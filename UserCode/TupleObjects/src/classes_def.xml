@@ -1,0 +1,6 @@
+<lcgdict>
+  <class name="TupleElectron"/>
+  <class name="std::vector<TupleElectron>"/>
+  <class name="edm::Wrapper<std::vector<TupleElectron> >"/>
+</lcgdict>
+
