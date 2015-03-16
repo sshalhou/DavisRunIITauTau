@@ -89,7 +89,7 @@ private:
 //
 TupleElectronProducer::TupleElectronProducer(const edm::ParameterSet& iConfig):
 electronSrc_(iConfig.getParameter<edm::InputTag>("electronSrc" )),
-cutSrc_ = iConfig.getParameter<VPSet>("cutSrc")
+cutSrc_(iConfig.getParameter<VPSet>("cutSrc"))
 {
 
 
