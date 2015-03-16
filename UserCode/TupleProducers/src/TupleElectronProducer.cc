@@ -69,7 +69,8 @@ private:
   // ----------member data ---------------------------
 
   edm::InputTag electronSrc_;
-  
+  string NAME_;
+
 
 
 };
