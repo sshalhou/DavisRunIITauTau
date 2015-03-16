@@ -2,7 +2,7 @@
 <use name="FWCore/PluginManager"/>
 <use name="FWCore/ParameterSet"/>
 <use name="DataFormats/PatCandidates"/>
-<use name="UserCode/TupleObjects"/>
+<use name="DavisRunIITauTau/TupleObjects"/>
 <use name="PhysicsTools/PatUtils"/>
 <use name="rootrflx"/>
 <flags EDM_PLUGIN="1"/>

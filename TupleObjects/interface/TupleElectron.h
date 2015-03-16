@@ -1,5 +1,5 @@
-#ifndef UserCode_TupleObjects_TupleElectron_h
-#define UserCode_TupleObjects_TupleElectron_h
+#ifndef DavisRunIITauTau_TupleObjects_TupleElectron_h
+#define DavisRunIITauTau_TupleObjects_TupleElectron_h
 
 
 // system include files

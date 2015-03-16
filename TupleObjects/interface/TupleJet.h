@@ -1,5 +1,5 @@
-#ifndef UserCode_TupleObjects_TupleJet_h
-#define UserCode_TupleObjects_TupleJet_h
+#ifndef DavisRunIITauTau_TupleObjects_TupleJet_h
+#define DavisRunIITauTau_TupleObjects_TupleJet_h
 
 
 // system include files
