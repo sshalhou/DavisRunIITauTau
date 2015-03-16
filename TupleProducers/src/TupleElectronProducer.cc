@@ -40,6 +40,7 @@ Implementation:
 
 
 typedef math::XYZTLorentzVector LorentzVector;
+typedef std::vector<edm::ParameterSet> VPSet;
 using namespace std;
 using namespace edm;
 using namespace pat;
@@ -70,8 +71,7 @@ private:
 
   edm::InputTag electronSrc_;
   string NAME_;
-
-
+  VPSet cutSrc_;
 
 };
 
@@ -88,7 +88,8 @@ private:
 // constructors and destructor
 //
 TupleElectronProducer::TupleElectronProducer(const edm::ParameterSet& iConfig):
-electronSrc_(iConfig.getParameter<edm::InputTag>("electronSrc" ))
+electronSrc_(iConfig.getParameter<edm::InputTag>("electronSrc" )),
+cutSrc_ = iConfig.getParameter<VPSet>("cutSrc")
 {
 
 
