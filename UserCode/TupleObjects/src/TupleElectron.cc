@@ -3,7 +3,7 @@
 
 TupleElectron::TupleElectron()
 {
-  m_p4.Set(NAN,NAN,NAN,NAN);
+  m_p4.SetXYZT(NAN,NAN,NAN,NAN);
 
 }
 
