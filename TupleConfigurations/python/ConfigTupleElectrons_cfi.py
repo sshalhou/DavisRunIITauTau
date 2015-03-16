@@ -12,7 +12,7 @@ import FWCore.ParameterSet.Config as cms
 ###################################
 
 
-cuts = cms.PSet(
+cuts = cms.VPSet(
 thinCuts = cms.PSet(minPt = cms.double(10.0)),
 vetoCuts = cms.PSet(minPt = cms.double(10.0)),
 signal_eleTauCuts = cms.PSet(minPt = cms.double(10.0)),
