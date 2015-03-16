@@ -20,6 +20,7 @@ class TupleElectron
 
 
 public:
+
   TupleElectron();
   virtual ~TupleElectron(){}
 
@@ -27,8 +28,13 @@ public:
 
   void set_p4(LorentzVector);
 
+  // getters
+
+  LorentzVector p4() const;
+
 
 private:
+
   LorentzVector m_p4;
  
 
