@@ -150,9 +150,10 @@ TupleElectronProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup
     ////////////////
     CurrentElectron.set_p4(electron->p4());
 
+    std::cout<<cutSrc.getParameter<double>("SIGeleMu_minPt")<<std::endl;
 
-
-
+    //std::cout<<electron->electronID("POG_MVA_ID_Run2_NonTrig_Tight")<<std::endl; 
+    //std::cout<<electron.relIso(dBetaFactor=0.5, allCharged=0)<<std::endl;
 
 
 
