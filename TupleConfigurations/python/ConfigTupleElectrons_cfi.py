@@ -11,11 +11,7 @@ import FWCore.ParameterSet.Config as cms
 # signal_eleMuCuts = minimum requirement to be a signal ele + muon final state electron
 ###################################
 
-
-cuts = cms.VPSet
-(
-	cms.PSet(minPt = cms.double(10.0), type=cms.string('thinCuts')),
- 	cms.PSet(minPt = cms.double(10.0), type=cms.string('vetoCuts')),
-	cms.PSet(minPt = cms.double(10.0), type=cms.string('signal_eleTauCuts')),
-	cms.PSet(minPt = cms.double(10.0), type=cms.string('signal_eleMuCuts'))
-)
+ele_thinCuts = cms.PSet(minPt = cms.double(10.0))
+ele_vetoCuts = cms.PSet(minPt = cms.double(10.0))
+ele_signal_eleTauCuts = cms.PSet(minPt = cms.double(10.0))
+ele_signal_eleMuCuts = cms.PSet(minPt = cms.double(10.0))
