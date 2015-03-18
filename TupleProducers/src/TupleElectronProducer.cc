@@ -70,10 +70,7 @@ private:
 
   edm::InputTag electronSrc_;
   string NAME_;
-  edm::ParameterSet cutSrc_ele_thinCuts;
-  edm::ParameterSet cutSrc_ele_vetoCuts;
-  edm::ParameterSet cutSrc_ele_signal_eleTauCuts;
-  edm::ParameterSet cutSrc_ele_signal_eleMuCuts;
+  edm::ParameterSet cutSrc;
 
 };
 
@@ -91,7 +88,7 @@ private:
 //
 TupleElectronProducer::TupleElectronProducer(const edm::ParameterSet& iConfig):
 electronSrc_(iConfig.getParameter<edm::InputTag>("electronSrc" )),
-cutSrc_(iConfig.getParameter<edm::ParameterSet>("cutSrc"))
+cutSrc(iConfig.getParameter<edm::ParameterSet>("cutSrc"))
 {
 
 
