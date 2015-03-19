@@ -35,9 +35,6 @@ cmsenv
 git cms-init
 
 # electron ID
-git clone -n https://github.com/cms-analysis/EgammaAnalysis-ElectronTools EGamma/EGammaAnalysisTools 
-cd EGamma/EGammaAnalysisTools
-git checkout c0db796 -- interface/ElectronEffectiveArea.h
-
+git cms-merge-topic HuguesBrun:trigElecIdInCommonIsoSelection720
 
 git clone git@github.com:sshalhou/DavisRunIITauTau DavisRunIITauTau
