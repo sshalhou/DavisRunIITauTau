@@ -39,6 +39,23 @@ Implementation:
 #include "DataFormats/Math/interface/LorentzVector.h"
 
 
+#include "DataFormats/EgammaCandidates/interface/GsfElectron.h"
+#include "DataFormats/EgammaCandidates/interface/GsfElectronFwd.h"
+#include "DataFormats/Common/interface/ValueMap.h"
+#include "EgammaAnalysis/ElectronTools/interface/EGammaMvaEleEstimatorCSA14.h"
+#include "TH1D.h"
+#include <map>
+#include "TFile.h"
+#include <math.h>
+#include <sstream>
+#include <string>
+#include <stdlib.h>
+#include <string.h>
+#include "TLorentzVector.h"
+#include "TVector3.h"
+#include "TString.h"
+#include "TTree.h"
+
 typedef math::XYZTLorentzVector LorentzVector;
 using namespace std;
 using namespace edm;
