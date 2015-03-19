@@ -39,23 +39,6 @@ Implementation:
 #include "DataFormats/Math/interface/LorentzVector.h"
 
 
-#include "DataFormats/EgammaCandidates/interface/GsfElectron.h"
-#include "DataFormats/EgammaCandidates/interface/GsfElectronFwd.h"
-#include "DataFormats/Common/interface/ValueMap.h"
-#include "EgammaAnalysis/ElectronTools/interface/EGammaMvaEleEstimatorCSA14.h"
-#include "TH1D.h"
-#include <map>
-#include "TFile.h"
-#include <math.h>
-#include <sstream>
-#include <string>
-#include <stdlib.h>
-#include <string.h>
-#include "TLorentzVector.h"
-#include "TVector3.h"
-#include "TString.h"
-#include "TTree.h"
-
 typedef math::XYZTLorentzVector LorentzVector;
 using namespace std;
 using namespace edm;
@@ -87,7 +70,6 @@ private:
 
   edm::InputTag electronSrc_;
   string NAME_;
-  edm::ParameterSet cutSrc;
 
 };
 
@@ -104,8 +86,7 @@ private:
 // constructors and destructor
 //
 TupleElectronProducer::TupleElectronProducer(const edm::ParameterSet& iConfig):
-electronSrc_(iConfig.getParameter<edm::InputTag>("electronSrc" )),
-cutSrc(iConfig.getParameter<edm::ParameterSet>("cutSrc"))
+electronSrc_(iConfig.getParameter<edm::InputTag>("electronSrc" ))
 {
 
 
@@ -145,32 +126,55 @@ void
 TupleElectronProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
 {
 
+
   // get electron collection
   edm::Handle<edm::View<pat::Electron> > electrons;
   iEvent.getByLabel(electronSrc_,electrons);
+
 
   auto_ptr<TupleElectronCollection> TupleElectrons (new TupleElectronCollection);
 
   const int TupleElectronSize = electrons->size();
   TupleElectrons->reserve( TupleElectronSize );
 
-
   edm::View<pat::Electron>::const_iterator electron;
   for(electron=electrons->begin(); electron!=electrons->end(); ++electron)
   {
 
+
     TupleElectron CurrentElectron;
 
-   
+
+    std::cout<<electron->userFloat("dxy")<<" = dxy "<<std::endl; 
+    std::cout<<electron->userFloat("dz")<<" = dz "<<std::endl; 
+
     ////////////////
     //set_p4
     ////////////////
     CurrentElectron.set_p4(electron->p4());
 
-    std::cout<<cutSrc.getParameter<double>("SIGeleMu_minPt")<<std::endl;
+//    std::cout<<cutSrc.getParameter<double>("SIGeleMu_minPt")<<std::endl;
 
-    //std::cout<<electron->electronID("POG_MVA_ID_Run2_NonTrig_Tight")<<std::endl; 
+
+//    std::cout<<electron->electronID("POG_MVA_ID_Run2_NonTrig_Tight")<<std::endl; 
     //std::cout<<electron.relIso(dBetaFactor=0.5, allCharged=0)<<std::endl;
+
+
+// std::cout<<electron->electronID("cutBasedElectronID-CSA14-50ns-V1-standalone-loose")<<std::endl;
+// std::cout<<electron->electronID("cutBasedElectronID-CSA14-50ns-V1-standalone-medium")<<std::endl;
+// std::cout<<electron->electronID("cutBasedElectronID-CSA14-50ns-V1-standalone-tight")<<std::endl;
+// std::cout<<electron->electronID("cutBasedElectronID-CSA14-50ns-V1-standalone-veto")<<std::endl;
+// std::cout<<electron->electronID("cutBasedElectronID-CSA14-PU20bx25-V0-standalone-loose")<<std::endl;
+// std::cout<<electron->electronID("cutBasedElectronID-CSA14-PU20bx25-V0-standalone-medium")<<std::endl;
+// std::cout<<electron->electronID("cutBasedElectronID-CSA14-PU20bx25-V0-standalone-tight")<<std::endl;
+// std::cout<<electron->electronID("cutBasedElectronID-CSA14-PU20bx25-V0-standalone-veto")<<std::endl;
+// std::cout<<electron->electronID("eidLoose")<<std::endl;
+// std::cout<<electron->electronID("eidRobustHighEnergy")<<std::endl;
+// std::cout<<electron->electronID("eidRobustLoose")<<std::endl;
+// std::cout<<electron->electronID("eidRobustTight")<<std::endl;
+// std::cout<<electron->electronID("eidTight")<<std::endl;
+// std::cout<<electron->electronID("heepElectronID-HEEPV50-CSA14-25ns")<<std::endl;
+// std::cout<<electron->electronID("heepElectronID-HEEPV50-CSA14-startup")<<std::endl;
 
 
 
