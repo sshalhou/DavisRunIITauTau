@@ -21,7 +21,7 @@
 #include "DataFormats/PatCandidates/interface/Electron.h"
 
 #include "EgammaAnalysis/ElectronTools/interface/EGammaMvaEleEstimatorCSA14.h"
-
+#include "DavisRunIITauTau/TupleHelpers/interface/LeptonRelativIsolationTool.hh"
 
 
 
@@ -46,9 +46,9 @@ class electronClones
 	const slimmedPatElectronCollection& electrons;
 	const reco::Vertex & first_vertex;
 
-	// the list of mva ID evaluators and the names of thier embedded userFloats
-	EGammaMvaEleEstimatorCSA14 & MVAS;
-	std::string & MVA_NAMES;
+	// the mva ID evaluators and the names of thier embedded userFloats
+	EGammaMvaEleEstimatorCSA14 & MVA_PHYS14nonTrig;
+	std::string & MVA_PHYS14nonTrig_NAME;
 
 
 	public:
@@ -61,11 +61,6 @@ class electronClones
 		// the cloned collection which will have the user floats embedded
 		std::vector <pat::Electron> clones;
 
-
-
-
-
-
 	private:
 		void clone();
 		void fillUserFloats();		  
@@ -77,12 +72,12 @@ class electronClones
 // constructor which clones and adds userFloats to the input collection
 
 electronClones::electronClones(const slimmedPatElectronCollection& inputColl, const reco::Vertex & input_vertex,
-				 EGammaMvaEleEstimatorCSA14 & MVAS_, 
-				 std::string & MVA_NAMES_):
+				 EGammaMvaEleEstimatorCSA14 & MVA_PHYS14nonTrig_, 
+				 std::string & MVA_PHYS14nonTrig_NAME_):
 		electrons(inputColl),
 		first_vertex(input_vertex),
-		MVAS(MVAS_),
-		MVA_NAMES(MVA_NAMES_)
+		MVA_PHYS14nonTrig(MVA_PHYS14nonTrig_),
+		MVA_PHYS14nonTrig_NAME(MVA_PHYS14nonTrig_NAME_)
 		{
 
 		 clone();
@@ -108,6 +103,8 @@ void electronClones::clone()
 }
 
 
+
+
 // fill user defined floats
 
 void electronClones::fillUserFloats()
@@ -127,40 +124,33 @@ void electronClones::fillUserFloats()
   		float dxy = 999.0;
 		float dz = 999.0;
 
+		// worried that we need a gsfTrack check here?
 	  	dxy = e.gsfTrack()->dxy(first_vertex.position());
 	  	e.addUserFloat("dxy",dxy);
 
 	  	dz = e.gsfTrack()->dz(first_vertex.position());
 	  	e.addUserFloat("dz",dz);
 
+	  	////////////////////////////
+	  	// evaluate the electron's relIso
+
+	  	LeptonRelativIsolationTool IsoTool;
+	  	double deltaBeta = 0.5;
+	  	double relIso = IsoTool.electronRelIso(e,deltaBeta);
+
+	  	e.addUserFloat("relIso",relIso);
 
 
-	  	// add the mva IDs 
+	  	///////////////////////////
+	  	// evaluate and add the mva IDs 
 
+	  	float mva_val = MVA_PHYS14nonTrig.mvaValue(e,false);
+	    e.addUserFloat(MVA_PHYS14nonTrig_NAME,mva_val);
 
-	  	float mva_val = MVAS.mvaValue(e,true);
-	  	
-		std::cout<<" pt = "<<e.p4().Pt()<<" ";
-	    std::cout<<" mva from in "<<mva_val<<std::endl;
+	  	///////////////////////////
+	    // once ready add the pass/fail based on the mva
 
-
-	  	// for (std::size_t mva = 0; mva<MVA_NAMES.size(); mva++)
-	  	// {
-
-
-	  	// 	EGammaMvaEleEstimatorCSA14 * A = &MVAS[mva];
-	  	// 	//std::cout<<MVAS[mva]<<std::endl;
-	  	// 	// float mva_val = MVAS[mva].mvaValue(e,true);
-	  	
-
-	  	// 	// std::cout<<MVA_NAMES[mva]<<" pt = "<<e.p4().Pt()<<" ";
-		  //  //  std::cout<<" mva from in "<<mva_val<<std::endl;
-
-
-
-	  	// }
-
-
+	    e.addUserFloat("PASS_"+MVA_PHYS14nonTrig_NAME,1.00);
 
 
 	  	///////////////////////////

@@ -89,10 +89,7 @@ private:
   // the mva ID estimator for CSA14 and Phs14(?)
   EGammaMvaEleEstimatorCSA14 MVA_NonTrigPhys14;
 
-  // create vectors of MVA evaluators and Names
-
-  std::vector<EGammaMvaEleEstimatorCSA14> THE_MVAS;
-  std::vector<std::string> THE_MVA_NAMES;
+  // note: if additonal MVAs are needed add them in ElectronClones.hh
 
 };
 
@@ -138,11 +135,6 @@ vertexSrc_(iConfig.getParameter<edm::InputTag>("vertexSrc" ))
                           NonTrigPhys14);
 
 
-
-  // fill vectors of MVA evaluators and Names
-
-  THE_MVAS.push_back(MVA_NonTrigPhys14);
-  THE_MVA_NAMES.push_back("MVA_NonTrigPhys14");
 
 
 
@@ -195,10 +187,10 @@ CustomPatElectronProducer::produce(edm::Event& iEvent, const edm::EventSetup& iS
 
 
 
-  // tool to fill the user-computed electron variables
+  // clone & fill the electron with user-computed quantities including mva
 
-  std::string XXX = "MVA_NonTrigPhys14";
-  electronClones ele(electrons,first_vertex,MVA_NonTrigPhys14,XXX); 
+  std::string MVA_NonTrigPhys14_name = "MVA_NonTrigPhys14";
+  electronClones ele(electrons,first_vertex,MVA_NonTrigPhys14,MVA_NonTrigPhys14_name); 
 
 
 
@@ -208,23 +200,10 @@ CustomPatElectronProducer::produce(edm::Event& iEvent, const edm::EventSetup& iS
   for (std::size_t i = 0; i<electrons->size(); i++)
   {
 
-    // embed the mva ID outputs
-    for (std::size_t mva = 0; mva<THE_MVAS.size(); mva++)
-    {
-      float mva_output = MVA_NonTrigPhys14.mvaValue(electrons->at(i),true);
-      ele.clones[i].addUserFloat(THE_MVA_NAMES[mva],mva_output);
-      std::cout<<" xxx "<<mva_output<<std::endl;
-    }
-
-
 
 
 
     const pat::Electron & electronToStore = ele.clones[i];
-    std::cout<<electronToStore.userFloat("MVA_NonTrigPhys14")<<" MVA_NonTrigPhys14 "<<std::endl;
-
-
-
     storedElectrons->push_back(electronToStore);
 
 
