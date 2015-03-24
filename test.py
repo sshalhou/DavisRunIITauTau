@@ -88,6 +88,10 @@ process.customSlimmedMuons = cms.EDProducer('CustomPatMuonProducer' ,
 							NAME=cms.string("customSlimmedMuons")
 							                 )
 
+process.TupleMuonsNominal = cms.EDProducer('TupleMuonProducer' ,
+							muonSrc =cms.InputTag('customSlimmedMuons:customSlimmedMuons:Ntuple'),
+							NAME=cms.string("TupleMuonsNominal")
+							                 )
 
 
 
@@ -104,6 +108,39 @@ process.out = cms.OutputModule("PoolOutputModule",
 
 
 
+###################################
+# create a new Tuple tau collection
+# based on customSlimmedTaus which has
+# user defined variables and selections applied
+###################################
+
+
+from DavisRunIITauTau.TupleConfigurations.ConfigTupleTaus_cfi import tau_Cuts
+
+process.customSlimmedTaus = cms.EDProducer('CustomPatTauProducer' ,
+							tauSrc =cms.InputTag('slimmedTaus'),
+							cutSrc = tau_Cuts, 
+							vertexSrc =cms.InputTag('TupleOfllineVertices'),
+							NAME=cms.string("customSlimmedTaus")
+							                 )
+
+process.TupleTausNominal = cms.EDProducer('TupleTauProducer' ,
+							tauSrc =cms.InputTag('customSlimmedTaus:customSlimmedTaus:Ntuple'),
+							NAME=cms.string("TupleTausNominal")
+							                 )
+
+
+
+process.out = cms.OutputModule("PoolOutputModule",
+			fileName = cms.untracked.string('NtupleFile.root'),
+			SelectEvents = cms.untracked.PSet(
+			                SelectEvents = cms.vstring('p')
+			                ),
+			outputCommands = cms.untracked.vstring('drop *')
+)
+
+
+
 
 
 #################################
@@ -114,11 +151,19 @@ process.out.outputCommands +=['keep *_*_*_Ntuple']
 
 process.p = cms.Path(process.myProducerLabel)
 #process.p *= process.UserSpecifiedData
-process.p *= process.TupleOfllineVertices
-process.p *= process.customSlimmedElectrons
 
+process.p *= process.TupleOfllineVertices
+
+process.p *= process.customSlimmedElectrons
 process.p *= process.TupleElectronsNominal
+
 process.p *= process.customSlimmedMuons
+process.p *= process.TupleMuonsNominal
+
+process.p *= process.customSlimmedTaus
+process.p *= process.TupleTausNominal
+
+
 process.e = cms.EndPath(process.out)
 
 

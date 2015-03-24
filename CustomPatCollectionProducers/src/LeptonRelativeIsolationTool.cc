@@ -87,3 +87,32 @@ double LeptonRelativeIsolationTool::muonRelIso(const pat::Muon & m, double delta
 }	
 
 
+
+
+// tau relIso
+
+double LeptonRelativeIsolationTool::tauRelIso(const pat::Tau & t, double deltaBeta)
+{
+	double ReturnVal = 999.0;
+	double PT = t.p4().Pt();
+	if (PT == 0) {return ReturnVal;}
+
+
+	// these are taken as is from mini-AOD slimmedMuons
+	double chargedHadron = t.chargedHadronIso();
+	double neutralHadron = t.neutralHadronIso();
+	double photonIso = t.photonIso();
+	double PUchargedHadron = t.puChargedHadronIso();
+
+	// should be careful to add FSR correction if recommended in the future
+
+
+	ReturnVal = chargedHadron + std::max(0.0, neutralHadron + photonIso -  deltaBeta * PUchargedHadron  );
+
+
+	ReturnVal = ReturnVal/PT;
+	return ReturnVal;
+
+}	
+
+

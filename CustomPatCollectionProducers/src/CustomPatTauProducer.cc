@@ -1,9 +1,9 @@
 // -*- C++ -*-
 //
-// Package:    CustomPatMuonProducer
-// Class:      CustomPatMuonProducer
+// Package:    CustomPatTauProducer
+// Class:      CustomPatTauProducer
 //
-/**\class CustomPatMuonProducer CustomPatMuonProducer.cc TEMP/CustomPatMuonProducer/src/CustomPatMuonProducer.cc
+/**\class CustomPatTauProducer CustomPatTauProducer.cc TEMP/CustomPatTauProducer/src/CustomPatTauProducer.cc
 
 Description: [one line class summary]
 
@@ -28,10 +28,10 @@ Implementation:
 #include "FWCore/Framework/interface/MakerMacros.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 
-// needed by ntuple muon producer
+// needed by ntuple Tau producer
 #include <vector>
 #include <iostream>
-#include "DataFormats/PatCandidates/interface/Muon.h"
+#include "DataFormats/PatCandidates/interface/Tau.h"
 #include "DataFormats/PatCandidates/interface/Lepton.h"
 #include "DataFormats/Math/interface/LorentzVector.h"
 #include "TLorentzVector.h"
@@ -42,7 +42,7 @@ Implementation:
 #include "DataFormats/PatCandidates/interface/TriggerEvent.h"
 #include "DataFormats/Common/interface/ValueMap.h"
 #include "DavisRunIITauTau/CustomPatCollectionProducers/interface/LeptonRelativeIsolationTool.h"
-#include "DavisRunIITauTau/CustomPatCollectionProducers/interface/MuonClones.h"
+#include "DavisRunIITauTau/CustomPatCollectionProducers/interface/TauClones.h"
 
 typedef math::XYZTLorentzVector LorentzVector;
 using namespace std;
@@ -55,10 +55,10 @@ using namespace pat;
 // class declaration
 //
 
-class CustomPatMuonProducer : public edm::EDProducer {
+class CustomPatTauProducer : public edm::EDProducer {
 public:
-  explicit CustomPatMuonProducer(const edm::ParameterSet&);
-  ~CustomPatMuonProducer();
+  explicit CustomPatTauProducer(const edm::ParameterSet&);
+  ~CustomPatTauProducer();
 
   static void fillDescriptions(edm::ConfigurationDescriptions& descriptions);
 
@@ -73,12 +73,11 @@ private:
   virtual void endLuminosityBlock(edm::LuminosityBlock&, edm::EventSetup const&);
 
   // ----------member data ---------------------------
-  edm::InputTag muonSrc_;
+  edm::InputTag tauSrc_;
   string NAME_;
   edm::ParameterSet cutSrc;
   edm::InputTag vertexSrc_;
 
- 
 };
 
 //
@@ -93,15 +92,20 @@ private:
 //
 // constructors and destructor
 //
-CustomPatMuonProducer::CustomPatMuonProducer(const edm::ParameterSet& iConfig):
-muonSrc_(iConfig.getParameter<edm::InputTag>("muonSrc" )),
+CustomPatTauProducer::CustomPatTauProducer(const edm::ParameterSet& iConfig):
+tauSrc_(iConfig.getParameter<edm::InputTag>("tauSrc" )),
 NAME_(iConfig.getParameter<string>("NAME" )),
 cutSrc(iConfig.getParameter<edm::ParameterSet>("cutSrc")),
 vertexSrc_(iConfig.getParameter<edm::InputTag>("vertexSrc" ))
 {
 
 
-  produces<vector<pat::Muon>>(NAME_).setBranchAlias(NAME_);
+  produces<vector<pat::Tau>>(NAME_).setBranchAlias(NAME_);
+
+
+
+
+
 
   //register your products
   /* Examples
@@ -118,7 +122,7 @@ vertexSrc_(iConfig.getParameter<edm::InputTag>("vertexSrc" ))
 }
 
 
-CustomPatMuonProducer::~CustomPatMuonProducer()
+CustomPatTauProducer::~CustomPatTauProducer()
 {
 
   // do anything here that needs to be done at desctruction time
@@ -133,7 +137,7 @@ CustomPatMuonProducer::~CustomPatMuonProducer()
 
 // ------------ method called to produce the data  ------------
 void
-CustomPatMuonProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
+CustomPatTauProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
 {
 
 
@@ -143,40 +147,33 @@ CustomPatMuonProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup
   iEvent.getByLabel(vertexSrc_,vertices);
   const reco::Vertex & first_vertex = vertices->at(0);
 
-  // get muon collection
-  edm::Handle<edm::View<pat::Muon> > muons;
-  iEvent.getByLabel(muonSrc_,muons);
+  // get Tau collection
+  edm::Handle<edm::View<pat::Tau> > taus;
+  iEvent.getByLabel(tauSrc_,taus);
 
 
 
 
-  muonClones mu(muons,first_vertex); 
+  TauClones tauClone(taus,first_vertex); 
 
 
 
-  std::vector<pat::Muon> * storedMuons = new std::vector<pat::Muon>();
+  std::vector<pat::Tau> * storedTaus = new std::vector<pat::Tau>();
 
 
-  for (std::size_t i = 0; i<muons->size(); i++)
+  for (std::size_t i = 0; i<taus->size(); i++)
   {
 
 
 
 
-    const pat::Muon & muonToStore = mu.clones[i];
-    storedMuons->push_back(muonToStore);
-
-    // std::cout<<" ------> muon with pt = "<<muonToStore.p4().Pt()<<std::endl;
-    // std::cout<<" -------------> relIsol = "<<muonToStore.userFloat("relIso")<<std::endl;
-    // std::cout<<" -------------> dxy = "<<muonToStore.userFloat("dxy")<<std::endl;
-    // std::cout<<" -------------> dz = "<<muonToStore.userFloat("dz")<<std::endl;
-
-
+    const pat::Tau & TauToStore = tauClone.clones[i];
+    storedTaus->push_back(TauToStore);
 
   }
 
-  // add the muons to the event output
-  std::auto_ptr<std::vector<pat::Muon> > eptr(storedMuons);
+  // add the taus to the event output
+  std::auto_ptr<std::vector<pat::Tau> > eptr(storedTaus);
   iEvent.put(eptr,NAME_);
 
 
@@ -184,42 +181,42 @@ CustomPatMuonProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup
 
 // ------------ method called once each job just before starting event loop  ------------
 void
-CustomPatMuonProducer::beginJob()
+CustomPatTauProducer::beginJob()
 {
 }
 
 // ------------ method called once each job just after ending the event loop  ------------
 void
-CustomPatMuonProducer::endJob() {
+CustomPatTauProducer::endJob() {
 }
 
 // ------------ method called when starting to processes a run  ------------
 void
-CustomPatMuonProducer::beginRun(edm::Run&, edm::EventSetup const&)
+CustomPatTauProducer::beginRun(edm::Run&, edm::EventSetup const&)
 {
 }
 
 // ------------ method called when ending the processing of a run  ------------
 void
-CustomPatMuonProducer::endRun(edm::Run&, edm::EventSetup const&)
+CustomPatTauProducer::endRun(edm::Run&, edm::EventSetup const&)
 {
 }
 
 // ------------ method called when starting to processes a luminosity block  ------------
 void
-CustomPatMuonProducer::beginLuminosityBlock(edm::LuminosityBlock&, edm::EventSetup const&)
+CustomPatTauProducer::beginLuminosityBlock(edm::LuminosityBlock&, edm::EventSetup const&)
 {
 }
 
 // ------------ method called when ending the processing of a luminosity block  ------------
 void
-CustomPatMuonProducer::endLuminosityBlock(edm::LuminosityBlock&, edm::EventSetup const&)
+CustomPatTauProducer::endLuminosityBlock(edm::LuminosityBlock&, edm::EventSetup const&)
 {
 }
 
 // ------------ method fills 'descriptions' with the allowed parameters for the module  ------------
 void
-CustomPatMuonProducer::fillDescriptions(edm::ConfigurationDescriptions& descriptions) {
+CustomPatTauProducer::fillDescriptions(edm::ConfigurationDescriptions& descriptions) {
   //The following says we do not know what parameters are allowed so do no validation
   // Please change this to state exactly what you do use, even if it is no parameters
   edm::ParameterSetDescription desc;
@@ -228,4 +225,4 @@ CustomPatMuonProducer::fillDescriptions(edm::ConfigurationDescriptions& descript
 }
 
 //define this as a plug-in
-DEFINE_FWK_MODULE(CustomPatMuonProducer);
+DEFINE_FWK_MODULE(CustomPatTauProducer);

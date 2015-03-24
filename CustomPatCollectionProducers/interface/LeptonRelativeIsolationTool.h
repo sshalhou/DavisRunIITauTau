@@ -20,6 +20,7 @@
 #include "DataFormats/Common/interface/ValueMap.h"
 #include "DataFormats/PatCandidates/interface/Electron.h"
 #include "DataFormats/PatCandidates/interface/Muon.h"
+#include "DataFormats/PatCandidates/interface/Tau.h"
 
 #include "TH1D.h"
 #include <map>
@@ -44,6 +45,7 @@ class LeptonRelativeIsolationTool
 		// deltaBeta corrected relative isolation
 		double electronRelIso(const pat::Electron &, double deltaBeta);		
 		double muonRelIso(const pat::Muon &, double deltaBeta);		
+		double tauRelIso(const pat::Tau &, double deltaBeta);		
 
   
 
