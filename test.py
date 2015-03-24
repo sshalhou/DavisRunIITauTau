@@ -41,13 +41,30 @@ process.myProducerLabel = cms.EDProducer('Ntuple')
 
 from DavisRunIITauTau.TupleConfigurations.ConfigTupleOfflineVertices_cfi import vtx_Cuts
 
-process.TupleOfllineVertices = cms.EDFilter(
+from DavisRunIITauTau.TupleConfigurations.ConfigTupleElectrons_cfi import electronFilter
+
+print '-----> ', electronFilter
+
+process.filteredVertices = cms.EDFilter(
     "VertexSelector",
     src = cms.InputTag('offlineSlimmedPrimaryVertices'),
     cut = vtx_Cuts,
-    filter = cms.bool(True)
+    filter = cms.bool(True) # drop events without good quality veritces
 )
 
+process.filteredElectrons = cms.EDFilter("PATElectronRefSelector",
+src = cms.InputTag("slimmedElectrons"),
+cut = cms.string("pt>25")
+)
+process.filteredMuons = cms.EDFilter("PATMuonRefSelector",
+src = cms.InputTag("slimmedMuons"),
+cut = cms.string("pt>25")
+)
+
+process.filteredTaus = cms.EDFilter("PATTauRefSelector",
+src = cms.InputTag("slimmedTaus"),
+cut = cms.string("pt>25")
+)
 
 ###################################
 # create a new Tuple electron collection
@@ -59,11 +76,18 @@ process.TupleOfllineVertices = cms.EDFilter(
 from DavisRunIITauTau.TupleConfigurations.ConfigTupleElectrons_cfi import ele_Cuts
 
 process.customSlimmedElectrons = cms.EDProducer('CustomPatElectronProducer' ,
-							electronSrc =cms.InputTag('slimmedElectrons'),
+							electronSrc =cms.InputTag('filteredElectrons::Ntuple'),
 							cutSrc = ele_Cuts, 
-							vertexSrc =cms.InputTag('TupleOfllineVertices'),
+							vertexSrc =cms.InputTag('filteredVertices::Ntuple'),
 							NAME=cms.string("customSlimmedElectrons")
 							                 )
+
+# test
+process.filteredCustomSlimmedElectrons = cms.EDFilter("PATElectronRefSelector",
+	src =cms.InputTag('customSlimmedElectrons:customSlimmedElectrons:Ntuple'),
+	cut = electronFilter
+)
+# test
 
 
 process.TupleElectronsNominal = cms.EDProducer('TupleElectronProducer' ,
@@ -82,9 +106,9 @@ process.TupleElectronsNominal = cms.EDProducer('TupleElectronProducer' ,
 from DavisRunIITauTau.TupleConfigurations.ConfigTupleMuons_cfi import mu_Cuts
 
 process.customSlimmedMuons = cms.EDProducer('CustomPatMuonProducer' ,
-							muonSrc =cms.InputTag('slimmedMuons'),
+							muonSrc =cms.InputTag('filteredMuons::Ntuple'),
 							cutSrc = mu_Cuts, 
-							vertexSrc =cms.InputTag('TupleOfllineVertices'),
+							vertexSrc =cms.InputTag('filteredVertices::Ntuple'),
 							NAME=cms.string("customSlimmedMuons")
 							                 )
 
@@ -118,9 +142,9 @@ process.out = cms.OutputModule("PoolOutputModule",
 from DavisRunIITauTau.TupleConfigurations.ConfigTupleTaus_cfi import tau_Cuts
 
 process.customSlimmedTaus = cms.EDProducer('CustomPatTauProducer' ,
-							tauSrc =cms.InputTag('slimmedTaus'),
+							tauSrc =cms.InputTag('filteredTaus::Ntuple'),
 							cutSrc = tau_Cuts, 
-							vertexSrc =cms.InputTag('TupleOfllineVertices'),
+							vertexSrc =cms.InputTag('filteredVertices::Ntuple'),
 							NAME=cms.string("customSlimmedTaus")
 							                 )
 
@@ -152,9 +176,14 @@ process.out.outputCommands +=['keep *_*_*_Ntuple']
 process.p = cms.Path(process.myProducerLabel)
 #process.p *= process.UserSpecifiedData
 
-process.p *= process.TupleOfllineVertices
+# collection filtering 
+process.p *= process.filteredVertices
+process.p *= process.filteredElectrons
+process.p *= process.filteredMuons
+process.p *= process.filteredTaus
 
 process.p *= process.customSlimmedElectrons
+process.p *= process.filteredCustomSlimmedElectrons
 process.p *= process.TupleElectronsNominal
 
 process.p *= process.customSlimmedMuons

@@ -1,4 +1,49 @@
+####################################################################################################
+# config file containing all tau selections
+# contains : 
+#              tauFilter - cms.string of initial cuts imposed on slimmedTaus
+#
+#
+
 import FWCore.ParameterSet.Config as cms
+from and_string_concatonator import and_string_concatonator
+
+####################################################################################################
+####################################################################################################
+####################################################################################################
+# tauFilter : initial cut applied to slimmedTaus
+# only objects passing these requirements will be considered 
+# (everything failing is dropped)
+
+
+########################
+# user should modify the append statements below to change tau filter cut settings
+# they will be (&&) concatenated to form one string cut
+# see (https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuidePhysicsCutParser) 
+# for allowed syntax
+
+filter_ = []
+
+# ----------------------------------------------------
+# ------------[user edit here]------------------------
+filter_.append('pt>20') # be careful here to allow for tau ES variation
+filter_.append('userFloat("relIsol") < 0.01')
+# ----------------------------------------------------
+# ----------------------------------------------------
+
+
+tauFilter = cms.string(and_string_concatonator(filter_))
+
+
+####################################################################################################
+####################################################################################################
+####################################################################################################
+
+
+
+
+
+
 
 ###################################
 # configuration file to determine
@@ -8,7 +53,7 @@ import FWCore.ParameterSet.Config as cms
 # thinCuts = minimum skim requirements on taus (anything failing these will be thrown away)
 # vetoCuts = minimum requirement to be a veto Tau
 # signal_eleTauCuts = minimum requirement to be a signal ele + Tau_h final state Tau
-# signal_muTauCuts = minimum requirement to be a signal muon + Tau_h final state Tau
+# signal_muTauCuts = minimum requirement to be a signal tau + Tau_h final state Tau
 ###################################
 
 

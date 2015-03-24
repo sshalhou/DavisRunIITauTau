@@ -75,7 +75,6 @@ private:
   // ----------member data ---------------------------
   edm::InputTag muonSrc_;
   string NAME_;
-  edm::ParameterSet cutSrc;
   edm::InputTag vertexSrc_;
 
  
@@ -96,7 +95,6 @@ private:
 CustomPatMuonProducer::CustomPatMuonProducer(const edm::ParameterSet& iConfig):
 muonSrc_(iConfig.getParameter<edm::InputTag>("muonSrc" )),
 NAME_(iConfig.getParameter<string>("NAME" )),
-cutSrc(iConfig.getParameter<edm::ParameterSet>("cutSrc")),
 vertexSrc_(iConfig.getParameter<edm::InputTag>("vertexSrc" ))
 {
 

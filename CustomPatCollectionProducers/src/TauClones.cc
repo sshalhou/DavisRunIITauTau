@@ -1,4 +1,5 @@
 /* clones a pat::Tau collection with embedded user floats */
+/* will also clone with corrected ES and systematic shifts of Energy Scale */
 
 
 // system include files
@@ -28,20 +29,34 @@ typedef edm::Handle<edm::View<pat::Tau> > 	slimmedPatTauCollection;
 
 // constructor which clones and adds userFloats to the input collection
 
-TauClones::TauClones(const slimmedPatTauCollection& inputColl, const reco::Vertex & input_vertex):
+TauClones::TauClones(const slimmedPatTauCollection& inputColl, const reco::Vertex & input_vertex,
+	const float EsCorrectionFactor,
+	const float EsShiftScaleFactorUp,
+	const float EsShiftScaleFactorDown):
 		taus(inputColl),
-		first_vertex(input_vertex)
+		first_vertex(input_vertex),
+		EsCorrectionFactor(EsCorrectionFactor),
+		EsShiftScaleFactorUp(EsShiftScaleFactorUp),
+		EsShiftScaleFactorDown(EsShiftScaleFactorDown)
 		{
 
 		 clone();
-		 fillUserFloats();		  
+		 ChangeEnergyAndFillUserFloats(clones);		  
+		 ChangeEnergyAndFillUserFloats(clonesCorrectedNominalEsShift);		  
+		 ChangeEnergyAndFillUserFloats(clonesCorrectedUpEsShift);		  
+		 ChangeEnergyAndFillUserFloats(clonesCorrectedDownEsShift);		  
+
 
 		}
 
 // destructor 
 
-TauClones::~TauClones(){ clones.clear();}
-
+TauClones::~TauClones(){ 
+	clones.clear();
+	clonesCorrectedNominalEsShift.clear();	
+	clonesCorrectedUpEsShift.clear();
+	clonesCorrectedDownEsShift.clear();
+						}
 
 // clone the collection 
 
@@ -52,6 +67,9 @@ void TauClones::clone()
   for(Tau=taus->begin(); Tau!=taus->end(); ++Tau)
   {
   	clones.push_back(*Tau);
+  	clonesCorrectedNominalEsShift.push_back(*Tau);
+	clonesCorrectedUpEsShift.push_back(*Tau);
+	clonesCorrectedDownEsShift.push_back(*Tau);
   }
 }
 
@@ -60,7 +78,7 @@ void TauClones::clone()
 
 // fill user defined floats
 
-void TauClones::fillUserFloats()
+void TauClones::ChangeEnergyAndFillUserFloats(std::vector <pat::Tau> & clones)
 {
 
 
@@ -77,17 +95,6 @@ void TauClones::fillUserFloats()
 
   		float dxy = 999.0;
 		float dz = 999.0;
-
-		// worried that we need a gsfTrack check here?
-		//		assert(t.gsfTrack().isNonnull());
-
-//		if(t.vertex().isNonnull())
-//		{
-			//		  	dxy = t.gsfTrack()->dxy(first_vertex.position());
-		  	//dz = t.gsfTrack()->dz(first_vertex.position());
-
-
-//		}
 
 	  	t.addUserFloat("dxy",dxy);
 	  	t.addUserFloat("dz",dz);

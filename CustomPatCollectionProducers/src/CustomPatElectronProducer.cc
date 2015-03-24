@@ -82,7 +82,6 @@ private:
   // ----------member data ---------------------------
   edm::InputTag electronSrc_;
   string NAME_;
-  edm::ParameterSet cutSrc;
   edm::InputTag vertexSrc_;
 
   // the mva ID estimator for CSA14 and Phs14(?)
@@ -107,7 +106,6 @@ private:
 CustomPatElectronProducer::CustomPatElectronProducer(const edm::ParameterSet& iConfig):
 electronSrc_(iConfig.getParameter<edm::InputTag>("electronSrc" )),
 NAME_(iConfig.getParameter<string>("NAME" )),
-cutSrc(iConfig.getParameter<edm::ParameterSet>("cutSrc")),
 vertexSrc_(iConfig.getParameter<edm::InputTag>("vertexSrc" ))
 {
 

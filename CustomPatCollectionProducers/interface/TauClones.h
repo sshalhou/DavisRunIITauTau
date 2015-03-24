@@ -42,21 +42,27 @@ class TauClones
 	// input taus and vertex
 	const slimmedPatTauCollection& taus;
 	const reco::Vertex & first_vertex;
-
+	const float EsCorrectionFactor;
+	const float EsShiftScaleFactorUp;
+	const float EsShiftScaleFactorDown;
 
 
 
 	public:
-		TauClones(const slimmedPatTauCollection&, const reco::Vertex &);
+		TauClones(const slimmedPatTauCollection&, const reco::Vertex &, const float, const float, const float);
 
 		virtual ~TauClones();
 
 		// the cloned collection which will have the user floats embedded
-		std::vector <pat::Tau> clones;
+		std::vector <pat::Tau> clones; /* only change is embedded userFloats */
+		std::vector <pat::Tau> clonesCorrectedNominalEsShift; /* embed userFloats and correct Es */
+		std::vector <pat::Tau> clonesCorrectedUpEsShift; /* embed userFloats and correct Es and sys. shift Up */
+		std::vector <pat::Tau> clonesCorrectedDownEsShift; /* embed userFloats and correct Es and sys. shift Down */
+
 
 	private:
 		void clone();
-		void fillUserFloats();		  
+		void ChangeEnergyAndFillUserFloats(std::vector <pat::Tau>&);		  
 
 
 };

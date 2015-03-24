@@ -5,7 +5,7 @@
 //
 /**\class CustomPatTauProducer CustomPatTauProducer.cc TEMP/CustomPatTauProducer/src/CustomPatTauProducer.cc
 
-Description: [one line class summary]
+Description: produce 3 copies of the input pat::tau collection with user embedded info and ES variation
 
 Implementation:
 [Notes on implementation]
@@ -20,7 +20,6 @@ Implementation:
 
 // system include files
 #include <memory>
-
 // user include files
 #include "FWCore/Framework/interface/Frameworkfwd.h"
 #include "FWCore/Framework/interface/EDProducer.h"
@@ -75,8 +74,11 @@ private:
   // ----------member data ---------------------------
   edm::InputTag tauSrc_;
   string NAME_;
-  edm::ParameterSet cutSrc;
   edm::InputTag vertexSrc_;
+
+  std::string NAME_NOMINAL;
+  std::string NAME_UP;
+  std::string NAME_DOWN;
 
 };
 
@@ -95,13 +97,17 @@ private:
 CustomPatTauProducer::CustomPatTauProducer(const edm::ParameterSet& iConfig):
 tauSrc_(iConfig.getParameter<edm::InputTag>("tauSrc" )),
 NAME_(iConfig.getParameter<string>("NAME" )),
-cutSrc(iConfig.getParameter<edm::ParameterSet>("cutSrc")),
 vertexSrc_(iConfig.getParameter<edm::InputTag>("vertexSrc" ))
 {
 
+  NAME_NOMINAL = NAME_+"TauEsNominal";
+  NAME_UP = NAME_+"TauEsUp";
+  NAME_DOWN = NAME_+"TauEsDown";
 
-  produces<vector<pat::Tau>>(NAME_).setBranchAlias(NAME_);
 
+  produces<vector<pat::Tau>>(NAME_NOMINAL).setBranchAlias(NAME_NOMINAL);
+  produces<vector<pat::Tau>>(NAME_UP).setBranchAlias(NAME_UP);
+  produces<vector<pat::Tau>>(NAME_DOWN).setBranchAlias(NAME_DOWN);
 
 
 
@@ -154,27 +160,64 @@ CustomPatTauProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
 
 
 
-  TauClones tauClone(taus,first_vertex); 
+  // correct the tau ES and also
+  // create up and down variants in TauEs
+
+/*
+  TauEnergyScaleTool CorrectedwithNominalShift(taus,1.01,1.0);
+  TauEnergyScaleTool CorrectedwithUpShift(taus,1.01,1.03);
+  TauEnergyScaleTool CorrectedwithDownShift(taus,1.01,0.97);
+
+
+  std::cout<<" ----- **** ---- "<<"\n";
+  std::cout<<" orig "<<typeid(taus).name()<<"\n";
+  std::cout<<"clone "<<typeid(CorrectedwithNominalShift.clones).name()<<"\n";
+*/
+
+
+  // add the user embedded info
+
+
+  TauClones allClones(taus,first_vertex,1.01,1.03,0.97); 
 
 
 
-  std::vector<pat::Tau> * storedTaus = new std::vector<pat::Tau>();
-
+  std::vector<pat::Tau> * storedTausNominal = new std::vector<pat::Tau>();
+  std::vector<pat::Tau> * storedTausUp = new std::vector<pat::Tau>();
+  std::vector<pat::Tau> * storedTausDown = new std::vector<pat::Tau>();
 
   for (std::size_t i = 0; i<taus->size(); i++)
   {
 
 
+    const pat::Tau & original = allClones.clones[i];
+    const pat::Tau & TauToStoreNominal = allClones.clonesCorrectedNominalEsShift[i];
+    const pat::Tau & TauToStoreUp = allClones.clonesCorrectedUpEsShift[i];
+    const pat::Tau & TauToStoreDown = allClones.clonesCorrectedDownEsShift[i];
 
 
-    const pat::Tau & TauToStore = tauClone.clones[i];
-    storedTaus->push_back(TauToStore);
+    std::cout<<" 4 isol variants "<<original.userFloat("relIso")<<" ";
+    std::cout<<TauToStoreNominal.userFloat("relIso")<<" ";
+    std::cout<<TauToStoreUp.userFloat("relIso")<<" ";
+    std::cout<<TauToStoreDown.userFloat("relIso")<<"\n";
+
+
+    storedTausNominal->push_back(TauToStoreNominal);
+    storedTausUp->push_back(TauToStoreUp);
+    storedTausDown->push_back(TauToStoreDown);
+
 
   }
 
   // add the taus to the event output
-  std::auto_ptr<std::vector<pat::Tau> > eptr(storedTaus);
-  iEvent.put(eptr,NAME_);
+  std::auto_ptr<std::vector<pat::Tau> > eptr(storedTausNominal);
+  iEvent.put(eptr,NAME_NOMINAL);
+
+  std::auto_ptr<std::vector<pat::Tau> > eptr1(storedTausUp);
+  iEvent.put(eptr1,NAME_UP);
+
+  std::auto_ptr<std::vector<pat::Tau> > eptr2(storedTausDown);
+  iEvent.put(eptr2,NAME_DOWN);
 
 
 }
