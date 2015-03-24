@@ -1,27 +1,13 @@
-/* clones a pat::Electron collection with embedded user floats */
+/* clones a pat::Electron collection with embedded user floats including MVA ID*/
 
 
 // system include files
 #include <memory>
+#include <assert.h>     
 
 // user include files
-#include "FWCore/Framework/interface/Frameworkfwd.h"
-#include "FWCore/Framework/interface/EDAnalyzer.h"
-
-#include "FWCore/Framework/interface/Event.h"
-#include "FWCore/Framework/interface/MakerMacros.h"
-
-#include "FWCore/ParameterSet/interface/ParameterSet.h"
-
-#include "DataFormats/EgammaCandidates/interface/GsfElectron.h"
-#include "DataFormats/EgammaCandidates/interface/GsfElectronFwd.h"
-
-#include "DataFormats/Common/interface/ValueMap.h"
-
-#include "DataFormats/PatCandidates/interface/Electron.h"
-
-#include "EgammaAnalysis/ElectronTools/interface/EGammaMvaEleEstimatorCSA14.h"
-#include "DavisRunIITauTau/TupleHelpers/interface/LeptonRelativIsolationTool.hh"
+#include "DavisRunIITauTau/CustomPatCollectionProducers/interface/ElectronClones.h"
+#include "DavisRunIITauTau/CustomPatCollectionProducers/interface/LeptonRelativeIsolationTool.h"
 
 
 
@@ -38,35 +24,6 @@
 #include "TString.h"
 
 typedef edm::Handle<edm::View<pat::Electron> > 	slimmedPatElectronCollection;
-
-class electronClones
-{
-
-	// input electrons and vertex
-	const slimmedPatElectronCollection& electrons;
-	const reco::Vertex & first_vertex;
-
-	// the mva ID evaluators and the names of thier embedded userFloats
-	EGammaMvaEleEstimatorCSA14 & MVA_PHYS14nonTrig;
-	std::string & MVA_PHYS14nonTrig_NAME;
-
-
-	public:
-		electronClones(const slimmedPatElectronCollection&, const reco::Vertex &,
-				EGammaMvaEleEstimatorCSA14 &, 
-				std::string &);
-
-		virtual ~electronClones();
-
-		// the cloned collection which will have the user floats embedded
-		std::vector <pat::Electron> clones;
-
-	private:
-		void clone();
-		void fillUserFloats();		  
-
-
-};
 
 
 // constructor which clones and adds userFloats to the input collection
@@ -125,16 +82,21 @@ void electronClones::fillUserFloats()
 		float dz = 999.0;
 
 		// worried that we need a gsfTrack check here?
-	  	dxy = e.gsfTrack()->dxy(first_vertex.position());
-	  	e.addUserFloat("dxy",dxy);
+		//		assert(e.gsfTrack().isNonnull());
 
-	  	dz = e.gsfTrack()->dz(first_vertex.position());
+		if(e.gsfTrack().isNonnull())
+		{
+		  	dxy = e.gsfTrack()->dxy(first_vertex.position());
+		  	dz = e.gsfTrack()->dz(first_vertex.position());
+		}
+
+	  	e.addUserFloat("dxy",dxy);
 	  	e.addUserFloat("dz",dz);
 
 	  	////////////////////////////
 	  	// evaluate the electron's relIso
 
-	  	LeptonRelativIsolationTool IsoTool;
+	  	LeptonRelativeIsolationTool IsoTool;
 	  	double deltaBeta = 0.5;
 	  	double relIso = IsoTool.electronRelIso(e,deltaBeta);
 

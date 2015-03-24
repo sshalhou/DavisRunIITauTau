@@ -1,6 +1,5 @@
 #include "DavisRunIITauTau/TupleObjects/interface/TupleElectron.h"
 
-
 TupleElectron::TupleElectron()
 {
   m_p4.SetXYZT(NAN,NAN,NAN,NAN);

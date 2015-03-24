@@ -72,6 +72,25 @@ process.TupleElectronsNominal = cms.EDProducer('TupleElectronProducer' ,
 							                 )
 
 
+###################################
+# create a new Tuple muon collection
+# based on customSlimmedMuons which has
+# user defined variables and selections applied
+###################################
+
+
+from DavisRunIITauTau.TupleConfigurations.ConfigTupleMuons_cfi import mu_Cuts
+
+process.customSlimmedMuons = cms.EDProducer('CustomPatMuonProducer' ,
+							muonSrc =cms.InputTag('slimmedMuons'),
+							cutSrc = mu_Cuts, 
+							vertexSrc =cms.InputTag('TupleOfllineVertices'),
+							NAME=cms.string("customSlimmedMuons")
+							                 )
+
+
+
+
 process.out = cms.OutputModule("PoolOutputModule",
 			fileName = cms.untracked.string('NtupleFile.root'),
 			SelectEvents = cms.untracked.PSet(
@@ -99,6 +118,7 @@ process.p *= process.TupleOfllineVertices
 process.p *= process.customSlimmedElectrons
 
 process.p *= process.TupleElectronsNominal
+process.p *= process.customSlimmedMuons
 process.e = cms.EndPath(process.out)
 
 

@@ -39,6 +39,7 @@ Implementation:
 #include "DataFormats/Math/interface/LorentzVector.h"
 
 
+
 typedef math::XYZTLorentzVector LorentzVector;
 using namespace std;
 using namespace edm;
@@ -144,14 +145,19 @@ TupleElectronProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup
 
     TupleElectron CurrentElectron;
 
-
-    std::cout<<electron->userFloat("dxy")<<" = dxy "<<std::endl; 
-    std::cout<<electron->userFloat("dz")<<" = dz "<<std::endl; 
-
     ////////////////
     //set_p4
     ////////////////
     CurrentElectron.set_p4(electron->p4());
+
+    std::cout<<" ------> electron with pt = "<<electron->p4().Pt()<<std::endl;
+    std::cout<<" ------> relIsol = "<<electron->userFloat("relIso")<<std::endl;
+    std::cout<<" ------> dxy = "<<electron->userFloat("dxy")<<std::endl;
+    std::cout<<" ------> dz = "<<electron->userFloat("dz")<<std::endl;
+    std::cout<<" ------> mva val = "<<electron->userFloat("MVA_NonTrigPhys14")<<std::endl;
+
+
+
 
 //    std::cout<<cutSrc.getParameter<double>("SIGeleMu_minPt")<<std::endl;
 

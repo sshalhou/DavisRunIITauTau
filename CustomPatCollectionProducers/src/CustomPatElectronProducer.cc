@@ -42,15 +42,14 @@ Implementation:
 #include "DataFormats/Math/interface/LorentzVector.h"
 #include "Math/GenVector/VectorUtil.h"
 #include "DataFormats/PatCandidates/interface/PFParticle.h"
-#include "PhysicsTools/PatUtils/interface/TriggerHelper.h"
 #include "DataFormats/PatCandidates/interface/TriggerEvent.h"
-#include "DavisRunIITauTau/TupleHelpers/interface/ElectronClones.hh"
 
 #include "DataFormats/EgammaCandidates/interface/GsfElectron.h"
 #include "DataFormats/EgammaCandidates/interface/GsfElectronFwd.h"
 #include "DataFormats/Common/interface/ValueMap.h"
 #include "EgammaAnalysis/ElectronTools/interface/EGammaMvaEleEstimatorCSA14.h"
-
+#include "DavisRunIITauTau/CustomPatCollectionProducers/interface/LeptonRelativeIsolationTool.h"
+#include "DavisRunIITauTau/CustomPatCollectionProducers/interface/ElectronClones.h"
 
 typedef math::XYZTLorentzVector LorentzVector;
 using namespace std;
@@ -89,7 +88,7 @@ private:
   // the mva ID estimator for CSA14 and Phs14(?)
   EGammaMvaEleEstimatorCSA14 MVA_NonTrigPhys14;
 
-  // note: if additonal MVAs are needed add them in ElectronClones.hh
+  // note: if additonal MVAs are needed add them in ElectronClones.h
 
 };
 
@@ -205,7 +204,6 @@ CustomPatElectronProducer::produce(edm::Event& iEvent, const edm::EventSetup& iS
 
     const pat::Electron & electronToStore = ele.clones[i];
     storedElectrons->push_back(electronToStore);
-
 
   }
 
