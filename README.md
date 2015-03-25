@@ -16,7 +16,15 @@ cd CMSSW_7_2_0/src
 cmsenv 
 git cms-init
 
-# electron ID
+# electron MVA ID
 git cms-merge-topic HuguesBrun:trigElecIdInCommonIsoSelection720
+
+# mva MET
+#https://twiki.cern.ch/twiki/bin/view/CMS/MVAMet#CMSSW_7_2_X_requires_slc6_MiniAO
+git cms-addpkg PhysicsTools/PatAlgos
+git cms-addpkg FWCore/Version
+git-cms-merge-topic -u cms-met:72X-13TeV-Training-30Jan15
+
+# davis code
 
 git clone git@github.com:sshalhou/DavisRunIITauTau DavisRunIITauTau
