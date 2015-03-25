@@ -26,8 +26,8 @@ filter_ = []
 
 # ----------------------------------------------------
 # ------------[user edit here]------------------------
-filter_.append('pt>20') # be careful here to allow for tau ES variation
-filter_.append('userFloat("relIsol") < 0.01')
+filter_.append('pt>0.0') # be careful here to allow for tau ES variation
+#filter_.append('userFloat("relIsol") < 0.01')
 # ----------------------------------------------------
 # ----------------------------------------------------
 

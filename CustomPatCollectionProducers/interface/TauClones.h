@@ -53,16 +53,32 @@ class TauClones
 
 		virtual ~TauClones();
 
-		// the cloned collection which will have the user floats embedded
-		std::vector <pat::Tau> clones; /* only change is embedded userFloats */
-		std::vector <pat::Tau> clonesCorrectedNominalEsShift; /* embed userFloats and correct Es */
-		std::vector <pat::Tau> clonesCorrectedUpEsShift; /* embed userFloats and correct Es and sys. shift Up */
-		std::vector <pat::Tau> clonesCorrectedDownEsShift; /* embed userFloats and correct Es and sys. shift Down */
+		/////////////////////////////////////////////////////////////////////
+		// the cloned collection which will have the user floats embedded and ES changed
+		/////////////////////////////////////////////////////////////////////
+		/* only change is embedded userFloats */
+
+		std::vector <pat::Tau> clones; 
+
+		/* embed userFloats and correct Es */
+
+		std::vector <pat::Tau> clonesCorrectedNominalEsShift; 
+
+		/* embed userFloats and correct Es and sys. shift Up */
+
+		std::vector <pat::Tau> clonesCorrectedUpEsShift; 
+
+		/* embed userFloats and correct Es and sys. shift Down */
+
+		std::vector <pat::Tau> clonesCorrectedDownEsShift; 
 
 
 	private:
 		void clone();
-		void ChangeEnergyAndFillUserFloats(std::vector <pat::Tau>&);		  
+		// function to embed user quantities and change ES the 2 float arguments are 
+		// Tau ES correction SF and the Systematic shift 
+		// Tau P4 will be scaled by the product of the 2 floats 
+		void ChangeEnergyAndFillUserFloats(std::vector <pat::Tau>&, const float, const float);		  
 
 
 };

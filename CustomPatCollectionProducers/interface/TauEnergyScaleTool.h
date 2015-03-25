@@ -1,9 +1,8 @@
+/* given a pat::Tau and a Tau ES correction SF and a Tau ES systematic shift factor 
+modify the Tau 4-vector */
+
 #ifndef DavisRunIITauTau_CustomPatCollectionProducers_TauEnergyScaleTool_h
 #define DavisRunIITauTau_CustomPatCollectionProducers_TauEnergyScaleTool_h
-
-
-
-/* clones a pat::Tau collection and shifts Energy Scale */
 
 // system include files
 #include <memory>
@@ -33,26 +32,18 @@
 #include "TVector3.h"
 #include "TString.h"
 
-typedef edm::Handle<edm::View<pat::Tau> > 	slimmedPatTauCollection;
 
 class TauEnergyScaleTool
 {
 
-	// input taus and vertex
-	const slimmedPatTauCollection& taus;
 	const float EsCorrectionFactor;
 	const float EsShiftScaleFactor;
 
 
 	public:
-		TauEnergyScaleTool(const slimmedPatTauCollection&, const float, const float);
+		TauEnergyScaleTool(const float, const float);
 		virtual ~TauEnergyScaleTool();
-		
-		// the cloned collection which will have the tau ES shifted
-		std::vector <pat::Tau> clones;
-
-	private:
-		void clone();
+		void changeES(pat::Tau &);
 
 };
 

@@ -75,10 +75,14 @@ private:
   edm::InputTag tauSrc_;
   string NAME_;
   edm::InputTag vertexSrc_;
+  double TauEsCorrection_;
+  double TauEsUpSystematic_;
+  double TauEsDownSystematic_;
 
   std::string NAME_NOMINAL;
   std::string NAME_UP;
   std::string NAME_DOWN;
+
 
 };
 
@@ -97,7 +101,10 @@ private:
 CustomPatTauProducer::CustomPatTauProducer(const edm::ParameterSet& iConfig):
 tauSrc_(iConfig.getParameter<edm::InputTag>("tauSrc" )),
 NAME_(iConfig.getParameter<string>("NAME" )),
-vertexSrc_(iConfig.getParameter<edm::InputTag>("vertexSrc" ))
+vertexSrc_(iConfig.getParameter<edm::InputTag>("vertexSrc" )),
+TauEsCorrection_(iConfig.getParameter<double>("TauEsCorrection" )),
+TauEsUpSystematic_(iConfig.getParameter<double>("TauEsUpSystematic" )),
+TauEsDownSystematic_(iConfig.getParameter<double>("TauEsDownSystematic" ))
 {
 
   NAME_NOMINAL = NAME_+"TauEsNominal";
@@ -159,26 +166,11 @@ CustomPatTauProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
 
 
 
+  // add the user embedded info and create ES corrected Sys. variants
+  // for data no corrections will be applied due to the genJet requirement
+  // need to be careful about this when embedded samples arrive
 
-  // correct the tau ES and also
-  // create up and down variants in TauEs
-
-/*
-  TauEnergyScaleTool CorrectedwithNominalShift(taus,1.01,1.0);
-  TauEnergyScaleTool CorrectedwithUpShift(taus,1.01,1.03);
-  TauEnergyScaleTool CorrectedwithDownShift(taus,1.01,0.97);
-
-
-  std::cout<<" ----- **** ---- "<<"\n";
-  std::cout<<" orig "<<typeid(taus).name()<<"\n";
-  std::cout<<"clone "<<typeid(CorrectedwithNominalShift.clones).name()<<"\n";
-*/
-
-
-  // add the user embedded info
-
-
-  TauClones allClones(taus,first_vertex,1.01,1.03,0.97); 
+  TauClones allClones(taus,first_vertex,TauEsCorrection_,TauEsUpSystematic_,TauEsDownSystematic_); 
 
 
 
@@ -190,16 +182,10 @@ CustomPatTauProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
   {
 
 
-    const pat::Tau & original = allClones.clones[i];
+    //const pat::Tau & original = allClones.clones[i];
     const pat::Tau & TauToStoreNominal = allClones.clonesCorrectedNominalEsShift[i];
     const pat::Tau & TauToStoreUp = allClones.clonesCorrectedUpEsShift[i];
     const pat::Tau & TauToStoreDown = allClones.clonesCorrectedDownEsShift[i];
-
-
-    std::cout<<" 4 isol variants "<<original.userFloat("relIso")<<" ";
-    std::cout<<TauToStoreNominal.userFloat("relIso")<<" ";
-    std::cout<<TauToStoreUp.userFloat("relIso")<<" ";
-    std::cout<<TauToStoreDown.userFloat("relIso")<<"\n";
 
 
     storedTausNominal->push_back(TauToStoreNominal);

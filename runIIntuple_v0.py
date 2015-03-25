@@ -59,7 +59,10 @@ process.customSlimmedMuons = cms.EDProducer('CustomPatMuonProducer' ,
 process.customSlimmedTaus = cms.EDProducer('CustomPatTauProducer' ,
 							tauSrc =cms.InputTag('slimmedTaus::PAT'),
 							vertexSrc =cms.InputTag('filteredVertices::Ntuple'),
-							NAME=cms.string("customSlimmedTaus")
+							NAME=cms.string("customSlimmedTaus"),
+							TauEsCorrection=cms.double(1.01),
+							TauEsUpSystematic=cms.double(1.03),
+							TauEsDownSystematic=cms.double(0.97)
 							                 )
 
 

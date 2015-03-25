@@ -9,6 +9,7 @@
 // user include files
 #include "DavisRunIITauTau/CustomPatCollectionProducers/interface/TauClones.h"
 #include "DavisRunIITauTau/CustomPatCollectionProducers/interface/LeptonRelativeIsolationTool.h"
+#include "DavisRunIITauTau/CustomPatCollectionProducers/interface/TauEnergyScaleTool.h"
 
 
 
@@ -41,10 +42,10 @@ TauClones::TauClones(const slimmedPatTauCollection& inputColl, const reco::Verte
 		{
 
 		 clone();
-		 ChangeEnergyAndFillUserFloats(clones);		  
-		 ChangeEnergyAndFillUserFloats(clonesCorrectedNominalEsShift);		  
-		 ChangeEnergyAndFillUserFloats(clonesCorrectedUpEsShift);		  
-		 ChangeEnergyAndFillUserFloats(clonesCorrectedDownEsShift);		  
+		 ChangeEnergyAndFillUserFloats(clones,1.0,1.0);		  
+		 ChangeEnergyAndFillUserFloats(clonesCorrectedNominalEsShift,EsCorrectionFactor,1.0);		  
+		 ChangeEnergyAndFillUserFloats(clonesCorrectedUpEsShift,EsCorrectionFactor,EsShiftScaleFactorUp);		  
+		 ChangeEnergyAndFillUserFloats(clonesCorrectedDownEsShift,EsCorrectionFactor,EsShiftScaleFactorDown);		  
 
 
 		}
@@ -78,16 +79,25 @@ void TauClones::clone()
 
 // fill user defined floats
 
-void TauClones::ChangeEnergyAndFillUserFloats(std::vector <pat::Tau> & clones)
+void TauClones::ChangeEnergyAndFillUserFloats(std::vector <pat::Tau> & clones,
+	const float CORRECTION, const float SYSTEMATIC)
 {
 
 
-
+	TauEnergyScaleTool TauEsTool(CORRECTION,SYSTEMATIC);
 
 
 	for (std::size_t i=0; i<clones.size(); i++)
 	  {
 	  	pat::Tau t = clones[i];
+
+
+	  	/////////////////////
+	  	// begin by correcting the Tau Es and
+	  	// applying the correct systematic shift
+	  	// should do this before computing things like isolation!
+
+	  	TauEsTool.changeES(t);
 
 	  	///////////////////////////
 	  	// dxy and dz
