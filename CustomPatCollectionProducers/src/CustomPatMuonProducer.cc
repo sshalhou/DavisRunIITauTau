@@ -48,6 +48,7 @@ typedef math::XYZTLorentzVector LorentzVector;
 using namespace std;
 using namespace edm;
 using namespace pat;
+typedef std::vector<pat::Muon> PatMuonCollection;
 
 
 
@@ -98,8 +99,8 @@ NAME_(iConfig.getParameter<string>("NAME" )),
 vertexSrc_(iConfig.getParameter<edm::InputTag>("vertexSrc" ))
 {
 
+  produces<PatMuonCollection>(NAME_).setBranchAlias(NAME_);
 
-  produces<vector<pat::Muon>>(NAME_).setBranchAlias(NAME_);
 
   //register your products
   /* Examples
@@ -151,8 +152,7 @@ CustomPatMuonProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup
   muonClones mu(muons,first_vertex); 
 
 
-
-  std::vector<pat::Muon> * storedMuons = new std::vector<pat::Muon>();
+  auto_ptr<PatMuonCollection> storedMuons (new PatMuonCollection);
 
 
   for (std::size_t i = 0; i<muons->size(); i++)
@@ -174,8 +174,7 @@ CustomPatMuonProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup
   }
 
   // add the muons to the event output
-  std::auto_ptr<std::vector<pat::Muon> > eptr(storedMuons);
-  iEvent.put(eptr,NAME_);
+  iEvent.put(storedMuons,NAME_);
 
 
 }

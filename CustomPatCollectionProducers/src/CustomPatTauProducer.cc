@@ -47,6 +47,7 @@ typedef math::XYZTLorentzVector LorentzVector;
 using namespace std;
 using namespace edm;
 using namespace pat;
+typedef std::vector<pat::Tau> PatTauCollection;
 
 
 
@@ -111,11 +112,9 @@ TauEsDownSystematic_(iConfig.getParameter<double>("TauEsDownSystematic" ))
   NAME_UP = NAME_+"TauEsUp";
   NAME_DOWN = NAME_+"TauEsDown";
 
-
-  produces<vector<pat::Tau>>(NAME_NOMINAL).setBranchAlias(NAME_NOMINAL);
-  produces<vector<pat::Tau>>(NAME_UP).setBranchAlias(NAME_UP);
-  produces<vector<pat::Tau>>(NAME_DOWN).setBranchAlias(NAME_DOWN);
-
+  produces<PatTauCollection>(NAME_NOMINAL).setBranchAlias(NAME_NOMINAL);
+  produces<PatTauCollection>(NAME_UP).setBranchAlias(NAME_UP);
+  produces<PatTauCollection>(NAME_DOWN).setBranchAlias(NAME_DOWN);
 
 
 
@@ -174,9 +173,10 @@ CustomPatTauProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
 
 
 
-  std::vector<pat::Tau> * storedTausNominal = new std::vector<pat::Tau>();
-  std::vector<pat::Tau> * storedTausUp = new std::vector<pat::Tau>();
-  std::vector<pat::Tau> * storedTausDown = new std::vector<pat::Tau>();
+  auto_ptr<PatTauCollection> storedTausNominal (new PatTauCollection);
+  auto_ptr<PatTauCollection> storedTausUp (new PatTauCollection);
+  auto_ptr<PatTauCollection> storedTausDown (new PatTauCollection);
+
 
   for (std::size_t i = 0; i<taus->size(); i++)
   {
@@ -196,14 +196,10 @@ CustomPatTauProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
   }
 
   // add the taus to the event output
-  std::auto_ptr<std::vector<pat::Tau> > eptr(storedTausNominal);
-  iEvent.put(eptr,NAME_NOMINAL);
 
-  std::auto_ptr<std::vector<pat::Tau> > eptr1(storedTausUp);
-  iEvent.put(eptr1,NAME_UP);
-
-  std::auto_ptr<std::vector<pat::Tau> > eptr2(storedTausDown);
-  iEvent.put(eptr2,NAME_DOWN);
+  iEvent.put(storedTausNominal,NAME_NOMINAL);
+  iEvent.put(storedTausUp,NAME_UP);
+  iEvent.put(storedTausDown,NAME_DOWN);
 
 
 }

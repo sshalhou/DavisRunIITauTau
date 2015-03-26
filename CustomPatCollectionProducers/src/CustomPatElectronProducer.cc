@@ -55,7 +55,7 @@ typedef math::XYZTLorentzVector LorentzVector;
 using namespace std;
 using namespace edm;
 using namespace pat;
-
+typedef std::vector<pat::Electron> PatElectronCollection;
 
 
 //
@@ -110,7 +110,7 @@ vertexSrc_(iConfig.getParameter<edm::InputTag>("vertexSrc" ))
 {
 
 
-  produces<vector<pat::Electron>>(NAME_).setBranchAlias(NAME_);
+  produces<PatElectronCollection>(NAME_).setBranchAlias(NAME_);
 
 
   // define the various MVA electron IDs that we want to (re)run on mini-AOD
@@ -190,8 +190,7 @@ CustomPatElectronProducer::produce(edm::Event& iEvent, const edm::EventSetup& iS
   electronClones ele(electrons,first_vertex,MVA_NonTrigPhys14,MVA_NonTrigPhys14_name); 
 
 
-
-  std::vector<pat::Electron> * storedElectrons = new std::vector<pat::Electron>();
+  auto_ptr<PatElectronCollection> storedElectrons (new PatElectronCollection);
 
 
   for (std::size_t i = 0; i<electrons->size(); i++)
@@ -206,8 +205,7 @@ CustomPatElectronProducer::produce(edm::Event& iEvent, const edm::EventSetup& iS
   }
 
   // add the electrons to the event output
-  std::auto_ptr<std::vector<pat::Electron> > eptr(storedElectrons);
-  iEvent.put(eptr,NAME_);
+  iEvent.put(storedElectrons,NAME_);
 
 
 }
