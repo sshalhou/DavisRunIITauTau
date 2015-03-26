@@ -1,54 +1,61 @@
- DavisRunIITauTau : Code For H->tau tau Run II analysis
 ------------------
-
-
+DavisRunIITauTau : Code For H->tau tau Run II analysis
+------------------
 
 For Quick Start (on SL6 only):
-------------------
 
 - CMSSW/Certificate prelims :
 
-setenv GIT_ASKPASS
+		setenv GIT_ASKPASS
 
-voms-proxy-init -voms cms --valid=72:00
+		voms-proxy-init -voms cms --valid=72:00
 
-source /cvmfs/cms.cern.ch/cmsset_default.csh
-
-
-- create a working area and then 
-
-setenv SCRAM_ARCH slc6_amd64_gcc481 
-
-cmsrel CMSSW_7_2_3_patch1
-
-cmsenv
-
-(git cms-init) # might be needed
-
-- for MVA MET (13 TeV Training) : 
-
-https://twiki.cern.ch/twiki/bin/view/CMS/MVAMet#CMSSW_7_2_X_requires_slc6_MiniAO
+		source /cvmfs/cms.cern.ch/cmsset_default.csh
 
 
-git cms-addpkg PhysicsTools/PatAlgos
+- create a working area and then :
 
-git cms-addpkg FWCore/Version
+		setenv SCRAM_ARCH slc6_amd64_gcc481 
 
-git-cms-merge-topic -u cms-met:72X-13TeV-Training-30Jan15
+		cmsrel CMSSW_7_2_3_patch1
 
+		cd CMSSW_7_2_3_patch1/src/
+
+		cmsenv
+
+		(git cms-init) # might be needed
 
 - For Electron MVA ID (Phys14 version)
 
-git cms-merge-topic HuguesBrun:trigElecIdInCommonIsoSelection720
+		git cms-merge-topic HuguesBrun:trigElecIdInCommonIsoSelection720
 
+
+- for MVA MET (13 TeV Training) : 
+
+		(see : https://twiki.cern.ch/twiki/bin/view/CMS/MVAMet#CMSSW_7_2_X_requires_slc6_MiniAO)
+
+		git cms-addpkg PhysicsTools/PatAlgos
+
+		git cms-addpkg FWCore/Version
+
+		git-cms-merge-topic -u cms-met:72X-13TeV-Training-30Jan15
+
+		cd RecoMET/METPUSubtraction/
+
+		git clone https://github.com/rfriese/RecoMET-METPUSubtraction data
+
+		cd -
 
 - Clone the Davis Code :
 
-git clone git@github.com:sshalhou/DavisRunIITauTau DavisRunIITauTau
+		git clone git@github.com:sshalhou/DavisRunIITauTau DavisRunIITauTau
 
 - Compile : 
 
-scram b -j 20
+		scram b -j 20
 
+- Test Run (remember to change the miniAOD input file):
+		
+		cmsRun DavisRunIITauTau/runIIntuple_v0.py
 
 
