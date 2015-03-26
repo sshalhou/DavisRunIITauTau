@@ -1,30 +1,54 @@
-# DavisRunIITauTau
-repo for Run II TauTau analysis code 
+ DavisRunIITauTau : Code For H->tau tau Run II analysis
+------------------
 
-# CMSSW settings (checked only at LPC for now)
+
+
+For Quick Start (on SL6 only):
+------------------
+
+- CMSSW/Certificate prelims :
 
 setenv GIT_ASKPASS
+
 voms-proxy-init -voms cms --valid=72:00
+
 source /cvmfs/cms.cern.ch/cmsset_default.csh
+
+
+- create a working area and then 
+
 setenv SCRAM_ARCH slc6_amd64_gcc481 
 
+cmsrel CMSSW_7_2_3_patch1
 
-# getting started
+cmsenv
 
-cmsrel CMSSW_7_2_0
-cd CMSSW_7_2_0/src
-cmsenv 
-git cms-init
+(git cms-init) # might be needed
 
-# electron MVA ID
-git cms-merge-topic HuguesBrun:trigElecIdInCommonIsoSelection720
+- for MVA MET (13 TeV Training) : 
 
-# mva MET
-#https://twiki.cern.ch/twiki/bin/view/CMS/MVAMet#CMSSW_7_2_X_requires_slc6_MiniAO
+https://twiki.cern.ch/twiki/bin/view/CMS/MVAMet#CMSSW_7_2_X_requires_slc6_MiniAO
+
+
 git cms-addpkg PhysicsTools/PatAlgos
+
 git cms-addpkg FWCore/Version
+
 git-cms-merge-topic -u cms-met:72X-13TeV-Training-30Jan15
 
-# davis code
+
+- For Electron MVA ID (Phys14 version)
+
+git cms-merge-topic HuguesBrun:trigElecIdInCommonIsoSelection720
+
+
+- Clone the Davis Code :
 
 git clone git@github.com:sshalhou/DavisRunIITauTau DavisRunIITauTau
+
+- Compile : 
+
+scram b -j 20
+
+
+
