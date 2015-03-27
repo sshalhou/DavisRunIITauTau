@@ -1,14 +1,30 @@
 import FWCore.ParameterSet.Config as cms
 process = cms.Process("Ntuple")
 
+
+
+
 ###################################
 # preliminaries 
 ###################################
 
-process.load("FWCore.MessageService.MessageLogger_cfi")
-process.options   = cms.untracked.PSet( wantSummary = cms.untracked.bool(True) )
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(100) )
+
 process.myProducerLabel = cms.EDProducer('Ntuple')
+
+# import of standard configurations
+process.load('Configuration.StandardSequences.Services_cff')
+process.load('SimGeneral.HepPDTESSource.pythiapdt_cfi')
+process.load("FWCore.MessageService.MessageLogger_cfi")
+process.load('Configuration.EventContent.EventContent_cff')
+process.load('SimGeneral.MixingModule.mixNoPU_cfi')
+process.load('Configuration.StandardSequences.GeometryRecoDB_cff')
+process.load('Configuration.StandardSequences.MagneticField_38T_cff')
+process.load('Configuration.StandardSequences.EndOfProcess_cff')
+process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff')
+from Configuration.AlCa.GlobalTag_condDBv2 import GlobalTag
+process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:run2_mc', '')
+# this next line seems to cause issues, unlike the example I am setting to False :
+process.options = cms.untracked.PSet(allowUnscheduled = cms.untracked.bool(False))
 
 
 ###################################
@@ -110,7 +126,6 @@ process.filteredCustomTausEsDown = cms.EDFilter("PATTauRefSelector",
 # should go here
 ###################################
 
-
 process.requireCandidateHiggsPair = cms.EDFilter("HiggsCandidateCountFilter",
   electronSource = cms.InputTag("filteredCustomElectrons::Ntuple"),
   muonSource     = cms.InputTag("filteredCustomMuons::Ntuple"),
@@ -122,6 +137,52 @@ process.requireCandidateHiggsPair = cms.EDFilter("HiggsCandidateCountFilter",
   filter = cms.bool(True)
 )
 
+###############################
+# test -- start
+################################
+
+
+
+
+from DavisRunIITauTau.PythonHelperClasses.pairContainer_cff import a_class_test
+from DavisRunIITauTau.PythonHelperClasses.pairContainer_cff import b_class_test
+from DavisRunIITauTau.PythonHelperClasses.pairContainer_cff import PairWiseMetHelper
+
+
+#ATEST = a_class_test(process)
+#BTEST = b_class_test(process)
+
+from RecoMET.METPUSubtraction.mvaPFMET_cff import calibratedAK4PFJetsForPFMVAMEt
+from RecoMET.METPUSubtraction.mvaPFMET_cff import puJetIdForPFMVAMEt
+process.calibratedAK4PFJetsForPFMVAMEt = calibratedAK4PFJetsForPFMVAMEt.clone()
+process.puJetIdForPFMVAMEt = puJetIdForPFMVAMEt.clone()
+
+
+from JetMETCorrections.Configuration.DefaultJEC_cff import ak4PFJetsL1FastL2L3
+process.load("RecoJets.JetProducers.ak4PFJets_cfi")
+process.ak4PFJets.src = cms.InputTag("packedPFCandidates")
+process.load("RecoMET.METPUSubtraction.mvaPFMET_cff")
+process.pfMVAMEt.srcPFCandidates = cms.InputTag("packedPFCandidates")
+process.pfMVAMEt.srcVertices = cms.InputTag("offlineSlimmedPrimaryVertices")
+process.puJetIdForPFMVAMEt.jec =  cms.string('AK4PF')
+process.puJetIdForPFMVAMEt.vertexes = cms.InputTag("offlineSlimmedPrimaryVertices")
+process.puJetIdForPFMVAMEt.rho = cms.InputTag("fixedGridRhoFastjetAll")
+
+
+
+prelimSequence  = cms.Sequence()
+prelimSequence += process.calibratedAK4PFJetsForPFMVAMEt
+prelimSequence += process.puJetIdForPFMVAMEt
+
+
+mvaMEThelper = PairWiseMetHelper(process)
+#mvaMEThelper.initializeMVAmet()
+
+
+
+###############################
+# test -- end
+################################
 
 ###################################
 # create TupleLepton collections
@@ -204,9 +265,21 @@ process.p *= process.TupleTausNominal
 process.p *= process.TupleTausUp
 process.p *= process.TupleTausDown
 
+# test - start
+mvaMEThelper.runSingleLeptonProducers(process.p)
+process.p *= prelimSequence
+#mvaMEThelper.runMvaMetPrelims(process.p)
+mvaMEThelper.runPairWiseMets(process.p)
+#ATEST.printMCinfo(process.p)
+#process.p *= process.XXX
+#BTEST.makeLepCount(process.p)
+# test - end
 
 process.e = cms.EndPath(process.out)
 
+
+process.options   = cms.untracked.PSet( wantSummary = cms.untracked.bool(True) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(100) )
 
 #################################
 # keep everything produced by Tuple-Code

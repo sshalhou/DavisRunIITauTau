@@ -20,5 +20,6 @@
   <class name="std::vector<TupleJet>"/>
   <class name="edm::Wrapper<std::vector<TupleJet> >"/>
 
+
 </lcgdict>
 

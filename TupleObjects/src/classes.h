@@ -20,7 +20,5 @@ struct dictionary
   edm::Wrapper<TupleJetCollection> dummy7;
   TupleGen dummy8;
   edm::Wrapper<TupleGenCollection> dummy9;
-
-
 };
 
