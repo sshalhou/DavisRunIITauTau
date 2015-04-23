@@ -43,6 +43,14 @@ Implementation:
 #include "DavisRunIITauTau/CustomPatCollectionProducers/interface/LeptonRelativeIsolationTool.h"
 #include "DavisRunIITauTau/CustomPatCollectionProducers/interface/TauClones.h"
 
+#include "DataFormats/Math/interface/deltaR.h"
+#include "FWCore/Common/interface/TriggerNames.h"
+#include "DataFormats/Common/interface/TriggerResults.h"
+#include "DataFormats/PatCandidates/interface/TriggerObjectStandAlone.h"
+#include "DataFormats/PatCandidates/interface/PackedTriggerPrescales.h"
+
+
+
 typedef math::XYZTLorentzVector LorentzVector;
 using namespace std;
 using namespace edm;
@@ -79,6 +87,10 @@ private:
   double TauEsCorrection_;
   double TauEsUpSystematic_;
   double TauEsDownSystematic_;
+  edm::EDGetTokenT<edm::TriggerResults> triggerBitSrc_;
+  edm::EDGetTokenT<pat::PackedTriggerPrescales> triggerPreScaleSrc_;
+  edm::EDGetTokenT<pat::TriggerObjectStandAloneCollection> triggerObjectSrc_;
+
 
   std::string NAME_NOMINAL;
   std::string NAME_UP;
@@ -105,7 +117,10 @@ NAME_(iConfig.getParameter<string>("NAME" )),
 vertexSrc_(iConfig.getParameter<edm::InputTag>("vertexSrc" )),
 TauEsCorrection_(iConfig.getParameter<double>("TauEsCorrection" )),
 TauEsUpSystematic_(iConfig.getParameter<double>("TauEsUpSystematic" )),
-TauEsDownSystematic_(iConfig.getParameter<double>("TauEsDownSystematic" ))
+TauEsDownSystematic_(iConfig.getParameter<double>("TauEsDownSystematic" )),
+triggerBitSrc_(consumes<edm::TriggerResults>(iConfig.getParameter<edm::InputTag>("triggerBitSrc"))),
+triggerPreScaleSrc_(consumes<pat::PackedTriggerPrescales>(iConfig.getParameter<edm::InputTag>("triggerPreScaleSrc"))),
+triggerObjectSrc_(consumes<pat::TriggerObjectStandAloneCollection>(iConfig.getParameter<edm::InputTag>("triggerObjectSrc")))
 {
 
   NAME_NOMINAL = NAME_+"TauEsNominal";
@@ -163,13 +178,24 @@ CustomPatTauProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
   edm::Handle<edm::View<pat::Tau> > taus;
   iEvent.getByLabel(tauSrc_,taus);
 
+// get trigger-related collections
 
+    edm::Handle<edm::TriggerResults> triggerBits;
+    edm::Handle<pat::TriggerObjectStandAloneCollection> triggerObjects;
+    edm::Handle<pat::PackedTriggerPrescales> triggerPreScales;
+
+    iEvent.getByToken(triggerBitSrc_, triggerBits);
+    iEvent.getByToken(triggerObjectSrc_, triggerObjects);
+    iEvent.getByToken(triggerPreScaleSrc_, triggerPreScales);
+
+    const edm::TriggerNames &names = iEvent.triggerNames(*triggerBits);
 
   // add the user embedded info and create ES corrected Sys. variants
   // for data no corrections will be applied due to the genJet requirement
   // need to be careful about this when embedded samples arrive
 
-  TauClones allClones(taus,first_vertex,TauEsCorrection_,TauEsUpSystematic_,TauEsDownSystematic_); 
+  TauClones allClones(taus,first_vertex,TauEsCorrection_,TauEsUpSystematic_,TauEsDownSystematic_,
+                      triggerBits,triggerObjects,triggerPreScales,names); 
 
 
 

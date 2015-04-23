@@ -19,6 +19,7 @@
 #include "DataFormats/PatCandidates/interface/Muon.h"
 #include "DavisRunIITauTau/CustomPatCollectionProducers/interface/LeptonRelativeIsolationTool.h"
 
+#include "DavisRunIITauTau/CustomPatCollectionProducers/interface/TriggerInfoEmbeddingTool.h"
 
 
 #include "TH1D.h"
@@ -42,10 +43,19 @@ class muonClones
 	const slimmedPatMuonCollection& muons;
 	const reco::Vertex & first_vertex;
 
+	// trigger related collections
 
+	edm::Handle<edm::TriggerResults> & triggerBits;   
+	edm::Handle<pat::TriggerObjectStandAloneCollection> & triggerObjects;
+	edm::Handle<pat::PackedTriggerPrescales> & triggerPreScales;
+	const edm::TriggerNames & names;
 
 	public:
-		muonClones(const slimmedPatMuonCollection&, const reco::Vertex &);
+		muonClones(const slimmedPatMuonCollection&, const reco::Vertex &,
+			edm::Handle<edm::TriggerResults> &,
+			edm::Handle<pat::TriggerObjectStandAloneCollection> &,
+			edm::Handle<pat::PackedTriggerPrescales>&,
+			const edm::TriggerNames &);
 
 		virtual ~muonClones();
 

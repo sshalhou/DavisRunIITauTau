@@ -33,12 +33,20 @@ typedef edm::Handle<edm::View<pat::Tau> > 	slimmedPatTauCollection;
 TauClones::TauClones(const slimmedPatTauCollection& inputColl, const reco::Vertex & input_vertex,
 	const float EsCorrectionFactor,
 	const float EsShiftScaleFactorUp,
-	const float EsShiftScaleFactorDown):
+	const float EsShiftScaleFactorDown,
+	edm::Handle<edm::TriggerResults> & triggerBits_,
+	edm::Handle<pat::TriggerObjectStandAloneCollection> & triggerObjects_,
+	edm::Handle<pat::PackedTriggerPrescales> & triggerPreScales_,
+	const edm::TriggerNames &names_):
 		taus(inputColl),
 		first_vertex(input_vertex),
 		EsCorrectionFactor(EsCorrectionFactor),
 		EsShiftScaleFactorUp(EsShiftScaleFactorUp),
-		EsShiftScaleFactorDown(EsShiftScaleFactorDown)
+		EsShiftScaleFactorDown(EsShiftScaleFactorDown),
+		triggerBits(triggerBits_),
+		triggerObjects(triggerObjects_),
+		triggerPreScales(triggerPreScales_),
+		names(names_)
 		{
 
 		 clone();
@@ -83,6 +91,7 @@ void TauClones::ChangeEnergyAndFillUserFloats(std::vector <pat::Tau> & clones,
 	const float CORRECTION, const float SYSTEMATIC)
 {
 
+	TriggerInfoEmbeddingTool triggerEmbedderTool(triggerBits,triggerObjects,triggerPreScales,names);
 
 	TauEnergyScaleTool TauEsTool(CORRECTION,SYSTEMATIC);
 
@@ -98,6 +107,22 @@ void TauClones::ChangeEnergyAndFillUserFloats(std::vector <pat::Tau> & clones,
 	  	// should do this before computing things like isolation!
 
 	  	TauEsTool.changeES(t);
+
+
+		/////////////
+	  	// trigger info
+
+	  	std::vector <std::string> userFloatNames;
+	  	std::vector <float> userFloatVals;
+
+	  	triggerEmbedderTool.getTriggerInfo(t,userFloatNames, userFloatVals); 
+
+	  	for (std::size_t a = 0; a< userFloatNames.size(); ++a )
+	  	{
+		  	t.addUserFloat("acceptedTriggerPrescale_"+userFloatNames[a],userFloatVals[a]);
+	  	}
+
+
 
 	  	///////////////////////////
 	  	// dxy and dz

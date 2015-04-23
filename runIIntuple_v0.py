@@ -79,7 +79,10 @@ process.filteredVertices = cms.EDFilter(
 process.customSlimmedElectrons = cms.EDProducer('CustomPatElectronProducer' ,
 							electronSrc =cms.InputTag('slimmedElectrons::PAT'),
 							vertexSrc =cms.InputTag('filteredVertices::Ntuple'),
-							NAME=cms.string("customSlimmedElectrons")
+							NAME=cms.string("customSlimmedElectrons"),
+							triggerBitSrc = cms.InputTag("TriggerResults","","HLT"),
+							triggerPreScaleSrc = cms.InputTag("patTrigger"),
+							triggerObjectSrc = cms.InputTag("selectedPatTrigger")
 							                 )
 
 process.customSlimmedMuons = cms.EDProducer('CustomPatMuonProducer' ,
@@ -200,7 +203,18 @@ process.TupleTausDown = cms.EDProducer('TupleTauProducer' ,
 							NAME=cms.string("TupleTausNominal")
 												)
 
+# test -- pair producer
 
+process.TupleEventPair = cms.EDProducer('TupleCandidateEventProducer' ,
+							tauSrc =cms.InputTag("singleTauEsNominal0","singleTauEsNominal0","Ntuple"),
+							electronSrc =cms.InputTag("singleElectron0","singleElectron0","Ntuple"),
+							muonSrc =cms.InputTag(''),
+							NAME=cms.string("TuplePair")
+												)
+
+
+
+# end test -- pair producer
 
 
 
@@ -217,6 +231,14 @@ process.out = cms.OutputModule("PoolOutputModule",
 )
 
 
+#################################
+# keep everything produced by Tuple-Code
+#################################
+#process.out.outputCommands +=['drop *_*_*_*']
+#process.out.outputCommands +=['keep *_*_*_*']
+
+process.out.outputCommands +=['keep TupleUserSpecifiedDatas_UserSpecifiedData_TupleUserSpecifiedData_PAT']
+
 
 
 
@@ -224,6 +246,13 @@ process.out = cms.OutputModule("PoolOutputModule",
 # keep everything produced by Ntuple
 #################################
 process.out.outputCommands +=['keep *_*_*_Ntuple']
+
+
+###################################
+# asked to keep trigger info 
+
+process.out.outputCommands +=['keep *_l1extraParticles_*_*']
+
 
 
 process.p = cms.Path(process.myProducerLabel)
@@ -256,18 +285,13 @@ mvaMEThelper.runSingleLeptonProducers(process.p)
 mvaMEThelper.runPairWiseMets(process.p)
 # test - end
 
+process.p *=process.TupleEventPair
+
 process.e = cms.EndPath(process.out)
 
 
 process.options   = cms.untracked.PSet( wantSummary = cms.untracked.bool(True) )
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(100) )
-
-#################################
-# keep everything produced by Tuple-Code
-#################################
-#process.out.outputCommands +=['drop *_*_*_*']
-process.out.outputCommands +=['keep TupleUserSpecifiedDatas_UserSpecifiedData_TupleUserSpecifiedData_PAT']
-process.out.outputCommands +=['keep *_*_*_*']
 
 
 

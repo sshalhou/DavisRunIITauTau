@@ -44,6 +44,14 @@ Implementation:
 #include "DavisRunIITauTau/CustomPatCollectionProducers/interface/LeptonRelativeIsolationTool.h"
 #include "DavisRunIITauTau/CustomPatCollectionProducers/interface/MuonClones.h"
 
+
+#include "DataFormats/Math/interface/deltaR.h"
+#include "FWCore/Common/interface/TriggerNames.h"
+#include "DataFormats/Common/interface/TriggerResults.h"
+#include "DataFormats/PatCandidates/interface/TriggerObjectStandAlone.h"
+#include "DataFormats/PatCandidates/interface/PackedTriggerPrescales.h"
+
+
 typedef math::XYZTLorentzVector LorentzVector;
 using namespace std;
 using namespace edm;
@@ -77,6 +85,9 @@ private:
   edm::InputTag muonSrc_;
   string NAME_;
   edm::InputTag vertexSrc_;
+  edm::EDGetTokenT<edm::TriggerResults> triggerBitSrc_;
+  edm::EDGetTokenT<pat::PackedTriggerPrescales> triggerPreScaleSrc_;
+  edm::EDGetTokenT<pat::TriggerObjectStandAloneCollection> triggerObjectSrc_;
 
  
 };
@@ -96,7 +107,10 @@ private:
 CustomPatMuonProducer::CustomPatMuonProducer(const edm::ParameterSet& iConfig):
 muonSrc_(iConfig.getParameter<edm::InputTag>("muonSrc" )),
 NAME_(iConfig.getParameter<string>("NAME" )),
-vertexSrc_(iConfig.getParameter<edm::InputTag>("vertexSrc" ))
+vertexSrc_(iConfig.getParameter<edm::InputTag>("vertexSrc" )),
+triggerBitSrc_(consumes<edm::TriggerResults>(iConfig.getParameter<edm::InputTag>("triggerBitSrc"))),
+triggerPreScaleSrc_(consumes<pat::PackedTriggerPrescales>(iConfig.getParameter<edm::InputTag>("triggerPreScaleSrc"))),
+triggerObjectSrc_(consumes<pat::TriggerObjectStandAloneCollection>(iConfig.getParameter<edm::InputTag>("triggerObjectSrc")))
 {
 
   produces<PatMuonCollection>(NAME_).setBranchAlias(NAME_);
@@ -146,10 +160,20 @@ CustomPatMuonProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup
   edm::Handle<edm::View<pat::Muon> > muons;
   iEvent.getByLabel(muonSrc_,muons);
 
+// get trigger-related collections
+
+    edm::Handle<edm::TriggerResults> triggerBits;
+    edm::Handle<pat::TriggerObjectStandAloneCollection> triggerObjects;
+    edm::Handle<pat::PackedTriggerPrescales> triggerPreScales;
+
+    iEvent.getByToken(triggerBitSrc_, triggerBits);
+    iEvent.getByToken(triggerObjectSrc_, triggerObjects);
+    iEvent.getByToken(triggerPreScaleSrc_, triggerPreScales);
+
+    const edm::TriggerNames &names = iEvent.triggerNames(*triggerBits);
 
 
-
-  muonClones mu(muons,first_vertex); 
+  muonClones mu(muons,first_vertex,triggerBits,triggerObjects,triggerPreScales,names);  
 
 
   auto_ptr<PatMuonCollection> storedMuons (new PatMuonCollection);

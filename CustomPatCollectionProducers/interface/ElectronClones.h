@@ -28,6 +28,10 @@
 #include "EgammaAnalysis/ElectronTools/interface/EGammaMvaEleEstimatorCSA14.h"
 #include "DavisRunIITauTau/CustomPatCollectionProducers/interface/LeptonRelativeIsolationTool.h"
 
+#include "DavisRunIITauTau/CustomPatCollectionProducers/interface/TriggerInfoEmbeddingTool.h"
+
+
+
 
 
 #include "TH1D.h"
@@ -55,11 +59,21 @@ class electronClones
 	EGammaMvaEleEstimatorCSA14 & MVA_PHYS14nonTrig;
 	std::string & MVA_PHYS14nonTrig_NAME;
 
+	// trigger related collections
+
+	edm::Handle<edm::TriggerResults> & triggerBits;   
+	edm::Handle<pat::TriggerObjectStandAloneCollection> & triggerObjects;
+	edm::Handle<pat::PackedTriggerPrescales> & triggerPreScales;
+	const edm::TriggerNames & names;
 
 	public:
 		electronClones(const slimmedPatElectronCollection&, const reco::Vertex &,
 				EGammaMvaEleEstimatorCSA14 &, 
-				std::string &);
+				std::string &,
+				edm::Handle<edm::TriggerResults> &,
+				edm::Handle<pat::TriggerObjectStandAloneCollection> &,
+				edm::Handle<pat::PackedTriggerPrescales>&,
+				const edm::TriggerNames &);
 
 		virtual ~electronClones();
 

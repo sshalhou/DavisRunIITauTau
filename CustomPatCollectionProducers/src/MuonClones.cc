@@ -28,9 +28,17 @@ typedef edm::Handle<edm::View<pat::Muon> > 	slimmedPatMuonCollection;
 
 // constructor which clones and adds userFloats to the input collection
 
-muonClones::muonClones(const slimmedPatMuonCollection& inputColl, const reco::Vertex & input_vertex):
+muonClones::muonClones(const slimmedPatMuonCollection& inputColl, const reco::Vertex & input_vertex,
+				edm::Handle<edm::TriggerResults> & triggerBits_,
+				edm::Handle<pat::TriggerObjectStandAloneCollection> & triggerObjects_,
+				edm::Handle<pat::PackedTriggerPrescales> & triggerPreScales_,
+				const edm::TriggerNames &names_):
 		muons(inputColl),
-		first_vertex(input_vertex)
+		first_vertex(input_vertex),
+		triggerBits(triggerBits_),
+		triggerObjects(triggerObjects_),
+		triggerPreScales(triggerPreScales_),
+		names(names_)
 		{
 
 		 clone();
@@ -64,12 +72,28 @@ void muonClones::fillUserFloats()
 {
 
 
+	TriggerInfoEmbeddingTool triggerEmbedderTool(triggerBits,triggerObjects,triggerPreScales,names);
 
 
 
 	for (std::size_t i=0; i<clones.size(); i++)
 	  {
 	  	pat::Muon m = clones[i];
+
+
+		/////////////
+	  	// trigger info
+
+	  	std::vector <std::string> userFloatNames;
+	  	std::vector <float> userFloatVals;
+
+	  	triggerEmbedderTool.getTriggerInfo(m,userFloatNames, userFloatVals); 
+
+	  	for (std::size_t a = 0; a< userFloatNames.size(); ++a )
+	  	{
+		  	m.addUserFloat("acceptedTriggerPrescale_"+userFloatNames[a],userFloatVals[a]);
+	  	}
+
 
 	  	///////////////////////////
 	  	// dxy and dz

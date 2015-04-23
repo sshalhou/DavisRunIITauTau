@@ -20,6 +20,7 @@
 #include "DataFormats/PatCandidates/interface/Tau.h"
 #include "DavisRunIITauTau/CustomPatCollectionProducers/interface/LeptonRelativeIsolationTool.h"
 
+#include "DavisRunIITauTau/CustomPatCollectionProducers/interface/TriggerInfoEmbeddingTool.h"
 
 
 #include "TH1D.h"
@@ -46,10 +47,19 @@ class TauClones
 	const float EsShiftScaleFactorUp;
 	const float EsShiftScaleFactorDown;
 
+	// trigger related collections
 
+	edm::Handle<edm::TriggerResults> & triggerBits;   
+	edm::Handle<pat::TriggerObjectStandAloneCollection> & triggerObjects;
+	edm::Handle<pat::PackedTriggerPrescales> & triggerPreScales;
+	const edm::TriggerNames & names;
 
 	public:
-		TauClones(const slimmedPatTauCollection&, const reco::Vertex &, const float, const float, const float);
+		TauClones(const slimmedPatTauCollection&, const reco::Vertex &, const float, const float, const float,
+			edm::Handle<edm::TriggerResults> &,
+			edm::Handle<pat::TriggerObjectStandAloneCollection> &,
+			edm::Handle<pat::PackedTriggerPrescales>&,
+			const edm::TriggerNames &);
 
 		virtual ~TauClones();
 

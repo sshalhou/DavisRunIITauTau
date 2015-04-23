@@ -29,12 +29,20 @@ typedef edm::Handle<edm::View<pat::Electron> > 	slimmedPatElectronCollection;
 // constructor which clones and adds userFloats to the input collection
 
 electronClones::electronClones(const slimmedPatElectronCollection& inputColl, const reco::Vertex & input_vertex,
-				 EGammaMvaEleEstimatorCSA14 & MVA_PHYS14nonTrig_, 
-				 std::string & MVA_PHYS14nonTrig_NAME_):
+				EGammaMvaEleEstimatorCSA14 & MVA_PHYS14nonTrig_, 
+				std::string & MVA_PHYS14nonTrig_NAME_,
+				edm::Handle<edm::TriggerResults> & triggerBits_,
+				edm::Handle<pat::TriggerObjectStandAloneCollection> & triggerObjects_,
+				edm::Handle<pat::PackedTriggerPrescales> & triggerPreScales_,
+				const edm::TriggerNames &names_):
 		electrons(inputColl),
 		first_vertex(input_vertex),
 		MVA_PHYS14nonTrig(MVA_PHYS14nonTrig_),
-		MVA_PHYS14nonTrig_NAME(MVA_PHYS14nonTrig_NAME_)
+		MVA_PHYS14nonTrig_NAME(MVA_PHYS14nonTrig_NAME_),
+		triggerBits(triggerBits_),
+		triggerObjects(triggerObjects_),
+		triggerPreScales(triggerPreScales_),
+		names(names_)
 		{
 
 		 clone();
@@ -67,13 +75,29 @@ void electronClones::clone()
 void electronClones::fillUserFloats()
 {
 
-
-
-
+	TriggerInfoEmbeddingTool triggerEmbedderTool(triggerBits,triggerObjects,triggerPreScales,names);
 
 	for (std::size_t i=0; i<clones.size(); i++)
 	  {
 	  	pat::Electron e = clones[i];
+
+	  	/////////////
+	  	// trigger info
+
+	  	std::vector <std::string> userFloatNames;
+	  	std::vector <float> userFloatVals;
+
+	  	triggerEmbedderTool.getTriggerInfo(e,userFloatNames, userFloatVals); 
+	  		
+
+	  	for (std::size_t a = 0; a< userFloatNames.size(); ++a )
+	  	{
+	  		//std::cout<<"ele "<<i<<" "<<userFloatNames[a]<<" "<<userFloatVals[a]<<"\n";
+
+		  	e.addUserFloat("acceptedTriggerPrescale_"+userFloatNames[a],userFloatVals[a]);
+
+
+	  	}
 
 	  	///////////////////////////
 	  	// dxy and dz
