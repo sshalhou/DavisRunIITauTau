@@ -133,7 +133,8 @@ void TriggerInfoEmbeddingTool::getTriggerInfo(pat::Electron & lepton,
 
 		 	// trigger object types allowed
 		 	std::vector<int> allowedTrigObjectTypes;
-	 		allowedTrigObjectTypes.push_back(trigger::TriggerObjectType::TriggerElectron);
+	 		allowedTrigObjectTypes.push_back(trigger::TriggerObjectType::TriggerElectron); // for Run I & RunII
+	 		allowedTrigObjectTypes.push_back(trigger::TriggerObjectType::TriggerPhoton); // needs this for RunII
 
 
 	 		std::size_t bestMatchIndex = getBestMatchedObject(RecoObjVec, allowedTrigObjectTypes,0.5);
