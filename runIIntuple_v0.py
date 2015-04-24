@@ -76,20 +76,39 @@ process.filteredVertices = cms.EDFilter(
 # the Energy scale variation
 ###################################
 
+
+from DavisRunIITauTau.TupleConfigurations.ConfigTupleTriggers_cfi import (electronTriggerPathsAndFilters,
+electronTriggerMatch_DR, electronTriggerMatch_Types)
+
 process.customSlimmedElectrons = cms.EDProducer('CustomPatElectronProducer' ,
 							electronSrc =cms.InputTag('slimmedElectrons::PAT'),
 							vertexSrc =cms.InputTag('filteredVertices::Ntuple'),
 							NAME=cms.string("customSlimmedElectrons"),
 							triggerBitSrc = cms.InputTag("TriggerResults","","HLT"),
 							triggerPreScaleSrc = cms.InputTag("patTrigger"),
-							triggerObjectSrc = cms.InputTag("selectedPatTrigger")
+							triggerObjectSrc = cms.InputTag("selectedPatTrigger"),
+							triggerMatchDRSrc = electronTriggerMatch_DR,
+							triggerMatchTypesSrc = electronTriggerMatch_Types,
+							triggerMatchPathsAndFiltersSrc = electronTriggerPathsAndFilters
 							                 )
+
+from DavisRunIITauTau.TupleConfigurations.ConfigTupleTriggers_cfi import (muonTriggerPathsAndFilters,
+muonTriggerMatch_DR, muonTriggerMatch_Types)
 
 process.customSlimmedMuons = cms.EDProducer('CustomPatMuonProducer' ,
 							muonSrc =cms.InputTag('slimmedMuons::PAT'),
 							vertexSrc =cms.InputTag('filteredVertices::Ntuple'),
-							NAME=cms.string("customSlimmedMuons")
+							NAME=cms.string("customSlimmedMuons"),
+							triggerBitSrc = cms.InputTag("TriggerResults","","HLT"),
+							triggerPreScaleSrc = cms.InputTag("patTrigger"),
+							triggerObjectSrc = cms.InputTag("selectedPatTrigger"),
+							triggerMatchDRSrc = muonTriggerMatch_DR,
+							triggerMatchTypesSrc = muonTriggerMatch_Types,
+							triggerMatchPathsAndFiltersSrc = muonTriggerPathsAndFilters
 							                 )
+
+from DavisRunIITauTau.TupleConfigurations.ConfigTupleTriggers_cfi import (tauTriggerPathsAndFilters,
+tauTriggerMatch_DR, tauTriggerMatch_Types)
 
 process.customSlimmedTaus = cms.EDProducer('CustomPatTauProducer' ,
 							tauSrc =cms.InputTag('slimmedTaus::PAT'),
@@ -97,7 +116,13 @@ process.customSlimmedTaus = cms.EDProducer('CustomPatTauProducer' ,
 							NAME=cms.string("customSlimmedTaus"),
 							TauEsCorrection=cms.double(1.01),
 							TauEsUpSystematic=cms.double(1.03),
-							TauEsDownSystematic=cms.double(0.97)
+							TauEsDownSystematic=cms.double(0.97),
+							triggerBitSrc = cms.InputTag("TriggerResults","","HLT"),
+							triggerPreScaleSrc = cms.InputTag("patTrigger"),
+							triggerObjectSrc = cms.InputTag("selectedPatTrigger"),
+							triggerMatchDRSrc = tauTriggerMatch_DR,
+							triggerMatchTypesSrc = tauTriggerMatch_Types,
+							triggerMatchPathsAndFiltersSrc = tauTriggerPathsAndFilters
 							                 )
 
 

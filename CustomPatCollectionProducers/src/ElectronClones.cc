@@ -34,7 +34,10 @@ electronClones::electronClones(const slimmedPatElectronCollection& inputColl, co
 				edm::Handle<edm::TriggerResults> & triggerBits_,
 				edm::Handle<pat::TriggerObjectStandAloneCollection> & triggerObjects_,
 				edm::Handle<pat::PackedTriggerPrescales> & triggerPreScales_,
-				const edm::TriggerNames &names_):
+				const edm::TriggerNames &names_,
+				double trigMatchDRcut_,
+				std::vector<int> trigMatchTypes_,
+				std::vector<std::string> trigSummaryPathsAndFilters_):
 		electrons(inputColl),
 		first_vertex(input_vertex),
 		MVA_PHYS14nonTrig(MVA_PHYS14nonTrig_),
@@ -42,7 +45,10 @@ electronClones::electronClones(const slimmedPatElectronCollection& inputColl, co
 		triggerBits(triggerBits_),
 		triggerObjects(triggerObjects_),
 		triggerPreScales(triggerPreScales_),
-		names(names_)
+		names(names_),
+		trigMatchDRcut(trigMatchDRcut_),
+		trigMatchTypes(trigMatchTypes_),
+		trigSummaryPathsAndFilters(trigSummaryPathsAndFilters_)
 		{
 
 		 clone();
@@ -75,7 +81,10 @@ void electronClones::clone()
 void electronClones::fillUserFloats()
 {
 
-	TriggerInfoEmbeddingTool triggerEmbedderTool(triggerBits,triggerObjects,triggerPreScales,names);
+	TriggerInfoEmbeddingTool triggerEmbedderTool(triggerBits,triggerObjects,triggerPreScales,names,
+											trigMatchDRcut,trigMatchTypes,trigSummaryPathsAndFilters);
+
+
 
 	for (std::size_t i=0; i<clones.size(); i++)
 	  {
@@ -89,6 +98,8 @@ void electronClones::fillUserFloats()
 
 	  	triggerEmbedderTool.getTriggerInfo(e,userFloatNames, userFloatVals); 
 	  		
+
+
 
 	  	for (std::size_t a = 0; a< userFloatNames.size(); ++a )
 	  	{

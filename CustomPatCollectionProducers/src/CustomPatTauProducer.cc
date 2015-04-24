@@ -90,7 +90,9 @@ private:
   edm::EDGetTokenT<edm::TriggerResults> triggerBitSrc_;
   edm::EDGetTokenT<pat::PackedTriggerPrescales> triggerPreScaleSrc_;
   edm::EDGetTokenT<pat::TriggerObjectStandAloneCollection> triggerObjectSrc_;
-
+  double triggerMatchDRSrc_;
+  std::vector<int> triggerMatchTypesSrc_;
+  std::vector<std::string> triggerMatchPathsAndFiltersSrc_;
 
   std::string NAME_NOMINAL;
   std::string NAME_UP;
@@ -120,7 +122,10 @@ TauEsUpSystematic_(iConfig.getParameter<double>("TauEsUpSystematic" )),
 TauEsDownSystematic_(iConfig.getParameter<double>("TauEsDownSystematic" )),
 triggerBitSrc_(consumes<edm::TriggerResults>(iConfig.getParameter<edm::InputTag>("triggerBitSrc"))),
 triggerPreScaleSrc_(consumes<pat::PackedTriggerPrescales>(iConfig.getParameter<edm::InputTag>("triggerPreScaleSrc"))),
-triggerObjectSrc_(consumes<pat::TriggerObjectStandAloneCollection>(iConfig.getParameter<edm::InputTag>("triggerObjectSrc")))
+triggerObjectSrc_(consumes<pat::TriggerObjectStandAloneCollection>(iConfig.getParameter<edm::InputTag>("triggerObjectSrc"))),
+triggerMatchDRSrc_(iConfig.getParameter<double>("triggerMatchDRSrc" )),
+triggerMatchTypesSrc_(iConfig.getParameter<std::vector<int>>("triggerMatchTypesSrc" )),
+triggerMatchPathsAndFiltersSrc_(iConfig.getParameter<std::vector<std::string>>("triggerMatchPathsAndFiltersSrc" ))
 {
 
   NAME_NOMINAL = NAME_+"TauEsNominal";
@@ -195,7 +200,8 @@ CustomPatTauProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
   // need to be careful about this when embedded samples arrive
 
   TauClones allClones(taus,first_vertex,TauEsCorrection_,TauEsUpSystematic_,TauEsDownSystematic_,
-                      triggerBits,triggerObjects,triggerPreScales,names); 
+                      triggerBits,triggerObjects,triggerPreScales,names,
+                    triggerMatchDRSrc_,triggerMatchTypesSrc_,triggerMatchPathsAndFiltersSrc_);
 
 
 
@@ -212,6 +218,27 @@ CustomPatTauProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
     const pat::Tau & TauToStoreNominal = allClones.clonesCorrectedNominalEsShift[i];
     const pat::Tau & TauToStoreUp = allClones.clonesCorrectedUpEsShift[i];
     const pat::Tau & TauToStoreDown = allClones.clonesCorrectedDownEsShift[i];
+
+
+    //dump userFloats -- test start
+    // for (std::size_t ii = 0; ii < TauToStoreNominal.userFloatNames().size(); ii ++ )
+    // {
+    //     std::cout<<"nominal tau "<<i<<" "<<TauToStoreNominal.userFloatNames().at(ii)<<" "<<TauToStoreNominal.userFloat(TauToStoreNominal.userFloatNames().at(ii))<<"\n";
+    // }
+    
+    // for (std::size_t ii = 0; ii < TauToStoreUp.userFloatNames().size(); ii ++ )
+    // {
+    //     std::cout<<"up tau "<<i<<" "<<TauToStoreUp.userFloatNames().at(ii)<<" "<<TauToStoreUp.userFloat(TauToStoreUp.userFloatNames().at(ii))<<"\n";
+    // }
+
+    // for (std::size_t ii = 0; ii < TauToStoreDown.userFloatNames().size(); ii ++ )
+    // {
+    //     std::cout<<"down tau "<<i<<" "<<TauToStoreDown.userFloatNames().at(ii)<<" "<<TauToStoreDown.userFloat(TauToStoreDown.userFloatNames().at(ii))<<"\n";
+    // }
+    //dump userFloats -- test end
+
+
+
 
 
     storedTausNominal->push_back(TauToStoreNominal);

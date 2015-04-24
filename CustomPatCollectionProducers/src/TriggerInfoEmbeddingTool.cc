@@ -3,6 +3,7 @@
 
 // system include files
 #include <memory>
+#include <sstream>
 
 // user include files
 
@@ -30,11 +31,18 @@ TriggerInfoEmbeddingTool::TriggerInfoEmbeddingTool(
 				edm::Handle<edm::TriggerResults> & triggerBits_,
 				edm::Handle<pat::TriggerObjectStandAloneCollection> & triggerObjects_,
 				edm::Handle<pat::PackedTriggerPrescales> & triggerPreScales_,
-				const edm::TriggerNames &names_):
+				const edm::TriggerNames &names_,
+				double trigMatchDRcut_,
+				std::vector<int> trigMatchTypes_,
+				std::vector<std::string> trigSummaryPathsAndFilters_):
 					triggerBits(triggerBits_),
 					triggerObjects(triggerObjects_),
 					triggerPreScales(triggerPreScales_),
-					names(names_){}
+					names(names_),
+					trigMatchDRcut(trigMatchDRcut_),
+					trigMatchTypes(trigMatchTypes_),
+					trigSummaryPathsAndFilters(trigSummaryPathsAndFilters_)
+					{}
 	
 // destructor 
 
@@ -50,9 +58,12 @@ bool TriggerInfoEmbeddingTool::wasAnyPathAccepted(std::vector<std::string> & pat
 			{
 				if(triggerBits->accept(i)) 
 				{
-					pathNamesToFill.push_back(names.triggerName(i));
-					pathPrescalesToFill.push_back(triggerPreScales->getPrescaleForIndex(i));
 
+					if(names.triggerName(i).find("HLT_")==0)
+					{
+						pathNamesToFill.push_back("AcceptWithPreScale_"+names.triggerName(i));
+						pathPrescalesToFill.push_back(triggerPreScales->getPrescaleForIndex(i));
+					}
 				}
 			}
 
@@ -60,8 +71,210 @@ bool TriggerInfoEmbeddingTool::wasAnyPathAccepted(std::vector<std::string> & pat
 	return 0;
 	}
 
+	void TriggerInfoEmbeddingTool::fillTrigFilterInfo(std::size_t index, std::vector<std::string> & fillStrings, std::vector<float> & fillFloats)
+	{
 
-std::size_t TriggerInfoEmbeddingTool::getBestMatchedObject(
+		pat::TriggerObjectStandAlone obj = (*triggerObjects)[index];
+
+		//obj.unpackPathNames(names);
+
+		for (std::string fil : obj.filterLabels())
+		{
+			if(obj.hasFilterLabel(fil)==1 && obj.filter(fil)==1)
+			{
+				fillStrings.push_back("trigObjectFilter_"+fil);
+				fillFloats.push_back(1.0);
+
+			}
+		}
+
+	}		
+
+
+
+	void TriggerInfoEmbeddingTool::fillTrigSummaryInfo(std::size_t index, std::vector<std::string> & fillStrings, std::vector<float> & fillFloats)
+	{
+
+		pat::TriggerObjectStandAlone obj = (*triggerObjects)[index];
+
+		obj.unpackPathNames(names);
+		std::vector<std::string> pathNamesAll  = obj.pathNames(false);
+		//std::vector<std::string> pathNamesLast = obj.pathNames(true);
+		
+		for (std::string pathFilterString : trigSummaryPathsAndFilters)
+		{
+			//std::cout<<pathFilterString<<"\n";
+
+			std::istringstream ss(pathFilterString);
+
+			std::string dummy; /* becuase we use -- and not - */
+
+			std::string variableName;
+			std::getline(ss, variableName, '-'); std::getline(ss, dummy, '-');
+
+			std::string pathName;
+			std::getline(ss, pathName, '-'); std::getline(ss, dummy, '-');
+
+			std::string andOrName;
+			std::getline(ss, andOrName, '-'); std::getline(ss, dummy, '-');
+
+			std::string buf;
+			std::vector<std::string> filterNames;
+			int FilterPassSum = 0;
+
+			//std::vector<int> passed_correspondingFilter;
+
+			while(std::getline(ss, buf, '-'))
+			{
+				filterNames.push_back(buf);
+				std::getline(ss, dummy, '-');
+
+			}
+
+			// std::cout<<"----------\n";
+			// std::cout<<" variableName: "<<variableName<<"\n";
+			// std::cout<<" pathName: "<<pathName<<"\n";
+			// std::cout<<" andOrName: "<<andOrName<<"\n";
+			// std::cout<<"FilterNames : ";
+			// for(std::string f : filterNames) std::cout<<f<<" ";
+			// std::cout<<"\n";
+			// std::cout<<"----------\n";
+
+
+			/* following the HLT tutorial : 
+			for each path record also if the object is associated 
+			to a 'l3' filter (always true for the definition used in the PAT trigger producer) 
+			and if it's associated to the last filter of a successfull path 
+			(which means that this object did cause this trigger to succeed;
+			however, it doesn't work on some multi-object triggers)
+			
+			see : https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuidePATTrigger#TriggerObjectStandAlone
+			
+			bool hasPathName( const std::string& pathName, bool pathLastFilterAccepted = false, 
+			bool pathL3FilterAccepted = true ) and
+			
+			bool path( const std::string& pathName, unsigned pathLastFilterAccepted = 0, 
+			unsigned pathL3FilterAccepted = 1 ) ( ** ):
+			
+			checks, if a certain trigger path name is assigned to the 
+			stand-alone trigger object with the optional parameters indicating, 
+			if the trigger object should have been used in the final filter ( pathLastFilterAccepted ) 
+			resp. in an L3 filter ( pathL3FilterAccepted ) and the path was succeeding;
+
+
+			 bool hasFilterLabel( const std::string& filterLabel ) and
+			 bool filter( const std::string& filterLabel ) ( ** ):
+			 checks, if a certain HLT filter label is assigned to the stand-alone trigger object; 
+			 (**) -1 not run, 0 failed, 1 passed
+
+			 */
+
+			// check if the object has the current HLT path : 
+			// either passing a L3 filter on this path or
+			// passing the last filter in the path
+
+            int isBoth = obj.hasPathName( pathName, true, true ); 
+            int isL3   = obj.hasPathName( pathName, false, true ); 
+            int isLF   = obj.hasPathName( pathName, true, false ); 
+
+			// check if the object passes the actual 
+			// filters specified using AND or OR condition
+
+            for(std::string fil : filterNames)
+            {
+            	//std::cout<<" filter "<<fil<<" "<<obj.hasFilterLabel(fil)<<" "<<obj.filter(fil)<<"\n";
+            	if(obj.hasFilterLabel(fil)==1 && obj.filter(fil)==1) FilterPassSum++;
+            }
+
+
+            int FilterListPassed = 0;
+
+			/* no filters provided by user */ 
+            if(filterNames.size()==0) 
+            {
+            	FilterListPassed = 1;
+
+            }
+
+			/* all filters passed */ 
+			else if(andOrName=="AND" && FilterPassSum==int(filterNames.size()))
+			{
+				FilterListPassed = 1;
+			}
+
+			/* at least one filter passed */ 
+			else if(andOrName=="OR" && FilterPassSum!=0)
+			{
+				FilterListPassed = 1;
+			}
+
+
+
+   			float finalValue = 0.0;
+   			if(isBoth) finalValue+= 1000.0;
+   			if(isL3) finalValue+= 100.0;
+   			if(isLF) finalValue+= 10.0;
+   			if(FilterListPassed) finalValue+= 1.0;
+
+
+   			// store info
+			fillStrings.push_back(variableName);
+			fillFloats.push_back(finalValue);	
+
+            // std::cout<<"testing "<<pathName<<" ";
+            // std::cout<<isBoth<<" ";
+            // std::cout<<isL3<<" ";
+            // std::cout<<isLF<<" ";
+            // std::cout<<FilterListPassed<<" ---> ";
+			// std::cout<<finalValue<<" ";
+			// std::cout<<"\n";		
+
+
+		}
+
+
+	}
+
+
+
+	void TriggerInfoEmbeddingTool::fillTrigObjInfo(std::size_t index, std::vector<std::string> & fillStrings, std::vector<float> & fillFloats)
+	{
+
+		//pat::TriggerObjectStandAlone obj = (*triggerObjects)[index];
+		
+	}
+
+
+	void TriggerInfoEmbeddingTool::fillTrigObjKinematics(std::size_t index, std::vector<std::string> & fillStrings, std::vector<float> & fillFloats)
+	{
+
+		pat::TriggerObjectStandAlone obj = (*triggerObjects)[index];
+		
+		/* DR */
+		fillStrings.push_back("TrigObjRecoObjDeltaR"); 
+		fillFloats.push_back(bestMatchDR_);
+
+		/* pt, eta, phi, mass */
+
+		fillStrings.push_back("TrigObjPt"); 
+		fillFloats.push_back(obj.pt());
+
+		fillStrings.push_back("TrigObjEta"); 
+		fillFloats.push_back(obj.eta());
+
+		fillStrings.push_back("TrigObjPhi"); 
+		fillFloats.push_back(obj.phi());
+
+		fillStrings.push_back("TrigObjMass"); 
+		fillFloats.push_back(obj.mass());
+
+
+
+
+	}
+
+
+	std::size_t TriggerInfoEmbeddingTool::getBestMatchedObject(
 				TLorentzVector RecoObjVec, std::vector<int> & AllowedTypes, float DRcut)
 	{
 
@@ -101,7 +314,7 @@ std::size_t TriggerInfoEmbeddingTool::getBestMatchedObject(
 			TrigObjVec.SetPtEtaPhiM(obj.pt(),obj.eta(),obj.phi(),obj.mass());
 
 			float currentDR = TrigObjVec.DeltaR(RecoObjVec);
-			if(currentDR > 0.5) continue;
+			if(currentDR > DRcut) continue;
 
 			// check if smallest DR
 			if( currentDR < minDR )
@@ -112,7 +325,7 @@ std::size_t TriggerInfoEmbeddingTool::getBestMatchedObject(
 
  		}
 
-
+ 		bestMatchDR_ = minDR;
  		return returnIndex;
  	}
 
@@ -127,18 +340,43 @@ void TriggerInfoEmbeddingTool::getTriggerInfo(pat::Electron & lepton,
 		std::vector<float> & userFloatValues)
 		{
 
+			// check if any paths were accepted, if so store them along with pre-scales
+			// this is done without ref. to any trigger object, this feature is key for embedded
+			// samples
+
+			if(!wasAnyPathAccepted(userFloatNames, userFloatValues)) return;
+
 			// lepton 4-vector
 			TLorentzVector RecoObjVec;
 		 	RecoObjVec.SetXYZT(lepton.p4().X(),lepton.p4().Y(),lepton.p4().Z(),lepton.p4().T());
 
 		 	// trigger object types allowed
 		 	std::vector<int> allowedTrigObjectTypes;
-	 		allowedTrigObjectTypes.push_back(trigger::TriggerObjectType::TriggerElectron); // for Run I & RunII
-	 		allowedTrigObjectTypes.push_back(trigger::TriggerObjectType::TriggerPhoton); // needs this for RunII
+
+	 		for (int type : trigMatchTypes) 
+	 		{
+	 			allowedTrigObjectTypes.push_back(type);
+	 		}
+
+	 		std::size_t bestMatchIndex = getBestMatchedObject(RecoObjVec, allowedTrigObjectTypes,trigMatchDRcut);
+	 		
+	 		if(bestMatchIndex==9999) return;
+	 		
+	 		fillTrigObjKinematics(bestMatchIndex, userFloatNames, userFloatValues);
+
+	 		fillTrigSummaryInfo(bestMatchIndex, userFloatNames, userFloatValues);
+
+	 		fillTrigFilterInfo(bestMatchIndex, userFloatNames, userFloatValues);
 
 
-	 		std::size_t bestMatchIndex = getBestMatchedObject(RecoObjVec, allowedTrigObjectTypes,0.5);
-	 		if(bestMatchIndex!=9999) std::cout<<" ele "<<bestMatchIndex<<"\n";
+	 		///////////
+	 		//std::cout<<" RECO "<<RecoObjVec.Pt()<<", "<<RecoObjVec.Eta()<<", "<<RecoObjVec.Phi()<<", "<<RecoObjVec.M()<<" \n";
+	 		 // for (std::size_t ii = 0; ii < userFloatNames.size(); ii ++ )
+		   //  {
+     //    		std::cout<<"electron "<<userFloatNames.at(ii)<<" "<<userFloatValues.at(ii)<<"\n";
+
+    	// 	}
+	 		///////////	 		
 
 		} 
 
@@ -149,16 +387,47 @@ void TriggerInfoEmbeddingTool::getTriggerInfo(pat::Muon & lepton,
 		std::vector<std::string> & userFloatNames,
 		std::vector<float> & userFloatValues)
 		{
+
+			// check if any paths were accepted, if so store them along with pre-scales
+			if(!wasAnyPathAccepted(userFloatNames, userFloatValues)) return;
+
+
 			// lepton 4-vector
 			TLorentzVector RecoObjVec;
 		 	RecoObjVec.SetXYZT(lepton.p4().X(),lepton.p4().Y(),lepton.p4().Z(),lepton.p4().T());
 
 		 	// trigger object types allowed
 		 	std::vector<int> allowedTrigObjectTypes;
-	 		allowedTrigObjectTypes.push_back(trigger::TriggerObjectType::TriggerMuon);
 
-	 		std::size_t bestMatchIndex = getBestMatchedObject(RecoObjVec, allowedTrigObjectTypes,0.5);
-	 			if(bestMatchIndex!=9999) std::cout<<" mu "<<bestMatchIndex<<"\n";
+	 		for (int type : trigMatchTypes) 
+	 		{
+	 			allowedTrigObjectTypes.push_back(type);
+	 		}
+
+
+
+	 		std::size_t bestMatchIndex = getBestMatchedObject(RecoObjVec, allowedTrigObjectTypes,trigMatchDRcut);
+
+	 		//std::cout<<" muon "<<bestMatchIndex<<"\n";
+	 		if(bestMatchIndex==9999) return;
+	 		
+	 		fillTrigObjKinematics(bestMatchIndex, userFloatNames, userFloatValues);
+
+	 		fillTrigSummaryInfo(bestMatchIndex, userFloatNames, userFloatValues);
+
+	 		fillTrigFilterInfo(bestMatchIndex, userFloatNames, userFloatValues);
+
+
+	 		///////////
+	 		 // for (std::size_t ii = 0; ii < userFloatNames.size(); ii ++ )
+		   //  {
+     //    		std::cout<<"muon "<<userFloatNames.at(ii)<<" "<<userFloatValues.at(ii)<<"\n";
+
+    	// 	}
+	 		///////////
+
+
+
 		}
 
 
@@ -168,114 +437,44 @@ void TriggerInfoEmbeddingTool::getTriggerInfo(pat::Tau & lepton,
 		std::vector<float> & userFloatValues)
 		{
 
+
+			// check if any paths were accepted, if so store them along with pre-scales
+			if(!wasAnyPathAccepted(userFloatNames, userFloatValues)) return;
+
+
 			// lepton 4-vector
 			TLorentzVector RecoObjVec;
 		 	RecoObjVec.SetXYZT(lepton.p4().X(),lepton.p4().Y(),lepton.p4().Z(),lepton.p4().T());
 
 		 	// trigger object types allowed
 		 	std::vector<int> allowedTrigObjectTypes;
-	 		allowedTrigObjectTypes.push_back(trigger::TriggerObjectType::TriggerTau);
+	 		
+	 		for (int type : trigMatchTypes) 
+	 		{
+	 			allowedTrigObjectTypes.push_back(type);
+	 		}
 
-	 		std::size_t bestMatchIndex = getBestMatchedObject(RecoObjVec, allowedTrigObjectTypes,0.5);
-	 			if(bestMatchIndex!=9999) std::cout<<" tau "<<bestMatchIndex<<"\n";
+	 		std::size_t bestMatchIndex = getBestMatchedObject(RecoObjVec, allowedTrigObjectTypes,trigMatchDRcut);
+
+			if(bestMatchIndex==9999) return;
+	 		
+	 		fillTrigObjKinematics(bestMatchIndex, userFloatNames, userFloatValues);
+
+	 		fillTrigSummaryInfo(bestMatchIndex, userFloatNames, userFloatValues);
+
+	 		fillTrigFilterInfo(bestMatchIndex, userFloatNames, userFloatValues);
+
+	 		///////////
+	 		 // for (std::size_t ii = 0; ii < userFloatNames.size(); ii ++ )
+		   //  {
+     //    		std::cout<<"tau "<<userFloatNames.at(ii)<<" "<<userFloatValues.at(ii)<<"\n";
+
+    	// 	}
+	 		///////////
 
 
 		}
 
 
 
-
-	// // create a vector to hold 'allowed' TriggerObjectIDs 
-	// 		// for the given reco object (in this case electrons)
-	// 		/* note - I only check |abs| matches on ID
-	// 		  and negatives mean L1, pos means HLT */
-
-	// 		std::vector<int> allowedTrigObjectTypes;
-	// 		allowedTrigObjectTypes.push_back(trigger::TriggerObjectType::TriggerElectron);
-
-	// 		// begin by getting accepted triggers, store 1.0 by default
-	// 		// unless prescaled (in that case store the prescale value)
-
-	// 		std::vector <std::string> passedPathNames;
-
-	// 		//const edm::TriggerNames &names = iEvent.triggerNames(*triggerBits);
-	// 		for (unsigned int i = 0, n = triggerBits->size(); i < n; ++i) 
-	// 		{
-	// 			if(triggerBits->accept(i)) 
-	// 			{
-	// 				userFloatNames.push_back(names.triggerName(i));
-	// 				userFloatValues.push_back(triggerPreScales->getPrescaleForIndex(i));
-	// 				passedPathNames.push_back(names.triggerName(i));
-
-	// 			}
-	// 		}
-
-	// 			TLorentzVector RecoObjVec;
-	// 			RecoObjVec.SetXYZT(lepton.p4().X(),lepton.p4().Y(),lepton.p4().Z(),lepton.p4().T());
-	// 			TLorentzVector TrigObjVec;
-
-	// 		for (pat::TriggerObjectStandAlone obj : *triggerObjects)
-	// 		{
-
-	// 			// check the DR between the reco and trigger objects
-	// 			TrigObjVec.SetPtEtaPhiM(obj.pt(),obj.eta(),obj.phi(),obj.mass());
-
-	// 			float DR = TrigObjVec.DeltaR(RecoObjVec);
-	// 			if(DR > 0.5) continue;
-
-	// 			// check that the filterIDs contain at least one of the allowed types
-	// 			// for this reco object (again I ignore sign)
-
-	// 			bool objectIDtypeMatch = 0;
-
-	// 			for (std::size_t reco1 = 0; reco1 < allowedTrigObjectTypes.size(); ++reco1)
-	// 			{
-	// 				for (std::size_t trig1 = 0; trig1 < obj.filterIds().size(); ++trig1)
-	// 				{
-
-
-	// 					if (abs(obj.filterIds()[trig1]) == abs(allowedTrigObjectTypes[reco1])) objectIDtypeMatch = 1;
-
-	// 				}
-
-
-	// 			}				
-
-	// 			if (!objectIDtypeMatch) continue;
-
-	// 			// get names of paths associated to this object
-	// 			// pathNamesAll = any path associated to the object
-	// 			// pathNamesLast = paths associated to the object for which it satisfies final filter in the path
-
-	// 			obj.unpackPathNames(names);
-	// 			std::vector<std::string> pathNamesAll  = obj.pathNames(false);
-	// 			std::vector<std::string> pathNamesLast = obj.pathNames(true);
-
-	// 			// loop over accepted paths
-
-	// 			for(std::string acceptedPath : passedPathNames)
-	// 			{
-					
-	// 				bool all = std::find(pathNamesAll.begin(), pathNamesAll.end(), acceptedPath) != pathNamesAll.end();
-	// 				bool last = std::find(pathNamesLast.begin(), pathNamesLast.end(), acceptedPath) != pathNamesLast.end();
-
-	// 				if (all==1 || last==1)
-	// 				{	
-	// 					std::cout<<"DR "<<DR<<" "<<obj.pt()<<" accepted path "<<acceptedPath<<" all, last : "<<all<<","<<last<<" ";					
-	// 					std::cout << "\t   Type IDs:   ";
- // 				        for (unsigned h = 0; h < obj.filterIds().size(); ++h) std::cout << " " << obj.filterIds()[h]<<" " ;
-	// 					std::cout << "\t   Filters:    ";
-	// 			        for (unsigned h = 0; h < obj.filterLabels().size(); ++h) std::cout << " " << obj.filterLabels()[h];
-	// 			        std::cout << std::endl;
-
-
-
-	// 				}
-
-
-	// 			}
-
-
-
-	// 		}
 

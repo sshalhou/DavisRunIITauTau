@@ -50,12 +50,21 @@ class TriggerInfoEmbeddingTool
 	edm::Handle<pat::TriggerObjectStandAloneCollection> & triggerObjects;
 	edm::Handle<pat::PackedTriggerPrescales> & triggerPreScales;
 	const edm::TriggerNames & names;
+	float bestMatchDR_;
+	double trigMatchDRcut;
+	std::vector<int> trigMatchTypes;
+	std::vector<std::string> trigSummaryPathsAndFilters;
+
+
 
 	public:
 		TriggerInfoEmbeddingTool(edm::Handle<edm::TriggerResults> &,
 				edm::Handle<pat::TriggerObjectStandAloneCollection> &,
 				edm::Handle<pat::PackedTriggerPrescales>&,
-				const edm::TriggerNames &);
+				const edm::TriggerNames &,
+				double,
+				std::vector<int>,
+				std::vector<std::string>);
 
 		virtual ~TriggerInfoEmbeddingTool();
 
@@ -70,6 +79,21 @@ class TriggerInfoEmbeddingTool
 
         /* return best matched trigger obj index based on reco 4-vector DR and set of TriggerObjTypes*/
 		std::size_t getBestMatchedObject(TLorentzVector, std::vector<int> &, float);
+
+		/* fill std::vectors with trigger obj's DR, pt, eta, phi, mass */
+		void fillTrigObjKinematics(std::size_t, std::vector<std::string> &, std::vector<float> &);
+
+
+		/* fill std::vectors with trigger obj's IDs, paths & filters as concatenated strings (need 1.0 for values) */
+		void fillTrigObjInfo(std::size_t, std::vector<std::string> &, std::vector<float> &);
+
+		/* fill trigger summary info based on trigSummaryPathsAndFilters */
+		void fillTrigSummaryInfo(std::size_t, std::vector<std::string> &, std::vector<float> &);
+
+		/* fill trigger filter info for all filters passed by the matchedObject */
+		void fillTrigFilterInfo(std::size_t, std::vector<std::string> &, std::vector<float> &);
+
+
 
 };
 

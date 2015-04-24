@@ -95,15 +95,12 @@ private:
   edm::EDGetTokenT<edm::TriggerResults> triggerBitSrc_;
   edm::EDGetTokenT<pat::PackedTriggerPrescales> triggerPreScaleSrc_;
   edm::EDGetTokenT<pat::TriggerObjectStandAloneCollection> triggerObjectSrc_;
-
+  double triggerMatchDRSrc_;
+  std::vector<int> triggerMatchTypesSrc_;
+  std::vector<std::string> triggerMatchPathsAndFiltersSrc_;
 
   // the mva ID estimator for CSA14 and Phs14(?)
   EGammaMvaEleEstimatorCSA14 MVA_NonTrigPhys14;
-
-
-  // trigger info embedding tool
-
- // TriggerInfoEmbeddingTool triggerEmbedderTool;
 
   // note: if additonal MVAs are needed add them in ElectronClones.h
 
@@ -127,7 +124,10 @@ NAME_(iConfig.getParameter<string>("NAME" )),
 vertexSrc_(iConfig.getParameter<edm::InputTag>("vertexSrc" )),
 triggerBitSrc_(consumes<edm::TriggerResults>(iConfig.getParameter<edm::InputTag>("triggerBitSrc"))),
 triggerPreScaleSrc_(consumes<pat::PackedTriggerPrescales>(iConfig.getParameter<edm::InputTag>("triggerPreScaleSrc"))),
-triggerObjectSrc_(consumes<pat::TriggerObjectStandAloneCollection>(iConfig.getParameter<edm::InputTag>("triggerObjectSrc")))
+triggerObjectSrc_(consumes<pat::TriggerObjectStandAloneCollection>(iConfig.getParameter<edm::InputTag>("triggerObjectSrc"))),
+triggerMatchDRSrc_(iConfig.getParameter<double>("triggerMatchDRSrc" )),
+triggerMatchTypesSrc_(iConfig.getParameter<std::vector<int>>("triggerMatchTypesSrc" )),
+triggerMatchPathsAndFiltersSrc_(iConfig.getParameter<std::vector<std::string>>("triggerMatchPathsAndFiltersSrc" ))
 {
 
 
@@ -214,125 +214,16 @@ CustomPatElectronProducer::produce(edm::Event& iEvent, const edm::EventSetup& iS
 
     const edm::TriggerNames &names = iEvent.triggerNames(*triggerBits);
 
-  // test embed of trigger info into electron collection :
-
-  //triggerEmbedderTool.embedTriggerInfo(electrons,triggerBits,triggerObjects,triggerPreScales);
-   
-
-
-//   // test -- trigger dump -- start
-
-//   const edm::TriggerNames &names = iEvent.triggerNames(*triggerBits);
-//   std::cout << "\n === TRIGGER PATHS === " << std::endl;
-//   for (unsigned int i = 0, n = triggerBits->size(); i < n; ++i) {
-//     std::cout << "Trigger " << names.triggerName(i) << 
-//             ", prescale " << triggerPreScales->getPrescaleForIndex(i) <<
-//             ": " << (triggerBits->accept(i) ? "PASS" : "fail (or not run)") 
-//             << std::endl;
-//   }
-
-
-// std::cout << "\n === TRIGGER OBJECTS === " << std::endl;
-//     for (pat::TriggerObjectStandAlone obj : *triggerObjects) { // note: not "const &" since we want to call unpackPathNames
-//         obj.unpackPathNames(names);
-//         std::cout << "\tTrigger object:  pt " << obj.pt() << ", eta " << obj.eta() << ", phi " << obj.phi() << std::endl;
-//         // Print trigger object collection and type
-//         std::cout << "\t   Collection: " << obj.collection() << std::endl;
-//         std::cout << "\t   Type IDs:   ";
-//         for (unsigned h = 0; h < obj.filterIds().size(); ++h) std::cout << " " << obj.filterIds()[h] ;
-//         std::cout << std::endl;
-//         // Print associated trigger filters
-//         std::cout << "\t   Filters:    ";
-//         for (unsigned h = 0; h < obj.filterLabels().size(); ++h) std::cout << " " << obj.filterLabels()[h];
-//         std::cout << std::endl;
-//         std::vector<std::string> pathNamesAll  = obj.pathNames(false);
-//         std::vector<std::string> pathNamesLast = obj.pathNames(true);
-//         // Print all trigger paths, for each one record also if the object is associated to a 'l3' filter (always true for the
-//         // definition used in the PAT trigger producer) and if it's associated to the last filter of a successfull path (which
-//         // means that this object did cause this trigger to succeed; however, it doesn't work on some multi-object triggers)
-//         std::cout << "\t   Paths (" << pathNamesAll.size()<<"/"<<pathNamesLast.size()<<"):    ";
-//         for (unsigned h = 0, n = pathNamesAll.size(); h < n; ++h) {
-//             bool isBoth = obj.hasPathName( pathNamesAll[h], true, true ); 
-//             bool isL3   = obj.hasPathName( pathNamesAll[h], false, true ); 
-//             bool isLF   = obj.hasPathName( pathNamesAll[h], true, false ); 
-//             bool isNone = obj.hasPathName( pathNamesAll[h], false, false ); 
-//             std::cout << "   " << pathNamesAll[h];
-//             if (isBoth) std::cout << "(L,3)";
-//             if (isL3 && !isBoth) std::cout << "(*,3)";
-//             if (isLF && !isBoth) std::cout << "(L,*)";
-//             if (isNone && !isBoth && !isL3 && !isLF) std::cout << "(*,*)";
-//         }
-//         std::cout << std::endl;
-//     }
-//     std::cout << std::endl;
-
-
-//   // test -- trigger dump -- end
-
-
-//   // test embedding trigger vectors into a pat::Electron collection -- start
-
-
-//   std::vector <pat::Electron> clones;
-
-//   edm::View<pat::Electron>::const_iterator electron;
-//   for(electron=electrons->begin(); electron!=electrons->end(); ++electron)
-//   {
-  
-   
- 
-//     pat::Electron e = *electron;
-   
-//     for (unsigned int i = 0, n = triggerBits->size(); i < n; ++i) {
-    
-//       if ( triggerBits->accept(i)==1 ) 
-//       {
-        
-//         e.addUserFloat(names.triggerName(i),1.0);
-
-
-
-//       }
-
-//     }
-
-
-
-
-
-
-//     clones.push_back(e);
-
-//   }
-
-
-//   for (std::size_t i = 0; i<clones.size(); i++)
-//   {
-//     pat::Electron e = clones[i];
-
-  
-//     for (std::size_t ii = 0; ii < e.userFloatNames().size(); ii ++ )
-//     {
-//         std::cout<<"electron "<<i<<" "<<e.userFloatNames().at(ii)<<" "<<e.userFloat(e.userFloatNames().at(ii))<<"\n";
-
-//     }
-
-
-
-//   }
-
-
-
-
-//   // test embedding trigger vectors into a pat::Electron collection -- end
-
 
 
   // clone & fill the electron with user-computed quantities including mva
 
   std::string MVA_NonTrigPhys14_name = "MVA_NonTrigPhys14";
   electronClones ele(electrons,first_vertex,MVA_NonTrigPhys14,MVA_NonTrigPhys14_name,
-                    triggerBits,triggerObjects,triggerPreScales,names); 
+                    triggerBits,triggerObjects,triggerPreScales,names,
+                    triggerMatchDRSrc_,triggerMatchTypesSrc_,triggerMatchPathsAndFiltersSrc_); 
+
+
 
 
   auto_ptr<PatElectronCollection> storedElectrons (new PatElectronCollection);
@@ -345,6 +236,13 @@ CustomPatElectronProducer::produce(edm::Event& iEvent, const edm::EventSetup& iS
 
 
     const pat::Electron & electronToStore = ele.clones[i];
+
+    // if(electronToStore.userFloat("dxy"))
+    // std::cout<<"TEST OK "<<electronToStore.userFloat("dxy")<<"\n";
+
+    // if(electronToStore.userFloat("MMMMMM"))
+    // std::cout<<"TEST NOT OK "<<electronToStore.userFloat("MMMMMM")<<"\n";
+  
 
     // dump userFloats -- test start
     // for (std::size_t ii = 0; ii < electronToStore.userFloatNames().size(); ii ++ )

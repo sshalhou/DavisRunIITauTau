@@ -88,7 +88,9 @@ private:
   edm::EDGetTokenT<edm::TriggerResults> triggerBitSrc_;
   edm::EDGetTokenT<pat::PackedTriggerPrescales> triggerPreScaleSrc_;
   edm::EDGetTokenT<pat::TriggerObjectStandAloneCollection> triggerObjectSrc_;
-
+  double triggerMatchDRSrc_;
+  std::vector<int> triggerMatchTypesSrc_;
+  std::vector<std::string> triggerMatchPathsAndFiltersSrc_;
  
 };
 
@@ -110,7 +112,10 @@ NAME_(iConfig.getParameter<string>("NAME" )),
 vertexSrc_(iConfig.getParameter<edm::InputTag>("vertexSrc" )),
 triggerBitSrc_(consumes<edm::TriggerResults>(iConfig.getParameter<edm::InputTag>("triggerBitSrc"))),
 triggerPreScaleSrc_(consumes<pat::PackedTriggerPrescales>(iConfig.getParameter<edm::InputTag>("triggerPreScaleSrc"))),
-triggerObjectSrc_(consumes<pat::TriggerObjectStandAloneCollection>(iConfig.getParameter<edm::InputTag>("triggerObjectSrc")))
+triggerObjectSrc_(consumes<pat::TriggerObjectStandAloneCollection>(iConfig.getParameter<edm::InputTag>("triggerObjectSrc"))),
+triggerMatchDRSrc_(iConfig.getParameter<double>("triggerMatchDRSrc" )),
+triggerMatchTypesSrc_(iConfig.getParameter<std::vector<int>>("triggerMatchTypesSrc" )),
+triggerMatchPathsAndFiltersSrc_(iConfig.getParameter<std::vector<std::string>>("triggerMatchPathsAndFiltersSrc" ))
 {
 
   produces<PatMuonCollection>(NAME_).setBranchAlias(NAME_);
@@ -173,7 +178,8 @@ CustomPatMuonProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup
     const edm::TriggerNames &names = iEvent.triggerNames(*triggerBits);
 
 
-  muonClones mu(muons,first_vertex,triggerBits,triggerObjects,triggerPreScales,names);  
+  muonClones mu(muons,first_vertex,triggerBits,triggerObjects,triggerPreScales,names,
+                    triggerMatchDRSrc_,triggerMatchTypesSrc_,triggerMatchPathsAndFiltersSrc_); 
 
 
   auto_ptr<PatMuonCollection> storedMuons (new PatMuonCollection);

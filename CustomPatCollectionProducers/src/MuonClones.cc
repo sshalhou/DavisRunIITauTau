@@ -32,13 +32,19 @@ muonClones::muonClones(const slimmedPatMuonCollection& inputColl, const reco::Ve
 				edm::Handle<edm::TriggerResults> & triggerBits_,
 				edm::Handle<pat::TriggerObjectStandAloneCollection> & triggerObjects_,
 				edm::Handle<pat::PackedTriggerPrescales> & triggerPreScales_,
-				const edm::TriggerNames &names_):
+				const edm::TriggerNames &names_,
+				double trigMatchDRcut_,
+				std::vector<int> trigMatchTypes_,
+				std::vector<std::string> trigSummaryPathsAndFilters_):
 		muons(inputColl),
 		first_vertex(input_vertex),
 		triggerBits(triggerBits_),
 		triggerObjects(triggerObjects_),
 		triggerPreScales(triggerPreScales_),
-		names(names_)
+		names(names_),
+		trigMatchDRcut(trigMatchDRcut_),
+		trigMatchTypes(trigMatchTypes_),
+		trigSummaryPathsAndFilters(trigSummaryPathsAndFilters_)
 		{
 
 		 clone();
@@ -72,7 +78,8 @@ void muonClones::fillUserFloats()
 {
 
 
-	TriggerInfoEmbeddingTool triggerEmbedderTool(triggerBits,triggerObjects,triggerPreScales,names);
+	TriggerInfoEmbeddingTool triggerEmbedderTool(triggerBits,triggerObjects,triggerPreScales,names,
+		trigMatchDRcut,trigMatchTypes,trigSummaryPathsAndFilters);
 
 
 
@@ -87,7 +94,7 @@ void muonClones::fillUserFloats()
 	  	std::vector <std::string> userFloatNames;
 	  	std::vector <float> userFloatVals;
 
-	  	triggerEmbedderTool.getTriggerInfo(m,userFloatNames, userFloatVals); 
+	 	triggerEmbedderTool.getTriggerInfo(m,userFloatNames, userFloatVals); 
 
 	  	for (std::size_t a = 0; a< userFloatNames.size(); ++a )
 	  	{
