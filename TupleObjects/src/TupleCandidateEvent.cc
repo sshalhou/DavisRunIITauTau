@@ -1,12 +1,11 @@
 #include "DavisRunIITauTau/TupleObjects/interface/TupleCandidateEvent.h"
 #include "DavisRunIITauTau/TupleObjects/interface/TupleCandidateEventTypes.h"
-TupleCandidateEventTypes candTypes_;
 
 
 TupleCandidateEvent::TupleCandidateEvent()
 {
 
-	CandidateEventType = NAN;
+	CandidateEventType = 0;
 
 }
 
@@ -15,9 +14,8 @@ TupleCandidateEvent::TupleCandidateEvent()
 
 void TupleCandidateEvent::set_pair(pat::Electron dummy1_, pat::Electron dummy2_) 
 	{ 
-		m_electron1 = dummy1_; 
-		m_electron2 = dummy2_; 
-		CandidateEventType = candTypes_.EleEle;
+
+		CandidateEventType = TupleCandidateEventTypes::EleEle;
 		m_leg1.fill(dummy1_);
 		m_leg2.fill(dummy2_);
 
@@ -25,9 +23,8 @@ void TupleCandidateEvent::set_pair(pat::Electron dummy1_, pat::Electron dummy2_)
 
 void TupleCandidateEvent::set_pair(pat::Electron dummy1_, pat::Muon dummy2_) 
 	{ 
-		m_electron1 = dummy1_; 
-		m_muon2 = dummy2_; 
-		CandidateEventType = candTypes_.EleMuon;
+
+		CandidateEventType = TupleCandidateEventTypes::EleMuon;
 		m_leg1.fill(dummy1_);
 		m_leg2.fill(dummy2_);		
 
@@ -35,69 +32,65 @@ void TupleCandidateEvent::set_pair(pat::Electron dummy1_, pat::Muon dummy2_)
 
 void TupleCandidateEvent::set_pair(pat::Electron dummy1_, pat::Tau dummy2_) 
 	{ 
-		m_electron1 = dummy1_; 
-		m_tau2 = dummy2_; 
-		CandidateEventType = candTypes_.EleTau;
+
+		CandidateEventType = TupleCandidateEventTypes::EleTau;
 		m_leg1.fill(dummy1_);
 		m_leg2.fill(dummy2_);
 	}
 
 void TupleCandidateEvent::set_pair(pat::Muon dummy1_,     pat::Muon dummy2_) 
 	{ 
-		m_muon1 = dummy1_; 
-		m_muon2 = dummy2_; 
-		CandidateEventType = candTypes_.MuonMuon;
+	
+		CandidateEventType = TupleCandidateEventTypes::MuonMuon;
 		m_leg1.fill(dummy1_);
 		m_leg2.fill(dummy2_);
 	}
 
 void TupleCandidateEvent::set_pair(pat::Muon dummy1_,     pat::Tau dummy2_) 
 	{ 
-		m_muon1 = dummy1_; 
-		m_tau2 = dummy2_; 
-		CandidateEventType = candTypes_.MuonTau;
+
+		CandidateEventType = TupleCandidateEventTypes::MuonTau;
 		m_leg1.fill(dummy1_);
 		m_leg2.fill(dummy2_);
 	}
 
 void TupleCandidateEvent::set_pair(pat::Tau dummy1_,      pat::Tau dummy2_) 
 	{ 
-		m_tau1 = dummy1_; 
-		m_tau2 = dummy2_; 
-		CandidateEventType = candTypes_.TauTau;
+
+		CandidateEventType = TupleCandidateEventTypes::TauTau;
 		m_leg1.fill(dummy1_);
 		m_leg2.fill(dummy2_);
 
 	}
 
+// single objects
+
+
+void TupleCandidateEvent::set_mvaMET(reco::PFMET dummy_) 
+	{ 
+		m_mvaMET.push_back(dummy_);
+	}
+
+
+void TupleCandidateEvent::set_vetoMuon(pat::Muon dummy_) 
+	{ 
+		m_vetoMuon.push_back(dummy_);
+	}
+
+void TupleCandidateEvent::set_vetoElectron(pat::Electron dummy_) 
+	{ 
+		m_vetoElectron.push_back(dummy_);
+	}
 
 
 //////////////////
-// legs
+// accessors
 //////////////////
 TupleLepton TupleCandidateEvent::leg1() const { return m_leg1; }
-
 TupleLepton TupleCandidateEvent::leg2() const { return m_leg2; }
+std::vector<reco::PFMET> TupleCandidateEvent::mvaMET() const { return m_mvaMET; }
+std::vector<pat::Electron> TupleCandidateEvent::vetoElectron() const { return m_vetoElectron; }
+std::vector<pat::Muon> TupleCandidateEvent::vetoMuon() const { return m_vetoMuon; }
 
 
-//////////////////
-// taus
-//////////////////
-pat::Tau TupleCandidateEvent::tau1() const { return m_tau1; }
 
-pat::Tau TupleCandidateEvent::tau2() const { return m_tau2; }
-
-//////////////////
-// electrons
-//////////////////
-
-pat::Electron TupleCandidateEvent::electron1() const { return m_electron1; }
-
-pat::Electron TupleCandidateEvent::electron2() const { return m_electron2; }
-
-//////////////////
-// muons
-//////////////////
-pat::Muon TupleCandidateEvent::muon1() const { return m_muon1; }
-
-pat::Muon TupleCandidateEvent::muon2() const { return m_muon2; }

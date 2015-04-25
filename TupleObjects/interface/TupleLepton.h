@@ -22,6 +22,7 @@ blind of the specific lepton type
 #include "DataFormats/PatCandidates/interface/Muon.h"
 #include "DataFormats/PatCandidates/interface/Tau.h"
 
+#include "DavisRunIITauTau/TupleObjects/interface/TupleLeptonTypes.h"
 
 
 typedef math::XYZTLorentzVector LorentzVector;
@@ -44,18 +45,19 @@ public:
  
   // getters
 
-  LorentzVector p4() const;
-  bool isElectron() const;
-  bool isMuon() const;
-  bool isTau() const;
+  int leptonType() const;
 
+
+ std::vector< pat::Electron > Electron() const;
+ std::vector< pat::Muon > Muon() const;
+ std::vector< pat::Tau > Tau() const;
 
 private:
 
-  LorentzVector m_p4;
-  bool m_isElectron;
-  bool m_isMuon;
-  bool m_isTau;
+  int m_leptonType;
+  std::vector<pat::Electron> m_Electron;
+  std::vector<pat::Muon> m_Muon;
+  std::vector<pat::Tau> m_Tau;
 
 
 };

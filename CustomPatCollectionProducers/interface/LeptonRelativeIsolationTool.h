@@ -22,6 +22,14 @@
 #include "DataFormats/PatCandidates/interface/Muon.h"
 #include "DataFormats/PatCandidates/interface/Tau.h"
 
+#include "DataFormats/EgammaCandidates/interface/GsfElectron.h"
+#include "DataFormats/EgammaCandidates/interface/GsfElectronFwd.h"
+#include "DataFormats/GsfTrackReco/interface/GsfTrack.h"
+#include "DataFormats/GsfTrackReco/interface/GsfTrackFwd.h"
+#include "DataFormats/Common/interface/ValueMap.h"
+#include "EgammaAnalysis/ElectronTools/interface/ElectronEffectiveArea.h"
+
+
 #include "TH1D.h"
 #include <map>
 #include "TFile.h"
@@ -47,6 +55,8 @@ class LeptonRelativeIsolationTool
 		double muonRelIso(const pat::Muon &, double deltaBeta);		
 		double tauRelIso(const pat::Tau &, double deltaBeta);		
 
+		// effective area & rho corrected isolations
+		double electronEArhoRelIso(const pat::Electron &, double rho, float EA);
   
 
 

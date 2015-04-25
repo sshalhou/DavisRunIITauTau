@@ -55,6 +55,8 @@ class electronClones
 	const slimmedPatElectronCollection& electrons;
 	const reco::Vertex & first_vertex;
 
+
+
 	// the mva ID evaluators and the names of thier embedded userFloats
 	EGammaMvaEleEstimatorCSA14 & MVA_PHYS14nonTrig;
 	std::string & MVA_PHYS14nonTrig_NAME;
@@ -69,6 +71,10 @@ class electronClones
 	std::vector<int> trigMatchTypes;
 	std::vector<std::string> trigSummaryPathsAndFilters;
 
+	// rho related info
+	std::vector<std::string> rhoLabels;
+	std::vector<double> rhoValues;
+
 
 	public:
 		electronClones(const slimmedPatElectronCollection&, const reco::Vertex &,
@@ -80,7 +86,9 @@ class electronClones
 				const edm::TriggerNames &,
 				double,
 				std::vector<int>,
-				std::vector<std::string>);
+				std::vector<std::string>,
+				std::vector<std::string>,
+				std::vector<double>);
 
 		virtual ~electronClones();
 

@@ -67,6 +67,16 @@ process.filteredVertices = cms.EDFilter(
 )
 
 
+############################
+# define rho sources to be used in isol variants
+rhoSourceList = cms.VInputTag(
+	cms.InputTag('fixedGridRhoFastjetAll'),
+	cms.InputTag('fixedGridRhoFastjetAllCalo'),
+	cms.InputTag('fixedGridRhoFastjetCentralCalo'),
+	cms.InputTag('fixedGridRhoFastjetCentralChargedPileUp'),
+	cms.InputTag('fixedGridRhoFastjetCentralNeutral'),
+	cms.InputTag('fixedGridRhoAll'))
+
 
 ###################################
 # perform custom parameter embedding
@@ -89,8 +99,14 @@ process.customSlimmedElectrons = cms.EDProducer('CustomPatElectronProducer' ,
 							triggerObjectSrc = cms.InputTag("selectedPatTrigger"),
 							triggerMatchDRSrc = electronTriggerMatch_DR,
 							triggerMatchTypesSrc = electronTriggerMatch_Types,
-							triggerMatchPathsAndFiltersSrc = electronTriggerPathsAndFilters
+							triggerMatchPathsAndFiltersSrc = electronTriggerPathsAndFilters,
+							rhoSources = rhoSourceList
 							                 )
+
+
+
+
+
 
 from DavisRunIITauTau.TupleConfigurations.ConfigTupleTriggers_cfi import (muonTriggerPathsAndFilters,
 muonTriggerMatch_DR, muonTriggerMatch_Types)
@@ -191,6 +207,14 @@ from DavisRunIITauTau.PythonHelperClasses.pairContainer_cff import PairWiseMetHe
 mvaMEThelper = PairWiseMetHelper(process)
 #mvaMEThelper.initializeMVAmet()
 
+# we also need to remake PFMET since it lacks met significance in Phys14
+# this is unrelated to mvaMET
+
+from RecoMET.METProducers.PFMET_cfi import pfMet
+process.pfMet = pfMet.clone(src = "packedPFCandidates")
+process.pfMet.calculateSignificance = False 
+# before setting the above to true need to follow 
+# https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideMETSignificance
 
 
 ###############################
@@ -228,15 +252,18 @@ process.TupleTausDown = cms.EDProducer('TupleTauProducer' ,
 							NAME=cms.string("TupleTausNominal")
 												)
 
+
+
+
 # test -- pair producer
 
 process.TupleEventPair = cms.EDProducer('TupleCandidateEventProducer' ,
 							tauSrc =cms.InputTag("singleTauEsNominal0","singleTauEsNominal0","Ntuple"),
 							electronSrc =cms.InputTag("singleElectron0","singleElectron0","Ntuple"),
 							muonSrc =cms.InputTag(''),
+							mvaMETSrc = cms.InputTag("mvaMetElectronxTauEsNominal0x0::Ntuple"),
 							NAME=cms.string("TuplePair")
 												)
-
 
 
 # end test -- pair producer
@@ -260,7 +287,7 @@ process.out = cms.OutputModule("PoolOutputModule",
 # keep everything produced by Tuple-Code
 #################################
 #process.out.outputCommands +=['drop *_*_*_*']
-#process.out.outputCommands +=['keep *_*_*_*']
+#rocess.out.outputCommands +=['drop *_*_*_*']
 
 process.out.outputCommands +=['keep TupleUserSpecifiedDatas_UserSpecifiedData_TupleUserSpecifiedData_PAT']
 
@@ -277,8 +304,8 @@ process.out.outputCommands +=['keep *_*_*_Ntuple']
 # asked to keep trigger info 
 
 process.out.outputCommands +=['keep *_l1extraParticles_*_*']
-
-
+process.out.outputCommands +=['drop *_*_*_*']
+process.out.outputCommands += ['keep TupleCandidateEvents_*_*_Ntuple']
 
 process.p = cms.Path(process.myProducerLabel)
 #process.p *= process.UserSpecifiedData
@@ -298,11 +325,11 @@ process.p *= process.filteredCustomTausEsDown
 
 process.p *= process.requireCandidateHiggsPair
 
-process.p *= process.TupleElectronsNominal
-process.p *= process.TupleMuonsNominal
-process.p *= process.TupleTausNominal
-process.p *= process.TupleTausUp
-process.p *= process.TupleTausDown
+# process.p *= process.TupleElectronsNominal
+# process.p *= process.TupleMuonsNominal
+# process.p *= process.TupleTausNominal
+# process.p *= process.TupleTausUp
+# process.p *= process.TupleTausDown
 
 # test - start
 mvaMEThelper.initializeMVAmet(process.p)
@@ -310,7 +337,9 @@ mvaMEThelper.runSingleLeptonProducers(process.p)
 mvaMEThelper.runPairWiseMets(process.p)
 # test - end
 
+process.p *= process.pfMet
 process.p *=process.TupleEventPair
+
 
 process.e = cms.EndPath(process.out)
 

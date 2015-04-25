@@ -126,7 +126,7 @@ void TauClones::ChangeEnergyAndFillUserFloats(std::vector <pat::Tau> & clones,
 
 	  	for (std::size_t a = 0; a< userFloatNames.size(); ++a )
 	  	{
-		  	t.addUserFloat("acceptedTriggerPrescale_"+userFloatNames[a],userFloatVals[a]);
+		  	t.addUserFloat(userFloatNames[a],userFloatVals[a]);
 	  	}
 
 
@@ -148,7 +148,7 @@ void TauClones::ChangeEnergyAndFillUserFloats(std::vector <pat::Tau> & clones,
 	  	double deltaBeta = 0.5;
 	  	double relIso = IsoTool.tauRelIso(t,deltaBeta);
 
-	  	t.addUserFloat("relIso",relIso);
+	  	t.addUserFloat("DeltaBetaCorrectedRelIso",relIso);
 
 
 	  	///////////////////////////

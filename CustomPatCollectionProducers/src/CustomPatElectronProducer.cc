@@ -65,7 +65,7 @@ using namespace std;
 using namespace edm;
 using namespace pat;
 typedef std::vector<pat::Electron> PatElectronCollection;
-
+typedef std::vector<edm::InputTag> vInputTag;
 
 //
 // class declaration
@@ -98,6 +98,7 @@ private:
   double triggerMatchDRSrc_;
   std::vector<int> triggerMatchTypesSrc_;
   std::vector<std::string> triggerMatchPathsAndFiltersSrc_;
+  vInputTag rhoSources_;
 
   // the mva ID estimator for CSA14 and Phs14(?)
   EGammaMvaEleEstimatorCSA14 MVA_NonTrigPhys14;
@@ -127,7 +128,8 @@ triggerPreScaleSrc_(consumes<pat::PackedTriggerPrescales>(iConfig.getParameter<e
 triggerObjectSrc_(consumes<pat::TriggerObjectStandAloneCollection>(iConfig.getParameter<edm::InputTag>("triggerObjectSrc"))),
 triggerMatchDRSrc_(iConfig.getParameter<double>("triggerMatchDRSrc" )),
 triggerMatchTypesSrc_(iConfig.getParameter<std::vector<int>>("triggerMatchTypesSrc" )),
-triggerMatchPathsAndFiltersSrc_(iConfig.getParameter<std::vector<std::string>>("triggerMatchPathsAndFiltersSrc" ))
+triggerMatchPathsAndFiltersSrc_(iConfig.getParameter<std::vector<std::string>>("triggerMatchPathsAndFiltersSrc" )),
+rhoSources_(iConfig.getParameter<vInputTag>("rhoSources" ))
 {
 
 
@@ -201,6 +203,24 @@ CustomPatElectronProducer::produce(edm::Event& iEvent, const edm::EventSetup& iS
   edm::Handle<edm::View<pat::Electron> > electrons;
   iEvent.getByLabel(electronSrc_,electrons);
 
+  // get the rho variants
+
+  std::vector<std::string> rhoNames;
+  std::vector<double> rhos;
+
+  for(  edm::InputTag rs : rhoSources_ )
+  {
+
+  edm::Handle<double> arho;
+  iEvent.getByLabel(rs,arho);
+
+  rhoNames.push_back(rs.label());
+  rhos.push_back(*arho);
+  //std::cout<<rs.label()<<" "<<*arho<<std::endl;
+
+  }
+
+
 
   // get trigger-related collections
 
@@ -221,7 +241,8 @@ CustomPatElectronProducer::produce(edm::Event& iEvent, const edm::EventSetup& iS
   std::string MVA_NonTrigPhys14_name = "MVA_NonTrigPhys14";
   electronClones ele(electrons,first_vertex,MVA_NonTrigPhys14,MVA_NonTrigPhys14_name,
                     triggerBits,triggerObjects,triggerPreScales,names,
-                    triggerMatchDRSrc_,triggerMatchTypesSrc_,triggerMatchPathsAndFiltersSrc_); 
+                    triggerMatchDRSrc_,triggerMatchTypesSrc_,triggerMatchPathsAndFiltersSrc_,
+                    rhoNames,rhos); 
 
 
 
@@ -245,10 +266,10 @@ CustomPatElectronProducer::produce(edm::Event& iEvent, const edm::EventSetup& iS
   
 
     // dump userFloats -- test start
-    // for (std::size_t ii = 0; ii < electronToStore.userFloatNames().size(); ii ++ )
-    // {
-    //     std::cout<<"electron "<<i<<" "<<electronToStore.userFloatNames().at(ii)<<" "<<electronToStore.userFloat(electronToStore.userFloatNames().at(ii))<<"\n";
-    // }
+    for (std::size_t ii = 0; ii < electronToStore.userFloatNames().size(); ii ++ )
+    {
+        std::cout<<"electron "<<i<<" "<<electronToStore.userFloatNames().at(ii)<<" "<<electronToStore.userFloat(electronToStore.userFloatNames().at(ii))<<"\n";
+    }
     // dump userFloats -- test end
 
 

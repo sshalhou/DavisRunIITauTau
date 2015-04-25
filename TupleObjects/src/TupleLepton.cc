@@ -3,35 +3,33 @@
 
 TupleLepton::TupleLepton()
 {
-  m_p4.SetXYZT(NAN,NAN,NAN,NAN);
-  m_isElectron = 0;
-  m_isMuon = 0;
-  m_isTau = 0;
-
+	m_leptonType = 0;
 }
 
 void TupleLepton::fill(pat::Electron dummy)
 {
 
-	m_p4 = dummy.p4();
-	m_isElectron = 1;
+	m_Electron.push_back(dummy);
+	m_leptonType = TupleLeptonTypes::anElectron;
 
 }
 
 
 void TupleLepton::fill(pat::Muon dummy)
 {
+	m_Muon.push_back(dummy);
+	m_leptonType = TupleLeptonTypes::aMuon;
 
-	m_p4 = dummy.p4();
-	m_isMuon = 1;
 
 }
 
 void TupleLepton::fill(pat::Tau dummy)
 {
 
-	m_p4 = dummy.p4();
-	m_isTau = 1;
+
+	m_Tau.push_back(dummy);
+	m_leptonType = TupleLeptonTypes::aTau;
+
 
 }
 
@@ -39,9 +37,7 @@ void TupleLepton::fill(pat::Tau dummy)
 //////////////////
 // accessors
 //////////////////
-LorentzVector TupleLepton::p4() const { return m_p4; }
-bool TupleLepton::isElectron() const { return m_isElectron; }
-bool TupleLepton::isMuon() const { return m_isMuon; }
-bool TupleLepton::isTau() const { return m_isTau; }
-
-
+int TupleLepton::leptonType() const { return m_leptonType; }
+std::vector<pat::Electron> TupleLepton::Electron() const { return m_Electron; }
+std::vector<pat::Muon> TupleLepton::Muon() const { return m_Muon; }
+std::vector<pat::Tau> TupleLepton::Tau() const { return m_Tau; }

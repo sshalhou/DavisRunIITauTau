@@ -98,7 +98,7 @@ void muonClones::fillUserFloats()
 
 	  	for (std::size_t a = 0; a< userFloatNames.size(); ++a )
 	  	{
-		  	m.addUserFloat("acceptedTriggerPrescale_"+userFloatNames[a],userFloatVals[a]);
+		  	m.addUserFloat(userFloatNames[a],userFloatVals[a]);
 	  	}
 
 
@@ -129,7 +129,7 @@ void muonClones::fillUserFloats()
 	  	double deltaBeta = 0.5;
 	  	double relIso = IsoTool.muonRelIso(m,deltaBeta);
 
-	  	m.addUserFloat("relIso",relIso);
+	  	m.addUserFloat("DeltaBetaCorrectedRelIso",relIso);
 
 
 	  	///////////////////////////

@@ -73,6 +73,7 @@ private:
   edm::InputTag tauSrc_;
   edm::InputTag electronSrc_;
   edm::InputTag muonSrc_;
+  edm::InputTag mvaMETSrc_;
 
   string NAME_;
 
@@ -93,7 +94,8 @@ private:
 TupleCandidateEventProducer::TupleCandidateEventProducer(const edm::ParameterSet& iConfig):
 tauSrc_(iConfig.getParameter<edm::InputTag>("tauSrc" )),
 electronSrc_(iConfig.getParameter<edm::InputTag>("electronSrc" )),
-muonSrc_(iConfig.getParameter<edm::InputTag>("muonSrc" ))
+muonSrc_(iConfig.getParameter<edm::InputTag>("muonSrc" )),
+mvaMETSrc_(iConfig.getParameter<edm::InputTag>("mvaMETSrc" ))
 {
 
 
@@ -147,6 +149,10 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
   edm::Handle<edm::View<pat::Muon> > muons;
   iEvent.getByLabel(muonSrc_,muons);
 
+  // get mvaMET collection
+  //edm::Handle<edm::View<reco::PFMET> > mvamets;
+  edm::Handle <std::vector<reco::PFMET> >  mvamets;
+  iEvent.getByLabel(mvaMETSrc_,mvamets);
 
   auto_ptr<TupleCandidateEventCollection> TupleCandidateEvents (new TupleCandidateEventCollection);
 
@@ -164,6 +170,7 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
 
           TupleCandidateEvent CurrentCandidateEvent;
           CurrentCandidateEvent.set_pair(electrons->at(i),electrons->at(ii));
+          CurrentCandidateEvent.set_mvaMET(mvamets->at(0));
           TupleCandidateEvents->push_back(CurrentCandidateEvent);
 
       }
@@ -182,6 +189,7 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
 
           TupleCandidateEvent CurrentCandidateEvent;
           CurrentCandidateEvent.set_pair(electrons->at(i),muons->at(ii));
+          CurrentCandidateEvent.set_mvaMET(mvamets->at(0));
           TupleCandidateEvents->push_back(CurrentCandidateEvent);
 
       }
@@ -199,8 +207,13 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
 
           TupleCandidateEvent CurrentCandidateEvent;
           CurrentCandidateEvent.set_pair(electrons->at(i),taus->at(ii));
+          CurrentCandidateEvent.set_mvaMET(mvamets->at(0));          
+          std::cout<<" create a veto lepton index finder \n";
+          std::cout<<" to allow you to embed the veto e or m into the pair if needded\n";
+          std::cout<<" this means that the customSlimmed stuff has to be loose enough to \n";
+          std::cout<<" have both selected and veto leptons.\n";
           TupleCandidateEvents->push_back(CurrentCandidateEvent);
-
+        
       }
     }
   }  
@@ -215,6 +228,7 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
 
           TupleCandidateEvent CurrentCandidateEvent;
           CurrentCandidateEvent.set_pair(muons->at(i),muons->at(ii));
+          CurrentCandidateEvent.set_mvaMET(mvamets->at(0));          
           TupleCandidateEvents->push_back(CurrentCandidateEvent);
 
       }
@@ -235,6 +249,7 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
 
           TupleCandidateEvent CurrentCandidateEvent;
           CurrentCandidateEvent.set_pair(muons->at(i),taus->at(ii));
+          CurrentCandidateEvent.set_mvaMET(mvamets->at(0));          
           TupleCandidateEvents->push_back(CurrentCandidateEvent);
 
       }
@@ -254,6 +269,7 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
 
           TupleCandidateEvent CurrentCandidateEvent;
           CurrentCandidateEvent.set_pair(taus->at(i),taus->at(ii));
+          CurrentCandidateEvent.set_mvaMET(mvamets->at(0));          
           TupleCandidateEvents->push_back(CurrentCandidateEvent);
 
       }

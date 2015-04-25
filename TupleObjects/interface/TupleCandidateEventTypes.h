@@ -7,14 +7,14 @@
 #include <vector>
 #include <iostream>
 
-struct TupleCandidateEventTypes
+enum TupleCandidateEventTypes
 {
-    int EleEle;
-    int EleMuon;
-    int EleTau;
-    int MuonMuon;
-    int MuonTau;
-    int TauTau;
+     EleEle = 1,
+     EleMuon = 2,
+     EleTau = 3,
+     MuonMuon = 4,
+     MuonTau = 5,
+     TauTau = 6
 
 };
 

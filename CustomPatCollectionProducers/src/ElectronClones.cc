@@ -37,7 +37,9 @@ electronClones::electronClones(const slimmedPatElectronCollection& inputColl, co
 				const edm::TriggerNames &names_,
 				double trigMatchDRcut_,
 				std::vector<int> trigMatchTypes_,
-				std::vector<std::string> trigSummaryPathsAndFilters_):
+				std::vector<std::string> trigSummaryPathsAndFilters_,
+				std::vector<std::string> rhoLabels_,
+				std::vector<double> rhoValues_):
 		electrons(inputColl),
 		first_vertex(input_vertex),
 		MVA_PHYS14nonTrig(MVA_PHYS14nonTrig_),
@@ -48,7 +50,9 @@ electronClones::electronClones(const slimmedPatElectronCollection& inputColl, co
 		names(names_),
 		trigMatchDRcut(trigMatchDRcut_),
 		trigMatchTypes(trigMatchTypes_),
-		trigSummaryPathsAndFilters(trigSummaryPathsAndFilters_)
+		trigSummaryPathsAndFilters(trigSummaryPathsAndFilters_),
+		rhoLabels(rhoLabels_),
+		rhoValues(rhoValues_)
 		{
 
 		 clone();
@@ -105,7 +109,7 @@ void electronClones::fillUserFloats()
 	  	{
 	  		//std::cout<<"ele "<<i<<" "<<userFloatNames[a]<<" "<<userFloatVals[a]<<"\n";
 
-		  	e.addUserFloat("acceptedTriggerPrescale_"+userFloatNames[a],userFloatVals[a]);
+		  	e.addUserFloat(userFloatNames[a],userFloatVals[a]);
 
 
 	  	}
@@ -128,6 +132,14 @@ void electronClones::fillUserFloats()
 	  	e.addUserFloat("dxy",dxy);
 	  	e.addUserFloat("dz",dz);
 
+	  	// push in the rho variants
+
+	  	for (std::size_t x = 0; x<rhoLabels.size(); ++x )
+	  	{
+	  		e.addUserFloat(rhoLabels[x],rhoValues[x]);
+
+	  	}
+
 	  	////////////////////////////
 	  	// evaluate the electron's relIso
 
@@ -135,7 +147,7 @@ void electronClones::fillUserFloats()
 	  	double deltaBeta = 0.5;
 	  	double relIso = IsoTool.electronRelIso(e,deltaBeta);
 
-	  	e.addUserFloat("relIso",relIso);
+	  	e.addUserFloat("DeltaBetaCorrectedRelIso",relIso);
 
 
 	  	///////////////////////////
