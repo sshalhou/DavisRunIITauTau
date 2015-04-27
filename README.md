@@ -25,6 +25,31 @@ For Quick Start (on SL6 only):
 
 		(git cms-init) # might be needed
 
+- To Start 
+
+		git cms-addpkg PhysicsTools/PatAlgos
+
+		git cms-addpkg FWCore/Version
+
+
+
+- for MVA MET (13 TeV Training) & MET SIG: 
+
+		(see : https://twiki.cern.ch/twiki/bin/view/CMS/MVAMet#CMSSW_7_2_X_requires_slc6_MiniAO)
+
+		git-cms-merge-topic -u cms-met:72X-13TeV-Training-30Jan15
+
+		git-cms-merge-topic -u cms-met:72X-MetSig-150311
+
+
+
+		cd RecoMET/METPUSubtraction/
+
+		git clone https://github.com/rfriese/RecoMET-METPUSubtraction data
+
+		cd -
+
+
 - For Electron MVA ID (Phys14 version)
 
 		git cms-merge-topic HuguesBrun:trigElecIdInCommonIsoSelection720
@@ -40,26 +65,10 @@ For Quick Start (on SL6 only):
 
 		cd -
 
-- for MVA MET (13 TeV Training) & MET SIG: 
 
-		(see : https://twiki.cern.ch/twiki/bin/view/CMS/MVAMet#CMSSW_7_2_X_requires_slc6_MiniAO)
+- SVMass code :
 
-
-
-		git cms-addpkg PhysicsTools/PatAlgos
-
-		git cms-addpkg FWCore/Version
-
-		git-cms-merge-topic -u cms-met:72X-MetSig-150311
-
-
-		git-cms-merge-topic -u cms-met:72X-13TeV-Training-30Jan15
-
-		cd RecoMET/METPUSubtraction/
-
-		git clone https://github.com/rfriese/RecoMET-METPUSubtraction data
-
-		cd -
+		git clone https://github.com/veelken/SVfit_standalone TauAnalysis/SVfitStandalone
 
 - Clone the Davis Code :
 
@@ -72,5 +81,6 @@ For Quick Start (on SL6 only):
 - Test Run (remember to change the miniAOD input file):
 		
 		cmsRun DavisRunIITauTau/runIIntuple_v0.py
+
 
 

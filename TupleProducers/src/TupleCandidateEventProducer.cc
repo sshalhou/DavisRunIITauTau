@@ -69,6 +69,7 @@ private:
   virtual void beginLuminosityBlock(edm::LuminosityBlock&, edm::EventSetup const&);
   virtual void endLuminosityBlock(edm::LuminosityBlock&, edm::EventSetup const&);
   double computeSVMass(reco::PFMET,std::vector<svFitStandalone::MeasuredTauLepton>);
+  double computeSVMass(pat::MET,std::vector<svFitStandalone::MeasuredTauLepton>,double,double,double,double);
 
 
   // ----------member data ---------------------------
@@ -86,6 +87,11 @@ private:
   bool useMVAMET_;
   double logMterm_;
   int svMassVerbose_;
+  edm::InputTag sig00_;
+  edm::InputTag sig10_;
+  edm::InputTag sig01_;
+  edm::InputTag sig11_;
+
 };
 
 //
@@ -109,10 +115,15 @@ mvaMETSrc_(iConfig.getParameter<edm::InputTag>("mvaMETSrc" )),
 electronVetoSrc_(iConfig.getParameter<edm::InputTag>("electronVetoSrc" )),
 muonVetoSrc_(iConfig.getParameter<edm::InputTag>("muonVetoSrc" )),
 vetoDeltaR_(iConfig.getParameter<double>("vetoDeltaR" )),
+NAME_(iConfig.getParameter<string>("NAME" )),
 doSVMass_(iConfig.getParameter<bool>("doSVMass" )),
 useMVAMET_(iConfig.getParameter<bool>("useMVAMET" )),
 logMterm_(iConfig.getParameter<double>("logMterm" )),
-svMassVerbose_(iConfig.getParameter<int>("svMassVerbose" ))
+svMassVerbose_(iConfig.getParameter<int>("svMassVerbose" )),
+sig00_(iConfig.getParameter<edm::InputTag>("sig00" )),
+sig10_(iConfig.getParameter<edm::InputTag>("sig10" )),
+sig01_(iConfig.getParameter<edm::InputTag>("sig01" )),
+sig11_(iConfig.getParameter<edm::InputTag>("sig11" ))
 {
 
 
@@ -180,10 +191,28 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
   iEvent.getByLabel(mvaMETSrc_,mvamets);
 
   // get pfMET collection
-  edm::Handle <std::vector<reco::PFMET> >  pfmets;
+  edm::Handle <std::vector<pat::MET> >  pfmets;
   iEvent.getByLabel(pfMETSrc_,pfmets);
 
   auto_ptr<TupleCandidateEventCollection> TupleCandidateEvents (new TupleCandidateEventCollection);
+
+
+  // get met sig matrix
+
+
+  edm::Handle<double> sig00;
+  iEvent.getByLabel(sig00_,sig00);
+
+  edm::Handle<double> sig01;
+  iEvent.getByLabel(sig01_,sig01);
+
+
+  edm::Handle<double> sig10;
+  iEvent.getByLabel(sig10_,sig10);
+
+
+  edm::Handle<double> sig11;
+  iEvent.getByLabel(sig11_,sig11);
 
 
 
@@ -252,7 +281,7 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
         if(useMVAMET_)
           sv_mass = computeSVMass(mvamets->at(0),measuredTauLeptons);
         else
-          sv_mass = computeSVMass(pfmets->at(0),measuredTauLeptons);
+          sv_mass = computeSVMass(pfmets->at(0),measuredTauLeptons,*sig00,*sig10,*sig01,*sig11);
 
 
 
@@ -334,7 +363,7 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
         if(useMVAMET_)
           sv_mass = computeSVMass(mvamets->at(0),measuredTauLeptons);
         else
-          sv_mass = computeSVMass(pfmets->at(0),measuredTauLeptons);
+          sv_mass = computeSVMass(pfmets->at(0),measuredTauLeptons,*sig00,*sig10,*sig01,*sig11);
 
 
 
@@ -411,7 +440,7 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
         if(useMVAMET_)
           sv_mass = computeSVMass(mvamets->at(0),measuredTauLeptons);
         else
-          sv_mass = computeSVMass(pfmets->at(0),measuredTauLeptons);
+          sv_mass = computeSVMass(pfmets->at(0),measuredTauLeptons,*sig00,*sig10,*sig01,*sig11);
 
 
 
@@ -489,7 +518,7 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
         if(useMVAMET_)
           sv_mass = computeSVMass(mvamets->at(0),measuredTauLeptons);
         else
-          sv_mass = computeSVMass(pfmets->at(0),measuredTauLeptons);
+          sv_mass = computeSVMass(pfmets->at(0),measuredTauLeptons,*sig00,*sig10,*sig01,*sig11);
 
 
 
@@ -572,7 +601,7 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
         if(useMVAMET_)
           sv_mass = computeSVMass(mvamets->at(0),measuredTauLeptons);
         else
-          sv_mass = computeSVMass(pfmets->at(0),measuredTauLeptons);
+          sv_mass = computeSVMass(pfmets->at(0),measuredTauLeptons,*sig00,*sig10,*sig01,*sig11);
 
 
 
@@ -654,7 +683,7 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
         if(useMVAMET_)
           sv_mass = computeSVMass(mvamets->at(0),measuredTauLeptons);
         else
-          sv_mass = computeSVMass(pfmets->at(0),measuredTauLeptons);
+          sv_mass = computeSVMass(pfmets->at(0),measuredTauLeptons,*sig00,*sig10,*sig01,*sig11);
 
 
 
@@ -765,21 +794,52 @@ double TupleCandidateEventProducer::computeSVMass(reco::PFMET MET,std::vector<sv
   covMET[1][1] = MET.getSignificanceMatrix()[1][1];
   if (svMassVerbose_)  covMET.Print();
 
-  SVfitStandaloneAlgorithm svFitAlgorithm(MTL, MET.px(),MET.py(), covMET, svMassVerbose_);
+ SVfitStandaloneAlgorithm svFitAlgorithm(MTL, MET.px(),MET.py(), covMET, svMassVerbose_);
 
-  if(logMterm_>0)  svFitAlgorithm.addLogM(true, logMterm_);
-  else svFitAlgorithm.addLogM(false, 0.);
+ if(logMterm_>0)  svFitAlgorithm.addLogM(true, logMterm_);
+ else svFitAlgorithm.addLogM(false, 0.);
 
 
-  svFitAlgorithm.integrateVEGAS();
-  double retSVmass = svFitAlgorithm.getMass();
+ svFitAlgorithm.integrateVEGAS();
+ double retSVmass = svFitAlgorithm.getMass();
 
-  return retSVmass;
+ return retSVmass;
+
 
 }
 
 
 
+double TupleCandidateEventProducer::computeSVMass(pat::MET MET,std::vector<svFitStandalone::MeasuredTauLepton> MTL,
+ double sig00, double sig10, double sig01, double sig11)
+{
+
+/* this is a mess since MET SIG is not in PHYS14 samples for slimmedMET */
+  if(!doSVMass_) return 0.0;
+
+
+
+  // PFMET significance matrix
+  TMatrixD covMET(2, 2); 
+  covMET[0][0] = sig00;
+  covMET[1][0] = sig10;
+  covMET[0][1] = sig01;
+  covMET[1][1] = sig11;
+  if (svMassVerbose_)  covMET.Print();
+
+ SVfitStandaloneAlgorithm svFitAlgorithm(MTL, MET.px(),MET.py(), covMET, svMassVerbose_);
+
+ if(logMterm_>0)  svFitAlgorithm.addLogM(true, logMterm_);
+ else svFitAlgorithm.addLogM(false, 0.);
+
+
+ svFitAlgorithm.integrateVEGAS();
+ double retSVmass = svFitAlgorithm.getMass();
+
+ return retSVmass;
+
+
+}
 
 //define this as a plug-in
 DEFINE_FWK_MODULE(TupleCandidateEventProducer);

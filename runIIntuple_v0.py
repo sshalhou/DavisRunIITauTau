@@ -232,8 +232,10 @@ mvaMEThelper = PairWiseMetHelper(process)
 # this is unrelated to mvaMET
 
 from RecoMET.METProducers.PFMET_cfi import pfMet
+process.load("RecoMET/METProducers.METSignificance_cfi")
+process.load("RecoMET/METProducers.METSignificanceParams_cfi")
 process.pfMet = pfMet.clone(src = "packedPFCandidates")
-process.pfMet.calculateSignificance = False 
+process.pfMet.calculateSignificance = True
 # before setting the above to true need to follow 
 # https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideMETSignificance
 
@@ -250,17 +252,24 @@ process.TupleEventPair = cms.EDProducer('TupleCandidateEventProducer' ,
 							tauSrc =cms.InputTag("singleTauEsNominal0","singleTauEsNominal0","Ntuple"),
 							electronSrc =cms.InputTag("singleElectron0","singleElectron0","Ntuple"),
 							muonSrc =cms.InputTag(''),
-							pfMETSrc = cms.InputTag("pfMet::Ntuple"),
+							pfMETSrc = cms.InputTag("slimmedMETs"),
 							mvaMETSrc = cms.InputTag("mvaMetElectronxTauEsNominal0x0::Ntuple"),
 						    electronVetoSrc =cms.InputTag("filteredVetoElectrons","","Ntuple"),
 						    muonVetoSrc = cms.InputTag("filteredVetoMuons","","Ntuple"),				
-						    vetoDeltaR = cms.double(0.1), # should be small since don't want one of the pair in the veto list
+						    # should be small since don't want one of the pair in the veto list
+						    # note : this is used for DR(leg1, leg2) >, and for overlap removal from the
+						    # veto e and mu lists
+						    vetoDeltaR = cms.double(0.1), 
 							NAME=cms.string("TuplePair"),
 						    doSVMass = cms.bool(True),
 						    useMVAMET = cms.bool(True),
 						    logMterm = cms.double(2.),
-						    svMassVerbose = cms.int32(1)
-												)
+						    svMassVerbose = cms.int32(1),
+						    sig00 = cms.InputTag("METSignificance:CovarianceMatrix00:Ntuple"),
+						    sig10 = cms.InputTag("METSignificance:CovarianceMatrix10:Ntuple"),
+						    sig01 = cms.InputTag("METSignificance:CovarianceMatrix01:Ntuple"),
+						    sig11 = cms.InputTag("METSignificance:CovarianceMatrix11:Ntuple")
+									)										
 
 
 # end test -- pair producer
@@ -333,7 +342,8 @@ mvaMEThelper.runSingleLeptonProducers(process.p)
 mvaMEThelper.runPairWiseMets(process.p)
 # test - end
 
-process.p *= process.pfMet
+process.p *= process.METSignificance
+#process.p *= process.pfMet
 process.p *=process.TupleEventPair
 
 
