@@ -33,6 +33,58 @@ LeptonRelativeIsolationTool::LeptonRelativeIsolationTool(){}
 LeptonRelativeIsolationTool::~LeptonRelativeIsolationTool(){}
 
 
+// muon rho * EA corrected rel iso
+
+double LeptonRelativeIsolationTool::muonEffAreaRhoRelIso(const pat::Muon & m, double rho, float EffArea)
+{
+
+	double ReturnVal = 999.0;
+	double PT = m.p4().Pt();
+	if (PT == 0) {return ReturnVal;}
+
+	// should be careful to add FSR correction if recommended in the future
+
+	// these are taken as is from mini-AOD slimmedElectrons
+
+	double chargedHadron = m.chargedHadronIso();
+	double neutralHadron = m.neutralHadronIso();
+	double photonIso = m.photonIso();
+	//double PUchargedHadron = m.puChargedHadronIso();
+
+
+	ReturnVal = chargedHadron + std::max(0.0, neutralHadron + photonIso -  rho * EffArea  );
+	ReturnVal = ReturnVal/PT;
+	return ReturnVal;
+
+}
+
+
+// electron rho * EA corrected rel iso
+
+double LeptonRelativeIsolationTool::electronEffAreaRhoRelIso(const pat::Electron & e, double rho, float EffArea)
+{
+
+	double ReturnVal = 999.0;
+	double PT = e.p4().Pt();
+	if (PT == 0) {return ReturnVal;}
+
+	// should be careful to add FSR correction if recommended in the future
+
+	// these are taken as is from mini-AOD slimmedElectrons
+
+	double chargedHadron = e.chargedHadronIso();
+	double neutralHadron = e.neutralHadronIso();
+	double photonIso = e.photonIso();
+	//double PUchargedHadron = e.puChargedHadronIso();
+
+
+	ReturnVal = chargedHadron + std::max(0.0, neutralHadron + photonIso -  rho * EffArea  );
+	ReturnVal = ReturnVal/PT;
+	return ReturnVal;
+
+}
+
+
 // electron relIso
 
 double LeptonRelativeIsolationTool::electronRelIso(const pat::Electron & e, double deltaBeta)

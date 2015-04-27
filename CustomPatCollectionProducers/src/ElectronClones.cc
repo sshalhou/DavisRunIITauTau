@@ -132,18 +132,40 @@ void electronClones::fillUserFloats()
 	  	e.addUserFloat("dxy",dxy);
 	  	e.addUserFloat("dz",dz);
 
-	  	// push in the rho variants
+
+
+	  	// compute the electrons' effective area 
+	  	// for now hardcode to 2012 settings eventually need
+	  	// this to be drawn from a config file
+
+	  	float abseta = fabs(e.superCluster()->eta());
+  		float EffArea = ElectronEffectiveArea::GetElectronEffectiveArea(
+  						ElectronEffectiveArea::kEleGammaAndNeutralHadronIso04,
+					    abseta, ElectronEffectiveArea::kEleEAData2012);
+
+
+	  	e.addUserFloat("EffectiveArea",EffArea);
+
+	  	// iso tool 
+	  	LeptonRelativeIsolationTool IsoTool;
+
+
+	  	// push in the rho variants, and the relative isol based on
+	  	// each
 
 	  	for (std::size_t x = 0; x<rhoLabels.size(); ++x )
 	  	{
 	  		e.addUserFloat(rhoLabels[x],rhoValues[x]);
+
+	  		float tempIso = IsoTool.electronEffAreaRhoRelIso(e, rhoValues[x],EffArea);
+	  		e.addUserFloat("relativeIsol_"+rhoLabels[x],tempIso);
+
 
 	  	}
 
 	  	////////////////////////////
 	  	// evaluate the electron's relIso
 
-	  	LeptonRelativeIsolationTool IsoTool;
 	  	double deltaBeta = 0.5;
 	  	double relIso = IsoTool.electronRelIso(e,deltaBeta);
 

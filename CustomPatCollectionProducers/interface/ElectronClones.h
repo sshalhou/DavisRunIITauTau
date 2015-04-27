@@ -30,6 +30,7 @@
 
 #include "DavisRunIITauTau/CustomPatCollectionProducers/interface/TriggerInfoEmbeddingTool.h"
 
+#include "EgammaAnalysis/ElectronTools/interface/ElectronEffectiveArea.h"
 
 
 

@@ -20,6 +20,7 @@
 #include "DavisRunIITauTau/CustomPatCollectionProducers/interface/LeptonRelativeIsolationTool.h"
 
 #include "DavisRunIITauTau/CustomPatCollectionProducers/interface/TriggerInfoEmbeddingTool.h"
+#include "Muon/MuonAnalysisTools/interface/MuonEffectiveArea.h"
 
 
 #include "TH1D.h"
@@ -53,6 +54,9 @@ class muonClones
 	std::vector<int> trigMatchTypes;
 	std::vector<std::string> trigSummaryPathsAndFilters;
 
+	// rho related info
+	std::vector<std::string> rhoLabels;
+	std::vector<double> rhoValues;
 
 
 	public:
@@ -63,7 +67,9 @@ class muonClones
 			const edm::TriggerNames &,
 			double,
 			std::vector<int>,
-			std::vector<std::string>);
+			std::vector<std::string>,
+			std::vector<std::string>,
+			std::vector<double>);
 
 		virtual ~muonClones();
 

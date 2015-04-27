@@ -28,7 +28,7 @@
 #include "DataFormats/GsfTrackReco/interface/GsfTrackFwd.h"
 #include "DataFormats/Common/interface/ValueMap.h"
 #include "EgammaAnalysis/ElectronTools/interface/ElectronEffectiveArea.h"
-
+#include "Muon/MuonAnalysisTools/interface/MuonEffectiveArea.h"
 
 #include "TH1D.h"
 #include <map>
@@ -56,7 +56,8 @@ class LeptonRelativeIsolationTool
 		double tauRelIso(const pat::Tau &, double deltaBeta);		
 
 		// effective area & rho corrected isolations
-		double electronEArhoRelIso(const pat::Electron &, double rho, float EA);
+		double electronEffAreaRhoRelIso(const pat::Electron &, double , float );
+		double muonEffAreaRhoRelIso(const pat::Muon &, double , float );
   
 
 

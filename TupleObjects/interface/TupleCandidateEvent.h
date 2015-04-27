@@ -36,7 +36,9 @@ public:
   TupleCandidateEvent();
   virtual ~TupleCandidateEvent(){}
 
-  // pair type 
+  // pair type treated a bit differently then usual member
+  // data since determined automatically based on the overload called
+
   int CandidateEventType; 
 
   // setters
@@ -50,14 +52,16 @@ public:
   void set_mvaMET(reco::PFMET); 
   void set_vetoElectron(pat::Electron);
   void set_vetoMuon(pat::Muon);
+  void set_SVMass(double);
 
-
+  // getters
+  
   TupleLepton leg1() const;
   TupleLepton leg2() const;
   std::vector<reco::PFMET>  mvaMET() const;
   std::vector<pat::Electron> vetoElectron() const;
   std::vector<pat::Muon> vetoMuon() const;
-
+  std::vector<double> SVMass() const;
 
 private:
 
@@ -66,7 +70,7 @@ private:
   std::vector<reco::PFMET>  m_mvaMET;
   std::vector<pat::Electron> m_vetoElectron;
   std::vector<pat::Muon> m_vetoMuon;
-
+  std::vector<double> m_SVMass;
 
 };
 

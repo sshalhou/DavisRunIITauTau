@@ -6,7 +6,6 @@ TupleCandidateEvent::TupleCandidateEvent()
 {
 
 	CandidateEventType = 0;
-
 }
 
 ////////////////
@@ -82,6 +81,11 @@ void TupleCandidateEvent::set_vetoElectron(pat::Electron dummy_)
 		m_vetoElectron.push_back(dummy_);
 	}
 
+void TupleCandidateEvent::set_SVMass(double dummy_) 
+	{ 
+		m_SVMass.push_back(dummy_);
+	}
+
 
 //////////////////
 // accessors
@@ -91,6 +95,6 @@ TupleLepton TupleCandidateEvent::leg2() const { return m_leg2; }
 std::vector<reco::PFMET> TupleCandidateEvent::mvaMET() const { return m_mvaMET; }
 std::vector<pat::Electron> TupleCandidateEvent::vetoElectron() const { return m_vetoElectron; }
 std::vector<pat::Muon> TupleCandidateEvent::vetoMuon() const { return m_vetoMuon; }
-
+std::vector<double> TupleCandidateEvent::SVMass() const {return m_SVMass;} 
 
 

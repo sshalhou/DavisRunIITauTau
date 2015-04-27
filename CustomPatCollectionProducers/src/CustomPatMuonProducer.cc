@@ -57,6 +57,7 @@ using namespace std;
 using namespace edm;
 using namespace pat;
 typedef std::vector<pat::Muon> PatMuonCollection;
+typedef std::vector<edm::InputTag> vInputTag;
 
 
 
@@ -91,7 +92,8 @@ private:
   double triggerMatchDRSrc_;
   std::vector<int> triggerMatchTypesSrc_;
   std::vector<std::string> triggerMatchPathsAndFiltersSrc_;
- 
+  vInputTag rhoSources_;
+
 };
 
 //
@@ -115,7 +117,8 @@ triggerPreScaleSrc_(consumes<pat::PackedTriggerPrescales>(iConfig.getParameter<e
 triggerObjectSrc_(consumes<pat::TriggerObjectStandAloneCollection>(iConfig.getParameter<edm::InputTag>("triggerObjectSrc"))),
 triggerMatchDRSrc_(iConfig.getParameter<double>("triggerMatchDRSrc" )),
 triggerMatchTypesSrc_(iConfig.getParameter<std::vector<int>>("triggerMatchTypesSrc" )),
-triggerMatchPathsAndFiltersSrc_(iConfig.getParameter<std::vector<std::string>>("triggerMatchPathsAndFiltersSrc" ))
+triggerMatchPathsAndFiltersSrc_(iConfig.getParameter<std::vector<std::string>>("triggerMatchPathsAndFiltersSrc" )),
+rhoSources_(iConfig.getParameter<vInputTag>("rhoSources" ))
 {
 
   produces<PatMuonCollection>(NAME_).setBranchAlias(NAME_);
@@ -165,6 +168,24 @@ CustomPatMuonProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup
   edm::Handle<edm::View<pat::Muon> > muons;
   iEvent.getByLabel(muonSrc_,muons);
 
+ // get the rho variants
+
+  std::vector<std::string> rhoNames;
+  std::vector<double> rhos;
+
+  for(  edm::InputTag rs : rhoSources_ )
+  {
+
+  edm::Handle<double> arho;
+  iEvent.getByLabel(rs,arho);
+
+  rhoNames.push_back(rs.label());
+  rhos.push_back(*arho);
+  //std::cout<<rs.label()<<" "<<*arho<<std::endl;
+
+  }
+
+
 // get trigger-related collections
 
     edm::Handle<edm::TriggerResults> triggerBits;
@@ -179,7 +200,8 @@ CustomPatMuonProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup
 
 
   muonClones mu(muons,first_vertex,triggerBits,triggerObjects,triggerPreScales,names,
-                    triggerMatchDRSrc_,triggerMatchTypesSrc_,triggerMatchPathsAndFiltersSrc_); 
+                    triggerMatchDRSrc_,triggerMatchTypesSrc_,triggerMatchPathsAndFiltersSrc_,
+                    rhoNames,rhos);  
 
 
   auto_ptr<PatMuonCollection> storedMuons (new PatMuonCollection);
@@ -199,6 +221,12 @@ CustomPatMuonProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup
     // std::cout<<" -------------> dxy = "<<muonToStore.userFloat("dxy")<<std::endl;
     // std::cout<<" -------------> dz = "<<muonToStore.userFloat("dz")<<std::endl;
 
+    // dump userFloats -- test start
+    for (std::size_t ii = 0; ii < muonToStore.userFloatNames().size(); ii ++ )
+    {
+        std::cout<<"muon "<<i<<" "<<muonToStore.userFloatNames().at(ii)<<" "<<muonToStore.userFloat(muonToStore.userFloatNames().at(ii))<<"\n";
+    }
+    // dump userFloats -- test end
 
 
   }

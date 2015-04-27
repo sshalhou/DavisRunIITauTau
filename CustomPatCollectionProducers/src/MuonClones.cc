@@ -35,7 +35,9 @@ muonClones::muonClones(const slimmedPatMuonCollection& inputColl, const reco::Ve
 				const edm::TriggerNames &names_,
 				double trigMatchDRcut_,
 				std::vector<int> trigMatchTypes_,
-				std::vector<std::string> trigSummaryPathsAndFilters_):
+				std::vector<std::string> trigSummaryPathsAndFilters_,
+				std::vector<std::string> rhoLabels_,
+				std::vector<double> rhoValues_):
 		muons(inputColl),
 		first_vertex(input_vertex),
 		triggerBits(triggerBits_),
@@ -44,7 +46,9 @@ muonClones::muonClones(const slimmedPatMuonCollection& inputColl, const reco::Ve
 		names(names_),
 		trigMatchDRcut(trigMatchDRcut_),
 		trigMatchTypes(trigMatchTypes_),
-		trigSummaryPathsAndFilters(trigSummaryPathsAndFilters_)
+		trigSummaryPathsAndFilters(trigSummaryPathsAndFilters_),
+		rhoLabels(rhoLabels_),
+		rhoValues(rhoValues_)
 		{
 
 		 clone();
@@ -88,6 +92,15 @@ void muonClones::fillUserFloats()
 	  	pat::Muon m = clones[i];
 
 
+	  	///////////
+	  	// check some muon ID standards
+
+	  	// std::cout<<"isGlobalMuon "<<m.isGlobalMuon()<<"\n";
+	  	// std::cout<<"isTrackerMuon "<<m.isTrackerMuon()<<"\n";
+	  	// std::cout<<"isPFMuon "<<m.isPFMuon()<<"\n";
+
+
+
 		/////////////
 	  	// trigger info
 
@@ -122,10 +135,40 @@ void muonClones::fillUserFloats()
 	  	m.addUserFloat("dxy",dxy);
 	  	m.addUserFloat("dz",dz);
 
+
+
+	  	// compute the muons' effective area 
+	  	// for now hardcode to 2012 settings eventually need
+	  	// this to be drawn from a config file
+
+
+  		float EffArea = MuonEffectiveArea::GetMuonEffectiveArea(
+  						MuonEffectiveArea::kMuGammaAndNeutralHadronIso04,
+					    fabs(m.eta()), MuonEffectiveArea::kMuEAData2012);
+
+
+	  	m.addUserFloat("EffectiveArea",EffArea);
+
+	  	// iso tool 
+	  	LeptonRelativeIsolationTool IsoTool;
+
+	  	// push in the rho variants, and the relative isol based on
+	  	// each
+
+	  	for (std::size_t x = 0; x<rhoLabels.size(); ++x )
+	  	{
+	  		m.addUserFloat(rhoLabels[x],rhoValues[x]);
+
+	  		float tempIso = IsoTool.muonEffAreaRhoRelIso(m, rhoValues[x],EffArea);
+	  		m.addUserFloat("relativeIsol_"+rhoLabels[x],tempIso);
+
+
+	  	}
+
+
 	  	////////////////////////////
 	  	// evaluate the muon's relIso
 
-	  	LeptonRelativeIsolationTool IsoTool;
 	  	double deltaBeta = 0.5;
 	  	double relIso = IsoTool.muonRelIso(m,deltaBeta);
 

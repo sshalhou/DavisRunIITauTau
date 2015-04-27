@@ -120,7 +120,8 @@ process.customSlimmedMuons = cms.EDProducer('CustomPatMuonProducer' ,
 							triggerObjectSrc = cms.InputTag("selectedPatTrigger"),
 							triggerMatchDRSrc = muonTriggerMatch_DR,
 							triggerMatchTypesSrc = muonTriggerMatch_Types,
-							triggerMatchPathsAndFiltersSrc = muonTriggerPathsAndFilters
+							triggerMatchPathsAndFiltersSrc = muonTriggerPathsAndFilters,
+							rhoSources = rhoSourceList
 							                 )
 
 from DavisRunIITauTau.TupleConfigurations.ConfigTupleTriggers_cfi import (tauTriggerPathsAndFilters,
@@ -182,6 +183,26 @@ process.filteredCustomTausEsDown = cms.EDFilter("PATTauRefSelector",
 
 
 ###################################
+# apply e/mu veto filters onto 
+# custom slimmed lepton collections
+###################################
+
+from DavisRunIITauTau.TupleConfigurations.ConfigVetoElectrons_cfi import electronVetoFilter
+from DavisRunIITauTau.TupleConfigurations.ConfigVetoMuons_cfi import muonVetoFilter
+
+
+process.filteredVetoElectrons = cms.EDFilter("PATElectronRefSelector",
+	src = cms.InputTag('customSlimmedElectrons:customSlimmedElectrons:Ntuple'),
+	cut = electronVetoFilter
+	)
+
+process.filteredVetoMuons = cms.EDFilter("PATMuonRefSelector",
+	src = cms.InputTag('customSlimmedMuons:customSlimmedMuons:Ntuple'),
+	cut = muonVetoFilter
+	)
+
+
+###################################
 # double lepton requirement
 # should go here
 ###################################
@@ -221,38 +242,6 @@ process.pfMet.calculateSignificance = False
 # test -- end
 ################################
 
-###################################
-# create TupleLepton collections
-###################################
-
-
-process.TupleElectronsNominal = cms.EDProducer('TupleElectronProducer' ,
-							electronSrc =cms.InputTag('filteredCustomElectrons::Ntuple'),
-							NAME=cms.string("TupleElectronsNominal")
-							                 )
-
-
-process.TupleMuonsNominal = cms.EDProducer('TupleMuonProducer' ,
-							muonSrc =cms.InputTag('filteredCustomMuons::Ntuple'),
-							NAME=cms.string("TupleMuonsNominal")
-							                 )
-
-process.TupleTausNominal = cms.EDProducer('TupleTauProducer' ,
-							tauSrc =cms.InputTag('filteredCustomTausEsNominal::Ntuple'),
-							NAME=cms.string("TupleTausNominal")
-												)
-
-process.TupleTausUp = cms.EDProducer('TupleTauProducer' ,
-							tauSrc =cms.InputTag('filteredCustomTausEsUp::Ntuple'),
-							NAME=cms.string("TupleTausNominal")
-												)
-
-process.TupleTausDown = cms.EDProducer('TupleTauProducer' ,
-							tauSrc =cms.InputTag('filteredCustomTausEsDown::Ntuple'),
-							NAME=cms.string("TupleTausNominal")
-												)
-
-
 
 
 # test -- pair producer
@@ -261,8 +250,16 @@ process.TupleEventPair = cms.EDProducer('TupleCandidateEventProducer' ,
 							tauSrc =cms.InputTag("singleTauEsNominal0","singleTauEsNominal0","Ntuple"),
 							electronSrc =cms.InputTag("singleElectron0","singleElectron0","Ntuple"),
 							muonSrc =cms.InputTag(''),
+							pfMETSrc = cms.InputTag("pfMet::Ntuple"),
 							mvaMETSrc = cms.InputTag("mvaMetElectronxTauEsNominal0x0::Ntuple"),
-							NAME=cms.string("TuplePair")
+						    electronVetoSrc =cms.InputTag("filteredVetoElectrons","","Ntuple"),
+						    muonVetoSrc = cms.InputTag("filteredVetoMuons","","Ntuple"),				
+						    vetoDeltaR = cms.double(0.1), # should be small since don't want one of the pair in the veto list
+							NAME=cms.string("TuplePair"),
+						    doSVMass = cms.bool(True),
+						    useMVAMET = cms.bool(True),
+						    logMterm = cms.double(2.),
+						    svMassVerbose = cms.int32(1)
 												)
 
 
@@ -304,7 +301,7 @@ process.out.outputCommands +=['keep *_*_*_Ntuple']
 # asked to keep trigger info 
 
 process.out.outputCommands +=['keep *_l1extraParticles_*_*']
-process.out.outputCommands +=['drop *_*_*_*']
+#process.out.outputCommands +=['drop *_*_*_*']
 process.out.outputCommands += ['keep TupleCandidateEvents_*_*_Ntuple']
 
 process.p = cms.Path(process.myProducerLabel)
@@ -323,13 +320,12 @@ process.p *= process.filteredCustomTausEsUp
 process.p *= process.filteredCustomTausEsDown
 
 
+process.p *= process.filteredVetoElectrons
+process.p *= process.filteredVetoMuons
+
 process.p *= process.requireCandidateHiggsPair
 
-# process.p *= process.TupleElectronsNominal
-# process.p *= process.TupleMuonsNominal
-# process.p *= process.TupleTausNominal
-# process.p *= process.TupleTausUp
-# process.p *= process.TupleTausDown
+
 
 # test - start
 mvaMEThelper.initializeMVAmet(process.p)

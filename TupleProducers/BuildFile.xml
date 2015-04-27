@@ -19,6 +19,7 @@
 <use   name="TrackingTools/IPTools"/>
 <use   name="RecoEgamma/EgammaTools"/>
 <use   name="EgammaAnalysis/ElectronTools"/>
+<use   name="TauAnalysis/SVfitStandalone"/>
 <use   name="HLTrigger/HLTcore"/>
 <use   name="DataFormats/HLTReco"/>
 <use   name="clhep"/>
