@@ -23,13 +23,19 @@ from doubleHyphen_string_concatonator import doubleHyphen_string_concatonator
 #  the summary vstring just simplifies access
 #  to decode the value attached to each element of the vstring use :
 #
-#    -- finalValue :
-#   			if(isBoth) finalValue+= 1000.0;
-#   			if(isL3) finalValue+= 100.0;
-#   			if(isLF) finalValue+= 10.0;
-#   			if(FilterListPassed) finalValue+= 1.0;
-#				(so 1111.0 passes everything, 0.0 would fail all, etc.)
+#    -- final summary stores  :
+#			* based on https://twiki.cern.ch/twiki/bin/view/CMSPublic/
+#							SWGuidePATTrigger#TriggerObjectStandAlone
 #
+#   			isBoth 
+#   			isL3
+#   			isLF
+#
+#			* and one custom variable based on the AND or OR of all filters provided for a path
+#
+#   			FilterListPassed 
+#
+# 
 ####################################################################################################
 
 
@@ -43,7 +49,7 @@ tauTriggerMatch_DR = cms.double(0.5)
 
 electronTriggerMatch_Types = cms.vint32(+81, +82)
 muonTriggerMatch_Types = cms.vint32(+83)
-tauTriggerMatch_Types = cms.vint32(+84)
+tauTriggerMatch_Types = cms.vint32(-86,+84)
 
 
 ########################
@@ -133,7 +139,7 @@ muon_masterList_.append(mlist4_)
 tlist1_ = []
 tlist1_.append('trigObjectPathSummary_IsoMu17_Tau20') # summary variable name 
 tlist1_.append('HLT_IsoMu17_eta2p1_LooseIsoPFTau20_v1') # path
-tlist1_.append('OR') # AND or OR of the following filters
+tlist1_.append('AND') # AND or OR of the following filters
 tlist1_.append('hltL1sMu16erTauJet20er') # filter
 tlist1_.append('hltOverlapFilterIsoMu17LooseIsoPFTau20') # filter
 tau_masterList_.append(tlist1_)
@@ -144,7 +150,7 @@ tau_masterList_.append(tlist1_)
 tlist2_ = []
 tlist2_.append('trigObjectPathSummary_eleTau_Ele22_Tau20') #  summary variable name 
 tlist2_.append('HLT_Ele22_eta2p1_WP85_Gsf_LooseIsoPFTau20_v1') # path
-tlist2_.append('OR') # AND or OR of the following filters
+tlist2_.append('AND') # AND or OR of the following filters
 tlist2_.append('hltL1sL1IsoEG20erTauJet20er') # filter
 tlist2_.append('hltOverlapFilterIsoEle22WP85GsfLooseIsoPFTau20') # filter
 tau_masterList_.append(tlist2_)
@@ -153,7 +159,7 @@ tau_masterList_.append(tlist2_)
 tlist3_ = []
 tlist3_.append('trigObjectPathSummary_DoubleMediumIsoPFTau40') #  summary variable name 
 tlist3_.append('HLT_DoubleMediumIsoPFTau40_Trk1_eta2p1_Reg_v1') # path
-tlist3_.append('OR') # AND or OR of the following filters
+tlist3_.append('AND') # AND or OR of the following filters
 tlist3_.append('hltL1sDoubleTauJet36erORDoubleTauJet68er') # AND or OR of the following filters
 tlist3_.append('hltDoubleL2IsoTau35eta2p1') # filter
 tlist3_.append('hltDoublePFTau40TrackPt1MediumIsolationDz02Reg') # filter
@@ -164,10 +170,12 @@ tau_masterList_.append(tlist3_)
 tlist4_ = []
 tlist4_.append('trigObjectPathSummary_LooseIsoPFTau50') #  summary variable name 
 tlist4_.append('HLT_LooseIsoPFTau50_Trk30_eta2p1_MET120_v1') # path
-tlist4_.append('OR') # AND or OR of the following filters
+tlist4_.append('AND') # AND or OR of the following filters
 tlist4_.append('hltSingleL2Tau35eta2p1') # AND or OR of the following filters
 tlist4_.append('hltPFTau50TrackPt30LooseAbsOrRelIso') # filter
 tau_masterList_.append(tlist4_)
+
+
 
 ####################################################################################################
 # form the actual vsrting to be passed  -- electrons

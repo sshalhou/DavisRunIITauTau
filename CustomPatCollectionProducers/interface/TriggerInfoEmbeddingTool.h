@@ -81,18 +81,22 @@ class TriggerInfoEmbeddingTool
 		std::size_t getBestMatchedObject(TLorentzVector, std::vector<int> &, float);
 
 		/* fill std::vectors with trigger obj's DR, pt, eta, phi, mass */
-		void fillTrigObjKinematics(std::size_t, std::vector<std::string> &, std::vector<float> &);
+		void fillTrigObjKinematics(std::size_t, std::vector<std::string> &, std::vector<float> &, std::string);
 
 
 		/* fill std::vectors with trigger obj's IDs, paths & filters as concatenated strings (need 1.0 for values) */
 		void fillTrigObjInfo(std::size_t, std::vector<std::string> &, std::vector<float> &);
 
-		/* fill trigger summary info based on trigSummaryPathsAndFilters */
-		void fillTrigSummaryInfo(std::size_t, std::vector<std::string> &, std::vector<float> &);
-
 		/* fill trigger filter info for all filters passed by the matchedObject */
-		void fillTrigFilterInfo(std::size_t, std::vector<std::string> &, std::vector<float> &);
+		void fillTrigFilterInfo(std::size_t, std::vector<std::string> &, std::vector<float> &, std::string, std::vector<std::string> &);
 
+
+		/* fill trigger summary info based on trigSummaryPathsAndFilters */
+		/* calls fillTrigFilterInfo & fillTrigObjKinematics */
+
+		void TrigSummaryInfoHelper(TLorentzVector, std::vector<std::string> &, std::vector<float> &);
+
+		void fillTrigSummaryInfo(std::size_t, std::vector<std::string> &, std::vector<float> &, std::vector<std::string>);
 
 
 };

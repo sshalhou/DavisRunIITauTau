@@ -221,10 +221,10 @@ CustomPatTauProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
 
 
     //dump userFloats -- test start
-    // for (std::size_t ii = 0; ii < TauToStoreNominal.userFloatNames().size(); ii ++ )
-    // {
-    //     std::cout<<"nominal tau "<<i<<" "<<TauToStoreNominal.userFloatNames().at(ii)<<" "<<TauToStoreNominal.userFloat(TauToStoreNominal.userFloatNames().at(ii))<<"\n";
-    // }
+    for (std::size_t ii = 0; ii < TauToStoreNominal.userFloatNames().size(); ii ++ )
+    {
+        std::cout<<"nominal tau "<<i<<" "<<TauToStoreNominal.userFloatNames().at(ii)<<" "<<TauToStoreNominal.userFloat(TauToStoreNominal.userFloatNames().at(ii))<<"\n";
+    }
     
     // for (std::size_t ii = 0; ii < TauToStoreUp.userFloatNames().size(); ii ++ )
     // {

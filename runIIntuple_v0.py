@@ -13,6 +13,7 @@ process.myProducerLabel = cms.EDProducer('Ntuple')
 
 # import of standard configurations
 process.load("FWCore.MessageService.MessageLogger_cfi")
+process.MessageLogger.cerr.FwkReport.reportEvery = 1000
 
 # mva MET --start
 process.load('Configuration.StandardSequences.Services_cff')
@@ -240,40 +241,6 @@ process.pfMet.calculateSignificance = True
 # https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideMETSignificance
 
 
-###############################
-# test -- end
-################################
-
-
-
-# test -- pair producer
-
-process.TupleEventPair = cms.EDProducer('TupleCandidateEventProducer' ,
-							tauSrc =cms.InputTag("singleTauEsNominal0","singleTauEsNominal0","Ntuple"),
-							electronSrc =cms.InputTag("singleElectron0","singleElectron0","Ntuple"),
-							muonSrc =cms.InputTag(''),
-							pfMETSrc = cms.InputTag("slimmedMETs"),
-							mvaMETSrc = cms.InputTag("mvaMetElectronxTauEsNominal0x0::Ntuple"),
-						    electronVetoSrc =cms.InputTag("filteredVetoElectrons","","Ntuple"),
-						    muonVetoSrc = cms.InputTag("filteredVetoMuons","","Ntuple"),				
-						    # should be small since don't want one of the pair in the veto list
-						    # note : this is used for DR(leg1, leg2) >, and for overlap removal from the
-						    # veto e and mu lists
-						    vetoDeltaR = cms.double(0.1), 
-							NAME=cms.string("TuplePair"),
-						    doSVMass = cms.bool(True),
-						    useMVAMET = cms.bool(True),
-						    logMterm = cms.double(2.),
-						    svMassVerbose = cms.int32(1),
-						    sig00 = cms.InputTag("METSignificance:CovarianceMatrix00:Ntuple"),
-						    sig10 = cms.InputTag("METSignificance:CovarianceMatrix10:Ntuple"),
-						    sig01 = cms.InputTag("METSignificance:CovarianceMatrix01:Ntuple"),
-						    sig11 = cms.InputTag("METSignificance:CovarianceMatrix11:Ntuple")
-									)										
-
-
-# end test -- pair producer
-
 
 
 ###################################
@@ -305,6 +272,7 @@ process.out.outputCommands +=['keep TupleUserSpecifiedDatas_UserSpecifiedData_Tu
 #################################
 process.out.outputCommands +=['keep *_*_*_Ntuple']
 
+#process.SimpleMemoryCheck = cms.Service("SimpleMemoryCheck",ignoreTotal = cms.untracked.int32(1) )
 
 ###################################
 # asked to keep trigger info 
@@ -340,18 +308,15 @@ process.p *= process.requireCandidateHiggsPair
 mvaMEThelper.initializeMVAmet(process.p)
 mvaMEThelper.runSingleLeptonProducers(process.p)
 mvaMEThelper.runPairWiseMets(process.p)
-# test - end
-
 process.p *= process.METSignificance
-#process.p *= process.pfMet
-process.p *=process.TupleEventPair
-
+mvaMEThelper.run_pairMaker(process.p)
+# test -- end
 
 process.e = cms.EndPath(process.out)
 
 
 process.options   = cms.untracked.PSet( wantSummary = cms.untracked.bool(True) )
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(100) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
 
 
 

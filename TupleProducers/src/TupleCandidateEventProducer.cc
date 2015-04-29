@@ -278,9 +278,9 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
 
         double sv_mass = 0.0;          
 
-        if(useMVAMET_)
+        if(useMVAMET_ && mvamets.isValid())
           sv_mass = computeSVMass(mvamets->at(0),measuredTauLeptons);
-        else
+        else if (!useMVAMET_)
           sv_mass = computeSVMass(pfmets->at(0),measuredTauLeptons,*sig00,*sig10,*sig01,*sig11);
 
 
@@ -360,9 +360,9 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
 
         double sv_mass = 0.0;          
 
-        if(useMVAMET_)
+        if(useMVAMET_ && mvamets.isValid())
           sv_mass = computeSVMass(mvamets->at(0),measuredTauLeptons);
-        else
+        else if (!useMVAMET_)
           sv_mass = computeSVMass(pfmets->at(0),measuredTauLeptons,*sig00,*sig10,*sig01,*sig11);
 
 
@@ -437,9 +437,9 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
 
         double sv_mass = 0.0;          
 
-        if(useMVAMET_)
+        if(useMVAMET_ && mvamets.isValid())
           sv_mass = computeSVMass(mvamets->at(0),measuredTauLeptons);
-        else
+        else if (!useMVAMET_)
           sv_mass = computeSVMass(pfmets->at(0),measuredTauLeptons,*sig00,*sig10,*sig01,*sig11);
 
 
@@ -515,9 +515,9 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
 
         double sv_mass = 0.0;          
 
-        if(useMVAMET_)
+        if(useMVAMET_ && mvamets.isValid())
           sv_mass = computeSVMass(mvamets->at(0),measuredTauLeptons);
-        else
+        else if (!useMVAMET_)
           sv_mass = computeSVMass(pfmets->at(0),measuredTauLeptons,*sig00,*sig10,*sig01,*sig11);
 
 
@@ -598,9 +598,9 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
 
         double sv_mass = 0.0;          
 
-        if(useMVAMET_)
+        if(useMVAMET_ && mvamets.isValid())
           sv_mass = computeSVMass(mvamets->at(0),measuredTauLeptons);
-        else
+        else if (!useMVAMET_)
           sv_mass = computeSVMass(pfmets->at(0),measuredTauLeptons,*sig00,*sig10,*sig01,*sig11);
 
 
@@ -680,9 +680,9 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
 
         double sv_mass = 0.0;          
 
-        if(useMVAMET_)
+        if(useMVAMET_ && mvamets.isValid())
           sv_mass = computeSVMass(mvamets->at(0),measuredTauLeptons);
-        else
+        else if (!useMVAMET_)
           sv_mass = computeSVMass(pfmets->at(0),measuredTauLeptons,*sig00,*sig10,*sig01,*sig11);
 
 

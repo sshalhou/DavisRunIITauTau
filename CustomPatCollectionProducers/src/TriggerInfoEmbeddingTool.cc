@@ -71,7 +71,8 @@ bool TriggerInfoEmbeddingTool::wasAnyPathAccepted(std::vector<std::string> & pat
 	return 0;
 	}
 
-	void TriggerInfoEmbeddingTool::fillTrigFilterInfo(std::size_t index, std::vector<std::string> & fillStrings, std::vector<float> & fillFloats)
+	void TriggerInfoEmbeddingTool::fillTrigFilterInfo(std::size_t index, std::vector<std::string> & fillStrings, std::vector<float> & fillFloats, 
+		std::string prefix, std::vector<std::string> & runningFilterList)
 	{
 
 		pat::TriggerObjectStandAlone obj = (*triggerObjects)[index];
@@ -82,8 +83,9 @@ bool TriggerInfoEmbeddingTool::wasAnyPathAccepted(std::vector<std::string> & pat
 		{
 			if(obj.hasFilterLabel(fil)==1 && obj.filter(fil)==1)
 			{
-				fillStrings.push_back("trigObjectFilter_"+fil);
+				fillStrings.push_back(prefix+"trigObjectFilter_"+fil);
 				fillFloats.push_back(1.0);
+				runningFilterList.push_back(fil);
 
 			}
 		}
@@ -91,8 +93,56 @@ bool TriggerInfoEmbeddingTool::wasAnyPathAccepted(std::vector<std::string> & pat
 	}		
 
 
+	void TriggerInfoEmbeddingTool::TrigSummaryInfoHelper(TLorentzVector RecoObjVec, std::vector<std::string> & userFloatNames, std::vector<float> & userFloatValues)
+	{
 
-	void TriggerInfoEmbeddingTool::fillTrigSummaryInfo(std::size_t index, std::vector<std::string> & fillStrings, std::vector<float> & fillFloats)
+	 	
+	 	// first get the kinematic info and all filters for
+	 	// the best matched HLT L3 object and best L1 obj
+
+	 	// L3 & L1 trigger object types allowed
+	 	std::vector<int> allowedL3TrigObjectTypes;
+	 	std::vector<int> allowedL1TrigObjectTypes;
+
+	 	// master list of L1+L3 best match objects's filters :
+	 	std::vector<std::string> L1plusL3FilterList;
+
+ 		for (int type : trigMatchTypes) 
+ 		{
+ 			if (type > 0) allowedL3TrigObjectTypes.push_back(type);
+ 			else allowedL1TrigObjectTypes.push_back(type);
+
+ 		}
+
+ 		std::size_t bestL3MatchIndex = getBestMatchedObject(RecoObjVec, allowedL3TrigObjectTypes,trigMatchDRcut);
+ 		std::size_t bestL1MatchIndex = getBestMatchedObject(RecoObjVec, allowedL1TrigObjectTypes,trigMatchDRcut);
+
+		if(bestL1MatchIndex!=9999) 
+ 		{
+ 			fillTrigObjKinematics(bestL1MatchIndex, userFloatNames, userFloatValues,"L1Obj_");
+		 	fillTrigFilterInfo(bestL1MatchIndex, userFloatNames, userFloatValues,"L1Obj_",L1plusL3FilterList);
+	 	}
+
+		if(bestL3MatchIndex!=9999) 
+ 		{
+ 			fillTrigObjKinematics(bestL3MatchIndex, userFloatNames, userFloatValues,"L3Obj_");
+		 	fillTrigFilterInfo(bestL3MatchIndex, userFloatNames, userFloatValues,"L3Obj_",L1plusL3FilterList);
+		 	fillTrigSummaryInfo(bestL3MatchIndex, userFloatNames, userFloatValues,L1plusL3FilterList);
+
+	 	}
+
+
+
+	 	// std::cout<<" tau L1 + L3 filters ";
+	 	// for (std::string f : L1plusL3FilterList) std::cout<<f<<" ";
+	 	// std::cout<<"\n";
+
+
+	}
+
+
+	void TriggerInfoEmbeddingTool::fillTrigSummaryInfo(std::size_t index, std::vector<std::string> & fillStrings, std::vector<float> & fillFloats,
+														std::vector<std::string> combinedPassedL1andL3filters)
 	{
 
 		pat::TriggerObjectStandAlone obj = (*triggerObjects)[index];
@@ -179,11 +229,16 @@ bool TriggerInfoEmbeddingTool::wasAnyPathAccepted(std::vector<std::string> & pat
 
 			// check if the object passes the actual 
 			// filters specified using AND or OR condition
+            // the passed filters based on best matched L3 and L1 objects are 
+            // in combinedPassedL1andL3filters
 
-            for(std::string fil : filterNames)
+            for(std::string givenfil : filterNames)
             {
-            	//std::cout<<" filter "<<fil<<" "<<obj.hasFilterLabel(fil)<<" "<<obj.filter(fil)<<"\n";
-            	if(obj.hasFilterLabel(fil)==1 && obj.filter(fil)==1) FilterPassSum++;
+				for(std::string passedfil : combinedPassedL1andL3filters)
+				{
+					if (givenfil == passedfil) FilterPassSum++;
+				}
+
             }
 
 
@@ -210,23 +265,31 @@ bool TriggerInfoEmbeddingTool::wasAnyPathAccepted(std::vector<std::string> & pat
 
 
 
-   			float finalValue = 0.0;
-   			if(isBoth) finalValue+= 1000.0;
-   			if(isL3) finalValue+= 100.0;
-   			if(isLF) finalValue+= 10.0;
-   			if(FilterListPassed) finalValue+= 1.0;
+
 
 
    			// store info
-			fillStrings.push_back(variableName);
-			fillFloats.push_back(finalValue);	
 
-            // std::cout<<"testing "<<pathName<<" ";
-            // std::cout<<isBoth<<" ";
-            // std::cout<<isL3<<" ";
-            // std::cout<<isLF<<" ";
-            // std::cout<<FilterListPassed<<" ---> ";
-			// std::cout<<finalValue<<" ";
+			fillStrings.push_back(variableName+"_isBOTH");
+			fillFloats.push_back(isBoth);	
+
+			fillStrings.push_back(variableName+"_isL3");
+			fillFloats.push_back(isL3);	
+
+			fillStrings.push_back(variableName+"_isLF");
+			fillFloats.push_back(isLF);	
+
+			fillStrings.push_back(variableName+"_filterListPassed");
+			fillFloats.push_back(FilterListPassed);	
+
+   //          std::cout<<"testing "<<pathName<<" ";
+   //          std::cout<<" passed L1 + L3 filters ";
+	 	// 	for (std::string f : combinedPassedL1andL3filters) std::cout<<f<<" ";
+   //          std::cout<<"isBoth="<<isBoth<<" ";
+   //          std::cout<<"isL3="<<isL3<<" ";
+   //          std::cout<<"isLF="<<isLF<<" ";
+   //          std::cout<<"FilterListPassed="<<FilterListPassed<<" ---> ";
+			// std::cout<<"finalValue="<<finalValue<<" ";
 			// std::cout<<"\n";		
 
 
@@ -245,27 +308,27 @@ bool TriggerInfoEmbeddingTool::wasAnyPathAccepted(std::vector<std::string> & pat
 	}
 
 
-	void TriggerInfoEmbeddingTool::fillTrigObjKinematics(std::size_t index, std::vector<std::string> & fillStrings, std::vector<float> & fillFloats)
+	void TriggerInfoEmbeddingTool::fillTrigObjKinematics(std::size_t index, std::vector<std::string> & fillStrings, std::vector<float> & fillFloats, std::string prefix)
 	{
 
 		pat::TriggerObjectStandAlone obj = (*triggerObjects)[index];
 		
 		/* DR */
-		fillStrings.push_back("TrigObjRecoObjDeltaR"); 
+		fillStrings.push_back(prefix+"TrigObjRecoObjDeltaR"); 
 		fillFloats.push_back(bestMatchDR_);
 
 		/* pt, eta, phi, mass */
 
-		fillStrings.push_back("TrigObjPt"); 
+		fillStrings.push_back(prefix+"TrigObjPt"); 
 		fillFloats.push_back(obj.pt());
 
-		fillStrings.push_back("TrigObjEta"); 
+		fillStrings.push_back(prefix+"TrigObjEta"); 
 		fillFloats.push_back(obj.eta());
 
-		fillStrings.push_back("TrigObjPhi"); 
+		fillStrings.push_back(prefix+"TrigObjPhi"); 
 		fillFloats.push_back(obj.phi());
 
-		fillStrings.push_back("TrigObjMass"); 
+		fillStrings.push_back(prefix+"TrigObjMass"); 
 		fillFloats.push_back(obj.mass());
 
 
@@ -350,33 +413,9 @@ void TriggerInfoEmbeddingTool::getTriggerInfo(pat::Electron & lepton,
 			TLorentzVector RecoObjVec;
 		 	RecoObjVec.SetXYZT(lepton.p4().X(),lepton.p4().Y(),lepton.p4().Z(),lepton.p4().T());
 
-		 	// trigger object types allowed
-		 	std::vector<int> allowedTrigObjectTypes;
+			TrigSummaryInfoHelper(RecoObjVec, userFloatNames, userFloatValues);
 
-	 		for (int type : trigMatchTypes) 
-	 		{
-	 			allowedTrigObjectTypes.push_back(type);
-	 		}
-
-	 		std::size_t bestMatchIndex = getBestMatchedObject(RecoObjVec, allowedTrigObjectTypes,trigMatchDRcut);
-	 		
-	 		if(bestMatchIndex==9999) return;
-	 		
-	 		fillTrigObjKinematics(bestMatchIndex, userFloatNames, userFloatValues);
-
-	 		fillTrigSummaryInfo(bestMatchIndex, userFloatNames, userFloatValues);
-
-	 		fillTrigFilterInfo(bestMatchIndex, userFloatNames, userFloatValues);
-
-
-	 		///////////
-	 		//std::cout<<" RECO "<<RecoObjVec.Pt()<<", "<<RecoObjVec.Eta()<<", "<<RecoObjVec.Phi()<<", "<<RecoObjVec.M()<<" \n";
-	 		 // for (std::size_t ii = 0; ii < userFloatNames.size(); ii ++ )
-		   //  {
-     //    		std::cout<<"electron "<<userFloatNames.at(ii)<<" "<<userFloatValues.at(ii)<<"\n";
-
-    	// 	}
-	 		///////////	 		
+	
 
 		} 
 
@@ -396,38 +435,9 @@ void TriggerInfoEmbeddingTool::getTriggerInfo(pat::Muon & lepton,
 			TLorentzVector RecoObjVec;
 		 	RecoObjVec.SetXYZT(lepton.p4().X(),lepton.p4().Y(),lepton.p4().Z(),lepton.p4().T());
 
-		 	// trigger object types allowed
-		 	std::vector<int> allowedTrigObjectTypes;
+			TrigSummaryInfoHelper(RecoObjVec, userFloatNames, userFloatValues);
 
-	 		for (int type : trigMatchTypes) 
-	 		{
-	 			allowedTrigObjectTypes.push_back(type);
-	 		}
-
-
-
-	 		std::size_t bestMatchIndex = getBestMatchedObject(RecoObjVec, allowedTrigObjectTypes,trigMatchDRcut);
-
-	 		//std::cout<<" muon "<<bestMatchIndex<<"\n";
-	 		if(bestMatchIndex==9999) return;
-	 		
-	 		fillTrigObjKinematics(bestMatchIndex, userFloatNames, userFloatValues);
-
-	 		fillTrigSummaryInfo(bestMatchIndex, userFloatNames, userFloatValues);
-
-	 		fillTrigFilterInfo(bestMatchIndex, userFloatNames, userFloatValues);
-
-
-	 		///////////
-	 		 // for (std::size_t ii = 0; ii < userFloatNames.size(); ii ++ )
-		   //  {
-     //    		std::cout<<"muon "<<userFloatNames.at(ii)<<" "<<userFloatValues.at(ii)<<"\n";
-
-    	// 	}
-	 		///////////
-
-
-
+	
 		}
 
 
@@ -446,31 +456,8 @@ void TriggerInfoEmbeddingTool::getTriggerInfo(pat::Tau & lepton,
 			TLorentzVector RecoObjVec;
 		 	RecoObjVec.SetXYZT(lepton.p4().X(),lepton.p4().Y(),lepton.p4().Z(),lepton.p4().T());
 
-		 	// trigger object types allowed
-		 	std::vector<int> allowedTrigObjectTypes;
-	 		
-	 		for (int type : trigMatchTypes) 
-	 		{
-	 			allowedTrigObjectTypes.push_back(type);
-	 		}
 
-	 		std::size_t bestMatchIndex = getBestMatchedObject(RecoObjVec, allowedTrigObjectTypes,trigMatchDRcut);
-
-			if(bestMatchIndex==9999) return;
-	 		
-	 		fillTrigObjKinematics(bestMatchIndex, userFloatNames, userFloatValues);
-
-	 		fillTrigSummaryInfo(bestMatchIndex, userFloatNames, userFloatValues);
-
-	 		fillTrigFilterInfo(bestMatchIndex, userFloatNames, userFloatValues);
-
-	 		///////////
-	 		 // for (std::size_t ii = 0; ii < userFloatNames.size(); ii ++ )
-		   //  {
-     //    		std::cout<<"tau "<<userFloatNames.at(ii)<<" "<<userFloatValues.at(ii)<<"\n";
-
-    	// 	}
-	 		///////////
+	 		TrigSummaryInfoHelper(RecoObjVec, userFloatNames, userFloatValues);
 
 
 		}
