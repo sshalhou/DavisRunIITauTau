@@ -162,6 +162,12 @@ bool TriggerInfoEmbeddingTool::wasAnyPathAccepted(std::vector<std::string> & pat
 			std::string variableName;
 			std::getline(ss, variableName, '-'); std::getline(ss, dummy, '-');
 
+			/* force the desired summary variable prefix */
+			if(variableName.find("trigObjectPathSummary_")!=0) 
+				{
+					variableName = "trigObjectPathSummary_"+variableName;
+				}
+				
 			std::string pathName;
 			std::getline(ss, pathName, '-'); std::getline(ss, dummy, '-');
 

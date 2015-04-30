@@ -1,0 +1,10 @@
+<lcgdict>
+
+
+  <class name="NtupleLepton"/>
+  <class name="std::vector<NtupleLepton>"/>
+  <class name="edm::Wrapper<std::vector<NtupleLepton> >"/>
+  
+
+</lcgdict>
+

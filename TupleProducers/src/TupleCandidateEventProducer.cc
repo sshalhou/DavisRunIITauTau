@@ -40,7 +40,8 @@ Implementation:
 #include "DataFormats/Math/interface/Vector3D.h"
 #include "DataFormats/Math/interface/LorentzVector.h"
 #include "TauAnalysis/SVfitStandalone/interface/SVfitStandaloneAlgorithm.h"
-
+#include "DavisRunIITauTau/NtupleObjects/interface/NtupleLepton.h" /*TEMP*/
+ 
 
 typedef math::XYZTLorentzVector LorentzVector;
 using namespace std;
@@ -446,6 +447,22 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
 
         CurrentCandidateEvent.set_SVMass(sv_mass);
 
+        /* TEMP START */ 
+
+        NtupleLepton ntupLep1;
+        NtupleLepton ntupLep2;
+
+        ntupLep1.fill(CurrentCandidateEvent.leg1());        
+        ntupLep1.printLEP();
+
+
+        ntupLep2.fill(CurrentCandidateEvent.leg2());        
+        ntupLep2.printLEP();
+
+
+
+        /* TEMP END */ 
+
           TupleCandidateEvents->push_back(CurrentCandidateEvent);
         
       }
@@ -606,6 +623,24 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
 
 
         CurrentCandidateEvent.set_SVMass(sv_mass);
+
+
+        /* TEMP START */ 
+
+        NtupleLepton ntupLep1;
+        NtupleLepton ntupLep2;
+
+        ntupLep1.fill(CurrentCandidateEvent.leg1());  
+        ntupLep1.printLEP();
+
+
+        ntupLep2.fill(CurrentCandidateEvent.leg2());        
+        ntupLep2.printLEP();
+
+
+
+        /* TEMP END */ 
+
 
           TupleCandidateEvents->push_back(CurrentCandidateEvent);
 

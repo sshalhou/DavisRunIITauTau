@@ -3,6 +3,7 @@
 <use name="FWCore/ParameterSet"/>
 <use name="DataFormats/PatCandidates"/>
 <use name="DavisRunIITauTau/TupleObjects"/>
+<use name="DavisRunIITauTau/NtupleObjects"/>
 <use name="PhysicsTools/PatUtils"/>
 <use   name="CondFormats/EgammaObjects"/>
 <use   name="CondFormats/PhysicsToolsObjects"/>

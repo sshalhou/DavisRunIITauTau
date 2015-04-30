@@ -148,7 +148,7 @@ void TauClones::ChangeEnergyAndFillUserFloats(std::vector <pat::Tau> & clones,
 	  	double deltaBeta = 0.5;
 	  	double relIso = IsoTool.tauRelIso(t,deltaBeta);
 
-	  	t.addUserFloat("DeltaBetaCorrectedRelIso",relIso);
+	  	t.addUserFloat("relativeIsol_DeltaBetaCorrectedRelIso",relIso);
 
 
 	  	///////////////////////////

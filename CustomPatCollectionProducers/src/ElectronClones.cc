@@ -155,7 +155,7 @@ void electronClones::fillUserFloats()
 
 	  	for (std::size_t x = 0; x<rhoLabels.size(); ++x )
 	  	{
-	  		e.addUserFloat(rhoLabels[x],rhoValues[x]);
+	  		e.addUserFloat("rho_"+rhoLabels[x],rhoValues[x]);
 
 	  		float tempIso = IsoTool.electronEffAreaRhoRelIso(e, rhoValues[x],EffArea);
 	  		e.addUserFloat("relativeIsol_"+rhoLabels[x],tempIso);
@@ -169,7 +169,7 @@ void electronClones::fillUserFloats()
 	  	double deltaBeta = 0.5;
 	  	double relIso = IsoTool.electronRelIso(e,deltaBeta);
 
-	  	e.addUserFloat("DeltaBetaCorrectedRelIso",relIso);
+	  	e.addUserFloat("relativeIsol_DeltaBetaCorrectedRelIso",relIso);
 
 
 	  	///////////////////////////

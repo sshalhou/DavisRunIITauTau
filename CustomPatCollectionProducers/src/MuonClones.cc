@@ -157,7 +157,7 @@ void muonClones::fillUserFloats()
 
 	  	for (std::size_t x = 0; x<rhoLabels.size(); ++x )
 	  	{
-	  		m.addUserFloat(rhoLabels[x],rhoValues[x]);
+	  		m.addUserFloat("rho_"+rhoLabels[x],rhoValues[x]);
 
 	  		float tempIso = IsoTool.muonEffAreaRhoRelIso(m, rhoValues[x],EffArea);
 	  		m.addUserFloat("relativeIsol_"+rhoLabels[x],tempIso);
@@ -172,7 +172,7 @@ void muonClones::fillUserFloats()
 	  	double deltaBeta = 0.5;
 	  	double relIso = IsoTool.muonRelIso(m,deltaBeta);
 
-	  	m.addUserFloat("DeltaBetaCorrectedRelIso",relIso);
+	  	m.addUserFloat("relativeIsol_DeltaBetaCorrectedRelIso",relIso);
 
 
 	  	///////////////////////////
