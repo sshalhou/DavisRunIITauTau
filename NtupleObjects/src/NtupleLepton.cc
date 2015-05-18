@@ -80,6 +80,8 @@ void NtupleLepton::printLEP()
   std::cout<<"<LEPPRINT> HLT all config filters passed  : ";
     for(std::size_t i=0;i<m_pathSummary_filterListPassed.size();++i) std::cout<<"[ "<<m_pathSummary_filterListPassed[i]<<" ] ";
     std::cout<<"\n";  
+  std::cout<<"<LEPPRINT> ELECTRON MVA RAW "<<m_raw_electronMVA<<"\n";
+  std::cout<<"<LEPPRINT> ELECTRON MVA PASSFAIL "<<m_passFail_electronMVA<<"\n";
 
   std::cout<<" END: printing lepton <------------------\n";
 
@@ -204,6 +206,10 @@ void NtupleLepton::userFloatVectorParser(stringVec & labels_,floatVec & values_)
 
 
       }
+    else if(labels_[i]=="MVA_NonTrigPhys14")
+      {m_raw_electronMVA = values_[i];}  
+    else if(labels_[i]=="PASS_MVA_NonTrigPhys14")
+      {m_passFail_electronMVA = values_[i];}  
     else std::cout<<" NOT STORED "<<labels_[i]<<"\n";
 
   }
@@ -401,5 +407,7 @@ stringVec NtupleLepton::relativeIsol_Labels() const { return m_relativeIsol_Labe
 floatVec NtupleLepton::relativeIsol_Values() const { return m_relativeIsol_Values; }
 stringVec NtupleLepton::rho_Labels() const { return m_rho_Labels; }
 floatVec NtupleLepton::rho_Values() const { return m_rho_Values; }
+float NtupleLepton::raw_electronMVA() const {return m_raw_electronMVA;}
+float NtupleLepton::passFail_electronMVA() const {return m_passFail_electronMVA;} 
 
 

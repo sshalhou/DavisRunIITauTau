@@ -222,10 +222,10 @@ CustomPatMuonProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup
     // std::cout<<" -------------> dz = "<<muonToStore.userFloat("dz")<<std::endl;
 
     // dump userFloats -- test start
-    for (std::size_t ii = 0; ii < muonToStore.userFloatNames().size(); ii ++ )
-    {
-        std::cout<<"muon "<<i<<" "<<muonToStore.userFloatNames().at(ii)<<" "<<muonToStore.userFloat(muonToStore.userFloatNames().at(ii))<<"\n";
-    }
+    // for (std::size_t ii = 0; ii < muonToStore.userFloatNames().size(); ii ++ )
+    // {
+    //     std::cout<<"muon "<<i<<" "<<muonToStore.userFloatNames().at(ii)<<" "<<muonToStore.userFloat(muonToStore.userFloatNames().at(ii))<<"\n";
+    // }
     // dump userFloats -- test end
 
 

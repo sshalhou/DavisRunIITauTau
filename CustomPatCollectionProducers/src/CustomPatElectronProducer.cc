@@ -266,10 +266,10 @@ CustomPatElectronProducer::produce(edm::Event& iEvent, const edm::EventSetup& iS
   
 
     // dump userFloats -- test start
-    for (std::size_t ii = 0; ii < electronToStore.userFloatNames().size(); ii ++ )
-    {
-        std::cout<<"electron "<<i<<" "<<electronToStore.userFloatNames().at(ii)<<" "<<electronToStore.userFloat(electronToStore.userFloatNames().at(ii))<<"\n";
-    }
+    // for (std::size_t ii = 0; ii < electronToStore.userFloatNames().size(); ii ++ )
+    // {
+    //     std::cout<<"electron "<<i<<" "<<electronToStore.userFloatNames().at(ii)<<" "<<electronToStore.userFloat(electronToStore.userFloatNames().at(ii))<<"\n";
+    // }
     // dump userFloats -- test end
 
 
