@@ -72,6 +72,8 @@ public:
 	floatVec relativeIsol_Values() const; 
 	stringVec rho_Labels() const; 
 	floatVec rho_Values() const; 
+	float raw_electronMVA() const; 
+	float passFail_electronMVA() const; 
 
 
 
@@ -108,6 +110,9 @@ private:
     floatVec		m_relativeIsol_Values;			// 	value floats of isolations in userFloat data (same index order as labels)
     stringVec       m_rho_Labels;					//  label strings of rho in userFloat labels
     floatVec       	m_rho_Values;					//  value floats of rho in userFloat data (same index as rho strings)
+    float       	m_raw_electronMVA;					//  value of electron MVA score
+    int 			m_passFail_electronMVA;              // pass fail of electron MVA 
+
     										//
 	//////////////////////////////////////////////////
 	// meaniningful for taus	
