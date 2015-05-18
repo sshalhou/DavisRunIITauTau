@@ -115,6 +115,22 @@ void TauClones::ChangeEnergyAndFillUserFloats(std::vector <pat::Tau> & clones,
 
 	  	TauEsTool.changeES(t);
 
+	  	/////////////////////////
+	  	// add a userfloat to track TauEs variant 
+
+	  	if(SYSTEMATIC==1.0)
+	  	{
+	  		t.addUserFloat("TauEsVariant",0.0);
+	  	}
+	  	else if(SYSTEMATIC>1.0)
+	  	{
+	  		t.addUserFloat("TauEsVariant",1.0);
+	  	}
+	  	else if(SYSTEMATIC<1.0)
+	  	{
+	  		t.addUserFloat("TauEsVariant",-1.0);
+	  	}
+
 
 		/////////////
 	  	// trigger info
