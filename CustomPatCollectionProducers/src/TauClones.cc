@@ -151,11 +151,40 @@ void TauClones::ChangeEnergyAndFillUserFloats(std::vector <pat::Tau> & clones,
 	  	// dxy and dz
 	  	// to be updated for taus
 
-  		float dxy = 999.0;
-		float dz = 999.0;
+		float dz = t.vertex().z() - first_vertex.z();
 
-	  	t.addUserFloat("dxy",dxy);
+
+	  	t.addUserFloat("dxy",t.dxy());
 	  	t.addUserFloat("dz",dz);
+
+
+	  	// iso-related quantities
+
+	  	t.addUserFloat("chargedHadronIso", t.chargedHadronIso());
+		t.addUserFloat("neutralHadronIso", t.neutralHadronIso());
+		t.addUserFloat("photonIso", t.photonIso());
+		t.addUserFloat("PUchargedHadronIso",  t.puChargedHadronIso());
+
+
+		// tau IDs and MVA isolations
+
+		for (std::size_t p=0; p<t.tauIDs().size(); ++p)
+		{
+
+			t.addUserFloat(t.tauIDs()[p].first,t.tauIDs()[p].second);
+
+		}
+
+
+
+		////////////////
+		// strip and hadron counts
+
+		t.addUserFloat("numStrips",  float(t.signalGammaCands().size()));
+		t.addUserFloat("numHadrons", float(t.signalChargedHadrCands().size()));
+
+
+
 
 	  	////////////////////////////
 	  	// evaluate the Tau's relIso

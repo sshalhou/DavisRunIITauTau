@@ -95,12 +95,60 @@ void muonClones::fillUserFloats()
 	  	///////////
 	  	// check some muon ID standards
 
-	  	// std::cout<<"isGlobalMuon "<<m.isGlobalMuon()<<"\n";
-	  	// std::cout<<"isTrackerMuon "<<m.isTrackerMuon()<<"\n";
-	  	// std::cout<<"isPFMuon "<<m.isPFMuon()<<"\n";
+
+	  	m.addUserFloat("isGlobalMuon",m.isGlobalMuon());
+	  	m.addUserFloat("isTrackerMuon",m.isTrackerMuon());
+	  	m.addUserFloat("isPFMuon",m.isPFMuon());
+	  	m.addUserFloat("isLooseMuon",m.isLooseMuon());
+	  	m.addUserFloat("isSoftMuon",m.isSoftMuon(first_vertex));
+	  	m.addUserFloat("isTightMuon",m.isTightMuon(first_vertex));
+
+
+	  	//////////////
+	  	// some additional muon ID quantities &
+	  	// muon ID summary variables
+
+	  	float isGoodGlobalMuon = 0.0;
+	  	float passesMediumMuonId = 0.0;
 
 
 
+	  	if(m.globalTrack().isNonnull())
+	  	{
+		  	m.addUserFloat("muonGlobalTrackNormChi2",m.globalTrack()->normalizedChi2());
+
+  		  	if(m.isGlobalMuon() 
+				&& m.globalTrack()->normalizedChi2()<3. 
+			  	&& m.combinedQuality().chi2LocalPosition < 12.
+			  	&& m.combinedQuality().trkKink   <   20.) { isGoodGlobalMuon = 1.0; }
+
+
+
+	  	}
+	  	else m.addUserFloat("muonGlobalTrackNormChi2",NAN);
+
+
+	  	if(m.innerTrack().isNonnull())
+	  	{
+		  	m.addUserFloat("muonInnerTrkValidFraction",m.innerTrack()->validFraction());
+
+		  	
+		  	if(m.innerTrack()->validFraction() >= 0.8 
+	  		&& m.segmentCompatibility()   >=   (isGoodGlobalMuon   ? 0.303 : 0.451)) passesMediumMuonId = 1.0;
+
+
+	  	}
+		else m.addUserFloat("muonInnerTrkValidFraction",NAN);
+
+
+	  	m.addUserFloat("muonCombQualChi2LocalPosition",m.combinedQuality().chi2LocalPosition);
+	  	m.addUserFloat("muonCombQualTrkKink",m.combinedQuality().trkKink);
+	  	m.addUserFloat("muonSegmentCompatibility",m.segmentCompatibility());
+
+
+	  	m.addUserFloat("isGoodGlobalMuon",isGoodGlobalMuon);
+		m.addUserFloat("passesMediumMuonId",passesMediumMuonId);
+	  
 		/////////////
 	  	// trigger info
 
@@ -149,8 +197,34 @@ void muonClones::fillUserFloats()
 
 	  	m.addUserFloat("EffectiveArea",EffArea);
 
+
+		///////////////////////////
+	  	// IP, IPerror, note : SIP = IP/fabs(IPerror) is the useful quantity
+
+		m.addUserFloat("IP",fabs(m.dB(pat::Muon::PV3D)));
+		m.addUserFloat("IPerror",(m.edB(pat::Muon::PV3D)));
+
+
+		//////////////////////////
+		// DepositR03TrackerOfficial, DepositR03ECal, DepositR03Hcal
+
+	    m.addUserFloat("DepositR03TrackerOfficial",m.isolationR03().sumPt);
+	    m.addUserFloat("DepositR03ECal",m.isolationR03().emEt);
+	    m.addUserFloat("DepositR03Hcal",m.isolationR03().hadEt);
+
+
 	  	// iso tool 
 	  	LeptonRelativeIsolationTool IsoTool;
+
+
+	  	// iso-related quantities
+
+	  	m.addUserFloat("chargedHadronIso", m.chargedHadronIso());
+		m.addUserFloat("neutralHadronIso", m.neutralHadronIso());
+		m.addUserFloat("photonIso", m.photonIso());
+		m.addUserFloat("PUchargedHadronIso",  m.puChargedHadronIso());
+
+
 
 	  	// push in the rho variants, and the relative isol based on
 	  	// each
