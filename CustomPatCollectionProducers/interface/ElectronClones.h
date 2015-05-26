@@ -99,7 +99,8 @@ class electronClones
 	private:
 		void clone();
 		void fillUserFloats();		  
-
+		/* return a pass/fail based on MVA score, pt, and absSuperClusterEta */
+		float passedPhys14MVA(float, float, float); 
 
 };
 

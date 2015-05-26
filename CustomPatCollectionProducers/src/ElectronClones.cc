@@ -8,7 +8,7 @@
 // user include files
 #include "DavisRunIITauTau/CustomPatCollectionProducers/interface/ElectronClones.h"
 #include "DavisRunIITauTau/CustomPatCollectionProducers/interface/LeptonRelativeIsolationTool.h"
-
+#include "DataFormats/TrackReco/interface/HitPattern.h"
 
 
 #include "TH1D.h"
@@ -65,6 +65,44 @@ electronClones::electronClones(const slimmedPatElectronCollection& inputColl, co
 electronClones::~electronClones(){ clones.clear();}
 
 
+// pass-fail phys 14 MVA 
+// return a pass/fail based on MVA score, pt, and absSuperClusterEta */
+
+float electronClones::passedPhys14MVA(float MVAOUT, float PT, float ABS_SUPERCLUSTER_ETA)
+{
+	float returnVal = 0.0;
+	float ABSETA  = fabs(ABS_SUPERCLUSTER_ETA); // always ensure abs
+
+
+	// low-pt
+	if(PT <= 10.0)
+	{
+
+		if(ABSETA < 0.8 && MVAOUT > -0.202) return 1.0;
+		else if(ABSETA >= 0.8 && ABSETA<1.479 && MVAOUT > -0.444) return 1.0;
+		else if(ABSETA >= 1.479 && MVAOUT >  0.264) return 1.0;
+
+	}
+
+
+	// high-pt
+	else if(PT>10.0)
+	{
+
+		if(ABSETA < 0.8 && MVAOUT > -0.110 ) return 1.0;
+		else if(ABSETA >= 0.8 && ABSETA<1.479 && MVAOUT > -0.284) return 1.0;
+		else if(ABSETA >= 1.479 && MVAOUT > -0.212) return 1.0;
+
+
+
+	}
+
+
+	return returnVal;
+
+} 
+
+
 // clone the collection 
 
 
@@ -114,11 +152,51 @@ void electronClones::fillUserFloats()
 
 	  	}
 
-	  	///////////////////////////
-	  	// dxy and dz
 
-  		float dxy = 999.0;
-		float dz = 999.0;
+	  	////////////////////////
+	  	// isEB, isEE, isEBEEGap, ...
+		
+		e.addUserFloat("isEB",e.isEB());
+		e.addUserFloat("isEE",e.isEE());
+		e.addUserFloat("isEBEEGap",e.isEBEEGap());
+		e.addUserFloat("isEBEtaGap",e.isEBEtaGap());
+		e.addUserFloat("isEBPhiGap",e.isEBPhiGap());
+		e.addUserFloat("isEEDeeGap",e.isEEDeeGap());
+		e.addUserFloat("isEERingGap",e.isEERingGap());
+
+
+
+	  	////////////////////////
+	  	// sigmaEtaEta, sigmaIeataIeta, sigmaIphiIphi
+
+		e.addUserFloat("sigmaEtaEta",e.sigmaEtaEta());
+		e.addUserFloat("sigmaIetaIeta",e.sigmaIetaIeta());
+		e.addUserFloat("sigmaIphiIphi",e.sigmaIphiIphi());
+
+		////////////
+		// deltaPhiSuperClusterTrackAtVtx, deltaEtaSuperClusterTrackAtVtx, hadronicOverEm
+
+		e.addUserFloat("deltaPhiSuperClusterTrackAtVtx",e.deltaPhiSuperClusterTrackAtVtx());
+		e.addUserFloat("deltaEtaSuperClusterTrackAtVtx",e.deltaEtaSuperClusterTrackAtVtx());
+		e.addUserFloat("hadronicOverEm",e.hadronicOverEm());
+
+
+		///////////////////////////
+	  	// IP, IPerror, note : SIP = IP/fabs(IPerror) is the useful quantity
+
+		e.addUserFloat("IP",fabs(e.dB(pat::Electron::PV3D)));
+		e.addUserFloat("IPerror",(e.edB(pat::Electron::PV3D)));
+
+
+	  	///////////////////////////
+	  	// dxy, dz, numberOfMissingInnerHits, passConversionVeto, hits, missing hits
+
+
+  		float dxy = NAN;
+		float dz = NAN;
+		float numberOfMissingInnerHits = NAN;
+		float numberOfMissingOuterHits = NAN;
+		float numberOfTrackHits = NAN;
 
 		// worried that we need a gsfTrack check here?
 		//		assert(e.gsfTrack().isNonnull());
@@ -127,10 +205,18 @@ void electronClones::fillUserFloats()
 		{
 		  	dxy = e.gsfTrack()->dxy(first_vertex.position());
 		  	dz = e.gsfTrack()->dz(first_vertex.position());
+		  	numberOfMissingInnerHits = e.gsfTrack()->hitPattern().numberOfHits(HitPattern::MISSING_INNER_HITS);
+			numberOfMissingOuterHits = e.gsfTrack()->hitPattern().numberOfHits(HitPattern::MISSING_OUTER_HITS);
+			numberOfTrackHits = e.gsfTrack()->hitPattern().numberOfHits(HitPattern::TRACK_HITS);
+	
 		}
 
 	  	e.addUserFloat("dxy",dxy);
 	  	e.addUserFloat("dz",dz);
+	  	e.addUserFloat("numberOfMissingInnerHits",numberOfMissingInnerHits);
+	  	e.addUserFloat("numberOfMissingOuterHits",numberOfMissingOuterHits);
+	  	e.addUserFloat("numberOfTrackHits",numberOfTrackHits);
+	  	e.addUserFloat("passConversionVeto",e.passConversionVeto());
 
 
 
@@ -138,16 +224,39 @@ void electronClones::fillUserFloats()
 	  	// for now hardcode to 2012 settings eventually need
 	  	// this to be drawn from a config file
 
-	  	float abseta = fabs(e.superCluster()->eta());
+	  	float absSuperClusterEta = NAN;
+	  	float SuperClusterEta = NAN;
+
+
+	  	if(e.superCluster().isNonnull())
+		{
+	  		absSuperClusterEta = fabs(e.superCluster()->eta());
+	  		SuperClusterEta = e.superCluster()->eta();
+
+  		}
+
+	  	e.addUserFloat("SuperClusterEta",SuperClusterEta);
+
+
+
   		float EffArea = ElectronEffectiveArea::GetElectronEffectiveArea(
   						ElectronEffectiveArea::kEleGammaAndNeutralHadronIso04,
-					    abseta, ElectronEffectiveArea::kEleEAData2012);
+					    absSuperClusterEta, ElectronEffectiveArea::kEleEAData2012);
 
 
 	  	e.addUserFloat("EffectiveArea",EffArea);
 
 	  	// iso tool 
 	  	LeptonRelativeIsolationTool IsoTool;
+
+
+	  	// iso-related quantities
+
+	  	e.addUserFloat("chargedHadronIso", e.chargedHadronIso());
+		e.addUserFloat("neutralHadronIso", e.neutralHadronIso());
+		e.addUserFloat("photonIso", e.photonIso());
+		e.addUserFloat("PUchargedHadronIso",  e.puChargedHadronIso());
+
 
 
 	  	// push in the rho variants, and the relative isol based on
@@ -181,7 +290,8 @@ void electronClones::fillUserFloats()
 	  	///////////////////////////
 	    // once ready add the pass/fail based on the mva
 
-	    e.addUserFloat("PASS_"+MVA_PHYS14nonTrig_NAME,1.00);
+	    float passMVA14 = passedPhys14MVA(mva_val, e.pt(), absSuperClusterEta);
+	    e.addUserFloat("PASS_"+MVA_PHYS14nonTrig_NAME,passMVA14);
 
 
 	  	///////////////////////////
