@@ -78,6 +78,9 @@ private:
   edm::InputTag tauSrc_;
   edm::InputTag electronSrc_;
   edm::InputTag muonSrc_;
+  edm::InputTag second_tauSrc_;
+  edm::InputTag second_electronSrc_;
+  edm::InputTag second_muonSrc_;
   edm::InputTag pfMETSrc_;
   edm::InputTag mvaMETSrc_;
   edm::InputTag electronVetoSrc_;
@@ -111,6 +114,9 @@ TupleCandidateEventProducer::TupleCandidateEventProducer(const edm::ParameterSet
 tauSrc_(iConfig.getParameter<edm::InputTag>("tauSrc" )),
 electronSrc_(iConfig.getParameter<edm::InputTag>("electronSrc" )),
 muonSrc_(iConfig.getParameter<edm::InputTag>("muonSrc" )),
+second_tauSrc_(iConfig.getParameter<edm::InputTag>("second_tauSrc" )),
+second_electronSrc_(iConfig.getParameter<edm::InputTag>("second_electronSrc" )),
+second_muonSrc_(iConfig.getParameter<edm::InputTag>("second_muonSrc" )),
 pfMETSrc_(iConfig.getParameter<edm::InputTag>("pfMETSrc" )),
 mvaMETSrc_(iConfig.getParameter<edm::InputTag>("mvaMETSrc" )),
 electronVetoSrc_(iConfig.getParameter<edm::InputTag>("electronVetoSrc" )),
@@ -178,6 +184,19 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
   edm::Handle<edm::View<pat::Muon> > muons;
   iEvent.getByLabel(muonSrc_,muons);
 
+  // get 2nd Tau collection
+  edm::Handle<edm::View<pat::Tau> > second_taus;
+  iEvent.getByLabel(second_tauSrc_,second_taus);
+
+
+  // get 2nd Electron collection
+  edm::Handle<edm::View<pat::Electron> > second_electrons;
+  iEvent.getByLabel(second_electronSrc_,second_electrons);
+
+  // get 2nd Muon collection
+  edm::Handle<edm::View<pat::Muon> > second_muons;
+  iEvent.getByLabel(second_muonSrc_,second_muons);  
+
   // get VETO Electron collection
   edm::Handle<edm::View<pat::Electron> > veto_electrons;
   iEvent.getByLabel(electronVetoSrc_,veto_electrons);
@@ -220,21 +239,21 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
 
  
   // electron-electron 
-  if (electrons.isValid())
+  if (electrons.isValid() && second_electrons.isValid())
   {
     for (std::size_t i=0; i<electrons->size(); ++i)
     {
-      for (std::size_t ii=i+1; ii<electrons->size(); ++ii)
+      for (std::size_t ii=0; ii<second_electrons->size(); ++ii)
       {
 
           TupleCandidateEvent CurrentCandidateEvent;
-          CurrentCandidateEvent.set_pair(electrons->at(i),electrons->at(ii));
+          CurrentCandidateEvent.set_pair(electrons->at(i),second_electrons->at(ii));
           CurrentCandidateEvent.set_mvaMET(mvamets->at(0));
 
           // 4-vectors for veto candidate DR checks
           TLorentzVector l1,l2,vetoCand;
           l1.SetPtEtaPhiM(electrons->at(i).pt(), electrons->at(i).eta(), electrons->at(i).phi(),electrons->at(i).mass());
-          l2.SetPtEtaPhiM(electrons->at(ii).pt(), electrons->at(ii).eta(), electrons->at(ii).phi(),electrons->at(ii).mass());
+          l2.SetPtEtaPhiM(second_electrons->at(ii).pt(), second_electrons->at(ii).eta(), second_electrons->at(ii).phi(),second_electrons->at(ii).mass());
 
           if(l1.DeltaR(l2)<vetoDeltaR_) continue;
 
@@ -273,7 +292,7 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
 
         measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
           svFitStandalone::kTauToElecDecay,
-          electrons->at(ii).p4().pt(),electrons->at(ii).p4().eta(),electrons->at(ii).p4().phi(),
+          second_electrons->at(ii).p4().pt(),second_electrons->at(ii).p4().eta(),second_electrons->at(ii).p4().phi(),
           svFitStandalone::electronMass));
 
 
@@ -449,16 +468,18 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
 
         /* TEMP START */ 
 
-        NtupleLepton ntupLep1;
-        NtupleLepton ntupLep2;
+        if(taus->at(ii).userFloat("TauEsVariant")==0.0)
+        {
+                NtupleLepton ntupLep1;
+                NtupleLepton ntupLep2;
 
-        ntupLep1.fill(CurrentCandidateEvent.leg1());        
-        ntupLep1.printLEP();
+                ntupLep1.fill(CurrentCandidateEvent.leg1());        
+                ntupLep1.printLEP();
 
 
-        ntupLep2.fill(CurrentCandidateEvent.leg2());        
-        ntupLep2.printLEP();
-
+                ntupLep2.fill(CurrentCandidateEvent.leg2());        
+                ntupLep2.printLEP();
+        } // only for tau es 0
 
 
         /* TEMP END */ 
@@ -470,21 +491,21 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
   }  
 
   // muon-muon
-  if (muons.isValid())
+  if (muons.isValid() && second_muons.isValid())
   {
     for (std::size_t i=0; i<muons->size(); ++i)
     {
-      for (std::size_t ii=i+1; ii<muons->size(); ++ii)
+      for (std::size_t ii=0; ii<second_muons->size(); ++ii)
       {
 
           TupleCandidateEvent CurrentCandidateEvent;
-          CurrentCandidateEvent.set_pair(muons->at(i),muons->at(ii));
+          CurrentCandidateEvent.set_pair(muons->at(i),second_muons->at(ii));
           CurrentCandidateEvent.set_mvaMET(mvamets->at(0));  
 
           // 4-vectors for veto candidate DR checks
           TLorentzVector l1,l2,vetoCand;
           l1.SetPtEtaPhiM(muons->at(i).pt(), muons->at(i).eta(), muons->at(i).phi(),muons->at(i).mass());
-          l2.SetPtEtaPhiM(muons->at(ii).pt(), muons->at(ii).eta(), muons->at(ii).phi(),muons->at(ii).mass());
+          l2.SetPtEtaPhiM(second_muons->at(ii).pt(), second_muons->at(ii).eta(), second_muons->at(ii).phi(),second_muons->at(ii).mass());
 
           if(l1.DeltaR(l2)<vetoDeltaR_) continue;
 
@@ -523,7 +544,7 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
 
         measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
           svFitStandalone::kTauToMuDecay,
-          muons->at(ii).p4().pt(),muons->at(ii).p4().eta(),muons->at(ii).p4().phi(),
+          second_muons->at(ii).p4().pt(),second_muons->at(ii).p4().eta(),second_muons->at(ii).p4().phi(),
           svFitStandalone::muonMass));
 
 
@@ -627,6 +648,10 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
 
         /* TEMP START */ 
 
+
+        if(taus->at(ii).userFloat("TauEsVariant")==0.0)
+        {
+
         NtupleLepton ntupLep1;
         NtupleLepton ntupLep2;
 
@@ -637,7 +662,7 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
         ntupLep2.fill(CurrentCandidateEvent.leg2());        
         ntupLep2.printLEP();
 
-
+      }
 
         /* TEMP END */ 
 
@@ -651,22 +676,22 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
   }
 
   // tau-tau
-  if (taus.isValid())
+  if (taus.isValid() && second_taus.isValid())
   {
 
     for (std::size_t i=0; i<taus->size(); ++i)
     {
-      for (std::size_t ii=i+1; ii<taus->size(); ++ii)
+      for (std::size_t ii=0; ii<second_taus->size(); ++ii)
       {
 
           TupleCandidateEvent CurrentCandidateEvent;
-          CurrentCandidateEvent.set_pair(taus->at(i),taus->at(ii));
+          CurrentCandidateEvent.set_pair(taus->at(i),second_taus->at(ii));
           CurrentCandidateEvent.set_mvaMET(mvamets->at(0));     
 
           // 4-vectors for veto candidate DR checks
           TLorentzVector l1,l2,vetoCand;
           l1.SetPtEtaPhiM(taus->at(i).pt(), taus->at(i).eta(), taus->at(i).phi(),taus->at(i).mass());
-          l2.SetPtEtaPhiM(taus->at(ii).pt(), taus->at(ii).eta(), taus->at(ii).phi(),taus->at(ii).mass());
+          l2.SetPtEtaPhiM(second_taus->at(ii).pt(), second_taus->at(ii).eta(), second_taus->at(ii).phi(),second_taus->at(ii).mass());
 
           if(l1.DeltaR(l2)<vetoDeltaR_) continue;
 
@@ -708,8 +733,8 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
 
         measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
           svFitStandalone::kTauToHadDecay,
-          taus->at(ii).p4().pt(),taus->at(ii).p4().eta(),taus->at(ii).p4().phi(),
-          taus->at(ii).p4().mass()));
+          second_taus->at(ii).p4().pt(),second_taus->at(ii).p4().eta(),second_taus->at(ii).p4().phi(),
+          second_taus->at(ii).p4().mass()));
 
 
 
