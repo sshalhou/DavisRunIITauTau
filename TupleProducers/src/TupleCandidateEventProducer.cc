@@ -249,6 +249,9 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
           TupleCandidateEvent CurrentCandidateEvent;
           CurrentCandidateEvent.set_pair(electrons->at(i),second_electrons->at(ii));
           CurrentCandidateEvent.set_mvaMET(mvamets->at(0));
+          CurrentCandidateEvent.set_pfMET(pfmets->at(0));
+          CurrentCandidateEvent.set_pfMET_covMatrix(*sig00, *sig01, *sig10, *sig11);
+
 
           // 4-vectors for veto candidate DR checks
           TLorentzVector l1,l2,vetoCand;
@@ -331,6 +334,9 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
           TupleCandidateEvent CurrentCandidateEvent;
           CurrentCandidateEvent.set_pair(electrons->at(i),muons->at(ii));
           CurrentCandidateEvent.set_mvaMET(mvamets->at(0));
+          CurrentCandidateEvent.set_pfMET(pfmets->at(0));
+          CurrentCandidateEvent.set_pfMET_covMatrix(*sig00, *sig01, *sig10, *sig11);
+
 
           // 4-vectors for veto candidate DR checks
           TLorentzVector l1,l2,vetoCand;
@@ -407,7 +413,10 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
           TupleCandidateEvent CurrentCandidateEvent;
           CurrentCandidateEvent.set_pair(electrons->at(i),taus->at(ii));
           CurrentCandidateEvent.set_mvaMET(mvamets->at(0));          
+          CurrentCandidateEvent.set_pfMET(pfmets->at(0));
+          CurrentCandidateEvent.set_pfMET_covMatrix(*sig00, *sig01, *sig10, *sig11);
          
+
           // 4-vectors for veto candidate DR checks
           TLorentzVector l1,l2,vetoCand;
           l1.SetPtEtaPhiM(electrons->at(i).pt(), electrons->at(i).eta(), electrons->at(i).phi(),electrons->at(i).mass());
@@ -468,18 +477,18 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
 
         /* TEMP START */ 
 
-        if(taus->at(ii).userFloat("TauEsVariant")==0.0)
-        {
-                NtupleLepton ntupLep1;
-                NtupleLepton ntupLep2;
+        // if(taus->at(ii).userFloat("TauEsVariant")==0.0)
+        // {
+        //         NtupleLepton ntupLep1;
+        //         NtupleLepton ntupLep2;
 
-                ntupLep1.fill(CurrentCandidateEvent.leg1());        
-                ntupLep1.printLEP();
+        //         ntupLep1.fill(CurrentCandidateEvent.leg1());        
+        //         ntupLep1.printLEP();
 
 
-                ntupLep2.fill(CurrentCandidateEvent.leg2());        
-                ntupLep2.printLEP();
-        } // only for tau es 0
+        //         ntupLep2.fill(CurrentCandidateEvent.leg2());        
+        //         ntupLep2.printLEP();
+        // } // only for tau es 0
 
 
         /* TEMP END */ 
@@ -501,6 +510,9 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
           TupleCandidateEvent CurrentCandidateEvent;
           CurrentCandidateEvent.set_pair(muons->at(i),second_muons->at(ii));
           CurrentCandidateEvent.set_mvaMET(mvamets->at(0));  
+          CurrentCandidateEvent.set_pfMET(pfmets->at(0));
+          CurrentCandidateEvent.set_pfMET_covMatrix(*sig00, *sig01, *sig10, *sig11);
+
 
           // 4-vectors for veto candidate DR checks
           TLorentzVector l1,l2,vetoCand;
@@ -583,6 +595,9 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
           TupleCandidateEvent CurrentCandidateEvent;
           CurrentCandidateEvent.set_pair(muons->at(i),taus->at(ii));
           CurrentCandidateEvent.set_mvaMET(mvamets->at(0));    
+          CurrentCandidateEvent.set_pfMET(pfmets->at(0));
+          CurrentCandidateEvent.set_pfMET_covMatrix(*sig00, *sig01, *sig10, *sig11);
+
 
           // 4-vectors for veto candidate DR checks
           TLorentzVector l1,l2,vetoCand;
@@ -649,20 +664,20 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
         /* TEMP START */ 
 
 
-        if(taus->at(ii).userFloat("TauEsVariant")==0.0)
-        {
+      //   if(taus->at(ii).userFloat("TauEsVariant")==0.0)
+      //   {
 
-        NtupleLepton ntupLep1;
-        NtupleLepton ntupLep2;
+      //   NtupleLepton ntupLep1;
+      //   NtupleLepton ntupLep2;
 
-        ntupLep1.fill(CurrentCandidateEvent.leg1());  
-        ntupLep1.printLEP();
+      //   ntupLep1.fill(CurrentCandidateEvent.leg1());  
+      //   ntupLep1.printLEP();
 
 
-        ntupLep2.fill(CurrentCandidateEvent.leg2());        
-        ntupLep2.printLEP();
+      //   ntupLep2.fill(CurrentCandidateEvent.leg2());        
+      //   ntupLep2.printLEP();
 
-      }
+      // }
 
         /* TEMP END */ 
 
@@ -687,6 +702,9 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
           TupleCandidateEvent CurrentCandidateEvent;
           CurrentCandidateEvent.set_pair(taus->at(i),second_taus->at(ii));
           CurrentCandidateEvent.set_mvaMET(mvamets->at(0));     
+          CurrentCandidateEvent.set_pfMET(pfmets->at(0));
+          CurrentCandidateEvent.set_pfMET_covMatrix(*sig00, *sig01, *sig10, *sig11);
+
 
           // 4-vectors for veto candidate DR checks
           TLorentzVector l1,l2,vetoCand;

@@ -22,9 +22,11 @@ HiggsCandidateCountFilter::HiggsCandidateCountFilter(const edm::ParameterSet & i
   electronSource_ = iConfig.getParameter<edm::InputTag>( "electronSource" );
   muonSource_     = iConfig.getParameter<edm::InputTag>( "muonSource" );
   tauSource_      = iConfig.getParameter<edm::InputTag>( "tauSource" );
-  countElectronTaus_ = iConfig.getParameter<bool>         ( "countElectronTaus" );
-  countMuonTaus_     = iConfig.getParameter<bool>         ( "countMuonTaus" );
+  countElectronElectrons_  = iConfig.getParameter<bool>         ( "countElectronElectrons" );
   countElectronMuons_  = iConfig.getParameter<bool>         ( "countElectronMuons" );
+  countElectronTaus_ = iConfig.getParameter<bool>         ( "countElectronTaus" );
+  countMuonMuons_     = iConfig.getParameter<bool>         ( "countMuonMuons" );
+  countMuonTaus_     = iConfig.getParameter<bool>         ( "countMuonTaus" );
   countTauTaus_ = iConfig.getParameter<bool>         ( "countTauTaus" );
 }
 
@@ -50,36 +52,62 @@ bool HiggsCandidateCountFilter::filter(edm::Event & iEvent, const edm::EventSetu
 
   bool KEEP = 0;
 
-  // check for electron + tau candidates if requested
+  ////////////////////////////////////////////////////
+  // check for e+e if requested
+  ////////////////////////////////////////////////////
 
-  if(countElectronTaus_)
-  {
-    if (NUM_TAUS > 0 && NUM_ELECTRONS>0) KEEP = 1;
-  } 
+    if(countElectronElectrons_)
+    {
+      if (NUM_ELECTRONS>1) KEEP = 1;
+      
+    } 
 
+  ////////////////////////////////////////////////////
+  // check for e+muon if requested
+  ////////////////////////////////////////////////////
 
-  // check for muon + tau candidates if requested
-
-  if(countMuonTaus_)
-  {
-    if (NUM_TAUS > 0 && NUM_MUONS>0) KEEP = 1;    
-  } 
-
-
-  // check for electron + muon candidates if requested
-
-
-  if(countElectronTaus_)
-  {
-    if (NUM_MUONS > 0 && NUM_ELECTRONS>0) KEEP = 1;
-    
-  } 
+    if(countElectronMuons_)
+    {
+      if (NUM_MUONS > 0 && NUM_ELECTRONS>0) KEEP = 1;  
+    } 
 
 
-  if(countTauTaus_)
-  {
-    if (NUM_TAUS > 1) KEEP = 1;    
-  }
+  ////////////////////////////////////////////////////
+  // check for e+tau if requested
+  ////////////////////////////////////////////////////
+
+    if(countElectronTaus_)
+    {
+      if (NUM_TAUS > 0 && NUM_ELECTRONS>0) KEEP = 1;
+    } 
+
+  ////////////////////////////////////////////////////
+  // check for muon+muon if requested
+  ////////////////////////////////////////////////////
+
+    if(countMuonMuons_)
+    {
+      if (NUM_MUONS>1) KEEP = 1;    
+    } 
+
+
+  ////////////////////////////////////////////////////
+  // check for muon+tau if requested
+  ////////////////////////////////////////////////////
+
+    if(countMuonTaus_)
+    {
+      if (NUM_TAUS > 0 && NUM_MUONS>0) KEEP = 1;    
+    } 
+
+  ////////////////////////////////////////////////////
+  // check for tau+tau if requested
+  ////////////////////////////////////////////////////
+
+    if(countTauTaus_)
+    {
+      if (NUM_TAUS > 1) KEEP = 1;    
+    }
 
   std::cout<<KEEP<<"\n";
   return KEEP;

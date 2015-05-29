@@ -1,10 +1,16 @@
 <lcgdict>
 
+	<class name="NtupleLepton"/>
+	<class name="std::vector<NtupleLepton>"/>
+	<class name="edm::Wrapper<std::vector<NtupleLepton> >"/>
 
-  <class name="NtupleLepton"/>
-  <class name="std::vector<NtupleLepton>"/>
-  <class name="edm::Wrapper<std::vector<NtupleLepton> >"/>
-  
+	<class name="NtupleEvent"/>
+	<class name="std::vector<NtupleEvent>"/>
+	<class name="edm::Wrapper<std::vector<NtupleEvent> >"/>
+
+	<class name="NtuplePairIndependentInfo"/>
+	<class name="std::vector<NtuplePairIndependentInfo>"/>
+	<class name="edm::Wrapper<std::vector<NtuplePairIndependentInfo> >"/>
 
 </lcgdict>
 

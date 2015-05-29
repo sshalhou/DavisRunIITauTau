@@ -26,7 +26,11 @@ filter_ = []
 
 # ----------------------------------------------------
 # ------------[user edit here]------------------------
-filter_.append('pt>0.0')
+filter_.append('pt>18.0')
+filter_.append('abs(eta)<2.1')
+filter_.append('abs(userFloat("dxy"))<0.045')
+filter_.append('abs(userFloat("dz"))<0.2')
+
 #filter_.append('userFloat("relIsol") < 0.01')
 # ----------------------------------------------------
 # ----------------------------------------------------

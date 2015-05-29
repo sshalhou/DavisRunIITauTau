@@ -33,11 +33,14 @@ namespace pat {
       edm::InputTag electronSource_;
       edm::InputTag muonSource_;
       edm::InputTag tauSource_;
-      bool          countElectronTaus_;
-      bool          countMuonTaus_;
-      bool          countElectronMuons_;
-      bool          countTauTaus_;
+      bool countElectronElectrons_;
+      bool countElectronMuons_;
+      bool countElectronTaus_;
+      bool countMuonMuons_;
+      bool countMuonTaus_;
+      bool countTauTaus_;
   };
+
 
 
 }

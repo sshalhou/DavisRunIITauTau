@@ -1,15 +1,25 @@
 import FWCore.ParameterSet.Config as cms
 process = cms.Process("Ntuple")
 
-
-
-
 ###################################
 # preliminaries 
 ###################################
 
 
 process.myProducerLabel = cms.EDProducer('Ntuple')
+from DavisRunIITauTau.TupleConfigurations.ConfigNtupleContent_cfi import *
+
+
+print 'will build [',
+if BUILD_ELECTRON_ELECTRON : print 'e-e',
+if BUILD_ELECTRON_MUON : print 'e-mu',
+if BUILD_ELECTRON_TAU : print 'e-tau',
+if BUILD_MUON_MUON : print 'mu-mu',
+if BUILD_MUON_TAU : print 'mu-tau',
+if BUILD_TAU_TAU : print 'tau-tau',
+if BUILD_TAU_ES_VARIANTS : print ' + tau Es Variants',
+print ']'
+
 
 # import of standard configurations
 process.load("FWCore.MessageService.MessageLogger_cfi")
@@ -208,15 +218,18 @@ process.filteredVetoMuons = cms.EDFilter("PATMuonRefSelector",
 # should go here
 ###################################
 
+
 process.requireCandidateHiggsPair = cms.EDFilter("HiggsCandidateCountFilter",
-  electronSource = cms.InputTag("filteredCustomElectrons::Ntuple"),
-  muonSource     = cms.InputTag("filteredCustomMuons::Ntuple"),
-  tauSource      = cms.InputTag("filteredCustomTausEsDown::Ntuple"), # always count with down ES shift
-  countElectronTaus = cms.bool(True),
-  countMuonTaus     = cms.bool(True),
-  countElectronMuons    = cms.bool(False), # for now we won't keep eMu pairs
-  countTauTaus    = cms.bool(False), # for now we won't keep Tau_h Tau_h pairs
-  filter = cms.bool(True)
+  	electronSource = cms.InputTag("filteredCustomElectrons::Ntuple"),
+	muonSource     = cms.InputTag("filteredCustomMuons::Ntuple"),
+	tauSource      = cms.InputTag("filteredCustomTausEsDown::Ntuple"), # always count with down ES shift
+	countElectronElectrons = cms.bool(BUILD_ELECTRON_ELECTRON),
+	countElectronMuons  = cms.bool(BUILD_ELECTRON_MUON),
+	countElectronTaus = cms.bool(BUILD_ELECTRON_TAU),
+	countMuonMuons = cms.bool(BUILD_MUON_MUON),
+	countMuonTaus = cms.bool(BUILD_MUON_TAU),
+	countTauTaus = cms.bool(BUILD_TAU_TAU),
+    filter = cms.bool(True)
 )
 
 ###############################
@@ -241,6 +254,16 @@ process.pfMet.calculateSignificance = True
 # https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideMETSignificance
 
 
+#################################
+# pair independent content
+
+process.pairIndep = cms.EDProducer('NtuplePairIndependentInfoProducer',
+							packedGenSrc = cms.InputTag('packedGenParticles::PAT'),
+							prundedGenSrc =  cms.InputTag('prunedGenParticles::PAT'),
+							NAME=cms.string("NtupleEventPairIndep")
+							                 )
+
+
 
 
 ###################################
@@ -261,8 +284,7 @@ process.out = cms.OutputModule("PoolOutputModule",
 #################################
 #process.out.outputCommands +=['drop *_*_*_*']
 #rocess.out.outputCommands +=['drop *_*_*_*']
-
-process.out.outputCommands +=['keep TupleUserSpecifiedDatas_UserSpecifiedData_TupleUserSpecifiedData_PAT']
+#process.out.outputCommands +=['keep TupleUserSpecifiedDatas_UserSpecifiedData_TupleUserSpecifiedData_PAT']
 
 
 
@@ -270,16 +292,16 @@ process.out.outputCommands +=['keep TupleUserSpecifiedDatas_UserSpecifiedData_Tu
 #################################
 # keep everything produced by Ntuple
 #################################
-process.out.outputCommands +=['keep *_*_*_Ntuple']
-
+#process.out.outputCommands +=['keep *_*_*_Ntuple']
 #process.SimpleMemoryCheck = cms.Service("SimpleMemoryCheck",ignoreTotal = cms.untracked.int32(1) )
 
 ###################################
 # asked to keep trigger info 
 
-process.out.outputCommands +=['keep *_l1extraParticles_*_*']
-#process.out.outputCommands +=['drop *_*_*_*']
-process.out.outputCommands += ['keep TupleCandidateEvents_*_*_Ntuple']
+#process.out.outputCommands +=['keep *_l1extraParticles_*_*']
+process.out.outputCommands +=['drop *_*_*_*']
+#process.out.outputCommands += ['keep TupleCandidateEvents_*_*_Ntuple']
+process.out.outputCommands += ['keep NtupleEvents_NtupleEvent_*_Ntuple']
 
 process.p = cms.Path(process.myProducerLabel)
 #process.p *= process.UserSpecifiedData
@@ -310,13 +332,15 @@ mvaMEThelper.runSingleLeptonProducers(process.p)
 mvaMEThelper.runPairWiseMets(process.p)
 process.p *= process.METSignificance
 mvaMEThelper.run_pairMaker(process.p)
+mvaMEThelper.writeToNtuple(process.p)
+process.p *= process.pairIndep
 # test -- end
 
 process.e = cms.EndPath(process.out)
 
 
 process.options   = cms.untracked.PSet( wantSummary = cms.untracked.bool(True) )
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(10) )
 
 
 
