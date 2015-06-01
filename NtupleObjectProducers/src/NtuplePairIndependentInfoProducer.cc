@@ -43,6 +43,7 @@ Implementation:
 #include "TauAnalysis/SVfitStandalone/interface/SVfitStandaloneAlgorithm.h"
 #include "DavisRunIITauTau/NtupleObjects/interface/NtupleLepton.h" 
 #include "DavisRunIITauTau/NtupleObjects/interface/NtupleEvent.h"
+#include "DavisRunIITauTau/NtupleObjects/interface/NtupleGenParticle.h"
 #include "DavisRunIITauTau/NtupleObjects/interface/NtuplePairIndependentInfo.h"
 #include "DataFormats/PatCandidates/interface/PackedGenParticle.h"
 
@@ -80,6 +81,7 @@ private:
   edm::InputTag packedGenSrc_;
   edm::InputTag prunedGenSrc_;
   string NAME_;
+  std::vector<int> genParticlesToKeep_;
 
 
 };
@@ -99,7 +101,8 @@ private:
 NtuplePairIndependentInfoProducer::NtuplePairIndependentInfoProducer(const edm::ParameterSet& iConfig):
 packedGenSrc_(iConfig.getParameter<edm::InputTag>("packedGenSrc" )),
 prunedGenSrc_(iConfig.getParameter<edm::InputTag>("prundedGenSrc" )),
-NAME_(iConfig.getParameter<string>("NAME" ))
+NAME_(iConfig.getParameter<string>("NAME" )),
+genParticlesToKeep_(iConfig.getParameter<std::vector<int>>("genParticlesToKeep" ))
 {
 
 
@@ -155,24 +158,71 @@ NtuplePairIndependentInfoProducer::produce(edm::Event& iEvent, const edm::EventS
   pairIndep->reserve( reserveSize );
 
 
+  // the instance of NtuplePairIndependentInfo we want to add to the event output
+
+  NtuplePairIndependentInfo InfoToWrite;
+
+
+
+  /* start by adding gen particles to InfoToWrite */
+
+  std::vector<int> typesTokeep = genParticlesToKeep_;
 
   if(prunedGens.isValid()) 
   {
 
     for(std::size_t i = 0; i<prunedGens->size(); ++i)
     {
-      std::cout<<"index "<<i<<" pdgId "<<prunedGens->at(i).pdgId()<<" status "<<prunedGens->at(i).status()<<" has daughters : ";
-      for(std::size_t d = 0; d<prunedGens->at(i).numberOfDaughters(); ++d)
+    
+      //////////////////////////////////////////
+      // check that pdgId is in typesTokeep
+
+      bool keep = 0;
+      int currentID = abs(prunedGens->at(i).pdgId());
+
+      for(std::size_t s = 0; s<typesTokeep.size(); ++s)
       {
-        //std::cout<<d<<" , ";
-        std::cout<<prunedGens->at(i).daughter(d)->pdgId()<<" , ";
+
+        if (currentID==typesTokeep[s]) keep = 1;
 
       }
-      std::cout<<"\n";
+
+      /* if no pdgIds were provided keep all */
+
+      if(typesTokeep.size()==0) keep = 1;
+
+
+
+      if(!keep) continue;
+
+      NtupleGenParticle currentNtupleGenParticle;
+      currentNtupleGenParticle.initialize((prunedGens->at(i)));
+
+
+   for(std::size_t d = 0; d<prunedGens->at(i).numberOfDaughters(); ++d)
+    {
+      int ID = prunedGens->at(i).daughter(d)->pdgId();
+      int STATUS = prunedGens->at(i).daughter(d)->status();
+      LorentzVector P4 = prunedGens->at(i).daughter(d)->p4();
+      currentNtupleGenParticle.add_daughter(ID, STATUS, P4);
+    }
+
+   for(std::size_t m = 0; m<prunedGens->at(i).numberOfMothers(); ++m)
+    {
+      int ID = prunedGens->at(i).mother(m)->pdgId();
+      int STATUS = prunedGens->at(i).mother(m)->status();
+      LorentzVector P4 = prunedGens->at(i).mother(m)->p4();
+      currentNtupleGenParticle.add_mother(ID, STATUS, P4);
+    }    
+
+      InfoToWrite.fill_genParticle(currentNtupleGenParticle);
+
+
+    }
 
   }
 
-  }
+  pairIndep->push_back(InfoToWrite);
 
   iEvent.put( pairIndep, NAME_ );
 

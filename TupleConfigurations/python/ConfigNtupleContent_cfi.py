@@ -1,6 +1,6 @@
 ####################################################################################################
 # master config file :
-#    specify settings for pair building, Tau ES options, MET & SVMass
+#    specify settings for pair building, Tau ES options, MET & SVMass, genParticle content
 #
 
 import FWCore.ParameterSet.Config as cms
@@ -37,6 +37,29 @@ COMPUTE_SVMASS = False
 SVMASS_LOG_M = 2.0
 SVMASS_VERBOSE = 1
 
+
+####################################################################################################
+# edit the following to adjust genParticle content (empty vector keeps everything! use abs values only)
+# note : no filtering is applied on pdgId of particle's daughters or mothers 
+####################################################################################################
+
+GEN_PARTICLES_TO_KEEP = cms.vint32()
+
+GEN_PARTICLES_TO_KEEP.append(5) # keep b-quarks
+GEN_PARTICLES_TO_KEEP.append(6) # keep top-quarks
+GEN_PARTICLES_TO_KEEP.append(11) # keep electrons
+GEN_PARTICLES_TO_KEEP.append(13) # keep muons
+GEN_PARTICLES_TO_KEEP.append(15) # keep taus
+GEN_PARTICLES_TO_KEEP.append(12) # keep electron-neutrino
+GEN_PARTICLES_TO_KEEP.append(14) # keep muon-neutrino
+GEN_PARTICLES_TO_KEEP.append(16) # keep tau-neutrino
+GEN_PARTICLES_TO_KEEP.append(22) # keep photons
+GEN_PARTICLES_TO_KEEP.append(23) # keep Z
+GEN_PARTICLES_TO_KEEP.append(24) # keep W
+GEN_PARTICLES_TO_KEEP.append(25) # keep SM Higgs
+GEN_PARTICLES_TO_KEEP.append(35) # keep non-SM Higgs
+GEN_PARTICLES_TO_KEEP.append(36) # keep non-SM Higgs
+GEN_PARTICLES_TO_KEEP.append(37) # keep non-SM Higgs
 
 
 ####################################################################################################

@@ -10,6 +10,9 @@ process.myProducerLabel = cms.EDProducer('Ntuple')
 from DavisRunIITauTau.TupleConfigurations.ConfigNtupleContent_cfi import *
 
 
+##################
+# print the run settings 
+
 print 'will build [',
 if BUILD_ELECTRON_ELECTRON : print 'e-e',
 if BUILD_ELECTRON_MUON : print 'e-mu',
@@ -19,6 +22,11 @@ if BUILD_MUON_TAU : print 'mu-tau',
 if BUILD_TAU_TAU : print 'tau-tau',
 if BUILD_TAU_ES_VARIANTS : print ' + tau Es Variants',
 print ']'
+
+if(len(GEN_PARTICLES_TO_KEEP) > 0):
+	print 'gen info retained for pdgIDs ', GEN_PARTICLES_TO_KEEP
+else :
+	print 'gen info retained for all pdgIDs '
 
 
 # import of standard configurations
@@ -257,10 +265,12 @@ process.pfMet.calculateSignificance = True
 #################################
 # pair independent content
 
+
 process.pairIndep = cms.EDProducer('NtuplePairIndependentInfoProducer',
 							packedGenSrc = cms.InputTag('packedGenParticles::PAT'),
 							prundedGenSrc =  cms.InputTag('prunedGenParticles::PAT'),
-							NAME=cms.string("NtupleEventPairIndep")
+							NAME=cms.string("NtupleEventPairIndep"),
+							genParticlesToKeep = GEN_PARTICLES_TO_KEEP
 							                 )
 
 
@@ -302,7 +312,7 @@ process.out = cms.OutputModule("PoolOutputModule",
 process.out.outputCommands +=['drop *_*_*_*']
 #process.out.outputCommands += ['keep TupleCandidateEvents_*_*_Ntuple']
 process.out.outputCommands += ['keep NtupleEvents_NtupleEvent_*_Ntuple']
-
+process.out.outputCommands += ['keep NtuplePairIndependentInfos_pairIndep_NtupleEventPairIndep_Ntuple']
 process.p = cms.Path(process.myProducerLabel)
 #process.p *= process.UserSpecifiedData
 
@@ -340,7 +350,7 @@ process.e = cms.EndPath(process.out)
 
 
 process.options   = cms.untracked.PSet( wantSummary = cms.untracked.bool(True) )
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(10) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(1000) )
 
 
 

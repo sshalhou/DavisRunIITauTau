@@ -12,5 +12,10 @@
 	<class name="std::vector<NtuplePairIndependentInfo>"/>
 	<class name="edm::Wrapper<std::vector<NtuplePairIndependentInfo> >"/>
 
+	<class name="NtupleGenParticle"/>
+	<class name="std::vector<NtupleGenParticle>"/>
+	<class name="edm::Wrapper<std::vector<NtupleGenParticle> >"/>
+
+
 </lcgdict>
 
