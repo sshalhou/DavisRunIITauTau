@@ -16,6 +16,10 @@
 	<class name="std::vector<NtupleGenParticle>"/>
 	<class name="edm::Wrapper<std::vector<NtupleGenParticle> >"/>
 
+	<class name="NtupleJet"/>
+	<class name="std::vector<NtupleJet>"/>
+	<class name="edm::Wrapper<std::vector<NtupleJet> >"/>
+
 
 </lcgdict>
 

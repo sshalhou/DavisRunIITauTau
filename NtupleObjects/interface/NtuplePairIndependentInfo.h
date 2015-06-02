@@ -16,6 +16,7 @@
 #include "DavisRunIITauTau/TupleObjects/interface/TupleCandidateEvent.h"
 #include "DavisRunIITauTau/NtupleObjects/interface/NtupleLepton.h"
 #include "DavisRunIITauTau/NtupleObjects/interface/NtupleGenParticle.h"
+#include "DavisRunIITauTau/NtupleObjects/interface/NtupleJet.h"
 #include "DavisRunIITauTau/NtupleObjects/interface/NtuplePairIndependentInfo.h"
 #include "DataFormats/HepMCCandidate/interface/GenParticle.h"
 
@@ -37,19 +38,22 @@ public:
   // fillers 
 
 	void fill_genParticle(NtupleGenParticle);
+	void fill_jet(NtupleJet);
 
 
   // getters
 
 
   std::vector<NtupleGenParticle> genParticles() const; 
+  std::vector<NtupleJet> jets() const; 
  
 
 private:
 
   /* generator level particle records */
   std::vector<NtupleGenParticle> m_genParticles; 
- 
+  std::vector<NtupleJet> m_jets; 
+
 
 
 };

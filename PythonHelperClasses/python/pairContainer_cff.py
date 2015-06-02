@@ -20,7 +20,7 @@ class PairWiseMetHelper:
 		# note this will result in many, many empty collections if set too large
 		# and may cause missed pairings if set too low 
 
-		self.max_leptons = 2
+		self.max_leptons = 7
 
 		# the lepton collection sources (cange defaults with setLeptonSources)
 

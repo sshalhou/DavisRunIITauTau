@@ -25,9 +25,9 @@ NtupleGenParticle::NtupleGenParticle()
     m_gen_pdgId = genPart.pdgId();
     m_gen_status = genPart.status();
     m_gen_p4 = genPart.p4();
-    m_gen_vertex_x = genPart.vertex().Z();
+    m_gen_vertex_x = genPart.vertex().X();
     m_gen_vertex_y = genPart.vertex().Y();
-    m_gen_vertex_z = genPart.vertex().X();
+    m_gen_vertex_z = genPart.vertex().Z();
 
   }
 

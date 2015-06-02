@@ -14,7 +14,13 @@ void NtuplePairIndependentInfo::fill_genParticle(NtupleGenParticle NgenPart)
 
   };
 
+void NtuplePairIndependentInfo::fill_jet(NtupleJet anNtupleJet)
+  {
+  	m_jets.push_back(anNtupleJet);
+
+  };
 
 
 std::vector<NtupleGenParticle> NtuplePairIndependentInfo::genParticles() const {return m_genParticles;}
 
+std::vector<NtupleJet> NtuplePairIndependentInfo::jets() const {return m_jets;}

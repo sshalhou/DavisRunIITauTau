@@ -43,6 +43,7 @@ Implementation:
 #include "TauAnalysis/SVfitStandalone/interface/SVfitStandaloneAlgorithm.h"
 #include "DavisRunIITauTau/NtupleObjects/interface/NtupleLepton.h" 
 #include "DavisRunIITauTau/NtupleObjects/interface/NtupleEvent.h"
+#include "DavisRunIITauTau/NtupleObjects/interface/NtupleJet.h"
 #include "DavisRunIITauTau/NtupleObjects/interface/NtupleGenParticle.h"
 #include "DavisRunIITauTau/NtupleObjects/interface/NtuplePairIndependentInfo.h"
 #include "DataFormats/PatCandidates/interface/PackedGenParticle.h"
@@ -82,6 +83,7 @@ private:
   edm::InputTag prunedGenSrc_;
   string NAME_;
   std::vector<int> genParticlesToKeep_;
+  edm::InputTag slimmedJetSrc_;
 
 
 };
@@ -102,7 +104,8 @@ NtuplePairIndependentInfoProducer::NtuplePairIndependentInfoProducer(const edm::
 packedGenSrc_(iConfig.getParameter<edm::InputTag>("packedGenSrc" )),
 prunedGenSrc_(iConfig.getParameter<edm::InputTag>("prundedGenSrc" )),
 NAME_(iConfig.getParameter<string>("NAME" )),
-genParticlesToKeep_(iConfig.getParameter<std::vector<int>>("genParticlesToKeep" ))
+genParticlesToKeep_(iConfig.getParameter<std::vector<int>>("genParticlesToKeep" )),
+slimmedJetSrc_(iConfig.getParameter<edm::InputTag>("slimmedJetSrc" ))
 {
 
 
@@ -163,8 +166,9 @@ NtuplePairIndependentInfoProducer::produce(edm::Event& iEvent, const edm::EventS
   NtuplePairIndependentInfo InfoToWrite;
 
 
-
+  /////////////////////////////////////////////////////////////////
   /* start by adding gen particles to InfoToWrite */
+  /////////////////////////////////////////////////////////////////
 
   std::vector<int> typesTokeep = genParticlesToKeep_;
 
@@ -221,6 +225,49 @@ NtuplePairIndependentInfoProducer::produce(edm::Event& iEvent, const edm::EventS
     }
 
   }
+
+  /////////////////////////////////////////////////////////////////
+  /* next add jets to InfoToWrite */
+  /////////////////////////////////////////////////////////////////
+
+
+
+  // get slimmedJet collection
+  edm::Handle<edm::View<pat::Jet> > slimmedJets;
+  iEvent.getByLabel(slimmedJetSrc_,slimmedJets);
+
+
+  if(slimmedJets.isValid()) 
+  {
+
+    for(std::size_t i = 0; i<slimmedJets->size(); ++i)
+    {
+
+      NtupleJet currentNtupleJet;
+      currentNtupleJet.fill((slimmedJets->at(i)));
+
+      // temp -- start
+      for( std::size_t t = 0; t<currentNtupleJet.JEC_labels().size(); ++t)
+       {
+        std::cout<<currentNtupleJet.JEC_labels().at(t)<<" "<<currentNtupleJet.JEC_SFs().at(t)<<"\n";
+       } 
+
+       std::cout<<" A good label : L1FastJet " << currentNtupleJet.JEC("L1FastJet")<<"\n";
+       std::cout<<" A good label : Uncorrected " << currentNtupleJet.JEC("Uncorrected")<<"\n";
+
+
+      // temp -- end
+
+      InfoToWrite.fill_jet(currentNtupleJet);
+
+    }
+  }
+
+
+  /////////////////////////////////////////////////////////////////
+  /* next add InfoToWrite to pairIndep and write to the event */
+  /////////////////////////////////////////////////////////////////
+
 
   pairIndep->push_back(InfoToWrite);
 

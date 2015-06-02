@@ -202,6 +202,20 @@ process.filteredCustomTausEsDown = cms.EDFilter("PATTauRefSelector",
 
 
 ###################################
+# apply jet filter onto 
+# slimmed jet collection
+###################################
+
+from DavisRunIITauTau.TupleConfigurations.ConfigJets_cfi import jetFilter
+
+
+process.filteredSlimmedJets = cms.EDFilter("PATJetRefSelector",
+	src = cms.InputTag('slimmedJets::PAT'),
+	cut = jetFilter
+	)
+
+
+###################################
 # apply e/mu veto filters onto 
 # custom slimmed lepton collections
 ###################################
@@ -270,7 +284,8 @@ process.pairIndep = cms.EDProducer('NtuplePairIndependentInfoProducer',
 							packedGenSrc = cms.InputTag('packedGenParticles::PAT'),
 							prundedGenSrc =  cms.InputTag('prunedGenParticles::PAT'),
 							NAME=cms.string("NtupleEventPairIndep"),
-							genParticlesToKeep = GEN_PARTICLES_TO_KEEP
+							genParticlesToKeep = GEN_PARTICLES_TO_KEEP,
+							slimmedJetSrc = cms.InputTag('filteredSlimmedJets::Ntuple')
 							                 )
 
 
@@ -343,6 +358,7 @@ mvaMEThelper.runPairWiseMets(process.p)
 process.p *= process.METSignificance
 mvaMEThelper.run_pairMaker(process.p)
 mvaMEThelper.writeToNtuple(process.p)
+process.p *= process.filteredSlimmedJets
 process.p *= process.pairIndep
 # test -- end
 
@@ -350,7 +366,7 @@ process.e = cms.EndPath(process.out)
 
 
 process.options   = cms.untracked.PSet( wantSummary = cms.untracked.bool(True) )
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(1000) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
 
 
 

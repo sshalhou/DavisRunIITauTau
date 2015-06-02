@@ -20,7 +20,7 @@ BUILD_TAU_TAU = True
 # edit the following to turn on/off Tau ES variants
 ####################################################################################################
 
-BUILD_TAU_ES_VARIANTS = False
+BUILD_TAU_ES_VARIANTS = True
 
 
 ####################################################################################################

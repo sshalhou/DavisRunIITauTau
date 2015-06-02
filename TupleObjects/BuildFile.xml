@@ -3,6 +3,7 @@
 <use name="FWCore/ParameterSet"/>
 <use name="DataFormats/PatCandidates"/>
 <use name="PhysicsTools/Utilities"/>
+<use name="FWCore/Utilities"/>
 <use   name="rootrflx"/>
 <use   name="root"/>
 <export>
