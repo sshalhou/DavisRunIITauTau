@@ -28,6 +28,9 @@ if(len(GEN_PARTICLES_TO_KEEP) > 0):
 else :
 	print 'gen info retained for all pdgIDs '
 
+print 'default btag algoritm = ', DEFAULT_BTAG_ALGORITHM
+if APPLY_BTAG_SF :
+	print ' btag SFs will be applied with random seed = ', BTAG_SF_SEED
 
 # import of standard configurations
 process.load("FWCore.MessageService.MessageLogger_cfi")
@@ -279,13 +282,22 @@ process.pfMet.calculateSignificance = True
 #################################
 # pair independent content
 
+from DavisRunIITauTau.TupleConfigurations.ConfigJets_cfi import PUjetIDworkingPoint
+from DavisRunIITauTau.TupleConfigurations.ConfigJets_cfi import PFjetIDworkingPoint
 
 process.pairIndep = cms.EDProducer('NtuplePairIndependentInfoProducer',
 							packedGenSrc = cms.InputTag('packedGenParticles::PAT'),
 							prundedGenSrc =  cms.InputTag('prunedGenParticles::PAT'),
 							NAME=cms.string("NtupleEventPairIndep"),
 							genParticlesToKeep = GEN_PARTICLES_TO_KEEP,
-							slimmedJetSrc = cms.InputTag('filteredSlimmedJets::Ntuple')
+							slimmedJetSrc = cms.InputTag('filteredSlimmedJets::Ntuple'),
+							defaultBtagAlgorithmNameSrc = cms.string(DEFAULT_BTAG_ALGORITHM),
+							useBtagSFSrc = cms.bool(APPLY_BTAG_SF),
+							useBtagSFSeedSrc = cms.uint32(BTAG_SF_SEED),
+							PUjetIDworkingPointSrc = PUjetIDworkingPoint,
+							PFjetIDworkingPointSrc = PFjetIDworkingPoint,
+							vertexSrc =cms.InputTag('filteredVertices::Ntuple')
+
 							                 )
 
 
@@ -366,7 +378,7 @@ process.e = cms.EndPath(process.out)
 
 
 process.options   = cms.untracked.PSet( wantSummary = cms.untracked.bool(True) )
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(500) )
 
 
 

@@ -40,19 +40,26 @@ public:
 	void fill_genParticle(NtupleGenParticle);
 	void fill_jet(NtupleJet);
 
+  /* args are the 0th element in the vertex collection after quality cuts, size of the post-quality cut collection*/
+  void fill_vertexInfo(reco::Vertex, unsigned int);
+
 
   // getters
 
 
   std::vector<NtupleGenParticle> genParticles() const; 
   std::vector<NtupleJet> jets() const; 
- 
+  reco::Vertex  primaryVertex() const;
+
 
 private:
 
   /* generator level particle records */
   std::vector<NtupleGenParticle> m_genParticles; 
   std::vector<NtupleJet> m_jets; 
+  /* vertex information */
+  int m_PV_numberOfGoodVertices;
+  reco::Vertex m_primaryVertex;
 
 
 

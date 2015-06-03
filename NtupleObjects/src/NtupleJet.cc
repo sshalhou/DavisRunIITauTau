@@ -1,5 +1,6 @@
 #include "DavisRunIITauTau/NtupleObjects/interface/NtupleJet.h"
-#include "DavisRunIITauTau/TupleObjects/interface/TupleLeptonTypes.h"
+#include "DavisRunIITauTau/External/interface/BtagSF.hh" /* causes problems if included in a .h file */
+
 #include "TLorentzVector.h"
 #include <math.h> 
 
@@ -7,6 +8,8 @@ NtupleJet::NtupleJet()
 {
 
   m_jet_p4.SetXYZT(NAN,NAN,NAN,NAN);
+  m_GENjet_p4.SetXYZT(NAN,NAN,NAN,NAN);
+  m_GENjet_pdgId = -999;
   m_PARTON_flavour = -999;
   m_HADRON_flavour = -999;
   m_jet_vertex_x = NAN;
@@ -20,15 +23,13 @@ NtupleJet::NtupleJet()
   m_chargedEmEnergyFraction = NAN;
   m_chargedMultiplicityPlusNeutralMultiplicity = NAN;
   m_chargedMultiplicity = NAN;
+  m_defaultBtagAlgorithm_Name = "NULL";
+  m_defaultBtagAlgorithm_RawScore = NAN;
+  m_defaultBtagAlgorithm_isPassed = 0;
+  m_PU_jetIdRaw = NAN;
+  m_PU_jetIdPassed = 0;
+  m_PF_jetIdPassed = 0;
 
-
-
-
-
-  //m_PU_jetID = NAN;
-  //m_PF_jetID = NAN;
-  //m_BTAG_discriminant = NAN;
-  //m_BTAG_pass = -999;
 
 
 }
@@ -36,10 +37,50 @@ NtupleJet::NtupleJet()
 
 // filler 
 
+  void NtupleJet::fill_PFjetID(bool passFail)
+  {
+    m_PF_jetIdPassed = passFail;
+  }
+
+
+  void NtupleJet::fill_PUjetID(pat::Jet theJet, std::string DiscName, double CutMinimum)
+  {
+
+    m_PU_jetIdRaw = theJet.userFloat(DiscName);
+
+    if(m_PU_jetIdRaw > CutMinimum) m_PU_jetIdPassed = 1;
+    else m_PU_jetIdPassed = 0;
+
+  }
+
+  void NtupleJet::fill_defaultBtagInfo(pat::Jet theJet, std::string bTagAlgoName, 
+                            bool applySF, unsigned int SFseed, bool isRealData)
+  {
+
+    m_defaultBtagAlgorithm_Name = bTagAlgoName;
+    m_defaultBtagAlgorithm_RawScore = theJet.bDiscriminator(bTagAlgoName);
+
+    BtagSF btagSFtool(SFseed);
+
+    m_defaultBtagAlgorithm_isPassed = btagSFtool.isbtagged(
+    theJet.pt(), theJet.eta(),
+    m_defaultBtagAlgorithm_RawScore,
+    theJet.partonFlavour(),
+    isRealData,
+    0,0,1);
+
+
+
+  }
+
+
   void NtupleJet::fill(pat::Jet aPatJet)
   {
 
     m_jet_p4 = aPatJet.p4();
+    if(aPatJet.genJet()) m_GENjet_p4 = aPatJet.genJet()->p4();
+    if(aPatJet.genJet()) m_GENjet_pdgId = aPatJet.genJet()->pdgId();
+
     m_PARTON_flavour = aPatJet.partonFlavour();
     m_HADRON_flavour = aPatJet.hadronFlavour();
     m_jet_vertex_x = aPatJet.vertex().X();
@@ -67,56 +108,133 @@ NtupleJet::NtupleJet()
       m_JetEnergyCorrection.push_back(aJEC);
     }
 
+  /* store the BTAG label-rawOutput pairs */
+
+    for(std::size_t b=0; b<aPatJet.getPairDiscri().size(); ++b)
+    {
+      std::string current_string = aPatJet.getPairDiscri().at(b).first;
+      float current_float = aPatJet.bDiscriminator(current_string);
+      std::pair<std::string, float> aBTAGALGOpair(current_string,current_float);
+      m_BTAG.push_back(aBTAGALGOpair);
+    }
 
 
-    // m_gen_pdgId = genPart.pdgId();
-    // m_gen_status = genPart.status();
-    // m_gen_p4 = genPart.p4();
+
 
 
   }
 
 
 
-    //   std::cout<<"jet [pt, vertex_z, hadFlav, partFlav, (jecLabel, jecValue), (b-tag, value)] = ["<<slimmedJets->at(i).p4()<<" , ";
-    //   std::cout<<slimmedJets->at(i).vertex().Z()<<" , ";
-    //   std::cout<<slimmedJets->at(i).hadronFlavour()<<" , ";
-    //   std::cout<<slimmedJets->at(i).partonFlavour()<<" , ";
-     
-    //   for(std::size_t j=0; j<slimmedJets->at(i).availableJECLevels().size(); ++j)
-    //   {
-    //     std::cout<<" (label = "<<slimmedJets->at(i).availableJECLevels().at(j)<<" ";
-    //     std::cout<<" value = "<<slimmedJets->at(i).jecFactor(slimmedJets->at(i).availableJECLevels().at(j))<<")";
-
-    //   }
-
-    //   std::cout<<" LABELS SIZE "<<slimmedJets->at(i).tagInfoLabels().size()<<"\n";
-    //   std::cout<<" PAIR VECTOR SIZE "<<slimmedJets->at(i).getPairDiscri().size()<<"\n";
-
-    //   for(std::size_t b =0; b<slimmedJets->at(i).getPairDiscri().size(); ++b)
-    //   {
-
-    //     std::cout<<" (btag = "<<slimmedJets->at(i).getPairDiscri().at(b).first<<" ";
-    //     std::cout<<" (score = "<<slimmedJets->at(i).bDiscriminator(slimmedJets->at(i).getPairDiscri().at(b).first)<<")";
 
 
-    //   }
-
-    //   std::cout<<" combinedInclusiveSecondaryVertexV2BJetTags "<<slimmedJets->at(i).bDiscriminator("combinedInclusiveSecondaryVertexV2BJetTags")<<"\n";
-
-    //   std::cout<<" PU JET ID  = "<<slimmedJets->at(i).userFloat("pileupJetId:fullDiscriminant")<<"\n";        
-    //   std::cout<<" PF JET ID  = "<<slimmedJets->at(i).userFloat("pileupJetId:fullDiscriminant")<<"\n";        
+// helpers
 
 
-    //   // std::cout<<slimmedJets->at(i).jecFactor("Uncorrected")<<" , ";
-    //   // std::cout<<slimmedJets->at(i).jecFactor("L1FastJet")<<" , ";
-    //   // std::cout<<slimmedJets->at(i).jecFactor("L2")<<" , ";
-    //   // std::cout<<slimmedJets->at(i).jecFactor("L3")<<" , ";
-    //   // std::cout<<slimmedJets->at(i).jecFactor("Residual")<<" , ";
-    //   // std::cout<<slimmedJets->at(i).jecFactor("x");
-    //   std::cout<<" ] \n";
+///////////////////////////
+// JEC related helpers 
+////////////////////////////
 
-    // }    
+
+////////////////
+// return all labels for JEC
+////////////////
+
+  stringVec NtupleJet::JEC_labels()  
+  { 
+    stringVec m_JEC_labels;
+    for(std::size_t x = 0; x < m_JetEnergyCorrection.size();++x) 
+    { 
+      m_JEC_labels.push_back(m_JetEnergyCorrection.at(x).first);
+    }  
+
+    return m_JEC_labels;
+  }
+
+///////////
+// return all SFs for JEC
+///////////
+
+  floatVec NtupleJet::JEC_SFs()  
+  {
+    floatVec m_JEC_SFs;
+    for(std::size_t x = 0; x < m_JetEnergyCorrection.size();++x) 
+    {
+      m_JEC_SFs.push_back(m_JetEnergyCorrection.at(x).second);
+    }
+    return m_JEC_SFs;
+  }
+
+///////////////
+// return a given JEC SF for provided label
+// asserts if label is unknown
+///////////////
+
+  float NtupleJet::JEC(std::string label_)
+  {
+    float returnValue = NAN;
+    for(std::size_t x = 0; x < m_JetEnergyCorrection.size();++x) 
+    { 
+      if(m_JetEnergyCorrection.at(x).first == label_) returnValue = m_JetEnergyCorrection.at(x).second;
+
+    }
+
+    assert(isnan(returnValue)==0);
+    return returnValue;
+  }
+
+
+///////////////////////////
+// BTAG related helpers 
+////////////////////////////
+
+
+/////////////
+// return all labels for BTAGs 
+/////////////
+
+  stringVec NtupleJet::BTAG_labels()  
+  { 
+    stringVec m_BTAG_labels;
+    for(std::size_t x = 0; x < m_BTAG.size();++x) 
+    { 
+      m_BTAG_labels.push_back(m_BTAG.at(x).first);
+    }  
+
+    return m_BTAG_labels;
+  }
+
+/////////////
+// return all raw output for avaliable BTAG algorithms
+/////////////
+
+  floatVec NtupleJet::BTAGraw_scores()  
+  {
+    floatVec m_BTAGraw_scores;
+    for(std::size_t x = 0; x < m_BTAG.size();++x) 
+    {
+      m_BTAGraw_scores.push_back(m_BTAG.at(x).second);
+    }
+    return m_BTAGraw_scores;
+  }
+
+/////////////
+// return a given BTAG algorithm's raw output for provided label
+// asserts if label is unknown
+/////////////
+
+  float NtupleJet::BTAGraw(std::string label_)
+  {
+    float returnValue = NAN;
+    for(std::size_t x = 0; x < m_BTAG.size();++x) 
+    { 
+      if(m_BTAG.at(x).first == label_) returnValue = m_BTAG.at(x).second;
+
+    }
+
+    assert(isnan(returnValue)==0);
+    return returnValue;
+  }
 
 
 
@@ -125,6 +243,8 @@ NtupleJet::NtupleJet()
  
 
   LorentzVector NtupleJet::jet_p4() const { return m_jet_p4; }
+  LorentzVector NtupleJet::GENjet_p4() const { return m_GENjet_p4; }
+  int NtupleJet::GENjet_pdgId() const { return m_GENjet_pdgId; }
   int NtupleJet::PARTON_flavour() const { return m_PARTON_flavour; }
   int NtupleJet::HADRON_flavour() const { return m_HADRON_flavour; }
   float NtupleJet::jet_vertex_x() const { return m_jet_vertex_x; }
@@ -150,54 +270,12 @@ NtupleJet::NtupleJet()
   double NtupleJet::NumConst() const { return m_chargedMultiplicityPlusNeutralMultiplicity; } 
   double NtupleJet::CHM() const { return m_chargedMultiplicity; } 
 
+  std::string NtupleJet::defaultBtagAlgorithm_Name() const { return m_defaultBtagAlgorithm_Name; }
+  double NtupleJet::defaultBtagAlgorithm_RawScore() const { return m_defaultBtagAlgorithm_RawScore; }
+  bool NtupleJet::defaultBtagAlgorithm_isPassed() const { return m_defaultBtagAlgorithm_isPassed; }
+  double NtupleJet::PU_jetIdRaw() const { return m_PU_jetIdRaw; }
+  bool NtupleJet::PU_jetIdPassed() const { return m_PU_jetIdPassed; }
+  bool NtupleJet::PF_jetIdPassed() const { return m_PF_jetIdPassed; }
 
-  /* return available JEC labels and scale factors */
-
-  // return all labels for JEC
-  stringVec NtupleJet::JEC_labels()  
-  { 
-    stringVec m_JEC_labels;
-    for(std::size_t x = 0; x < m_JetEnergyCorrection.size();++x) 
-    { 
-      m_JEC_labels.push_back(m_JetEnergyCorrection.at(x).first);
-    }  
-
-    return m_JEC_labels;
-  }
-
-  // return all SFs for JEC
-  floatVec NtupleJet::JEC_SFs()  
-  {
-    floatVec m_JEC_SFs;
-    for(std::size_t x = 0; x < m_JetEnergyCorrection.size();++x) 
-    {
-      m_JEC_SFs.push_back(m_JetEnergyCorrection.at(x).second);
-    }
-    return m_JEC_SFs;
-  }
-
-  // return a given JEC SF for provided label
-  // asserts if label is unknown
-
-  float NtupleJet::JEC(std::string label_)
-  {
-    float returnValue = NAN;
-    for(std::size_t x = 0; x < m_JetEnergyCorrection.size();++x) 
-    { 
-      if(m_JetEnergyCorrection.at(x).first == label_) returnValue = m_JetEnergyCorrection.at(x).second;
-
-    }
-
-    assert(isnan(returnValue)==0);
-    return returnValue;
-  }
-
-
-
-  double NtupleJet::PU_jetID() const { return m_PU_jetID; }
-  double NtupleJet::PF_jetID() const { return m_PF_jetID; }
-  double NtupleJet::BTAG_discriminant() const { return m_BTAG_discriminant; }
-  int NtupleJet::BTAG_pass() const { return m_BTAG_pass; }
- 
 
 

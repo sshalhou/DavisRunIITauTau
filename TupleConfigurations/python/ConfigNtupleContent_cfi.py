@@ -63,6 +63,21 @@ GEN_PARTICLES_TO_KEEP.append(37) # keep non-SM Higgs
 
 
 ####################################################################################################
+# edit the choice of the default b-tag algorithm
+# note : for all jets, all BTAG algorithm raw scores are stored in the NtupleJet object
+#        the default choice however, is stored directly as a float allowing for easier access
+#        and is operated on by the BtagSF tool (if the applyBtagSF flag is set to True)
+####################################################################################################
+
+DEFAULT_BTAG_ALGORITHM = "combinedInclusiveSecondaryVertexV2BJetTags"
+APPLY_BTAG_SF = True 						
+BTAG_SF_SEED = 123456	#############################################################################
+						# note : if BTAG_SF_SEED is anything other than 0, the seed of the TRandom3 
+						#   	 used in the BtagSF tool will be set to that value
+						#        if however, BTAG_SF_SEED is 0, then the seed defaults to 	
+						#        (int)(eta+5)*100000) using a custom edit to the BtagSF.hh file 		
+
+####################################################################################################
 ####################################################################################################
 ####################################################################################################
 
