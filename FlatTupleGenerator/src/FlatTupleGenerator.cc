@@ -35,7 +35,7 @@ Implementation:
 #include "TLorentzVector.h"
 #include "DataFormats/Math/interface/Vector3D.h"
 #include "Math/GenVector/VectorUtil.h"
-
+#include <math.h>
 
 // FWCore include files
 #include "FWCore/Framework/interface/Frameworkfwd.h"
@@ -58,6 +58,7 @@ Implementation:
 #include "DavisRunIITauTau/NtupleObjects/interface/NtuplePairIndependentInfo.h"
 #include "DavisRunIITauTau/FlatTupleGenerator/interface/PairRankHelper.h"
 #include "DavisRunIITauTau/TupleObjects/interface/TupleLeptonTypes.h"
+#include "DavisRunIITauTau/FlatTupleGenerator/interface/LeptonFlatTupleCutHelper.h"
 
 
 using namespace edm;
@@ -105,14 +106,23 @@ private:
   edm::InputTag indepSrc_;
   std::string NAME_;  // use TauESNom, TauESUp, TauESDown, etc.
   edm::ParameterSet TreeCutSrc_;
+  edm::ParameterSet eCutSrc_;
+  edm::ParameterSet muCutSrc_;
+  edm::ParameterSet tauCutSrc_;
 
 
   /* the cut parameters to be read from TreeCutSrc_ */
 
   std::vector<std::string> tauIDsToKeep;
+  bool keepOS;
+  bool keepSS;
+  std::vector<double> MtCut;
+  bool keepTauEsNominal;
+  bool keepTauEsUp; 
+  bool keepTauEsDown; 
 
-
-
+  /* cut helper */
+  LeptonFlatTupleCutHelper cutHelper;
 
 
   /* the TTree */
@@ -149,15 +159,28 @@ FlatTupleGenerator::FlatTupleGenerator(const edm::ParameterSet& iConfig):
 pairSrc_(iConfig.getParameter<edm::InputTag>("pairSrc" )),
 indepSrc_(iConfig.getParameter<edm::InputTag>("indepSrc" )),
 NAME_(iConfig.getParameter<string>("NAME" )),
-TreeCutSrc_(iConfig.getParameter<edm::ParameterSet>("TreeCutSrc"))
+TreeCutSrc_(iConfig.getParameter<edm::ParameterSet>("TreeCutSrc")),
+eCutSrc_(iConfig.getParameter<edm::ParameterSet>("eCutSrc")),
+muCutSrc_(iConfig.getParameter<edm::ParameterSet>("muCutSrc")),
+tauCutSrc_(iConfig.getParameter<edm::ParameterSet>("tauCutSrc"))
 {
+
+  /* init the cut helper */
+
+  cutHelper.setEMuTauCutSets(eCutSrc_,muCutSrc_,tauCutSrc_);
 
   /* read in the TreeCutSrc varaibles */
 
   tauIDsToKeep = TreeCutSrc_.getParameter<std::vector<std::string> >("tauIDsToKeep"); 
   assert(MAX>=tauIDsToKeep.size());
 
-
+  MtCut = TreeCutSrc_.getParameter<std::vector<double> >("Mt"); 
+  assert(MtCut.size()==2);
+  keepOS = TreeCutSrc_.getParameter<bool>("keepOS");
+  keepSS = TreeCutSrc_.getParameter<bool>("keepSS");
+  keepTauEsNominal = TreeCutSrc_.getParameter<bool>("keepTauEsNominal");
+  keepTauEsUp = TreeCutSrc_.getParameter<bool>("keepTauEsUp");
+  keepTauEsDown = TreeCutSrc_.getParameter<bool>("keepTauEsDown");
 
   /* create TTree */
    
@@ -236,11 +259,40 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
 
   /////////////////////////////////////
   // now loop through the pairs in the current event
-
-
-
+  // and figure out which ones to retain 
 
   for(std::size_t p = 0; p<pairs->size(); ++p )
+  {
+    NtupleEvent currentPair =   ((*pairs)[p]);
+
+    bool keepSignPair = ((keepOS && currentPair.isOsPair()==1) || (keepSS && currentPair.isOsPair()!=1));
+    
+    bool keepTauEsVariant = (
+      
+      (keepTauEsNominal && currentPair.TauEsNumberSigmasShifted()==0.0) ||
+      (keepTauEsNominal && isnan(currentPair.TauEsNumberSigmasShifted())) || /* for eMu, muMu, EleEle */
+      (keepTauEsUp && currentPair.TauEsNumberSigmasShifted()==1.0) ||
+      (keepTauEsDown && currentPair.TauEsNumberSigmasShifted()==-1.0) 
+
+      );
+
+
+
+    if(cutHelper.pairPasses(currentPair) && keepSignPair && keepTauEsVariant) retainedPairs.push_back(currentPair);
+
+  }
+
+  std::cout<<" retained pairs size = "<<retainedPairs.size()<<"\n";
+  if(retainedPairs.size()==0) return;
+
+
+
+  /////////////////////////
+  // next figure out how to rank the pairs 
+
+
+
+  for(std::size_t p = 0; p<retainedPairs.size(); ++p )
   {
 
       reInit();
@@ -258,8 +310,10 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
       // now stuff depending on the current pair
 
 
-  		NtupleEvent currentPair =   ((*pairs)[p]);
-  		retainedPairs.push_back(currentPair); /* eventually this will be conditioned on passing cuts */
+  		NtupleEvent currentPair =   retainedPairs[p];
+      std::cout<<" got it \n";
+      std::cout<<" vis mass "<<currentPair.VISMass()[0]<<"\n";
+  		
       VISMass = currentPair.VISMass()[0];
 
       
@@ -283,17 +337,12 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
         }
 
 
-      //////////////////
-      // fill the tree once for each pair
-
       FlatTuple->Fill();
 
   }
 
 
-  // std::cout<<" retained pairs size = "<<retainedPairs.size()<<"\n";
 
-  // if(retainedPairs.size()==0) return;
 
   // PairRankHelper rankHelper;
   // rankHelper.process_pairs(retainedPairs);
