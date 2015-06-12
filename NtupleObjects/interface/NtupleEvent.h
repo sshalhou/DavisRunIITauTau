@@ -58,17 +58,18 @@ public:
   // getters
 
 	int CandidateEventType() const; 
-	NtupleLepton leg0() const; 
+  float TauEsNumberSigmasShifted() const;
 	NtupleLepton leg1() const; 
+	NtupleLepton leg2() const; 
 	std::vector<NtupleLepton> vetoElectron() const; 
  	std::vector<NtupleLepton> vetoMuon() const;
   std::vector<double> SVMass() const;
   std::vector<double> VISMass() const;
   int isOsPair() const;
-  std::vector<double> MTmvaMET_leg0() const;
-  std::vector<double> MTpfMET_leg0() const;
   std::vector<double> MTmvaMET_leg1() const;
   std::vector<double> MTpfMET_leg1() const;
+  std::vector<double> MTmvaMET_leg2() const;
+  std::vector<double> MTpfMET_leg2() const;
 
   std::vector<reco::PFMET>  mvaMET() const;
   std::vector<pat::MET>  pfMET() const;
@@ -81,20 +82,21 @@ public:
 private:
 
 	int m_CandidateEventType; 
+  float m_TauEsNumberSigmasShifted;
   int m_isOsPair;
-	NtupleLepton m_leg0; 
 	NtupleLepton m_leg1; 
+	NtupleLepton m_leg2; 
 	std::vector<NtupleLepton> m_vetoElectron; 
  	std::vector<NtupleLepton> m_vetoMuon;
   std::vector<double> m_SVMass;
   std::vector<double> m_VISMass;
-  /* for now these are just MT(leg0, MET) : later on we will want to rank leg0 & leg1 */
-  std::vector<double> m_MTmvaMET_leg0;
-  std::vector<double> m_MTpfMET_leg0;
-
-  /* for now these are just MT(leg1, MET) : later on we will want to rank leg0 & leg1 */
+  /* for now these are just MT(leg1, MET) : later on we will want to rank leg1 & leg2 */
   std::vector<double> m_MTmvaMET_leg1;
   std::vector<double> m_MTpfMET_leg1;
+
+  /* for now these are just MT(leg2, MET) : later on we will want to rank leg1 & leg2 */
+  std::vector<double> m_MTmvaMET_leg2;
+  std::vector<double> m_MTpfMET_leg2;
   std::vector<reco::PFMET>  m_mvaMET;
   std::vector<pat::MET>  m_pfMET;
   std::vector<double>  m_pfMET_cov00; // needed due to missing sig matrix in phys14 samples

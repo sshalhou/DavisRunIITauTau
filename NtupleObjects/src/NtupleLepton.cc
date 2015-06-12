@@ -62,65 +62,7 @@ NtupleLepton::NtupleLepton()
   m_numberOfMissingOuterHits = NAN;
   m_numberOfTrackHits = NAN;
   m_passConversionVeto = NAN;
-  m_againstElectronLoose = NAN;
-  m_againstElectronLooseMVA5 = NAN;
-  m_againstElectronMVA5category = NAN;
-  m_againstElectronMVA5raw = NAN;
-  m_againstElectronMedium = NAN;
-  m_againstElectronMediumMVA5 = NAN;
-  m_againstElectronTight = NAN;
-  m_againstElectronTightMVA5 = NAN;
-  m_againstElectronVLooseMVA5 = NAN;
-  m_againstElectronVTightMVA5 = NAN;
-  m_againstMuonLoose = NAN;
-  m_againstMuonLoose2 = NAN;
-  m_againstMuonLoose3 = NAN;
-  m_againstMuonLooseMVA = NAN;
-  m_againstMuonMVAraw = NAN;
-  m_againstMuonMedium = NAN;
-  m_againstMuonMedium2 = NAN;
-  m_againstMuonMediumMVA = NAN;
-  m_againstMuonTight = NAN;
-  m_againstMuonTight2 = NAN;
-  m_againstMuonTight3 = NAN;
-  m_againstMuonTightMVA = NAN;
-  m_byCombinedIsolationDeltaBetaCorrRaw3Hits = NAN;
-  m_byIsolationMVA3newDMwLTraw = NAN;
-  m_byIsolationMVA3newDMwoLTraw = NAN;
-  m_byIsolationMVA3oldDMwLTraw = NAN;
-  m_byIsolationMVA3oldDMwoLTraw = NAN;
-  m_byLooseCombinedIsolationDeltaBetaCorr3Hits = NAN;
-  m_byLooseIsolationMVA3newDMwLT = NAN;
-  m_byLooseIsolationMVA3newDMwoLT = NAN;
-  m_byLooseIsolationMVA3oldDMwLT = NAN;
-  m_byLooseIsolationMVA3oldDMwoLT = NAN;
-  m_byMediumCombinedIsolationDeltaBetaCorr3Hits = NAN;
-  m_byMediumIsolationMVA3newDMwLT = NAN;
-  m_byMediumIsolationMVA3newDMwoLT = NAN;
-  m_byMediumIsolationMVA3oldDMwLT = NAN;
-  m_byMediumIsolationMVA3oldDMwoLT = NAN;
-  m_byTightCombinedIsolationDeltaBetaCorr3Hits = NAN;
-  m_byTightIsolationMVA3newDMwLT = NAN;
-  m_byTightIsolationMVA3newDMwoLT = NAN;
-  m_byTightIsolationMVA3oldDMwLT = NAN;
-  m_byTightIsolationMVA3oldDMwoLT = NAN;
-  m_byVLooseIsolationMVA3newDMwLT = NAN;
-  m_byVLooseIsolationMVA3newDMwoLT = NAN;
-  m_byVLooseIsolationMVA3oldDMwLT = NAN;
-  m_byVLooseIsolationMVA3oldDMwoLT = NAN;
-  m_byVTightIsolationMVA3newDMwLT = NAN;
-  m_byVTightIsolationMVA3newDMwoLT = NAN;
-  m_byVTightIsolationMVA3oldDMwLT = NAN;
-  m_byVTightIsolationMVA3oldDMwoLT = NAN;
-  m_byVVTightIsolationMVA3newDMwLT = NAN;
-  m_byVVTightIsolationMVA3newDMwoLT = NAN;
-  m_byVVTightIsolationMVA3oldDMwLT = NAN;
-  m_byVVTightIsolationMVA3oldDMwoLT = NAN;
-  m_chargedIsoPtSum = NAN;
-  m_decayModeFinding = NAN;
-  m_decayModeFindingNewDMs = NAN;
-  m_neutralIsoPtSum = NAN;
-  m_puCorrPtSum = NAN;  
+
   m_genJet_p4.SetXYZT(NAN,NAN,NAN,NAN);
   m_numStrips = NAN;
   m_numHadrons  = NAN;
@@ -128,6 +70,230 @@ NtupleLepton::NtupleLepton()
 }
 
 // helpers
+
+
+
+
+///////////////////////////
+// tauID related helpers 
+////////////////////////////
+
+
+////////////////
+// return all labels for tauID that were calculated for the event
+////////////////
+
+  stringVec NtupleLepton::tauID_Labels()  
+  { 
+    stringVec m_tauID_labels;
+    for(std::size_t x = 0; x < m_tauIDs.size();++x) 
+    { 
+      m_tauID_labels.push_back(m_tauIDs.at(x).first);
+    }  
+
+    return m_tauID_labels;
+  }
+
+///////////
+// return all values for computed tauIDs
+///////////
+
+  floatVec NtupleLepton::tauID_Values()  
+  {
+    floatVec m_tauID_values;
+    for(std::size_t x = 0; x < m_tauIDs.size();++x) 
+    {
+      m_tauID_values.push_back(m_tauIDs.at(x).second);
+    }
+    return m_tauID_values;
+  }
+
+///////////////
+// return a given tauID value for provided label
+// assert that it is a known label
+///////////////
+
+  float NtupleLepton::tauID(std::string label_)
+  {
+    float returnValue = NAN;
+    for(std::size_t x = 0; x < m_tauIDs.size();++x) 
+    { 
+      if(m_tauIDs.at(x).first == label_) returnValue = m_tauIDs.at(x).second;
+
+    }
+
+    assert(isnan(returnValue)==0);
+    return returnValue;
+  }
+
+
+
+
+
+///////////////////////////
+// relativeIsol related helpers 
+////////////////////////////
+
+
+////////////////
+// return all labels for relativeIsols that were calculated for the event
+////////////////
+
+  stringVec NtupleLepton::relativeIsol_Labels()  
+  { 
+    stringVec m_ISOL_labels;
+    for(std::size_t x = 0; x < m_relativeIsolations.size();++x) 
+    { 
+      m_ISOL_labels.push_back(m_relativeIsolations.at(x).first);
+    }  
+
+    return m_ISOL_labels;
+  }
+
+///////////
+// return all values for computed relativeIsols
+///////////
+
+  floatVec NtupleLepton::relativeIsol_Values()  
+  {
+    floatVec m_ISOL_values;
+    for(std::size_t x = 0; x < m_relativeIsolations.size();++x) 
+    {
+      m_ISOL_values.push_back(m_relativeIsolations.at(x).second);
+    }
+    return m_ISOL_values;
+  }
+
+///////////////
+// return a given relativeIsol value for provided label
+// assert that it is a known label
+///////////////
+
+  float NtupleLepton::relativeIsol(std::string label_)
+  {
+    float returnValue = NAN;
+    for(std::size_t x = 0; x < m_relativeIsolations.size();++x) 
+    { 
+      if(m_relativeIsolations.at(x).first == label_) returnValue = m_relativeIsolations.at(x).second;
+
+    }
+
+    assert(isnan(returnValue)==0);
+    return returnValue;
+  }
+
+
+
+///////////////////////////
+// Rho related helpers 
+////////////////////////////
+
+
+////////////////
+// return all labels for Rhos that were calculated for the event
+////////////////
+
+  stringVec NtupleLepton::rho_Labels()  
+  { 
+    stringVec m_RHO_labels;
+    for(std::size_t x = 0; x < m_rhos.size();++x) 
+    { 
+      m_RHO_labels.push_back(m_rhos.at(x).first);
+    }  
+
+    return m_RHO_labels;
+  }
+
+///////////
+// return all values for computed rhos
+///////////
+
+  floatVec NtupleLepton::rho_Values()  
+  {
+    floatVec m_RHO_values;
+    for(std::size_t x = 0; x < m_rhos.size();++x) 
+    {
+      m_RHO_values.push_back(m_rhos.at(x).second);
+    }
+    return m_RHO_values;
+  }
+
+///////////////
+// return a given rho value for provided label
+// assert that it is a known label
+///////////////
+
+  float NtupleLepton::rho(std::string label_)
+  {
+    float returnValue = NAN;
+    for(std::size_t x = 0; x < m_rhos.size();++x) 
+    { 
+      if(m_rhos.at(x).first == label_) returnValue = m_rhos.at(x).second;
+
+    }
+
+    assert(isnan(returnValue)==0);
+    return returnValue;
+  }
+
+
+
+
+///////////////////////////
+// HLTPath related helpers 
+////////////////////////////
+
+
+////////////////
+// return all labels for HLTPaths that were accepted for the event
+////////////////
+
+  stringVec NtupleLepton::HLTAcceptedPath_Labels()  
+  { 
+    stringVec m_HLT_labels;
+    for(std::size_t x = 0; x < m_HLTPaths.size();++x) 
+    { 
+      m_HLT_labels.push_back(m_HLTPaths.at(x).first);
+    }  
+
+    return m_HLT_labels;
+  }
+
+///////////
+// return all preScales for accepted HLTpaths
+///////////
+
+  floatVec NtupleLepton::HLTAcceptedPath_preScales()  
+  {
+    floatVec m_HLT_preScales;
+    for(std::size_t x = 0; x < m_HLTPaths.size();++x) 
+    {
+      m_HLT_preScales.push_back(m_HLTPaths.at(x).second);
+    }
+    return m_HLT_preScales;
+  }
+
+///////////////
+// return a given HLT preScale for provided label
+// in general anything other than 0 means accepted 
+// for un-prescaled triggers it will return 1.0
+// retun '0 meaning not accepted' if label is unknown
+///////////////
+
+  float NtupleLepton::HLTpath(std::string label_)
+  {
+    float returnValue = 0;
+    for(std::size_t x = 0; x < m_HLTPaths.size();++x) 
+    { 
+      if(m_HLTPaths.at(x).first == label_) returnValue = m_HLTPaths.at(x).second;
+
+    }
+
+    return returnValue;
+  }
+
+
+
 
 ////////////////////////////////////////////////////////////////////
 // print some of the member data - useful for debugging
@@ -154,13 +320,13 @@ void NtupleLepton::printLEP()
   std::cout<<"<LEPPRINT "<<type_print<<"> dz "<<m_dz<<"\n";
   std::cout<<"<LEPPRINT "<<type_print<<"> dxy "<<m_dxy<<"\n";
   std::cout<<"<LEPPRINT "<<type_print<<"> known rho types and values : ";
-    for(std::size_t i=0;i<m_rho_Labels.size();++i) std::cout<<"[ "<<m_rho_Labels[i]<<" = "<<m_rho_Values[i]<<" ] ";
+    for(std::size_t i=0;i<m_rhos.size();++i) std::cout<<"[ "<<m_rhos[i].first<<" = "<<m_rhos[i].second<<" ] ";
     std::cout<<"\n";
   std::cout<<"<LEPPRINT "<<type_print<<"> known relIso types and values : ";
-    for(std::size_t i=0;i<m_relativeIsol_Labels.size();++i) std::cout<<"[ "<<m_relativeIsol_Labels[i]<<" = "<<m_relativeIsol_Values[i]<<" ] ";
+    for(std::size_t i=0;i<m_relativeIsolations.size();++i) std::cout<<"[ "<<m_relativeIsolations[i].first<<" = "<<m_relativeIsolations[i].second<<" ] ";
     std::cout<<"\n";
   std::cout<<"<LEPPRINT "<<type_print<<"> HLT ACCEPTED PATHS and PreScales : ";
-    for(std::size_t i=0;i<m_HLTacceptedPaths.size();++i) std::cout<<"[ "<<m_HLTacceptedPaths[i]<<" = "<<m_HLTacceptedPathPreScales[i]<<" ] ";
+    for(std::size_t i=0;i<m_HLTPaths.size();++i) std::cout<<"[ "<<m_HLTPaths[i].first<<" = "<<m_HLTPaths[i].second<<" ] ";
     std::cout<<"\n";
  
   std::cout<<"<LEPPRINT "<<type_print<<"> L1 trig obj Pt,Eta,Phi,M "<<m_L1TrigObj_p4.Pt()<<" , "<<m_L1TrigObj_p4.Eta()<<" , "<<m_L1TrigObj_p4.Phi()<<" , "<<m_L1TrigObj_p4.M()<<"\n";
@@ -234,65 +400,12 @@ std::cout<<"<LEPPRINT "<<type_print<<"> numberOfMissingInnerHits : " << m_number
 std::cout<<"<LEPPRINT "<<type_print<<"> numberOfMissingOuterHits : " << m_numberOfMissingOuterHits << std::endl;
 std::cout<<"<LEPPRINT "<<type_print<<"> numberOfTrackHits : " << m_numberOfTrackHits << std::endl;
 std::cout<<"<LEPPRINT "<<type_print<<"> passConversionVeto : " << m_passConversionVeto << std::endl;
-std::cout<<"<LEPPRINT "<<type_print<<"> againstElectronLoose : " << m_againstElectronLoose << std::endl;
-std::cout<<"<LEPPRINT "<<type_print<<"> againstElectronLooseMVA5 : " << m_againstElectronLooseMVA5 << std::endl;
-std::cout<<"<LEPPRINT "<<type_print<<"> againstElectronMVA5category : " << m_againstElectronMVA5category << std::endl;
-std::cout<<"<LEPPRINT "<<type_print<<"> againstElectronMVA5raw : " << m_againstElectronMVA5raw << std::endl;
-std::cout<<"<LEPPRINT "<<type_print<<"> againstElectronMedium : " << m_againstElectronMedium << std::endl;
-std::cout<<"<LEPPRINT "<<type_print<<"> againstElectronMediumMVA5 : " << m_againstElectronMediumMVA5 << std::endl;
-std::cout<<"<LEPPRINT "<<type_print<<"> againstElectronTight : " << m_againstElectronTight << std::endl;
-std::cout<<"<LEPPRINT "<<type_print<<"> againstElectronTightMVA5 : " << m_againstElectronTightMVA5 << std::endl;
-std::cout<<"<LEPPRINT "<<type_print<<"> againstElectronVLooseMVA5 : " << m_againstElectronVLooseMVA5 << std::endl;
-std::cout<<"<LEPPRINT "<<type_print<<"> againstElectronVTightMVA5 : " << m_againstElectronVTightMVA5 << std::endl;
-std::cout<<"<LEPPRINT "<<type_print<<"> againstMuonLoose : " << m_againstMuonLoose << std::endl;
-std::cout<<"<LEPPRINT "<<type_print<<"> againstMuonLoose2 : " << m_againstMuonLoose2 << std::endl;
-std::cout<<"<LEPPRINT "<<type_print<<"> againstMuonLoose3 : " << m_againstMuonLoose3 << std::endl;
-std::cout<<"<LEPPRINT "<<type_print<<"> againstMuonLooseMVA : " << m_againstMuonLooseMVA << std::endl;
-std::cout<<"<LEPPRINT "<<type_print<<"> againstMuonMVAraw : " << m_againstMuonMVAraw << std::endl;
-std::cout<<"<LEPPRINT "<<type_print<<"> againstMuonMedium : " << m_againstMuonMedium << std::endl;
-std::cout<<"<LEPPRINT "<<type_print<<"> againstMuonMedium2 : " << m_againstMuonMedium2 << std::endl;
-std::cout<<"<LEPPRINT "<<type_print<<"> againstMuonMediumMVA : " << m_againstMuonMediumMVA << std::endl;
-std::cout<<"<LEPPRINT "<<type_print<<"> againstMuonTight : " << m_againstMuonTight << std::endl;
-std::cout<<"<LEPPRINT "<<type_print<<"> againstMuonTight2 : " << m_againstMuonTight2 << std::endl;
-std::cout<<"<LEPPRINT "<<type_print<<"> againstMuonTight3 : " << m_againstMuonTight3 << std::endl;
-std::cout<<"<LEPPRINT "<<type_print<<"> againstMuonTightMVA : " << m_againstMuonTightMVA << std::endl;
-std::cout<<"<LEPPRINT "<<type_print<<"> byCombinedIsolationDeltaBetaCorrRaw3Hits : " << m_byCombinedIsolationDeltaBetaCorrRaw3Hits << std::endl;
-std::cout<<"<LEPPRINT "<<type_print<<"> byIsolationMVA3newDMwLTraw : " << m_byIsolationMVA3newDMwLTraw << std::endl;
-std::cout<<"<LEPPRINT "<<type_print<<"> byIsolationMVA3newDMwoLTraw : " << m_byIsolationMVA3newDMwoLTraw << std::endl;
-std::cout<<"<LEPPRINT "<<type_print<<"> byIsolationMVA3oldDMwLTraw : " << m_byIsolationMVA3oldDMwLTraw << std::endl;
-std::cout<<"<LEPPRINT "<<type_print<<"> byIsolationMVA3oldDMwoLTraw : " << m_byIsolationMVA3oldDMwoLTraw << std::endl;
-std::cout<<"<LEPPRINT "<<type_print<<"> byLooseCombinedIsolationDeltaBetaCorr3Hits : " << m_byLooseCombinedIsolationDeltaBetaCorr3Hits << std::endl;
-std::cout<<"<LEPPRINT "<<type_print<<"> byLooseIsolationMVA3newDMwLT : " << m_byLooseIsolationMVA3newDMwLT << std::endl;
-std::cout<<"<LEPPRINT "<<type_print<<"> byLooseIsolationMVA3newDMwoLT : " << m_byLooseIsolationMVA3newDMwoLT << std::endl;
-std::cout<<"<LEPPRINT "<<type_print<<"> byLooseIsolationMVA3oldDMwLT : " << m_byLooseIsolationMVA3oldDMwLT << std::endl;
-std::cout<<"<LEPPRINT "<<type_print<<"> byLooseIsolationMVA3oldDMwoLT : " << m_byLooseIsolationMVA3oldDMwoLT << std::endl;
-std::cout<<"<LEPPRINT "<<type_print<<"> byMediumCombinedIsolationDeltaBetaCorr3Hits : " << m_byMediumCombinedIsolationDeltaBetaCorr3Hits << std::endl;
-std::cout<<"<LEPPRINT "<<type_print<<"> byMediumIsolationMVA3newDMwLT : " << m_byMediumIsolationMVA3newDMwLT << std::endl;
-std::cout<<"<LEPPRINT "<<type_print<<"> byMediumIsolationMVA3newDMwoLT : " << m_byMediumIsolationMVA3newDMwoLT << std::endl;
-std::cout<<"<LEPPRINT "<<type_print<<"> byMediumIsolationMVA3oldDMwLT : " << m_byMediumIsolationMVA3oldDMwLT << std::endl;
-std::cout<<"<LEPPRINT "<<type_print<<"> byMediumIsolationMVA3oldDMwoLT : " << m_byMediumIsolationMVA3oldDMwoLT << std::endl;
-std::cout<<"<LEPPRINT "<<type_print<<"> byTightCombinedIsolationDeltaBetaCorr3Hits : " << m_byTightCombinedIsolationDeltaBetaCorr3Hits << std::endl;
-std::cout<<"<LEPPRINT "<<type_print<<"> byTightIsolationMVA3newDMwLT : " << m_byTightIsolationMVA3newDMwLT << std::endl;
-std::cout<<"<LEPPRINT "<<type_print<<"> byTightIsolationMVA3newDMwoLT : " << m_byTightIsolationMVA3newDMwoLT << std::endl;
-std::cout<<"<LEPPRINT "<<type_print<<"> byTightIsolationMVA3oldDMwLT : " << m_byTightIsolationMVA3oldDMwLT << std::endl;
-std::cout<<"<LEPPRINT "<<type_print<<"> byTightIsolationMVA3oldDMwoLT : " << m_byTightIsolationMVA3oldDMwoLT << std::endl;
-std::cout<<"<LEPPRINT "<<type_print<<"> byVLooseIsolationMVA3newDMwLT : " << m_byVLooseIsolationMVA3newDMwLT << std::endl;
-std::cout<<"<LEPPRINT "<<type_print<<"> byVLooseIsolationMVA3newDMwoLT : " << m_byVLooseIsolationMVA3newDMwoLT << std::endl;
-std::cout<<"<LEPPRINT "<<type_print<<"> byVLooseIsolationMVA3oldDMwLT : " << m_byVLooseIsolationMVA3oldDMwLT << std::endl;
-std::cout<<"<LEPPRINT "<<type_print<<"> byVLooseIsolationMVA3oldDMwoLT : " << m_byVLooseIsolationMVA3oldDMwoLT << std::endl;
-std::cout<<"<LEPPRINT "<<type_print<<"> byVTightIsolationMVA3newDMwLT : " << m_byVTightIsolationMVA3newDMwLT << std::endl;
-std::cout<<"<LEPPRINT "<<type_print<<"> byVTightIsolationMVA3newDMwoLT : " << m_byVTightIsolationMVA3newDMwoLT << std::endl;
-std::cout<<"<LEPPRINT "<<type_print<<"> byVTightIsolationMVA3oldDMwLT : " << m_byVTightIsolationMVA3oldDMwLT << std::endl;
-std::cout<<"<LEPPRINT "<<type_print<<"> byVTightIsolationMVA3oldDMwoLT : " << m_byVTightIsolationMVA3oldDMwoLT << std::endl;
-std::cout<<"<LEPPRINT "<<type_print<<"> byVVTightIsolationMVA3newDMwLT : " << m_byVVTightIsolationMVA3newDMwLT << std::endl;
-std::cout<<"<LEPPRINT "<<type_print<<"> byVVTightIsolationMVA3newDMwoLT : " << m_byVVTightIsolationMVA3newDMwoLT << std::endl;
-std::cout<<"<LEPPRINT "<<type_print<<"> byVVTightIsolationMVA3oldDMwLT : " << m_byVVTightIsolationMVA3oldDMwLT << std::endl;
-std::cout<<"<LEPPRINT "<<type_print<<"> byVVTightIsolationMVA3oldDMwoLT : " << m_byVVTightIsolationMVA3oldDMwoLT << std::endl;
-std::cout<<"<LEPPRINT "<<type_print<<"> chargedIsoPtSum : " << m_chargedIsoPtSum << std::endl;
-std::cout<<"<LEPPRINT "<<type_print<<"> decayModeFinding : " << m_decayModeFinding << std::endl;
-std::cout<<"<LEPPRINT "<<type_print<<"> decayModeFindingNewDMs : " << m_decayModeFindingNewDMs << std::endl;
-std::cout<<"<LEPPRINT "<<type_print<<"> neutralIsoPtSum : " << m_neutralIsoPtSum << std::endl;
-std::cout<<"<LEPPRINT "<<type_print<<"> puCorrPtSum : " << m_puCorrPtSum << std::endl;
+
+std::cout<<"<LEPPRINT "<<type_print<<"> known tauID types and values : ";
+  for(std::size_t i=0;i<m_tauIDs.size();++i) std::cout<<"[ "<<m_tauIDs[i].first<<" = "<<m_tauIDs[i].second<<" ] ";
+  std::cout<<"\n";
+
+
 std::cout<<"<LEPPRINT "<<type_print<<"> num strips : " << m_numStrips << std::endl;
 std::cout<<"<LEPPRINT "<<type_print<<"> num hadrons : " << m_numHadrons << std::endl;
 std::cout<<"<LEPPRINT "<<type_print<<"> genJet p4 pt :  " << m_genJet_p4.pt() << std::endl;
@@ -324,9 +437,14 @@ void NtupleLepton::userFloatVectorParser(stringVec & labels_,floatVec & values_)
 
     if(labels_[i].find("AcceptWithPreScale_")==0) 
       {
-        std::string x = "AcceptWithPreScale_";
-        m_HLTacceptedPaths.push_back(labels_[i].erase(0,x.length()));
-        m_HLTacceptedPathPreScales.push_back(values_[i]);
+   
+       /* store the HLT path label-preScale pairs */
+          std::string x = "AcceptWithPreScale_";
+          std::string current_string = labels_[i].erase(0,x.length());
+          float current_float = values_[i];
+          std::pair<std::string, float> aPathPreScalePair(current_string,current_float);
+          m_HLTPaths.push_back(aPathPreScalePair);
+        
       }
     else if(labels_[i]=="EffectiveArea")  m_EffectiveArea = values_[i];
     else if(labels_[i]=="dxy")  m_dxy = values_[i];
@@ -353,16 +471,41 @@ void NtupleLepton::userFloatVectorParser(stringVec & labels_,floatVec & values_)
       { trigL3Mass = values_[i];}
     else if (labels_[i].find("rho_")==0)
       {
-        std::string x = "rho_";
-        m_rho_Labels.push_back(labels_[i].erase(0,x.length()));
-        m_rho_Values.push_back(values_[i]);
+
+   
+       /* store the rho label-value pairs */
+          std::string x = "rho_";
+          std::string current_string = labels_[i].erase(0,x.length());
+          float current_float = values_[i];
+          std::pair<std::string, float> currentPair(current_string,current_float);
+          m_rhos.push_back(currentPair);
+        
+
       }
     else if (labels_[i].find("relativeIsol_")==0)
       {
-        std::string x = "relativeIsol_";
-        m_relativeIsol_Labels.push_back(labels_[i].erase(0,x.length()));
-        m_relativeIsol_Values.push_back(values_[i]);
+
+      /* store the relIso label-value pairs */
+          std::string x = "relativeIsol_";
+          std::string current_string = labels_[i].erase(0,x.length());
+          float current_float = values_[i];
+          std::pair<std::string, float> currentPair(current_string,current_float);
+          m_relativeIsolations.push_back(currentPair);        
+
       }
+
+    else if (labels_[i].find("tauID_")==0)
+      {
+
+      /* store the rho label-value pairs */
+          std::string x = "tauID_";
+          std::string current_string = labels_[i].erase(0,x.length());
+          float current_float = values_[i];
+          std::pair<std::string, float> currentPair(current_string,current_float);
+          m_tauIDs.push_back(currentPair);        
+
+      }
+
     else if(labels_[i].find("L1Obj_trigObjectFilter_")==0)
       {
         std::string x = "L1Obj_trigObjectFilter_";
@@ -463,65 +606,8 @@ void NtupleLepton::userFloatVectorParser(stringVec & labels_,floatVec & values_)
     else if(labels_[i]=="numberOfMissingOuterHits") {m_numberOfMissingOuterHits = values_[i];}
     else if(labels_[i]=="numberOfTrackHits") {m_numberOfTrackHits = values_[i];}
     else if(labels_[i]=="passConversionVeto") {m_passConversionVeto = values_[i];}
-    else if(labels_[i]=="againstElectronLoose") {m_againstElectronLoose = values_[i];}
-    else if(labels_[i]=="againstElectronLooseMVA5") {m_againstElectronLooseMVA5 = values_[i];}
-    else if(labels_[i]=="againstElectronMVA5category") {m_againstElectronMVA5category = values_[i];}
-    else if(labels_[i]=="againstElectronMVA5raw") {m_againstElectronMVA5raw = values_[i];}
-    else if(labels_[i]=="againstElectronMedium") {m_againstElectronMedium = values_[i];}
-    else if(labels_[i]=="againstElectronMediumMVA5") {m_againstElectronMediumMVA5 = values_[i];}
-    else if(labels_[i]=="againstElectronTight") {m_againstElectronTight = values_[i];}
-    else if(labels_[i]=="againstElectronTightMVA5") {m_againstElectronTightMVA5 = values_[i];}
-    else if(labels_[i]=="againstElectronVLooseMVA5") {m_againstElectronVLooseMVA5 = values_[i];}
-    else if(labels_[i]=="againstElectronVTightMVA5") {m_againstElectronVTightMVA5 = values_[i];}
-    else if(labels_[i]=="againstMuonLoose") {m_againstMuonLoose = values_[i];}
-    else if(labels_[i]=="againstMuonLoose2") {m_againstMuonLoose2 = values_[i];}
-    else if(labels_[i]=="againstMuonLoose3") {m_againstMuonLoose3 = values_[i];}
-    else if(labels_[i]=="againstMuonLooseMVA") {m_againstMuonLooseMVA = values_[i];}
-    else if(labels_[i]=="againstMuonMVAraw") {m_againstMuonMVAraw = values_[i];}
-    else if(labels_[i]=="againstMuonMedium") {m_againstMuonMedium = values_[i];}
-    else if(labels_[i]=="againstMuonMedium2") {m_againstMuonMedium2 = values_[i];}
-    else if(labels_[i]=="againstMuonMediumMVA") {m_againstMuonMediumMVA = values_[i];}
-    else if(labels_[i]=="againstMuonTight") {m_againstMuonTight = values_[i];}
-    else if(labels_[i]=="againstMuonTight2") {m_againstMuonTight2 = values_[i];}
-    else if(labels_[i]=="againstMuonTight3") {m_againstMuonTight3 = values_[i];}
-    else if(labels_[i]=="againstMuonTightMVA") {m_againstMuonTightMVA = values_[i];}
-    else if(labels_[i]=="byCombinedIsolationDeltaBetaCorrRaw3Hits") {m_byCombinedIsolationDeltaBetaCorrRaw3Hits = values_[i];}
-    else if(labels_[i]=="byIsolationMVA3newDMwLTraw") {m_byIsolationMVA3newDMwLTraw = values_[i];}
-    else if(labels_[i]=="byIsolationMVA3newDMwoLTraw") {m_byIsolationMVA3newDMwoLTraw = values_[i];}
-    else if(labels_[i]=="byIsolationMVA3oldDMwLTraw") {m_byIsolationMVA3oldDMwLTraw = values_[i];}
-    else if(labels_[i]=="byIsolationMVA3oldDMwoLTraw") {m_byIsolationMVA3oldDMwoLTraw = values_[i];}
-    else if(labels_[i]=="byLooseCombinedIsolationDeltaBetaCorr3Hits") {m_byLooseCombinedIsolationDeltaBetaCorr3Hits = values_[i];}
-    else if(labels_[i]=="byLooseIsolationMVA3newDMwLT") {m_byLooseIsolationMVA3newDMwLT = values_[i];}
-    else if(labels_[i]=="byLooseIsolationMVA3newDMwoLT") {m_byLooseIsolationMVA3newDMwoLT = values_[i];}
-    else if(labels_[i]=="byLooseIsolationMVA3oldDMwLT") {m_byLooseIsolationMVA3oldDMwLT = values_[i];}
-    else if(labels_[i]=="byLooseIsolationMVA3oldDMwoLT") {m_byLooseIsolationMVA3oldDMwoLT = values_[i];}
-    else if(labels_[i]=="byMediumCombinedIsolationDeltaBetaCorr3Hits") {m_byMediumCombinedIsolationDeltaBetaCorr3Hits = values_[i];}
-    else if(labels_[i]=="byMediumIsolationMVA3newDMwLT") {m_byMediumIsolationMVA3newDMwLT = values_[i];}
-    else if(labels_[i]=="byMediumIsolationMVA3newDMwoLT") {m_byMediumIsolationMVA3newDMwoLT = values_[i];}
-    else if(labels_[i]=="byMediumIsolationMVA3oldDMwLT") {m_byMediumIsolationMVA3oldDMwLT = values_[i];}
-    else if(labels_[i]=="byMediumIsolationMVA3oldDMwoLT") {m_byMediumIsolationMVA3oldDMwoLT = values_[i];}
-    else if(labels_[i]=="byTightCombinedIsolationDeltaBetaCorr3Hits") {m_byTightCombinedIsolationDeltaBetaCorr3Hits = values_[i];}
-    else if(labels_[i]=="byTightIsolationMVA3newDMwLT") {m_byTightIsolationMVA3newDMwLT = values_[i];}
-    else if(labels_[i]=="byTightIsolationMVA3newDMwoLT") {m_byTightIsolationMVA3newDMwoLT = values_[i];}
-    else if(labels_[i]=="byTightIsolationMVA3oldDMwLT") {m_byTightIsolationMVA3oldDMwLT = values_[i];}
-    else if(labels_[i]=="byTightIsolationMVA3oldDMwoLT") {m_byTightIsolationMVA3oldDMwoLT = values_[i];}
-    else if(labels_[i]=="byVLooseIsolationMVA3newDMwLT") {m_byVLooseIsolationMVA3newDMwLT = values_[i];}
-    else if(labels_[i]=="byVLooseIsolationMVA3newDMwoLT") {m_byVLooseIsolationMVA3newDMwoLT = values_[i];}
-    else if(labels_[i]=="byVLooseIsolationMVA3oldDMwLT") {m_byVLooseIsolationMVA3oldDMwLT = values_[i];}
-    else if(labels_[i]=="byVLooseIsolationMVA3oldDMwoLT") {m_byVLooseIsolationMVA3oldDMwoLT = values_[i];}
-    else if(labels_[i]=="byVTightIsolationMVA3newDMwLT") {m_byVTightIsolationMVA3newDMwLT = values_[i];}
-    else if(labels_[i]=="byVTightIsolationMVA3newDMwoLT") {m_byVTightIsolationMVA3newDMwoLT = values_[i];}
-    else if(labels_[i]=="byVTightIsolationMVA3oldDMwLT") {m_byVTightIsolationMVA3oldDMwLT = values_[i];}
-    else if(labels_[i]=="byVTightIsolationMVA3oldDMwoLT") {m_byVTightIsolationMVA3oldDMwoLT = values_[i];}
-    else if(labels_[i]=="byVVTightIsolationMVA3newDMwLT") {m_byVVTightIsolationMVA3newDMwLT = values_[i];}
-    else if(labels_[i]=="byVVTightIsolationMVA3newDMwoLT") {m_byVVTightIsolationMVA3newDMwoLT = values_[i];}
-    else if(labels_[i]=="byVVTightIsolationMVA3oldDMwLT") {m_byVVTightIsolationMVA3oldDMwLT = values_[i];}
-    else if(labels_[i]=="byVVTightIsolationMVA3oldDMwoLT") {m_byVVTightIsolationMVA3oldDMwoLT = values_[i];}
-    else if(labels_[i]=="chargedIsoPtSum") {m_chargedIsoPtSum = values_[i];}
-    else if(labels_[i]=="decayModeFinding") {m_decayModeFinding = values_[i];}
-    else if(labels_[i]=="decayModeFindingNewDMs") {m_decayModeFindingNewDMs = values_[i];}
-    else if(labels_[i]=="neutralIsoPtSum") {m_neutralIsoPtSum = values_[i];}
-    else if(labels_[i]=="puCorrPtSum") {m_puCorrPtSum = values_[i];}
+
+
     else if(labels_[i]=="numHadrons") {m_numHadrons = values_[i];}
     else if(labels_[i]=="numStrips") {m_numStrips = values_[i];}
 
@@ -704,8 +790,6 @@ LorentzVector NtupleLepton::L3TrigObj_p4() const { return m_L3TrigObj_p4; }
 
 float NtupleLepton::dz() const { return m_dz; }
 float NtupleLepton::dxy() const { return m_dxy; }
-stringVec NtupleLepton::HLTacceptedPaths() const { return m_HLTacceptedPaths; }
-floatVec NtupleLepton::HLTacceptedPathPreScales() const { return m_HLTacceptedPathPreScales; }
 float NtupleLepton::EffectiveArea() const { return m_EffectiveArea; }
 int NtupleLepton::charge() const { return m_charge; }
 int NtupleLepton::PFpdgId() const { return m_PFpdgId; }
@@ -720,10 +804,6 @@ stringVec NtupleLepton::pathSummary_isBOTH() const { return m_pathSummary_isBOTH
 stringVec NtupleLepton::pathSummary_isL3() const { return m_pathSummary_isL3; }
 stringVec NtupleLepton::pathSummary_isLF() const { return m_pathSummary_isLF; }
 stringVec NtupleLepton::pathSummary_filterListPassed() const { return m_pathSummary_filterListPassed; }
-stringVec NtupleLepton::relativeIsol_Labels() const { return m_relativeIsol_Labels; }
-floatVec NtupleLepton::relativeIsol_Values() const { return m_relativeIsol_Values; }
-stringVec NtupleLepton::rho_Labels() const { return m_rho_Labels; }
-floatVec NtupleLepton::rho_Values() const { return m_rho_Values; }
 float NtupleLepton::raw_electronMVA() const {return m_raw_electronMVA;}
 float NtupleLepton::passFail_electronMVA() const {return m_passFail_electronMVA;} 
 float NtupleLepton::TauEsVariant() const {return m_TauEsVariant;} 
@@ -767,65 +847,8 @@ float NtupleLepton::numberOfMissingInnerHits() const {return m_numberOfMissingIn
 float NtupleLepton::numberOfMissingOuterHits() const {return m_numberOfMissingOuterHits;}
 float NtupleLepton::numberOfTrackHits() const {return m_numberOfTrackHits;}
 float NtupleLepton::passConversionVeto() const {return m_passConversionVeto;}
-float NtupleLepton::againstElectronLoose() const {return m_againstElectronLoose;}
-float NtupleLepton::againstElectronLooseMVA5() const {return m_againstElectronLooseMVA5;}
-float NtupleLepton::againstElectronMVA5category() const {return m_againstElectronMVA5category;}
-float NtupleLepton::againstElectronMVA5raw() const {return m_againstElectronMVA5raw;}
-float NtupleLepton::againstElectronMedium() const {return m_againstElectronMedium;}
-float NtupleLepton::againstElectronMediumMVA5() const {return m_againstElectronMediumMVA5;}
-float NtupleLepton::againstElectronTight() const {return m_againstElectronTight;}
-float NtupleLepton::againstElectronTightMVA5() const {return m_againstElectronTightMVA5;}
-float NtupleLepton::againstElectronVLooseMVA5() const {return m_againstElectronVLooseMVA5;}
-float NtupleLepton::againstElectronVTightMVA5() const {return m_againstElectronVTightMVA5;}
-float NtupleLepton::againstMuonLoose() const {return m_againstMuonLoose;}
-float NtupleLepton::againstMuonLoose2() const {return m_againstMuonLoose2;}
-float NtupleLepton::againstMuonLoose3() const {return m_againstMuonLoose3;}
-float NtupleLepton::againstMuonLooseMVA() const {return m_againstMuonLooseMVA;}
-float NtupleLepton::againstMuonMVAraw() const {return m_againstMuonMVAraw;}
-float NtupleLepton::againstMuonMedium() const {return m_againstMuonMedium;}
-float NtupleLepton::againstMuonMedium2() const {return m_againstMuonMedium2;}
-float NtupleLepton::againstMuonMediumMVA() const {return m_againstMuonMediumMVA;}
-float NtupleLepton::againstMuonTight() const {return m_againstMuonTight;}
-float NtupleLepton::againstMuonTight2() const {return m_againstMuonTight2;}
-float NtupleLepton::againstMuonTight3() const {return m_againstMuonTight3;}
-float NtupleLepton::againstMuonTightMVA() const {return m_againstMuonTightMVA;}
-float NtupleLepton::byCombinedIsolationDeltaBetaCorrRaw3Hits() const {return m_byCombinedIsolationDeltaBetaCorrRaw3Hits;}
-float NtupleLepton::byIsolationMVA3newDMwLTraw() const {return m_byIsolationMVA3newDMwLTraw;}
-float NtupleLepton::byIsolationMVA3newDMwoLTraw() const {return m_byIsolationMVA3newDMwoLTraw;}
-float NtupleLepton::byIsolationMVA3oldDMwLTraw() const {return m_byIsolationMVA3oldDMwLTraw;}
-float NtupleLepton::byIsolationMVA3oldDMwoLTraw() const {return m_byIsolationMVA3oldDMwoLTraw;}
-float NtupleLepton::byLooseCombinedIsolationDeltaBetaCorr3Hits() const {return m_byLooseCombinedIsolationDeltaBetaCorr3Hits;}
-float NtupleLepton::byLooseIsolationMVA3newDMwLT() const {return m_byLooseIsolationMVA3newDMwLT;}
-float NtupleLepton::byLooseIsolationMVA3newDMwoLT() const {return m_byLooseIsolationMVA3newDMwoLT;}
-float NtupleLepton::byLooseIsolationMVA3oldDMwLT() const {return m_byLooseIsolationMVA3oldDMwLT;}
-float NtupleLepton::byLooseIsolationMVA3oldDMwoLT() const {return m_byLooseIsolationMVA3oldDMwoLT;}
-float NtupleLepton::byMediumCombinedIsolationDeltaBetaCorr3Hits() const {return m_byMediumCombinedIsolationDeltaBetaCorr3Hits;}
-float NtupleLepton::byMediumIsolationMVA3newDMwLT() const {return m_byMediumIsolationMVA3newDMwLT;}
-float NtupleLepton::byMediumIsolationMVA3newDMwoLT() const {return m_byMediumIsolationMVA3newDMwoLT;}
-float NtupleLepton::byMediumIsolationMVA3oldDMwLT() const {return m_byMediumIsolationMVA3oldDMwLT;}
-float NtupleLepton::byMediumIsolationMVA3oldDMwoLT() const {return m_byMediumIsolationMVA3oldDMwoLT;}
-float NtupleLepton::byTightCombinedIsolationDeltaBetaCorr3Hits() const {return m_byTightCombinedIsolationDeltaBetaCorr3Hits;}
-float NtupleLepton::byTightIsolationMVA3newDMwLT() const {return m_byTightIsolationMVA3newDMwLT;}
-float NtupleLepton::byTightIsolationMVA3newDMwoLT() const {return m_byTightIsolationMVA3newDMwoLT;}
-float NtupleLepton::byTightIsolationMVA3oldDMwLT() const {return m_byTightIsolationMVA3oldDMwLT;}
-float NtupleLepton::byTightIsolationMVA3oldDMwoLT() const {return m_byTightIsolationMVA3oldDMwoLT;}
-float NtupleLepton::byVLooseIsolationMVA3newDMwLT() const {return m_byVLooseIsolationMVA3newDMwLT;}
-float NtupleLepton::byVLooseIsolationMVA3newDMwoLT() const {return m_byVLooseIsolationMVA3newDMwoLT;}
-float NtupleLepton::byVLooseIsolationMVA3oldDMwLT() const {return m_byVLooseIsolationMVA3oldDMwLT;}
-float NtupleLepton::byVLooseIsolationMVA3oldDMwoLT() const {return m_byVLooseIsolationMVA3oldDMwoLT;}
-float NtupleLepton::byVTightIsolationMVA3newDMwLT() const {return m_byVTightIsolationMVA3newDMwLT;}
-float NtupleLepton::byVTightIsolationMVA3newDMwoLT() const {return m_byVTightIsolationMVA3newDMwoLT;}
-float NtupleLepton::byVTightIsolationMVA3oldDMwLT() const {return m_byVTightIsolationMVA3oldDMwLT;}
-float NtupleLepton::byVTightIsolationMVA3oldDMwoLT() const {return m_byVTightIsolationMVA3oldDMwoLT;}
-float NtupleLepton::byVVTightIsolationMVA3newDMwLT() const {return m_byVVTightIsolationMVA3newDMwLT;}
-float NtupleLepton::byVVTightIsolationMVA3newDMwoLT() const {return m_byVVTightIsolationMVA3newDMwoLT;}
-float NtupleLepton::byVVTightIsolationMVA3oldDMwLT() const {return m_byVVTightIsolationMVA3oldDMwLT;}
-float NtupleLepton::byVVTightIsolationMVA3oldDMwoLT() const {return m_byVVTightIsolationMVA3oldDMwoLT;}
-float NtupleLepton::chargedIsoPtSum() const {return m_chargedIsoPtSum;}
-float NtupleLepton::decayModeFinding() const {return m_decayModeFinding;}
-float NtupleLepton::decayModeFindingNewDMs() const {return m_decayModeFindingNewDMs;}
-float NtupleLepton::neutralIsoPtSum() const {return m_neutralIsoPtSum;}
-float NtupleLepton::puCorrPtSum() const {return m_puCorrPtSum;}
+
+
 LorentzVector NtupleLepton::genJet_p4() const {return m_genJet_p4;}
 float NtupleLepton::numStrips() const {return m_numStrips;}
 float NtupleLepton::numHadrons() const {return m_numHadrons;}

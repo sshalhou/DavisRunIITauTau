@@ -2,10 +2,13 @@
 #include "DavisRunIITauTau/TupleObjects/interface/TupleLeptonTypes.h"
 #include "DavisRunIITauTau/TupleObjects/interface/TupleCandidateEventTypes.h"
 #include "TLorentzVector.h"
+#include <math.h> 
+
 
 NtupleEvent::NtupleEvent()
 {
 	m_CandidateEventType = -999;
+	m_TauEsNumberSigmasShifted = NAN;
 	m_isOsPair = -999;
 
 }
@@ -20,24 +23,29 @@ void NtupleEvent::fill(TupleCandidateEvent TCE)
 
 	NtupleLepton ntupLep1; ntupLep1.fill(TCE.leg1());        
     NtupleLepton ntupLep2; ntupLep2.fill(TCE.leg2());        
-	m_leg0  =  ntupLep1;
-	m_leg1  =  ntupLep2;
+	m_leg1 =  ntupLep1;
+	m_leg2  =  ntupLep2;
 
-	if (m_leg0.charge() == m_leg1.charge()) m_isOsPair = 0;
-	else if (m_leg0.charge() == -1*m_leg1.charge()) m_isOsPair = 1;
+	if(isnan(m_leg2.TauEsVariant()) == 0) m_TauEsNumberSigmasShifted = m_leg2.TauEsVariant();
+	else if(isnan(m_leg1.TauEsVariant()) == 0) m_TauEsNumberSigmasShifted = m_leg1.TauEsVariant();
+
+
+
+	if (m_leg1.charge() == m_leg2.charge()) m_isOsPair = 0;
+	else if (m_leg1.charge() == -1*m_leg2.charge()) m_isOsPair = 1;
 
 
 	m_SVMass = TCE.SVMass();
-	m_VISMass.push_back((m_leg0.p4()+m_leg1.p4()).M());
+	m_VISMass.push_back((m_leg1.p4()+m_leg2.p4()).M());
 	math::PtEtaPhiMLorentzVector mvamet(TCE.mvaMET()[0].pt(),0.0,TCE.mvaMET()[0].phi(),0.0);
 	math::PtEtaPhiMLorentzVector pfmet(TCE.pfMET()[0].pt(),0.0,TCE.pfMET()[0].phi(),0.0);
 
 
-	m_MTmvaMET_leg0.push_back(GetTransverseMass(m_leg0.p4(),mvamet));
-	m_MTpfMET_leg0.push_back(GetTransverseMass(m_leg0.p4(),pfmet));
-
 	m_MTmvaMET_leg1.push_back(GetTransverseMass(m_leg1.p4(),mvamet));
 	m_MTpfMET_leg1.push_back(GetTransverseMass(m_leg1.p4(),pfmet));
+
+	m_MTmvaMET_leg2.push_back(GetTransverseMass(m_leg2.p4(),mvamet));
+	m_MTpfMET_leg2.push_back(GetTransverseMass(m_leg2.p4(),pfmet));
 
 	m_mvaMET = TCE.mvaMET();
 	m_pfMET = TCE.pfMET();
@@ -67,17 +75,18 @@ void NtupleEvent::fill(TupleCandidateEvent TCE)
 
 
 int NtupleEvent::CandidateEventType() const { return m_CandidateEventType; }
-NtupleLepton NtupleEvent::leg0() const { return m_leg0; }
+float NtupleEvent::TauEsNumberSigmasShifted() const {return m_TauEsNumberSigmasShifted;}
 NtupleLepton NtupleEvent::leg1() const { return m_leg1; }
+NtupleLepton NtupleEvent::leg2() const { return m_leg2; }
 std::vector<NtupleLepton> NtupleEvent::vetoElectron() const {return m_vetoElectron;}
 std::vector<NtupleLepton> NtupleEvent::vetoMuon() const {return  m_vetoMuon;}
 std::vector<double> NtupleEvent::SVMass() const {return  m_SVMass;}
 std::vector<double> NtupleEvent::VISMass() const {return  m_VISMass;}
 int NtupleEvent::isOsPair() const {return m_isOsPair;}
-std::vector<double> NtupleEvent::MTmvaMET_leg0() const {return m_MTmvaMET_leg0;}
-std::vector<double> NtupleEvent::MTpfMET_leg0() const {return m_MTpfMET_leg0;}
 std::vector<double> NtupleEvent::MTmvaMET_leg1() const {return m_MTmvaMET_leg1;}
 std::vector<double> NtupleEvent::MTpfMET_leg1() const {return m_MTpfMET_leg1;}
+std::vector<double> NtupleEvent::MTmvaMET_leg2() const {return m_MTmvaMET_leg2;}
+std::vector<double> NtupleEvent::MTpfMET_leg2() const {return m_MTpfMET_leg2;}
 std::vector<reco::PFMET>  NtupleEvent::mvaMET() const {return m_mvaMET;}
 std::vector<pat::MET>  NtupleEvent::pfMET() const {return m_pfMET;}
 std::vector<double>  NtupleEvent::pfMET_cov00() const {return m_pfMET_cov00;}

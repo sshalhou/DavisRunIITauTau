@@ -171,7 +171,7 @@ void TauClones::ChangeEnergyAndFillUserFloats(std::vector <pat::Tau> & clones,
 		for (std::size_t p=0; p<t.tauIDs().size(); ++p)
 		{
 
-			t.addUserFloat(t.tauIDs()[p].first,t.tauIDs()[p].second);
+			t.addUserFloat("tauID_"+t.tauIDs()[p].first,t.tauIDs()[p].second);
 
 		}
 

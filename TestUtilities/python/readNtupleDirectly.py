@@ -20,7 +20,8 @@ options.parseArguments()
 
 doExample1 = False
 doExample2 = False
-doExample3 = True
+doExample3 = False
+doExample4 = True
 
 ####################################
 # EX-1 : print candidateType & isolations
@@ -36,9 +37,9 @@ if doExample1 :
     	event.getByLabel (label, handle)
     	pairs = handle.product()
     	for p in pairs:
-    		leg0 = p.leg0()
-    		for i in range(0,len(leg0.relativeIsol_Labels())):
-    			print 'event type = ', p.CandidateEventType(), leg0.relativeIsol_Labels()[i]," = ", leg0.relativeIsol_Values()[i]
+    		leg1 = p.leg1()
+    		for i in range(0,len(leg1.relativeIsol_Labels())):
+    			print 'event type = ', p.CandidateEventType(), leg1.relativeIsol_Labels()[i]," = ", leg1.relativeIsol_Values()[i]
 
 
 
@@ -105,4 +106,37 @@ if doExample3 :
     outFileEx3.Close()    
 
 
+####################################
+# EX-4 : print HLT accepted paths and preScales, rhos, and relativeIsols, tauIDs
+
+if doExample4 :
+
+    events4 = Events ("/uscms_data/d3/shalhout/RunIIWorking/CMSSW_7_2_3_patch1/src/NtupleFile.root")
+    handle4 = Handle ("std::vector<NtupleEvent>")
+    label4 = ("NtupleEvent","NtupleEvent","Ntuple")
+
+
+
+    for event4 in events4:
+        event4.getByLabel (label4, handle4)
+        pairs = handle4.product()
+        for p in pairs:
+            leg1 = p.leg1()
+            print '**********************************************', leg1.leptonType()
+            print '------------- accepted HLT paths and preScales ----------------------'
+            for pathName in leg1.HLTAcceptedPath_Labels():
+                print '[', pathName, " , ", leg1.HLTpath(pathName), ']' 
+            print     
+            print '------------- known Rho labels and values ----------------------'
+            for rhoName in leg1.rho_Labels():
+                print '[', rhoName, " , ", leg1.rho(rhoName), ']' 
+            print     
+            print '------------- known RelIso labels and values ----------------------'
+            for isoName in leg1.relativeIsol_Labels():
+                print '[', isoName, " , ", leg1.relativeIsol(isoName), ']' 
+            print     
+            print '------------- known tauID labels and values ----------------------'
+            for idName in leg1.tauID_Labels():
+                print '[', idName, " , ", leg1.tauID(idName), ']' 
+            print   
 
