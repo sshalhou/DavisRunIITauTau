@@ -3,7 +3,7 @@ import FWCore.ParameterSet.Config as cms
 process = cms.Process("FlatTuple")
 
 process.load("FWCore.MessageService.MessageLogger_cfi")
-process.MessageLogger.cerr.FwkReport.reportEvery = cms.untracked.int32(1)
+process.MessageLogger.cerr.FwkReport.reportEvery = cms.untracked.int32(1000)
 
 
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
@@ -15,6 +15,9 @@ process.source = cms.Source("PoolSource",
     # replace 'myfile.root' with the source file you want to use
 	    fileNames=myfilelist
     )
+
+
+
 
 
 # very basic cuts on (H-candidate) muons
@@ -63,6 +66,15 @@ OSpSet = cms.PSet(
 			keepTauEsUp = cms.bool(False),
 			keepTauEsDown = cms.bool(False),
 
+			# how to rank pairs within this selection
+			rankByPtSum = cms.bool(True),
+			rankByIsolation = cms.bool(False),
+			electronIsolationForRank = cms.string("DeltaBetaCorrectedRelIso"),
+			muonIsolationForRank = cms.string("DeltaBetaCorrectedRelIso"),
+			tauIDisolationForRank = cms.string("byCombinedIsolationDeltaBetaCorrRaw3Hits"),
+
+
+
 			# the Tau IDs we would like to keep in the FlatTuple
 			# note : the hardcoded MAX variable in FlatTupleGenerator.cc limits the 
 			# number of these that we can keep 
@@ -85,6 +97,15 @@ OSEsDownSet = cms.PSet(
 			keepTauEsNominal = cms.bool(False),
 			keepTauEsUp = cms.bool(False),
 			keepTauEsDown = cms.bool(True),
+
+			# how to rank pairs within this selection
+			rankByPtSum = cms.bool(True),
+			rankByIsolation = cms.bool(False),
+			electronIsolationForRank = cms.string("DeltaBetaCorrectedRelIso"),
+			muonIsolationForRank = cms.string("DeltaBetaCorrectedRelIso"),
+			tauIDisolationForRank = cms.string("byCombinedIsolationDeltaBetaCorrRaw3Hits"),
+
+
 
 			# the Tau IDs we would like to keep in the FlatTuple
 			# note : the hardcoded MAX variable in FlatTupleGenerator.cc limits the 
@@ -110,6 +131,15 @@ OSEsUpSet = cms.PSet(
 			keepTauEsUp = cms.bool(True),
 			keepTauEsDown = cms.bool(False),
 
+			# how to rank pairs within this selection
+			rankByPtSum = cms.bool(True),
+			rankByIsolation = cms.bool(False),
+			electronIsolationForRank = cms.string("DeltaBetaCorrectedRelIso"),
+			muonIsolationForRank = cms.string("DeltaBetaCorrectedRelIso"),
+			tauIDisolationForRank = cms.string("byCombinedIsolationDeltaBetaCorrRaw3Hits"),
+
+
+
 			# the Tau IDs we would like to keep in the FlatTuple
 			# note : the hardcoded MAX variable in FlatTupleGenerator.cc limits the 
 			# number of these that we can keep 
@@ -132,6 +162,15 @@ SSpSet = cms.PSet(
 			keepTauEsNominal = cms.bool(True),
 			keepTauEsUp = cms.bool(False),
 			keepTauEsDown = cms.bool(False),
+
+			# how to rank pairs within this selection
+			rankByPtSum = cms.bool(True),
+			rankByIsolation = cms.bool(False),
+			electronIsolationForRank = cms.string("DeltaBetaCorrectedRelIso"),
+			muonIsolationForRank = cms.string("DeltaBetaCorrectedRelIso"),
+			tauIDisolationForRank = cms.string("byCombinedIsolationDeltaBetaCorrRaw3Hits"),
+
+
 
 			# the Tau IDs we would like to keep in the FlatTuple
 			# note : the hardcoded MAX variable in FlatTupleGenerator.cc limits the 
@@ -158,6 +197,15 @@ SSEsDownSet = cms.PSet(
 			keepTauEsUp = cms.bool(False),
 			keepTauEsDown = cms.bool(True),
 
+			# how to rank pairs within this selection
+			rankByPtSum = cms.bool(True),
+			rankByIsolation = cms.bool(False),
+			electronIsolationForRank = cms.string("DeltaBetaCorrectedRelIso"),
+			muonIsolationForRank = cms.string("DeltaBetaCorrectedRelIso"),
+			tauIDisolationForRank = cms.string("byCombinedIsolationDeltaBetaCorrRaw3Hits"),
+
+
+
 			# the Tau IDs we would like to keep in the FlatTuple
 			# note : the hardcoded MAX variable in FlatTupleGenerator.cc limits the 
 			# number of these that we can keep 
@@ -181,6 +229,15 @@ SSEsUpSet = cms.PSet(
 			keepTauEsNominal = cms.bool(False),
 			keepTauEsUp = cms.bool(True),
 			keepTauEsDown = cms.bool(False),
+
+			# how to rank pairs within this selection
+			rankByPtSum = cms.bool(True),
+			rankByIsolation = cms.bool(False),
+			electronIsolationForRank = cms.string("DeltaBetaCorrectedRelIso"),
+			muonIsolationForRank = cms.string("DeltaBetaCorrectedRelIso"),
+			tauIDisolationForRank = cms.string("byCombinedIsolationDeltaBetaCorrRaw3Hits"),
+
+
 
 			# the Tau IDs we would like to keep in the FlatTuple
 			# note : the hardcoded MAX variable in FlatTupleGenerator.cc limits the 
@@ -267,6 +324,7 @@ process.SSEsUp = cms.EDAnalyzer('FlatTupleGenerator',
 process.options = cms.untracked.PSet(
 SkipEvent = cms.untracked.vstring('ProductNotFound')
 )
+
 
 
 process.p = cms.Path(process.OS+process.OSEsUp+process.OSEsDown+process.SS+process.SSEsUp+process.SSEsDown)

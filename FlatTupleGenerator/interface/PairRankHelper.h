@@ -36,6 +36,7 @@ best by rank == 1 etc.
 #include "DavisRunIITauTau/TupleObjects/interface/TupleCandidateEvent.h"
 #include "DavisRunIITauTau/TupleObjects/interface/TupleCandidateEventTypes.h"
 #include "DavisRunIITauTau/TupleObjects/interface/TupleLepton.h"
+#include "DavisRunIITauTau/TupleObjects/interface/TupleLeptonTypes.h"
 #include "DataFormats/Math/interface/LorentzVector.h"
 #include "TLorentzVector.h"
 #include "DataFormats/Math/interface/Vector3D.h"
@@ -66,24 +67,42 @@ public:
 
 // helpers
 
-  std::vector<std::pair <std::size_t, NtupleEvent>> rank_pairs_BySumPt(std::vector<NtupleEvent>);
 
 
-// fillers
 
-  void process_pairs(std::vector<NtupleEvent>);
-  void process_pairs_RANKDEMO(std::vector<NtupleEvent>);
+  void process_pairs();
+  void print_ranking();
+
+  /* return sumPt or isolation product*/
+
+  double getSumPt(NtupleEvent);
+  double getIsolProduct(NtupleEvent,std::string, std::string, std::string);
+
+
+  /* for sumPt ranking */
+  void init(std::vector<NtupleEvent>); 
+  
+  /* for isolation ranking note : the 3 strings are passed to 
+  electron.relativeIsol(), muon.relativeIsol(), tau.tauID() in that order  */
+
+  void init(std::vector<NtupleEvent>,std::string, std::string, std::string); 
+
 // getters
 
+  std::vector<std::pair<std::size_t, NtupleEvent>> returnRankedPairVec(); /* return ranked ranking:pair vector m_finalRanking */
 
 
 private:
 
-	std::vector<NtupleEvent> m_InputPairs; 			/* the unranked pairs */
-    std::vector<NtupleEvent> m_OSpairsNoRank; 		/* the opposite sign unranked pairs */
-    std::vector<NtupleEvent> m_SSpairsNoRank; 		/* the same sign unranked pairs */
-	std::vector<bool> m_InvertLegs;					/* flags true if should invert leg0 <-> leg1 ordering in the pair (same index order as m_InputPairs) */
-	std::vector<int> m_PairRanks;					/* the ordering Rank of each pair in m_InputPairs (same index order as m_InputPairs) */
+	std::vector<std::pair<double, NtupleEvent>> m_CriterionLepPair; /* vec<std::pair> of the criterion for ranking and the pair */
+	std::vector<std::pair <double, NtupleEvent>> m_OSRanking; /* the OS ranked rank:LeptonPair std::pair */
+	std::vector<std::pair <double, NtupleEvent>> m_SSRanking; /* the SS ranked rank:LeptonPair std::pair */
+   	std::vector<std::pair <std::size_t, NtupleEvent>> m_finalRanking; /* the final ranked rank:LeptonPair std::pair */
+   	std::vector<std::pair <double, NtupleEvent>> m_finalRankedCriterion; /* the final ranked criterion:LeptonPair std::pair */
+
+
+
+
 
 
 };

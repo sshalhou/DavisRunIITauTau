@@ -120,6 +120,14 @@ private:
   bool keepTauEsNominal;
   bool keepTauEsUp; 
   bool keepTauEsDown; 
+  bool rankByPtSum;
+  bool rankByIsolation;
+  std::string electronIsolationForRank;
+  std::string muonIsolationForRank;
+  std::string tauIDisolationForRank;
+
+
+
 
   /* cut helper */
   LeptonFlatTupleCutHelper cutHelper;
@@ -136,6 +144,8 @@ private:
    unsigned int  run ;
    unsigned int  luminosityBlock ;
    unsigned int  event ;
+   unsigned int  pairRank ; /* zero is the best rank */
+
    bool  isRealData ;
    std::string treeInfoString; /* this will be filled as NAME_, should be something like TauEsNominal etc. */
    double VISMass; 
@@ -181,6 +191,16 @@ tauCutSrc_(iConfig.getParameter<edm::ParameterSet>("tauCutSrc"))
   keepTauEsNominal = TreeCutSrc_.getParameter<bool>("keepTauEsNominal");
   keepTauEsUp = TreeCutSrc_.getParameter<bool>("keepTauEsUp");
   keepTauEsDown = TreeCutSrc_.getParameter<bool>("keepTauEsDown");
+  rankByPtSum = TreeCutSrc_.getParameter<bool>("rankByPtSum");
+  rankByIsolation = TreeCutSrc_.getParameter<bool>("rankByIsolation");
+  assert(rankByPtSum!=rankByIsolation);
+  electronIsolationForRank = TreeCutSrc_.getParameter<std::string>("electronIsolationForRank");
+  muonIsolationForRank = TreeCutSrc_.getParameter<std::string>("muonIsolationForRank");
+  tauIDisolationForRank = TreeCutSrc_.getParameter<std::string>("tauIDisolationForRank");
+
+
+
+
 
   /* create TTree */
    
@@ -198,6 +218,7 @@ tauCutSrc_(iConfig.getParameter<edm::ParameterSet>("tauCutSrc"))
   FlatTuple->Branch("run", &run);
   FlatTuple->Branch("luminosityBlock", &luminosityBlock);
   FlatTuple->Branch("event", &event);
+  FlatTuple->Branch("pairRank",&pairRank);
   FlatTuple->Branch("isRealData", &isRealData);
   FlatTuple->Branch("treeInfoString", &treeInfoString);
   FlatTuple->Branch("VISMass", &VISMass);
@@ -291,8 +312,19 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
   // next figure out how to rank the pairs 
 
 
+  PairRankHelper rankHelper;
 
-  for(std::size_t p = 0; p<retainedPairs.size(); ++p )
+  if(rankByPtSum) rankHelper.init(retainedPairs);
+  else if(rankByIsolation) rankHelper.init(retainedPairs,electronIsolationForRank,muonIsolationForRank,tauIDisolationForRank);
+
+  std::vector<std::pair<std::size_t,NtupleEvent>> retainedPairsWithRank = rankHelper.returnRankedPairVec();
+
+
+  // rankHelper.process_pairs(retainedPairs);
+
+
+
+  for(std::size_t p = 0; p<retainedPairsWithRank.size(); ++p )
   {
 
       reInit();
@@ -310,12 +342,11 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
       // now stuff depending on the current pair
 
 
-  		NtupleEvent currentPair =   retainedPairs[p];
-      std::cout<<" got it \n";
-      std::cout<<" vis mass "<<currentPair.VISMass()[0]<<"\n";
-  		
-      VISMass = currentPair.VISMass()[0];
+  		NtupleEvent currentPair =   retainedPairsWithRank[p].second;
 
+
+      VISMass = currentPair.VISMass()[0];
+      pairRank = retainedPairsWithRank[p].first;
       
       ////////////////
       // fill the tauIDs for tau legs
@@ -344,8 +375,6 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
 
 
 
-  // PairRankHelper rankHelper;
-  // rankHelper.process_pairs(retainedPairs);
 
 
 
@@ -363,6 +392,7 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
    run = 0;
    luminosityBlock = 0;
    event = 0;
+   pairRank = 999;
    isRealData  = 0;
    treeInfoString = "NULL";
    VISMass  = NAN;

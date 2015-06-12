@@ -18,12 +18,9 @@ best by rank == 1 etc.
 
 bool NtupleRankCompare( const std::pair<double, NtupleEvent>& p1, const std::pair<double, NtupleEvent>& p2) 
 {
-	/* rank by provided doubles, in the case of equal criteria use the CandidateEventTypes
-	to rank  */
-	if(p1.first != p2.first) return p1.first > p2.first;
-	else { return p1.second.CandidateEventType() > p2.second.CandidateEventType();}
-
+	return p1.first > p2.first;	
 }
+
 
 
 
@@ -37,146 +34,149 @@ PairRankHelper::PairRankHelper(){}
 
 
 
-/* return a ranked pair <rank, NtupleEvent> */
+  double PairRankHelper::getSumPt(NtupleEvent pair)
+  {
+  	return pair.leg1().p4().pt()+pair.leg2().p4().pt();
+  }
 
-std::vector<std::pair <std::size_t, NtupleEvent>> PairRankHelper::rank_pairs_BySumPt(std::vector<NtupleEvent> Input)
+  double PairRankHelper::getIsolProduct(NtupleEvent pair,std::string eIsol, std::string muIsol, std::string tauID)
+  {
+
+  		double criterion = 1.0;
+
+  		if(pair.leg1().leptonType()==TupleLeptonTypes::anElectron) criterion *= pair.leg1().relativeIsol(eIsol);
+  		else if(pair.leg1().leptonType()==TupleLeptonTypes::aMuon) criterion *= pair.leg1().relativeIsol(muIsol);
+  		else if(pair.leg1().leptonType()==TupleLeptonTypes::aTau)	 criterion *= pair.leg1().tauID(tauID);
+
+  		if(pair.leg2().leptonType()==TupleLeptonTypes::anElectron) criterion *= pair.leg2().relativeIsol(eIsol);
+  		else if(pair.leg2().leptonType()==TupleLeptonTypes::aMuon) criterion *= pair.leg2().relativeIsol(muIsol);
+  		else if(pair.leg2().leptonType()==TupleLeptonTypes::aTau)  criterion *= pair.leg2().tauID(tauID);
+
+  		return criterion;
+
+
+  }
+
+
+
+
+
+  /* for sumPt ranking */
+  void PairRankHelper::init(std::vector<NtupleEvent> pairs)
+  {
+
+  	for(std::size_t i = 0; i<pairs.size(); ++i)
+  	{
+  		double criterion = getSumPt(pairs[i]);
+  		std::pair<double, NtupleEvent> apair(criterion, pairs[i]);
+	  	m_CriterionLepPair.push_back(apair);
+	}
+	std::cout<<m_CriterionLepPair.size()<<" = m_CriterionLepPair size \n";
+	process_pairs();
+	//print_ranking();
+
+  }
+  
+  /* for isolation ranking note : the 3 strings are passed to 
+  electron.relativeIsol(), muon.relativeIsol(), tau.tauID() in that order  */
+
+  void PairRankHelper::init(std::vector<NtupleEvent> pairs,std::string eIsol, std::string muIsol, std::string tauID)
+  {
+
+  	for(std::size_t i = 0; i<pairs.size(); ++i)
+  	{
+  		double criterion = getIsolProduct(pairs[i],eIsol,muIsol,tauID);
+  		std::pair<double, NtupleEvent> apair(criterion, pairs[i]);
+	  	m_CriterionLepPair.push_back(apair);
+	}
+
+	process_pairs();
+	//print_ranking();
+
+
+
+
+  } 
+
+void PairRankHelper::print_ranking()
 {
-	std::vector<std::pair <double, NtupleEvent>> theVectorToRank;
-	for (std::size_t x = 0;  x<Input.size(); ++x )
+
+	std::cout<<"------ new Event ------- \n";
+	for(std::size_t x = 0; x<m_finalRanking.size();++x)
 	{
 
-		std::pair <double, NtupleEvent> thepair(Input[x].leg1().p4().pt()+Input[x].leg2().p4().pt(),Input[x]);
-		theVectorToRank.push_back(thepair);
+	std::cout<<"RANK = "<<m_finalRanking[x].first<<" ";
+	std::cout<<"CRITERION = "<<m_finalRankedCriterion[x].first<<" ";
+	std::cout<<" isOS "<<m_finalRankedCriterion[x].second.isOsPair()<<" ";
+	std::cout<<" pairType "<<m_finalRankedCriterion[x].second.CandidateEventType()<<"\n";
+
 
 	}
 
-
-
-
-	std::sort(theVectorToRank.begin(), theVectorToRank.end(), NtupleRankCompare);
-
-
-
-
-	std::vector<std::pair <std::size_t, NtupleEvent>> r;
-	r.clear();
-	for(std::size_t y=0; y<theVectorToRank.size();++y)
-	{
-
-		std::pair <std::size_t, NtupleEvent> theRankedPair(y,theVectorToRank[y].second);
-
-		r.push_back(theRankedPair);
-
-	}
-	return r;
 }
 
 
-
-/* fillers */
-
-void PairRankHelper::process_pairs(std::vector<NtupleEvent> PAIRS)
+std::vector<std::pair<std::size_t, NtupleEvent>> PairRankHelper::returnRankedPairVec()
 {
+	return m_finalRanking;
 
 }
 
-void PairRankHelper::process_pairs_RANKDEMO(std::vector<NtupleEvent> PAIRS)
+void PairRankHelper::process_pairs()
 {
-	m_InputPairs = PAIRS;
-	std::vector<std::pair <std::size_t, NtupleEvent>> finalRanking;
 
-	/* Ranking :
-		repeat separately for each TauEsVariant then 
+	/* Ranking : fills m_finalRanking with std::size RANK, and NtupleEvent
+		repeat separately 
 		for OS and SS (prefer OS to SS)
 
 	*/
+
+
+
 	
-	for (float shift = -1.0; shift <= +1.0; shift+=1.0)
-	{
 
-
-		/* vecs to hold ordered pairs each shift */
-		std::vector<std::pair <std::size_t, NtupleEvent>> OSranked;
-		OSranked.clear();
-		std::vector<std::pair <std::size_t, NtupleEvent>> SSranked;
-		SSranked.clear();
-
-		std::cout<<" size "<<OSranked.size()<<" shift "<<shift<<"\n";
-
-		for(std::size_t p = 0; p<PAIRS.size(); ++p)
+		for(std::size_t p = 0; p<m_CriterionLepPair.size(); ++p)
 		{		
-			/* consider one Tau Es Variant at a time unless it pair does not involve tau_h 
-			in which case treat under tauEsNominal */
-
-			if (isnan(PAIRS[p].TauEsNumberSigmasShifted())==1 && shift != 0.0 )  continue;
-			else if(PAIRS[p].TauEsNumberSigmasShifted()!=shift) continue;
-
-			std::cout<<" shift comp "<<PAIRS[p].TauEsNumberSigmasShifted()<<" "<<shift<<" bool "<<(PAIRS[p].TauEsNumberSigmasShifted()==shift)<<"\n";
-
+			/* note this all breaks if mix tauEs variants in same TTree */
 			/* start by 1st splitting up pairs into OS and SS */
 
-			if(PAIRS[p].isOsPair()==1) m_OSpairsNoRank.push_back(PAIRS[p]);
-			else m_SSpairsNoRank.push_back(PAIRS[p]);
+
+			if(m_CriterionLepPair[p].second.isOsPair()==1) m_OSRanking.push_back(m_CriterionLepPair[p]);
+			else m_SSRanking.push_back(m_CriterionLepPair[p]);
 
 		}	
 
-			/* next generate std::pairs <double, NtupleEvent> in which the double
-			represents the pair-ordering critera (either sumPt or isolation based) */
+		/* sort OS and SS separately */
+		std::sort(m_OSRanking.begin(), m_OSRanking.end(), NtupleRankCompare);
+		std::sort(m_SSRanking.begin(), m_SSRanking.end(), NtupleRankCompare);
 
 
-			OSranked = rank_pairs_BySumPt(m_OSpairsNoRank);
-			SSranked = rank_pairs_BySumPt(m_SSpairsNoRank);			
 
-			std::cout<<" OS size "<<OSranked.size()<<" ES shift = "<<shift<<"\n";
-			std::cout<<" SS size "<<SSranked.size()<<" ES shift = "<<shift<<"\n";
+		/* append OS and the SSranked to finalRanking */
+		
+		for(std::size_t t = 0; t<m_OSRanking.size(); ++t) 
+		{
+			std::pair<std::size_t, NtupleEvent> toPush(m_finalRanking.size(),m_OSRanking[t].second);
+			m_finalRanking.push_back(toPush);
 
-			/* append OS and the SSranked to finalRanking */
-			for(std::size_t i = 0; i<OSranked.size(); ++i) finalRanking.push_back(OSranked[i]);
-			for(std::size_t i = 0; i<SSranked.size(); ++i) finalRanking.push_back(SSranked[i]);
-
-			m_OSpairsNoRank.clear();
-			m_SSpairsNoRank.clear();		
+			m_finalRankedCriterion.push_back(m_OSRanking[t]);
+		}
 
 
-	}
+		for(std::size_t t = 0; t<m_SSRanking.size(); ++t) 
+		{
+			std::pair<std::size_t, NtupleEvent> toPush(m_finalRanking.size(),m_SSRanking[t].second);
+			m_finalRanking.push_back(toPush);
+			m_finalRankedCriterion.push_back(m_SSRanking[t]);
 
-	/* CHECK -- temp START */
-
-	
-	std::cout<<" ------------------------------- NEW EVENT -------------------------------\n";
-	std::cout<<" input order : \n";
-
-	for(std::size_t i = 0; i<PAIRS.size(); ++i) 
-	{
-
-		double sumPt = PAIRS[i].leg1().p4().pt()+PAIRS[i].leg2().p4().pt();
-		double isOsPair = PAIRS[i].isOsPair();
-		double TauEsShift = PAIRS[i].TauEsNumberSigmasShifted();
-		int type = PAIRS[i].CandidateEventType();
-
-		std::cout<<"Original Rank = "<<i<<" sumPt = "<<sumPt<<" isOS? = "<<isOsPair<<" type = "<<type<<" TauEsShift = "<<TauEsShift<<"\n";
+		}
 
 
-	}
-
-
-	std::cout<<" ranked order : \n";
-
-	for(std::size_t i = 0; i<finalRanking.size(); ++i) 
-	{
-
-		double sumPt = finalRanking[i].second.leg1().p4().pt()+finalRanking[i].second.leg2().p4().pt();
-		double isOsPair = finalRanking[i].second.isOsPair();
-		double TauEsShift = finalRanking[i].second.TauEsNumberSigmasShifted();
-		int type = finalRanking[i].second.CandidateEventType();
-
-		std::cout<<"Final Rank = "<<finalRanking[i].first<<" sumPt = "<<sumPt<<" isOS? = "<<isOsPair<<" type = "<<type<<" TauEsShift = "<<TauEsShift<<"\n";
-
-
-	}
-
-
-	/* CHECK -- temp END */
-
+		/* clear them */
+		m_OSRanking.clear();
+		m_SSRanking.clear();		
+		
 
 }
+
+
