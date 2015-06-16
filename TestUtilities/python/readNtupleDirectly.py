@@ -4,7 +4,7 @@ import os
 import math
 from array import array
 
-
+FILE = "/uscms_data/d3/shalhout/RunIIWorking/CMSSW_7_2_3_patch1/src/NtupleFile.root"
 
 import ROOT
 import sys
@@ -27,7 +27,7 @@ doExample4 = True
 # EX-1 : print candidateType & isolations
 
 if doExample1 :
-    events = Events ("/uscms_data/d3/shalhout/RunIIWorking/CMSSW_7_2_3_patch1/src/NtupleFile.root")
+    events = Events (FILE)
     handle = Handle ("std::vector<NtupleEvent>")
     label = ("NtupleEvent","NtupleEvent","Ntuple")
 
@@ -48,7 +48,7 @@ if doExample1 :
 
 if doExample2 :
 
-    events2 = Events ("/uscms_data/d3/shalhout/RunIIWorking/CMSSW_7_2_3_patch1/src/NtupleFile.root")
+    events2 = Events (FILE)
     handle2 = Handle ("std::vector<NtuplePairIndependentInfo>")
     label2 = ("pairIndep","NtupleEventPairIndep","Ntuple")
 
@@ -75,7 +75,7 @@ if doExample2 :
 
 if doExample3 :
 
-    events3 = Events ("/uscms_data/d3/shalhout/RunIIWorking/CMSSW_7_2_3_patch1/src/NtupleFile.root")
+    events3 = Events (FILE)
     handle3 = Handle ("std::vector<NtuplePairIndependentInfo>")
     label3 = ("pairIndep","NtupleEventPairIndep","Ntuple")
 
@@ -111,7 +111,7 @@ if doExample3 :
 
 if doExample4 :
 
-    events4 = Events ("/uscms_data/d3/shalhout/RunIIWorking/CMSSW_7_2_3_patch1/src/NtupleFile.root")
+    events4 = Events (FILE)
     handle4 = Handle ("std::vector<NtupleEvent>")
     label4 = ("NtupleEvent","NtupleEvent","Ntuple")
 
