@@ -19,315 +19,117 @@ process.source = cms.Source("PoolSource",
 
 
 
-
-# very basic cuts on (H-candidate) muons
-# to help control size of flatTuple and or define alternate TTrees in the same file
-signalMuonCuts = cms.PSet(
-				# format is vdouble(min,max)
-				Pt = cms.vdouble(18.0,1e30),
-				EtaAbs = cms.vdouble(0.0,2.1),
-				dxyAbs = cms.vdouble(0.0,0.045),
-			    dzAbs = cms.vdouble(0.0,0.2),
-			    # name of relativeIsol we want to cut on 
-			    relIsoToCutOn = cms.string("DeltaBetaCorrectedRelIso"), 
-			    relIsoCut = cms.vdouble(-1e50,0.15)
-							)
-
-# very basic cuts on (H-candidate) electrons
-signalElectronCuts = cms.PSet(
-				# format is vdouble(min,max)
-				Pt = cms.vdouble(10.0,1e30),
-				EtaAbs = cms.vdouble(0.0,2.5),
-				dxyAbs = cms.vdouble(0.0,0.045),
-			    dzAbs = cms.vdouble(0.0,0.2),
-			    # name of relativeIsol we want to cut on 
-			    relIsoToCutOn = cms.string("DeltaBetaCorrectedRelIso"), 
-			    relIsoCut = cms.vdouble(-1e50,0.15)
-							)
-
-# very basic cuts on (H-candidate) taus
-signalTauCuts = cms.PSet(
-				# format is vdouble(min,max)
-				Pt = cms.vdouble(20.0,1e30),
-				EtaAbs = cms.vdouble(0.0,2.3),
-			    # name of a single tauID we want to cut on 
-			    tauIDtoCutOn = cms.string("byCombinedIsolationDeltaBetaCorrRaw3Hits"), 
-			    tauIDCut = cms.vdouble(-1e50,1.5)
-							)
-
-
-
-OSpSet = cms.PSet(
-
-			Mt = cms.vdouble(-1.0e30,30.0), # not used at the moment
-			keepOS = cms.bool(True),
-			keepSS = cms.bool(False),
-			keepTauEsNominal = cms.bool(True),
-			keepTauEsUp = cms.bool(False),
-			keepTauEsDown = cms.bool(False),
-
-			# how to rank pairs within this selection
-			rankByPtSum = cms.bool(True),
-			rankByIsolation = cms.bool(False),
-			electronIsolationForRank = cms.string("DeltaBetaCorrectedRelIso"),
-			muonIsolationForRank = cms.string("DeltaBetaCorrectedRelIso"),
-			tauIDisolationForRank = cms.string("byCombinedIsolationDeltaBetaCorrRaw3Hits"),
-
-
-
-			# the Tau IDs we would like to keep in the FlatTuple
-			# note : the hardcoded MAX variable in FlatTupleGenerator.cc limits the 
-			# number of these that we can keep 
-
-			tauIDsToKeep = cms.vstring(
-				"byCombinedIsolationDeltaBetaCorrRaw3Hits",
-				"decayModeFindingNewDMs",
-				"againstMuonLoose3",
-				"againstElectronVLooseMVA5",
-				"againstMuonLoose3",
-				"againstElectronMediumMVA5")
-
-					)
-
-OSEsDownSet = cms.PSet(
-
-			Mt = cms.vdouble(-1.0e30,30.0), # not used at the moment
-			keepOS = cms.bool(True),
-			keepSS = cms.bool(False),
-			keepTauEsNominal = cms.bool(False),
-			keepTauEsUp = cms.bool(False),
-			keepTauEsDown = cms.bool(True),
-
-			# how to rank pairs within this selection
-			rankByPtSum = cms.bool(True),
-			rankByIsolation = cms.bool(False),
-			electronIsolationForRank = cms.string("DeltaBetaCorrectedRelIso"),
-			muonIsolationForRank = cms.string("DeltaBetaCorrectedRelIso"),
-			tauIDisolationForRank = cms.string("byCombinedIsolationDeltaBetaCorrRaw3Hits"),
-
-
-
-			# the Tau IDs we would like to keep in the FlatTuple
-			# note : the hardcoded MAX variable in FlatTupleGenerator.cc limits the 
-			# number of these that we can keep 
-
-			tauIDsToKeep = cms.vstring(
-				"byCombinedIsolationDeltaBetaCorrRaw3Hits",
-				"decayModeFindingNewDMs",
-				"againstMuonLoose3",
-				"againstElectronVLooseMVA5",
-				"againstMuonLoose3",
-				"againstElectronMediumMVA5")
-
-					)
-
-
-OSEsUpSet = cms.PSet(
-
-			Mt = cms.vdouble(-1.0e30,30.0), # not used at the moment
-			keepOS = cms.bool(True),
-			keepSS = cms.bool(False),
-			keepTauEsNominal = cms.bool(False),
-			keepTauEsUp = cms.bool(True),
-			keepTauEsDown = cms.bool(False),
-
-			# how to rank pairs within this selection
-			rankByPtSum = cms.bool(True),
-			rankByIsolation = cms.bool(False),
-			electronIsolationForRank = cms.string("DeltaBetaCorrectedRelIso"),
-			muonIsolationForRank = cms.string("DeltaBetaCorrectedRelIso"),
-			tauIDisolationForRank = cms.string("byCombinedIsolationDeltaBetaCorrRaw3Hits"),
-
-
-
-			# the Tau IDs we would like to keep in the FlatTuple
-			# note : the hardcoded MAX variable in FlatTupleGenerator.cc limits the 
-			# number of these that we can keep 
-
-			tauIDsToKeep = cms.vstring(
-				"byCombinedIsolationDeltaBetaCorrRaw3Hits",
-				"decayModeFindingNewDMs",
-				"againstMuonLoose3",
-				"againstElectronVLooseMVA5",
-				"againstMuonLoose3",
-				"againstElectronMediumMVA5")
-
-					)
-
-SSpSet = cms.PSet(
-
-			Mt = cms.vdouble(-1.0e30,30.0), # not used at the moment
-			keepOS = cms.bool(False),
-			keepSS = cms.bool(True),
-			keepTauEsNominal = cms.bool(True),
-			keepTauEsUp = cms.bool(False),
-			keepTauEsDown = cms.bool(False),
-
-			# how to rank pairs within this selection
-			rankByPtSum = cms.bool(True),
-			rankByIsolation = cms.bool(False),
-			electronIsolationForRank = cms.string("DeltaBetaCorrectedRelIso"),
-			muonIsolationForRank = cms.string("DeltaBetaCorrectedRelIso"),
-			tauIDisolationForRank = cms.string("byCombinedIsolationDeltaBetaCorrRaw3Hits"),
-
-
-
-			# the Tau IDs we would like to keep in the FlatTuple
-			# note : the hardcoded MAX variable in FlatTupleGenerator.cc limits the 
-			# number of these that we can keep 
-
-			tauIDsToKeep = cms.vstring(
-				"byCombinedIsolationDeltaBetaCorrRaw3Hits",
-				"decayModeFindingNewDMs",
-				"againstMuonLoose3",
-				"againstElectronVLooseMVA5",
-				"againstMuonLoose3",
-				"againstElectronMediumMVA5")
-
-					)
-
-
-
-SSEsDownSet = cms.PSet(
-
-			Mt = cms.vdouble(-1.0e30,30.0), # not used at the moment
-			keepOS = cms.bool(False),
-			keepSS = cms.bool(True),
-			keepTauEsNominal = cms.bool(False),
-			keepTauEsUp = cms.bool(False),
-			keepTauEsDown = cms.bool(True),
-
-			# how to rank pairs within this selection
-			rankByPtSum = cms.bool(True),
-			rankByIsolation = cms.bool(False),
-			electronIsolationForRank = cms.string("DeltaBetaCorrectedRelIso"),
-			muonIsolationForRank = cms.string("DeltaBetaCorrectedRelIso"),
-			tauIDisolationForRank = cms.string("byCombinedIsolationDeltaBetaCorrRaw3Hits"),
-
-
-
-			# the Tau IDs we would like to keep in the FlatTuple
-			# note : the hardcoded MAX variable in FlatTupleGenerator.cc limits the 
-			# number of these that we can keep 
-
-			tauIDsToKeep = cms.vstring(
-				"byCombinedIsolationDeltaBetaCorrRaw3Hits",
-				"decayModeFindingNewDMs",
-				"againstMuonLoose3",
-				"againstElectronVLooseMVA5",
-				"againstMuonLoose3",
-				"againstElectronMediumMVA5")
-
-					)
-
-
-SSEsUpSet = cms.PSet(
-
-			Mt = cms.vdouble(-1.0e30,30.0), # not used at the moment
-			keepOS = cms.bool(False),
-			keepSS = cms.bool(True),
-			keepTauEsNominal = cms.bool(False),
-			keepTauEsUp = cms.bool(True),
-			keepTauEsDown = cms.bool(False),
-
-			# how to rank pairs within this selection
-			rankByPtSum = cms.bool(True),
-			rankByIsolation = cms.bool(False),
-			electronIsolationForRank = cms.string("DeltaBetaCorrectedRelIso"),
-			muonIsolationForRank = cms.string("DeltaBetaCorrectedRelIso"),
-			tauIDisolationForRank = cms.string("byCombinedIsolationDeltaBetaCorrRaw3Hits"),
-
-
-
-			# the Tau IDs we would like to keep in the FlatTuple
-			# note : the hardcoded MAX variable in FlatTupleGenerator.cc limits the 
-			# number of these that we can keep 
-
-			tauIDsToKeep = cms.vstring(
-				"byCombinedIsolationDeltaBetaCorrRaw3Hits",
-				"decayModeFindingNewDMs",
-				"againstMuonLoose3",
-				"againstElectronVLooseMVA5",
-				"againstMuonLoose3",
-				"againstElectronMediumMVA5")
-
-					)
-
-process.OS = cms.EDAnalyzer('FlatTupleGenerator',
-	pairSrc = cms.InputTag('NtupleEvent','NtupleEvent','Ntuple'),
-	indepSrc = cms.InputTag('pairIndep','NtupleEventPairIndep','Ntuple'),
-	NAME = cms.string("OSxTauEsNominal"),
-	TreeCutSrc = OSpSet,
-	eCutSrc = signalElectronCuts,
-	muCutSrc = signalMuonCuts,
-	tauCutSrc = signalTauCuts
-								)
-
-process.OSEsDown = cms.EDAnalyzer('FlatTupleGenerator',
-	pairSrc = cms.InputTag('NtupleEvent','NtupleEvent','Ntuple'),
-	indepSrc = cms.InputTag('pairIndep','NtupleEventPairIndep','Ntuple'),
-	NAME = cms.string("OSxTauEsDown"),
-	TreeCutSrc = OSEsDownSet,
-	eCutSrc = signalElectronCuts,
-	muCutSrc = signalMuonCuts,
-	tauCutSrc = signalTauCuts
-								)
-
-
-
-process.OSEsUp = cms.EDAnalyzer('FlatTupleGenerator',
-	pairSrc = cms.InputTag('NtupleEvent','NtupleEvent','Ntuple'),
-	indepSrc = cms.InputTag('pairIndep','NtupleEventPairIndep','Ntuple'),
-	NAME = cms.string("OSxTauEsUp"),
-	TreeCutSrc = OSEsUpSet,
-	eCutSrc = signalElectronCuts,
-	muCutSrc = signalMuonCuts,
-	tauCutSrc = signalTauCuts
-								)
-
-process.SS = cms.EDAnalyzer('FlatTupleGenerator',
-	pairSrc = cms.InputTag('NtupleEvent','NtupleEvent','Ntuple'),
-	indepSrc = cms.InputTag('pairIndep','NtupleEventPairIndep','Ntuple'),
-	NAME = cms.string("SSxTauEsNominal"),
-	TreeCutSrc = SSpSet,
-	eCutSrc = signalElectronCuts,
-	muCutSrc = signalMuonCuts,
-	tauCutSrc = signalTauCuts
-								)
-
-
-process.SSEsDown = cms.EDAnalyzer('FlatTupleGenerator',
-	pairSrc = cms.InputTag('NtupleEvent','NtupleEvent','Ntuple'),
-	indepSrc = cms.InputTag('pairIndep','NtupleEventPairIndep','Ntuple'),
-	NAME = cms.string("SSxTauEsDown"),
-	TreeCutSrc = SSEsDownSet,
-	eCutSrc = signalElectronCuts,
-	muCutSrc = signalMuonCuts,
-	tauCutSrc = signalTauCuts
-								)
-
-
-
-process.SSEsUp = cms.EDAnalyzer('FlatTupleGenerator',
-	pairSrc = cms.InputTag('NtupleEvent','NtupleEvent','Ntuple'),
-	indepSrc = cms.InputTag('pairIndep','NtupleEventPairIndep','Ntuple'),
-	NAME = cms.string("SSxTauEsUp"),
-	TreeCutSrc = SSEsUpSet,
-	eCutSrc = signalElectronCuts,
-	muCutSrc = signalMuonCuts,
-	tauCutSrc = signalTauCuts
-								)
-
-
 # the following is needed
 # because not all events have both eTau and muTau
 process.options = cms.untracked.PSet(
 SkipEvent = cms.untracked.vstring('ProductNotFound')
 )
 
+# -- start test
+
+TESTSET = cms.PSet(
+
+			Mt = cms.vdouble(-1.0e30,30.0), # not used at the moment
+			keepOS = cms.bool(True),
+			keepSS = cms.bool(True),
+			keepTauEsNominal = cms.bool(True),
+			keepTauEsUp = cms.bool(False),
+			keepTauEsDown = cms.bool(False),
+
+			# how to rank pairs within this selection
+			rankByPtSum = cms.bool(True),
+			rankByIsolation = cms.bool(False),
+			electronIsolationForRank = cms.string("DeltaBetaCorrectedRelIso"),
+			muonIsolationForRank = cms.string("DeltaBetaCorrectedRelIso"),
+			tauIDisolationForRank = cms.string("byCombinedIsolationDeltaBetaCorrRaw3Hits"),
 
 
-process.p = cms.Path(process.OS+process.OSEsUp+process.OSEsDown+process.SS+process.SSEsUp+process.SSEsDown)
+
+			# the Tau IDs we would like to keep in the FlatTuple
+			# note : the hardcoded MAX variable in FlatTupleGenerator.cc limits the 
+			# number of these that we can keep 
+
+			tauIDsToKeep = cms.vstring(
+				"byCombinedIsolationDeltaBetaCorrRaw3Hits",
+				"decayModeFindingNewDMs",
+				"againstMuonLoose3",
+				"againstElectronVLooseMVA5",
+				"againstMuonLoose3",
+				"againstElectronMediumMVA5")
+
+					)
+
+
+# main cut vector PSet :
+theCuts = cms.VPset(
+
+	# for EleTau :
+		cms.PSet(   candidatePairType = cms.string("EleTau"),
+					electronCut = "(p4.pt>23 && abs(p4.eta)<2.1 && abs(dxy)<0.045 \
+									&& abs(dz)<0.2 && relativeIsol('DeltaBetaCorrectedRelIso')<0.1)"),
+					tauCut = 	  "(dz==0 && tauID('byCombinedIsolationDeltaBetaCorrRaw3Hits')<1.5
+
+
+						abs(p4.eta)<2.1 && abs(dxy)<0.045 \
+									&& abs(dz)<0.2 && relativeIsol('DeltaBetaCorrectedRelIso')<0.1)"),
+				),
+
+	# for MuTau :
+		cms.PSet(
+				 	candidatePairType = cms.string("MuonTau"),
+					muonCut =  "(p4.pt>18 && abs(p4.eta)<2.1 && abs(dxy)<0.045 \
+					&& abs(dz)<0.2 && relativeIsol('DeltaBetaCorrectedRelIso')<0.1)"
+
+				),		
+					
+
+	# for TauTau
+		cms.PSet(
+				 	candidatePairType = cms.string("TauTau"),
+					
+									
+				),
+
+
+
+	# for EleMu :
+		cms.PSet(
+				 	candidatePairType = cms.string("EleMuon"),
+					electronCut = "(p4.pt>10 && abs(p4.eta)<2.5 && abs(dxy)<0.045 \
+					&& abs(dz)<0.2 && relativeIsol('DeltaBetaCorrectedRelIso')<0.15)",
+					muonCut =  "(p4.pt>10 && abs(p4.eta)<2.5 && abs(dxy)<0.045 \
+					&& abs(dz)<0.2 && relativeIsol('DeltaBetaCorrectedRelIso')<0.15)"
+									
+				)
+
+				
+)
+
+
+
+
+
+
+
+process.XX = cms.EDAnalyzer('FlatTupleGenerator',
+	pairSrc = cms.InputTag('NtupleEvent','NtupleEvent','Ntuple'),
+	indepSrc = cms.InputTag('pairIndep','NtupleEventPairIndep','Ntuple'),
+	NAME = cms.string("XX"),
+	TreeCutSrc = TESTSET,
+	candidateElectronCut = cms.string(electronCut),
+	candidateMuonCut = cms.string(muonCut),
+	candidateTauCut  = cms.string("p4.pt<-10"),
+	vetoElectronCut  = cms.string(""),
+	vetoMuonCut  = cms.string("")
+								)
+
+
+
+process.p = cms.Path(process.XX)
+
+# -- end test
+
+#process.p = cms.Path(process.OS+process.OSEsUp+process.OSEsDown+process.SS+process.SSEsUp+process.SSEsDown)
 
 
 process.TFileService = cms.Service("TFileService",

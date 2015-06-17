@@ -113,7 +113,7 @@ NtupleLepton::NtupleLepton()
 // assert that it is a known label
 ///////////////
 
-  float NtupleLepton::tauID(std::string label_)
+  float NtupleLepton::tauID(std::string label_) const
   {
     float returnValue = NAN;
     for(std::size_t x = 0; x < m_tauIDs.size();++x) 
@@ -169,7 +169,7 @@ NtupleLepton::NtupleLepton()
 // assert that it is a known label
 ///////////////
 
-  float NtupleLepton::relativeIsol(std::string label_)
+  float NtupleLepton::relativeIsol(std::string label_) const
   {
     float returnValue = NAN;
     for(std::size_t x = 0; x < m_relativeIsolations.size();++x) 
@@ -223,7 +223,7 @@ NtupleLepton::NtupleLepton()
 // assert that it is a known label
 ///////////////
 
-  float NtupleLepton::rho(std::string label_)
+  float NtupleLepton::rho(std::string label_) const
   {
     float returnValue = NAN;
     for(std::size_t x = 0; x < m_rhos.size();++x) 
@@ -280,7 +280,7 @@ NtupleLepton::NtupleLepton()
 // retun '0 meaning not accepted' if label is unknown
 ///////////////
 
-  float NtupleLepton::HLTpath(std::string label_)
+  float NtupleLepton::HLTpath(std::string label_) const
   {
     float returnValue = 0;
     for(std::size_t x = 0; x < m_HLTPaths.size();++x) 

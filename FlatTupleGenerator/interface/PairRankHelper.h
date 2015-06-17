@@ -95,8 +95,7 @@ public:
 private:
 
 	std::vector<std::pair<double, NtupleEvent>> m_CriterionLepPair; /* vec<std::pair> of the criterion for ranking and the pair */
-	std::vector<std::pair <double, NtupleEvent>> m_OSRanking; /* the OS ranked rank:LeptonPair std::pair */
-	std::vector<std::pair <double, NtupleEvent>> m_SSRanking; /* the SS ranked rank:LeptonPair std::pair */
+	std::vector<std::pair <double, NtupleEvent>> m_Ranking; /* the  ranked rank:LeptonPair std::pair */
    	std::vector<std::pair <std::size_t, NtupleEvent>> m_finalRanking; /* the final ranked rank:LeptonPair std::pair */
    	std::vector<std::pair <double, NtupleEvent>> m_finalRankedCriterion; /* the final ranked criterion:LeptonPair std::pair */
 

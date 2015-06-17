@@ -58,8 +58,7 @@ Implementation:
 #include "DavisRunIITauTau/NtupleObjects/interface/NtuplePairIndependentInfo.h"
 #include "DavisRunIITauTau/FlatTupleGenerator/interface/PairRankHelper.h"
 #include "DavisRunIITauTau/TupleObjects/interface/TupleLeptonTypes.h"
-#include "DavisRunIITauTau/FlatTupleGenerator/interface/LeptonFlatTupleCutHelper.h"
-
+#include "CommonTools/Utils/interface/StringCutObjectSelector.h"
 
 using namespace edm;
 using namespace std;
@@ -106,9 +105,11 @@ private:
   edm::InputTag indepSrc_;
   std::string NAME_;  // use TauESNom, TauESUp, TauESDown, etc.
   edm::ParameterSet TreeCutSrc_;
-  edm::ParameterSet eCutSrc_;
-  edm::ParameterSet muCutSrc_;
-  edm::ParameterSet tauCutSrc_;
+  std::string candidateElectronCut_;
+  std::string candidateMuonCut_;
+  std::string candidateTauCut_;
+  std::string vetoElectronCut_;
+  std::string vetoMuonCut_;
 
 
   /* the cut parameters to be read from TreeCutSrc_ */
@@ -126,11 +127,6 @@ private:
   std::string muonIsolationForRank;
   std::string tauIDisolationForRank;
 
-
-
-
-  /* cut helper */
-  LeptonFlatTupleCutHelper cutHelper;
 
 
   /* the TTree */
@@ -170,14 +166,14 @@ pairSrc_(iConfig.getParameter<edm::InputTag>("pairSrc" )),
 indepSrc_(iConfig.getParameter<edm::InputTag>("indepSrc" )),
 NAME_(iConfig.getParameter<string>("NAME" )),
 TreeCutSrc_(iConfig.getParameter<edm::ParameterSet>("TreeCutSrc")),
-eCutSrc_(iConfig.getParameter<edm::ParameterSet>("eCutSrc")),
-muCutSrc_(iConfig.getParameter<edm::ParameterSet>("muCutSrc")),
-tauCutSrc_(iConfig.getParameter<edm::ParameterSet>("tauCutSrc"))
+candidateElectronCut_(iConfig.getParameter<std::string>("candidateElectronCut")),
+candidateMuonCut_(iConfig.getParameter<std::string>("candidateMuonCut")),
+candidateTauCut_(iConfig.getParameter<std::string>("candidateTauCut")),
+vetoElectronCut_(iConfig.getParameter<std::string>("vetoElectronCut")),
+vetoMuonCut_(iConfig.getParameter<std::string>("vetoMuonCut"))
 {
 
-  /* init the cut helper */
 
-  cutHelper.setEMuTauCutSets(eCutSrc_,muCutSrc_,tauCutSrc_);
 
   /* read in the TreeCutSrc varaibles */
 
@@ -250,6 +246,15 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
 
 
 
+  /* set up the selectors to be applied */
+
+  StringCutObjectSelector<NtupleLepton> candidateElectronSelect(candidateElectronCut_);
+  StringCutObjectSelector<NtupleLepton> candidateMuonSelect(candidateMuonCut_);
+  StringCutObjectSelector<NtupleLepton> candidateTauSelect(candidateTauCut_);
+  StringCutObjectSelector<NtupleLepton> vetoElectronSelect(vetoElectronCut_);
+  StringCutObjectSelector<NtupleLepton> vetoMuonSelect(vetoMuonCut_);
+
+
 
   //////////////
   // init values
@@ -265,7 +270,6 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
 
   edm::Handle< NtuplePairIndependentInfoCollection > pairIndepInfos;
   iEvent.getByLabel(indepSrc_, pairIndepInfos);
-
 
 
 
@@ -298,8 +302,23 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
       );
 
 
+    /* init the booleans for applying StringCutObjectSelectors */
+    bool leg1Pass = 1;
+    bool leg2Pass = 1;
 
-    if(cutHelper.pairPasses(currentPair) && keepSignPair && keepTauEsVariant) retainedPairs.push_back(currentPair);
+   if(currentPair.leg1().leptonType()==TupleLeptonTypes::anElectron) leg1Pass = candidateElectronSelect(currentPair.leg1());
+   else if(currentPair.leg1().leptonType()==TupleLeptonTypes::aMuon) leg1Pass = candidateMuonSelect(currentPair.leg1());
+   else if(currentPair.leg1().leptonType()==TupleLeptonTypes::aTau) leg1Pass = candidateTauSelect(currentPair.leg1());
+
+   if(currentPair.leg2().leptonType()==TupleLeptonTypes::anElectron) leg2Pass = candidateElectronSelect(currentPair.leg2());
+   else if(currentPair.leg2().leptonType()==TupleLeptonTypes::aMuon) leg2Pass = candidateMuonSelect(currentPair.leg2());
+   else if(currentPair.leg2().leptonType()==TupleLeptonTypes::aTau) leg2Pass = candidateTauSelect(currentPair.leg2());
+
+
+
+
+
+   if(keepSignPair && keepTauEsVariant && leg1Pass && leg2Pass) retainedPairs.push_back(currentPair);
 
   }
 

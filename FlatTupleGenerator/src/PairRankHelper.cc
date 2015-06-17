@@ -18,7 +18,42 @@ best by rank == 1 etc.
 
 bool NtupleRankCompare( const std::pair<double, NtupleEvent>& p1, const std::pair<double, NtupleEvent>& p2) 
 {
-	return p1.first > p2.first;	
+
+  /* always prefer OS to SS */
+  
+  if ( p1.second.isOsPair()==1 && p2.second.isOsPair()!=1) return true;
+  if ( p1.second.isOsPair()!=1 && p2.second.isOsPair()==1) return false;
+
+  /* if both OS or both SS, rank by the provided criterion if it differes */
+
+  if(p1.first != p2.first)  return p1.first > p2.first;	
+
+  /* otherwise rank by pair types 
+	adapted from code by LLR
+  */
+
+  int p1Type=0;
+  int p2Type=0;
+  
+  if(p1.second.leg1().leptonType()==TupleLeptonTypes::anElectron) p1Type+=0;
+  else if(p1.second.leg1().leptonType()==TupleLeptonTypes::aMuon) p1Type+=1;
+  else if(p1.second.leg1().leptonType()==TupleLeptonTypes::aTau) p1Type+=2;
+
+  if(p1.second.leg2().leptonType()==TupleLeptonTypes::anElectron) p1Type+=0;
+  else if(p1.second.leg2().leptonType()==TupleLeptonTypes::aMuon) p1Type+=1;
+  else if(p1.second.leg2().leptonType()==TupleLeptonTypes::aTau) p1Type+=2;
+
+  if(p2.second.leg1().leptonType()==TupleLeptonTypes::anElectron) p2Type+=0;
+  else if(p2.second.leg1().leptonType()==TupleLeptonTypes::aMuon) p2Type+=1;
+  else if(p2.second.leg1().leptonType()==TupleLeptonTypes::aTau) p2Type+=2;
+
+  if(p2.second.leg2().leptonType()==TupleLeptonTypes::anElectron) p2Type+=0;
+  else if(p2.second.leg2().leptonType()==TupleLeptonTypes::aMuon) p2Type+=1;
+  else if(p2.second.leg2().leptonType()==TupleLeptonTypes::aTau) p2Type+=2;
+
+
+  return (p1Type<p2Type);
+
 }
 
 
@@ -73,7 +108,7 @@ PairRankHelper::PairRankHelper(){}
 	}
 	std::cout<<m_CriterionLepPair.size()<<" = m_CriterionLepPair size \n";
 	process_pairs();
-	//print_ranking();
+	print_ranking();
 
   }
   
@@ -91,7 +126,7 @@ PairRankHelper::PairRankHelper(){}
 	}
 
 	process_pairs();
-	//print_ranking();
+	print_ranking();
 
 
 
@@ -126,9 +161,7 @@ void PairRankHelper::process_pairs()
 {
 
 	/* Ranking : fills m_finalRanking with std::size RANK, and NtupleEvent
-		repeat separately 
-		for OS and SS (prefer OS to SS)
-
+			
 	*/
 
 
@@ -138,43 +171,32 @@ void PairRankHelper::process_pairs()
 		for(std::size_t p = 0; p<m_CriterionLepPair.size(); ++p)
 		{		
 			/* note this all breaks if mix tauEs variants in same TTree */
-			/* start by 1st splitting up pairs into OS and SS */
+			
 
-
-			if(m_CriterionLepPair[p].second.isOsPair()==1) m_OSRanking.push_back(m_CriterionLepPair[p]);
-			else m_SSRanking.push_back(m_CriterionLepPair[p]);
+			m_Ranking.push_back(m_CriterionLepPair[p]);
 
 		}	
 
-		/* sort OS and SS separately */
-		std::sort(m_OSRanking.begin(), m_OSRanking.end(), NtupleRankCompare);
-		std::sort(m_SSRanking.begin(), m_SSRanking.end(), NtupleRankCompare);
+		std::sort(m_Ranking.begin(), m_Ranking.end(), NtupleRankCompare);
 
 
 
-		/* append OS and the SSranked to finalRanking */
+		/* append to finalRanking */
 		
-		for(std::size_t t = 0; t<m_OSRanking.size(); ++t) 
+		for(std::size_t t = 0; t<m_Ranking.size(); ++t) 
 		{
-			std::pair<std::size_t, NtupleEvent> toPush(m_finalRanking.size(),m_OSRanking[t].second);
+			std::pair<std::size_t, NtupleEvent> toPush(m_finalRanking.size(),m_Ranking[t].second);
 			m_finalRanking.push_back(toPush);
 
-			m_finalRankedCriterion.push_back(m_OSRanking[t]);
+			m_finalRankedCriterion.push_back(m_Ranking[t]);
 		}
 
 
-		for(std::size_t t = 0; t<m_SSRanking.size(); ++t) 
-		{
-			std::pair<std::size_t, NtupleEvent> toPush(m_finalRanking.size(),m_SSRanking[t].second);
-			m_finalRanking.push_back(toPush);
-			m_finalRankedCriterion.push_back(m_SSRanking[t]);
-
-		}
+	
 
 
 		/* clear them */
-		m_OSRanking.clear();
-		m_SSRanking.clear();		
+		m_Ranking.clear();
 		
 
 }

@@ -16,6 +16,7 @@
 #include "DataFormats/HepMCCandidate/interface/GenParticle.h"
 
 
+
 typedef math::XYZTLorentzVector LorentzVector;
 typedef std::vector<std::string> stringVec;
 typedef std::vector<float>  floatVec;
@@ -47,25 +48,30 @@ public:
 
   stringVec HLTAcceptedPath_Labels() ;     		 /* return the accepted HLT path names  */
   floatVec  HLTAcceptedPath_preScales() ;        /* return  the available jec SFs */
-  float HLTpath(std::string);                    /* return the PreScale for accepted path strings return 0 (not accepted) if not available */
+  float HLTpath(std::string) const;                    /* return the PreScale for accepted path strings return 0 (not accepted) if not available */
  
 
   stringVec relativeIsol_Labels(); 			/* return the relativeIsolation names  */
   floatVec relativeIsol_Values(); 			/* return the relativeIsolation values  */
-  float relativeIsol(std::string);          /* return the value for valid name strings assert if not available */
+  float relativeIsol(std::string) const;          /* return the value for valid name strings assert if not available */
 
 
   stringVec rho_Labels(); 			/* return the rho names  */
   floatVec rho_Values(); 			/* return the rho values  */
-  float rho(std::string);          /* return the rho value for valid name strings assert if not available */
+  float rho(std::string) const;          /* return the rho value for valid name strings assert if not available */
 
 
   stringVec tauID_Labels(); 			/* return the tauID (including isolations) names  */
   floatVec tauID_Values(); 			/* return the tauID values  */
-  float tauID(std::string);          /* return the tauID value for valid name strings assert if not available */
+  float tauID(std::string) const;          /* return the tauID value for valid name strings assert if not available */
 
 
   // getters
+
+  	float pt() const; 
+  	float eta() const; 
+  	float phi() const; 
+  	float mass() const; 
 
 
 	int leptonType() const; 
