@@ -19,152 +19,139 @@ production stage based on cms.PSet and NtupleEvent arguments
 
 LeptonFlatTupleCutHelper::LeptonFlatTupleCutHelper(){}
 
+/* main cut checking function */
+
+bool LeptonFlatTupleCutHelper::cutEvaluator(NtupleEvent anEvent, std::vector<edm::ParameterSet> aVPSet)
+{
+
+	/* return True if empty cut set */
+	if(aVPSet.size()==0) return 1;
+
+	/* counters for all applicable cuts, and for those passing */
+
+	int valid_cuts = 0;
+	int passed_cuts = 0;
+
+	/* get the 2 leptons & the CandidateEventType */
+
+	NtupleLepton leg1 = anEvent.leg1();
+	NtupleLepton leg2 = anEvent.leg2();
+	int pairType = anEvent.CandidateEventType();
+
+	/* loop through all PSets in aVPSet, require passing of all PSets with matching CandidateEventType
+	(or no CandidateEventType specified) */
+
+
+	for (std::size_t i = 0; i < aVPSet.size(); ++i)
+	{
+		edm::ParameterSet currentSet = (aVPSet.at(i));
+		int forType = -999;
+		if(currentSet.exists("candidatePairType"))
+		{
+			forType = decodeCandidateTypeString(currentSet.getParameter<std::string>("candidatePairType"));
+		}
+
+		if(pairType==forType || forType == -999)
+		{
+			/* we have a valid cut set */
+			valid_cuts++;
+
+			StringCutObjectSelector<NtupleLepton> leg1Cut(getAppropriateCutString(
+													leg1.leptonType(), currentSet, 0));
+			StringCutObjectSelector<NtupleLepton> leg2Cut(getAppropriateCutString(
+													leg2.leptonType(), currentSet, 0));
+
+			if(leg1Cut(leg1) && leg2Cut(leg2)) passed_cuts++;
+
+		}
+
+
+	}
+
+
+return (valid_cuts==passed_cuts && valid_cuts!=0);
+}
+
 /* helpers */
 
-
-void LeptonFlatTupleCutHelper::setEMuTauCutSets(edm::ParameterSet eCut, edm::ParameterSet muCut, edm::ParameterSet tauCut){
-	 m_eCutSet = eCut;
-	 m_muCutSet = muCut;
-	 m_tauCutSet = tauCut;}
-
-
-bool LeptonFlatTupleCutHelper::pairPasses(NtupleEvent pair)
+int LeptonFlatTupleCutHelper::decodeCandidateTypeString(std::string thePairType)
 {
-	bool pass1 = 0;
-	bool pass2 = 0;
 
-	if(pair.leg1().leptonType()==TupleLeptonTypes::anElectron) pass1 = checkElectron(pair.leg1());
-	else if(pair.leg1().leptonType()==TupleLeptonTypes::aMuon) pass1 = checkMuon(pair.leg1());
-	else if(pair.leg1().leptonType()==TupleLeptonTypes::aTau) pass1 = checkTau(pair.leg1());
-
-
-	if(pair.leg2().leptonType()==TupleLeptonTypes::anElectron) pass2 = checkElectron(pair.leg2());
-	else if(pair.leg2().leptonType()==TupleLeptonTypes::aMuon) pass2 = checkMuon(pair.leg2());
-	else if(pair.leg2().leptonType()==TupleLeptonTypes::aTau) pass2 = checkTau(pair.leg2());
+	int returnVal = -999;
+ 
+	if(thePairType=="EleEle") returnVal = TupleCandidateEventTypes::EleEle;
+	if(thePairType=="EleMuon") returnVal = TupleCandidateEventTypes::EleMuon;
+	if(thePairType=="EleTau") returnVal = TupleCandidateEventTypes::EleTau;
+	if(thePairType=="MuonMuon") returnVal = TupleCandidateEventTypes::MuonMuon;
+	if(thePairType=="MuonTau") returnVal = TupleCandidateEventTypes::MuonTau;
+	if(thePairType=="TauTau") returnVal = TupleCandidateEventTypes::TauTau;
 
 
 
-	return (pass1 && pass2);
+	assert(returnVal!=-999);
+	return returnVal;
 }
 
 
-bool LeptonFlatTupleCutHelper::checkElectron(NtupleLepton electron)
+
+std::string LeptonFlatTupleCutHelper::getAppropriateCutString(int lepType, edm::ParameterSet aPSet, bool wantVetoCut)
 {
+	std::string returnString = "";
 
-	/* read the cut PSet */
-	
-	std::vector<double> Pt_Range = m_eCutSet.getParameter<std::vector<double>>("Pt");
-	assert(Pt_Range.size()==2);
-	
-	std::vector<double> EtaAbs_Range = m_eCutSet.getParameter<std::vector<double>>("EtaAbs");
-	assert(EtaAbs_Range.size()==2);
+	if(!wantVetoCut)
+	{
 
-	std::vector<double> dxyAbs_Range = m_eCutSet.getParameter<std::vector<double>>("dxyAbs");
-	assert(dxyAbs_Range.size()==2);
+		if(lepType==TupleLeptonTypes::anElectron && aPSet.exists("electronID")) returnString = aPSet.getParameter<std::string>("electronID");
+		else if(lepType==TupleLeptonTypes::aMuon && aPSet.exists("muonID")) returnString = aPSet.getParameter<std::string>("muonID");
+		else if(lepType==TupleLeptonTypes::aTau && aPSet.exists("tauID")) returnString =  aPSet.getParameter<std::string>("tauID");
+	}
 
-	std::vector<double> dzAbs_Range = m_eCutSet.getParameter<std::vector<double>>("dzAbs");
-	assert(dzAbs_Range.size()==2);
-
-	std::vector<double> relIso_Range = m_eCutSet.getParameter<std::vector<double>>("relIsoCut");
-	assert(relIso_Range.size()==2);
-
- 	std::string relIsoName = m_eCutSet.getParameter<std::string>("relIsoToCutOn");
-
- 	/* evaluate electron quantities */
-
-	double pt = electron.p4().pt();
-	double absEta = fabs(electron.p4().eta());
-	float absDxy = fabs(electron.dxy());
-	float absDz = fabs(electron.dz());
-	float relIso = electron.relativeIsol(relIsoName);
-
-
-	return 
-	(
-		( pt >= Pt_Range[0] && Pt_Range[1] >= pt) && 
-		( absEta >= EtaAbs_Range[0] && EtaAbs_Range[1] >= absEta) && 
-		( absDxy >= dxyAbs_Range[0] && dxyAbs_Range[1] >= absDxy) && 
-		( absDz >= dzAbs_Range[0] && dzAbs_Range[1] >= absDz) && 
-		( relIso >= relIso_Range[0] && relIso_Range[1] >= relIso)
-	);
-
-
+return returnString;
 }
 
-bool LeptonFlatTupleCutHelper::checkMuon(NtupleLepton muon)
+
+std::vector<std::string> LeptonFlatTupleCutHelper::getCutSummary(std::vector<edm::ParameterSet> aVPSet)
 {
-	/* read the cut PSet */
-	
-	std::vector<double> Pt_Range = m_muCutSet.getParameter<std::vector<double>>("Pt");
-	assert(Pt_Range.size()==2);
-	
-	std::vector<double> EtaAbs_Range = m_muCutSet.getParameter<std::vector<double>>("EtaAbs");
-	assert(EtaAbs_Range.size()==2);
+	std::vector <std::string> theCuts;
 
-	std::vector<double> dxyAbs_Range = m_muCutSet.getParameter<std::vector<double>>("dxyAbs");
-	assert(dxyAbs_Range.size()==2);
-
-	std::vector<double> dzAbs_Range = m_muCutSet.getParameter<std::vector<double>>("dzAbs");
-	assert(dzAbs_Range.size()==2);
-
-	std::vector<double> relIso_Range = m_muCutSet.getParameter<std::vector<double>>("relIsoCut");
-	assert(relIso_Range.size()==2);
-
- 	std::string relIsoName = m_muCutSet.getParameter<std::string>("relIsoToCutOn");
-
- 	/* evaluate muon quantities */
-
-	double pt = muon.p4().pt();
-	double absEta = fabs(muon.p4().eta());
-	float absDxy = fabs(muon.dxy());
-	float absDz = fabs(muon.dz());
-	float relIso = muon.relativeIsol(relIsoName);
+	for (std::size_t i = 0; i < aVPSet.size(); ++i)
+	{
+		std::string currentCut = "";
+		edm::ParameterSet currentSet = (aVPSet.at(i));
 
 
-	return 
-	(
-		( pt >= Pt_Range[0] && Pt_Range[1] >= pt) && 
-		( absEta >= EtaAbs_Range[0] && EtaAbs_Range[1] >= absEta) && 
-		( absDxy >= dxyAbs_Range[0] && dxyAbs_Range[1] >= absDxy) && 
-		( absDz >= dzAbs_Range[0] && dzAbs_Range[1] >= absDz) && 
-		( relIso >= relIso_Range[0] && relIso_Range[1] >= relIso)
-	);
+		if(currentSet.exists("candidatePairType"))
+		{
+			currentCut += " [ "+(currentSet.getParameter<std::string>("candidatePairType"));
+			currentCut += " ] ";	
+		}
+		else currentCut+= " [ anyPairType ] ";
+
+		if(currentSet.exists("electronID"))
+		{
+			currentCut += " [ electronID = "+(currentSet.getParameter<std::string>("electronID"));
+			currentCut += " ] ";	
+		}
+
+		if(currentSet.exists("muonID"))
+		{
+			currentCut += " [ muonID = "+(currentSet.getParameter<std::string>("muonID"));
+			currentCut += " ] ";	
+		}
 
 
+		if(currentSet.exists("tauID"))
+		{
+			currentCut += " [ tauID = "+(currentSet.getParameter<std::string>("tauID"));
+			currentCut += " ] ";	
+		}
 
+		theCuts.push_back(currentCut);
+	}
+
+
+return theCuts;
 }
 
-bool LeptonFlatTupleCutHelper::checkTau(NtupleLepton tau)
-{
-
-   /* read the cut PSet */
-	
-	std::vector<double> Pt_Range = m_tauCutSet.getParameter<std::vector<double>>("Pt");
-	assert(Pt_Range.size()==2);
-	
-	std::vector<double> EtaAbs_Range = m_tauCutSet.getParameter<std::vector<double>>("EtaAbs");
-	assert(EtaAbs_Range.size()==2);
-
-	std::vector<double> tauID_Range = m_tauCutSet.getParameter<std::vector<double>>("tauIDCut");
-	assert(tauID_Range.size()==2);
-
- 	std::string tauIDName = m_tauCutSet.getParameter<std::string>("tauIDtoCutOn");
-
- 	/* evaluate tau quantities */
-
-	double pt = tau.p4().pt();
-	double absEta = fabs(tau.p4().eta());
-	float tauID = tau.tauID(tauIDName);
-
-
-	return 
-	(
-		( pt >= Pt_Range[0] && Pt_Range[1] >= pt) && 
-		( absEta >= EtaAbs_Range[0] && EtaAbs_Range[1] >= absEta) && 
-		( tauID >= tauID_Range[0] && tauID_Range[1] >= tauID)
-	);
-
-
-}
 
 

@@ -384,10 +384,11 @@ class PairWiseMetHelper:
 							mvaMETSrc = leplepmet[2],
 						    electronVetoSrc =cms.InputTag("filteredVetoElectrons","","Ntuple"),
 						    muonVetoSrc = cms.InputTag("filteredVetoMuons","","Ntuple"),				
+						    pairDeltaRmin = cms.double(0.1), 
 						    # should be small since don't want one of the pair in the veto list
 						    # note : this is used for DR(leg1, leg2) >, and for overlap removal from the
 						    # veto e and mu lists
-						    vetoDeltaR = cms.double(0.1), 
+						    vetoDeltaRmin = cms.double(0.1), 
 							NAME=cms.string(moduleName),
 						    doSVMass = cms.bool(COMPUTE_SVMASS),
 						    useMVAMET = cms.bool(USE_MVAMET),

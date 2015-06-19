@@ -34,7 +34,7 @@ if APPLY_BTAG_SF :
 
 # import of standard configurations
 process.load("FWCore.MessageService.MessageLogger_cfi")
-process.MessageLogger.cerr.FwkReport.reportEvery = 1000
+process.MessageLogger.cerr.FwkReport.reportEvery = 50
 
 # mva MET --start
 process.load('Configuration.StandardSequences.Services_cff')
@@ -378,7 +378,7 @@ process.e = cms.EndPath(process.out)
 
 
 process.options   = cms.untracked.PSet( wantSummary = cms.untracked.bool(True) )
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(1000) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(10000) )
 
 
 

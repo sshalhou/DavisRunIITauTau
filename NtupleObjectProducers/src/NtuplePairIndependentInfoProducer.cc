@@ -312,44 +312,44 @@ NtuplePairIndependentInfoProducer::produce(edm::Event& iEvent, const edm::EventS
       // temp -- start
 
 
-       for( std::size_t t = 0; t<slimmedJets->at(i).availableJECSets().size(); ++t)
-       {
-        std::cout<<"JECSET : "<<slimmedJets->at(i).availableJECSets().at(t)<<"\n";
-       } 
+      //  for( std::size_t t = 0; t<slimmedJets->at(i).availableJECSets().size(); ++t)
+      //  {
+      //   std::cout<<"JECSET : "<<slimmedJets->at(i).availableJECSets().at(t)<<"\n";
+      //  } 
 
 
 
-      std::cout<<" JET (PT,|ABSETA|) = ( "<<slimmedJets->at(i).pt()<<" , "<< fabs(slimmedJets->at(i).eta())<<" ) ";
-      std::cout<<" name = "<<nameAndIndex.first<<" abs eta index = "<<nameAndIndex.second<<" ";
-      std::cout<<" cut point = "<<pu_cutsByEta[nameAndIndex.second]<<" raw val = "<<currentNtupleJet.PU_jetIdRaw()<<" ";
-      std::cout<<" pass/fail = "<<currentNtupleJet.PU_jetIdPassed()<<"\n";
+      // std::cout<<" JET (PT,|ABSETA|) = ( "<<slimmedJets->at(i).pt()<<" , "<< fabs(slimmedJets->at(i).eta())<<" ) ";
+      // std::cout<<" name = "<<nameAndIndex.first<<" abs eta index = "<<nameAndIndex.second<<" ";
+      // std::cout<<" cut point = "<<pu_cutsByEta[nameAndIndex.second]<<" raw val = "<<currentNtupleJet.PU_jetIdRaw()<<" ";
+      // std::cout<<" pass/fail = "<<currentNtupleJet.PU_jetIdPassed()<<"\n";
 
-      for( std::size_t t = 0; t<currentNtupleJet.JEC_labels().size(); ++t)
-       {
-        std::cout<<currentNtupleJet.JEC_labels().at(t)<<" "<<currentNtupleJet.JEC_SFs().at(t)<<"\n";
-       } 
+      // for( std::size_t t = 0; t<currentNtupleJet.JEC_labels().size(); ++t)
+      //  {
+      //   std::cout<<currentNtupleJet.JEC_labels().at(t)<<" "<<currentNtupleJet.JEC_SFs().at(t)<<"\n";
+      //  } 
 
-       std::cout<<" A good label : L1FastJet " << currentNtupleJet.JEC("L1FastJet")<<"\n";
-       std::cout<<" alternate method "<<slimmedJets->at(i).correctedJet("L1FastJet").pt()/slimmedJets->at(i).pt()<<"\n";
+      //  std::cout<<" A good label : L1FastJet " << currentNtupleJet.JEC("L1FastJet")<<"\n";
+      //  std::cout<<" alternate method "<<slimmedJets->at(i).correctedJet("L1FastJet").pt()/slimmedJets->at(i).pt()<<"\n";
 
-       std::cout<<" A good label : Uncorrected " << currentNtupleJet.JEC("Uncorrected")<<"\n";
-       std::cout<<" alternate method "<<slimmedJets->at(i).correctedJet("Uncorrected").pt()/slimmedJets->at(i).pt()<<"\n";
+      //  std::cout<<" A good label : Uncorrected " << currentNtupleJet.JEC("Uncorrected")<<"\n";
+      //  std::cout<<" alternate method "<<slimmedJets->at(i).correctedJet("Uncorrected").pt()/slimmedJets->at(i).pt()<<"\n";
 
-       std::cout<<" A good label : L2Relative " << currentNtupleJet.JEC("L2Relative")<<"\n";
-       std::cout<<" alternate method "<<slimmedJets->at(i).correctedJet("L2Relative").pt()/slimmedJets->at(i).pt()<<"\n";
+      //  std::cout<<" A good label : L2Relative " << currentNtupleJet.JEC("L2Relative")<<"\n";
+      //  std::cout<<" alternate method "<<slimmedJets->at(i).correctedJet("L2Relative").pt()/slimmedJets->at(i).pt()<<"\n";
 
-       std::cout<<" A good label : L3Absolute " << currentNtupleJet.JEC("L3Absolute")<<"\n";
-       std::cout<<" alternate method "<<slimmedJets->at(i).correctedJet("L3Absolute").pt()/slimmedJets->at(i).pt()<<"\n";
+      //  std::cout<<" A good label : L3Absolute " << currentNtupleJet.JEC("L3Absolute")<<"\n";
+      //  std::cout<<" alternate method "<<slimmedJets->at(i).correctedJet("L3Absolute").pt()/slimmedJets->at(i).pt()<<"\n";
 
 
 
-      for( std::size_t t = 0; t<currentNtupleJet.BTAG_labels().size(); ++t)
-       {
-        std::cout<<currentNtupleJet.BTAG_labels().at(t)<<" "<<currentNtupleJet.BTAGraw_scores().at(t)<<" ";
-        std::cout<<" access via BTAGraw(string) "<<currentNtupleJet.BTAGraw(currentNtupleJet.BTAG_labels().at(t))<<"\n";
-       } 
+      // for( std::size_t t = 0; t<currentNtupleJet.BTAG_labels().size(); ++t)
+      //  {
+      //   std::cout<<currentNtupleJet.BTAG_labels().at(t)<<" "<<currentNtupleJet.BTAGraw_scores().at(t)<<" ";
+      //   std::cout<<" access via BTAGraw(string) "<<currentNtupleJet.BTAGraw(currentNtupleJet.BTAG_labels().at(t))<<"\n";
+      //  } 
  
-       std::cout<<" pass/fail PU and PF jet ID : "<<currentNtupleJet.PU_jetIdPassed()<<" "<<currentNtupleJet.PF_jetIdPassed()<<"\n";
+      //  std::cout<<" pass/fail PU and PF jet ID : "<<currentNtupleJet.PU_jetIdPassed()<<" "<<currentNtupleJet.PF_jetIdPassed()<<"\n";
 
       // temp -- end
 

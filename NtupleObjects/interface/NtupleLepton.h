@@ -70,10 +70,6 @@ public:
 
   	float pt() const; 
   	float eta() const; 
-  	float phi() const; 
-  	float mass() const; 
-
-
 	int leptonType() const; 
 	LorentzVector p4() const; 
 	LorentzVector gen_p4() const; 

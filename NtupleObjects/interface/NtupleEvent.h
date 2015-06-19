@@ -30,22 +30,6 @@ public:
   virtual ~NtupleEvent(){}
 
 
-  // master cut handler
-  // idea is it takes in a cut = string, max, min and returns true or false
-
-  // pair.cut("pt",min,max,"muons")
-  // pair.cut("fabs(eta)",min,max,"electrons")
-  // pair.cut("","taus")
-  // pair.cut("","event")
-  // pair.cut("","vetoMuons")
-
-
-
-
-  bool applyCut(std::string, double, double, std::string);
-  void checkCutArgs(std::string, std::string);
-
-
   // fillers 
 
 	void fill(TupleCandidateEvent);
@@ -118,10 +102,7 @@ private:
   std::vector<double>  m_pfMET_cov10; // needed due to missing sig matrix in phys14 samples
   std::vector<double>  m_pfMET_cov11; // needed due to missing sig matrix in phys14 samples
 
-  /* keys for the applyCut member function */
-  std::set<std::string> m_parameterKeys;
-  std::set<std::string> m_targetKeys;
-  bool callCut(std::string, double, double, std::string);
+
 
 
 };

@@ -788,6 +788,9 @@ LorentzVector NtupleLepton::L1TrigObj_p4() const { return m_L1TrigObj_p4; }
 LorentzVector NtupleLepton::L3TrigObj_p4() const { return m_L3TrigObj_p4; }
 
 
+float NtupleLepton::pt() const { return m_p4.pt(); }
+float NtupleLepton::eta() const { return m_p4.eta(); }
+
 float NtupleLepton::dz() const { return m_dz; }
 float NtupleLepton::dxy() const { return m_dxy; }
 float NtupleLepton::EffectiveArea() const { return m_EffectiveArea; }

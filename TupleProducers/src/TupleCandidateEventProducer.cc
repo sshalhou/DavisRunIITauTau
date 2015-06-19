@@ -85,7 +85,8 @@ private:
   edm::InputTag mvaMETSrc_;
   edm::InputTag electronVetoSrc_;
   edm::InputTag muonVetoSrc_;
-  double vetoDeltaR_;
+  double pairDeltaRmin_;
+  double vetoDeltaRmin_;
   string NAME_;
   bool doSVMass_;
   bool useMVAMET_;
@@ -121,7 +122,8 @@ pfMETSrc_(iConfig.getParameter<edm::InputTag>("pfMETSrc" )),
 mvaMETSrc_(iConfig.getParameter<edm::InputTag>("mvaMETSrc" )),
 electronVetoSrc_(iConfig.getParameter<edm::InputTag>("electronVetoSrc" )),
 muonVetoSrc_(iConfig.getParameter<edm::InputTag>("muonVetoSrc" )),
-vetoDeltaR_(iConfig.getParameter<double>("vetoDeltaR" )),
+pairDeltaRmin_(iConfig.getParameter<double>("pairDeltaRmin" )),
+vetoDeltaRmin_(iConfig.getParameter<double>("vetoDeltaRmin" )),
 NAME_(iConfig.getParameter<string>("NAME" )),
 doSVMass_(iConfig.getParameter<bool>("doSVMass" )),
 useMVAMET_(iConfig.getParameter<bool>("useMVAMET" )),
@@ -258,7 +260,7 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
           l1.SetPtEtaPhiM(electrons->at(i).pt(), electrons->at(i).eta(), electrons->at(i).phi(),electrons->at(i).mass());
           l2.SetPtEtaPhiM(second_electrons->at(ii).pt(), second_electrons->at(ii).eta(), second_electrons->at(ii).phi(),second_electrons->at(ii).mass());
 
-          if(l1.DeltaR(l2)<vetoDeltaR_) continue;
+          if(l1.DeltaR(l2)<pairDeltaRmin_) continue;
 
 
           ///////////////////
@@ -266,7 +268,7 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
           for (std::size_t ve=0; ve<veto_electrons->size(); ++ve)
           {          
             vetoCand.SetPtEtaPhiM(veto_electrons->at(ve).pt(), veto_electrons->at(ve).eta(), veto_electrons->at(ve).phi(),veto_electrons->at(ve).mass());
-            if(vetoCand.DeltaR(l1) > vetoDeltaR_ && vetoCand.DeltaR(l2) > vetoDeltaR_ )
+            if(vetoCand.DeltaR(l1) > vetoDeltaRmin_ && vetoCand.DeltaR(l2) > vetoDeltaRmin_ )
             {
               CurrentCandidateEvent.set_vetoElectron(veto_electrons->at(ve));
             }
@@ -276,7 +278,7 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
           for (std::size_t vm=0; vm<veto_muons->size(); ++vm)
           {          
              vetoCand.SetPtEtaPhiM(veto_muons->at(vm).pt(), veto_muons->at(vm).eta(), veto_muons->at(vm).phi(),veto_muons->at(vm).mass());
-            if(vetoCand.DeltaR(l1) > vetoDeltaR_ && vetoCand.DeltaR(l2) > vetoDeltaR_ )
+            if(vetoCand.DeltaR(l1) > vetoDeltaRmin_ && vetoCand.DeltaR(l2) > vetoDeltaRmin_ )
             {
               CurrentCandidateEvent.set_vetoMuon(veto_muons->at(vm));
             }
@@ -343,7 +345,7 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
           l1.SetPtEtaPhiM(electrons->at(i).pt(), electrons->at(i).eta(), electrons->at(i).phi(),electrons->at(i).mass());
           l2.SetPtEtaPhiM(muons->at(ii).pt(), muons->at(ii).eta(), muons->at(ii).phi(),muons->at(ii).mass());
 
-          if(l1.DeltaR(l2)<vetoDeltaR_) continue;
+          if(l1.DeltaR(l2)<vetoDeltaRmin_) continue;
 
 
           ///////////////////
@@ -351,7 +353,7 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
           for (std::size_t ve=0; ve<veto_electrons->size(); ++ve)
           {          
             vetoCand.SetPtEtaPhiM(veto_electrons->at(ve).pt(), veto_electrons->at(ve).eta(), veto_electrons->at(ve).phi(),veto_electrons->at(ve).mass());
-            if(vetoCand.DeltaR(l1) > vetoDeltaR_ && vetoCand.DeltaR(l2) > vetoDeltaR_ )
+            if(vetoCand.DeltaR(l1) > vetoDeltaRmin_ && vetoCand.DeltaR(l2) > vetoDeltaRmin_ )
             {
               CurrentCandidateEvent.set_vetoElectron(veto_electrons->at(ve));
             }
@@ -361,7 +363,7 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
           for (std::size_t vm=0; vm<veto_muons->size(); ++vm)
           {          
              vetoCand.SetPtEtaPhiM(veto_muons->at(vm).pt(), veto_muons->at(vm).eta(), veto_muons->at(vm).phi(),veto_muons->at(vm).mass());
-            if(vetoCand.DeltaR(l1) > vetoDeltaR_ && vetoCand.DeltaR(l2) > vetoDeltaR_ )
+            if(vetoCand.DeltaR(l1) > vetoDeltaRmin_ && vetoCand.DeltaR(l2) > vetoDeltaRmin_ )
             {
               CurrentCandidateEvent.set_vetoMuon(veto_muons->at(vm));
             }
@@ -422,7 +424,7 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
           l1.SetPtEtaPhiM(electrons->at(i).pt(), electrons->at(i).eta(), electrons->at(i).phi(),electrons->at(i).mass());
           l2.SetPtEtaPhiM(taus->at(ii).pt(), taus->at(ii).eta(), taus->at(ii).phi(),taus->at(ii).mass());
 
-          if(l1.DeltaR(l2)<vetoDeltaR_) continue;
+          if(l1.DeltaR(l2)<vetoDeltaRmin_) continue;
 
 
           ///////////////////
@@ -430,7 +432,7 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
           for (std::size_t ve=0; ve<veto_electrons->size(); ++ve)
           {          
             vetoCand.SetPtEtaPhiM(veto_electrons->at(ve).pt(), veto_electrons->at(ve).eta(), veto_electrons->at(ve).phi(),veto_electrons->at(ve).mass());
-            if(vetoCand.DeltaR(l1) > vetoDeltaR_ && vetoCand.DeltaR(l2) > vetoDeltaR_ )
+            if(vetoCand.DeltaR(l1) > vetoDeltaRmin_ && vetoCand.DeltaR(l2) > vetoDeltaRmin_ )
             {
               CurrentCandidateEvent.set_vetoElectron(veto_electrons->at(ve));
             }
@@ -440,7 +442,7 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
           for (std::size_t vm=0; vm<veto_muons->size(); ++vm)
           {          
              vetoCand.SetPtEtaPhiM(veto_muons->at(vm).pt(), veto_muons->at(vm).eta(), veto_muons->at(vm).phi(),veto_muons->at(vm).mass());
-            if(vetoCand.DeltaR(l1) > vetoDeltaR_ && vetoCand.DeltaR(l2) > vetoDeltaR_ )
+            if(vetoCand.DeltaR(l1) > vetoDeltaRmin_ && vetoCand.DeltaR(l2) > vetoDeltaRmin_ )
             {
               CurrentCandidateEvent.set_vetoMuon(veto_muons->at(vm));
             }
@@ -519,7 +521,7 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
           l1.SetPtEtaPhiM(muons->at(i).pt(), muons->at(i).eta(), muons->at(i).phi(),muons->at(i).mass());
           l2.SetPtEtaPhiM(second_muons->at(ii).pt(), second_muons->at(ii).eta(), second_muons->at(ii).phi(),second_muons->at(ii).mass());
 
-          if(l1.DeltaR(l2)<vetoDeltaR_) continue;
+          if(l1.DeltaR(l2)<vetoDeltaRmin_) continue;
 
 
           ///////////////////
@@ -527,7 +529,7 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
           for (std::size_t ve=0; ve<veto_electrons->size(); ++ve)
           {          
             vetoCand.SetPtEtaPhiM(veto_electrons->at(ve).pt(), veto_electrons->at(ve).eta(), veto_electrons->at(ve).phi(),veto_electrons->at(ve).mass());
-            if(vetoCand.DeltaR(l1) > vetoDeltaR_ && vetoCand.DeltaR(l2) > vetoDeltaR_ )
+            if(vetoCand.DeltaR(l1) > vetoDeltaRmin_ && vetoCand.DeltaR(l2) > vetoDeltaRmin_ )
             {
               CurrentCandidateEvent.set_vetoElectron(veto_electrons->at(ve));
             }
@@ -537,7 +539,7 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
           for (std::size_t vm=0; vm<veto_muons->size(); ++vm)
           {          
              vetoCand.SetPtEtaPhiM(veto_muons->at(vm).pt(), veto_muons->at(vm).eta(), veto_muons->at(vm).phi(),veto_muons->at(vm).mass());
-            if(vetoCand.DeltaR(l1) > vetoDeltaR_ && vetoCand.DeltaR(l2) > vetoDeltaR_ )
+            if(vetoCand.DeltaR(l1) > vetoDeltaRmin_ && vetoCand.DeltaR(l2) > vetoDeltaRmin_ )
             {
               CurrentCandidateEvent.set_vetoMuon(veto_muons->at(vm));
             }
@@ -604,7 +606,7 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
           l1.SetPtEtaPhiM(muons->at(i).pt(), muons->at(i).eta(), muons->at(i).phi(),muons->at(i).mass());
           l2.SetPtEtaPhiM(taus->at(ii).pt(), taus->at(ii).eta(), taus->at(ii).phi(),taus->at(ii).mass());
         
-          if(l1.DeltaR(l2)<vetoDeltaR_) continue;
+          if(l1.DeltaR(l2)<vetoDeltaRmin_) continue;
 
 
           ///////////////////
@@ -612,7 +614,7 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
           for (std::size_t ve=0; ve<veto_electrons->size(); ++ve)
           {          
             vetoCand.SetPtEtaPhiM(veto_electrons->at(ve).pt(), veto_electrons->at(ve).eta(), veto_electrons->at(ve).phi(),veto_electrons->at(ve).mass());
-            if(vetoCand.DeltaR(l1) > vetoDeltaR_ && vetoCand.DeltaR(l2) > vetoDeltaR_ )
+            if(vetoCand.DeltaR(l1) > vetoDeltaRmin_ && vetoCand.DeltaR(l2) > vetoDeltaRmin_ )
             {
               CurrentCandidateEvent.set_vetoElectron(veto_electrons->at(ve));
             }
@@ -622,7 +624,7 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
           for (std::size_t vm=0; vm<veto_muons->size(); ++vm)
           {          
              vetoCand.SetPtEtaPhiM(veto_muons->at(vm).pt(), veto_muons->at(vm).eta(), veto_muons->at(vm).phi(),veto_muons->at(vm).mass());
-            if(vetoCand.DeltaR(l1) > vetoDeltaR_ && vetoCand.DeltaR(l2) > vetoDeltaR_ )
+            if(vetoCand.DeltaR(l1) > vetoDeltaRmin_ && vetoCand.DeltaR(l2) > vetoDeltaRmin_ )
             {
               CurrentCandidateEvent.set_vetoMuon(veto_muons->at(vm));
             }
@@ -711,14 +713,14 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
           l1.SetPtEtaPhiM(taus->at(i).pt(), taus->at(i).eta(), taus->at(i).phi(),taus->at(i).mass());
           l2.SetPtEtaPhiM(second_taus->at(ii).pt(), second_taus->at(ii).eta(), second_taus->at(ii).phi(),second_taus->at(ii).mass());
 
-          if(l1.DeltaR(l2)<vetoDeltaR_) continue;
+          if(l1.DeltaR(l2)<vetoDeltaRmin_) continue;
 
           ///////////////////
           /////// VETO ELECTRONS /////////////////////////////////////////////
           for (std::size_t ve=0; ve<veto_electrons->size(); ++ve)
           {          
             vetoCand.SetPtEtaPhiM(veto_electrons->at(ve).pt(), veto_electrons->at(ve).eta(), veto_electrons->at(ve).phi(),veto_electrons->at(ve).mass());
-            if(vetoCand.DeltaR(l1) > vetoDeltaR_ && vetoCand.DeltaR(l2) > vetoDeltaR_ )
+            if(vetoCand.DeltaR(l1) > vetoDeltaRmin_ && vetoCand.DeltaR(l2) > vetoDeltaRmin_ )
             {
               CurrentCandidateEvent.set_vetoElectron(veto_electrons->at(ve));
             }
@@ -728,7 +730,7 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
           for (std::size_t vm=0; vm<veto_muons->size(); ++vm)
           {          
              vetoCand.SetPtEtaPhiM(veto_muons->at(vm).pt(), veto_muons->at(vm).eta(), veto_muons->at(vm).phi(),veto_muons->at(vm).mass());
-            if(vetoCand.DeltaR(l1) > vetoDeltaR_ && vetoCand.DeltaR(l2) > vetoDeltaR_ )
+            if(vetoCand.DeltaR(l1) > vetoDeltaRmin_ && vetoCand.DeltaR(l2) > vetoDeltaRmin_ )
             {
               CurrentCandidateEvent.set_vetoMuon(veto_muons->at(vm));
             }
