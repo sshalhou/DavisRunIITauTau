@@ -21,7 +21,8 @@ options.parseArguments()
 doExample1 = False
 doExample2 = False
 doExample3 = False
-doExample4 = True
+doExample4 = False
+doExample5 = True
 
 ####################################
 # EX-1 : print candidateType & isolations
@@ -140,3 +141,54 @@ if doExample4 :
                 print '[', idName, " , ", leg1.tauID(idName), ']' 
             print   
 
+
+
+####################################
+# EX-5 : print HLT filter info
+
+if doExample5 :
+
+    events5 = Events (FILE)
+    handle5 = Handle ("std::vector<NtupleEvent>")
+    label5 = ("NtupleEvent","NtupleEvent","Ntuple")
+
+
+
+    for event5 in events5:
+        event5.getByLabel (label5, handle5)
+        pairs = handle5.product()
+        for p in pairs:
+            leg1 = p.leg1()
+            leg2 = p.leg2()
+
+            type = ''
+            if leg1.leptonType()==0:
+                type = '----- ELECTRON ----' 
+            if leg1.leptonType()==1:
+                type = '----- MUON ----' 
+            if leg1.leptonType()==2:
+                type = '----- TAU ----' 
+
+            print type, 'L3 PATHS = [',
+            for l3 in leg1.pathSummary_isL3():
+                print l3, ',',
+            print '] Filters = [',    
+            for filter in leg1.pathSummary_filterListPassed():
+                print filter, ',',
+            print ']'    
+
+
+            if leg2.leptonType()==0:
+                type = '----- ELECTRON ----' 
+            if leg2.leptonType()==1:
+                type = '----- MUON ----' 
+            if leg2.leptonType()==2:
+                type = '----- TAU ----' 
+
+            print type, 'L3 PATHS = [',
+            for l3 in leg2.pathSummary_isL3():
+                print l3, ',',
+            print '] Filters = [',    
+            for filter in leg2.pathSummary_filterListPassed():
+                print filter, ',',
+            print ']'    
