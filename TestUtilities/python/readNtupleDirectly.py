@@ -35,12 +35,12 @@ if doExample1 :
 
 
     for event in events:
-    	event.getByLabel (label, handle)
-    	pairs = handle.product()
-    	for p in pairs:
-    		leg1 = p.leg1()
-    		for i in range(0,len(leg1.relativeIsol_Labels())):
-    			print 'event type = ', p.CandidateEventType(), leg1.relativeIsol_Labels()[i]," = ", leg1.relativeIsol_Values()[i]
+        event.getByLabel (label, handle)
+        pairs = handle.product()
+        for p in pairs:
+            leg1 = p.leg1()
+            for i in range(0,len(leg1.relativeIsol_Labels())):
+                print 'event type = ', p.CandidateEventType(), leg1.relativeIsol_Labels()[i]," = ", leg1.relativeIsol_Values()[i]
 
 
 
@@ -60,14 +60,14 @@ if doExample2 :
         # get the product
         pairIndep = handle2.product()   
         for pI in pairIndep:
-        	for gP in pI.genParticles():
-        		print 'gen particle id, status, pt = ', gP.gen_pdgId(), gP.gen_status(), gP.gen_p4().pt(),
-        		print 'mother(s) [pdgId, status] = ',
-        		for m in range(0, len(gP.mothers_pdgId())):
-        			print '[', gP.mothers_pdgId()[m],',',gP.mothers_status()[m],']'
-        		print 'daughters(s) [pdgId, status] = ',
-        		for d in range(0, len(gP.daughters_pdgId())):
-        			print '[', gP.daughters_pdgId()[d],',',gP.daughters_status()[d],']'
+            for gP in pI.genParticles():
+                print 'gen particle id, status, pt = ', gP.gen_pdgId(), gP.gen_status(), gP.gen_p4().pt(),
+                print 'mother(s) [pdgId, status] = ',
+                for m in range(0, len(gP.mothers_pdgId())):
+                    print '[', gP.mothers_pdgId()[m],',',gP.mothers_status()[m],']'
+                print 'daughters(s) [pdgId, status] = ',
+                for d in range(0, len(gP.daughters_pdgId())):
+                    print '[', gP.daughters_pdgId()[d],',',gP.daughters_status()[d],']'
 
 
 #########################################################################
@@ -175,8 +175,13 @@ if doExample5 :
             print '] Filters = [',    
             for filter in leg1.pathSummary_filterListPassed():
                 print filter, ',',
-            print ']'    
-
+            print '], L1 accepted filters = [',
+            for filter in leg1.L1acceptedFilters():
+                print filter, ',',                
+            print '], L3 accepted filters = [',    
+            for filter in leg1.L3acceptedFilters():
+                print filter, ',', 
+            print ']'
 
             if leg2.leptonType()==0:
                 type = '----- ELECTRON ----' 
@@ -185,10 +190,17 @@ if doExample5 :
             if leg2.leptonType()==2:
                 type = '----- TAU ----' 
 
+
             print type, 'L3 PATHS = [',
             for l3 in leg2.pathSummary_isL3():
                 print l3, ',',
             print '] Filters = [',    
             for filter in leg2.pathSummary_filterListPassed():
                 print filter, ',',
-            print ']'    
+            print '], L1 accepted filters = [',
+            for filter in leg2.L1acceptedFilters():
+                print filter, ',',                
+            print '], L3 accepted filters = [',    
+            for filter in leg2.L3acceptedFilters():
+                print filter, ',', 
+            print ']'
