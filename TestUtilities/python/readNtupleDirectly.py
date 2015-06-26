@@ -162,11 +162,11 @@ if doExample5 :
             leg2 = p.leg2()
 
             type = ''
-            if leg1.leptonType()==0:
-                type = '----- ELECTRON ----' 
             if leg1.leptonType()==1:
-                type = '----- MUON ----' 
+                type = '----- ELECTRON ----' 
             if leg1.leptonType()==2:
+                type = '----- MUON ----' 
+            if leg1.leptonType()==3:
                 type = '----- TAU ----' 
 
             print type, 'L3 PATHS = [',
@@ -183,11 +183,11 @@ if doExample5 :
                 print filter, ',', 
             print ']'
 
-            if leg2.leptonType()==0:
-                type = '----- ELECTRON ----' 
             if leg2.leptonType()==1:
-                type = '----- MUON ----' 
+                type = '----- ELECTRON ----' 
             if leg2.leptonType()==2:
+                type = '----- MUON ----' 
+            if leg2.leptonType()==3:
                 type = '----- TAU ----' 
 
 
