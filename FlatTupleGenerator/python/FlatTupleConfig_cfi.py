@@ -93,7 +93,7 @@ cut_tau_MuonTau = cms.string(and_string_concatonator(tau_MuonTau))
 
 
 
-# VPSet containing selections for different final states, if no PSet is not
+# VPSet containing selections for different final states, if PSet is not
 # provided for a given final state the 
 # the events will omitted
 
@@ -145,7 +145,6 @@ generalConfig = cms.PSet(
 			tauIDsToKeep = cms.vstring(
 				"byCombinedIsolationDeltaBetaCorrRaw3Hits",
 				"decayModeFindingNewDMs",
-				"againstMuonLoose3",
 				"againstElectronVLooseMVA5",
 				"againstMuonLoose3",
 				"againstElectronMediumMVA5")
