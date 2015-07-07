@@ -30,7 +30,6 @@
 #include "DavisRunIITauTau/NtupleObjects/interface/NtupleTrigObject.h"
 
 #include "DavisRunIITauTau/TupleObjects/interface/TupleLepton.h"
-#include "DavisRunIITauTau/TupleObjects/interface/TupleLeptonTypes.h"
 
 
 #include "TH1D.h"
@@ -44,7 +43,6 @@
 #include "TLorentzVector.h"
 #include "TVector3.h"
 #include "TString.h"
-typedef std::vector<std::pair<std::string, float> >  stringFloatPairVec;
 
 
 class NtupleTriggerObjectHelper
