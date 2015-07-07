@@ -26,6 +26,7 @@
 typedef math::XYZTLorentzVector LorentzVector;
 typedef std::vector<std::string> stringVec;
 typedef std::vector<float>  floatVec;
+typedef std::vector<std::pair<std::string, float> >  stringFloatPairVec;
 
 class NtupleEvent
 {
@@ -77,6 +78,11 @@ public:
   float isLeg1GoodForHLTPath(std::string) const;  
   float isLeg2GoodForHLTPath(std::string) const;  
 
+  stringVec isLeg1GoodForHLTPath_Labels() ;         /* return the list of HLT path names (requested in ConfigTupleTriggers_cfi) for which reco lepton is GOOD */
+  stringVec isLeg2GoodForHLTPath_Labels() ;         
+
+  void fillTriggerSummariesLeg1andLeg2(stringFloatPairVec , 
+                                        stringFloatPairVec ); /* fill the member data */
 
   // getters
 
@@ -130,8 +136,8 @@ private:
   std::vector<double>  m_pfMET_cov01; // needed due to missing sig matrix in phys14 samples
   std::vector<double>  m_pfMET_cov10; // needed due to missing sig matrix in phys14 samples
   std::vector<double>  m_pfMET_cov11; // needed due to missing sig matrix in phys14 samples
-
-
+  stringFloatPairVec m_isLeg1GoodForHLTPath; /* pair of HLT path : 1.0 meeting reco leg1 accept+match+filter */
+  stringFloatPairVec m_isLeg2GoodForHLTPath; /* pair of HLT path : 1.0 meeting reco leg1 accept+match+filter */
 
 
 };

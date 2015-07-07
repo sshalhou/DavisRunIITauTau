@@ -29,6 +29,80 @@ void NtupleEvent::fillTriggerMatchesLeg1andLeg2(std::vector<NtupleTrigObject> tr
 
 }
 
+/* trigger summary helpers */
+
+/* fill them */
+
+void NtupleEvent::fillTriggerSummariesLeg1andLeg2(stringFloatPairVec isLeg1GoodForHLTPath_, 
+												  stringFloatPairVec isLeg2GoodForHLTPath_)
+{
+
+   m_isLeg1GoodForHLTPath = isLeg1GoodForHLTPath_;
+   m_isLeg2GoodForHLTPath = isLeg2GoodForHLTPath_;
+
+
+}
+
+/* get list of paths based on ConfigTupleTriggers_cfi that the leg is good for */
+/* note may contain duplicates with and without version wildcard */
+  
+stringVec NtupleEvent::isLeg1GoodForHLTPath_Labels()  
+{ 
+	stringVec dummy;
+	for(std::size_t x = 0; x < m_isLeg1GoodForHLTPath.size();++x) 
+	{ 
+  		dummy.push_back(m_isLeg1GoodForHLTPath.at(x).first);
+	}  
+
+return dummy;
+}
+
+stringVec NtupleEvent::isLeg2GoodForHLTPath_Labels()  
+{ 
+	stringVec dummy;
+	for(std::size_t x = 0; x < m_isLeg2GoodForHLTPath.size();++x) 
+	{ 
+  		dummy.push_back(m_isLeg2GoodForHLTPath.at(x).first);
+	}  
+
+return dummy;
+}
+
+/* functions that check if a leg is good for a trigger */
+/* only valid for those in ConfigTupleTriggers_cfi */
+/* for all the rest you need to check manually in leg1_trigMatches & leg2_trigMatches */
+/* version wildcards are  OK, but could suffer from filter problems if filter list changes 
+between versions of the HLT path */
+
+float NtupleEvent::isLeg1GoodForHLTPath(std::string label_) const
+{
+	float returnValue = 0.0;
+	for(std::size_t x = 0; x < m_isLeg1GoodForHLTPath.size();++x) 
+	{ 
+	  if(m_isLeg1GoodForHLTPath.at(x).first == label_) returnValue = m_isLeg1GoodForHLTPath.at(x).second;
+
+	}
+
+	return returnValue;
+}
+
+
+
+float NtupleEvent::isLeg2GoodForHLTPath(std::string label_) const
+{
+	float returnValue = 0.0;
+	for(std::size_t x = 0; x < m_isLeg2GoodForHLTPath.size();++x) 
+	{ 
+	  if(m_isLeg2GoodForHLTPath.at(x).first == label_) returnValue = m_isLeg2GoodForHLTPath.at(x).second;
+
+	}
+
+	return returnValue;
+}
+
+
+
+
 
 
 void NtupleEvent::fill(TupleCandidateEvent TCE)

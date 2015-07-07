@@ -20,7 +20,7 @@
 typedef math::XYZTLorentzVector LorentzVector;
 typedef std::vector<std::string> stringVec;
 typedef std::vector<float>  floatVec;
-typedef std::vector<std::pair<std::string, float> >  stringFloatPair;
+typedef std::vector<std::pair<std::string, float> >  stringFloatPairVec;
 
 class NtupleLepton
 {
@@ -48,7 +48,9 @@ public:
 
   stringVec HLTAcceptedPath_Labels() ;     		 /* return the accepted HLT path names  */
   floatVec  HLTAcceptedPath_preScales() ;        /* return  the available jec SFs */
-  float HLTpath(std::string) const;                    /* return the PreScale for accepted path strings return 0 (not accepted) if not available */
+  
+  /* note HLTpath now supports _v* version wildcards */
+  float HLTpath(std::string) const;              /* return the PreScale for accepted path strings return 0 (not accepted) if not available */
  
 
   stringVec relativeIsol_Labels(); 			/* return the relativeIsolation names  */
@@ -142,9 +144,9 @@ private:
 	LorentzVector 	m_genMother_p4;					//	the pat-matched gen particle's mother's 4-vector
 	float 		  	m_dz;							//	dz	- this is pulled from lepton UserFloat data
 	float 		  	m_dxy;							//  dxy - this is pulled from lepton UserFloat data
-	stringFloatPair m_HLTPaths;                     //  pair pathName : preScale 
-	stringFloatPair m_relativeIsolations;           //  pair relativeIsolation name : value 
-	stringFloatPair m_rhos;                         //  pair rho name : value 
+	stringFloatPairVec m_HLTPaths;                     //  pair pathName : preScale 
+	stringFloatPairVec m_relativeIsolations;           //  pair relativeIsolation name : value 
+	stringFloatPairVec m_rhos;                         //  pair rho name : value 
 	float			m_EffectiveArea; 				//  EffectiveArea (for e, mu) pulled from lepton UserFloat data
 	int 			m_charge;						//	charge
     int 			m_PFpdgId;  					//	the pdg ID attached to the PF particle
@@ -213,7 +215,7 @@ private:
 	LorentzVector 	m_genJet_p4;					//  the pat-matched genJet p4
 	float m_numStrips;								//  number strips
 	float m_numHadrons;								//	number hadrons
-	stringFloatPair m_tauIDs;                       //  pair rho name : value 
+	stringFloatPairVec m_tauIDs;                       //  pair rho name : value 
 	
 
 

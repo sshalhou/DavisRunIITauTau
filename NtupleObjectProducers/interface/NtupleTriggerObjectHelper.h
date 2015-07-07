@@ -89,6 +89,7 @@ class NtupleTriggerObjectHelper
 
         std::vector<std::pair<std::string, float> > isNtupleLeptonGoodForHLTPath(NtupleLepton);
 
+
 };
 
 

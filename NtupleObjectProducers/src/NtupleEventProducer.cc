@@ -217,25 +217,13 @@ NtupleEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
                        tau_triggerMatchDRSrc_,tau_triggerMatchTypesSrc_,tau_triggerMatchPathsAndFiltersSrc_);
 
         anNtupleEvent.fillTriggerMatchesLeg1andLeg2(trigObjHelper.getMatchedNtupleTrigObjectVector(anNtupleEvent.leg1()),
-        trigObjHelper.getMatchedNtupleTrigObjectVector(anNtupleEvent.leg2()));
+                                                    trigObjHelper.getMatchedNtupleTrigObjectVector(anNtupleEvent.leg2()));
+
+        anNtupleEvent.fillTriggerSummariesLeg1andLeg2(trigObjHelper.isNtupleLeptonGoodForHLTPath(anNtupleEvent.leg1()),
+                                                      trigObjHelper.isNtupleLeptonGoodForHLTPath(anNtupleEvent.leg2()));
 
 
-        // TriggerInfoEmbeddingTool electron_triggerEmbedderTool(triggerBits,triggerObjects,triggerPreScales,names,
-        //               electron_trigMatchDRcut,electron_trigMatchTypes,electron_trigSummaryPathsAndFilters);
 
-        // TriggerInfoEmbeddingTool muon_triggerEmbedderTool(triggerBits,triggerObjects,triggerPreScales,names,
-        //               muon_trigMatchDRcut,muon_trigMatchTypes,muon_trigSummaryPathsAndFilters);
-
-        // TriggerInfoEmbeddingTool tau_triggerEmbedderTool(triggerBits,triggerObjects,triggerPreScales,names,
-        //               tau_trigMatchDRcut,tau_trigMatchTypes,tau_trigSummaryPathsAndFilters);
-
-        // if(anNtupleEvent.leg1().leptonType()==TupleLeptonTypes::anElectron)
-        // else if(anNtupleEvent.leg1().leptonType()==TupleLeptonTypes::aMuon)
-        // else if(anNtupleEvent.leg1().leptonType()==TupleLeptonTypes::aTau)
-
-        // if(anNtupleEvent.leg2().leptonType()==TupleLeptonTypes::anElectron)
-        // else if(anNtupleEvent.leg2().leptonType()==TupleLeptonTypes::aMuon)
-        // else if(anNtupleEvent.leg2().leptonType()==TupleLeptonTypes::aTau)
 
 
 

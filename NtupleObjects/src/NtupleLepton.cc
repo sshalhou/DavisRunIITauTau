@@ -279,9 +279,33 @@ NtupleLepton::NtupleLepton()
   float NtupleLepton::HLTpath(std::string label_) const
   {
     float returnValue = 0;
+
+    // the simpler case without a version wildcard
+    if(label_.find('*')==std::string::npos) 
+    {
+      for(std::size_t x = 0; x < m_HLTPaths.size();++x) 
+      { 
+        if(m_HLTPaths.at(x).first == label_) returnValue = m_HLTPaths.at(x).second;
+
+      }
+    }
+    // a bit more work needed in case _v* wildcard is provided
+    else 
+    {
+      std::string versionStrippedLabel_ = label_;
+      versionStrippedLabel_.erase(label_.find("_v"),label_.length());
+
+
     for(std::size_t x = 0; x < m_HLTPaths.size();++x) 
-    { 
-      if(m_HLTPaths.at(x).first == label_) returnValue = m_HLTPaths.at(x).second;
+      { 
+
+        std::string comparisonString = m_HLTPaths.at(x).first;
+        comparisonString.erase(comparisonString.find("_v"),comparisonString.length());
+
+        if(comparisonString == versionStrippedLabel_) returnValue = m_HLTPaths.at(x).second;
+
+      }
+
 
     }
 

@@ -61,14 +61,151 @@ NtupleTriggerObjectHelper::~NtupleTriggerObjectHelper(){}
 std::vector<std::pair<std::string, float> > NtupleTriggerObjectHelper::isNtupleLeptonGoodForHLTPath(
                                             NtupleLepton nl)
 {
+
+    bool verbose = 0; 
+    
     std::vector<std::pair<std::string, float> > returnPairVec;
 
 
-    /* 1st decode the 
+    /* 1st get all the matched trigger objects and filters on all accepted paths */
+
+    std::vector <NtupleTrigObject> trigObjMatches = getMatchedNtupleTrigObjectVector(nl);
+
+
+    /* next decode the trigSummaryPathsAndFilters variables */
+
+    std::vector<std::string> trigSummaryPathsAndFilters_;
+
+    if(nl.leptonType()==TupleLeptonTypes::anElectron)
+    {           
+            trigSummaryPathsAndFilters_ = electron_trigSummaryPathsAndFilters;
+    }
+    else if(nl.leptonType()==TupleLeptonTypes::aMuon)
+    {
+            trigSummaryPathsAndFilters_ = muon_trigSummaryPathsAndFilters;
+    }        
+    else if(nl.leptonType()==TupleLeptonTypes::aTau)
+    {          
+            trigSummaryPathsAndFilters_ = tau_trigSummaryPathsAndFilters;
+    }
+
+    for (std::string pathFilterString : trigSummaryPathsAndFilters_)
+    {
+
+        if(verbose) std::cout<<" == SUMMARY FOR "<<pathFilterString<<" == \n";
+
+        std::istringstream ss(pathFilterString);
+        std::string dummy; /* becuase we use -- and not - */
+
+        std::string pathName;
+        std::getline(ss, pathName, '-'); std::getline(ss, dummy, '-');
+
+
+        std::string andOrName;
+        std::getline(ss, andOrName, '-'); std::getline(ss, dummy, '-');
+
+        std::string buf;
+        std::vector<std::string> filterNames;
+
+
+        while(std::getline(ss, buf, '-'))
+        {
+            filterNames.push_back(buf);
+            std::getline(ss, dummy, '-');
+        }
+
+        if(verbose) std::cout<<" ---------> pathName =  "<<pathName<<" \n";
+        if(verbose) std::cout<<" ---------> andOrName =  "<<andOrName<<" \n";
+        if(verbose) std::cout<<" ---------> checking   "<<filterNames.size()<<" filters \n";
+
+     
+        /* now check 3 conditions on isNtupleLeptonGoodForHLTPath */
+
+        int condition1 = 0; /* path accepted */
+        int condition2 = 0; /* a trigger object DR match */
+        int condition3 = 0; /* filters meet conditions in trigSummaryPathsAndFilters_ */
+
+
+        /* condition1 ---- checking wasAccept */
+
+
+        if(nl.HLTpath(pathName)>0.0) condition1 = 1; /* > 0 allows for prescale values */
+
+        /* condition2 ---- checking for any trigger object matches */
+
+        if(trigObjMatches.size()!=0) condition2 = 1;
+
+ 
+        /* condition 3 -- check the and or or of the filters */
+
+        int FilterPassSum = 0;
+
+        /* need to loop on all matched trigger objects to check total filters passed */
+
+        for(std::size_t tIndx = 0; tIndx < trigObjMatches.size(); ++tIndx)
+        {
+            for(std::string givenfil : filterNames)
+            {
+                if(trigObjMatches[tIndx].HLTFilter(givenfil)==1.0)
+                {
+                   FilterPassSum++;     
+                   if(verbose) std::cout<<" --------------------> trigObj # "<<tIndx<<" passes filter "<<givenfil<<"\n";
+                }
+            }
+
+
+        }
 
 
 
 
+
+        /* no filters provided by user */ 
+        if(filterNames.size()==0) condition3 = 1;
+
+        /* all filters passed */ 
+        else if(andOrName=="AND" && FilterPassSum>=int(filterNames.size()))
+        {
+            condition3 = 1;
+        }
+
+        /* at least one filter passed */ 
+        else if(andOrName=="OR" && FilterPassSum!=0)
+        {
+            condition3 = 1;
+        }
+
+        if(verbose) std::cout<<" ---------> condition1 = "<<condition1<<" ";
+        if(verbose) std::cout<<" condition2 = "<<condition2<<" ";
+        if(verbose) std::cout<<" condition3 = "<<condition3<<" \n";
+        if(verbose) std::cout<<" ---------> for path "<<pathName<<" FINAL="<<condition1+condition2+condition3<<" for reco lepton type "<<nl.leptonType()<<"\n";
+        if(verbose) std::cout<<"\n";
+
+        // push back the result only if all 3 conditions passed
+
+        float allThreeCond = 0.0;
+        if(condition1+condition2+condition3==3) allThreeCond = 1.0;
+
+        if(allThreeCond==1.0)
+        {
+            
+            returnPairVec.push_back(std::make_pair(pathName,1.0));
+
+            /* in case the original did not have a version wildcard add that in too */
+            if(pathName.find('*')==std::string::npos) 
+            {
+                std::string wildCardVersion = pathName;
+                wildCardVersion.erase(wildCardVersion.find("_v"),wildCardVersion.length());
+
+                returnPairVec.push_back(std::make_pair(wildCardVersion,1.0));
+
+            }    
+        }
+
+
+    }
+
+    if(verbose) std::cout<<" all paths "<<returnPairVec.size()<<"\n";
 
     return returnPairVec;
 }
@@ -77,7 +214,7 @@ std::vector<std::pair<std::string, float> > NtupleTriggerObjectHelper::isNtupleL
 
 std::vector <NtupleTrigObject> NtupleTriggerObjectHelper::getMatchedNtupleTrigObjectVector(NtupleLepton nl)
 {
-
+        bool verbose = 0; 
         std::vector <NtupleTrigObject> returnVec;
 
         /* local vars to hold lepton specific info */
@@ -139,8 +276,8 @@ std::vector <NtupleTrigObject> NtupleTriggerObjectHelper::getMatchedNtupleTrigOb
                 if(currentDR > DRmax_) continue;
 
                 /* have a match */
-                std::cout<<"\n \n \n ";
-                std::cout<<" -----> have a trigObj match of type/dr @ index "<<i<<" ";
+                if(verbose) std::cout<<"\n \n \n ";
+                if(verbose) std::cout<<" -----> have a trigObj match of type/dr @ index "<<i<<" ";
 
                 /* generate info needed to creat a NtupleTrigObject see NtupleTrigObject.h for meanings */
 
@@ -152,29 +289,29 @@ std::vector <NtupleTrigObject> NtupleTriggerObjectHelper::getMatchedNtupleTrigOb
                 stringFloatPairVec HLTFiltersPair;                        
 
 
-                std::cout<<" trig obj pt = "<<nto_p4.pt()<<" trig types = [ ";
+                if(verbose) std::cout<<" trig obj pt = "<<nto_p4.pt()<<" trig types = [ ";
                 for(std::size_t x = 0; x<nto_triggerObjectTypes.size();++x)
                 {
-                        std::cout<<nto_triggerObjectTypes[x]<<" ";
+                       if(verbose)  std::cout<<nto_triggerObjectTypes[x]<<" ";
 
                 }
-                std::cout<<" ] \n ";
+                if(verbose) std::cout<<" ] \n ";
 
                 /* unpack trigger names for current object */
                 obj.unpackPathNames(names);
 
 
                 /* loop over accepted HLT paths */
-                std::cout<<"            passed hlt paths = [ ";
+                if(verbose) std::cout<<"            passed hlt paths = [ ";
 
                 for (std::size_t p = 0; p<nl.HLTAcceptedPath_Labels().size(); ++p)
                 {       std::string pathName = nl.HLTAcceptedPath_Labels().at(p);
-                        std::cout<<" \n < "<<pathName<<"  ";
+                        if(verbose) std::cout<<" \n < "<<pathName<<"  ";
                         float isBoth = float(obj.hasPathName( pathName, true,  true )); 
                         float isL3   = float(obj.hasPathName( pathName, false, true )); 
                         float isLF   = float(obj.hasPathName( pathName, true, false )); 
 
-                        std::cout<<" (isBoth,isL3,isLF) = ("<<isBoth<<","<<isL3<<","<<isLF<<") > ";
+                        if(verbose) std::cout<<" (isBoth,isL3,isLF) = ("<<isBoth<<","<<isL3<<","<<isLF<<") > ";
 
                         HLTPath_isBothPair.push_back(std::make_pair (pathName,isBoth));
                         HLTPath_isL3Pair.push_back(std::make_pair (pathName,isL3));
@@ -183,25 +320,25 @@ std::vector <NtupleTrigObject> NtupleTriggerObjectHelper::getMatchedNtupleTrigOb
 
 
                 }
-                std::cout<<" \n ";
+                if(verbose) std::cout<<" \n ";
 
                 //HLTFiltersPair
         
                 /* loop over all filters that this trig object has */
 
-                std::cout<<"            passed hlt filters = [ ";
+                if(verbose) std::cout<<"            passed hlt filters = [ ";
 
                 for (std::string fil : obj.filterLabels())
                 {
                         if(obj.hasFilterLabel(fil)==1 && obj.filter(fil)==1)
                         {
 
-                                std::cout<<fil<<" ";
+                                if(verbose) std::cout<<fil<<" ";
                                 HLTFiltersPair.push_back(std::make_pair(fil,1.0));                       
 
                         }
                 }
-                std::cout<<" ] \n ";
+                if(verbose) std::cout<<" ] \n ";
 
                 /* finally create and call fillInfo for trigger object and push it back */
                 
@@ -215,7 +352,7 @@ std::vector <NtupleTrigObject> NtupleTriggerObjectHelper::getMatchedNtupleTrigOb
         }
 
 
-        std::cout<<" have found "<<returnVec.size()<<" matched trigger objects \n";
+        if(verbose) std::cout<<" have found "<<returnVec.size()<<" matched trigger objects \n";
 
 
         return returnVec;
