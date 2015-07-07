@@ -20,6 +20,9 @@
 	<class name="std::vector<NtupleJet>"/>
 	<class name="edm::Wrapper<std::vector<NtupleJet> >"/>
 
+	<class name="NtupleTrigObject"/>
+	<class name="std::vector<NtupleTrigObject>"/>
+	<class name="edm::Wrapper<std::vector<NtupleTrigObject> >"/>
 
 </lcgdict>
 

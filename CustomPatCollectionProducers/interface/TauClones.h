@@ -53,9 +53,7 @@ class TauClones
 	edm::Handle<pat::TriggerObjectStandAloneCollection> & triggerObjects;
 	edm::Handle<pat::PackedTriggerPrescales> & triggerPreScales;
 	const edm::TriggerNames & names;
-	double trigMatchDRcut;
-	std::vector<int> trigMatchTypes;
-	std::vector<std::string> trigSummaryPathsAndFilters;
+
 
 
 
@@ -64,10 +62,7 @@ class TauClones
 			edm::Handle<edm::TriggerResults> &,
 			edm::Handle<pat::TriggerObjectStandAloneCollection> &,
 			edm::Handle<pat::PackedTriggerPrescales>&,
-			const edm::TriggerNames &,
-			double,
-			std::vector<int>,
-			std::vector<std::string>);
+			const edm::TriggerNames &);
 
 		virtual ~TauClones();
 

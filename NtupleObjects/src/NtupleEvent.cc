@@ -21,6 +21,13 @@ NtupleEvent::NtupleEvent()
 
 
 
+void NtupleEvent::fillTriggerMatchesLeg1andLeg2(std::vector<NtupleTrigObject> trigVec1,std::vector<NtupleTrigObject> trigVec2)
+{
+
+  m_leg1_trigMatches = trigVec1;
+  m_leg2_trigMatches = trigVec2;
+
+}
 
 
 
@@ -89,6 +96,8 @@ int NtupleEvent::CandidateEventType() const { return m_CandidateEventType; }
 float NtupleEvent::TauEsNumberSigmasShifted() const {return m_TauEsNumberSigmasShifted;}
 NtupleLepton NtupleEvent::leg1() const { return m_leg1; }
 NtupleLepton NtupleEvent::leg2() const { return m_leg2; }
+std::vector<NtupleTrigObject> NtupleEvent::leg1_trigMatches() const { return m_leg1_trigMatches; }
+std::vector<NtupleTrigObject> NtupleEvent::leg2_trigMatches() const { return m_leg2_trigMatches; }
 std::vector<NtupleLepton> NtupleEvent::vetoElectron() const {return m_vetoElectron;}
 std::vector<NtupleLepton> NtupleEvent::vetoMuon() const {return  m_vetoMuon;}
 std::vector<double> NtupleEvent::SVMass() const {return  m_SVMass;}

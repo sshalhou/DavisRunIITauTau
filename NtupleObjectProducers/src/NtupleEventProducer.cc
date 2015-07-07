@@ -43,7 +43,15 @@ Implementation:
 #include "TauAnalysis/SVfitStandalone/interface/SVfitStandaloneAlgorithm.h"
 #include "DavisRunIITauTau/NtupleObjects/interface/NtupleLepton.h" 
 #include "DavisRunIITauTau/NtupleObjects/interface/NtupleEvent.h"
- 
+#include "DavisRunIITauTau/NtupleObjects/interface/NtupleTrigObject.h"
+#include "DataFormats/Math/interface/deltaR.h"
+#include "FWCore/Common/interface/TriggerNames.h"
+#include "DataFormats/Common/interface/TriggerResults.h"
+#include "DataFormats/PatCandidates/interface/TriggerObjectStandAlone.h"
+#include "DataFormats/PatCandidates/interface/PackedTriggerPrescales.h"
+#include "DavisRunIITauTau/TupleObjects/interface/TupleLeptonTypes.h"
+#include "DavisRunIITauTau/NtupleObjectProducers/interface/NtupleTriggerObjectHelper.h"
+
 
 typedef math::XYZTLorentzVector LorentzVector;
 using namespace std;
@@ -77,6 +85,18 @@ private:
   // ----------member data ---------------------------
 
   VInputTag tupleCandidateEventSrc_;
+  edm::EDGetTokenT<edm::TriggerResults> triggerBitSrc_;
+  edm::EDGetTokenT<pat::PackedTriggerPrescales> triggerPreScaleSrc_;
+  edm::EDGetTokenT<pat::TriggerObjectStandAloneCollection> triggerObjectSrc_;
+  double electron_triggerMatchDRSrc_;
+  std::vector<int> electron_triggerMatchTypesSrc_;
+  std::vector<std::string> electron_triggerMatchPathsAndFiltersSrc_;
+  double muon_triggerMatchDRSrc_;
+  std::vector<int> muon_triggerMatchTypesSrc_;
+  std::vector<std::string> muon_triggerMatchPathsAndFiltersSrc_;
+  double tau_triggerMatchDRSrc_;
+  std::vector<int> tau_triggerMatchTypesSrc_;
+  std::vector<std::string> tau_triggerMatchPathsAndFiltersSrc_;
   string NAME_;
 
 
@@ -96,6 +116,18 @@ private:
 //
 NtupleEventProducer::NtupleEventProducer(const edm::ParameterSet& iConfig):
 tupleCandidateEventSrc_(iConfig.getParameter<VInputTag>("tupleCandidateEventSrc" )),
+triggerBitSrc_(consumes<edm::TriggerResults>(iConfig.getParameter<edm::InputTag>("triggerBitSrc"))),
+triggerPreScaleSrc_(consumes<pat::PackedTriggerPrescales>(iConfig.getParameter<edm::InputTag>("triggerPreScaleSrc"))),
+triggerObjectSrc_(consumes<pat::TriggerObjectStandAloneCollection>(iConfig.getParameter<edm::InputTag>("triggerObjectSrc"))),
+electron_triggerMatchDRSrc_(iConfig.getParameter<double>("electron_triggerMatchDRSrc" )),
+electron_triggerMatchTypesSrc_(iConfig.getParameter<std::vector<int>>("electron_triggerMatchTypesSrc" )),
+electron_triggerMatchPathsAndFiltersSrc_(iConfig.getParameter<std::vector<std::string>>("electron_triggerMatchPathsAndFiltersSrc" )),
+muon_triggerMatchDRSrc_(iConfig.getParameter<double>("muon_triggerMatchDRSrc" )),
+muon_triggerMatchTypesSrc_(iConfig.getParameter<std::vector<int>>("muon_triggerMatchTypesSrc" )),
+muon_triggerMatchPathsAndFiltersSrc_(iConfig.getParameter<std::vector<std::string>>("muon_triggerMatchPathsAndFiltersSrc" )),
+tau_triggerMatchDRSrc_(iConfig.getParameter<double>("tau_triggerMatchDRSrc" )),
+tau_triggerMatchTypesSrc_(iConfig.getParameter<std::vector<int>>("tau_triggerMatchTypesSrc" )),
+tau_triggerMatchPathsAndFiltersSrc_(iConfig.getParameter<std::vector<std::string>>("tau_triggerMatchPathsAndFiltersSrc" )),
 NAME_(iConfig.getParameter<string>("NAME" ))
 {
 
@@ -140,6 +172,20 @@ NtupleEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
   std::size_t reserveSize =  tupleCandidateEventSrc_.size();
   NtupleEvents->reserve( reserveSize );
 
+    // get trigger-related collections
+
+    edm::Handle<edm::TriggerResults> triggerBits;
+    edm::Handle<pat::TriggerObjectStandAloneCollection> triggerObjects;
+    edm::Handle<pat::PackedTriggerPrescales> triggerPreScales;
+
+    iEvent.getByToken(triggerBitSrc_, triggerBits);
+    iEvent.getByToken(triggerObjectSrc_, triggerObjects);
+    iEvent.getByToken(triggerPreScaleSrc_, triggerPreScales);
+
+    const edm::TriggerNames &TRIGGERnames = iEvent.triggerNames(*triggerBits);
+
+
+
 
 
   for(std::size_t i = 0; i < tupleCandidateEventSrc_.size(); ++i)
@@ -159,8 +205,43 @@ NtupleEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
         const TupleCandidateEvent aPair =  (*pairs)[ii];
         NtupleEvent anNtupleEvent;
         anNtupleEvent.fill(aPair);
-        NtupleEvents->push_back(anNtupleEvent);
 
+
+
+
+        /* add the trigger object match & filter info */
+  
+        NtupleTriggerObjectHelper trigObjHelper(triggerBits,triggerObjects,triggerPreScales,TRIGGERnames,
+                       electron_triggerMatchDRSrc_,electron_triggerMatchTypesSrc_,electron_triggerMatchPathsAndFiltersSrc_,
+                       muon_triggerMatchDRSrc_,muon_triggerMatchTypesSrc_,muon_triggerMatchPathsAndFiltersSrc_,
+                       tau_triggerMatchDRSrc_,tau_triggerMatchTypesSrc_,tau_triggerMatchPathsAndFiltersSrc_);
+
+        anNtupleEvent.fillTriggerMatchesLeg1andLeg2(trigObjHelper.getMatchedNtupleTrigObjectVector(anNtupleEvent.leg1()),
+        trigObjHelper.getMatchedNtupleTrigObjectVector(anNtupleEvent.leg2()));
+
+
+        // TriggerInfoEmbeddingTool electron_triggerEmbedderTool(triggerBits,triggerObjects,triggerPreScales,names,
+        //               electron_trigMatchDRcut,electron_trigMatchTypes,electron_trigSummaryPathsAndFilters);
+
+        // TriggerInfoEmbeddingTool muon_triggerEmbedderTool(triggerBits,triggerObjects,triggerPreScales,names,
+        //               muon_trigMatchDRcut,muon_trigMatchTypes,muon_trigSummaryPathsAndFilters);
+
+        // TriggerInfoEmbeddingTool tau_triggerEmbedderTool(triggerBits,triggerObjects,triggerPreScales,names,
+        //               tau_trigMatchDRcut,tau_trigMatchTypes,tau_trigSummaryPathsAndFilters);
+
+        // if(anNtupleEvent.leg1().leptonType()==TupleLeptonTypes::anElectron)
+        // else if(anNtupleEvent.leg1().leptonType()==TupleLeptonTypes::aMuon)
+        // else if(anNtupleEvent.leg1().leptonType()==TupleLeptonTypes::aTau)
+
+        // if(anNtupleEvent.leg2().leptonType()==TupleLeptonTypes::anElectron)
+        // else if(anNtupleEvent.leg2().leptonType()==TupleLeptonTypes::aMuon)
+        // else if(anNtupleEvent.leg2().leptonType()==TupleLeptonTypes::aTau)
+
+
+
+        /* push back the current pair */
+         NtupleEvents->push_back(anNtupleEvent);
+ 
 
       }
 
@@ -169,57 +250,6 @@ NtupleEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
 
 iEvent.put( NtupleEvents, NAME_ );
 
-
-//tupleCandidateEventSrc_
-
-  // edm::Handle<std::vector<TupleCandidateEventCollection>> pairs;
-  // iEvent.getByLabel(tupleCandidateEventSrc_,pairs);
-
-  // std::cout<<" SIZE "<<pairs.size()<<"\n";
-
-  // for(vInputTag::const_iterator it=srcLeptonsTags.begin();it!=srcLeptonsTags.end();it++) {
-  //   srcLeptons_.push_back( consumes<reco::CandidateView >( *it ) );
-  // }
-
-  // get TupleEvent collections
-  // edm::Handle<std::vector<TupleCandidateEventCollection>> pairs;
-  // iEvent.getByLabel(tupleCandidateEventSrc_,pairs);
-
-
-//   for(std::size_t p = 0; p < tupleCandidateEventSrc_.size(); ++p)
-// {     
-//       std::cout<<" getting "<<tupleCandidateEventSrc_[p]<<std::endl;
-//       edm::Handle <TupleCandidateEventCollection>  pair_vec;
-//       iEvent.getByLabel(tupleCandidateEventSrc_[p], pair_vec);
-
-//       if(!pair_vec.isValid()) continue;
-
-//      std::cout<<pair_vec
-
-//       edm::View<TupleCandidateEvent>::const_iterator pair;
-
-//   for(pair=pair_vec->begin(); pair!=pair_vec->end(); ++pair)
-//   {
-
-// }
-      // for(std::size_t pp = 0; pp < pair_vec.size(); ++pp)
-      // {
-      //  }
-       
-
-      //     const TupleCandidateEvent aPair =  (*pair_vec)[pp];
-
-      //     if(!aPair.isValid()) continue;
-
-
-      //     std::cout<<"pair #"<<p<<" is of type "<<aPair.CandidateEventType()<<"\n";
-
-      //     // NtupleEvent anNtupleEvent;
-      //     // anNtupleEvent.fill(aPair);
-      //     // iEvent.put( NtupleEvents, NAME_ );
-      // }
-
-//}
 
 
 

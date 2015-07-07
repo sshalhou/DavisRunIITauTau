@@ -41,8 +41,8 @@ from doubleHyphen_string_concatonator import doubleHyphen_string_concatonator
 
 # DR match between lepton at reco and the triggerObject
 
-electronTriggerMatch_DR = cms.double(0.5)
-muonTriggerMatch_DR = cms.double(0.5)
+electronTriggerMatch_DR = cms.double(0.3)
+muonTriggerMatch_DR = cms.double(0.3)
 tauTriggerMatch_DR = cms.double(0.5)
 
 # allowed types for triggerObject matching

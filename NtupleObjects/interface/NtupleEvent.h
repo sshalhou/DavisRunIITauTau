@@ -12,7 +12,15 @@
 #include "DavisRunIITauTau/TupleObjects/interface/TupleLepton.h"
 #include "DavisRunIITauTau/TupleObjects/interface/TupleCandidateEvent.h"
 #include "DavisRunIITauTau/NtupleObjects/interface/NtupleLepton.h"
+#include "DavisRunIITauTau/NtupleObjects/interface/NtupleTrigObject.h"
 #include "DataFormats/HepMCCandidate/interface/GenParticle.h"
+
+#include "DataFormats/Math/interface/deltaR.h"
+#include "FWCore/Common/interface/TriggerNames.h"
+#include "DataFormats/Common/interface/TriggerResults.h"
+#include "DataFormats/PatCandidates/interface/TriggerObjectStandAlone.h"
+#include "DataFormats/PatCandidates/interface/PackedTriggerPrescales.h"
+#include "DavisRunIITauTau/TupleObjects/interface/TupleLeptonTypes.h"
 
 
 typedef math::XYZTLorentzVector LorentzVector;
@@ -33,6 +41,8 @@ public:
   // fillers 
 
 	void fill(TupleCandidateEvent);
+  void fillTriggerMatchesLeg1andLeg2(std::vector<NtupleTrigObject>,std::vector<NtupleTrigObject>);
+
 
   // helpers 
 
@@ -59,6 +69,8 @@ public:
   float TauEsNumberSigmasShifted() const;
 	NtupleLepton leg1() const; 
 	NtupleLepton leg2() const; 
+  std::vector<NtupleTrigObject> leg1_trigMatches() const; 
+  std::vector<NtupleTrigObject> leg2_trigMatches() const; 
 	std::vector<NtupleLepton> vetoElectron() const; 
  	std::vector<NtupleLepton> vetoMuon() const;
   std::vector<double> SVMass() const;
@@ -84,6 +96,8 @@ private:
   int m_isOsPair;
 	NtupleLepton m_leg1; 
 	NtupleLepton m_leg2; 
+  std::vector<NtupleTrigObject> m_leg1_trigMatches; 
+  std::vector<NtupleTrigObject> m_leg2_trigMatches; 
 	std::vector<NtupleLepton> m_vetoElectron; 
  	std::vector<NtupleLepton> m_vetoMuon;
   std::vector<double> m_SVMass;

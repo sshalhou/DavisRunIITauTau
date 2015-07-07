@@ -94,10 +94,7 @@ private:
   edm::InputTag vertexSrc_;
   edm::EDGetTokenT<edm::TriggerResults> triggerBitSrc_;
   edm::EDGetTokenT<pat::PackedTriggerPrescales> triggerPreScaleSrc_;
-  edm::EDGetTokenT<pat::TriggerObjectStandAloneCollection> triggerObjectSrc_;
-  double triggerMatchDRSrc_;
-  std::vector<int> triggerMatchTypesSrc_;
-  std::vector<std::string> triggerMatchPathsAndFiltersSrc_;
+  edm::EDGetTokenT<pat::TriggerObjectStandAloneCollection> triggerObjectSrc_; 
   vInputTag rhoSources_;
 
   // the mva ID estimator for CSA14 and Phs14(?)
@@ -126,9 +123,6 @@ vertexSrc_(iConfig.getParameter<edm::InputTag>("vertexSrc" )),
 triggerBitSrc_(consumes<edm::TriggerResults>(iConfig.getParameter<edm::InputTag>("triggerBitSrc"))),
 triggerPreScaleSrc_(consumes<pat::PackedTriggerPrescales>(iConfig.getParameter<edm::InputTag>("triggerPreScaleSrc"))),
 triggerObjectSrc_(consumes<pat::TriggerObjectStandAloneCollection>(iConfig.getParameter<edm::InputTag>("triggerObjectSrc"))),
-triggerMatchDRSrc_(iConfig.getParameter<double>("triggerMatchDRSrc" )),
-triggerMatchTypesSrc_(iConfig.getParameter<std::vector<int>>("triggerMatchTypesSrc" )),
-triggerMatchPathsAndFiltersSrc_(iConfig.getParameter<std::vector<std::string>>("triggerMatchPathsAndFiltersSrc" )),
 rhoSources_(iConfig.getParameter<vInputTag>("rhoSources" ))
 {
 
@@ -240,8 +234,7 @@ CustomPatElectronProducer::produce(edm::Event& iEvent, const edm::EventSetup& iS
 
   std::string MVA_NonTrigPhys14_name = "MVA_NonTrigPhys14";
   electronClones ele(electrons,first_vertex,MVA_NonTrigPhys14,MVA_NonTrigPhys14_name,
-                    triggerBits,triggerObjects,triggerPreScales,names,
-                    triggerMatchDRSrc_,triggerMatchTypesSrc_,triggerMatchPathsAndFiltersSrc_,
+                    triggerBits,triggerObjects,triggerPreScales,names,                    
                     rhoNames,rhos); 
 
 

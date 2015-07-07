@@ -90,9 +90,7 @@ private:
   edm::EDGetTokenT<edm::TriggerResults> triggerBitSrc_;
   edm::EDGetTokenT<pat::PackedTriggerPrescales> triggerPreScaleSrc_;
   edm::EDGetTokenT<pat::TriggerObjectStandAloneCollection> triggerObjectSrc_;
-  double triggerMatchDRSrc_;
-  std::vector<int> triggerMatchTypesSrc_;
-  std::vector<std::string> triggerMatchPathsAndFiltersSrc_;
+ 
 
   std::string NAME_NOMINAL;
   std::string NAME_UP;
@@ -122,10 +120,7 @@ TauEsUpSystematic_(iConfig.getParameter<double>("TauEsUpSystematic" )),
 TauEsDownSystematic_(iConfig.getParameter<double>("TauEsDownSystematic" )),
 triggerBitSrc_(consumes<edm::TriggerResults>(iConfig.getParameter<edm::InputTag>("triggerBitSrc"))),
 triggerPreScaleSrc_(consumes<pat::PackedTriggerPrescales>(iConfig.getParameter<edm::InputTag>("triggerPreScaleSrc"))),
-triggerObjectSrc_(consumes<pat::TriggerObjectStandAloneCollection>(iConfig.getParameter<edm::InputTag>("triggerObjectSrc"))),
-triggerMatchDRSrc_(iConfig.getParameter<double>("triggerMatchDRSrc" )),
-triggerMatchTypesSrc_(iConfig.getParameter<std::vector<int>>("triggerMatchTypesSrc" )),
-triggerMatchPathsAndFiltersSrc_(iConfig.getParameter<std::vector<std::string>>("triggerMatchPathsAndFiltersSrc" ))
+triggerObjectSrc_(consumes<pat::TriggerObjectStandAloneCollection>(iConfig.getParameter<edm::InputTag>("triggerObjectSrc")))
 {
 
   NAME_NOMINAL = NAME_+"TauEsNominal";
@@ -200,8 +195,7 @@ CustomPatTauProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
   // need to be careful about this when embedded samples arrive
 
   TauClones allClones(taus,first_vertex,TauEsCorrection_,TauEsUpSystematic_,TauEsDownSystematic_,
-                      triggerBits,triggerObjects,triggerPreScales,names,
-                    triggerMatchDRSrc_,triggerMatchTypesSrc_,triggerMatchPathsAndFiltersSrc_);
+                      triggerBits,triggerObjects,triggerPreScales,names);
 
 
 

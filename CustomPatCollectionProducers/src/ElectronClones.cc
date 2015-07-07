@@ -34,10 +34,7 @@ electronClones::electronClones(const slimmedPatElectronCollection& inputColl, co
 				edm::Handle<edm::TriggerResults> & triggerBits_,
 				edm::Handle<pat::TriggerObjectStandAloneCollection> & triggerObjects_,
 				edm::Handle<pat::PackedTriggerPrescales> & triggerPreScales_,
-				const edm::TriggerNames &names_,
-				double trigMatchDRcut_,
-				std::vector<int> trigMatchTypes_,
-				std::vector<std::string> trigSummaryPathsAndFilters_,
+				const edm::TriggerNames &names_,				
 				std::vector<std::string> rhoLabels_,
 				std::vector<double> rhoValues_):
 		electrons(inputColl),
@@ -47,10 +44,7 @@ electronClones::electronClones(const slimmedPatElectronCollection& inputColl, co
 		triggerBits(triggerBits_),
 		triggerObjects(triggerObjects_),
 		triggerPreScales(triggerPreScales_),
-		names(names_),
-		trigMatchDRcut(trigMatchDRcut_),
-		trigMatchTypes(trigMatchTypes_),
-		trigSummaryPathsAndFilters(trigSummaryPathsAndFilters_),
+		names(names_),		
 		rhoLabels(rhoLabels_),
 		rhoValues(rhoValues_)
 		{
@@ -123,8 +117,7 @@ void electronClones::clone()
 void electronClones::fillUserFloats()
 {
 
-	TriggerInfoEmbeddingTool triggerEmbedderTool(triggerBits,triggerObjects,triggerPreScales,names,
-											trigMatchDRcut,trigMatchTypes,trigSummaryPathsAndFilters);
+	TriggerInfoEmbeddingTool triggerEmbedderTool(triggerBits,triggerObjects,triggerPreScales,names);
 
 
 
@@ -138,7 +131,7 @@ void electronClones::fillUserFloats()
 	  	std::vector <std::string> userFloatNames;
 	  	std::vector <float> userFloatVals;
 
-	  	triggerEmbedderTool.getTriggerInfo(e,userFloatNames, userFloatVals); 
+	  	triggerEmbedderTool.fillAcceptedPathsAndPrescales(userFloatNames, userFloatVals); 
 	  		
 
 

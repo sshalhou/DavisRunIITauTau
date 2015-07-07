@@ -37,10 +37,7 @@ TauClones::TauClones(const slimmedPatTauCollection& inputColl, const reco::Verte
 	edm::Handle<edm::TriggerResults> & triggerBits_,
 	edm::Handle<pat::TriggerObjectStandAloneCollection> & triggerObjects_,
 	edm::Handle<pat::PackedTriggerPrescales> & triggerPreScales_,
-	const edm::TriggerNames &names_,
-	double trigMatchDRcut_,
-	std::vector<int> trigMatchTypes_,
-	std::vector<std::string> trigSummaryPathsAndFilters_):
+	const edm::TriggerNames &names_):
 		taus(inputColl),
 		first_vertex(input_vertex),
 		EsCorrectionFactor(EsCorrectionFactor),
@@ -49,10 +46,7 @@ TauClones::TauClones(const slimmedPatTauCollection& inputColl, const reco::Verte
 		triggerBits(triggerBits_),
 		triggerObjects(triggerObjects_),
 		triggerPreScales(triggerPreScales_),
-		names(names_),
-		trigMatchDRcut(trigMatchDRcut_),
-		trigMatchTypes(trigMatchTypes_),
-		trigSummaryPathsAndFilters(trigSummaryPathsAndFilters_)
+		names(names_)
 		{
 
 		 clone();
@@ -97,8 +91,7 @@ void TauClones::ChangeEnergyAndFillUserFloats(std::vector <pat::Tau> & clones,
 	const float CORRECTION, const float SYSTEMATIC)
 {
 
-	TriggerInfoEmbeddingTool triggerEmbedderTool(triggerBits,triggerObjects,triggerPreScales,names,
-		trigMatchDRcut,trigMatchTypes,trigSummaryPathsAndFilters);
+	TriggerInfoEmbeddingTool triggerEmbedderTool(triggerBits,triggerObjects,triggerPreScales,names);
 
 	TauEnergyScaleTool TauEsTool(CORRECTION,SYSTEMATIC);
 
@@ -138,7 +131,7 @@ void TauClones::ChangeEnergyAndFillUserFloats(std::vector <pat::Tau> & clones,
 	  	std::vector <std::string> userFloatNames;
 	  	std::vector <float> userFloatVals;
 
-	  	triggerEmbedderTool.getTriggerInfo(t,userFloatNames, userFloatVals); 
+	  	triggerEmbedderTool.fillAcceptedPathsAndPrescales(userFloatNames, userFloatVals); 
 
 	  	for (std::size_t a = 0; a< userFloatNames.size(); ++a )
 	  	{

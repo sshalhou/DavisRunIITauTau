@@ -81,18 +81,6 @@ public:
 	int PFpdgId() const; 
 	int GENpdgId() const; 
 	int GENMOTHERpdgId() const; 
-	stringVec L1acceptedFilters() const; 
-	float L1TrigObjRecoObjDeltaR() const; 
-	LorentzVector L1TrigObj_p4() const; 
-	stringVec L3acceptedFilters() const; 
-	float L3TrigObjRecoObjDeltaR() const; 
-	LorentzVector L3TrigObj_p4() const; 
-	stringVec pathSummary_isBOTH() const; 
-	stringVec pathSummary_isL3() const; 
-	stringVec pathSummary_isLF() const; 
-	stringVec pathSummary_filterListPassed() const; 
-
-
 	LorentzVector 	genJet_p4() const;
 	float numStrips() const;
 	float numHadrons() const;
@@ -162,16 +150,6 @@ private:
     int 			m_PFpdgId;  					//	the pdg ID attached to the PF particle
 	int 			m_GENpdgId;						//	the pdg ID of the default pat-matched gen particle	
 	int 			m_GENMOTHERpdgId;				//	the pdg ID of the default pat-matched gen particle's mother	
-	stringVec		m_L1acceptedFilters;     		//  best match L1 trig object accepted filters from userFloat labels
-	float 			m_L1TrigObjRecoObjDeltaR;		//  min DR to a L1 trig object from userFloats
-	LorentzVector	m_L1TrigObj_p4;					//  best match L1 trig obj p4  from userFloats
-	stringVec		m_L3acceptedFilters;     		//  best match L3 trig object accepted filters from userFloat labels
-	float 			m_L3TrigObjRecoObjDeltaR;		//  min DR to a L3 trig object from userFloats
-	LorentzVector	m_L3TrigObj_p4;					//  best match L3 trig obj p4  from userFloats
-	stringVec		m_pathSummary_isBOTH;			//	path summary variable names that have isBOTH==1 from userFloat labels & data	
-	stringVec		m_pathSummary_isL3;				//	path summary variable names that have isL3==1 from userFloat labels & data	
-	stringVec		m_pathSummary_isLF;				//	path summary variable names that have isLF==1 from userFloat labels & data	
-	stringVec		m_pathSummary_filterListPassed;	//	path summary variable names that have filterListPassed==1 from userFloat labels & data	
 	float m_IP;										//  for ele or muon dB(pat::X::PV3D)
 	float m_IPerror;								//  for ele or muon edB(pat::X::PV3D)
 	float m_PUchargedHadronIso;						//  iso parameter

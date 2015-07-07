@@ -1,16 +1,6 @@
 <lcgdict>
 
-  <class name="TupleElectron"/>
-  <class name="std::vector<TupleElectron>"/>
-  <class name="edm::Wrapper<std::vector<TupleElectron> >"/>
   
-  <class name="TupleMuon"/>
-  <class name="std::vector<TupleMuon>"/>
-  <class name="edm::Wrapper<std::vector<TupleMuon> >"/>
-
-  <class name="TupleTau"/>
-  <class name="std::vector<TupleTau>"/>
-  <class name="edm::Wrapper<std::vector<TupleTau> >"/>
 
   <class name="TupleGen"/>
   <class name="std::vector<TupleGen>"/>

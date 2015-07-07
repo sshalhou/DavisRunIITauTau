@@ -408,10 +408,28 @@ class PairWiseMetHelper:
 
 
 	def writeToNtuple(self,p):
+		from DavisRunIITauTau.TupleConfigurations.ConfigTupleTriggers_cfi import (electronTriggerPathsAndFilters,
+				electronTriggerMatch_DR, electronTriggerMatch_Types)
+		from DavisRunIITauTau.TupleConfigurations.ConfigTupleTriggers_cfi import (muonTriggerPathsAndFilters,
+				muonTriggerMatch_DR, muonTriggerMatch_Types)
+		from DavisRunIITauTau.TupleConfigurations.ConfigTupleTriggers_cfi import (tauTriggerPathsAndFilters,
+				tauTriggerMatch_DR, tauTriggerMatch_Types)
 		pairWriter = cms.Sequence()
 		moduleName = "NtupleEvent"
 		module = cms.EDProducer('NtupleEventProducer' ,
 				 tupleCandidateEventSrc = self.tupleCandidateEvents,
+				 triggerBitSrc = cms.InputTag("TriggerResults","","HLT"),
+				 triggerPreScaleSrc = cms.InputTag("patTrigger"),
+				 triggerObjectSrc = cms.InputTag("selectedPatTrigger"),				 
+				 electron_triggerMatchDRSrc = electronTriggerMatch_DR,
+				 electron_triggerMatchTypesSrc = electronTriggerMatch_Types,
+				 electron_triggerMatchPathsAndFiltersSrc = electronTriggerPathsAndFilters,
+				 muon_triggerMatchDRSrc = muonTriggerMatch_DR,
+				 muon_triggerMatchTypesSrc = muonTriggerMatch_Types,
+				 muon_triggerMatchPathsAndFiltersSrc = muonTriggerPathsAndFilters,
+				 tau_triggerMatchDRSrc = tauTriggerMatch_DR,
+				 tau_triggerMatchTypesSrc = tauTriggerMatch_Types,
+				 tau_triggerMatchPathsAndFiltersSrc = tauTriggerPathsAndFilters,
 			     NAME=cms.string(moduleName))
 		setattr(self.process, moduleName, module)
 		pairWriter += module
