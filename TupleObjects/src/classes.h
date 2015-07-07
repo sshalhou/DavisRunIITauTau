@@ -1,5 +1,3 @@
-#include "DavisRunIITauTau/TupleObjects/interface/TupleJet.h"
-#include "DavisRunIITauTau/TupleObjects/interface/TupleGen.h"
 #include "DavisRunIITauTau/TupleObjects/interface/TupleCandidateEvent.h"
 #include "DavisRunIITauTau/TupleObjects/interface/TupleLepton.h"
 

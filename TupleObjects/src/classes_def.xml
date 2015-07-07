@@ -1,15 +1,6 @@
 <lcgdict>
 
   
-
-  <class name="TupleGen"/>
-  <class name="std::vector<TupleGen>"/>
-  <class name="edm::Wrapper<std::vector<TupleGen> >"/>
-
-  <class name="TupleJet"/>
-  <class name="std::vector<TupleJet>"/>
-  <class name="edm::Wrapper<std::vector<TupleJet> >"/>
-
   <class name="TupleCandidateEvent"/>
   <class name="std::vector<TupleCandidateEvent>"/>
   <class name="edm::Wrapper<std::vector<TupleCandidateEvent> >"/>
