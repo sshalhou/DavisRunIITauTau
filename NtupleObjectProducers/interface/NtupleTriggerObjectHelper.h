@@ -58,7 +58,7 @@ class NtupleTriggerObjectHelper
         std::vector<int> electron_trigMatchTypes;
         std::vector<std::string> electron_trigSummaryPathsAndFilters;
 
-		double muon_trigMatchDRcut;
+        double muon_trigMatchDRcut;
         std::vector<int> muon_trigMatchTypes;
         std::vector<std::string> muon_trigSummaryPathsAndFilters;
 
@@ -77,8 +77,18 @@ class NtupleTriggerObjectHelper
                         double, std::vector<int>, std::vector<std::string>);
 
         virtual ~NtupleTriggerObjectHelper();
+
         /* return a vector of matched Ntuple Trigger Objects given an NtupleLepton */
+       
         std::vector <NtupleTrigObject> getMatchedNtupleTrigObjectVector(NtupleLepton);
+
+
+        /* for a given NtupleLepton return std::vector of std::pair(HLTpath, X) where
+        X = (HLT wasAccept && trigObject was matched && all Filters met) 
+        based on summary config in ConfigTupleTriggers_cfi.py */
+
+        std::vector<std::pair<std::string, float> > isNtupleLeptonGoodForHLTPath(NtupleLepton);
+
 };
 
 

@@ -63,6 +63,21 @@ public:
 
   }
 
+
+  /* Functions : isLeg1GoodForHLTPath and isLeg2GoodForHLTPath 
+     string argument is an HLT path
+     for the HLT summaries requested in ConfigTupleTriggers_cfi.py 
+     return 1.0 if the leg is a good HLT lepton :
+     (path wasAccepted && filter conditions met && trigger obj match)
+     return 0.0 if a bad HLT lepton or if no summary was requested in  
+     ConfigTupleTriggers_cfi.py 
+     (note : can still find non-summary requested trig info using leg1_trigMatches & leg1_trigMatches)
+  */  
+
+  float isLeg1GoodForHLTPath(std::string) const;  
+  float isLeg2GoodForHLTPath(std::string) const;  
+
+
   // getters
 
 	int CandidateEventType() const; 
@@ -70,7 +85,7 @@ public:
 	NtupleLepton leg1() const; 
 	NtupleLepton leg2() const; 
   std::vector<NtupleTrigObject> leg1_trigMatches() const; 
-  std::vector<NtupleTrigObject> leg2_trigMatches() const; 
+  std::vector<NtupleTrigObject> leg2_trigMatches() const;   
 	std::vector<NtupleLepton> vetoElectron() const; 
  	std::vector<NtupleLepton> vetoMuon() const;
   std::vector<double> SVMass() const;

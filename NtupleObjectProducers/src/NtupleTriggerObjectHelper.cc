@@ -55,6 +55,26 @@ NtupleTriggerObjectHelper::NtupleTriggerObjectHelper(
 NtupleTriggerObjectHelper::~NtupleTriggerObjectHelper(){}
 
 
+
+
+
+std::vector<std::pair<std::string, float> > NtupleTriggerObjectHelper::isNtupleLeptonGoodForHLTPath(
+                                            NtupleLepton nl)
+{
+    std::vector<std::pair<std::string, float> > returnPairVec;
+
+
+    /* 1st decode the 
+
+
+
+
+
+    return returnPairVec;
+}
+
+
+
 std::vector <NtupleTrigObject> NtupleTriggerObjectHelper::getMatchedNtupleTrigObjectVector(NtupleLepton nl)
 {
 
@@ -64,7 +84,7 @@ std::vector <NtupleTrigObject> NtupleTriggerObjectHelper::getMatchedNtupleTrigOb
 
         double DRmax_ = 0.5; /* this value is changed based on arguments and the lepton type below */
         std::vector<int> trigMatchTypes_;
-        std::vector<std::string> trigSummaryPathsAndFilters_;
+        //std::vector<std::string> trigSummaryPathsAndFilters_;
         TLorentzVector RecoObjVec_;
         RecoObjVec_.SetXYZT(nl.p4().X(),nl.p4().Y(),nl.p4().Z(),nl.p4().T());
         TLorentzVector TrigObjVec_; /* set in loop */
@@ -76,19 +96,19 @@ std::vector <NtupleTrigObject> NtupleTriggerObjectHelper::getMatchedNtupleTrigOb
         {
                // DRmax_  = electron_trigMatchDRcut;
                 trigMatchTypes_ = electron_trigMatchTypes;
-                trigSummaryPathsAndFilters_ = electron_trigSummaryPathsAndFilters;
+                //trigSummaryPathsAndFilters_ = electron_trigSummaryPathsAndFilters;
         }
         else if(nl.leptonType()==TupleLeptonTypes::aMuon)
         {
                // DRmax_  = muon_trigMatchDRcut;
                 trigMatchTypes_ = muon_trigMatchTypes;
-                trigSummaryPathsAndFilters_ = muon_trigSummaryPathsAndFilters;
+                //trigSummaryPathsAndFilters_ = muon_trigSummaryPathsAndFilters;
         }        
         else if(nl.leptonType()==TupleLeptonTypes::aTau)
         {
                // DRmax_  = tau_trigMatchDRcut; 
                 trigMatchTypes_ = tau_trigMatchTypes;
-                trigSummaryPathsAndFilters_ = tau_trigSummaryPathsAndFilters;
+                //trigSummaryPathsAndFilters_ = tau_trigSummaryPathsAndFilters;
         }
 
 

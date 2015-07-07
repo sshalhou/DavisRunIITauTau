@@ -61,6 +61,7 @@ private:
 	stringFloatPairVec m_HLTPath_isL3Pair;                   /*  pair of passed path and isL3 =  (filterName, isL3)  */
 	stringFloatPairVec m_HLTPath_isLFPair;                   /*  pair of passed path and isLF =  (filterName, isLF)  */
 	stringFloatPairVec m_HLTPath_isBothPair;                 /*  pair of passed path and isBoth =  (filterName, isBoth)  */
+  stringFloatPairVec m_HLTPath_isBothPair;                 /*  pair of passed path and isBoth =  (filterName, isBoth)  */
 
 
 

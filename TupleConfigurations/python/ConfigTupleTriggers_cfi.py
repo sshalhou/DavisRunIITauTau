@@ -1,13 +1,13 @@
 ####################################################################################################
-# config file containing all trigger selection summaries and vetos for electrons, muons, and taus
-#
+# config file containing all trigger setup info for HLT pats at the event level
+# and also for lepton-trigObject matching
 
 import FWCore.ParameterSet.Config as cms
 from doubleHyphen_string_concatonator import doubleHyphen_string_concatonator
 
 ####################################################################################################
-# trigger Setup : 
-#
+# User Provided Arguments for Trigger Setup : 
+####################################################################################################
 #	- trigger object match max DR
 #
 #	- trigger object match types: cms.vint32(+81, +82)
@@ -19,25 +19,38 @@ from doubleHyphen_string_concatonator import doubleHyphen_string_concatonator
 #	    vstring('SummaryVarName1--PATHNAME1--FILTER REQ. AND/OR--FILTER_1--FILTER_2--FILTER_N',
 #		  	     SummaryVarName2--PATHNAME2--FILTER REQ. AND/OR--FILTER_1--FILTER_2--FILTER_N')
 #								
-#  by default full info is stored for each reco lepton matched to one of the allowed trigger types
-#  the summary vstring just simplifies access
-#  to decode the value attached to each element of the vstring use :
-#
-#    -- final summary stores  :
-#			* based on https://twiki.cern.ch/twiki/bin/view/CMSPublic/
-#							SWGuidePATTrigger#TriggerObjectStandAlone
-#
-#   			isBoth 
-#   			isL3
-#   			isLF
-#
-#			* and one custom variable based on the AND or OR of all filters provided for a path
-#
-#   			FilterListPassed 
-#
+###############
+# *** NOTES ***
+###############
 # 
+# [1a] ALL HLT paths that were accepted for the event are embedded 
+#      during creation of CustomPat{e,mu,tau} Collections --> these are UserFloat("HLT_XYZ_v1")
+#
+# [1b] ALL HLT paths that were accepted for the event are kept in NtupleEvent's 
+#	   NtupleLeptons (i.e. leg1() and leg2(); see HLTpath function in NtupleLepton.h) 
+# 
+# [2] ALL TriggerObjects matched to leg1 and leg2 meeting DR and object match type requirments are stored in 
+#     NtupleEvent as a vector of NtupleTrigObject (i.e. leg1_trigMatches and leg2_trigMatches)
+#
+# [3a] Each NtupleTrigObject retains isL3, isLF, & isBoth
+#     (see https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuidePATTrigger#TriggerObjectStandAlone)   
+#     evaluated for each accepted HLT path
+#
+# [3b] Each NtupleTrigObject has a list of all Filters the object satisfies (from any HLT path, not just accepted ones)  
+#
+# [4] Summary Variables : For ease of checking HLT paths, trigger matching & filters, NtupleEvent now contains 
+#     the following built in functions :
+#
+#						isLeg1GoodForHLTPath('HLT_XYZ')
+#                       isLeg2GoodForHLTPath('HLT_XYZ')
+#
+#    these return 1.0 if  'specific path and filters to summarize' are satisfied by the given leg
+#
 ####################################################################################################
 
+####################################################################################################
+# Configuration :
+####################################################################################################
 
 # DR match between lepton at reco and the triggerObject
 
