@@ -1,320 +1,6 @@
-// -*- C++ -*-
-//
-// Package:    FlatTupleGenerator
-// Class:      FlatTupleGenerator
-//
-/**\class FlatTupleGenerator FlatTupleGenerator.cc DavisRunIITauTau/FlatTupleGenerator/src/FlatTupleGenerator.cc
+/* FlatTupleGenerator imp */
+#include "DavisRunIITauTau/FlatTupleGenerator/interface/FlatTupleGenerator.h" 
 
-Description: [EDAnalyzer that creates FlatTuples for DavisRunIITauTau analysis using Ntuple as input]
-
-
-Implementation:
-
-*/
-//
-// Original Author:  shalhout shalhout
-//         Created:  Tue Jun  4 04:25:53 CDT 2015
-// $Id$
-//
-//
-
-
-
-//  include files
-#include <memory>
-#include <string>
-#include <stdio.h>
-#include <assert.h>
-#include <vector>
-#include <iostream>
-#include "TTree.h"
-#include "TFile.h"
-#include "DataFormats/Math/interface/deltaR.h"
-#include "DataFormats/Math/interface/deltaPhi.h"
-#include "DataFormats/Math/interface/LorentzVector.h"
-#include "TLorentzVector.h"
-#include "DataFormats/Math/interface/Vector3D.h"
-#include "Math/GenVector/VectorUtil.h"
-#include <math.h>
-
-// FWCore include files
-#include "FWCore/Framework/interface/Frameworkfwd.h"
-#include "FWCore/Framework/interface/EDAnalyzer.h"
-#include "FWCore/Framework/interface/Event.h"
-#include "FWCore/Framework/interface/MakerMacros.h"
-#include "FWCore/ParameterSet/interface/ParameterSet.h"
-#include "FWCore/ServiceRegistry/interface/Service.h"
-#include "FWCore/Framework/interface/ESHandle.h"
-#include "CommonTools/UtilAlgos/interface/TFileService.h"
-
-
-// Custom object include files
-
-
-#include "DavisRunIITauTau/NtupleObjects/interface/NtupleLepton.h" 
-#include "DavisRunIITauTau/NtupleObjects/interface/NtupleEvent.h"
-#include "DavisRunIITauTau/NtupleObjects/interface/NtupleJet.h"
-#include "DavisRunIITauTau/NtupleObjects/interface/NtupleGenParticle.h"
-#include "DavisRunIITauTau/NtupleObjects/interface/NtuplePairIndependentInfo.h"
-#include "DavisRunIITauTau/FlatTupleGenerator/interface/PairRankHelper.h"
-#include "DavisRunIITauTau/TupleObjects/interface/TupleLeptonTypes.h"
-#include "CommonTools/Utils/interface/StringCutObjectSelector.h"
-#include "DavisRunIITauTau/FlatTupleGenerator/interface/LeptonFlatTupleCutHelper.h"
-#include "DataFormats/PatCandidates/interface/MET.h"
-#include "DataFormats/METReco/interface/PFMET.h"
-#include "DataFormats/METReco/interface/PFMETCollection.h"
-
-
-using namespace edm;
-using namespace std;
-typedef math::XYZTLorentzVector LorentzVector;
-typedef std::vector<edm::InputTag> vInputTag;
-typedef std::vector<std::string> stringVec;
-typedef std::vector<float>  floatVec;
-
-
-
-//////////////////////////////////////////////////
-// class declaration
-//////////////////////////////////////////////////
-
-class FlatTupleGenerator : public edm::EDAnalyzer
-{
-public:
-  explicit FlatTupleGenerator(const edm::ParameterSet&);
-  ~FlatTupleGenerator();
-
-  static void fillDescriptions(edm::ConfigurationDescriptions& descriptions);
-
-
-private:
-  virtual void beginJob() ;
-  virtual void analyze(const edm::Event&, const edm::EventSetup&);
-  virtual void endJob() ;
-
-  virtual void beginRun(edm::Run const&, edm::EventSetup const&);
-  virtual void endRun(edm::Run const&, edm::EventSetup const&);
-  virtual void beginLuminosityBlock(edm::LuminosityBlock const&, edm::EventSetup const&);
-  virtual void endLuminosityBlock(edm::LuminosityBlock const&, edm::EventSetup const&);
-  virtual void reInit();
-
-  // ----------member data ---------------------------
-
-  /* MASTER VALUE FOR MAX std::pair flattening */
-
-  static const int MAX = 10;
-
-  /* the input collection sources */
-
-  edm::InputTag pairSrc_;
-  edm::InputTag indepSrc_;
-  std::string NAME_;  // use TauESNom, TauESUp, TauESDown, etc.
-  edm::ParameterSet EventCutSrc_;
-  std::vector<edm::ParameterSet> LeptonCutVecSrc_;
-  
-
-
-  /* the parameters to be read from EventCutSrc_ */
-
-  std::vector<std::string> tauIDsToKeep;
-  bool keepOS;
-  bool keepSS;
-  std::vector<double> MtCut;
-  bool keepTauEsNominal;
-  bool keepTauEsUp; 
-  bool keepTauEsDown; 
-  bool rankByPtSum;
-  bool rankByIsolation;
-  std::string electronIsolationForRank;
-  std::string muonIsolationForRank;
-  std::string tauIDisolationForRank;
-
-  /* the lepton cut helper object */
-  LeptonFlatTupleCutHelper LeptonCutHelper;
-
-  /* the TTree */
- 
-  TTree * FlatTuple;
-
-
-
-  /* the leaves : Idea here is to be as flat as possible - stick to simple objects */
-
-  std::string treeInfoString;           /* this will be filled as NAME_, should be something like TauEsNominal etc. */
-  std::vector<std::string> AppliedLepCuts; /* the cuts applied to the current tree */
-  unsigned int  run ;
-  unsigned int  luminosityBlock ;
-  unsigned int  event ;
-  unsigned int  pairRank ; /* zero is the best rank */
-  bool  isRealData ;
-  double VISMass; 
-  float l1_tauIDs[MAX]; /* leg 1 tau IDs */
-  float l2_tauIDs[MAX]; /* leg 2 tau IDs */
-
-  int CandidateEventType; 
-  float TauEsNumberSigmasShifted;
-  int isOsPair;
-  double SVMass;
-  double MTmvaMET_leg1;
-  double MTpfMET_leg1;
-  double MTmvaMET_leg2;
-  double MTpfMET_leg2;
-  double mvaMET;
-  double mvaMETphi;
-  double mvaMET_cov00; 
-  double mvaMET_cov01; 
-  double mvaMET_cov10; 
-  double mvaMET_cov11;   
-  double pfMET;
-  double pfMETphi;
-  double pfMET_cov00; 
-  double pfMET_cov01; 
-  double pfMET_cov10; 
-  double pfMET_cov11; 
-
-  int leg1_leptonType;
-  float leg1_dz;
-  float leg1_dxy;
-  float leg1_EffectiveArea;
-  int leg1_charge;
-  int leg1_PFpdgId;
-  int leg1_GENpdgId;
-  int leg1_GENMOTHERpdgId;
-  float leg1_IP;
-  float leg1_IPerror;
-  float leg1_PUchargedHadronIso;
-  float leg1_chargedHadronIso;
-  float leg1_neutralHadronIso;
-  float leg1_photonIso;
-  float leg1_DepositR03ECal;
-  float leg1_DepositR03Hcal;
-  float leg1_DepositR03TrackerOfficial;
-  float leg1_isGlobalMuon;
-  float leg1_isGoodGlobalMuon;
-  float leg1_passesMediumMuonId;
-  float leg1_isLooseMuon;
-  float leg1_isPFMuon;
-  float leg1_isSoftMuon;
-  float leg1_isTightMuon;
-  float leg1_isTrackerMuon;
-  float leg1_muonCombQualChi2LocalPosition;
-  float leg1_muonCombQualTrkKink;
-  float leg1_muonGlobalTrackNormChi2;
-  float leg1_muonInnerTrkValidFraction;
-  float leg1_muonSegmentCompatibility;
-  float leg1_raw_electronMVA;
-  float leg1_passFail_electronMVA;
-  float leg1_SuperClusterEta;
-  float leg1_hadronicOverEm;
-  float leg1_isEB;
-  float leg1_isEBEEGap;
-  float leg1_isEBEtaGap;
-  float leg1_isEBPhiGap;
-  float leg1_isEE;
-  float leg1_isEEDeeGap;
-  float leg1_isEERingGap;
-  float leg1_deltaEtaSuperClusterTrackAtVtx;
-  float leg1_deltaPhiSuperClusterTrackAtVtx;
-  float leg1_sigmaEtaEta;
-  float leg1_sigmaIetaIeta;
-  float leg1_sigmaIphiIphi;
-  float leg1_numberOfMissingInnerHits;
-  float leg1_numberOfMissingOuterHits;
-  float leg1_numberOfTrackHits;
-  float leg1_passConversionVeto;
-  float leg1_TauEsVariant;
-  float leg1_numStrips;
-  float leg1_numHadrons;
-
-  int leg2_leptonType;
-  float leg2_dz;
-  float leg2_dxy;
-  float leg2_EffectiveArea;
-  int leg2_charge;
-  int leg2_PFpdgId;
-  int leg2_GENpdgId;
-  int leg2_GENMOTHERpdgId;
-  float leg2_IP;
-  float leg2_IPerror;
-  float leg2_PUchargedHadronIso;
-  float leg2_chargedHadronIso;
-  float leg2_neutralHadronIso;
-  float leg2_photonIso;
-  float leg2_DepositR03ECal;
-  float leg2_DepositR03Hcal;
-  float leg2_DepositR03TrackerOfficial;
-  float leg2_isGlobalMuon;
-  float leg2_isGoodGlobalMuon;
-  float leg2_passesMediumMuonId;
-  float leg2_isLooseMuon;
-  float leg2_isPFMuon;
-  float leg2_isSoftMuon;
-  float leg2_isTightMuon;
-  float leg2_isTrackerMuon;
-  float leg2_muonCombQualChi2LocalPosition;
-  float leg2_muonCombQualTrkKink;
-  float leg2_muonGlobalTrackNormChi2;
-  float leg2_muonInnerTrkValidFraction;
-  float leg2_muonSegmentCompatibility;
-  float leg2_raw_electronMVA;
-  float leg2_passFail_electronMVA;
-  float leg2_SuperClusterEta;
-  float leg2_hadronicOverEm;
-  float leg2_isEB;
-  float leg2_isEBEEGap;
-  float leg2_isEBEtaGap;
-  float leg2_isEBPhiGap;
-  float leg2_isEE;
-  float leg2_isEEDeeGap;
-  float leg2_isEERingGap;
-  float leg2_deltaEtaSuperClusterTrackAtVtx;
-  float leg2_deltaPhiSuperClusterTrackAtVtx;
-  float leg2_sigmaEtaEta;
-  float leg2_sigmaIetaIeta;
-  float leg2_sigmaIphiIphi;
-  float leg2_numberOfMissingInnerHits;
-  float leg2_numberOfMissingOuterHits;
-  float leg2_numberOfTrackHits;
-  float leg2_passConversionVeto;
-  float leg2_TauEsVariant;
-  float leg2_numStrips;
-  float leg2_numHadrons;
-
-  double leg2_pt;
-  double leg2_gen_pt;
-  double leg2_genMother_pt;
-  double leg2_genJet_pt;
-  double leg1_pt;
-  double leg1_gen_pt;
-  double leg1_genMother_pt;
-  double leg1_genJet_pt;
-  double leg2_eta;
-  double leg2_gen_eta;
-  double leg2_genMother_eta;
-  double leg2_genJet_eta;
-  double leg1_eta;
-  double leg1_gen_eta;
-  double leg1_genMother_eta;
-  double leg1_genJet_eta;
-  double leg2_phi;
-  double leg2_gen_phi;
-  double leg2_genMother_phi;
-  double leg2_genJet_phi;
-  double leg1_phi;
-  double leg1_gen_phi;
-  double leg1_genMother_phi;
-  double leg1_genJet_phi;
-  double leg2_M;
-  double leg2_gen_M;
-  double leg2_genMother_M;
-  double leg2_genJet_M;
-  double leg1_M;
-  double leg1_gen_M;
-  double leg1_genMother_M;
-  double leg1_genJet_M;
-
-
-};
 
 ////////////////////////////////////////////
 //	--- class constructor
@@ -330,28 +16,31 @@ LeptonCutVecSrc_(iConfig.getParameter<std::vector<edm::ParameterSet>>("LeptonCut
 {
 
 
+	/* read in the EventCutSrc varaibles */
 
-  /* read in the EventCutSrc varaibles */
+	tauIDsToKeep = EventCutSrc_.getParameter<std::vector<std::string> >("tauIDsToKeep"); 
+  assert(THE_MAX>=tauIDsToKeep.size());
 
-  tauIDsToKeep = EventCutSrc_.getParameter<std::vector<std::string> >("tauIDsToKeep"); 
-  assert(MAX>=tauIDsToKeep.size());
+  triggerSummaryChecks = EventCutSrc_.getParameter<std::vector<std::string> >("triggerSummaryChecks"); 
+  assert(THE_MAX>=triggerSummaryChecks.size());
 
-  MtCut = EventCutSrc_.getParameter<std::vector<double> >("Mt"); 
-  assert(MtCut.size()==2);
-  keepOS = EventCutSrc_.getParameter<bool>("keepOS");
-  keepSS = EventCutSrc_.getParameter<bool>("keepSS");
-  keepTauEsNominal = EventCutSrc_.getParameter<bool>("keepTauEsNominal");
-  keepTauEsUp = EventCutSrc_.getParameter<bool>("keepTauEsUp");
-  keepTauEsDown = EventCutSrc_.getParameter<bool>("keepTauEsDown");
-  rankByPtSum = EventCutSrc_.getParameter<bool>("rankByPtSum");
-  rankByIsolation = EventCutSrc_.getParameter<bool>("rankByIsolation");
-  assert(rankByPtSum!=rankByIsolation);
-  electronIsolationForRank = EventCutSrc_.getParameter<std::string>("electronIsolationForRank");
-  muonIsolationForRank = EventCutSrc_.getParameter<std::string>("muonIsolationForRank");
-  tauIDisolationForRank = EventCutSrc_.getParameter<std::string>("tauIDisolationForRank");
+	keepOS = EventCutSrc_.getParameter<bool>("keepOS");
+	keepSS = EventCutSrc_.getParameter<bool>("keepSS");
+	keepTauEsNominal = EventCutSrc_.getParameter<bool>("keepTauEsNominal");
+	keepTauEsUp = EventCutSrc_.getParameter<bool>("keepTauEsUp");
+	keepTauEsDown = EventCutSrc_.getParameter<bool>("keepTauEsDown");
+	rankByPtSum = EventCutSrc_.getParameter<bool>("rankByPtSum");
+	rankByIsolation = EventCutSrc_.getParameter<bool>("rankByIsolation");
+	assert(rankByPtSum!=rankByIsolation);
+	electronIsolationForRank = EventCutSrc_.getParameter<std::string>("electronIsolationForRank");
+	muonIsolationForRank = EventCutSrc_.getParameter<std::string>("muonIsolationForRank");
+	tauIDisolationForRank = EventCutSrc_.getParameter<std::string>("tauIDisolationForRank");
 
-
-
+  electronIsolationForRelIsoBranch = EventCutSrc_.getParameter<std::string>("electronIsolationForRelIsoBranch");
+  muonIsolationForRelIsoBranch = EventCutSrc_.getParameter<std::string>("muonIsolationForRelIsoBranch");
+  tauIsolationForRelIsoBranch = EventCutSrc_.getParameter<std::string>("tauIsolationForRelIsoBranch");
+  vetoElectronIsolationForRelIsoBranch = EventCutSrc_.getParameter<std::string>("vetoElectronIsolationForRelIsoBranch");
+  vetoMuonIsolationForRelIsoBranch = EventCutSrc_.getParameter<std::string>("vetoMuonIsolationForRelIsoBranch");
 
 
   /* create TTree */
@@ -379,8 +68,21 @@ LeptonCutVecSrc_(iConfig.getParameter<std::vector<edm::ParameterSet>>("LeptonCut
   for(std::size_t x = 0; x<tauIDsToKeep.size();++x ) 
   {
 
-  FlatTuple->Branch(("leg1_"+tauIDsToKeep.at(x)).c_str(), &l1_tauIDs[x]);
-  FlatTuple->Branch(("leg2_"+tauIDsToKeep.at(x)).c_str(), &l2_tauIDs[x]);
+  FlatTuple->Branch(("leg1_"+tauIDsToKeep.at(x)).c_str(), &leg1_tauIDs[x]);
+  FlatTuple->Branch(("leg2_"+tauIDsToKeep.at(x)).c_str(), &leg2_tauIDs[x]);
+  }
+
+
+  for(std::size_t x = 0; x<triggerSummaryChecks.size();++x ) 
+  {
+
+    std::string versionStrippedName = triggerSummaryChecks.at(x);
+    versionStrippedName.erase(versionStrippedName.find("_v"),versionStrippedName.length());
+
+    std::cout<<versionStrippedName<<"\n";
+
+    FlatTuple->Branch(("leg1_"+versionStrippedName).c_str(), &leg1_GoodForHLTPath[x]);
+    FlatTuple->Branch(("leg2_"+versionStrippedName).c_str(), &leg2_GoodForHLTPath[x]);
   }
 
   FlatTuple->Branch("CandidateEventType", &CandidateEventType);
@@ -454,7 +156,6 @@ LeptonCutVecSrc_(iConfig.getParameter<std::vector<edm::ParameterSet>>("LeptonCut
   FlatTuple->Branch("leg1_numberOfMissingOuterHits", &leg1_numberOfMissingOuterHits);
   FlatTuple->Branch("leg1_numberOfTrackHits", &leg1_numberOfTrackHits);
   FlatTuple->Branch("leg1_passConversionVeto", &leg1_passConversionVeto);
-  FlatTuple->Branch("leg1_TauEsVariant", &leg1_TauEsVariant);
   FlatTuple->Branch("leg1_numStrips", &leg1_numStrips);
   FlatTuple->Branch("leg1_numHadrons", &leg1_numHadrons);
   FlatTuple->Branch("leg2_leptonType", &leg2_leptonType);
@@ -507,7 +208,6 @@ LeptonCutVecSrc_(iConfig.getParameter<std::vector<edm::ParameterSet>>("LeptonCut
   FlatTuple->Branch("leg2_numberOfMissingOuterHits", &leg2_numberOfMissingOuterHits);
   FlatTuple->Branch("leg2_numberOfTrackHits", &leg2_numberOfTrackHits);
   FlatTuple->Branch("leg2_passConversionVeto", &leg2_passConversionVeto);
-  FlatTuple->Branch("leg2_TauEsVariant", &leg2_TauEsVariant);
   FlatTuple->Branch("leg2_numStrips", &leg2_numStrips);
   FlatTuple->Branch("leg2_numHadrons", &leg2_numHadrons);
 
@@ -543,6 +243,32 @@ LeptonCutVecSrc_(iConfig.getParameter<std::vector<edm::ParameterSet>>("LeptonCut
   FlatTuple->Branch("leg1_gen_M", &leg1_gen_M);
   FlatTuple->Branch("leg1_genMother_M", &leg1_genMother_M);
   FlatTuple->Branch("leg1_genJet_M", &leg1_genJet_M);
+  FlatTuple->Branch("leg1_RelIso",&leg1_RelIso);
+  FlatTuple->Branch("leg2_RelIso",&leg2_RelIso);
+
+
+  FlatTuple->Branch("veto_leptonType", &veto_leptonType);
+  FlatTuple->Branch("veto_pt", &veto_pt);
+  FlatTuple->Branch("veto_eta", &veto_eta);
+  FlatTuple->Branch("veto_phi", &veto_phi);
+  FlatTuple->Branch("veto_M", &veto_M);
+  FlatTuple->Branch("veto_dxy", &veto_dxy);
+  FlatTuple->Branch("veto_dz", &veto_dz);
+  FlatTuple->Branch("veto_RelIso", &veto_RelIso);
+  FlatTuple->Branch("veto_passesMediumMuonId", &veto_passesMediumMuonId);
+  FlatTuple->Branch("veto_rawElectronMVA", &veto_rawElectronMVA);
+  FlatTuple->Branch("vertex_NumberOfGoodVertices",&vertex_NumberOfGoodVertices);
+  FlatTuple->Branch("vertex_NDOF",&vertex_NDOF);
+  FlatTuple->Branch("vertex_CHI2",&vertex_CHI2);
+  FlatTuple->Branch("vertex_positionRho",&vertex_positionRho);
+  FlatTuple->Branch("vertex_positionX",&vertex_positionX);
+  FlatTuple->Branch("vertex_positionY",&vertex_positionY);
+  FlatTuple->Branch("vertex_positionZ",&vertex_positionZ);
+  FlatTuple->Branch("vertex_positionTheta",&vertex_positionTheta);
+  FlatTuple->Branch("vertex_positionEta",&vertex_positionEta);
+  FlatTuple->Branch("vertex_positionPhi",&vertex_positionPhi);
+
+
 
 
 }
@@ -553,7 +279,6 @@ LeptonCutVecSrc_(iConfig.getParameter<std::vector<edm::ParameterSet>>("LeptonCut
 //////////////////////////////////////////////////
 
 FlatTupleGenerator::~FlatTupleGenerator(){}
-
 
 //////////////////////////////////////////////////
 // ------------ method called for each event  ------------
@@ -614,14 +339,14 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
     /* check if the cuts pass */
 
     bool leptonCutsPass = LeptonCutHelper.cutEvaluator(currentPair, LeptonCutVecSrc_);
-    std::cout<<" lepton cuts ===> "<<leptonCutsPass<<"for type "<<currentPair.CandidateEventType()<<"\n";
+    //std::cout<<" lepton cuts ===> "<<leptonCutsPass<<"for type "<<currentPair.CandidateEventType()<<"\n";
 
 
    if(keepSignPair && keepTauEsVariant && leptonCutsPass) retainedPairs.push_back(currentPair);
 
   }
 
-  std::cout<<" retained pairs size = "<<retainedPairs.size()<<"\n";
+  //std::cout<<" retained pairs size = "<<retainedPairs.size()<<"\n";
   if(retainedPairs.size()==0) return;
 
 
@@ -677,17 +402,47 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
           
           if(currentPair.leg1().leptonType() == TupleLeptonTypes::aTau)
           {
-              l1_tauIDs[x]  =  currentPair.leg1().tauID(tauIDsToKeep[x]);
+              leg1_tauIDs[x]  =  currentPair.leg1().tauID(tauIDsToKeep[x]);
           }
 
           if(currentPair.leg2().leptonType() == TupleLeptonTypes::aTau)
           {
-              l2_tauIDs[x]  =  currentPair.leg2().tauID(tauIDsToKeep[x]);
+              leg2_tauIDs[x]  =  currentPair.leg2().tauID(tauIDsToKeep[x]);
           }
 
         }
 
+
+      ////////////////
+      // fill the triggerSummaryChecks for both legs
+
+
+      for(std::size_t x = 0; x<triggerSummaryChecks.size();++x ) 
+      {
+
+        // check the OR of a specific version or a wildcard v* 
+        std::string label_ = triggerSummaryChecks[x]; 
+        std::string versionStrippedLabel_ = label_;
+        versionStrippedLabel_.erase(label_.find("_v"),label_.length());
+
+        float l1trig = 0.0;
+        float l2trig = 0.0;
+
+        if(currentPair.isLeg1GoodForHLTPath(label_)) l1trig = 1.0;
+        else if(currentPair.isLeg1GoodForHLTPath(versionStrippedLabel_)) l1trig = 1.0;
+
+        if(currentPair.isLeg2GoodForHLTPath(label_)) l2trig = 1.0;
+        else if(currentPair.isLeg2GoodForHLTPath(versionStrippedLabel_)) l2trig = 1.0;
+
+        leg1_GoodForHLTPath[x]  =  l1trig;
+        leg2_GoodForHLTPath[x]  =  l2trig;
+      }
+
+
       CandidateEventType = currentPair.CandidateEventType();
+
+
+
       TauEsNumberSigmasShifted = currentPair.TauEsNumberSigmasShifted();
       isOsPair = currentPair.isOsPair();
       SVMass = currentPair.SVMass()[0];
@@ -759,7 +514,6 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
       leg1_numberOfMissingOuterHits = currentPair.leg1().numberOfMissingOuterHits();
       leg1_numberOfTrackHits = currentPair.leg1().numberOfTrackHits();
       leg1_passConversionVeto = currentPair.leg1().passConversionVeto();
-      leg1_TauEsVariant = currentPair.leg1().TauEsVariant();
       leg1_numStrips = currentPair.leg1().numStrips();
       leg1_numHadrons = currentPair.leg1().numHadrons();
       leg2_leptonType = currentPair.leg2().leptonType();
@@ -812,7 +566,6 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
       leg2_numberOfMissingOuterHits = currentPair.leg2().numberOfMissingOuterHits();
       leg2_numberOfTrackHits = currentPair.leg2().numberOfTrackHits();
       leg2_passConversionVeto = currentPair.leg2().passConversionVeto();
-      leg2_TauEsVariant = currentPair.leg2().TauEsVariant();
       leg2_numStrips = currentPair.leg2().numStrips();
       leg2_numHadrons = currentPair.leg2().numHadrons();
 
@@ -852,18 +605,95 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
 
 
 
+      /* set the relative isolation value dep. on the lepton type */
+
+      if(currentPair.leg1().leptonType() == TupleLeptonTypes::anElectron)
+      {
+        leg1_RelIso = currentPair.leg1().relativeIsol(electronIsolationForRelIsoBranch);
+      }
+
+      else if(currentPair.leg1().leptonType() == TupleLeptonTypes::aMuon)
+      {
+        leg1_RelIso = currentPair.leg1().relativeIsol(muonIsolationForRelIsoBranch);
+      }
+
+      else if(currentPair.leg1().leptonType() == TupleLeptonTypes::aTau)
+      {
+        leg1_RelIso = currentPair.leg1().tauID(tauIsolationForRelIsoBranch);
+      }
+
+
+      if(currentPair.leg2().leptonType() == TupleLeptonTypes::anElectron)
+      {
+        leg2_RelIso = currentPair.leg2().relativeIsol(electronIsolationForRelIsoBranch);
+      }
+
+      else if(currentPair.leg2().leptonType() == TupleLeptonTypes::aMuon)
+      {
+        leg2_RelIso = currentPair.leg2().relativeIsol(muonIsolationForRelIsoBranch);
+      }
+
+      else if(currentPair.leg2().leptonType() == TupleLeptonTypes::aTau)
+      {
+        leg2_RelIso = currentPair.leg2().tauID(tauIsolationForRelIsoBranch);
+      }
+
+      /* fill veto lepton parameters */
+
+      for(std::size_t v = 0; v<currentPair.vetoElectron().size(); ++v)
+      {
+          veto_leptonType.push_back(currentPair.vetoElectron()[v].leptonType());
+          veto_pt.push_back(currentPair.vetoElectron()[v].p4().pt());
+          veto_eta.push_back(currentPair.vetoElectron()[v].p4().eta());
+          veto_phi.push_back(currentPair.vetoElectron()[v].p4().phi());
+          veto_M.push_back(currentPair.vetoElectron()[v].p4().M());
+          veto_dxy.push_back(currentPair.vetoElectron()[v].dxy());
+          veto_dz.push_back(currentPair.vetoElectron()[v].dz());
+          veto_passesMediumMuonId.push_back(currentPair.vetoElectron()[v].passesMediumMuonId());
+          veto_rawElectronMVA.push_back(currentPair.vetoElectron()[v].raw_electronMVA());
+          veto_RelIso.push_back(currentPair.vetoElectron()[v].relativeIsol(electronIsolationForRelIsoBranch));
+      }
+
+      for(std::size_t v = 0; v<currentPair.vetoMuon().size(); ++v)
+      {
+          veto_leptonType.push_back(currentPair.vetoMuon()[v].leptonType());
+          veto_pt.push_back(currentPair.vetoMuon()[v].p4().pt());
+          veto_eta.push_back(currentPair.vetoMuon()[v].p4().eta());
+          veto_phi.push_back(currentPair.vetoMuon()[v].p4().phi());
+          veto_M.push_back(currentPair.vetoMuon()[v].p4().M());
+          veto_dxy.push_back(currentPair.vetoMuon()[v].dxy());
+          veto_dz.push_back(currentPair.vetoMuon()[v].dz());
+          veto_passesMediumMuonId.push_back(currentPair.vetoMuon()[v].passesMediumMuonId());
+          veto_rawElectronMVA.push_back(currentPair.vetoMuon()[v].raw_electronMVA());
+          veto_RelIso.push_back(currentPair.vetoMuon()[v].relativeIsol(muonIsolationForRelIsoBranch));
+
+      }
+
+
+      /* access the pair independent info, making any needed adjustments for the current pair */
+
+      NtuplePairIndependentInfo currentINDEP =   ((*pairIndepInfos)[0]);
+
+      vertex_NumberOfGoodVertices = currentINDEP.numberOfGoodVertices();
+      vertex_NDOF = currentINDEP.primaryVertex().ndof();
+      vertex_CHI2 = currentINDEP.primaryVertex().chi2();
+      vertex_positionRho = currentINDEP.primaryVertex().position().Rho();
+      vertex_positionX = currentINDEP.primaryVertex().position().x();
+      vertex_positionY  = currentINDEP.primaryVertex().position().y();
+      vertex_positionZ = currentINDEP.primaryVertex().position().z();
+      vertex_positionTheta = currentINDEP.primaryVertex().position().theta();
+      vertex_positionEta = currentINDEP.primaryVertex().position().eta();
+      vertex_positionPhi = currentINDEP.primaryVertex().position().phi();
+
+
       FlatTuple->Fill();
 
   }
 
 
 
-
-
-
-
-
 }
+
 
 
 //////////////////////////////////////////////////
@@ -872,6 +702,7 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
 
  void FlatTupleGenerator::reInit()
  {
+
 
    run = 0;
    luminosityBlock = 0;
@@ -882,10 +713,16 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
    VISMass  = NAN;
    AppliedLepCuts.clear();
 
-  for(int r =0; r<MAX;++r)
-  {  l1_tauIDs[r] = NAN;
-     l2_tauIDs[r] = NAN;
+  for(int r =0; r<THE_MAX;++r)
+  {  leg1_tauIDs[r] = NAN;
+     leg2_tauIDs[r] = NAN;
   }
+
+  for(int r =0; r<THE_MAX;++r)
+  {  leg1_GoodForHLTPath[r] = NAN;
+     leg2_GoodForHLTPath[r] = NAN;
+  }
+
 
   CandidateEventType = -999; 
   TauEsNumberSigmasShifted = NAN;
@@ -953,7 +790,6 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
   leg1_numberOfMissingOuterHits = NAN;
   leg1_numberOfTrackHits = NAN;
   leg1_passConversionVeto = NAN;
-  leg1_TauEsVariant = NAN;
   leg1_numStrips = NAN;
   leg1_numHadrons = NAN;
   leg2_dz = NAN;
@@ -1001,7 +837,6 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
   leg2_numberOfMissingOuterHits = NAN;
   leg2_numberOfTrackHits = NAN;
   leg2_passConversionVeto = NAN;
-  leg2_TauEsVariant = NAN;
   leg2_numStrips = NAN;
   leg2_numHadrons = NAN;
 
@@ -1049,10 +884,37 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
   leg1_gen_M = NAN;
   leg1_genMother_M = NAN;
   leg1_genJet_M = NAN;
+  leg1_RelIso = NAN;
+  leg2_RelIso = NAN;
+
+  veto_leptonType.clear(); 
+  veto_pt.clear(); 
+  veto_eta.clear(); 
+  veto_phi.clear(); 
+  veto_M.clear(); 
+  veto_dxy.clear(); 
+  veto_dz.clear(); 
+  veto_RelIso.clear(); 
+  veto_passesMediumMuonId.clear(); 
+  veto_rawElectronMVA.clear(); 
+
+  vertex_NumberOfGoodVertices = -999;
+  vertex_NDOF = NAN;
+  vertex_CHI2 = NAN;
+  vertex_positionRho = NAN;
+  vertex_positionX = NAN;
+  vertex_positionY  = NAN;
+  vertex_positionZ = NAN;
+  vertex_positionTheta = NAN;
+  vertex_positionEta = NAN;
+  vertex_positionPhi = NAN;
+
+
+
 
  }
 
-//////////////////////////////////////////////////
+ //////////////////////////////////////////////////
 // ------------ method called once each job just before starting event loop  ------------
 //////////////////////////////////////////////////
 
@@ -1099,6 +961,3 @@ void FlatTupleGenerator::fillDescriptions(edm::ConfigurationDescriptions& descri
     desc.setUnknown();
     descriptions.addDefault(desc);
   }
-
-//define this as a plug-in
-DEFINE_FWK_MODULE(FlatTupleGenerator);

@@ -33,3 +33,4 @@ void NtuplePairIndependentInfo::fill_jet(NtupleJet anNtupleJet)
 std::vector<NtupleGenParticle> NtuplePairIndependentInfo::genParticles() const {return m_genParticles;}
 std::vector<NtupleJet> NtuplePairIndependentInfo::jets() const {return m_jets;}
 reco::Vertex  NtuplePairIndependentInfo::primaryVertex() const {return m_primaryVertex;}
+int NtuplePairIndependentInfo::numberOfGoodVertices() const {return m_PV_numberOfGoodVertices;}

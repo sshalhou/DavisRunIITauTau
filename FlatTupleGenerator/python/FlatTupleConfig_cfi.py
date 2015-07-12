@@ -138,8 +138,39 @@ generalConfig = cms.PSet(
 			muonIsolationForRank = cms.string("DeltaBetaCorrectedRelIso"),
 			tauIDisolationForRank = cms.string("byCombinedIsolationDeltaBetaCorrRaw3Hits"),
 
+			# isolations to keep as the leg1_relativeIsolation and 
+			# leg2_relativeIsolation branches 
+
+			electronIsolationForRelIsoBranch = cms.string("DeltaBetaCorrectedRelIso"),
+			muonIsolationForRelIsoBranch= cms.string("DeltaBetaCorrectedRelIso"),
+			tauIsolationForRelIsoBranch = cms.string("byCombinedIsolationDeltaBetaCorrRaw3Hits"),
+
+			# isolations to keep as the veto_relativeIsolation  
+			# branches 
+
+			vetoElectronIsolationForRelIsoBranch = cms.string("DeltaBetaCorrectedRelIso"),
+			vetoMuonIsolationForRelIsoBranch= cms.string("DeltaBetaCorrectedRelIso"),
+
+			# check isLeg1GoodForHLTPath_Labels, isLeg2GoodForHLTPath_Labels
+			# for the following trigger paths (only a summary, need more functions to access new triggers)
+			# not requested in FlatTupleConfif_cfi.py summary variables
+			# note : the hardcoded THE_MAX variable in FlatTupleGenerator.cc limits the 
+			# number of these that we can keep 
+
+
+			triggerSummaryChecks = cms.vstring(
+					"HLT_Mu23_TrkIsoVVL_Ele12_Gsf_CaloId_TrackId_Iso_MediumWP_v1",
+					"HLT_Mu8_TrkIsoVVL_Ele23_Gsf_CaloId_TrackId_Iso_MediumWP_v1",
+					"HLT_Ele22_eta2p1_WP85_Gsf_LooseIsoPFTau20_v1",
+					"HLT_Ele27_eta2p1_WP85_Gsf_v1",
+					"HLT_IsoMu17_eta2p1_LooseIsoPFTau20_v*",
+					"HLT_IsoMu24_eta2p1_IterTrk02_v1",
+					"HLT_DoubleMediumIsoPFTau40_Trk1_eta2p1_Reg_v1",
+					"HLT_LooseIsoPFTau50_Trk30_eta2p1_MET120_v1"),
+
+
 			# the Tau IDs we would like to keep in the FlatTuple
-			# note : the hardcoded MAX variable in FlatTupleGenerator.cc limits the 
+			# note : the hardcoded THE_MAX variable in FlatTupleGenerator.cc limits the 
 			# number of these that we can keep 
 
 			tauIDsToKeep = cms.vstring(

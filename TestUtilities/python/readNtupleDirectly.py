@@ -11,7 +11,7 @@ import sys
 from DataFormats.FWLite import Events, Handle
 
 from FWCore.ParameterSet.VarParsing import VarParsing
-from ROOT import TH1F, TFile
+from ROOT import TH1F, TFile, TH2F
 options = VarParsing ('python')
 options.parseArguments()
 
@@ -169,6 +169,13 @@ if doExample5 :
     print 'printing triggers from ConfigTupleTriggers_cfi with at least one leg passing all requirements : '    
     print '********************************************************'    
 
+    # set up a file to hold the histogram
+    outFileEx5 = TFile("outFileEx5.root","RECREATE")
+
+
+    # set up a TH1F histogram and invoke the proper error setup - Sumw2
+    triggerInfo = TH2F("TriggerLegSummary","Various Triggers for diTau Events with >=1 good leg;leg1 isGood;leg2 isGood",2,0,1.0001,2,0,1.0001)
+    triggerInfo.Sumw2()
 
     for event5 in events5:
         event5.getByLabel (label5, handle5)
@@ -196,15 +203,35 @@ if doExample5 :
 
 
             for apath in WILDCARDpathsToCheck:
+                plotValue1 = 0.0 
+                plotValue2 = 0.0   
                 if p.isLeg1GoodForHLTPath(apath)==1.0 and p.isLeg2GoodForHLTPath(apath)==1.0 :
                     print 'for path ', apath , type1,'+',type2,
                     print ' pass all HLT accept+ trigger matching + filters for this trigger '
+                    plotValue1 = 1.0
+                    plotValue2 = 1.0
+
                 elif p.isLeg1GoodForHLTPath(apath)==1.0 and p.isLeg2GoodForHLTPath(apath)==0.0 :
                     print 'for path ', apath , type1,'+',type2,
                     print ' only leg1 passes all HLT accept+ trigger matching + filters for this trigger '
+                    plotValue1 = 1.0
+                    plotValue2 = 0.0
+
                 elif p.isLeg1GoodForHLTPath(apath)==0.0 and p.isLeg2GoodForHLTPath(apath)==1.0 :
                     print 'for path ', apath , type1,'+',type2,
                     print ' only leg2 passes all HLT accept+ trigger matching + filters for this trigger '
+                    plotValue1 = 0.0
+                    plotValue2 = 1.0
+
+                #if type1=='TAU' and type2=='TAU' :
+                if (plotValue1+plotValue2)!=0 :
+                    triggerInfo.Fill(plotValue1,plotValue2)
+
+    # write to file
+    outFileEx5.cd()
+    triggerInfo.Write()
+    outFileEx5.Close()    
+
                 # elif p.isLeg1GoodForHLTPath(apath)==0.0 and p.isLeg2GoodForHLTPath(apath)==0.0 :
                 #     print 'for path ', apath , type1,'+',type2,
                 #     print ' both fail '

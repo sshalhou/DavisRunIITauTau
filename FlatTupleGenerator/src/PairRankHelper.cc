@@ -106,9 +106,9 @@ PairRankHelper::PairRankHelper(){}
   		std::pair<double, NtupleEvent> apair(criterion, pairs[i]);
 	  	m_CriterionLepPair.push_back(apair);
 	}
-	std::cout<<m_CriterionLepPair.size()<<" = m_CriterionLepPair size \n";
+	//std::cout<<m_CriterionLepPair.size()<<" = m_CriterionLepPair size \n";
 	process_pairs();
-	print_ranking();
+	//print_ranking();
 
   }
   
@@ -126,7 +126,7 @@ PairRankHelper::PairRankHelper(){}
 	}
 
 	process_pairs();
-	print_ranking();
+	//print_ranking();
 
 
 

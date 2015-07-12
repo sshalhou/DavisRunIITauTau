@@ -50,6 +50,7 @@ public:
   std::vector<NtupleGenParticle> genParticles() const; 
   std::vector<NtupleJet> jets() const; 
   reco::Vertex  primaryVertex() const;
+  int  numberOfGoodVertices() const;
 
 
 private:

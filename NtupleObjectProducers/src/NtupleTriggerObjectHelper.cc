@@ -181,26 +181,25 @@ std::vector<std::pair<std::string, float> > NtupleTriggerObjectHelper::isNtupleL
         if(verbose) std::cout<<" ---------> for path "<<pathName<<" FINAL="<<condition1+condition2+condition3<<" for reco lepton type "<<nl.leptonType()<<"\n";
         if(verbose) std::cout<<"\n";
 
-        // push back the result only if all 3 conditions passed
+        // push back the result only if all 3 conditions passed with a 1.0, or 0 if any failed
 
         float allThreeCond = 0.0;
         if(condition1+condition2+condition3==3) allThreeCond = 1.0;
 
-        if(allThreeCond==1.0)
-        {
+
             
-            returnPairVec.push_back(std::make_pair(pathName,1.0));
+        returnPairVec.push_back(std::make_pair(pathName,allThreeCond));
 
-            /* in case the original did not have a version wildcard add that in too */
-            if(pathName.find('*')==std::string::npos) 
-            {
-                std::string wildCardVersion = pathName;
-                wildCardVersion.erase(wildCardVersion.find("_v"),wildCardVersion.length());
+        /* in case the original did not have a version wildcard add that in too */
+        if(pathName.find('*')==std::string::npos) 
+        {
+            std::string wildCardVersion = pathName;
+            wildCardVersion.erase(wildCardVersion.find("_v"),wildCardVersion.length());
 
-                returnPairVec.push_back(std::make_pair(wildCardVersion,1.0));
+            returnPairVec.push_back(std::make_pair(wildCardVersion,allThreeCond));
 
-            }    
-        }
+        }    
+        
 
 
     }
