@@ -2,6 +2,7 @@
 #include "DavisRunIITauTau/FlatTupleGenerator/interface/FlatTupleGenerator.h" 
 
 
+
 ////////////////////////////////////////////
 //	--- class constructor
 ////////////////////////////////////////////
@@ -42,6 +43,9 @@ LeptonCutVecSrc_(iConfig.getParameter<std::vector<edm::ParameterSet>>("LeptonCut
   vetoElectronIsolationForRelIsoBranch = EventCutSrc_.getParameter<std::string>("vetoElectronIsolationForRelIsoBranch");
   vetoMuonIsolationForRelIsoBranch = EventCutSrc_.getParameter<std::string>("vetoMuonIsolationForRelIsoBranch");
 
+  jetIDcut  = EventCutSrc_.getParameter<std::string>("jetIDcut");
+  BjetIDcut  = EventCutSrc_.getParameter<std::string>("BjetIDcut");
+  jetLeptonDRmin = EventCutSrc_.getParameter<double>("jetLeptonDRmin");
 
   /* create TTree */
    
@@ -257,7 +261,7 @@ LeptonCutVecSrc_(iConfig.getParameter<std::vector<edm::ParameterSet>>("LeptonCut
   FlatTuple->Branch("veto_RelIso", &veto_RelIso);
   FlatTuple->Branch("veto_passesMediumMuonId", &veto_passesMediumMuonId);
   FlatTuple->Branch("veto_rawElectronMVA", &veto_rawElectronMVA);
-  FlatTuple->Branch("vertex_NumberOfGoodVertices",&vertex_NumberOfGoodVertices);
+  FlatTuple->Branch("NumberOfGoodVertices",&NumberOfGoodVertices);
   FlatTuple->Branch("vertex_NDOF",&vertex_NDOF);
   FlatTuple->Branch("vertex_CHI2",&vertex_CHI2);
   FlatTuple->Branch("vertex_positionRho",&vertex_positionRho);
@@ -267,6 +271,32 @@ LeptonCutVecSrc_(iConfig.getParameter<std::vector<edm::ParameterSet>>("LeptonCut
   FlatTuple->Branch("vertex_positionTheta",&vertex_positionTheta);
   FlatTuple->Branch("vertex_positionEta",&vertex_positionEta);
   FlatTuple->Branch("vertex_positionPhi",&vertex_positionPhi);
+
+
+  FlatTuple->Branch("numberOfJets", &numberOfJets);
+  FlatTuple->Branch("numberOfBJets", &numberOfBJets);
+  FlatTuple->Branch("jets_pt", &jets_pt);
+  FlatTuple->Branch("jets_eta", &jets_eta);
+  FlatTuple->Branch("jets_phi", &jets_phi);
+  FlatTuple->Branch("jets_M", &jets_M);
+  FlatTuple->Branch("jets_PU_jetIdRaw", &jets_PU_jetIdRaw);
+  FlatTuple->Branch("jets_PU_jetIdPassed", &jets_PU_jetIdPassed);
+  FlatTuple->Branch("jets_PF_jetIdPassed", &jets_PF_jetIdPassed);
+  FlatTuple->Branch("jets_defaultBtagAlgorithm_RawScore", &jets_defaultBtagAlgorithm_RawScore);
+  FlatTuple->Branch("jets_defaultBtagAlgorithm_isPassed", &jets_defaultBtagAlgorithm_isPassed);
+  FlatTuple->Branch("jets_PARTON_flavour", &jets_PARTON_flavour);
+  FlatTuple->Branch("jets_HADRON_flavour", &jets_HADRON_flavour);
+  FlatTuple->Branch("bjets_pt", &bjets_pt);
+  FlatTuple->Branch("bjets_eta", &bjets_eta);
+  FlatTuple->Branch("bjets_phi", &bjets_phi);
+  FlatTuple->Branch("bjets_M", &bjets_M);
+  FlatTuple->Branch("bjets_PU_jetIdRaw", &bjets_PU_jetIdRaw);
+  FlatTuple->Branch("bjets_PU_jetIdPassed", &bjets_PU_jetIdPassed);
+  FlatTuple->Branch("bjets_PF_jetIdPassed", &bjets_PF_jetIdPassed);
+  FlatTuple->Branch("bjets_defaultBtagAlgorithm_RawScore", &bjets_defaultBtagAlgorithm_RawScore);
+  FlatTuple->Branch("bjets_defaultBtagAlgorithm_isPassed", &bjets_defaultBtagAlgorithm_isPassed);
+  FlatTuple->Branch("bjets_PARTON_flavour", &bjets_PARTON_flavour);
+  FlatTuple->Branch("bjets_HADRON_flavour", &bjets_HADRON_flavour);
 
 
 
@@ -674,7 +704,8 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
 
       NtuplePairIndependentInfo currentINDEP =   ((*pairIndepInfos)[0]);
 
-      vertex_NumberOfGoodVertices = currentINDEP.numberOfGoodVertices();
+      /* info about the primary vertex */
+      NumberOfGoodVertices = currentINDEP.numberOfGoodVertices();
       vertex_NDOF = currentINDEP.primaryVertex().ndof();
       vertex_CHI2 = currentINDEP.primaryVertex().chi2();
       vertex_positionRho = currentINDEP.primaryVertex().position().Rho();
@@ -684,6 +715,54 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
       vertex_positionTheta = currentINDEP.primaryVertex().position().theta();
       vertex_positionEta = currentINDEP.primaryVertex().position().eta();
       vertex_positionPhi = currentINDEP.primaryVertex().position().phi();
+
+      /* process the jets */
+      jethelper.init(currentINDEP.jets(),jetIDcut,BjetIDcut,
+                jetLeptonDRmin,currentPair.leg1(),currentPair.leg2());
+
+      /* get the jets and bjets passing the cuts provided in init */
+      std::vector<NtupleJet> goodJets = jethelper.PtOrderedPassingJets();
+      std::vector<NtupleJet> goodBJets = jethelper.PtOrderedPassingBJets();
+
+      numberOfJets =   goodJets.size();
+      numberOfBJets =  goodBJets.size();
+
+      /* now fill the FlatTuple jet vector */
+      for(std::size_t j=0; j<goodJets.size(); ++j)
+      {        
+        jets_pt.push_back(goodJets[j].jet_p4().pt());
+        jets_eta.push_back(goodJets[j].jet_p4().eta());
+        jets_phi.push_back(goodJets[j].jet_p4().phi());
+        jets_M.push_back(goodJets[j].jet_p4().M());
+
+        jets_PU_jetIdRaw.push_back(goodJets[j].PU_jetIdRaw());
+        jets_PU_jetIdPassed.push_back(goodJets[j].PU_jetIdPassed());
+        jets_PF_jetIdPassed.push_back(goodJets[j].PF_jetIdPassed());
+        jets_defaultBtagAlgorithm_RawScore.push_back(goodJets[j].defaultBtagAlgorithm_RawScore());
+        jets_defaultBtagAlgorithm_isPassed.push_back(goodJets[j].defaultBtagAlgorithm_isPassed());
+        jets_PARTON_flavour.push_back(goodJets[j].PARTON_flavour());
+        jets_HADRON_flavour.push_back(goodJets[j].HADRON_flavour());
+
+      }
+
+      /* now fill the FlatTuple bjet vector */
+      for(std::size_t j=0; j<goodBJets.size(); ++j)
+      {        
+        bjets_pt.push_back(goodBJets[j].jet_p4().pt());
+        bjets_eta.push_back(goodBJets[j].jet_p4().eta());
+        bjets_phi.push_back(goodBJets[j].jet_p4().phi());
+        bjets_M.push_back(goodBJets[j].jet_p4().M());
+
+        bjets_PU_jetIdRaw.push_back(goodBJets[j].PU_jetIdRaw());
+        bjets_PU_jetIdPassed.push_back(goodBJets[j].PU_jetIdPassed());
+        bjets_PF_jetIdPassed.push_back(goodBJets[j].PF_jetIdPassed());
+        bjets_defaultBtagAlgorithm_RawScore.push_back(goodBJets[j].defaultBtagAlgorithm_RawScore());
+        bjets_defaultBtagAlgorithm_isPassed.push_back(goodBJets[j].defaultBtagAlgorithm_isPassed());
+        bjets_PARTON_flavour.push_back(goodBJets[j].PARTON_flavour());
+        bjets_HADRON_flavour.push_back(goodBJets[j].HADRON_flavour());
+
+      }
+ 
 
 
       FlatTuple->Fill();
@@ -898,7 +977,7 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
   veto_passesMediumMuonId.clear(); 
   veto_rawElectronMVA.clear(); 
 
-  vertex_NumberOfGoodVertices = -999;
+  NumberOfGoodVertices = -999;
   vertex_NDOF = NAN;
   vertex_CHI2 = NAN;
   vertex_positionRho = NAN;
@@ -909,8 +988,30 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
   vertex_positionEta = NAN;
   vertex_positionPhi = NAN;
 
-
-
+  numberOfJets = -999;
+  numberOfBJets = -999;
+  jets_pt.clear();
+  jets_eta.clear();
+  jets_phi.clear();
+  jets_M.clear();
+  jets_PU_jetIdRaw.clear();
+  jets_PU_jetIdPassed.clear();
+  jets_PF_jetIdPassed.clear();
+  jets_defaultBtagAlgorithm_RawScore.clear();
+  jets_defaultBtagAlgorithm_isPassed.clear();
+  jets_PARTON_flavour.clear();
+  jets_HADRON_flavour.clear();
+  bjets_pt.clear();
+  bjets_eta.clear();
+  bjets_phi.clear();
+  bjets_M.clear();
+  bjets_PU_jetIdRaw.clear();
+  bjets_PU_jetIdPassed.clear();
+  bjets_PF_jetIdPassed.clear();
+  bjets_defaultBtagAlgorithm_RawScore.clear();
+  bjets_defaultBtagAlgorithm_isPassed.clear();
+  bjets_PARTON_flavour.clear();
+  bjets_HADRON_flavour.clear();
 
  }
 

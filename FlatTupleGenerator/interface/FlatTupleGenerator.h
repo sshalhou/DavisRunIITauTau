@@ -55,6 +55,7 @@
 #include "DavisRunIITauTau/NtupleObjects/interface/NtupleGenParticle.h"
 #include "DavisRunIITauTau/NtupleObjects/interface/NtuplePairIndependentInfo.h"
 #include "DavisRunIITauTau/FlatTupleGenerator/interface/PairRankHelper.h"
+#include "DavisRunIITauTau/FlatTupleGenerator/interface/JetHelper.h"
 #include "DavisRunIITauTau/TupleObjects/interface/TupleLeptonTypes.h"
 #include "CommonTools/Utils/interface/StringCutObjectSelector.h"
 #include "DavisRunIITauTau/FlatTupleGenerator/interface/LeptonFlatTupleCutHelper.h"
@@ -89,6 +90,8 @@ private:
 	virtual void beginLuminosityBlock(edm::LuminosityBlock const&, edm::EventSetup const&);
 	virtual void endLuminosityBlock(edm::LuminosityBlock const&, edm::EventSetup const&);
 	virtual void reInit();
+
+	JetHelper jethelper;
 
 	// ----------member data ---------------------------
 
@@ -130,6 +133,11 @@ private:
 	std::string tauIsolationForRelIsoBranch;
 	std::string vetoElectronIsolationForRelIsoBranch; 
 	std::string vetoMuonIsolationForRelIsoBranch;
+
+	/* jet and b-jet cut strings */
+	std::string jetIDcut;
+	std::string BjetIDcut;
+	double jetLeptonDRmin;
 
 	/* the lepton cut helper object */
 	LeptonFlatTupleCutHelper LeptonCutHelper;
@@ -262,7 +270,8 @@ private:
 	std::vector<float> veto_passesMediumMuonId;
 	std::vector<float> veto_rawElectronMVA;
 
-	int vertex_NumberOfGoodVertices; /* total number of good PV, see ConfigTupleOfflineVertices_cfi */ 
+	/* primary vertex info */
+	int NumberOfGoodVertices; /* total number of good PV, see ConfigTupleOfflineVertices_cfi */ 
 	double vertex_NDOF;   				 /* the primary vertex's # of degrees of freedom (not an int, so is it CHI2/NDOF?) */
 	double vertex_CHI2;   				 /* the primary vertex's # of degrees of freedom */
 	double vertex_positionRho;		 /* the primary vertex's position.Rho()  */ 	
@@ -272,6 +281,39 @@ private:
 	double vertex_positionTheta;	 /* the primary vertex's position.theta()  */ 	
 	double vertex_positionEta;		 /* the primary vertex's position.eta()  */ 	
 	double vertex_positionPhi;		 /* the primary vertex's position.phi()  */ 	
+
+	/* jet/b-jet summary info */
+
+	int numberOfJets;  /* overall number of jets passing jet selection */
+	int numberOfBJets;  /* overall number of btagged jets passing b-jet selection, can overlap with numberOfJets */
+
+	/* Good Jets (passing JetCuts, ranked in Pt) info, note JEC info is to be added */
+	std::vector<double> jets_pt; 				/* vectors of 4-vector components */
+	std::vector<double> jets_eta; 
+	std::vector<double> jets_phi;
+	std::vector<double> jets_M; 
+	std::vector<double> jets_PU_jetIdRaw; 
+	std::vector<bool>   jets_PU_jetIdPassed; 
+	std::vector<bool>   jets_PF_jetIdPassed;
+	std::vector<float>  jets_defaultBtagAlgorithm_RawScore;                 /*  raw output of default (see ConfigNtupleContent_cfi.py) b-tag algo */
+  	std::vector<bool>   jets_defaultBtagAlgorithm_isPassed;                 /*  pass-fail of default (see ConfigNtupleContent_cfi.py) b-tag algo after btagSF applied */
+  	std::vector<int>    jets_PARTON_flavour;
+  	std::vector<int>    jets_HADRON_flavour;
+
+	/* Good B-tag Jets, [by design, will overlap with Good Jets!] 
+	(passing bJetCuts, ranked in Pt) info, note JEC info is to be added */
+	std::vector<double> bjets_pt; 											/* vectors of 4-vector components */
+	std::vector<double> bjets_eta; 
+	std::vector<double> bjets_phi;
+	std::vector<double> bjets_M; 
+	std::vector<double> bjets_PU_jetIdRaw; 
+	std::vector<bool>   bjets_PU_jetIdPassed; 
+	std::vector<bool>   bjets_PF_jetIdPassed;
+	std::vector<float>  bjets_defaultBtagAlgorithm_RawScore;                 /*  raw output of default (see ConfigNtupleContent_cfi.py) b-tag algo */
+  	std::vector<bool>   bjets_defaultBtagAlgorithm_isPassed;                 /*  pass-fail of default (see ConfigNtupleContent_cfi.py) b-tag algo after btagSF applied */
+  	std::vector<int>    bjets_PARTON_flavour;
+  	std::vector<int>    bjets_HADRON_flavour;
+
 
 
 

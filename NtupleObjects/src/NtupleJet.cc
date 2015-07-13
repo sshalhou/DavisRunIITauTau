@@ -241,6 +241,9 @@ NtupleJet::NtupleJet()
 
 // getters 
  
+  double NtupleJet::pt() const {return m_jet_p4.pt();}
+  double NtupleJet::eta() const {return m_jet_p4.eta();}
+
 
   LorentzVector NtupleJet::jet_p4() const { return m_jet_p4; }
   LorentzVector NtupleJet::GENjet_p4() const { return m_GENjet_p4; }
