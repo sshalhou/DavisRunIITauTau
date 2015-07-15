@@ -56,6 +56,7 @@
 #include "DavisRunIITauTau/NtupleObjects/interface/NtuplePairIndependentInfo.h"
 #include "DavisRunIITauTau/FlatTupleGenerator/interface/PairRankHelper.h"
 #include "DavisRunIITauTau/FlatTupleGenerator/interface/JetHelper.h"
+#include "DavisRunIITauTau/FlatTupleGenerator/interface/GenHelper.h"
 #include "DavisRunIITauTau/TupleObjects/interface/TupleLeptonTypes.h"
 #include "CommonTools/Utils/interface/StringCutObjectSelector.h"
 #include "DavisRunIITauTau/FlatTupleGenerator/interface/LeptonFlatTupleCutHelper.h"
@@ -92,7 +93,8 @@ private:
 	virtual void reInit();
 
 	JetHelper jethelper;
-
+	GenHelper genhelper;
+	
 	// ----------member data ---------------------------
 
 
@@ -243,6 +245,7 @@ private:
 	float leg1_passConversionVeto, leg2_passConversionVeto;
 
 	/* tau related Info NEED TO ADD DOCUMENTATION TO WIKI*/
+	float leg1_ZimpactTau, leg2_ZimpactTau;
 	float leg1_numStrips, leg2_numStrips;
 	float leg1_numHadrons, leg2_numHadrons;
 	float leg1_tauIDs[THE_MAX]; 		/* leg 1 tau IDs */
@@ -313,6 +316,49 @@ private:
   	std::vector<bool>   bjets_defaultBtagAlgorithm_isPassed;                 /*  pass-fail of default (see ConfigNtupleContent_cfi.py) b-tag algo after btagSF applied */
   	std::vector<int>    bjets_PARTON_flavour;
   	std::vector<int>    bjets_HADRON_flavour;
+
+  	/* gen particles - kind of complicated, but we don't want custom objects in this code */
+
+  	
+  	std::vector <std::pair< int, int>> genParticle_pdgId;
+  	std::vector <std::pair< int, int>> genParticle_status;
+  	std::vector <std::pair< int, double>> genParticle_pt;
+  	std::vector <std::pair< int, double>> genParticle_eta;
+  	std::vector <std::pair< int, double>> genParticle_phi;
+  	std::vector <std::pair< int, double>> genParticle_M;
+
+  	std::vector <pair < int, int>> genDaughter_pdgId;
+  	std::vector <pair < int, int>> genDaughter_status;
+  	std::vector <std::pair< int, double>> genDaughter_pt;
+  	std::vector <std::pair< int, double>> genDaughter_eta;
+  	std::vector <std::pair< int, double>> genDaughter_phi;
+  	std::vector <std::pair< int, double>> genDaughter_M;
+
+
+  	std::vector <std::pair< int, int>> genMother_pdgId;
+  	std::vector <std::pair< int, int>> genMother_status;
+  	std::vector <std::pair< int, double>> genMother_pt;
+  	std::vector <std::pair< int, double>> genMother_eta;
+  	std::vector <std::pair< int, double>> genMother_phi;
+  	std::vector <std::pair< int, double>> genMother_M;
+
+
+  	/* the DY ZTT, ZL, ZJ, ZLL categories */
+    /* see https://twiki.cern.ch/twiki/bin/viewauth/CMS/HiggsToTauTauWorkingSummer2013#Backgrounds_Methods */
+
+
+    bool EventHasZtoTauTau;        /* for events with a Z boson, is there a Z->tau tau decay */
+    bool EventHasZtoEE;            /* for events with a Z boson, is there a Z->e e decay */
+    bool EventHasZtoMM;            /* for events with a Z boson, is there a Z->mu mu decay */
+    bool isDY_genZTTcase1;         /* (for e/mu + tau_h) : gen. Z->tau tau && tau_h leg has gen-tau match but no gen-e/mu match */
+    bool isDY_genZTTcase2;         /* (for e/mu + tau_h) : gen. Z->tau tau && tau_h leg has gen-e/mu match */
+    bool isDY_genZTTcaseEmbedded;  /* (for e/mu + tau_h in embedded samples) : tau_h leg has a gen tau match */
+    bool isDY_genZL;               /* (for e/mu + tau_h) : NOT gen. Z->tau tau && tau_h leg a gen-e/mu match */ 
+    bool isDY_genZJcase1;          /* (for e/mu + tau_h) : NOT gen. Z->tau tau && tau_h leg has no gen-e/mu match */     
+    bool isDY_genZJcase2;          /* (for e/mu + tau_h) : gen. Z->tau tau && tau_h leg has no gen-e/mu match or gen tau match */  
+    bool isDY_genZTTcase3;         /* (for tau_h+tau_h)  : gen. Z->tau tau is present */
+    bool isDY_genZLL;              /* (for tau_h+tau_h)  : gen. Z->e e or Z->m m is present, both tau_h have gen-e/mu (from Z) match */ 
+    bool isDY_genZJcase3;          /* (for tau_h+tau_h) :  defined as !m_isDY_genZTTcase3 && !m_isDY_genZLL */
 
 
 

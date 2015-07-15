@@ -62,7 +62,7 @@ NtupleLepton::NtupleLepton()
   m_genJet_p4.SetXYZT(NAN,NAN,NAN,NAN);
   m_numStrips = NAN;
   m_numHadrons  = NAN;
-
+  m_ZimpactTau = NAN;
 }
 
 // helpers
@@ -398,7 +398,7 @@ std::cout<<"<LEPPRINT "<<type_print<<"> known tauID types and values : ";
   for(std::size_t i=0;i<m_tauIDs.size();++i) std::cout<<"[ "<<m_tauIDs[i].first<<" = "<<m_tauIDs[i].second<<" ] ";
   std::cout<<"\n";
 
-
+std::cout<<"<LEPPRINT "<<type_print<<"> ZimpactTau : " << m_ZimpactTau << std::endl;
 std::cout<<"<LEPPRINT "<<type_print<<"> num strips : " << m_numStrips << std::endl;
 std::cout<<"<LEPPRINT "<<type_print<<"> num hadrons : " << m_numHadrons << std::endl;
 std::cout<<"<LEPPRINT "<<type_print<<"> genJet p4 pt :  " << m_genJet_p4.pt() << std::endl;
@@ -500,6 +500,7 @@ void NtupleLepton::userFloatVectorParser(stringVec & labels_,floatVec & values_)
     else if(labels_[i]=="passConversionVeto") {m_passConversionVeto = values_[i];}
     else if(labels_[i]=="numHadrons") {m_numHadrons = values_[i];}
     else if(labels_[i]=="numStrips") {m_numStrips = values_[i];}
+    else if(labels_[i]=="ZimpactTau") {m_ZimpactTau = values_[i];}
     else std::cout<<" NOT STORED "<<labels_[i]<<" = "<<values_[i]<<"\n";
   }
 }
@@ -717,3 +718,5 @@ float NtupleLepton::passConversionVeto() const {return m_passConversionVeto;}
 LorentzVector NtupleLepton::genJet_p4() const {return m_genJet_p4;}
 float NtupleLepton::numStrips() const {return m_numStrips;}
 float NtupleLepton::numHadrons() const {return m_numHadrons;}
+float NtupleLepton::ZimpactTau() const {return m_ZimpactTau;}
+

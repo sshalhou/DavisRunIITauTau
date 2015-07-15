@@ -151,6 +151,13 @@ void TauClones::ChangeEnergyAndFillUserFloats(std::vector <pat::Tau> & clones,
 	  	t.addUserFloat("dz",dz);
 
 
+	  	////////////////////
+	  	// ZimpactTau
+
+	  	float ZimpactTau = first_vertex.z() + (130.0)/tan(t.theta());
+	  	t.addUserFloat("ZimpactTau",ZimpactTau);
+
+
 	  	// iso-related quantities
 
 	  	t.addUserFloat("chargedHadronIso", t.chargedHadronIso());

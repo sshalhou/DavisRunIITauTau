@@ -1,7 +1,6 @@
 ####################################################################################################
 # master config file :
 #    specify settings for pair building, Tau ES options, MET & SVMass, genParticle content
-#
 
 import FWCore.ParameterSet.Config as cms
 
@@ -27,7 +26,7 @@ BUILD_TAU_ES_VARIANTS = True
 # edit the following MET settings 
 ####################################################################################################
 
-USE_MVAMET = True #  True = MVA MET, False = PFMET
+USE_MVAMET = False #  True = MVA MET, False = PFMET
 
 ####################################################################################################
 # edit the following SVMass settings 
@@ -60,6 +59,8 @@ GEN_PARTICLES_TO_KEEP.append(25) # keep SM Higgs
 GEN_PARTICLES_TO_KEEP.append(35) # keep non-SM Higgs
 GEN_PARTICLES_TO_KEEP.append(36) # keep non-SM Higgs
 GEN_PARTICLES_TO_KEEP.append(37) # keep non-SM Higgs
+GEN_PARTICLES_TO_KEEP.append(211) # keep pi+, pi-
+GEN_PARTICLES_TO_KEEP.append(111) # keep pi0
 
 
 ####################################################################################################

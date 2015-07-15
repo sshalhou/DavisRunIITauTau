@@ -143,14 +143,7 @@ class PairWiseMetHelper:
 		self.tauEsDownSrc_ = tauEsDownSrc
 		return
 
-	# def runMvaMetPrelims(self,p):
-	# 	prelimSequence  = cms.Sequence()
-	# 	self.process.calibratedAK4PFJetsForPFMVAMEt = calibratedAK4PFJetsForPFMVAMEt.clone()
-	# 	self.process.puJetIdForPFMVAMEt = puJetIdForPFMVAMEt.clone()
-	# 	prelimSequence += self.process.calibratedAK4PFJetsForPFMVAMEt
-	# 	prelimSequence += self.process.puJetIdForPFMVAMEt
-	# 	p *= prelimSequence
-	# 	return
+
 
 	def runPairWiseMets(self,p):
 		pairMets = cms.Sequence()		
@@ -313,7 +306,7 @@ class PairWiseMetHelper:
 	def run_pairMaker(self,p):
 		pairMaker = cms.Sequence()
 		for leplepmet in self.LepPairAndMetList:
-			print leplepmet
+			#print leplepmet
 			# figure out the correct sources
 			tauSrc_ = cms.InputTag('')
 			electronSrc_ = cms.InputTag('')
@@ -403,7 +396,7 @@ class PairWiseMetHelper:
 			pairMaker += module
 			self.tupleCandidateEvents.append(cms.InputTag(moduleName+":"+moduleName+":Ntuple"))		
 		p *= pairMaker
-		print self.tupleCandidateEvents
+		#print self.tupleCandidateEvents
 		return
 
 
@@ -436,56 +429,3 @@ class PairWiseMetHelper:
 		p *= pairWriter
 		return
 
-# process.TupleEventPair = cms.EDProducer('TupleCandidateEventProducer' ,
-# 							tauSrc =cms.InputTag("singleTauEsNominal0","singleTauEsNominal0","Ntuple"),
-# 							electronSrc =cms.InputTag("singleElectron0","singleElectron0","Ntuple"),
-# 							muonSrc =cms.InputTag(''),
-# 							pfMETSrc = cms.InputTag("slimmedMETs"),
-# 							mvaMETSrc = cms.InputTag("mvaMetElectronxTauEsNominal0x0::Ntuple"),
-# 						    electronVetoSrc =cms.InputTag("filteredVetoElectrons","","Ntuple"),
-# 						    muonVetoSrc = cms.InputTag("filteredVetoMuons","","Ntuple"),				
-# 						    # should be small since don't want one of the pair in the veto list
-# 						    # note : this is used for DR(leg1, leg2) >, and for overlap removal from the
-# 						    # veto e and mu lists
-# 						    vetoDeltaR = cms.double(0.1), 
-# 							NAME=cms.string("TuplePair"),
-# 						    doSVMass = cms.bool(True),
-# 						    useMVAMET = cms.bool(True),
-# 						    logMterm = cms.double(2.),
-# 						    svMassVerbose = cms.int32(1),
-# 						    sig00 = cms.InputTag("METSignificance:CovarianceMatrix00:Ntuple"),
-# 						    sig10 = cms.InputTag("METSignificance:CovarianceMatrix10:Ntuple"),
-# 						    sig01 = cms.InputTag("METSignificance:CovarianceMatrix01:Ntuple"),
-# 						    sig11 = cms.InputTag("METSignificance:CovarianceMatrix11:Ntuple")
-# 									)										
-
-
-
-
-
-class b_class_test:
-	def __init__(self,theProcess):
-		self.process = theProcess
-		self.NAME = cms.string('LepCounts::Ntuple')
-		# self.process.LepCounts = cms.EDProducer('PatLeptonCountContainerProducer',
-		# 						electronSrc =cms.InputTag('filteredCustomElectrons::Ntuple'),
-		# 						muonSrc =cms.InputTag('filteredCustomMuons::Ntuple'),
-		# 						tauEsNominalSrc =cms.InputTag('filteredCustomTausEsNominal::Ntuple'),
-		# 						tauEsUpSrc =cms.InputTag('filteredCustomTausEsUp::Ntuple'),
-		# 						tauEsDownSrc =cms.InputTag('filteredCustomTausEsDown::Ntuple'),
-		# 						NAME=self.NAME)
-	def makeLepCount(self,p):
-		#p *= self.process.LepCounts
-		return
-
-class a_class_test:
-	def __init__(self,theProcess):
-		self.process = theProcess
-		self.process.load("SimGeneral.HepPDTESSource.pythiapdt_cfi")
-		self.process.printTree = cms.EDAnalyzer("ParticleListDrawer",
-				maxEventsToPrint = cms.untracked.int32(-1),
-				printVertex = cms.untracked.bool(False),
-				src = cms.InputTag("prunedGenParticles"))
-	def printMCinfo(self,p):
-		p *= self.process.printTree	
-		return

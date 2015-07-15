@@ -160,6 +160,7 @@ LeptonCutVecSrc_(iConfig.getParameter<std::vector<edm::ParameterSet>>("LeptonCut
   FlatTuple->Branch("leg1_numberOfMissingOuterHits", &leg1_numberOfMissingOuterHits);
   FlatTuple->Branch("leg1_numberOfTrackHits", &leg1_numberOfTrackHits);
   FlatTuple->Branch("leg1_passConversionVeto", &leg1_passConversionVeto);
+  FlatTuple->Branch("leg1_ZimpactTau", &leg1_ZimpactTau);
   FlatTuple->Branch("leg1_numStrips", &leg1_numStrips);
   FlatTuple->Branch("leg1_numHadrons", &leg1_numHadrons);
   FlatTuple->Branch("leg2_leptonType", &leg2_leptonType);
@@ -212,6 +213,7 @@ LeptonCutVecSrc_(iConfig.getParameter<std::vector<edm::ParameterSet>>("LeptonCut
   FlatTuple->Branch("leg2_numberOfMissingOuterHits", &leg2_numberOfMissingOuterHits);
   FlatTuple->Branch("leg2_numberOfTrackHits", &leg2_numberOfTrackHits);
   FlatTuple->Branch("leg2_passConversionVeto", &leg2_passConversionVeto);
+  FlatTuple->Branch("leg2_ZimpactTau", &leg2_ZimpactTau);
   FlatTuple->Branch("leg2_numStrips", &leg2_numStrips);
   FlatTuple->Branch("leg2_numHadrons", &leg2_numHadrons);
 
@@ -298,6 +300,37 @@ LeptonCutVecSrc_(iConfig.getParameter<std::vector<edm::ParameterSet>>("LeptonCut
   FlatTuple->Branch("bjets_PARTON_flavour", &bjets_PARTON_flavour);
   FlatTuple->Branch("bjets_HADRON_flavour", &bjets_HADRON_flavour);
 
+  FlatTuple->Branch("genParticle_pdgId", &genParticle_pdgId);
+  FlatTuple->Branch("genParticle_status", &genParticle_status);
+  FlatTuple->Branch("genParticle_pt", &genParticle_pt);
+  FlatTuple->Branch("genParticle_eta", &genParticle_eta);
+  FlatTuple->Branch("genParticle_phi", &genParticle_phi);
+  FlatTuple->Branch("genParticle_M", &genParticle_M);
+  FlatTuple->Branch("genDaughter_pdgId", &genDaughter_pdgId);
+  FlatTuple->Branch("genDaughter_status", &genDaughter_status);
+  FlatTuple->Branch("genDaughter_pt", &genDaughter_pt);
+  FlatTuple->Branch("genDaughter_eta", &genDaughter_eta);
+  FlatTuple->Branch("genDaughter_phi", &genDaughter_phi);
+  FlatTuple->Branch("genDaughter_M", &genDaughter_M);
+  FlatTuple->Branch("genMother_pdgId", &genMother_pdgId);
+  FlatTuple->Branch("genMother_status", &genMother_status);
+  FlatTuple->Branch("genMother_pt", &genMother_pt);
+  FlatTuple->Branch("genMother_eta", &genMother_eta);
+  FlatTuple->Branch("genMother_phi", &genMother_phi);
+  FlatTuple->Branch("genMother_M", &genMother_M);
+
+  FlatTuple->Branch("EventHasZtoTauTau", &EventHasZtoTauTau);
+  FlatTuple->Branch("EventHasZtoEE", &EventHasZtoEE);
+  FlatTuple->Branch("EventHasZtoMM", &EventHasZtoMM);
+  FlatTuple->Branch("isDY_genZTTcase1", &isDY_genZTTcase1);
+  FlatTuple->Branch("isDY_genZTTcase2", &isDY_genZTTcase2);
+  FlatTuple->Branch("isDY_genZTTcaseEmbedded", &isDY_genZTTcaseEmbedded);
+  FlatTuple->Branch("isDY_genZL", &isDY_genZL);
+  FlatTuple->Branch("isDY_genZJcase1", &isDY_genZJcase1);
+  FlatTuple->Branch("isDY_genZJcase2", &isDY_genZJcase2);
+  FlatTuple->Branch("isDY_genZTTcase3", &isDY_genZTTcase3);
+  FlatTuple->Branch("isDY_genZLL", &isDY_genZLL);
+  FlatTuple->Branch("isDY_genZJcase3", &isDY_genZJcase3);
 
 
 
@@ -544,6 +577,7 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
       leg1_numberOfMissingOuterHits = currentPair.leg1().numberOfMissingOuterHits();
       leg1_numberOfTrackHits = currentPair.leg1().numberOfTrackHits();
       leg1_passConversionVeto = currentPair.leg1().passConversionVeto();
+      leg1_ZimpactTau = currentPair.leg1().ZimpactTau();
       leg1_numStrips = currentPair.leg1().numStrips();
       leg1_numHadrons = currentPair.leg1().numHadrons();
       leg2_leptonType = currentPair.leg2().leptonType();
@@ -596,6 +630,7 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
       leg2_numberOfMissingOuterHits = currentPair.leg2().numberOfMissingOuterHits();
       leg2_numberOfTrackHits = currentPair.leg2().numberOfTrackHits();
       leg2_passConversionVeto = currentPair.leg2().passConversionVeto();
+      leg2_ZimpactTau = currentPair.leg2().ZimpactTau();
       leg2_numStrips = currentPair.leg2().numStrips();
       leg2_numHadrons = currentPair.leg2().numHadrons();
 
@@ -764,6 +799,42 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
       }
  
 
+      /* fill the gen level info, for now ~ exaclty as in Ntuple */
+
+      genhelper.init(25, currentINDEP.genParticles(),currentPair.leg1(),currentPair.leg2(),
+                     currentPair.CandidateEventType());
+
+      genParticle_pdgId = genhelper.genParticle_pdgId();
+      genParticle_status = genhelper.genParticle_status();
+      genParticle_pt = genhelper.genParticle_pt();
+      genParticle_eta = genhelper.genParticle_eta();
+      genParticle_phi = genhelper.genParticle_phi();
+      genParticle_M = genhelper.genParticle_M();
+      genDaughter_pdgId = genhelper.genDaughter_pdgId();
+      genDaughter_status = genhelper.genDaughter_status();
+      genDaughter_pt = genhelper.genDaughter_pt();
+      genDaughter_eta = genhelper.genDaughter_eta();
+      genDaughter_phi = genhelper.genDaughter_phi();
+      genDaughter_M = genhelper.genDaughter_M();
+      genMother_pdgId = genhelper.genMother_pdgId();
+      genMother_status = genhelper.genMother_status();
+      genMother_pt = genhelper.genMother_pt();
+      genMother_eta = genhelper.genMother_eta();
+      genMother_phi = genhelper.genMother_phi();
+      genMother_M = genhelper.genMother_M();
+
+      EventHasZtoTauTau = genhelper.EventHasZtoTauTau();
+      EventHasZtoEE = genhelper.EventHasZtoEE();
+      EventHasZtoMM = genhelper.EventHasZtoMM();
+      isDY_genZTTcase1 = genhelper.isDY_genZTTcase1();
+      isDY_genZTTcase2 = genhelper.isDY_genZTTcase2();
+      isDY_genZTTcaseEmbedded = genhelper.isDY_genZTTcaseEmbedded();
+      isDY_genZL = genhelper.isDY_genZL();
+      isDY_genZJcase1 = genhelper.isDY_genZJcase1();
+      isDY_genZJcase2 = genhelper.isDY_genZJcase2();
+      isDY_genZTTcase3 = genhelper.isDY_genZTTcase3();
+      isDY_genZLL = genhelper.isDY_genZLL();
+      isDY_genZJcase3 = genhelper.isDY_genZJcase3();
 
       FlatTuple->Fill();
 
@@ -869,6 +940,7 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
   leg1_numberOfMissingOuterHits = NAN;
   leg1_numberOfTrackHits = NAN;
   leg1_passConversionVeto = NAN;
+  leg1_ZimpactTau = NAN;
   leg1_numStrips = NAN;
   leg1_numHadrons = NAN;
   leg2_dz = NAN;
@@ -916,6 +988,7 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
   leg2_numberOfMissingOuterHits = NAN;
   leg2_numberOfTrackHits = NAN;
   leg2_passConversionVeto = NAN;
+  leg2_ZimpactTau = NAN;
   leg2_numStrips = NAN;
   leg2_numHadrons = NAN;
 
@@ -1012,6 +1085,40 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
   bjets_defaultBtagAlgorithm_isPassed.clear();
   bjets_PARTON_flavour.clear();
   bjets_HADRON_flavour.clear();
+
+
+  genParticle_pdgId.clear();
+  genParticle_status.clear();
+  genParticle_pt.clear();
+  genParticle_eta.clear();
+  genParticle_phi.clear();
+  genParticle_M.clear();
+  genDaughter_pdgId.clear();
+  genDaughter_status.clear();
+  genDaughter_pt.clear();
+  genDaughter_eta.clear();
+  genDaughter_phi.clear();
+  genDaughter_M.clear();
+  genMother_pdgId.clear();
+  genMother_status.clear();
+  genMother_pt.clear();
+  genMother_eta.clear();
+  genMother_phi.clear();
+  genMother_M.clear();
+
+  EventHasZtoTauTau = 0;       
+  EventHasZtoEE = 0;          
+  EventHasZtoMM = 0;          
+  isDY_genZTTcase1 = 0;       
+  isDY_genZTTcase2 = 0;       
+  isDY_genZTTcaseEmbedded = 0; 
+  isDY_genZL = 0;              
+  isDY_genZJcase1 = 0;         
+  isDY_genZJcase2 = 0;         
+  isDY_genZTTcase3 = 0;        
+  isDY_genZLL = 0;             
+  isDY_genZJcase3 = 0;         
+
 
  }
 

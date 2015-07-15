@@ -41,7 +41,7 @@ For Quick Start (on SL6 only):
 
 		git-cms-merge-topic -u cms-met:72X-MetSig-150311
 
-
+		sed -i 's/lPatPFTau->signalPFCands/lPatPFTau->signalCands/g' RecoMET/METPUSubtraction/plugins/PFMETProducerMVA.cc
 
 		cd RecoMET/METPUSubtraction/
 
@@ -49,6 +49,7 @@ For Quick Start (on SL6 only):
 
 		cd -
 
+		scram b -j 20
 
 - For Electron MVA ID (Phys14 version)
 
@@ -69,6 +70,11 @@ For Quick Start (on SL6 only):
 - SVMass code :
 
 		git clone https://github.com/veelken/SVfit_standalone TauAnalysis/SVfitStandalone
+
+- PileUp Reweight Code (Only adding locally in order to turn off default prints) :
+
+		git cms-addpkg PhysicsTools/Utilities
+		sed -i 's/std::cout/\/\/std::cout/g' PhysicsTools/Utilities/src/LumiReWeighting.cc
 
 - Clone the Davis Code :
 

@@ -13,6 +13,19 @@ from DavisRunIITauTau.TupleConfigurations.ConfigNtupleContent_cfi import *
 ##################
 # print the run settings 
 
+if COMPUTE_SVMASS :
+	print 'will compute SVmass with log_m term = ', SVMASS_LOG_M
+	if USE_MVAMET :
+		print ' will use mva met in SVmass computation (no recoil corr yet)'
+	else :
+		print 'will use pfMET in SVmass computation (no recoil corr yet)'
+
+else :
+	print '******************************************'
+	print '***** WARNING SV MASS COMPUTE IS OFF *****'
+	print '******************************************'
+
+
 print 'will build [',
 if BUILD_ELECTRON_ELECTRON : print 'e-e',
 if BUILD_ELECTRON_MUON : print 'e-mu',
@@ -24,7 +37,8 @@ if BUILD_TAU_ES_VARIANTS : print ' + tau Es Variants',
 print ']'
 
 if(len(GEN_PARTICLES_TO_KEEP) > 0):
-	print 'gen info retained for pdgIDs ', GEN_PARTICLES_TO_KEEP
+	print 'gen info retained for pdgIDs ' 
+	print GEN_PARTICLES_TO_KEEP
 else :
 	print 'gen info retained for all pdgIDs '
 
@@ -32,9 +46,11 @@ print 'default btag algoritm = ', DEFAULT_BTAG_ALGORITHM
 if APPLY_BTAG_SF :
 	print ' btag SFs will be applied with random seed = ', BTAG_SF_SEED
 
+
+
 # import of standard configurations
 process.load("FWCore.MessageService.MessageLogger_cfi")
-process.MessageLogger.cerr.FwkReport.reportEvery = 50
+process.MessageLogger.cerr.FwkReport.reportEvery = 500
 
 # mva MET --start
 process.load('Configuration.StandardSequences.Services_cff')
@@ -45,23 +61,6 @@ process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:run2_mc', '')
 from JetMETCorrections.Configuration.JetCorrectionServicesAllAlgos_cff import *
 from JetMETCorrections.Configuration.DefaultJEC_cff import *
 
-# process.load('Configuration.StandardSequences.Services_cff')
-# process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
-# process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff')
-# from Configuration.AlCa.GlobalTag_condDBv2 import GlobalTag
-# process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:run2_mc', '')
-# process.load("RecoJets.JetProducers.ak4PFJets_cfi")
-# process.ak4PFJets.doAreaFastjet = cms.bool(True) 
-# process.ak4PFJets.src = cms.InputTag("packedPFCandidates")
-# from JetMETCorrections.Configuration.DefaultJEC_cff import ak4PFJetsL1FastL2L3
-# process.load("RecoMET.METPUSubtraction.mvaPFMET_cff")
-# #process.pfMVAMEt.srcLeptons = cms.VInputTag("slimmedElectrons")
-# process.pfMVAMEt.srcPFCandidates = cms.InputTag("packedPFCandidates")
-# process.pfMVAMEt.srcVertices = cms.InputTag("offlineSlimmedPrimaryVertices")
-# process.puJetIdForPFMVAMEt.jec =  cms.string('AK4PF')
-# #process.puJetIdForPFMVAMEt.jets = cms.InputTag("ak4PFJets")
-# process.puJetIdForPFMVAMEt.vertexes = cms.InputTag("offlineSlimmedPrimaryVertices")
-# process.puJetIdForPFMVAMEt.rho = cms.InputTag("fixedGridRhoFastjetAll")
 
 # mva MET -- end
 
@@ -70,7 +69,8 @@ from JetMETCorrections.Configuration.DefaultJEC_cff import *
 ###################################
 
 myfilelist = cms.untracked.vstring()
-myfilelist.extend(['file:/uscms_data/d3/shalhout/Phys14signal_miniAOD.root'])
+#myfilelist.extend(['file:/uscms_data/d3/shalhout/Phys14signal_miniAOD.root'])
+myfilelist.extend(['file:/uscms_data/d3/shalhout/Phys14DYJetsToLL_miniAOD.root'])
 process.source = cms.Source("PoolSource",fileNames=myfilelist)
 
 
@@ -138,7 +138,7 @@ process.customSlimmedMuons = cms.EDProducer('CustomPatMuonProducer' ,
 							                 )
 
 
-
+# produces all 3 variants in ES at once 
 process.customSlimmedTaus = cms.EDProducer('CustomPatTauProducer' ,
 							tauSrc =cms.InputTag('slimmedTaus::PAT'),
 							vertexSrc =cms.InputTag('filteredVertices::Ntuple'),
@@ -271,6 +271,11 @@ process.pfMet.calculateSignificance = True
 
 from DavisRunIITauTau.TupleConfigurations.ConfigJets_cfi import PUjetIDworkingPoint
 from DavisRunIITauTau.TupleConfigurations.ConfigJets_cfi import PFjetIDworkingPoint
+from DavisRunIITauTau.TupleConfigurations.ConfigNtupleWeights_cfi import PUntupleWeightSettings
+from DavisRunIITauTau.TupleConfigurations.ConfigNtupleWeights_cfi import pileupSrcInputTag
+from DavisRunIITauTau.TupleConfigurations.ConfigNtupleWeights_cfi import mcGenWeightSrcInputTag
+from DavisRunIITauTau.TupleConfigurations.ConfigNtupleWeights_cfi import LHEEventProductSrcInputTag
+
 
 process.pairIndep = cms.EDProducer('NtuplePairIndependentInfoProducer',
 							packedGenSrc = cms.InputTag('packedGenParticles::PAT'),
@@ -283,7 +288,11 @@ process.pairIndep = cms.EDProducer('NtuplePairIndependentInfoProducer',
 							useBtagSFSeedSrc = cms.uint32(BTAG_SF_SEED),
 							PUjetIDworkingPointSrc = PUjetIDworkingPoint,
 							PFjetIDworkingPointSrc = PFjetIDworkingPoint,
-							vertexSrc =cms.InputTag('filteredVertices::Ntuple')
+							vertexSrc =cms.InputTag('filteredVertices::Ntuple'),
+							pileupSrc = pileupSrcInputTag,
+							PUweightSettingsSrc = PUntupleWeightSettings,
+							mcGenWeightSrc = mcGenWeightSrcInputTag,
+				  			LHEEventProductSrc = LHEEventProductSrcInputTag
 
 							                 )
 
@@ -350,22 +359,22 @@ process.p *= process.requireCandidateHiggsPair
 
 
 
-# test - start
+# mva met - start
 mvaMEThelper.initializeMVAmet(process.p)
 mvaMEThelper.runSingleLeptonProducers(process.p)
 mvaMEThelper.runPairWiseMets(process.p)
 process.p *= process.METSignificance
 mvaMEThelper.run_pairMaker(process.p)
 mvaMEThelper.writeToNtuple(process.p)
+# mva met -- end
+
 process.p *= process.filteredSlimmedJets
 process.p *= process.pairIndep
-# test -- end
-
 process.e = cms.EndPath(process.out)
 
 
 process.options   = cms.untracked.PSet( wantSummary = cms.untracked.bool(True) )
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(500) )
 
 
 
