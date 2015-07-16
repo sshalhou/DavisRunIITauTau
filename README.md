@@ -33,7 +33,7 @@ For Quick Start (on SL6 only):
 
 
 
-- for MVA MET (13 TeV Training) & MET SIG: 
+- for MVA MET (13 TeV Training) & MET SIG: (the cp and sed commands are all one long line)
 
 		(see : https://twiki.cern.ch/twiki/bin/view/CMS/MVAMet#CMSSW_7_2_X_requires_slc6_MiniAO)
 
@@ -45,9 +45,15 @@ For Quick Start (on SL6 only):
 
 		cd RecoMET/METPUSubtraction/
 
-		git clone https://github.com/rfriese/RecoMET-METPUSubtraction data
+		git clone https://github.com/rfriese/RecoMET-METPUSubtraction data -b 72X-13TeV-Phys14_25_V4-26Mar15
 
 		cd -
+
+		cp /afs/cern.ch/user/s/sshalhou/public/INSTALL_PUBLIC_FILES/72X/mvaPFMEt_72X_Mar2015.db RecoMET/METPUSubtraction/data/.
+
+		cp /afs/cern.ch/user/s/sshalhou/public/INSTALL_PUBLIC_FILES/72X/mvaPFMET_db_cfi.py RecoMET/METPUSubtraction/python/.
+
+		sed -i 's/puJetIdForPFMVAMEt = pileupJetIdEvaluator.clone/from RecoMET.METPUSubtraction.mvaPFMET_db_cfi import mvaPFMEtGBRForestsFromDB\npuJetIdForPFMVAMEt = pileupJetIdEvaluator.clone/g' RecoMET/METPUSubtraction/python/mvaPFMET_cff.py
 
 		scram b -j 20
 
@@ -88,5 +94,20 @@ For Quick Start (on SL6 only):
 		
 		cmsRun DavisRunIITauTau/runIIntuple_v0.py
 
+- NOTE : for CRAB3 the code+data limit on the tarball size is 100MB,
+         in this case it is best to go to RecoMET/METPUSubtraction/data
+         and keep only the following files :
 
+		gbrmet_7_2_X_MINIAOD_BX25PU20_Mar2015.root
+		
+		gbrphi_7_2_X_MINIAOD_BX25PU20_Mar2015.root
+		
+		gbru1cov_7_2_X_MINIAOD_BX25PU20_Mar2015.root
+		
+		gbru2cov_7_2_X_MINIAOD_BX25PU20_Mar2015.root
+
+		mvaPFMEt_72X_Mar2015.db
+		
+		- make sure to also delete : RecoMET/METPUSubtraction/data/.git
+		- you should also remove : EgammaAnalysis/ElectronTools/data/CSA14
 

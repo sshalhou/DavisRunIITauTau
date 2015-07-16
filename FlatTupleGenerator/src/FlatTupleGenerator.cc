@@ -801,7 +801,7 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
 
       /* fill the gen level info, for now ~ exaclty as in Ntuple */
 
-      genhelper.init(25, currentINDEP.genParticles(),currentPair.leg1(),currentPair.leg2(),
+      genhelper.init(23, currentINDEP.genParticles(),currentPair.leg1(),currentPair.leg2(),
                      currentPair.CandidateEventType());
 
       genParticle_pdgId = genhelper.genParticle_pdgId();

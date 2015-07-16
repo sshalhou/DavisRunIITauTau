@@ -121,8 +121,25 @@ class PairWiseMetHelper:
 		self.process.ak4PFJets.doAreaFastjet = cms.bool(True) 
 		self.process.ak4PFJets.src = cms.InputTag("packedPFCandidates")
 		from JetMETCorrections.Configuration.DefaultJEC_cff import ak4PFJetsL1FastL2L3
-		self.process.load("RecoMET.METPUSubtraction.mvaPFMET_cff")
+		self.process.load("RecoMET.METPUSubtraction.mvaPFMET_cff")		
 		#process.pfMVAMEt.srcLeptons = cms.VInputTag("slimmedElectrons")
+		self.process.pfMVAMEt.loadMVAfromDB = cms.bool(True)
+   		self.process.pfMVAMEt.inputFileNames = cms.PSet(
+        U     = cms.FileInPath('RecoMET/METPUSubtraction/data/gbrmet_7_2_X_MINIAOD_BX25PU20_Mar2015.root'),
+        DPhi  = cms.FileInPath('RecoMET/METPUSubtraction/data/gbrphi_7_2_X_MINIAOD_BX25PU20_Mar2015.root'),
+        CovU1 = cms.FileInPath('RecoMET/METPUSubtraction/data/gbru1cov_7_2_X_MINIAOD_BX25PU20_Mar2015.root'),
+        CovU2 = cms.FileInPath('RecoMET/METPUSubtraction/data/gbru2cov_7_2_X_MINIAOD_BX25PU20_Mar2015.root')
+    	)
+		self.process.pfMVAMEt.inputRecords = cms.PSet(
+			U     = cms.string('mvaPFMET_72X_Mar2015_U'),
+			DPhi  = cms.string('mvaPFMET_72X_Mar2015_DPhi'),
+			CovU1 = cms.string('mvaPFMET_72X_Mar2015_CovU1'),
+			CovU2 = cms.string('mvaPFMET_72X_Mar2015_CovU2'))
+# self.process.pfMVAMEt.inputRecords = cms.PSet(
+#      					 U     = cms.string('mvaPFMET_72_March2015_U'),
+#      					 DPhi  = cms.string('mvaPFMET_72_March2015_DPhi'),
+#     					 CovU1 = cms.string('mvaPFMET_72_March2015_CovU1'),
+#       				 CovU2 = cms.string('mvaPFMET_72_March2015_CovU2'))
 		self.process.pfMVAMEt.srcPFCandidates = cms.InputTag("packedPFCandidates")
 		self.process.pfMVAMEt.srcVertices = cms.InputTag("offlineSlimmedPrimaryVertices")
 		self.process.pfMVAMEt.minNumLeptons = cms.int32(2) 
