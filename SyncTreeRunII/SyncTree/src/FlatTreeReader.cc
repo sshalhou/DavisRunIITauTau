@@ -79,7 +79,7 @@ void FlatTreeReader::connectBranches()
   int vscount = 0;      // vector < string > 
   int viipcount = 0;    // vector < pair <int, int> >
   int vidpcount = 0;    // vector < pair <int, double> >
-  int vifcount = 0;    // vector < pair <int, float> >
+  int vifpcount = 0;    // vector < pair <int, float> >
 
 
   while ((leaf = (const TLeaf*)iLeaf())) 
@@ -132,12 +132,12 @@ void FlatTreeReader::connectBranches()
     { 
       /* ROOT appends an underscore to these */
       title.erase(title.end()-1, title.end());
-      vifcount++;
-      checkCount(vifcount,compName);
-      vIntFloatPair_leaves[vifcount-1] = nullptr;
-      b_vIntFloatPair_leaves[vifcount-1] = nullptr;
-     fChain->SetBranchAddress(title.c_str(),&vIntFloatPair_leaves[vifcount-1],&b_vIntFloatPair_leaves[vifcount-1]);
-     read_map[title] = vIntFloatPair_leaves[vifcount-1];
+      vifpcount++;
+      checkCount(vifpcount,compName);
+      vIntFloatPair_leaves[vifpcount-1] = nullptr;
+      b_vIntFloatPair_leaves[vifpcount-1] = nullptr;
+     fChain->SetBranchAddress(title.c_str(),&vIntFloatPair_leaves[vifpcount-1],&b_vIntFloatPair_leaves[vifpcount-1]);
+     read_map[title] = vIntFloatPair_leaves[vifpcount-1];
 
     }
 
