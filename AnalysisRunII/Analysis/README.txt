@@ -11,5 +11,5 @@ Compilation Notes : should work the same on OS X and SL6, except that the make c
 
 To Run :
 
-	./generate_syncTree "PASSCUTS/FlatTuple" "../../../FlatTuple_fullVBFsample1stGo.root"    
+	./run_analysis "PASSCUTS/FlatTuple" "../../../FlatTuple_fullVBFsample1stGo.root"    
 

@@ -1,9 +1,12 @@
 CC= g++
-CFLAGS=-c -g -Wall -I `root-config --incdir` -I./include
+CFLAGS=-c -g -Wall -MMD -MP -I `root-config --incdir` -I./include
 LDFLAGS=`root-config --libs`
 SOURCES=$(wildcard ./src/*.cc)
+SOURCES += $(wildcard ./operations/*.cc)
 OBJECTS=$(SOURCES:.cc=.o)
-EXECUTABLE=generate_syncTree
+EXECUTABLE=run_analysis
+DEPS = $(SOURCES:.cc=.d)
+
 
 all: $(SOURCES) $(EXECUTABLE)
 
@@ -14,7 +17,9 @@ $(EXECUTABLE): $(OBJECTS)
 	$(CC) $(CFLAGS) $< -o $@
 
 clean:
-	rm ./src/*.o ./generate_syncTree  ./src/autoGEN*
+	rm ./src/*.o ./run_analysis  ./src/autoGEN* ./src/*.d
 
 dict:
 	rootcint -f ./src/autoGENsynctreeLinkDef.cc -c ./include/syncTreeLinkDef.h
+
+-include $(DEPS)

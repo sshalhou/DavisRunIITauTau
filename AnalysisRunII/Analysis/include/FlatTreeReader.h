@@ -24,8 +24,8 @@
   - Shalhout
 */
 
-#ifndef SyncTree_FlatTreeReader_h
-#define SyncTree_FlatTreeReader_h
+#ifndef Analysis_FlatTreeReader_h
+#define Analysis_FlatTreeReader_h
 
 ////////////////////////////
 
