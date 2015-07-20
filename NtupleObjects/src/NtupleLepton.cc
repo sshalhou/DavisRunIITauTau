@@ -16,7 +16,11 @@ NtupleLepton::NtupleLepton()
   m_dxy = NAN;
   m_EffectiveArea = NAN;
   m_raw_electronMVA = NAN;
-  m_passFail_electronMVA = NAN; 
+  m_passFail_electronMVA80 = NAN; 
+  m_passFail_electronMVA90 = NAN; 
+  m_passFail_electronCutBasedID = NAN;
+  m_ooEmooP = NAN;
+  m_full5x5_sigmaIetaIeta = NAN;
   m_TauEsVariant = NAN; 
   m_IP = NAN;                   
   m_IPerror = NAN;              
@@ -62,6 +66,7 @@ NtupleLepton::NtupleLepton()
   m_genJet_p4.SetXYZT(NAN,NAN,NAN,NAN);
   m_numStrips = NAN;
   m_numHadrons  = NAN;
+  m_dzTauVertex = NAN;
   m_ZimpactTau = NAN;
 }
 
@@ -118,6 +123,7 @@ NtupleLepton::NtupleLepton()
 
     }
 
+    if(isnan(returnValue)!=0) std::cout<<" bad tau ID "<<label_<<"\n";
     assert(isnan(returnValue)==0);
     return returnValue;
   }
@@ -350,7 +356,11 @@ void NtupleLepton::printLEP()
     std::cout<<"\n";
  
   std::cout<<"<LEPPRINT "<<type_print<<"> ELECTRON MVA RAW "<<m_raw_electronMVA<<"\n";
-  std::cout<<"<LEPPRINT "<<type_print<<"> ELECTRON MVA PASSFAIL "<<m_passFail_electronMVA<<"\n";
+  std::cout<<"<LEPPRINT "<<type_print<<"> ELECTRON MVA 80 PASSFAIL "<<m_passFail_electronMVA80<<"\n";
+  std::cout<<"<LEPPRINT "<<type_print<<"> ELECTRON MVA 90 PASSFAIL "<<m_passFail_electronMVA90<<"\n";
+  std::cout<<"<LEPPRINT "<<type_print<<"> ELECTRON CUT BASED VETO ID PASSFAIL "<<m_passFail_electronCutBasedID<<"\n";
+  std::cout<<"<LEPPRINT "<<type_print<<"> ELECTRON ooEmooP "<<m_ooEmooP<<"\n";
+  std::cout<<"<LEPPRINT "<<type_print<<"> ELECTRON full5x5_sigmaIetaIeta "<<m_full5x5_sigmaIetaIeta<<"\n";
   std::cout<<"<LEPPRINT "<<type_print<<"> TauEsVariant "<<m_TauEsVariant<<"\n";
 
 std::cout<<"<LEPPRINT "<<type_print<<"> IP : " << m_IP << std::endl;
@@ -398,6 +408,7 @@ std::cout<<"<LEPPRINT "<<type_print<<"> known tauID types and values : ";
   for(std::size_t i=0;i<m_tauIDs.size();++i) std::cout<<"[ "<<m_tauIDs[i].first<<" = "<<m_tauIDs[i].second<<" ] ";
   std::cout<<"\n";
 
+std::cout<<"<LEPPRINT "<<type_print<<"> dzTauVertex : " << m_dzTauVertex << std::endl;
 std::cout<<"<LEPPRINT "<<type_print<<"> ZimpactTau : " << m_ZimpactTau << std::endl;
 std::cout<<"<LEPPRINT "<<type_print<<"> num strips : " << m_numStrips << std::endl;
 std::cout<<"<LEPPRINT "<<type_print<<"> num hadrons : " << m_numHadrons << std::endl;
@@ -455,8 +466,12 @@ void NtupleLepton::userFloatVectorParser(stringVec & labels_,floatVec & values_)
       std::pair<std::string, float> currentPair(current_string,current_float);
       m_tauIDs.push_back(currentPair);        
     }
-    else if(labels_[i]=="MVA_NonTrigPhys14") {m_raw_electronMVA = values_[i];}  
-    else if(labels_[i]=="PASS_MVA_NonTrigPhys14") {m_passFail_electronMVA = values_[i];}  
+    else if(labels_[i]=="MVA_nonTrig_raw") {m_raw_electronMVA = values_[i];}  
+    else if(labels_[i]=="PASS_nonTrigMVA80") {m_passFail_electronMVA80 = values_[i];}  
+    else if(labels_[i]=="PASS_nonTrigMVA90") {m_passFail_electronMVA90 = values_[i];}  
+    else if(labels_[i]=="passCutBasedVetoID") {m_passFail_electronCutBasedID = values_[i];}  
+    else if(labels_[i]=="ooEmooP") {m_ooEmooP = values_[i];}  
+    else if(labels_[i]=="full5x5_sigmaIetaIeta") {m_full5x5_sigmaIetaIeta = values_[i];}  
     else if(labels_[i]=="TauEsVariant") {m_TauEsVariant = values_[i];}      
     else if(labels_[i]=="IP") {m_IP = values_[i];}      
     else if(labels_[i]=="IPerror") { m_IPerror = values_[i];}      
@@ -500,6 +515,7 @@ void NtupleLepton::userFloatVectorParser(stringVec & labels_,floatVec & values_)
     else if(labels_[i]=="passConversionVeto") {m_passConversionVeto = values_[i];}
     else if(labels_[i]=="numHadrons") {m_numHadrons = values_[i];}
     else if(labels_[i]=="numStrips") {m_numStrips = values_[i];}
+    else if(labels_[i]=="dzTauVertex") {m_dzTauVertex = values_[i];}
     else if(labels_[i]=="ZimpactTau") {m_ZimpactTau = values_[i];}
     else std::cout<<" NOT STORED "<<labels_[i]<<" = "<<values_[i]<<"\n";
   }
@@ -671,7 +687,14 @@ int NtupleLepton::PFpdgId() const { return m_PFpdgId; }
 int NtupleLepton::GENpdgId() const { return m_GENpdgId; }
 int NtupleLepton::GENMOTHERpdgId() const { return m_GENMOTHERpdgId; }
 float NtupleLepton::raw_electronMVA() const {return m_raw_electronMVA;}
-float NtupleLepton::passFail_electronMVA() const {return m_passFail_electronMVA;} 
+float NtupleLepton::passFail_electronMVA80() const {return m_passFail_electronMVA80;} 
+float NtupleLepton::passFail_electronMVA90() const {return m_passFail_electronMVA90;} 
+
+
+float NtupleLepton::passFail_electronCutBasedID() const {return m_passFail_electronCutBasedID;} 
+float NtupleLepton::ooEmooP() const {return m_ooEmooP;} 
+float NtupleLepton::full5x5_sigmaIetaIeta() const {return m_full5x5_sigmaIetaIeta;} 
+
 float NtupleLepton::TauEsVariant() const {return m_TauEsVariant;} 
 float NtupleLepton::IP() const {return m_IP;} 
 float NtupleLepton::IPerror() const {return m_IPerror;} 
@@ -716,6 +739,7 @@ float NtupleLepton::passConversionVeto() const {return m_passConversionVeto;}
 
 
 LorentzVector NtupleLepton::genJet_p4() const {return m_genJet_p4;}
+float NtupleLepton::dzTauVertex() const {return m_dzTauVertex;}
 float NtupleLepton::numStrips() const {return m_numStrips;}
 float NtupleLepton::numHadrons() const {return m_numHadrons;}
 float NtupleLepton::ZimpactTau() const {return m_ZimpactTau;}

@@ -58,7 +58,7 @@ public:
 
 // init
 
-    void init(int, std::vector<NtupleGenParticle>, NtupleLepton, NtupleLepton, int ); 
+    void init(std::vector<NtupleGenParticle>, NtupleLepton, NtupleLepton, int ); 
     void classifyTheEventForDY();
 
 // helper functions
@@ -115,8 +115,7 @@ public:
 
 private:
 
-  /* the pdg ID of the Z, pass as an argument allowing testing with other MCs */ 
-  int m_Z_pdgID; 
+
 	NtupleLepton m_leg1;
 	NtupleLepton m_leg2;
 	int m_CandidateEventType;

@@ -141,7 +141,11 @@ LeptonCutVecSrc_(iConfig.getParameter<std::vector<edm::ParameterSet>>("LeptonCut
   FlatTuple->Branch("leg1_muonInnerTrkValidFraction", &leg1_muonInnerTrkValidFraction);
   FlatTuple->Branch("leg1_muonSegmentCompatibility", &leg1_muonSegmentCompatibility);
   FlatTuple->Branch("leg1_raw_electronMVA", &leg1_raw_electronMVA);
-  FlatTuple->Branch("leg1_passFail_electronMVA", &leg1_passFail_electronMVA);
+  FlatTuple->Branch("leg1_passFail_electronMVA80", &leg1_passFail_electronMVA80);
+  FlatTuple->Branch("leg1_passFail_electronMVA90", &leg1_passFail_electronMVA90);
+  FlatTuple->Branch("leg1_passFail_electronCutBasedID", &leg1_passFail_electronCutBasedID);
+  FlatTuple->Branch("leg1_ooEmooP", &leg1_ooEmooP);
+  FlatTuple->Branch("leg1_full5x5_sigmaIetaIeta", &leg1_full5x5_sigmaIetaIeta);
   FlatTuple->Branch("leg1_SuperClusterEta", &leg1_SuperClusterEta);
   FlatTuple->Branch("leg1_hadronicOverEm", &leg1_hadronicOverEm);
   FlatTuple->Branch("leg1_isEB", &leg1_isEB);
@@ -162,6 +166,7 @@ LeptonCutVecSrc_(iConfig.getParameter<std::vector<edm::ParameterSet>>("LeptonCut
   FlatTuple->Branch("leg1_passConversionVeto", &leg1_passConversionVeto);
   FlatTuple->Branch("leg1_ZimpactTau", &leg1_ZimpactTau);
   FlatTuple->Branch("leg1_numStrips", &leg1_numStrips);
+  FlatTuple->Branch("leg1_dzTauVertex", &leg1_dzTauVertex);
   FlatTuple->Branch("leg1_numHadrons", &leg1_numHadrons);
   FlatTuple->Branch("leg2_leptonType", &leg2_leptonType);
   FlatTuple->Branch("leg2_dz", &leg2_dz);
@@ -194,7 +199,11 @@ LeptonCutVecSrc_(iConfig.getParameter<std::vector<edm::ParameterSet>>("LeptonCut
   FlatTuple->Branch("leg2_muonInnerTrkValidFraction", &leg2_muonInnerTrkValidFraction);
   FlatTuple->Branch("leg2_muonSegmentCompatibility", &leg2_muonSegmentCompatibility);
   FlatTuple->Branch("leg2_raw_electronMVA", &leg2_raw_electronMVA);
-  FlatTuple->Branch("leg2_passFail_electronMVA", &leg2_passFail_electronMVA);
+  FlatTuple->Branch("leg2_passFail_electronMVA80", &leg2_passFail_electronMVA80);
+  FlatTuple->Branch("leg2_passFail_electronMVA90", &leg2_passFail_electronMVA90);
+  FlatTuple->Branch("leg2_passFail_electronCutBasedID", &leg2_passFail_electronCutBasedID);
+  FlatTuple->Branch("leg2_ooEmooP", &leg2_ooEmooP);
+  FlatTuple->Branch("leg2_full5x5_sigmaIetaIeta", &leg2_full5x5_sigmaIetaIeta);
   FlatTuple->Branch("leg2_SuperClusterEta", &leg2_SuperClusterEta);
   FlatTuple->Branch("leg2_hadronicOverEm", &leg2_hadronicOverEm);
   FlatTuple->Branch("leg2_isEB", &leg2_isEB);
@@ -216,6 +225,7 @@ LeptonCutVecSrc_(iConfig.getParameter<std::vector<edm::ParameterSet>>("LeptonCut
   FlatTuple->Branch("leg2_ZimpactTau", &leg2_ZimpactTau);
   FlatTuple->Branch("leg2_numStrips", &leg2_numStrips);
   FlatTuple->Branch("leg2_numHadrons", &leg2_numHadrons);
+  FlatTuple->Branch("leg2_dzTauVertex", &leg2_dzTauVertex);
 
   FlatTuple->Branch("leg2_pt", &leg2_pt);
   FlatTuple->Branch("leg2_gen_pt", &leg2_gen_pt);
@@ -274,6 +284,11 @@ LeptonCutVecSrc_(iConfig.getParameter<std::vector<edm::ParameterSet>>("LeptonCut
   FlatTuple->Branch("vertex_positionEta",&vertex_positionEta);
   FlatTuple->Branch("vertex_positionPhi",&vertex_positionPhi);
 
+  FlatTuple->Branch("puWeight",&puWeight);
+  FlatTuple->Branch("NumPileupInt",&NumPileupInt);
+  FlatTuple->Branch("NumTruePileUpInt",&NumTruePileUpInt);
+  FlatTuple->Branch("generatorEventWeight",&generatorEventWeight);
+  FlatTuple->Branch("hepNUP",&hepNUP);
 
   FlatTuple->Branch("numberOfJets", &numberOfJets);
   FlatTuple->Branch("numberOfBJets", &numberOfBJets);
@@ -331,6 +346,8 @@ LeptonCutVecSrc_(iConfig.getParameter<std::vector<edm::ParameterSet>>("LeptonCut
   FlatTuple->Branch("isDY_genZTTcase3", &isDY_genZTTcase3);
   FlatTuple->Branch("isDY_genZLL", &isDY_genZLL);
   FlatTuple->Branch("isDY_genZJcase3", &isDY_genZJcase3);
+
+  FlatTuple->Branch("rho", &rho);
 
 
 
@@ -558,7 +575,11 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
       leg1_muonInnerTrkValidFraction = currentPair.leg1().muonInnerTrkValidFraction();
       leg1_muonSegmentCompatibility = currentPair.leg1().muonSegmentCompatibility();
       leg1_raw_electronMVA = currentPair.leg1().raw_electronMVA();
-      leg1_passFail_electronMVA = currentPair.leg1().passFail_electronMVA();
+      leg1_passFail_electronMVA80 = currentPair.leg1().passFail_electronMVA80();
+      leg1_passFail_electronMVA90 = currentPair.leg1().passFail_electronMVA90();
+      leg1_passFail_electronCutBasedID = currentPair.leg1().passFail_electronCutBasedID();
+      leg1_ooEmooP = currentPair.leg1().ooEmooP();
+      leg1_full5x5_sigmaIetaIeta = currentPair.leg1().full5x5_sigmaIetaIeta();
       leg1_SuperClusterEta = currentPair.leg1().SuperClusterEta();
       leg1_hadronicOverEm = currentPair.leg1().hadronicOverEm();
       leg1_isEB = currentPair.leg1().isEB();
@@ -578,6 +599,7 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
       leg1_numberOfTrackHits = currentPair.leg1().numberOfTrackHits();
       leg1_passConversionVeto = currentPair.leg1().passConversionVeto();
       leg1_ZimpactTau = currentPair.leg1().ZimpactTau();
+      leg1_dzTauVertex = currentPair.leg1().dzTauVertex();
       leg1_numStrips = currentPair.leg1().numStrips();
       leg1_numHadrons = currentPair.leg1().numHadrons();
       leg2_leptonType = currentPair.leg2().leptonType();
@@ -611,7 +633,11 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
       leg2_muonInnerTrkValidFraction = currentPair.leg2().muonInnerTrkValidFraction();
       leg2_muonSegmentCompatibility = currentPair.leg2().muonSegmentCompatibility();
       leg2_raw_electronMVA = currentPair.leg2().raw_electronMVA();
-      leg2_passFail_electronMVA = currentPair.leg2().passFail_electronMVA();
+      leg2_passFail_electronMVA80 = currentPair.leg2().passFail_electronMVA80();
+      leg2_passFail_electronMVA90 = currentPair.leg2().passFail_electronMVA90();
+      leg2_passFail_electronCutBasedID = currentPair.leg2().passFail_electronCutBasedID();
+      leg2_ooEmooP = currentPair.leg2().ooEmooP();
+      leg2_full5x5_sigmaIetaIeta = currentPair.leg2().full5x5_sigmaIetaIeta();
       leg2_SuperClusterEta = currentPair.leg2().SuperClusterEta();
       leg2_hadronicOverEm = currentPair.leg2().hadronicOverEm();
       leg2_isEB = currentPair.leg2().isEB();
@@ -633,6 +659,8 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
       leg2_ZimpactTau = currentPair.leg2().ZimpactTau();
       leg2_numStrips = currentPair.leg2().numStrips();
       leg2_numHadrons = currentPair.leg2().numHadrons();
+      leg2_dzTauVertex = currentPair.leg2().dzTauVertex();
+
 
       leg2_pt = currentPair.leg2().p4().pt();
       leg2_gen_pt = currentPair.leg2().gen_p4().pt();
@@ -751,6 +779,14 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
       vertex_positionEta = currentINDEP.primaryVertex().position().eta();
       vertex_positionPhi = currentINDEP.primaryVertex().position().phi();
 
+      /* pileup & other weights */
+  
+      puWeight = currentINDEP.puWeight();
+      NumPileupInt = currentINDEP.NumPileupInt();
+      NumTruePileUpInt = currentINDEP.NumTruePileUpInt();
+      generatorEventWeight = currentINDEP.generatorEventWeight();
+      hepNUP = currentINDEP.hepNUP();
+
       /* process the jets */
       jethelper.init(currentINDEP.jets(),jetIDcut,BjetIDcut,
                 jetLeptonDRmin,currentPair.leg1(),currentPair.leg2());
@@ -801,7 +837,7 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
 
       /* fill the gen level info, for now ~ exaclty as in Ntuple */
 
-      genhelper.init(23, currentINDEP.genParticles(),currentPair.leg1(),currentPair.leg2(),
+      genhelper.init(currentINDEP.genParticles(),currentPair.leg1(),currentPair.leg2(),
                      currentPair.CandidateEventType());
 
       genParticle_pdgId = genhelper.genParticle_pdgId();
@@ -835,6 +871,11 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
       isDY_genZTTcase3 = genhelper.isDY_genZTTcase3();
       isDY_genZLL = genhelper.isDY_genZLL();
       isDY_genZJcase3 = genhelper.isDY_genZJcase3();
+
+      if(currentPair.leg1().leptonType() != TupleLeptonTypes::aTau)
+      { /* same for both legs, but current ntuple forgot to include this for taus */
+        rho = currentPair.leg1().rho("fixedGridRhoFastjetAll"); 
+      }
 
       FlatTuple->Fill();
 
@@ -921,7 +962,11 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
   leg1_muonInnerTrkValidFraction = NAN;
   leg1_muonSegmentCompatibility = NAN;
   leg1_raw_electronMVA = NAN;
-  leg1_passFail_electronMVA = NAN;
+  leg1_passFail_electronMVA80 = NAN;
+  leg1_passFail_electronMVA90 = NAN;
+  leg1_passFail_electronCutBasedID = NAN;
+  leg1_ooEmooP = NAN;
+  leg1_full5x5_sigmaIetaIeta = NAN;
   leg1_SuperClusterEta = NAN;
   leg1_hadronicOverEm = NAN;
   leg1_isEB = NAN;
@@ -941,6 +986,7 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
   leg1_numberOfTrackHits = NAN;
   leg1_passConversionVeto = NAN;
   leg1_ZimpactTau = NAN;
+  leg1_dzTauVertex = NAN;
   leg1_numStrips = NAN;
   leg1_numHadrons = NAN;
   leg2_dz = NAN;
@@ -969,7 +1015,11 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
   leg2_muonInnerTrkValidFraction = NAN;
   leg2_muonSegmentCompatibility = NAN;
   leg2_raw_electronMVA = NAN;
-  leg2_passFail_electronMVA = NAN;
+  leg2_passFail_electronMVA80 = NAN;
+  leg2_passFail_electronMVA90 = NAN;
+  leg2_passFail_electronCutBasedID = NAN;
+  leg2_ooEmooP = NAN;
+  leg2_full5x5_sigmaIetaIeta = NAN;  
   leg2_SuperClusterEta = NAN;
   leg2_hadronicOverEm = NAN;
   leg2_isEB = NAN;
@@ -991,6 +1041,8 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
   leg2_ZimpactTau = NAN;
   leg2_numStrips = NAN;
   leg2_numHadrons = NAN;
+  leg2_dzTauVertex = NAN;
+
 
   leg1_leptonType = -999;
   leg1_charge = -999;
@@ -1061,6 +1113,15 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
   vertex_positionEta = NAN;
   vertex_positionPhi = NAN;
 
+  puWeight = NAN;
+  NumPileupInt = NAN;
+  NumTruePileUpInt = NAN;
+  generatorEventWeight = NAN;
+  hepNUP = -999;
+
+
+
+
   numberOfJets = -999;
   numberOfBJets = -999;
   jets_pt.clear();
@@ -1118,7 +1179,7 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
   isDY_genZTTcase3 = 0;        
   isDY_genZLL = 0;             
   isDY_genZJcase3 = 0;         
-
+  rho  = NAN;
 
  }
 

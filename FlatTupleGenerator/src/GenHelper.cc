@@ -9,11 +9,10 @@ GenHelper::GenHelper(){}
 
 /* initialization function */
 
-void GenHelper::init(int Z_pdgID, std::vector<NtupleGenParticle> genVec, NtupleLepton leg1, NtupleLepton leg2, int CandidateEventType )
+void GenHelper::init(std::vector<NtupleGenParticle> genVec, NtupleLepton leg1, NtupleLepton leg2, int CandidateEventType )
 {
 
 	/* member data set to arguments */
-	m_Z_pdgID = Z_pdgID;
 	m_genVec.clear();
 	m_genVec = genVec;
 	m_leg1 = leg1;
@@ -174,12 +173,13 @@ void GenHelper::classifyTheEventForDY()
 /* simple check for Z->Tau Tau at GenLevel */
 bool GenHelper::isZXXatGenLevel(std::vector<NtupleGenParticle> genVec,int LEPPDGID)
 {
-  	int Z = m_Z_pdgID; /* the Z boson pdgID */
 	for(std::size_t g = 0; g < genVec.size(); ++g)
 	{
 
 		NtupleGenParticle GEN = genVec[g];  
-		if(abs(GEN.gen_pdgId())==Z)
+		if(abs(GEN.gen_pdgId())==23 || abs(GEN.gen_pdgId())==25 \
+			|| abs(GEN.gen_pdgId())==35 \
+			|| abs(GEN.gen_pdgId())==36 || abs(GEN.gen_pdgId())==37)
 		{
 			bool genlegP = 0;
 			bool genlegM = 0;
@@ -246,7 +246,6 @@ bool GenHelper::isRecoTauGenEorMuMatched(NtupleLepton legX,std::vector<NtupleGen
 /* checks if the reco tau is matched by DR<0.5 to an embedded gen electron or muon FROM A Z with pT > 8 */
 bool GenHelper::isRecoTauGenEorMu_FROMZ_Matched(NtupleLepton legX,std::vector<NtupleGenParticle> genVec)
 {
-	int Z = m_Z_pdgID; /* the Z boson pdgID */
 	for(std::size_t g = 0; g < genVec.size(); ++g)
 	{
 
@@ -257,10 +256,17 @@ bool GenHelper::isRecoTauGenEorMu_FROMZ_Matched(NtupleLepton legX,std::vector<Nt
 			{
 				if(deltaR(GEN.gen_p4(),legX.p4())<0.5)
 				{
-					/* now check mothers for a Z */
+					/* now check mothers for a Z or H */
 					for(std::size_t gg = 0; gg < GEN.mothers_pdgId().size(); ++gg)
 			   		{ 
-			    		if(GEN.mothers_pdgId()[gg]==Z) return 1;
+
+			    		if(GEN.mothers_pdgId()[gg]==23) return 1;
+			    		if(GEN.mothers_pdgId()[gg]==25) return 1;
+			    		if(GEN.mothers_pdgId()[gg]==35) return 1;
+			    		if(GEN.mothers_pdgId()[gg]==36) return 1;
+			    		if(GEN.mothers_pdgId()[gg]==37) return 1;
+
+
 			    	}
 				}
 			}

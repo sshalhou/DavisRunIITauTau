@@ -224,7 +224,11 @@ private:
 	/* electron ID related quanties, see CustomPatCollectionProducers/src/ElectronClones.cc */
 
 	float leg1_raw_electronMVA, leg2_raw_electronMVA;
-	float leg1_passFail_electronMVA, leg2_passFail_electronMVA;
+	float leg1_passFail_electronMVA80, leg2_passFail_electronMVA80;
+	float leg1_passFail_electronMVA90, leg2_passFail_electronMVA90;
+    float leg1_passFail_electronCutBasedID,leg2_passFail_electronCutBasedID;
+    float leg1_ooEmooP, leg2_ooEmooP;				
+    float leg1_full5x5_sigmaIetaIeta, leg2_full5x5_sigmaIetaIeta;
 	float leg1_SuperClusterEta, leg2_SuperClusterEta;
 	float leg1_hadronicOverEm, leg2_hadronicOverEm;
 	float leg1_isEB, leg2_isEB;
@@ -247,6 +251,7 @@ private:
 	/* tau related Info NEED TO ADD DOCUMENTATION TO WIKI*/
 	float leg1_ZimpactTau, leg2_ZimpactTau;
 	float leg1_numStrips, leg2_numStrips;
+	float leg1_dzTauVertex, leg2_dzTauVertex;
 	float leg1_numHadrons, leg2_numHadrons;
 	float leg1_tauIDs[THE_MAX]; 		/* leg 1 tau IDs */
 	float leg2_tauIDs[THE_MAX]; 		/* leg 2 tau IDs */
@@ -284,6 +289,14 @@ private:
 	double vertex_positionTheta;	 /* the primary vertex's position.theta()  */ 	
 	double vertex_positionEta;		 /* the primary vertex's position.eta()  */ 	
 	double vertex_positionPhi;		 /* the primary vertex's position.phi()  */ 	
+
+	/* pileUp & other weight info */
+
+	double puWeight;
+	float NumPileupInt;
+	float NumTruePileUpInt;
+	double generatorEventWeight;
+	int hepNUP;
 
 	/* jet/b-jet summary info */
 
@@ -360,6 +373,9 @@ private:
     bool isDY_genZLL;              /* (for tau_h+tau_h)  : gen. Z->e e or Z->m m is present, both tau_h have gen-e/mu (from Z) match */ 
     bool isDY_genZJcase3;          /* (for tau_h+tau_h) :  defined as !m_isDY_genZTTcase3 && !m_isDY_genZLL */
 
+  	/* things missing from sync tree */
+
+  	double rho;                    /* fixedGridRhoFastjetAll */
 
 
 

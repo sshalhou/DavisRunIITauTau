@@ -9,6 +9,8 @@
 #include "FlatTreeReader.h"
 #include "simpleQuantityPrint.h"
 #include "histogramLeptonQuantites.h"
+#include "generateH2TauSyncTree.h"
+
 
 int main(int argc, char* argv[])
 {
@@ -52,7 +54,7 @@ FlatTreeReader R(T);
 /* invoke the operations */
 simpleQuantityPrint 	 SQP(R,operations_map["simpleQuantityPrint"]);
 histogramLeptonQuantites HLQ(R,operations_map["histogramLeptonQuantites"]);
-
+generateH2TauSyncTree    SYNC(R,operations_map["generateH2TauSyncTree"]);
 
 long int entries = T->GetEntries();
 
@@ -73,7 +75,7 @@ for(long int e = 0; e<entries; ++e)
 	}
 
 	if(operations_map["histogramLeptonQuantites"]) HLQ.handleEvent();
-
+	if(operations_map["generateH2TauSyncTree"]) SYNC.handleEvent();
 
 ///////// EXAMPLE CODE SHOWING ACCESS  -- END
 
@@ -83,6 +85,7 @@ for(long int e = 0; e<entries; ++e)
 
 if(operations_map["simpleQuantityPrint"]) SQP.finish();
 if(operations_map["histogramLeptonQuantites"]) HLQ.finish();
+if(operations_map["generateH2TauSyncTree"]) SYNC.finish();
 
 
 return 0;	

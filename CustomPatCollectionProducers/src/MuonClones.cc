@@ -167,10 +167,10 @@ void muonClones::fillUserFloats()
 		//assert(m.innerTrack().isNonnull());
 
 
-		if (m.innerTrack().isNonnull())
+		if (m.muonBestTrack().isNonnull())
 		{
-		  	dxy = m.innerTrack()->dxy(first_vertex.position());
-	  		dz = m.innerTrack()->dz(first_vertex.position());
+		  	dxy = m.muonBestTrack()->dxy(first_vertex.position());
+	  		dz = m.muonBestTrack()->dz(first_vertex.position());
 		}
 
 
@@ -213,10 +213,15 @@ void muonClones::fillUserFloats()
 
 	  	// iso-related quantities
 
-	  	m.addUserFloat("chargedHadronIso", m.chargedHadronIso());
-		m.addUserFloat("neutralHadronIso", m.neutralHadronIso());
-		m.addUserFloat("photonIso", m.photonIso());
-		m.addUserFloat("PUchargedHadronIso",  m.puChargedHadronIso());
+		double chargedHadron = m.pfIsolationR03().sumChargedHadronPt;
+		double neutralHadron = m.pfIsolationR03().sumNeutralHadronEt;
+		double photonIso = m.pfIsolationR03().sumPhotonEt;
+		double PUchargedHadron = m.pfIsolationR03().sumPUPt;
+
+	  	m.addUserFloat("chargedHadronIso", chargedHadron);
+		m.addUserFloat("neutralHadronIso", neutralHadron);
+		m.addUserFloat("photonIso", photonIso);
+		m.addUserFloat("PUchargedHadronIso",  PUchargedHadron);
 
 
 

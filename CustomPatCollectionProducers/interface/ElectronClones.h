@@ -59,8 +59,7 @@ class electronClones
 
 
 	// the mva ID evaluators and the names of thier embedded userFloats
-	EGammaMvaEleEstimatorCSA14 & MVA_PHYS14nonTrig;
-	std::string & MVA_PHYS14nonTrig_NAME;
+	EGammaMvaEleEstimatorCSA14 & MVA_nonTrig;
 
 	// trigger related collections
 
@@ -78,7 +77,6 @@ class electronClones
 	public:
 		electronClones(const slimmedPatElectronCollection&, const reco::Vertex &,
 				EGammaMvaEleEstimatorCSA14 &, 
-				std::string &,
 				edm::Handle<edm::TriggerResults> &,
 				edm::Handle<pat::TriggerObjectStandAloneCollection> &,
 				edm::Handle<pat::PackedTriggerPrescales>&,
@@ -95,7 +93,8 @@ class electronClones
 		void clone();
 		void fillUserFloats();		  
 		/* return a pass/fail based on MVA score, pt, and absSuperClusterEta */
-		float passedPhys14MVA(float, float, float); 
+		float passedMVA(float, float, float, int);  /* int is 80 or 90 for WP */
+		float passedCutBasedID(pat::Electron&); 
 
 };
 

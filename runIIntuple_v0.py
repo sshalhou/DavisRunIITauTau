@@ -69,8 +69,8 @@ from JetMETCorrections.Configuration.DefaultJEC_cff import *
 ###################################
 
 myfilelist = cms.untracked.vstring()
-#myfilelist.extend(['file:/uscms_data/d3/shalhout/Phys14signal_miniAOD.root'])
-myfilelist.extend(['file:/uscms_data/d3/shalhout/Phys14DYJetsToLL_miniAOD.root'])
+myfilelist.extend(['file:/uscms_data/d3/shalhout/Phys14signal_miniAOD.root'])
+#myfilelist.extend(['file:/uscms_data/d3/shalhout/Phys14DYJetsToLL_miniAOD.root'])
 process.source = cms.Source("PoolSource",fileNames=myfilelist)
 
 
@@ -374,7 +374,7 @@ process.e = cms.EndPath(process.out)
 
 
 process.options   = cms.untracked.PSet( wantSummary = cms.untracked.bool(True) )
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(1500) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
 
 
 

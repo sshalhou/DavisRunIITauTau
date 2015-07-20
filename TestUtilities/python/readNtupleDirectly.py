@@ -21,8 +21,8 @@ options.parseArguments()
 doExample1 = False
 doExample2 = False
 doExample3 = False
-doExample4 = False
-doExample5 = True
+doExample4 = True
+doExample5 = False
 
 ####################################
 # EX-1 : print candidateType & isolations

@@ -87,8 +87,13 @@ public:
 	float ZimpactTau() const;
 	float numStrips() const;
 	float numHadrons() const;
+	float dzTauVertex() const;
 	float raw_electronMVA() const; 
-	float passFail_electronMVA() const; 
+	float passFail_electronMVA80() const; 
+	float passFail_electronMVA90() const; 
+    float passFail_electronCutBasedID() const;   
+    float ooEmooP() const;         				
+    float full5x5_sigmaIetaIeta() const;   
 	float TauEsVariant() const; 
 	float IP() const; 								
 	float IPerror() const; 							
@@ -189,7 +194,11 @@ private:
 	// paramenters meaningful for electrons only
 	//////////////////////////////////////////////////
     float m_raw_electronMVA;						//  value of electron MVA score
-    float m_passFail_electronMVA;         			//  pass fail of electron MVA 
+    float m_passFail_electronMVA80;         			//  pass fail of electron MVA 
+    float m_passFail_electronMVA90;         			//  pass fail of electron MVA 
+    float m_passFail_electronCutBasedID;         		//  pass fail of electron cut-based veto ID 
+    float m_ooEmooP;         							//  used for electron cut-based veto ID 
+    float m_full5x5_sigmaIetaIeta;         				//  used for electron cut-based veto ID 
 	float m_SuperClusterEta;
 	float m_hadronicOverEm;
 	float m_isEB;
@@ -218,7 +227,7 @@ private:
 	float m_numStrips;								//  number strips
 	float m_numHadrons;								//	number hadrons
 	stringFloatPairVec m_tauIDs;                    //  pair rho name : value 
-	
+	float m_dzTauVertex; 							//  tau.z - vertex.z
 
 
 

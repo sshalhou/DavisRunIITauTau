@@ -15,18 +15,18 @@ ele_EleTau.append("pt>23")
 ele_EleTau.append("abs(eta)<2.1")
 ele_EleTau.append("abs(dxy)<0.045")
 ele_EleTau.append("abs(dz)<0.2")
-ele_EleTau.append("relativeIsol('DeltaBetaCorrectedRelIso')<0.1")
-ele_EleTau.append("passFail_electronMVA==1.0")
+ele_EleTau.append("passFail_electronMVA80==1.0")
+#ele_EleTau.append("relativeIsol('DeltaBetaCorrectedRelIso')<0.1")
 
 
 # electron in EleMuon final state :
 ele_EleMuon = []
-ele_EleMuon.append("pt>20")
+ele_EleMuon.append("pt>13")
 ele_EleMuon.append("abs(eta)<2.5")
 ele_EleMuon.append("abs(dxy)<0.045")
 ele_EleMuon.append("abs(dz)<0.2")
-ele_EleMuon.append("relativeIsol('DeltaBetaCorrectedRelIso')<0.15")
-ele_EleMuon.append("passFail_electronMVA==1.0")
+ele_EleMuon.append("passFail_electronMVA80==1.0")
+#ele_EleMuon.append("relativeIsol('DeltaBetaCorrectedRelIso')<0.15")
 
 
 # muon in MuonTau final state :
@@ -35,50 +35,48 @@ muon_MuonTau.append("pt>18")
 muon_MuonTau.append("abs(eta)<2.1")
 muon_MuonTau.append("abs(dxy)<0.045")
 muon_MuonTau.append("abs(dz)<0.2")
-muon_MuonTau.append("relativeIsol('DeltaBetaCorrectedRelIso')<0.1")
 muon_MuonTau.append("passesMediumMuonId==1.0")
+#muon_MuonTau.append("relativeIsol('DeltaBetaCorrectedRelIso')<0.1")
 
 
 # muon in EleMuon final state :
 muon_EleMuon = []
-muon_EleMuon.append("pt>10")
-muon_EleMuon.append("abs(eta)<2.5")
+muon_EleMuon.append("pt>9")
+muon_EleMuon.append("abs(eta)<2.4")
 muon_EleMuon.append("abs(dxy)<0.045")
 muon_EleMuon.append("abs(dz)<0.2")
-muon_EleMuon.append("relativeIsol('DeltaBetaCorrectedRelIso')<0.15")
 muon_EleMuon.append("passesMediumMuonId==1.0")
+#muon_EleMuon.append("relativeIsol('DeltaBetaCorrectedRelIso')<0.15")
+
+
+
+
+# tau in MuonTau final state :
+tau_MuonTau = []
+tau_MuonTau.append("pt>20")
+tau_MuonTau.append("abs(eta)<2.3")
+tau_MuonTau.append("tauID('decayModeFindingNewDMs') > 0.5")                                        
+tau_MuonTau.append("abs(dz)<0.2")
+tau_MuonTau.append("abs(dzTauVertex)==0.0")
 
 
 # tau in TauTau final state :
 tau_TauTau = []
-tau_TauTau.append("abs(dz)==0.0")
-tau_TauTau.append("tauID('byCombinedIsolationDeltaBetaCorrRaw3Hits')<1.0")
 tau_TauTau.append("pt>45")
 tau_TauTau.append("abs(eta)<2.1")
-tau_TauTau.append("(tauID('decayModeFinding')>0.5 ||  tauID('decayModeFindingNewDMs') > 0.5)")                                        
-tau_TauTau.append("tauID('againstElectronVLooseMVA5')>0.5")
-tau_TauTau.append("tauID('againstMuonLoose3')>0.5")
+tau_TauTau.append("tauID('decayModeFindingNewDMs') > 0.5")                                        
+tau_TauTau.append("abs(dz)<0.2")
+tau_TauTau.append("abs(dzTauVertex)==0.0")
 
 
 # tau in EleTau final state :
 tau_EleTau = []
-tau_EleTau.append("abs(dz)==0.0")
-tau_EleTau.append("tauID('byCombinedIsolationDeltaBetaCorrRaw3Hits')<1.0")
 tau_EleTau.append("pt>20")
 tau_EleTau.append("abs(eta)<2.3")
-tau_EleTau.append("(tauID('decayModeFinding')>0.5 ||  tauID('decayModeFindingNewDMs') > 0.5)")                                        
-tau_EleTau.append("tauID('againstElectronTightMVA5')>0.5")
-tau_EleTau.append("tauID('againstMuonLoose3')>0.5")
+tau_EleTau.append("tauID('decayModeFindingNewDMs') > 0.5")                                        
+tau_EleTau.append("abs(dz)<0.2")
+tau_EleTau.append("abs(dzTauVertex)==0.0")
 
-# tau in MuonTau final state :
-tau_MuonTau = []
-tau_MuonTau.append("abs(dz)==0.0")
-tau_MuonTau.append("tauID('byCombinedIsolationDeltaBetaCorrRaw3Hits')<1.0")
-tau_MuonTau.append("pt>20")
-tau_MuonTau.append("abs(eta)<2.3")
-tau_MuonTau.append("(tauID('decayModeFinding')>0.5 ||  tauID('decayModeFindingNewDMs') > 0.5)")                                        
-tau_MuonTau.append("tauID('againstElectronVLooseMVA5')>0.5")
-tau_MuonTau.append("tauID('againstMuonTight3')>0.5")
 
 
 
@@ -175,11 +173,23 @@ generalConfig = cms.PSet(
 			# number of these that we can keep 
 
 			tauIDsToKeep = cms.vstring(
-				"byCombinedIsolationDeltaBetaCorrRaw3Hits",
-				"decayModeFindingNewDMs",
+				"againstElectronLooseMVA5",
+				"againstElectronMediumMVA5",
+				"againstElectronTightMVA5",
 				"againstElectronVLooseMVA5",
+				"againstElectronVTightMVA5",
 				"againstMuonLoose3",
-				"againstElectronMediumMVA5"),
+				"againstMuonTight3",
+				"byCombinedIsolationDeltaBetaCorrRaw3Hits",
+				"byIsolationMVA3newDMwoLTraw",
+				"byIsolationMVA3oldDMwoLTraw",
+				"byIsolationMVA3newDMwLTraw",
+				"byIsolationMVA3oldDMwLTraw",
+				"chargedIsoPtSum",
+				#"decayModeFindingOldDMs",
+				"neutralIsoPtSum",
+				"puCorrPtSum",	
+				"decayModeFindingNewDMs"),
 
 			###################
 			# jet & bjet ID cut strings

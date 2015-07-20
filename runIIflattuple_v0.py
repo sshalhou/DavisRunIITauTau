@@ -9,7 +9,14 @@ process.MessageLogger.cerr.FwkReport.reportEvery = cms.untracked.int32(50)
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
 
 
+from DavisRunIITauTau.InputFlatFiles.FlatFileLists import testList
+
 myfilelist = cms.untracked.vstring()
+# for aFile in testList:
+# 	formatted_name = "file:"+aFile
+# 	print 'adding file', formatted_name
+# 	myfilelist.extend([formatted_name])
+
 myfilelist.extend(['file:/uscms_data/d3/shalhout/RunIIWorking/CMSSW_7_2_3_patch1/src/NtupleFile.root'])
 #myfilelist.extend(['file:/uscms_data/d3/shalhout/RunIIWorking/CMSSW_7_2_3_patch1/src/NtupleFile_SIGNAL.root'])
 #myfilelist.extend(['file:/uscms_data/d3/shalhout/RunIIWorking/CMSSW_7_2_3_patch1/src/NtupleFile_DY.root'])
@@ -51,6 +58,7 @@ process.NOCUTS = cms.EDAnalyzer('FlatTupleGenerator',
 	)
 
 process.p = cms.Path(process.PASSCUTS + process.NOCUTS)
+#process.p = cms.Path(process.PASSCUTS)
 
 # -- end test
 

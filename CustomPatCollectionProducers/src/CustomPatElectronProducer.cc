@@ -232,8 +232,7 @@ CustomPatElectronProducer::produce(edm::Event& iEvent, const edm::EventSetup& iS
 
   // clone & fill the electron with user-computed quantities including mva
 
-  std::string MVA_NonTrigPhys14_name = "MVA_NonTrigPhys14";
-  electronClones ele(electrons,first_vertex,MVA_NonTrigPhys14,MVA_NonTrigPhys14_name,
+  electronClones ele(electrons,first_vertex,MVA_NonTrigPhys14,
                     triggerBits,triggerObjects,triggerPreScales,names,                    
                     rhoNames,rhos); 
 

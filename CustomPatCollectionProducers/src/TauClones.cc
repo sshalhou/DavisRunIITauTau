@@ -144,12 +144,13 @@ void TauClones::ChangeEnergyAndFillUserFloats(std::vector <pat::Tau> & clones,
 	  	// dxy and dz
 	  	// to be updated for taus
 
-		float dz = t.vertex().z() - first_vertex.z();
-
+		float dzTauVertex = t.vertex().z() - first_vertex.z();
+	  	pat::PackedCandidate const* packedLeadTauCand = dynamic_cast<pat::PackedCandidate const*>(t.leadChargedHadrCand().get());
+	  	float dz = packedLeadTauCand->dz();
 
 	  	t.addUserFloat("dxy",t.dxy());
 	  	t.addUserFloat("dz",dz);
-
+	  	t.addUserFloat("dzTauVertex",dzTauVertex);
 
 	  	////////////////////
 	  	// ZimpactTau

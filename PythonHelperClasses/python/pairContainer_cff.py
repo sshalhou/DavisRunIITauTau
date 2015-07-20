@@ -165,6 +165,19 @@ class PairWiseMetHelper:
 	def runPairWiseMets(self,p):
 		pairMets = cms.Sequence()		
 	
+		# electron + muon
+		if BUILD_ELECTRON_MUON is True :
+			for i in range(0, self.max_leptons+1):
+				for j in range(i+1, self.max_leptons+1):
+					moduleName = "mvaMetElectronxMuon"+str(i)+"x"+str(j)
+					lep1SrcColl = cms.InputTag(self.electronList[i])
+					lep2SrcColl = cms.InputTag(self.muonList[j])
+					module = self.process.pfMVAMEt.clone(
+							srcLeptons = cms.VInputTag(lep1SrcColl,lep2SrcColl))
+					setattr(self.process, moduleName, module)
+					self.LepPairAndMetList.append([lep1SrcColl,lep2SrcColl,cms.InputTag(moduleName+':'+':Ntuple'),str(i)+"x"+str(j)])
+					pairMets += module
+
 		# electron + electron
 		if BUILD_ELECTRON_ELECTRON is True :
 			for i in range(0, self.max_leptons+1):
@@ -394,11 +407,11 @@ class PairWiseMetHelper:
 							mvaMETSrc = leplepmet[2],
 						    electronVetoSrc =cms.InputTag("filteredVetoElectrons","","Ntuple"),
 						    muonVetoSrc = cms.InputTag("filteredVetoMuons","","Ntuple"),				
-						    pairDeltaRmin = cms.double(0.1), 
+						    pairDeltaRmin = cms.double(0.3), 
 						    # should be small since don't want one of the pair in the veto list
 						    # note : this is used for DR(leg1, leg2) >, and for overlap removal from the
 						    # veto e and mu lists
-						    vetoDeltaRmin = cms.double(0.1), 
+						    vetoDeltaRmin = cms.double(0.15), 
 							NAME=cms.string(moduleName),
 						    doSVMass = cms.bool(COMPUTE_SVMASS),
 						    useMVAMET = cms.bool(USE_MVAMET),

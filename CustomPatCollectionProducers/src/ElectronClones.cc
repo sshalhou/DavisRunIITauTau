@@ -30,7 +30,6 @@ typedef edm::Handle<edm::View<pat::Electron> > 	slimmedPatElectronCollection;
 
 electronClones::electronClones(const slimmedPatElectronCollection& inputColl, const reco::Vertex & input_vertex,
 				EGammaMvaEleEstimatorCSA14 & MVA_PHYS14nonTrig_, 
-				std::string & MVA_PHYS14nonTrig_NAME_,
 				edm::Handle<edm::TriggerResults> & triggerBits_,
 				edm::Handle<pat::TriggerObjectStandAloneCollection> & triggerObjects_,
 				edm::Handle<pat::PackedTriggerPrescales> & triggerPreScales_,
@@ -39,8 +38,7 @@ electronClones::electronClones(const slimmedPatElectronCollection& inputColl, co
 				std::vector<double> rhoValues_):
 		electrons(inputColl),
 		first_vertex(input_vertex),
-		MVA_PHYS14nonTrig(MVA_PHYS14nonTrig_),
-		MVA_PHYS14nonTrig_NAME(MVA_PHYS14nonTrig_NAME_),
+		MVA_nonTrig(MVA_PHYS14nonTrig_),
 		triggerBits(triggerBits_),
 		triggerObjects(triggerObjects_),
 		triggerPreScales(triggerPreScales_),
@@ -58,37 +56,112 @@ electronClones::electronClones(const slimmedPatElectronCollection& inputColl, co
 
 electronClones::~electronClones(){ clones.clear();}
 
+// cut based veto electron ID
+
+float electronClones::passedCutBasedID(pat::Electron& e)
+{	
+	float ABS_SC_ETA = abs(e.superCluster()->eta());
+
+	float c_dEtaIn  = 0;
+	float c_dPhiIn  = 0;
+	float c_full5x5_sigmaIetaIeta  = 0;
+	float c_hOverE  = 0;
+	float c_d0  = 0;
+	float c_dz  = 0;
+	float c_ooEmooP  = 0;
+	float c_relIso  = 0;
+	float c_expectedMissingInnerHits  = 0;
+
+	if(ABS_SC_ETA<= 1.479)
+	{
+		c_dEtaIn  = 				 0.013625;
+		c_dPhiIn  = 				 0.230374;
+		c_full5x5_sigmaIetaIeta  =   0.011586;
+		c_hOverE  =					 0.181130;
+		c_d0  = 					 0.094095; 	
+		c_dz  = 					 0.713070;
+		c_ooEmooP  = 				 0.295751;
+		c_relIso   = 				 0.158721;
+		c_expectedMissingInnerHits = 2;
+
+	}
+
+	else if(ABS_SC_ETA > 1.479 && ABS_SC_ETA < 2.5 )  	
+	{
+		c_dEtaIn  = 				 0.011932;
+		c_dPhiIn  = 				 0.255450;
+		c_full5x5_sigmaIetaIeta  =   0.031849;
+		c_hOverE  =					 0.223870;
+		c_d0  = 					 0.342293; 	
+		c_dz  = 					 0.953461;
+		c_ooEmooP  = 				 0.155501;
+		c_relIso   = 				 0.177032;
+		c_expectedMissingInnerHits = 3;
+
+	}
+
+	if(!( fabs(e.deltaEtaSuperClusterTrackAtVtx()) < c_dEtaIn)) return 0;
+	if(!( fabs(e.deltaPhiSuperClusterTrackAtVtx()) < c_dPhiIn)) return 0;
+	if(!( e.full5x5_sigmaIetaIeta() < c_full5x5_sigmaIetaIeta)) return 0;
+	if(!( e.hadronicOverEm() < c_hOverE)) return 0;
+	if(!( fabs(e.userFloat("dxy")) < c_d0)) return 0;
+	if(!( fabs(e.userFloat("dz")) < c_dz)) return 0;
+	if(!( e.userFloat("ooEmooP") < c_ooEmooP)) return 0;
+	if(!( e.userFloat("relativeIsol_DeltaBetaCorrectedRelIso") < c_relIso)) return 0;
+	if(!( e.userFloat("numberOfMissingInnerHits") <=  c_expectedMissingInnerHits)) return 0;
+	if(!( e.passConversionVeto())) return 0;
+
+	return 1.0;
+}
+
 
 // pass-fail phys 14 MVA 
 // return a pass/fail based on MVA score, pt, and absSuperClusterEta */
+//		float passedCutBasedID(float, float, float); 
 
-float electronClones::passedPhys14MVA(float MVAOUT, float PT, float ABS_SUPERCLUSTER_ETA)
+
+float electronClones::passedMVA(float MVAOUT, float PT, float ABS_SUPERCLUSTER_ETA, int WP)
 {
 	float returnVal = 0.0;
 	float ABSETA  = fabs(ABS_SUPERCLUSTER_ETA); // always ensure abs
 
+	float low[3] = {-999.0,-999.0,-999.0};
+	float high[3] = {-999.0,-999.0,-999.0};
+
+	if(WP==80)
+	{
+		low[0] = -0.253;
+		low[1] = 0.081;
+		low[2] = -0.081;
+		high[0] = 0.965;
+		high[1] = 0.917;
+		high[2] =  0.683;
+	}
+	else if(WP==90)
+	{
+		low[0] = -0.483;
+		low[1] = -0.267;
+		low[2] = -0.323;
+		high[0] = 0.933;
+		high[1] = 0.825;
+		high[2] = 0.337;
+	}
 
 	// low-pt
 	if(PT <= 10.0)
 	{
-
-		if(ABSETA < 0.8 && MVAOUT > -0.202) return 1.0;
-		else if(ABSETA >= 0.8 && ABSETA<1.479 && MVAOUT > -0.444) return 1.0;
-		else if(ABSETA >= 1.479 && MVAOUT >  0.264) return 1.0;
-
+		if(ABSETA < 0.8 && MVAOUT > low[0]) return 1.0;
+		else if(ABSETA >= 0.8 && ABSETA<1.479 && MVAOUT > low[1] ) return 1.0;
+		else if(ABSETA >= 1.479 && MVAOUT >  low[2]) return 1.0;
 	}
 
 
 	// high-pt
 	else if(PT>10.0)
 	{
-
-		if(ABSETA < 0.8 && MVAOUT > -0.110 ) return 1.0;
-		else if(ABSETA >= 0.8 && ABSETA<1.479 && MVAOUT > -0.284) return 1.0;
-		else if(ABSETA >= 1.479 && MVAOUT > -0.212) return 1.0;
-
-
-
+		if(ABSETA < 0.8 && MVAOUT > high[0]  ) return 1.0;
+		else if(ABSETA >= 0.8 && ABSETA<1.479 && MVAOUT > high[1] ) return 1.0;
+		else if(ABSETA >= 1.479 && MVAOUT > high[2] ) return 1.0;
 	}
 
 
@@ -245,10 +318,16 @@ void electronClones::fillUserFloats()
 
 	  	// iso-related quantities
 
-	  	e.addUserFloat("chargedHadronIso", e.chargedHadronIso());
-		e.addUserFloat("neutralHadronIso", e.neutralHadronIso());
-		e.addUserFloat("photonIso", e.photonIso());
-		e.addUserFloat("PUchargedHadronIso",  e.puChargedHadronIso());
+	  	double chargedHadron = e.pfIsolationVariables().sumChargedHadronPt;
+		double neutralHadron = e.pfIsolationVariables().sumNeutralHadronEt;
+		double photonIso = e.pfIsolationVariables().sumPhotonEt;
+		double PUchargedHadron = e.pfIsolationVariables().sumPUPt;
+
+
+	  	e.addUserFloat("chargedHadronIso", chargedHadron);
+		e.addUserFloat("neutralHadronIso", neutralHadron);
+		e.addUserFloat("photonIso", photonIso);
+		e.addUserFloat("PUchargedHadronIso",  PUchargedHadron);
 
 
 
@@ -277,15 +356,35 @@ void electronClones::fillUserFloats()
 	  	///////////////////////////
 	  	// evaluate and add the mva IDs 
 
-	  	float mva_val = MVA_PHYS14nonTrig.mvaValue(e,false);
-	    e.addUserFloat(MVA_PHYS14nonTrig_NAME,mva_val);
+	  	float mva_val = MVA_nonTrig.mvaValue(e,false);
+	    e.addUserFloat("MVA_nonTrig_raw",mva_val);
 
 	  	///////////////////////////
 	    // once ready add the pass/fail based on the mva
 
-	    float passMVA14 = passedPhys14MVA(mva_val, e.pt(), absSuperClusterEta);
-	    e.addUserFloat("PASS_"+MVA_PHYS14nonTrig_NAME,passMVA14);
+	    float passMVA80 = passedMVA(mva_val, e.pt(), absSuperClusterEta,80);
+	    e.addUserFloat("PASS_nonTrigMVA80",passMVA80);
 
+	    float passMVA90 = passedMVA(mva_val, e.pt(), absSuperClusterEta,90);
+	    e.addUserFloat("PASS_nonTrigMVA90",passMVA90);
+
+	    ////////////////
+	    // evaluate the cut based electron ID, and add some variables it needs
+
+	    float ooEmooP = 999.0;   /* What is this? copied from online CMSSW examples */
+	    if(e.ecalEnergy() == 0 || !std::isfinite(e.ecalEnergy()) ) ooEmooP = 1e30;
+	    else
+	    {
+	    	ooEmooP = fabs(1.0/e.ecalEnergy() - e.eSuperClusterOverP()/e.ecalEnergy() );
+	    }
+	    e.addUserFloat("ooEmooP",ooEmooP);
+	    e.addUserFloat("full5x5_sigmaIetaIeta",e.full5x5_sigmaIetaIeta());
+
+
+	    /* last call because needs all addUserFloats filled */
+	  
+	    float passCutBasedVetoID = passedCutBasedID(e);
+	   	e.addUserFloat("passCutBasedVetoID",passCutBasedVetoID);
 
 	  	///////////////////////////
 	  	clones[i] = e;
