@@ -194,7 +194,7 @@ generalConfig = cms.PSet(
 			###################
 			# jet & bjet ID cut strings
 			jetLeptonDRmin = cms.double(0.5),
-			jetIDcut = cms.string("pt>30 && abs(eta) < 4.7 && PU_jetIdPassed && PF_jetIdPassed"),
+			jetIDcut = cms.string("pt>20 && abs(eta) < 4.7 && PU_jetIdPassed && PF_jetIdPassed"),
 			BjetIDcut = cms.string("pt>20 && abs(eta) < 2.4 && PU_jetIdPassed && PF_jetIdPassed && defaultBtagAlgorithm_isPassed")
 
 					)

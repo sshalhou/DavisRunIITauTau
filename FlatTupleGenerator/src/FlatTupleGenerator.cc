@@ -291,6 +291,8 @@ LeptonCutVecSrc_(iConfig.getParameter<std::vector<edm::ParameterSet>>("LeptonCut
   FlatTuple->Branch("hepNUP",&hepNUP);
 
   FlatTuple->Branch("numberOfJets", &numberOfJets);
+  FlatTuple->Branch("numberOfJets30", &numberOfJets30);
+
   FlatTuple->Branch("numberOfBJets", &numberOfBJets);
   FlatTuple->Branch("jets_pt", &jets_pt);
   FlatTuple->Branch("jets_eta", &jets_eta);
@@ -797,10 +799,14 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
 
       numberOfJets =   goodJets.size();
       numberOfBJets =  goodBJets.size();
+      numberOfJets30 = 0;
+
+
 
       /* now fill the FlatTuple jet vector */
       for(std::size_t j=0; j<goodJets.size(); ++j)
-      {        
+      {      
+        if(goodJets[j].jet_p4().pt()>30) numberOfJets30++;  
         jets_pt.push_back(goodJets[j].jet_p4().pt());
         jets_eta.push_back(goodJets[j].jet_p4().eta());
         jets_phi.push_back(goodJets[j].jet_p4().phi());
@@ -1121,7 +1127,7 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
 
 
 
-
+  numberOfJets30 = -999;
   numberOfJets = -999;
   numberOfBJets = -999;
   jets_pt.clear();

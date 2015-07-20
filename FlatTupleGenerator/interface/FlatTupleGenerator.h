@@ -301,6 +301,7 @@ private:
 	/* jet/b-jet summary info */
 
 	int numberOfJets;  /* overall number of jets passing jet selection */
+	int numberOfJets30;  /* overall number of jets passing jet selection + pT > 30 cut */
 	int numberOfBJets;  /* overall number of btagged jets passing b-jet selection, can overlap with numberOfJets */
 
 	/* Good Jets (passing JetCuts, ranked in Pt) info, note JEC info is to be added */
