@@ -268,11 +268,18 @@ LeptonCutVecSrc_(iConfig.getParameter<std::vector<edm::ParameterSet>>("LeptonCut
   FlatTuple->Branch("veto_eta", &veto_eta);
   FlatTuple->Branch("veto_phi", &veto_phi);
   FlatTuple->Branch("veto_M", &veto_M);
+  FlatTuple->Branch("veto_charge", &veto_charge);
+
   FlatTuple->Branch("veto_dxy", &veto_dxy);
   FlatTuple->Branch("veto_dz", &veto_dz);
   FlatTuple->Branch("veto_RelIso", &veto_RelIso);
   FlatTuple->Branch("veto_passesMediumMuonId", &veto_passesMediumMuonId);
   FlatTuple->Branch("veto_rawElectronMVA", &veto_rawElectronMVA);
+
+  FlatTuple->Branch("veto_passElectronMVA90", &veto_passElectronMVA90);
+  FlatTuple->Branch("veto_passElectronCutBased", &veto_passElectronCutBased);
+  FlatTuple->Branch("veto_isTrackerGlobalPFMuon", &veto_isTrackerGlobalPFMuon);
+
   FlatTuple->Branch("NumberOfGoodVertices",&NumberOfGoodVertices);
   FlatTuple->Branch("vertex_NDOF",&vertex_NDOF);
   FlatTuple->Branch("vertex_CHI2",&vertex_CHI2);
@@ -733,7 +740,7 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
         leg2_RelIso = currentPair.leg2().tauID(tauIsolationForRelIsoBranch);
       }
 
-      /* fill veto lepton parameters */
+      /* fill veto lepton parameters, MUST FILL IN SAME ORDER FOR ELECTRONS & MUONS */
 
       for(std::size_t v = 0; v<currentPair.vetoElectron().size(); ++v)
       {
@@ -746,7 +753,11 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
           veto_dz.push_back(currentPair.vetoElectron()[v].dz());
           veto_passesMediumMuonId.push_back(currentPair.vetoElectron()[v].passesMediumMuonId());
           veto_rawElectronMVA.push_back(currentPair.vetoElectron()[v].raw_electronMVA());
+          veto_passElectronMVA90.push_back(currentPair.vetoElectron()[v].passFail_electronMVA90());
+          veto_passElectronCutBased.push_back(currentPair.vetoElectron()[v].passFail_electronCutBasedID());
+          veto_isTrackerGlobalPFMuon.push_back(0.0);         
           veto_RelIso.push_back(currentPair.vetoElectron()[v].relativeIsol(electronIsolationForRelIsoBranch));
+          veto_charge.push_back(currentPair.vetoElectron()[v].charge());
       }
 
       for(std::size_t v = 0; v<currentPair.vetoMuon().size(); ++v)
@@ -760,7 +771,17 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
           veto_dz.push_back(currentPair.vetoMuon()[v].dz());
           veto_passesMediumMuonId.push_back(currentPair.vetoMuon()[v].passesMediumMuonId());
           veto_rawElectronMVA.push_back(currentPair.vetoMuon()[v].raw_electronMVA());
+          veto_passElectronMVA90.push_back(currentPair.vetoMuon()[v].passFail_electronMVA90());
+          veto_passElectronCutBased.push_back(currentPair.vetoMuon()[v].passFail_electronCutBasedID());
+         
+          float isTrackerGlobalPFMuon = (currentPair.vetoMuon()[v].isTrackerMuon() && \
+                                         currentPair.vetoMuon()[v].isGlobalMuon() && \
+                                         currentPair.vetoMuon()[v].isPFMuon());
+          
+
+          veto_isTrackerGlobalPFMuon.push_back(isTrackerGlobalPFMuon);         
           veto_RelIso.push_back(currentPair.vetoMuon()[v].relativeIsol(muonIsolationForRelIsoBranch));
+          veto_charge.push_back(currentPair.vetoMuon()[v].charge());
 
       }
 
@@ -1102,11 +1123,16 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
   veto_eta.clear(); 
   veto_phi.clear(); 
   veto_M.clear(); 
+  veto_charge.clear(); 
   veto_dxy.clear(); 
   veto_dz.clear(); 
   veto_RelIso.clear(); 
   veto_passesMediumMuonId.clear(); 
   veto_rawElectronMVA.clear(); 
+
+  veto_passElectronMVA90.clear(); 
+  veto_passElectronCutBased.clear(); 
+  veto_isTrackerGlobalPFMuon.clear(); 
 
   NumberOfGoodVertices = -999;
   vertex_NDOF = NAN;

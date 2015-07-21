@@ -12,12 +12,12 @@ process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
 from DavisRunIITauTau.InputFlatFiles.FlatFileLists import testList
 
 myfilelist = cms.untracked.vstring()
-# for aFile in testList:
-# 	formatted_name = "file:"+aFile
-# 	print 'adding file', formatted_name
-# 	myfilelist.extend([formatted_name])
+for aFile in testList:
+	formatted_name = "file:"+aFile
+	print 'adding file', formatted_name
+	myfilelist.extend([formatted_name])
 
-myfilelist.extend(['file:/uscms_data/d3/shalhout/RunIIWorking/CMSSW_7_2_3_patch1/src/NtupleFile.root'])
+#myfilelist.extend(['file:/uscms_data/d3/shalhout/RunIIWorking/CMSSW_7_2_3_patch1/src/NtupleFile.root'])
 #myfilelist.extend(['file:/uscms_data/d3/shalhout/RunIIWorking/CMSSW_7_2_3_patch1/src/NtupleFile_SIGNAL.root'])
 #myfilelist.extend(['file:/uscms_data/d3/shalhout/RunIIWorking/CMSSW_7_2_3_patch1/src/NtupleFile_DY.root'])
 
@@ -57,8 +57,8 @@ process.NOCUTS = cms.EDAnalyzer('FlatTupleGenerator',
 	LeptonCutVecSrc = cms.VPSet()
 	)
 
-process.p = cms.Path(process.PASSCUTS + process.NOCUTS)
-#process.p = cms.Path(process.PASSCUTS)
+#process.p = cms.Path(process.PASSCUTS + process.NOCUTS)
+process.p = cms.Path(process.PASSCUTS)
 
 # -- end test
 
@@ -66,5 +66,7 @@ process.p = cms.Path(process.PASSCUTS + process.NOCUTS)
 
 
 process.TFileService = cms.Service("TFileService",
-    fileName = cms.string("FlatTuple.root")
+    fileName = cms.string("FlatTupleFULL_VBFv2.root")
+    #fileName = cms.string("FlatTuple.root")
+
 )

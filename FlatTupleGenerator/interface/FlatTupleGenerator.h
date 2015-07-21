@@ -272,11 +272,15 @@ private:
 	std::vector<double> veto_eta; 
 	std::vector<double> veto_phi;
 	std::vector<double> veto_M; 
+	std::vector<int> veto_charge; 
 	std::vector<float> veto_dxy;  /* lepton dxy see CustomPatCollectionProducers/src/{Electron,Muon,Tau}Clones.cc */
 	std::vector<float> veto_dz;	  /* lepton dz see CustomPatCollectionProducers/src/{Electron,Muon,Tau}Clones.cc */
 	std::vector<float> veto_RelIso;
 	std::vector<float> veto_passesMediumMuonId;
 	std::vector<float> veto_rawElectronMVA;
+	std::vector<float> veto_passElectronMVA90;
+	std::vector<float> veto_passElectronCutBased;
+	std::vector<float> veto_isTrackerGlobalPFMuon;
 
 	/* primary vertex info */
 	int NumberOfGoodVertices; /* total number of good PV, see ConfigTupleOfflineVertices_cfi */ 

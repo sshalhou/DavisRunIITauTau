@@ -1,5 +1,6 @@
 /* class generateH2TauSyncTree 
 generate the H2TauTau group's standard sync trees (one tree produced per channel)
+see : https://twiki.cern.ch/twiki/bin/viewauth/CMS/HiggsToTauTauWorking2015#Synchronisation_Ntuple
 -- Shalhout
 */
 
@@ -20,6 +21,7 @@ generate the H2TauTau group's standard sync trees (one tree produced per channel
 #include <TClassRef.h>
 #include <TObjArray.h>
 #include <TBranchElement.h>
+#include <TLorentzVector.h>
 #include <vector>
 #include <utility>
 #include <iostream>
@@ -29,6 +31,7 @@ generate the H2TauTau group's standard sync trees (one tree produced per channel
 #include <TString.h>
 #include <assert.h>
 #include "FlatTreeReader.h"
+#include <math.h>
 
 
 class generateH2TauSyncTree
@@ -39,11 +42,18 @@ public:
 	virtual ~generateH2TauSyncTree();	
 	void handleEvent();
 	void finish();
+	double pzetaVisCalc(TLorentzVector, TLorentzVector);
+	double pzetaMissCalc(TLorentzVector, TLorentzVector, TLorentzVector);
+	void reset(); /* reset values each event */
+	void setExtraLepVetoes(TLorentzVector, TLorentzVector);
 
 private:
 	FlatTreeReader R;
 	bool m_run; /* did we want to run this operation? */ 
 	void setupBranches(TTree*);
+		
+
+
 	// elements of the TTree 
 
 	unsigned int run;
@@ -109,7 +119,95 @@ private:
 	float neutralIsoPtSum_2;
 	float puCorrPtSum_2;
 
+	double pt_tt;
+	double m_vis;
+	
+	double met;
+	double metphi;
+	double mvamet;
+	double mvametphi;
+	double pzetavis;
+	double pzetamiss;
+	double mvacov00;
+	double mvacov01;
+	double mvacov10;
+	double mvacov11;
+	double metcov00;
+	double metcov01;
+	double metcov10;
+	double metcov11;
 
+	// Only fill if njetspt20>=2 
+	double mjj;
+	double jdeta;
+	double njetingap;
+	double njetingap20;
+	double jdphi;
+
+
+	// for jet counting 
+
+	int nbtag;
+	int njets;
+	int njetspt20;
+
+	// for leading jet in pt (pt > 20)
+	
+	double jpt_1;
+	double jeta_1;
+	double jphi_1;
+	double jrawf_1; /* don't have yet */
+	double jmva_1;
+
+	// for trailing jet in pt (pt > 20)
+
+	double jpt_2; 
+	double jeta_2;
+	double jphi_2;
+	double jrawf_2; /* don't have yet */
+	double jmva_2;
+
+	// for leading b-jet in pt (pt > 20)
+
+	double bpt_1;
+	double beta_1;
+	double bphi_1;
+	double brawf_1;
+	double bmva_1;
+	float bcsv_1;
+	
+	// for trailing b-jet in pt (pt > 20)
+
+	double bpt_2;
+	double beta_2;
+	double bphi_2;
+	double brawf_2;
+	double bmva_2;
+	float bcsv_2;
+
+	// extra vetoes
+
+	float dilepton_veto; 	
+	float extraelec_veto; 	
+	float extramuon_veto;
+
+	// DY info
+
+	bool isZtt;  	
+	bool isZmt;  	
+	bool isZet;  	
+	bool isZee;  	
+	bool isZmm;  	
+	bool isZem;  	
+	bool isZEE;  	
+	bool isZMM;  	
+	bool isZLL;  	
+	bool isFake;  
+
+	// trigger info
+
+	float trigweight_1 ;
+	float trigweight_2 ;
 
 	// member pointers to TTrees & TFiles 
 	
