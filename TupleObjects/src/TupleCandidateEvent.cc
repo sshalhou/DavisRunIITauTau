@@ -87,8 +87,6 @@ void TupleCandidateEvent::set_pfMET_covMatrix(double cov00,double cov01,double c
 	}
 
 
-
-
 void TupleCandidateEvent::set_vetoMuon(pat::Muon dummy_) 
 	{ 
 		m_vetoMuon.push_back(dummy_);

@@ -47,7 +47,7 @@ public:
   void set_pair(pat::Tau, pat::Tau);
   void set_mvaMET(reco::PFMET); 
   void set_pfMET(pat::MET); 
-  void set_pfMET_covMatrix(double,double,double,double);  // 00, 01, 10, 11 is the order
+  void set_pfMET_covMatrix(double,double,double,double);  // 00, 01, 10, 11 is the order  
   void set_vetoElectron(pat::Electron);
   void set_vetoMuon(pat::Muon);
   void set_SVMass(double);
@@ -62,7 +62,7 @@ public:
   std::vector<double>  pfMET_cov00() const;
   std::vector<double>  pfMET_cov01() const;
   std::vector<double>  pfMET_cov10() const;
-  std::vector<double>  pfMET_cov11() const;
+  std::vector<double>  pfMET_cov11() const;  
   std::vector<pat::Electron> vetoElectron() const;
   std::vector<pat::Muon> vetoMuon() const;
   std::vector<double> SVMass() const;
@@ -74,11 +74,11 @@ private:
   TupleLepton m_leg1;
   TupleLepton m_leg2;
   std::vector<reco::PFMET>  m_mvaMET; // note : keep as a vector in case systematic variants are needed 
-  std::vector<pat::MET>  m_pfMET;
-  std::vector<double>  m_pfMET_cov00; // needed due to missing sig matrix in phys14 samples
-  std::vector<double>  m_pfMET_cov01; // needed due to missing sig matrix in phys14 samples
-  std::vector<double>  m_pfMET_cov10; // needed due to missing sig matrix in phys14 samples
-  std::vector<double>  m_pfMET_cov11; // needed due to missing sig matrix in phys14 samples
+  std::vector<pat::MET>  m_pfMET; 
+  std::vector<double>  m_pfMET_cov00; // needed due to missing sig matrix in phys14/Spring15 samples
+  std::vector<double>  m_pfMET_cov01; // needed due to missing sig matrix in phys14/Spring15 samples
+  std::vector<double>  m_pfMET_cov10; // needed due to missing sig matrix in phys14/Spring15 samples
+  std::vector<double>  m_pfMET_cov11; // needed due to missing sig matrix in phys14/Spring15 samples
   std::vector<pat::Electron> m_vetoElectron;
   std::vector<pat::Muon> m_vetoMuon;
   std::vector<double> m_SVMass;

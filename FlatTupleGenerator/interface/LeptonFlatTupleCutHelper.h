@@ -41,7 +41,8 @@ production stage based on cms.PSet and NtupleEvent arguments
 #include "TauAnalysis/SVfitStandalone/interface/SVfitStandaloneAlgorithm.h"
 #include "DavisRunIITauTau/NtupleObjects/interface/NtupleLepton.h" 
 #include "DavisRunIITauTau/NtupleObjects/interface/NtupleEvent.h"
- 
+#include "CommonTools/Utils/interface/StringCutObjectSelector.h"
+
 
 typedef math::XYZTLorentzVector LorentzVector;
 using namespace std;
@@ -61,19 +62,15 @@ public:
   LeptonFlatTupleCutHelper();
   virtual ~LeptonFlatTupleCutHelper(){}
 
-
-  void setEMuTauCutSets(edm::ParameterSet, edm::ParameterSet, edm::ParameterSet);
-  bool pairPasses(NtupleEvent);
-  bool checkMuon(NtupleLepton);
-  bool checkElectron(NtupleLepton);
-  bool checkTau(NtupleLepton);
+  bool cutEvaluator(NtupleEvent, std::vector<edm::ParameterSet>);
+ 
+  std::vector<std::string> getCutSummary(std::vector<edm::ParameterSet>);
 
 
 private:
-	edm::ParameterSet m_eCutSet;
-	edm::ParameterSet m_muCutSet;
-	edm::ParameterSet m_tauCutSet;
-	
+
+  int decodeCandidateTypeString(std::string);
+  std::string getAppropriateCutString(int, edm::ParameterSet, bool); /* lepType, cut PSet, bool wantVetoCut */ 
 
 
 };

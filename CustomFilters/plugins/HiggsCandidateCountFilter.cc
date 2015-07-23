@@ -48,7 +48,7 @@ bool HiggsCandidateCountFilter::filter(edm::Event & iEvent, const edm::EventSetu
   std::size_t NUM_ELECTRONS = electrons->size();
   std::size_t NUM_MUONS = muons->size();
 
-  std::cout<<" e, mu, tau size : "<<NUM_ELECTRONS<<" , "<<NUM_MUONS<<" , "<<NUM_TAUS<<" KEEP = ";
+//  std::cout<<" e, mu, tau size : "<<NUM_ELECTRONS<<" , "<<NUM_MUONS<<" , "<<NUM_TAUS<<" KEEP = ";
 
   bool KEEP = 0;
 
@@ -109,7 +109,7 @@ bool HiggsCandidateCountFilter::filter(edm::Event & iEvent, const edm::EventSetu
       if (NUM_TAUS > 1) KEEP = 1;    
     }
 
-  std::cout<<KEEP<<"\n";
+//  std::cout<<KEEP<<"\n";
   return KEEP;
 }
 

@@ -25,7 +25,6 @@
 
 #include "DataFormats/PatCandidates/interface/Electron.h"
 
-#include "EgammaAnalysis/ElectronTools/interface/EGammaMvaEleEstimatorCSA14.h"
 #include "DavisRunIITauTau/CustomPatCollectionProducers/interface/LeptonRelativeIsolationTool.h"
 
 #include "DavisRunIITauTau/CustomPatCollectionProducers/interface/TriggerInfoEmbeddingTool.h"
@@ -58,9 +57,7 @@ class electronClones
 
 
 
-	// the mva ID evaluators and the names of thier embedded userFloats
-	EGammaMvaEleEstimatorCSA14 & MVA_PHYS14nonTrig;
-	std::string & MVA_PHYS14nonTrig_NAME;
+	
 
 	// trigger related collections
 
@@ -68,9 +65,7 @@ class electronClones
 	edm::Handle<pat::TriggerObjectStandAloneCollection> & triggerObjects;
 	edm::Handle<pat::PackedTriggerPrescales> & triggerPreScales;
 	const edm::TriggerNames & names;
-	double trigMatchDRcut;
-	std::vector<int> trigMatchTypes;
-	std::vector<std::string> trigSummaryPathsAndFilters;
+	
 
 	// rho related info
 	std::vector<std::string> rhoLabels;
@@ -79,15 +74,10 @@ class electronClones
 
 	public:
 		electronClones(const slimmedPatElectronCollection&, const reco::Vertex &,
-				EGammaMvaEleEstimatorCSA14 &, 
-				std::string &,
 				edm::Handle<edm::TriggerResults> &,
 				edm::Handle<pat::TriggerObjectStandAloneCollection> &,
 				edm::Handle<pat::PackedTriggerPrescales>&,
-				const edm::TriggerNames &,
-				double,
-				std::vector<int>,
-				std::vector<std::string>,
+				const edm::TriggerNames &,			
 				std::vector<std::string>,
 				std::vector<double>);
 
@@ -100,7 +90,8 @@ class electronClones
 		void clone();
 		void fillUserFloats();		  
 		/* return a pass/fail based on MVA score, pt, and absSuperClusterEta */
-		float passedPhys14MVA(float, float, float); 
+		float passedMVA(float, float, float, int);  /* int is 80 or 90 for WP */
+		float passedCutBasedID(pat::Electron&); 
 
 };
 

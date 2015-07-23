@@ -48,6 +48,9 @@ Implementation:
 #include "DavisRunIITauTau/NtupleObjects/interface/NtuplePairIndependentInfo.h"
 #include "DataFormats/PatCandidates/interface/PackedGenParticle.h"
 #include "DavisRunIITauTau/External/interface/PUPFjetIdHelper.hh"
+#include "SimDataFormats/GeneratorProducts/interface/GenEventInfoProduct.h"
+#include "SimDataFormats/GeneratorProducts/interface/LHEEventProduct.h"
+
 
 typedef math::XYZTLorentzVector LorentzVector;
 using namespace std;
@@ -91,8 +94,10 @@ private:
   edm::ParameterSet PUjetIDworkingPointSrc_;
   edm::ParameterSet PFjetIDworkingPointSrc_;
   edm::InputTag vertexSrc_;
-
-
+  edm::InputTag pileupSrc_;
+  edm::ParameterSet PUweightSettingsSrc_;
+  edm::InputTag mcGenWeightSrc_;
+  edm::InputTag LHEEventProductSrc_;
 };
 
 //
@@ -118,11 +123,12 @@ useBtagSFSrc_(iConfig.getParameter<bool>("useBtagSFSrc" )),
 useBtagSFSeedSrc_(iConfig.getParameter<unsigned int>("useBtagSFSeedSrc" )),
 PUjetIDworkingPointSrc_(iConfig.getParameter<edm::ParameterSet>("PUjetIDworkingPointSrc")),
 PFjetIDworkingPointSrc_(iConfig.getParameter<edm::ParameterSet>("PFjetIDworkingPointSrc")),
-vertexSrc_(iConfig.getParameter<edm::InputTag>("vertexSrc" ))
-
-
+vertexSrc_(iConfig.getParameter<edm::InputTag>("vertexSrc" )),
+pileupSrc_(iConfig.getParameter<edm::InputTag>("pileupSrc" )),
+PUweightSettingsSrc_(iConfig.getParameter<edm::ParameterSet>("PUweightSettingsSrc")),
+mcGenWeightSrc_(iConfig.getParameter<edm::InputTag>("mcGenWeightSrc")),
+LHEEventProductSrc_(iConfig.getParameter<edm::InputTag>("LHEEventProductSrc"))
 {
-
 
   produces<vector<NtuplePairIndependentInfo>>(NAME_).setBranchAlias(NAME_);
 
@@ -307,53 +313,9 @@ NtuplePairIndependentInfoProducer::produce(edm::Event& iEvent, const edm::EventS
 
       currentNtupleJet.fill_PFjetID(passPF);   
 
-
-
-      // temp -- start
-
-
-       for( std::size_t t = 0; t<slimmedJets->at(i).availableJECSets().size(); ++t)
-       {
-        std::cout<<"JECSET : "<<slimmedJets->at(i).availableJECSets().at(t)<<"\n";
-       } 
-
-
-
-      std::cout<<" JET (PT,|ABSETA|) = ( "<<slimmedJets->at(i).pt()<<" , "<< fabs(slimmedJets->at(i).eta())<<" ) ";
-      std::cout<<" name = "<<nameAndIndex.first<<" abs eta index = "<<nameAndIndex.second<<" ";
-      std::cout<<" cut point = "<<pu_cutsByEta[nameAndIndex.second]<<" raw val = "<<currentNtupleJet.PU_jetIdRaw()<<" ";
-      std::cout<<" pass/fail = "<<currentNtupleJet.PU_jetIdPassed()<<"\n";
-
-      for( std::size_t t = 0; t<currentNtupleJet.JEC_labels().size(); ++t)
-       {
-        std::cout<<currentNtupleJet.JEC_labels().at(t)<<" "<<currentNtupleJet.JEC_SFs().at(t)<<"\n";
-       } 
-
-       std::cout<<" A good label : L1FastJet " << currentNtupleJet.JEC("L1FastJet")<<"\n";
-       std::cout<<" alternate method "<<slimmedJets->at(i).correctedJet("L1FastJet").pt()/slimmedJets->at(i).pt()<<"\n";
-
-       std::cout<<" A good label : Uncorrected " << currentNtupleJet.JEC("Uncorrected")<<"\n";
-       std::cout<<" alternate method "<<slimmedJets->at(i).correctedJet("Uncorrected").pt()/slimmedJets->at(i).pt()<<"\n";
-
-       std::cout<<" A good label : L2Relative " << currentNtupleJet.JEC("L2Relative")<<"\n";
-       std::cout<<" alternate method "<<slimmedJets->at(i).correctedJet("L2Relative").pt()/slimmedJets->at(i).pt()<<"\n";
-
-       std::cout<<" A good label : L3Absolute " << currentNtupleJet.JEC("L3Absolute")<<"\n";
-       std::cout<<" alternate method "<<slimmedJets->at(i).correctedJet("L3Absolute").pt()/slimmedJets->at(i).pt()<<"\n";
-
-
-
-      for( std::size_t t = 0; t<currentNtupleJet.BTAG_labels().size(); ++t)
-       {
-        std::cout<<currentNtupleJet.BTAG_labels().at(t)<<" "<<currentNtupleJet.BTAGraw_scores().at(t)<<" ";
-        std::cout<<" access via BTAGraw(string) "<<currentNtupleJet.BTAGraw(currentNtupleJet.BTAG_labels().at(t))<<"\n";
-       } 
- 
-       std::cout<<" pass/fail PU and PF jet ID : "<<currentNtupleJet.PU_jetIdPassed()<<" "<<currentNtupleJet.PF_jetIdPassed()<<"\n";
-
-      // temp -- end
-
       InfoToWrite.fill_jet(currentNtupleJet);
+
+
 
     }
   }
@@ -367,7 +329,46 @@ NtuplePairIndependentInfoProducer::produce(edm::Event& iEvent, const edm::EventS
   
   InfoToWrite.fill_vertexInfo(vertices->at(0),vertices->size());
 
+  ///////////////////////////////////////////////////////////////////////////
+  /*   get the pileUp collection info */
+  ///////////////////////////////////////////////////////////////////////////
 
+  edm::Handle<std::vector<PileupSummaryInfo> > PupInfo;
+  iEvent.getByLabel(pileupSrc_, PupInfo);
+
+  /* get the mc and data pu file paths */
+  
+  std::string pileup_mcFilePath = PUweightSettingsSrc_.getParameter<std::string> ("pileup_mcFilePath");
+  std::string pileup_dataFilePath = PUweightSettingsSrc_.getParameter<std::string> ("pileup_dataFilePath");
+  InfoToWrite.fill_pileUpInfo(PupInfo,pileup_mcFilePath,pileup_dataFilePath); /* path argument order is mc, data */
+
+  ///////////////////////////////////////////////////////////////////////////
+  /*   get the MC gen weight collection  */
+  ///////////////////////////////////////////////////////////////////////////
+
+  edm::Handle<GenEventInfoProduct> genEvtWeight;
+  iEvent.getByLabel(mcGenWeightSrc_,genEvtWeight);
+
+  if(genEvtWeight.isValid()) 
+    {
+      InfoToWrite.fill_generatorEventWeight(genEvtWeight->weight());
+    }
+
+  /////////////////////////////////////////////////////////////////////////////////////
+  /*   get the MC generated LHE collection - for NUP used in n-jet sample stitching  */
+  /////////////////////////////////////////////////////////////////////////////////////
+
+  edm::Handle<LHEEventProduct> LHEEventProductSrc;
+  iEvent.getByLabel(LHEEventProductSrc_,LHEEventProductSrc);
+
+  edm::Handle<LHEEventProduct > LHEHandle;
+  const LHEEventProduct* LHE = 0;
+  iEvent.getByLabel(LHEEventProductSrc_,LHEHandle);
+  if(LHEHandle.isValid())
+  {
+    LHE = LHEHandle.product();
+    InfoToWrite.fill_hepNUP((LHE->hepeup()).NUP);
+  }
 
 
   /////////////////////////////////////////////////////////////////

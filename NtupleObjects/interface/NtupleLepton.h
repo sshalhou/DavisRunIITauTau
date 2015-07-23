@@ -16,10 +16,11 @@
 #include "DataFormats/HepMCCandidate/interface/GenParticle.h"
 
 
+
 typedef math::XYZTLorentzVector LorentzVector;
 typedef std::vector<std::string> stringVec;
 typedef std::vector<float>  floatVec;
-typedef std::vector<std::pair<std::string, float> >  stringFloatPair;
+typedef std::vector<std::pair<std::string, float> >  stringFloatPairVec;
 
 class NtupleLepton
 {
@@ -47,27 +48,30 @@ public:
 
   stringVec HLTAcceptedPath_Labels() ;     		 /* return the accepted HLT path names  */
   floatVec  HLTAcceptedPath_preScales() ;        /* return  the available jec SFs */
-  float HLTpath(std::string);                    /* return the PreScale for accepted path strings return 0 (not accepted) if not available */
+  
+  /* note HLTpath now supports _v* version wildcards */
+  float HLTpath(std::string) const;              /* return the PreScale for accepted path strings return 0 (not accepted) if not available */
  
 
   stringVec relativeIsol_Labels(); 			/* return the relativeIsolation names  */
   floatVec relativeIsol_Values(); 			/* return the relativeIsolation values  */
-  float relativeIsol(std::string);          /* return the value for valid name strings assert if not available */
+  float relativeIsol(std::string) const;          /* return the value for valid name strings assert if not available */
 
 
   stringVec rho_Labels(); 			/* return the rho names  */
   floatVec rho_Values(); 			/* return the rho values  */
-  float rho(std::string);          /* return the rho value for valid name strings assert if not available */
+  float rho(std::string) const;          /* return the rho value for valid name strings assert if not available */
 
 
   stringVec tauID_Labels(); 			/* return the tauID (including isolations) names  */
   floatVec tauID_Values(); 			/* return the tauID values  */
-  float tauID(std::string);          /* return the tauID value for valid name strings assert if not available */
+  float tauID(std::string) const;          /* return the tauID value for valid name strings assert if not available */
 
 
   // getters
 
-
+  	float pt() const; 
+  	float eta() const; 
 	int leptonType() const; 
 	LorentzVector p4() const; 
 	LorentzVector gen_p4() const; 
@@ -79,23 +83,18 @@ public:
 	int PFpdgId() const; 
 	int GENpdgId() const; 
 	int GENMOTHERpdgId() const; 
-	stringVec L1acceptedFilters() const; 
-	float L1TrigObjRecoObjDeltaR() const; 
-	LorentzVector L1TrigObj_p4() const; 
-	stringVec L3acceptedFilters() const; 
-	float L3TrigObjRecoObjDeltaR() const; 
-	LorentzVector L3TrigObj_p4() const; 
-	stringVec pathSummary_isBOTH() const; 
-	stringVec pathSummary_isL3() const; 
-	stringVec pathSummary_isLF() const; 
-	stringVec pathSummary_filterListPassed() const; 
-
-
 	LorentzVector 	genJet_p4() const;
+	float ZimpactTau() const;
 	float numStrips() const;
 	float numHadrons() const;
+	float dzTauVertex() const;
 	float raw_electronMVA() const; 
-	float passFail_electronMVA() const; 
+	float category_electronMVA() const;
+	float passFail_electronMVA80() const; 
+	float passFail_electronMVA90() const; 
+    float passFail_electronCutBasedID() const;   
+    float ooEmooP() const;         				
+    float full5x5_sigmaIetaIeta() const;   
 	float TauEsVariant() const; 
 	float IP() const; 								
 	float IPerror() const; 							
@@ -152,24 +151,14 @@ private:
 	LorentzVector 	m_genMother_p4;					//	the pat-matched gen particle's mother's 4-vector
 	float 		  	m_dz;							//	dz	- this is pulled from lepton UserFloat data
 	float 		  	m_dxy;							//  dxy - this is pulled from lepton UserFloat data
-	stringFloatPair m_HLTPaths;                     //  pair pathName : preScale 
-	stringFloatPair m_relativeIsolations;           //  pair relativeIsolation name : value 
-	stringFloatPair m_rhos;                         //  pair rho name : value 
+	stringFloatPairVec m_HLTPaths;                     //  pair pathName : preScale 
+	stringFloatPairVec m_relativeIsolations;           //  pair relativeIsolation name : value 
+	stringFloatPairVec m_rhos;                         //  pair rho name : value 
 	float			m_EffectiveArea; 				//  EffectiveArea (for e, mu) pulled from lepton UserFloat data
 	int 			m_charge;						//	charge
     int 			m_PFpdgId;  					//	the pdg ID attached to the PF particle
 	int 			m_GENpdgId;						//	the pdg ID of the default pat-matched gen particle	
 	int 			m_GENMOTHERpdgId;				//	the pdg ID of the default pat-matched gen particle's mother	
-	stringVec		m_L1acceptedFilters;     		//  best match L1 trig object accepted filters from userFloat labels
-	float 			m_L1TrigObjRecoObjDeltaR;		//  min DR to a L1 trig object from userFloats
-	LorentzVector	m_L1TrigObj_p4;					//  best match L1 trig obj p4  from userFloats
-	stringVec		m_L3acceptedFilters;     		//  best match L3 trig object accepted filters from userFloat labels
-	float 			m_L3TrigObjRecoObjDeltaR;		//  min DR to a L3 trig object from userFloats
-	LorentzVector	m_L3TrigObj_p4;					//  best match L3 trig obj p4  from userFloats
-	stringVec		m_pathSummary_isBOTH;			//	path summary variable names that have isBOTH==1 from userFloat labels & data	
-	stringVec		m_pathSummary_isL3;				//	path summary variable names that have isL3==1 from userFloat labels & data	
-	stringVec		m_pathSummary_isLF;				//	path summary variable names that have isLF==1 from userFloat labels & data	
-	stringVec		m_pathSummary_filterListPassed;	//	path summary variable names that have filterListPassed==1 from userFloat labels & data	
 	float m_IP;										//  for ele or muon dB(pat::X::PV3D)
 	float m_IPerror;								//  for ele or muon edB(pat::X::PV3D)
 	float m_PUchargedHadronIso;						//  iso parameter
@@ -206,7 +195,12 @@ private:
 	// paramenters meaningful for electrons only
 	//////////////////////////////////////////////////
     float m_raw_electronMVA;						//  value of electron MVA score
-    float m_passFail_electronMVA;         			//  pass fail of electron MVA 
+    float m_category_electronMVA;						//  category of electron MVA score
+    float m_passFail_electronMVA80;         			//  pass fail of electron MVA 
+    float m_passFail_electronMVA90;         			//  pass fail of electron MVA 
+    float m_passFail_electronCutBasedID;         		//  pass fail of electron cut-based veto ID 
+    float m_ooEmooP;         							//  used for electron cut-based veto ID 
+    float m_full5x5_sigmaIetaIeta;         				//  used for electron cut-based veto ID 
 	float m_SuperClusterEta;
 	float m_hadronicOverEm;
 	float m_isEB;
@@ -231,10 +225,11 @@ private:
 	//////////////////////////////////////////////////
     float m_TauEsVariant;							//  -1 if TauEs DOWN, +1 if UP, 0 if Nominal
 	LorentzVector 	m_genJet_p4;					//  the pat-matched genJet p4
+	float m_ZimpactTau; 							// tau-event vertex match quality parameter
 	float m_numStrips;								//  number strips
 	float m_numHadrons;								//	number hadrons
-	stringFloatPair m_tauIDs;                       //  pair rho name : value 
-	
+	stringFloatPairVec m_tauIDs;                    //  pair rho name : value 
+	float m_dzTauVertex; 							//  tau.z - vertex.z
 
 
 

@@ -1,4 +1,4 @@
-/* for a pat::Electron, Muon or Tau collection embed trigger info as UserFloats */
+/* for a pat::Electron, Muon or Tau collection embed accepted HLT trigger paths as UserFloats */
 
 
 #ifndef DavisRunIITauTau_CustomPatCollectionProducers_TRIGGERINFOEMBEDDINGTOOL_h
@@ -50,10 +50,7 @@ class TriggerInfoEmbeddingTool
 	edm::Handle<pat::TriggerObjectStandAloneCollection> & triggerObjects;
 	edm::Handle<pat::PackedTriggerPrescales> & triggerPreScales;
 	const edm::TriggerNames & names;
-	float bestMatchDR_;
-	double trigMatchDRcut;
-	std::vector<int> trigMatchTypes;
-	std::vector<std::string> trigSummaryPathsAndFilters;
+
 
 
 
@@ -61,42 +58,17 @@ class TriggerInfoEmbeddingTool
 		TriggerInfoEmbeddingTool(edm::Handle<edm::TriggerResults> &,
 				edm::Handle<pat::TriggerObjectStandAloneCollection> &,
 				edm::Handle<pat::PackedTriggerPrescales>&,
-				const edm::TriggerNames &,
-				double,
-				std::vector<int>,
-				std::vector<std::string>);
+				const edm::TriggerNames &);
 
 		virtual ~TriggerInfoEmbeddingTool();
 
-		void getTriggerInfo(pat::Electron &, std::vector<std::string> &, std::vector<float> &);		
-		void getTriggerInfo(pat::Muon &, std::vector<std::string> &, std::vector<float> &);		
-		void getTriggerInfo(pat::Tau &, std::vector<std::string> &, std::vector<float> &);		
+	
 
-	private:
-
-		/* fill vectors of accepted paths and return False if size is zero */
-        bool wasAnyPathAccepted(std::vector<std::string> &, std::vector<float> &);
-
-        /* return best matched trigger obj index based on reco 4-vector DR and set of TriggerObjTypes*/
-		std::size_t getBestMatchedObject(TLorentzVector, std::vector<int> &, float);
-
-		/* fill std::vectors with trigger obj's DR, pt, eta, phi, mass */
-		void fillTrigObjKinematics(std::size_t, std::vector<std::string> &, std::vector<float> &, std::string);
+		/* fill vectors of accepted paths - simple accept check without object or filter matching */
+        void fillAcceptedPathsAndPrescales(std::vector<std::string> &, std::vector<float> &);
 
 
-		/* fill std::vectors with trigger obj's IDs, paths & filters as concatenated strings (need 1.0 for values) */
-		void fillTrigObjInfo(std::size_t, std::vector<std::string> &, std::vector<float> &);
 
-		/* fill trigger filter info for all filters passed by the matchedObject */
-		void fillTrigFilterInfo(std::size_t, std::vector<std::string> &, std::vector<float> &, std::string, std::vector<std::string> &);
-
-
-		/* fill trigger summary info based on trigSummaryPathsAndFilters */
-		/* calls fillTrigFilterInfo & fillTrigObjKinematics */
-
-		void TrigSummaryInfoHelper(TLorentzVector, std::vector<std::string> &, std::vector<float> &);
-
-		void fillTrigSummaryInfo(std::size_t, std::vector<std::string> &, std::vector<float> &, std::vector<std::string>);
 
 
 };

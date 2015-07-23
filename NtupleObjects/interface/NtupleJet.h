@@ -53,6 +53,7 @@ public:
   // getters
  
 
+
   LorentzVector jet_p4() const; /* should have all corrections applied */
   LorentzVector GENjet_p4() const; /* as embedded in slimmedJets */
   int GENjet_pdgId() const; /* as embedded in slimmedJets */
@@ -87,6 +88,9 @@ public:
   double defaultBtagAlgorithm_RawScore() const;
   bool defaultBtagAlgorithm_isPassed() const;
 
+  /* for easy use with cut strings */
+  double pt() const; /* should have all corrections applied */
+  double eta() const; /* should have all corrections applied */
 
 
 private:

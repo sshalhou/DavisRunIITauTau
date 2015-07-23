@@ -3,6 +3,8 @@
 #include "DavisRunIITauTau/TupleObjects/interface/TupleCandidateEventTypes.h"
 #include "TLorentzVector.h"
 #include <math.h> 
+#include <assert.h> 
+#include <string> 
 
 
 NtupleEvent::NtupleEvent()
@@ -11,7 +13,94 @@ NtupleEvent::NtupleEvent()
 	m_TauEsNumberSigmasShifted = NAN;
 	m_isOsPair = -999;
 
+
 }
+
+
+
+
+
+
+void NtupleEvent::fillTriggerMatchesLeg1andLeg2(std::vector<NtupleTrigObject> trigVec1,std::vector<NtupleTrigObject> trigVec2)
+{
+
+  m_leg1_trigMatches = trigVec1;
+  m_leg2_trigMatches = trigVec2;
+
+}
+
+/* trigger summary helpers */
+
+/* fill them */
+
+void NtupleEvent::fillTriggerSummariesLeg1andLeg2(stringFloatPairVec isLeg1GoodForHLTPath_, 
+												  stringFloatPairVec isLeg2GoodForHLTPath_)
+{
+
+   m_isLeg1GoodForHLTPath = isLeg1GoodForHLTPath_;
+   m_isLeg2GoodForHLTPath = isLeg2GoodForHLTPath_;
+
+
+}
+
+/* get list of paths based on ConfigTupleTriggers_cfi that the leg is good for */
+/* note may contain duplicates with and without version wildcard */
+  
+stringVec NtupleEvent::isLeg1GoodForHLTPath_Labels()  
+{ 
+	stringVec dummy;
+	for(std::size_t x = 0; x < m_isLeg1GoodForHLTPath.size();++x) 
+	{ 
+  		dummy.push_back(m_isLeg1GoodForHLTPath.at(x).first);
+	}  
+
+return dummy;
+}
+
+stringVec NtupleEvent::isLeg2GoodForHLTPath_Labels()  
+{ 
+	stringVec dummy;
+	for(std::size_t x = 0; x < m_isLeg2GoodForHLTPath.size();++x) 
+	{ 
+  		dummy.push_back(m_isLeg2GoodForHLTPath.at(x).first);
+	}  
+
+return dummy;
+}
+
+/* functions that check if a leg is good for a trigger */
+/* only valid for those in ConfigTupleTriggers_cfi */
+/* for all the rest you need to check manually in leg1_trigMatches & leg2_trigMatches */
+/* version wildcards are  OK, but could suffer from filter problems if filter list changes 
+between versions of the HLT path */
+
+float NtupleEvent::isLeg1GoodForHLTPath(std::string label_) const
+{
+	float returnValue = 0.0;
+	for(std::size_t x = 0; x < m_isLeg1GoodForHLTPath.size();++x) 
+	{ 
+	  if(m_isLeg1GoodForHLTPath.at(x).first == label_) returnValue = m_isLeg1GoodForHLTPath.at(x).second;
+
+	}
+
+	return returnValue;
+}
+
+
+
+float NtupleEvent::isLeg2GoodForHLTPath(std::string label_) const
+{
+	float returnValue = 0.0;
+	for(std::size_t x = 0; x < m_isLeg2GoodForHLTPath.size();++x) 
+	{ 
+	  if(m_isLeg2GoodForHLTPath.at(x).first == label_) returnValue = m_isLeg2GoodForHLTPath.at(x).second;
+
+	}
+
+	return returnValue;
+}
+
+
 
 
 
@@ -55,6 +144,7 @@ void NtupleEvent::fill(TupleCandidateEvent TCE)
 	m_pfMET_cov11 = TCE.pfMET_cov11();
 
 
+
 	for (std::size_t i = 0; i < TCE.vetoElectron().size(); ++i)
 	{
 		NtupleLepton tempLep; tempLep.fill(TCE.vetoElectron()[i]);
@@ -70,6 +160,9 @@ void NtupleEvent::fill(TupleCandidateEvent TCE)
 	}
 
 
+
+
+
 }
 
 
@@ -78,6 +171,8 @@ int NtupleEvent::CandidateEventType() const { return m_CandidateEventType; }
 float NtupleEvent::TauEsNumberSigmasShifted() const {return m_TauEsNumberSigmasShifted;}
 NtupleLepton NtupleEvent::leg1() const { return m_leg1; }
 NtupleLepton NtupleEvent::leg2() const { return m_leg2; }
+std::vector<NtupleTrigObject> NtupleEvent::leg1_trigMatches() const { return m_leg1_trigMatches; }
+std::vector<NtupleTrigObject> NtupleEvent::leg2_trigMatches() const { return m_leg2_trigMatches; }
 std::vector<NtupleLepton> NtupleEvent::vetoElectron() const {return m_vetoElectron;}
 std::vector<NtupleLepton> NtupleEvent::vetoMuon() const {return  m_vetoMuon;}
 std::vector<double> NtupleEvent::SVMass() const {return  m_SVMass;}

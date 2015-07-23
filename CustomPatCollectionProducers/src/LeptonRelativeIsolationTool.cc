@@ -44,12 +44,13 @@ double LeptonRelativeIsolationTool::muonEffAreaRhoRelIso(const pat::Muon & m, do
 
 	// should be careful to add FSR correction if recommended in the future
 
-	// these are taken as is from mini-AOD slimmedElectrons
+	// these are taken as is from mini-AOD slimmedMuons
 
-	double chargedHadron = m.chargedHadronIso();
-	double neutralHadron = m.neutralHadronIso();
-	double photonIso = m.photonIso();
-	//double PUchargedHadron = m.puChargedHadronIso();
+	double chargedHadron = m.pfIsolationR03().sumChargedHadronPt;
+	double neutralHadron = m.pfIsolationR03().sumNeutralHadronEt;
+	double photonIso = m.pfIsolationR03().sumPhotonEt;
+	//double PUchargedHadron = m.pfIsolationR03().sumPUPt;
+
 
 
 	ReturnVal = chargedHadron + std::max(0.0, neutralHadron + photonIso -  rho * EffArea  );
@@ -72,10 +73,10 @@ double LeptonRelativeIsolationTool::electronEffAreaRhoRelIso(const pat::Electron
 
 	// these are taken as is from mini-AOD slimmedElectrons
 
-	double chargedHadron = e.chargedHadronIso();
-	double neutralHadron = e.neutralHadronIso();
-	double photonIso = e.photonIso();
-	//double PUchargedHadron = e.puChargedHadronIso();
+	double chargedHadron = e.pfIsolationVariables().sumChargedHadronPt;
+	double neutralHadron = e.pfIsolationVariables().sumNeutralHadronEt;
+	double photonIso = e.pfIsolationVariables().sumPhotonEt;
+	//double PUchargedHadron = e.pfIsolationVariables().sumPUPt;
 
 
 	ReturnVal = chargedHadron + std::max(0.0, neutralHadron + photonIso -  rho * EffArea  );
@@ -97,10 +98,10 @@ double LeptonRelativeIsolationTool::electronRelIso(const pat::Electron & e, doub
 
 	// these are taken as is from mini-AOD slimmedElectrons
 
-	double chargedHadron = e.chargedHadronIso();
-	double neutralHadron = e.neutralHadronIso();
-	double photonIso = e.photonIso();
-	double PUchargedHadron = e.puChargedHadronIso();
+	double chargedHadron = e.pfIsolationVariables().sumChargedHadronPt;
+	double neutralHadron = e.pfIsolationVariables().sumNeutralHadronEt;
+	double photonIso = e.pfIsolationVariables().sumPhotonEt;
+	double PUchargedHadron = e.pfIsolationVariables().sumPUPt;
 
 
 	ReturnVal = chargedHadron + std::max(0.0, neutralHadron + photonIso -  deltaBeta * PUchargedHadron  );
@@ -122,10 +123,10 @@ double LeptonRelativeIsolationTool::muonRelIso(const pat::Muon & m, double delta
 
 
 	// these are taken as is from mini-AOD slimmedMuons
-	double chargedHadron = m.chargedHadronIso();
-	double neutralHadron = m.neutralHadronIso();
-	double photonIso = m.photonIso();
-	double PUchargedHadron = m.puChargedHadronIso();
+	double chargedHadron = m.pfIsolationR03().sumChargedHadronPt;
+	double neutralHadron = m.pfIsolationR03().sumNeutralHadronEt;
+	double photonIso = m.pfIsolationR03().sumPhotonEt;
+	double PUchargedHadron = m.pfIsolationR03().sumPUPt;
 
 	// should be careful to add FSR correction if recommended in the future
 

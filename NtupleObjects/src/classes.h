@@ -3,6 +3,7 @@
 #include "DavisRunIITauTau/NtupleObjects/interface/NtuplePairIndependentInfo.h"
 #include "DavisRunIITauTau/NtupleObjects/interface/NtupleGenParticle.h"
 #include "DavisRunIITauTau/NtupleObjects/interface/NtupleJet.h"
+#include "DavisRunIITauTau/NtupleObjects/interface/NtupleTrigObject.h"
 
 #include "DataFormats/Common/interface/Wrapper.h"
 
@@ -18,5 +19,8 @@ struct dictionary
   edm::Wrapper<NtupleGenParticleCollection> dummy7;	
   NtupleJet dummy8;
   edm::Wrapper<NtupleJetCollection> dummy9;	  
+  NtupleTrigObject dummy10;
+  edm::Wrapper<NtupleTrigObjectCollection> dummy11;  
+
 };
 

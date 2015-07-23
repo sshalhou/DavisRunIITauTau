@@ -26,10 +26,10 @@ filter_ = []
 
 # ----------------------------------------------------
 # ------------[user edit here]------------------------
-filter_.append('pt>20.0') # be careful here to allow for tau ES variation
-filter_.append('abs(eta)<2.3') # be careful here to allow for tau ES variation
-
-#filter_.append('userFloat("relIsol") < 0.01')
+filter_.append('pt>20.0') 	   # be careful here to allow for tau ES variation
+filter_.append('abs(eta)<2.3') 
+filter_.append('tauID("decayModeFindingNewDMs")>0.5')
+filter_.append('abs(userFloat("dz"))<0.2')
 # ----------------------------------------------------
 # ----------------------------------------------------
 
@@ -47,26 +47,4 @@ tauFilter = cms.string(and_string_concatonator(filter_))
 
 
 
-###################################
-# configuration file to determine
-# what mini-AOD skimmedTaus are retained
-# in TupleTau collection
-# will define :
-# thinCuts = minimum skim requirements on taus (anything failing these will be thrown away)
-# vetoCuts = minimum requirement to be a veto Tau
-# signal_eleTauCuts = minimum requirement to be a signal ele + Tau_h final state Tau
-# signal_muTauCuts = minimum requirement to be a signal tau + Tau_h final state Tau
-###################################
-
-
-tau_Cuts = cms.PSet(
-	######### thin cuts ##############
-	THIN_minPt = cms.double(10.0),
-	######### veto cuts ##############
-	VETO_minPt = cms.double(10.0),
-	######### eleTau signal cuts ##############
-	SIGeleTau_minPt = cms.double(10.0),
-	######### eleMu signal cuts ##############
-	SIGmuTau_minPt = cms.double(10.0)
-)
 

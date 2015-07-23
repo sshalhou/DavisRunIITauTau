@@ -31,6 +31,7 @@ Implementation:
 // needed by ntuple Tau producer
 #include <vector>
 #include <iostream>
+#include "TMatrix.h"
 #include "DataFormats/PatCandidates/interface/Tau.h"
 #include "DataFormats/PatCandidates/interface/Electron.h"
 #include "DataFormats/PatCandidates/interface/Muon.h"
@@ -85,16 +86,14 @@ private:
   edm::InputTag mvaMETSrc_;
   edm::InputTag electronVetoSrc_;
   edm::InputTag muonVetoSrc_;
-  double vetoDeltaR_;
+  double pairDeltaRmin_;
+  double vetoDeltaRmin_;
   string NAME_;
   bool doSVMass_;
   bool useMVAMET_;
   double logMterm_;
   int svMassVerbose_;
-  edm::InputTag sig00_;
-  edm::InputTag sig10_;
-  edm::InputTag sig01_;
-  edm::InputTag sig11_;
+  edm::InputTag pfCovMatrix_;
 
 };
 
@@ -121,16 +120,14 @@ pfMETSrc_(iConfig.getParameter<edm::InputTag>("pfMETSrc" )),
 mvaMETSrc_(iConfig.getParameter<edm::InputTag>("mvaMETSrc" )),
 electronVetoSrc_(iConfig.getParameter<edm::InputTag>("electronVetoSrc" )),
 muonVetoSrc_(iConfig.getParameter<edm::InputTag>("muonVetoSrc" )),
-vetoDeltaR_(iConfig.getParameter<double>("vetoDeltaR" )),
+pairDeltaRmin_(iConfig.getParameter<double>("pairDeltaRmin" )),
+vetoDeltaRmin_(iConfig.getParameter<double>("vetoDeltaRmin" )),
 NAME_(iConfig.getParameter<string>("NAME" )),
 doSVMass_(iConfig.getParameter<bool>("doSVMass" )),
 useMVAMET_(iConfig.getParameter<bool>("useMVAMET" )),
 logMterm_(iConfig.getParameter<double>("logMterm" )),
 svMassVerbose_(iConfig.getParameter<int>("svMassVerbose" )),
-sig00_(iConfig.getParameter<edm::InputTag>("sig00" )),
-sig10_(iConfig.getParameter<edm::InputTag>("sig10" )),
-sig01_(iConfig.getParameter<edm::InputTag>("sig01" )),
-sig11_(iConfig.getParameter<edm::InputTag>("sig11" ))
+pfCovMatrix_(iConfig.getParameter<edm::InputTag>("pfMetSig" ))
 {
 
 
@@ -217,27 +214,23 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
   auto_ptr<TupleCandidateEventCollection> TupleCandidateEvents (new TupleCandidateEventCollection);
 
 
-  // get met sig matrix
+
+  // get met sig matrix & sig for PF met
 
 
-  edm::Handle<double> sig00;
-  iEvent.getByLabel(sig00_,sig00);
-
-  edm::Handle<double> sig01;
-  iEvent.getByLabel(sig01_,sig01);
+  edm::Handle<math::Error<2>::type> pfCovMatrix;
+  iEvent.getByLabel(pfCovMatrix_,pfCovMatrix);
 
 
-  edm::Handle<double> sig10;
-  iEvent.getByLabel(sig10_,sig10);
-
-
-  edm::Handle<double> sig11;
-  iEvent.getByLabel(sig11_,sig11);
-
-
+  double PFsig00 = (*pfCovMatrix)(0,0);
+  double PFsig01 = (*pfCovMatrix)(0,1);
+  double PFsig10 = (*pfCovMatrix)(1,0);
+  double PFsig11 = (*pfCovMatrix)(1,1);
 
 
  
+
+
   // electron-electron 
   if (electrons.isValid() && second_electrons.isValid())
   {
@@ -250,15 +243,14 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
           CurrentCandidateEvent.set_pair(electrons->at(i),second_electrons->at(ii));
           CurrentCandidateEvent.set_mvaMET(mvamets->at(0));
           CurrentCandidateEvent.set_pfMET(pfmets->at(0));
-          CurrentCandidateEvent.set_pfMET_covMatrix(*sig00, *sig01, *sig10, *sig11);
-
+          CurrentCandidateEvent.set_pfMET_covMatrix(PFsig00, PFsig01, PFsig10, PFsig11);
 
           // 4-vectors for veto candidate DR checks
           TLorentzVector l1,l2,vetoCand;
           l1.SetPtEtaPhiM(electrons->at(i).pt(), electrons->at(i).eta(), electrons->at(i).phi(),electrons->at(i).mass());
           l2.SetPtEtaPhiM(second_electrons->at(ii).pt(), second_electrons->at(ii).eta(), second_electrons->at(ii).phi(),second_electrons->at(ii).mass());
 
-          if(l1.DeltaR(l2)<vetoDeltaR_) continue;
+          if(l1.DeltaR(l2)<pairDeltaRmin_) continue;
 
 
           ///////////////////
@@ -266,7 +258,7 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
           for (std::size_t ve=0; ve<veto_electrons->size(); ++ve)
           {          
             vetoCand.SetPtEtaPhiM(veto_electrons->at(ve).pt(), veto_electrons->at(ve).eta(), veto_electrons->at(ve).phi(),veto_electrons->at(ve).mass());
-            if(vetoCand.DeltaR(l1) > vetoDeltaR_ && vetoCand.DeltaR(l2) > vetoDeltaR_ )
+            if(vetoCand.DeltaR(l1) > vetoDeltaRmin_ && vetoCand.DeltaR(l2) > vetoDeltaRmin_ )
             {
               CurrentCandidateEvent.set_vetoElectron(veto_electrons->at(ve));
             }
@@ -276,7 +268,7 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
           for (std::size_t vm=0; vm<veto_muons->size(); ++vm)
           {          
              vetoCand.SetPtEtaPhiM(veto_muons->at(vm).pt(), veto_muons->at(vm).eta(), veto_muons->at(vm).phi(),veto_muons->at(vm).mass());
-            if(vetoCand.DeltaR(l1) > vetoDeltaR_ && vetoCand.DeltaR(l2) > vetoDeltaR_ )
+            if(vetoCand.DeltaR(l1) > vetoDeltaRmin_ && vetoCand.DeltaR(l2) > vetoDeltaRmin_ )
             {
               CurrentCandidateEvent.set_vetoMuon(veto_muons->at(vm));
             }
@@ -304,7 +296,7 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
         if(useMVAMET_ && mvamets.isValid())
           sv_mass = computeSVMass(mvamets->at(0),measuredTauLeptons);
         else if (!useMVAMET_)
-          sv_mass = computeSVMass(pfmets->at(0),measuredTauLeptons,*sig00,*sig10,*sig01,*sig11);
+          sv_mass = computeSVMass(pfmets->at(0),measuredTauLeptons,PFsig00,PFsig10,PFsig01,PFsig11);
 
 
 
@@ -335,15 +327,14 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
           CurrentCandidateEvent.set_pair(electrons->at(i),muons->at(ii));
           CurrentCandidateEvent.set_mvaMET(mvamets->at(0));
           CurrentCandidateEvent.set_pfMET(pfmets->at(0));
-          CurrentCandidateEvent.set_pfMET_covMatrix(*sig00, *sig01, *sig10, *sig11);
-
+          CurrentCandidateEvent.set_pfMET_covMatrix(PFsig00, PFsig01, PFsig10, PFsig11);
 
           // 4-vectors for veto candidate DR checks
           TLorentzVector l1,l2,vetoCand;
           l1.SetPtEtaPhiM(electrons->at(i).pt(), electrons->at(i).eta(), electrons->at(i).phi(),electrons->at(i).mass());
           l2.SetPtEtaPhiM(muons->at(ii).pt(), muons->at(ii).eta(), muons->at(ii).phi(),muons->at(ii).mass());
 
-          if(l1.DeltaR(l2)<vetoDeltaR_) continue;
+          if(l1.DeltaR(l2)<vetoDeltaRmin_) continue;
 
 
           ///////////////////
@@ -351,7 +342,7 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
           for (std::size_t ve=0; ve<veto_electrons->size(); ++ve)
           {          
             vetoCand.SetPtEtaPhiM(veto_electrons->at(ve).pt(), veto_electrons->at(ve).eta(), veto_electrons->at(ve).phi(),veto_electrons->at(ve).mass());
-            if(vetoCand.DeltaR(l1) > vetoDeltaR_ && vetoCand.DeltaR(l2) > vetoDeltaR_ )
+            if(vetoCand.DeltaR(l1) > vetoDeltaRmin_ && vetoCand.DeltaR(l2) > vetoDeltaRmin_ )
             {
               CurrentCandidateEvent.set_vetoElectron(veto_electrons->at(ve));
             }
@@ -361,7 +352,7 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
           for (std::size_t vm=0; vm<veto_muons->size(); ++vm)
           {          
              vetoCand.SetPtEtaPhiM(veto_muons->at(vm).pt(), veto_muons->at(vm).eta(), veto_muons->at(vm).phi(),veto_muons->at(vm).mass());
-            if(vetoCand.DeltaR(l1) > vetoDeltaR_ && vetoCand.DeltaR(l2) > vetoDeltaR_ )
+            if(vetoCand.DeltaR(l1) > vetoDeltaRmin_ && vetoCand.DeltaR(l2) > vetoDeltaRmin_ )
             {
               CurrentCandidateEvent.set_vetoMuon(veto_muons->at(vm));
             }
@@ -389,7 +380,7 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
         if(useMVAMET_ && mvamets.isValid())
           sv_mass = computeSVMass(mvamets->at(0),measuredTauLeptons);
         else if (!useMVAMET_)
-          sv_mass = computeSVMass(pfmets->at(0),measuredTauLeptons,*sig00,*sig10,*sig01,*sig11);
+         sv_mass = computeSVMass(pfmets->at(0),measuredTauLeptons,PFsig00,PFsig10,PFsig01,PFsig11);
 
 
 
@@ -414,15 +405,14 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
           CurrentCandidateEvent.set_pair(electrons->at(i),taus->at(ii));
           CurrentCandidateEvent.set_mvaMET(mvamets->at(0));          
           CurrentCandidateEvent.set_pfMET(pfmets->at(0));
-          CurrentCandidateEvent.set_pfMET_covMatrix(*sig00, *sig01, *sig10, *sig11);
-         
+          CurrentCandidateEvent.set_pfMET_covMatrix(PFsig00, PFsig01, PFsig10, PFsig11);         
 
           // 4-vectors for veto candidate DR checks
           TLorentzVector l1,l2,vetoCand;
           l1.SetPtEtaPhiM(electrons->at(i).pt(), electrons->at(i).eta(), electrons->at(i).phi(),electrons->at(i).mass());
           l2.SetPtEtaPhiM(taus->at(ii).pt(), taus->at(ii).eta(), taus->at(ii).phi(),taus->at(ii).mass());
 
-          if(l1.DeltaR(l2)<vetoDeltaR_) continue;
+          if(l1.DeltaR(l2)<vetoDeltaRmin_) continue;
 
 
           ///////////////////
@@ -430,7 +420,7 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
           for (std::size_t ve=0; ve<veto_electrons->size(); ++ve)
           {          
             vetoCand.SetPtEtaPhiM(veto_electrons->at(ve).pt(), veto_electrons->at(ve).eta(), veto_electrons->at(ve).phi(),veto_electrons->at(ve).mass());
-            if(vetoCand.DeltaR(l1) > vetoDeltaR_ && vetoCand.DeltaR(l2) > vetoDeltaR_ )
+            if(vetoCand.DeltaR(l1) > vetoDeltaRmin_ && vetoCand.DeltaR(l2) > vetoDeltaRmin_ )
             {
               CurrentCandidateEvent.set_vetoElectron(veto_electrons->at(ve));
             }
@@ -440,7 +430,7 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
           for (std::size_t vm=0; vm<veto_muons->size(); ++vm)
           {          
              vetoCand.SetPtEtaPhiM(veto_muons->at(vm).pt(), veto_muons->at(vm).eta(), veto_muons->at(vm).phi(),veto_muons->at(vm).mass());
-            if(vetoCand.DeltaR(l1) > vetoDeltaR_ && vetoCand.DeltaR(l2) > vetoDeltaR_ )
+            if(vetoCand.DeltaR(l1) > vetoDeltaRmin_ && vetoCand.DeltaR(l2) > vetoDeltaRmin_ )
             {
               CurrentCandidateEvent.set_vetoMuon(veto_muons->at(vm));
             }
@@ -469,7 +459,7 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
         if(useMVAMET_ && mvamets.isValid())
           sv_mass = computeSVMass(mvamets->at(0),measuredTauLeptons);
         else if (!useMVAMET_)
-          sv_mass = computeSVMass(pfmets->at(0),measuredTauLeptons,*sig00,*sig10,*sig01,*sig11);
+          sv_mass = computeSVMass(pfmets->at(0),measuredTauLeptons,PFsig00,PFsig10,PFsig01,PFsig11);
 
 
 
@@ -511,15 +501,14 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
           CurrentCandidateEvent.set_pair(muons->at(i),second_muons->at(ii));
           CurrentCandidateEvent.set_mvaMET(mvamets->at(0));  
           CurrentCandidateEvent.set_pfMET(pfmets->at(0));
-          CurrentCandidateEvent.set_pfMET_covMatrix(*sig00, *sig01, *sig10, *sig11);
-
+          CurrentCandidateEvent.set_pfMET_covMatrix(PFsig00, PFsig01, PFsig10, PFsig11);
 
           // 4-vectors for veto candidate DR checks
           TLorentzVector l1,l2,vetoCand;
           l1.SetPtEtaPhiM(muons->at(i).pt(), muons->at(i).eta(), muons->at(i).phi(),muons->at(i).mass());
           l2.SetPtEtaPhiM(second_muons->at(ii).pt(), second_muons->at(ii).eta(), second_muons->at(ii).phi(),second_muons->at(ii).mass());
 
-          if(l1.DeltaR(l2)<vetoDeltaR_) continue;
+          if(l1.DeltaR(l2)<vetoDeltaRmin_) continue;
 
 
           ///////////////////
@@ -527,7 +516,7 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
           for (std::size_t ve=0; ve<veto_electrons->size(); ++ve)
           {          
             vetoCand.SetPtEtaPhiM(veto_electrons->at(ve).pt(), veto_electrons->at(ve).eta(), veto_electrons->at(ve).phi(),veto_electrons->at(ve).mass());
-            if(vetoCand.DeltaR(l1) > vetoDeltaR_ && vetoCand.DeltaR(l2) > vetoDeltaR_ )
+            if(vetoCand.DeltaR(l1) > vetoDeltaRmin_ && vetoCand.DeltaR(l2) > vetoDeltaRmin_ )
             {
               CurrentCandidateEvent.set_vetoElectron(veto_electrons->at(ve));
             }
@@ -537,7 +526,7 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
           for (std::size_t vm=0; vm<veto_muons->size(); ++vm)
           {          
              vetoCand.SetPtEtaPhiM(veto_muons->at(vm).pt(), veto_muons->at(vm).eta(), veto_muons->at(vm).phi(),veto_muons->at(vm).mass());
-            if(vetoCand.DeltaR(l1) > vetoDeltaR_ && vetoCand.DeltaR(l2) > vetoDeltaR_ )
+            if(vetoCand.DeltaR(l1) > vetoDeltaRmin_ && vetoCand.DeltaR(l2) > vetoDeltaRmin_ )
             {
               CurrentCandidateEvent.set_vetoMuon(veto_muons->at(vm));
             }
@@ -568,7 +557,7 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
         if(useMVAMET_ && mvamets.isValid())
           sv_mass = computeSVMass(mvamets->at(0),measuredTauLeptons);
         else if (!useMVAMET_)
-          sv_mass = computeSVMass(pfmets->at(0),measuredTauLeptons,*sig00,*sig10,*sig01,*sig11);
+          sv_mass = computeSVMass(pfmets->at(0),measuredTauLeptons,PFsig00,PFsig10,PFsig01,PFsig11);
 
 
 
@@ -596,15 +585,14 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
           CurrentCandidateEvent.set_pair(muons->at(i),taus->at(ii));
           CurrentCandidateEvent.set_mvaMET(mvamets->at(0));    
           CurrentCandidateEvent.set_pfMET(pfmets->at(0));
-          CurrentCandidateEvent.set_pfMET_covMatrix(*sig00, *sig01, *sig10, *sig11);
-
+          CurrentCandidateEvent.set_pfMET_covMatrix(PFsig00, PFsig01, PFsig10, PFsig11);
 
           // 4-vectors for veto candidate DR checks
           TLorentzVector l1,l2,vetoCand;
           l1.SetPtEtaPhiM(muons->at(i).pt(), muons->at(i).eta(), muons->at(i).phi(),muons->at(i).mass());
           l2.SetPtEtaPhiM(taus->at(ii).pt(), taus->at(ii).eta(), taus->at(ii).phi(),taus->at(ii).mass());
         
-          if(l1.DeltaR(l2)<vetoDeltaR_) continue;
+          if(l1.DeltaR(l2)<vetoDeltaRmin_) continue;
 
 
           ///////////////////
@@ -612,7 +600,7 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
           for (std::size_t ve=0; ve<veto_electrons->size(); ++ve)
           {          
             vetoCand.SetPtEtaPhiM(veto_electrons->at(ve).pt(), veto_electrons->at(ve).eta(), veto_electrons->at(ve).phi(),veto_electrons->at(ve).mass());
-            if(vetoCand.DeltaR(l1) > vetoDeltaR_ && vetoCand.DeltaR(l2) > vetoDeltaR_ )
+            if(vetoCand.DeltaR(l1) > vetoDeltaRmin_ && vetoCand.DeltaR(l2) > vetoDeltaRmin_ )
             {
               CurrentCandidateEvent.set_vetoElectron(veto_electrons->at(ve));
             }
@@ -622,7 +610,7 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
           for (std::size_t vm=0; vm<veto_muons->size(); ++vm)
           {          
              vetoCand.SetPtEtaPhiM(veto_muons->at(vm).pt(), veto_muons->at(vm).eta(), veto_muons->at(vm).phi(),veto_muons->at(vm).mass());
-            if(vetoCand.DeltaR(l1) > vetoDeltaR_ && vetoCand.DeltaR(l2) > vetoDeltaR_ )
+            if(vetoCand.DeltaR(l1) > vetoDeltaRmin_ && vetoCand.DeltaR(l2) > vetoDeltaRmin_ )
             {
               CurrentCandidateEvent.set_vetoMuon(veto_muons->at(vm));
             }
@@ -654,7 +642,7 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
         if(useMVAMET_ && mvamets.isValid())
           sv_mass = computeSVMass(mvamets->at(0),measuredTauLeptons);
         else if (!useMVAMET_)
-          sv_mass = computeSVMass(pfmets->at(0),measuredTauLeptons,*sig00,*sig10,*sig01,*sig11);
+          sv_mass = computeSVMass(pfmets->at(0),measuredTauLeptons,PFsig00,PFsig10,PFsig01,PFsig11);
 
 
 
@@ -703,22 +691,21 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
           CurrentCandidateEvent.set_pair(taus->at(i),second_taus->at(ii));
           CurrentCandidateEvent.set_mvaMET(mvamets->at(0));     
           CurrentCandidateEvent.set_pfMET(pfmets->at(0));
-          CurrentCandidateEvent.set_pfMET_covMatrix(*sig00, *sig01, *sig10, *sig11);
-
+          CurrentCandidateEvent.set_pfMET_covMatrix(PFsig00, PFsig01, PFsig10, PFsig11);
 
           // 4-vectors for veto candidate DR checks
           TLorentzVector l1,l2,vetoCand;
           l1.SetPtEtaPhiM(taus->at(i).pt(), taus->at(i).eta(), taus->at(i).phi(),taus->at(i).mass());
           l2.SetPtEtaPhiM(second_taus->at(ii).pt(), second_taus->at(ii).eta(), second_taus->at(ii).phi(),second_taus->at(ii).mass());
 
-          if(l1.DeltaR(l2)<vetoDeltaR_) continue;
+          if(l1.DeltaR(l2)<vetoDeltaRmin_) continue;
 
           ///////////////////
           /////// VETO ELECTRONS /////////////////////////////////////////////
           for (std::size_t ve=0; ve<veto_electrons->size(); ++ve)
           {          
             vetoCand.SetPtEtaPhiM(veto_electrons->at(ve).pt(), veto_electrons->at(ve).eta(), veto_electrons->at(ve).phi(),veto_electrons->at(ve).mass());
-            if(vetoCand.DeltaR(l1) > vetoDeltaR_ && vetoCand.DeltaR(l2) > vetoDeltaR_ )
+            if(vetoCand.DeltaR(l1) > vetoDeltaRmin_ && vetoCand.DeltaR(l2) > vetoDeltaRmin_ )
             {
               CurrentCandidateEvent.set_vetoElectron(veto_electrons->at(ve));
             }
@@ -728,7 +715,7 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
           for (std::size_t vm=0; vm<veto_muons->size(); ++vm)
           {          
              vetoCand.SetPtEtaPhiM(veto_muons->at(vm).pt(), veto_muons->at(vm).eta(), veto_muons->at(vm).phi(),veto_muons->at(vm).mass());
-            if(vetoCand.DeltaR(l1) > vetoDeltaR_ && vetoCand.DeltaR(l2) > vetoDeltaR_ )
+            if(vetoCand.DeltaR(l1) > vetoDeltaRmin_ && vetoCand.DeltaR(l2) > vetoDeltaRmin_ )
             {
               CurrentCandidateEvent.set_vetoMuon(veto_muons->at(vm));
             }
@@ -761,8 +748,7 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
         if(useMVAMET_ && mvamets.isValid())
           sv_mass = computeSVMass(mvamets->at(0),measuredTauLeptons);
         else if (!useMVAMET_)
-          sv_mass = computeSVMass(pfmets->at(0),measuredTauLeptons,*sig00,*sig10,*sig01,*sig11);
-
+          sv_mass = computeSVMass(pfmets->at(0),measuredTauLeptons,PFsig00,PFsig10,PFsig01,PFsig11);
 
 
         CurrentCandidateEvent.set_SVMass(sv_mass);
@@ -892,7 +878,7 @@ double TupleCandidateEventProducer::computeSVMass(pat::MET MET,std::vector<svFit
  double sig00, double sig10, double sig01, double sig11)
 {
 
-/* this is a mess since MET SIG is not in PHYS14 samples for slimmedMET */
+/* this is a bit complicated since MET SIG is not in PHYS14 (and Spring15?) samples for slimmedMET */
   if(!doSVMass_) return 0.0;
 
 
@@ -918,6 +904,8 @@ double TupleCandidateEventProducer::computeSVMass(pat::MET MET,std::vector<svFit
 
 
 }
+
+
 
 //define this as a plug-in
 DEFINE_FWK_MODULE(TupleCandidateEventProducer);

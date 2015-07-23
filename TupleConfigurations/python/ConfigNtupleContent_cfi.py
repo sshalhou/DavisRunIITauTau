@@ -1,7 +1,6 @@
 ####################################################################################################
 # master config file :
 #    specify settings for pair building, Tau ES options, MET & SVMass, genParticle content
-#
 
 import FWCore.ParameterSet.Config as cms
 
@@ -20,14 +19,14 @@ BUILD_TAU_TAU = True
 # edit the following to turn on/off Tau ES variants
 ####################################################################################################
 
-BUILD_TAU_ES_VARIANTS = True
+BUILD_TAU_ES_VARIANTS = False # not needed in early sync
 
 
 ####################################################################################################
 # edit the following MET settings 
 ####################################################################################################
 
-USE_MVAMET = True #  True = MVA MET, False = PFMET
+USE_MVAMET = False #  True = MVA MET, False = PFMET
 
 ####################################################################################################
 # edit the following SVMass settings 
@@ -60,6 +59,8 @@ GEN_PARTICLES_TO_KEEP.append(25) # keep SM Higgs
 GEN_PARTICLES_TO_KEEP.append(35) # keep non-SM Higgs
 GEN_PARTICLES_TO_KEEP.append(36) # keep non-SM Higgs
 GEN_PARTICLES_TO_KEEP.append(37) # keep non-SM Higgs
+GEN_PARTICLES_TO_KEEP.append(211) # keep pi+, pi-
+GEN_PARTICLES_TO_KEEP.append(111) # keep pi0
 
 
 ####################################################################################################
@@ -69,7 +70,7 @@ GEN_PARTICLES_TO_KEEP.append(37) # keep non-SM Higgs
 #        and is operated on by the BtagSF tool (if the applyBtagSF flag is set to True)
 ####################################################################################################
 
-DEFAULT_BTAG_ALGORITHM = "combinedInclusiveSecondaryVertexV2BJetTags"
+DEFAULT_BTAG_ALGORITHM = "pfCombinedInclusiveSecondaryVertexV2BJetTags"
 APPLY_BTAG_SF = True 						
 BTAG_SF_SEED = 123456	#############################################################################
 						# note : if BTAG_SF_SEED is anything other than 0, the seed of the TRandom3 

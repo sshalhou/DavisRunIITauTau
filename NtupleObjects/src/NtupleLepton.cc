@@ -7,8 +7,6 @@ NtupleLepton::NtupleLepton()
   m_p4.SetXYZT(NAN,NAN,NAN,NAN);
   m_gen_p4.SetXYZT(NAN,NAN,NAN,NAN);
   m_genMother_p4.SetXYZT(NAN,NAN,NAN,NAN);
-  m_L1TrigObj_p4.SetXYZT(NAN,NAN,NAN,NAN);
-  m_L3TrigObj_p4.SetXYZT(NAN,NAN,NAN,NAN);
   m_leptonType = -999;
   m_charge = -999;
   m_PFpdgId = -999;
@@ -17,10 +15,13 @@ NtupleLepton::NtupleLepton()
   m_dz = NAN;
   m_dxy = NAN;
   m_EffectiveArea = NAN;
-  m_L1TrigObjRecoObjDeltaR = NAN;
-  m_L3TrigObjRecoObjDeltaR = NAN;
   m_raw_electronMVA = NAN;
-  m_passFail_electronMVA = NAN; 
+  m_category_electronMVA = NAN;
+  m_passFail_electronMVA80 = NAN; 
+  m_passFail_electronMVA90 = NAN; 
+  m_passFail_electronCutBasedID = NAN;
+  m_ooEmooP = NAN;
+  m_full5x5_sigmaIetaIeta = NAN;
   m_TauEsVariant = NAN; 
   m_IP = NAN;                   
   m_IPerror = NAN;              
@@ -66,7 +67,8 @@ NtupleLepton::NtupleLepton()
   m_genJet_p4.SetXYZT(NAN,NAN,NAN,NAN);
   m_numStrips = NAN;
   m_numHadrons  = NAN;
-
+  m_dzTauVertex = NAN;
+  m_ZimpactTau = NAN;
 }
 
 // helpers
@@ -113,7 +115,7 @@ NtupleLepton::NtupleLepton()
 // assert that it is a known label
 ///////////////
 
-  float NtupleLepton::tauID(std::string label_)
+  float NtupleLepton::tauID(std::string label_) const
   {
     float returnValue = NAN;
     for(std::size_t x = 0; x < m_tauIDs.size();++x) 
@@ -122,6 +124,7 @@ NtupleLepton::NtupleLepton()
 
     }
 
+    if(isnan(returnValue)!=0) std::cout<<" bad tau ID "<<label_<<"\n";
     assert(isnan(returnValue)==0);
     return returnValue;
   }
@@ -169,7 +172,7 @@ NtupleLepton::NtupleLepton()
 // assert that it is a known label
 ///////////////
 
-  float NtupleLepton::relativeIsol(std::string label_)
+  float NtupleLepton::relativeIsol(std::string label_) const
   {
     float returnValue = NAN;
     for(std::size_t x = 0; x < m_relativeIsolations.size();++x) 
@@ -223,7 +226,7 @@ NtupleLepton::NtupleLepton()
 // assert that it is a known label
 ///////////////
 
-  float NtupleLepton::rho(std::string label_)
+  float NtupleLepton::rho(std::string label_) const
   {
     float returnValue = NAN;
     for(std::size_t x = 0; x < m_rhos.size();++x) 
@@ -280,12 +283,36 @@ NtupleLepton::NtupleLepton()
 // retun '0 meaning not accepted' if label is unknown
 ///////////////
 
-  float NtupleLepton::HLTpath(std::string label_)
+  float NtupleLepton::HLTpath(std::string label_) const
   {
     float returnValue = 0;
+
+    // the simpler case without a version wildcard
+    if(label_.find('*')==std::string::npos) 
+    {
+      for(std::size_t x = 0; x < m_HLTPaths.size();++x) 
+      { 
+        if(m_HLTPaths.at(x).first == label_) returnValue = m_HLTPaths.at(x).second;
+
+      }
+    }
+    // a bit more work needed in case _v* wildcard is provided
+    else 
+    {
+      std::string versionStrippedLabel_ = label_;
+      versionStrippedLabel_.erase(label_.find("_v"),label_.length());
+
+
     for(std::size_t x = 0; x < m_HLTPaths.size();++x) 
-    { 
-      if(m_HLTPaths.at(x).first == label_) returnValue = m_HLTPaths.at(x).second;
+      { 
+
+        std::string comparisonString = m_HLTPaths.at(x).first;
+        comparisonString.erase(comparisonString.find("_v"),comparisonString.length());
+
+        if(comparisonString == versionStrippedLabel_) returnValue = m_HLTPaths.at(x).second;
+
+      }
+
 
     }
 
@@ -328,36 +355,14 @@ void NtupleLepton::printLEP()
   std::cout<<"<LEPPRINT "<<type_print<<"> HLT ACCEPTED PATHS and PreScales : ";
     for(std::size_t i=0;i<m_HLTPaths.size();++i) std::cout<<"[ "<<m_HLTPaths[i].first<<" = "<<m_HLTPaths[i].second<<" ] ";
     std::cout<<"\n";
- 
-  std::cout<<"<LEPPRINT "<<type_print<<"> L1 trig obj Pt,Eta,Phi,M "<<m_L1TrigObj_p4.Pt()<<" , "<<m_L1TrigObj_p4.Eta()<<" , "<<m_L1TrigObj_p4.Phi()<<" , "<<m_L1TrigObj_p4.M()<<"\n";
-  std::cout<<"<LEPPRINT "<<type_print<<"> L1 trig obj minDR "<<m_L1TrigObjRecoObjDeltaR<<"\n";
-  std::cout<<"<LEPPRINT "<<type_print<<"> L1 trig obj's filters : ";
-    for(std::size_t i=0;i<m_L1acceptedFilters.size();++i) std::cout<<"[ "<<m_L1acceptedFilters[i]<<" ] ";
-    std::cout<<"\n";
 
-  std::cout<<"<LEPPRINT "<<type_print<<"> L3 trig obj Pt,Eta,Phi,M "<<m_L3TrigObj_p4.Pt()<<" , "<<m_L3TrigObj_p4.Eta()<<" , "<<m_L3TrigObj_p4.Phi()<<" , "<<m_L3TrigObj_p4.M()<<"\n";
-  std::cout<<"<LEPPRINT "<<type_print<<"> L3 trig obj minDR "<<m_L3TrigObjRecoObjDeltaR<<"\n";
-  std::cout<<"<LEPPRINT "<<type_print<<"> L3 trig obj's filters : ";
-    for(std::size_t i=0;i<m_L3acceptedFilters.size();++i) std::cout<<"[ "<<m_L3acceptedFilters[i]<<" ] ";
-    std::cout<<"\n";
-
-  std::cout<<"<LEPPRINT "<<type_print<<"> HLT isBOTH  : ";
-    for(std::size_t i=0;i<m_pathSummary_isBOTH.size();++i) std::cout<<"[ "<<m_pathSummary_isBOTH[i]<<" ] ";
-    std::cout<<"\n";  
-
-  std::cout<<"<LEPPRINT "<<type_print<<"> HLT isL3  : ";
-    for(std::size_t i=0;i<m_pathSummary_isL3.size();++i) std::cout<<"[ "<<m_pathSummary_isL3[i]<<" ] ";
-    std::cout<<"\n";  
-
-  std::cout<<"<LEPPRINT "<<type_print<<"> HLT isLF  : ";
-    for(std::size_t i=0;i<m_pathSummary_isLF.size();++i) std::cout<<"[ "<<m_pathSummary_isLF[i]<<" ] ";
-    std::cout<<"\n";  
-
-  std::cout<<"<LEPPRINT "<<type_print<<"> HLT all config filters passed  : ";
-    for(std::size_t i=0;i<m_pathSummary_filterListPassed.size();++i) std::cout<<"[ "<<m_pathSummary_filterListPassed[i]<<" ] ";
-    std::cout<<"\n";  
   std::cout<<"<LEPPRINT "<<type_print<<"> ELECTRON MVA RAW "<<m_raw_electronMVA<<"\n";
-  std::cout<<"<LEPPRINT "<<type_print<<"> ELECTRON MVA PASSFAIL "<<m_passFail_electronMVA<<"\n";
+  std::cout<<"<LEPPRINT "<<type_print<<"> ELECTRON MVA CATEG. "<<m_category_electronMVA<<"\n";
+  std::cout<<"<LEPPRINT "<<type_print<<"> ELECTRON MVA 80 PASSFAIL "<<m_passFail_electronMVA80<<"\n";
+  std::cout<<"<LEPPRINT "<<type_print<<"> ELECTRON MVA 90 PASSFAIL "<<m_passFail_electronMVA90<<"\n";
+  std::cout<<"<LEPPRINT "<<type_print<<"> ELECTRON CUT BASED VETO ID PASSFAIL "<<m_passFail_electronCutBasedID<<"\n";
+  std::cout<<"<LEPPRINT "<<type_print<<"> ELECTRON ooEmooP "<<m_ooEmooP<<"\n";
+  std::cout<<"<LEPPRINT "<<type_print<<"> ELECTRON full5x5_sigmaIetaIeta "<<m_full5x5_sigmaIetaIeta<<"\n";
   std::cout<<"<LEPPRINT "<<type_print<<"> TauEsVariant "<<m_TauEsVariant<<"\n";
 
 std::cout<<"<LEPPRINT "<<type_print<<"> IP : " << m_IP << std::endl;
@@ -405,7 +410,8 @@ std::cout<<"<LEPPRINT "<<type_print<<"> known tauID types and values : ";
   for(std::size_t i=0;i<m_tauIDs.size();++i) std::cout<<"[ "<<m_tauIDs[i].first<<" = "<<m_tauIDs[i].second<<" ] ";
   std::cout<<"\n";
 
-
+std::cout<<"<LEPPRINT "<<type_print<<"> dzTauVertex : " << m_dzTauVertex << std::endl;
+std::cout<<"<LEPPRINT "<<type_print<<"> ZimpactTau : " << m_ZimpactTau << std::endl;
 std::cout<<"<LEPPRINT "<<type_print<<"> num strips : " << m_numStrips << std::endl;
 std::cout<<"<LEPPRINT "<<type_print<<"> num hadrons : " << m_numHadrons << std::endl;
 std::cout<<"<LEPPRINT "<<type_print<<"> genJet p4 pt :  " << m_genJet_p4.pt() << std::endl;
@@ -420,151 +426,57 @@ std::cout<<"<LEPPRINT "<<type_print<<"> genJet p4 pt :  " << m_genJet_p4.pt() <<
 ////////////////////////////////////////////////////////////////////
 void NtupleLepton::userFloatVectorParser(stringVec & labels_,floatVec & values_)
 {
-
-  float trigL1Pt = NAN;
-  float trigL1Eta = NAN;
-  float trigL1Phi = NAN;
-  float trigL1Mass = NAN;
-  float trigL3Pt = NAN;
-  float trigL3Eta = NAN;
-  float trigL3Phi = NAN;
-  float trigL3Mass = NAN;
-
-
   for(std::size_t i = 0; i<labels_.size(); ++i)
   {
-   // std::cout<<labels_[i]<<" "<<values_[i]<<"\n";
 
     if(labels_[i].find("AcceptWithPreScale_")==0) 
-      {
-   
-       /* store the HLT path label-preScale pairs */
-          std::string x = "AcceptWithPreScale_";
-          std::string current_string = labels_[i].erase(0,x.length());
-          float current_float = values_[i];
-          std::pair<std::string, float> aPathPreScalePair(current_string,current_float);
-          m_HLTPaths.push_back(aPathPreScalePair);
-        
-      }
+    {  
+      /* store the HLT path label-preScale pairs */
+      std::string x = "AcceptWithPreScale_";
+      std::string current_string = labels_[i].erase(0,x.length());
+      float current_float = values_[i];
+      std::pair<std::string, float> aPathPreScalePair(current_string,current_float);
+      m_HLTPaths.push_back(aPathPreScalePair);
+    }
     else if(labels_[i]=="EffectiveArea")  m_EffectiveArea = values_[i];
     else if(labels_[i]=="dxy")  m_dxy = values_[i];
     else if(labels_[i]=="dz")  m_dz = values_[i];
-    else if (labels_[i].find("L1Obj_TrigObjRecoObjDeltaR")!=std::string::npos)
-      { m_L1TrigObjRecoObjDeltaR = values_[i];}
-    else if (labels_[i].find("L1Obj_TrigObjPt")!=std::string::npos)
-      { trigL1Pt = values_[i];}
-    else if (labels_[i].find("L1Obj_TrigObjEta")!=std::string::npos)
-      { trigL1Eta = values_[i];}
-    else if (labels_[i].find("L1Obj_TrigObjPhi")!=std::string::npos)
-      { trigL1Phi = values_[i];}
-    else if (labels_[i].find("L1Obj_TrigObjMass")!=std::string::npos)
-      { trigL1Mass = values_[i];}
-    else if (labels_[i].find("L3Obj_TrigObjRecoObjDeltaR")!=std::string::npos)
-      { m_L3TrigObjRecoObjDeltaR = values_[i];}
-    else if (labels_[i].find("L3Obj_TrigObjPt")!=std::string::npos)
-      { trigL3Pt = values_[i];}
-    else if (labels_[i].find("L3Obj_TrigObjEta")!=std::string::npos)
-      { trigL3Eta = values_[i];}
-    else if (labels_[i].find("L3Obj_TrigObjPhi")!=std::string::npos)
-      { trigL3Phi = values_[i];}
-    else if (labels_[i].find("L3Obj_TrigObjMass")!=std::string::npos)
-      { trigL3Mass = values_[i];}
     else if (labels_[i].find("rho_")==0)
-      {
-
-   
-       /* store the rho label-value pairs */
-          std::string x = "rho_";
-          std::string current_string = labels_[i].erase(0,x.length());
-          float current_float = values_[i];
-          std::pair<std::string, float> currentPair(current_string,current_float);
-          m_rhos.push_back(currentPair);
-        
-
-      }
-    else if (labels_[i].find("relativeIsol_")==0)
-      {
-
-      /* store the relIso label-value pairs */
-          std::string x = "relativeIsol_";
-          std::string current_string = labels_[i].erase(0,x.length());
-          float current_float = values_[i];
-          std::pair<std::string, float> currentPair(current_string,current_float);
-          m_relativeIsolations.push_back(currentPair);        
-
-      }
-
-    else if (labels_[i].find("tauID_")==0)
-      {
-
+    {
       /* store the rho label-value pairs */
-          std::string x = "tauID_";
-          std::string current_string = labels_[i].erase(0,x.length());
-          float current_float = values_[i];
-          std::pair<std::string, float> currentPair(current_string,current_float);
-          m_tauIDs.push_back(currentPair);        
-
-      }
-
-    else if(labels_[i].find("L1Obj_trigObjectFilter_")==0)
-      {
-        std::string x = "L1Obj_trigObjectFilter_";
-        m_L1acceptedFilters.push_back(labels_[i].erase(0,x.length()));
-      }
-    else if(labels_[i].find("L3Obj_trigObjectFilter_")==0)
-      {
-        std::string x = "L3Obj_trigObjectFilter_";
-        m_L3acceptedFilters.push_back(labels_[i].erase(0,x.length()));
-      }
-    else if(labels_[i].find("trigObjectPathSummary_")==0 && labels_[i].find("_isBOTH")!=std::string::npos)
-      {
-        if(values_[i]==1)
-        {
-          std::string x = "trigObjectPathSummary_";
-          std::string y = "_isBOTH";
-          std::string sansPrefix = labels_[i].erase(0,x.length());
-          m_pathSummary_isBOTH.push_back(sansPrefix.erase(sansPrefix.length()-y.length(),sansPrefix.length()));
-        }
-      }
-    else if(labels_[i].find("trigObjectPathSummary_")==0 && labels_[i].find("_isL3")!=std::string::npos)
-      {  
-        if(values_[i]==1)
-        {
-          std::string x = "trigObjectPathSummary_";
-          std::string y = "_isL3";
-          std::string sansPrefix = labels_[i].erase(0,x.length());
-          m_pathSummary_isL3.push_back(sansPrefix.erase(sansPrefix.length()-y.length(),sansPrefix.length()));
-        }
-
-      }
-    else if(labels_[i].find("trigObjectPathSummary_")==0 && labels_[i].find("_isLF")!=std::string::npos)
-      {
-
-        if(values_[i]==1)
-        {
-          std::string x = "trigObjectPathSummary_";
-          std::string y = "_isLF";
-          std::string sansPrefix = labels_[i].erase(0,x.length());
-          m_pathSummary_isLF.push_back(sansPrefix.erase(sansPrefix.length()-y.length(),sansPrefix.length()));
-        }
+      std::string x = "rho_";
+      std::string current_string = labels_[i].erase(0,x.length());
+      float current_float = values_[i];
+      std::pair<std::string, float> currentPair(current_string,current_float);
+      m_rhos.push_back(currentPair);
+    }
+    else if (labels_[i].find("relativeIsol_")==0)
+    {
+      /* store the relIso label-value pairs */
+      std::string x = "relativeIsol_";
+      std::string current_string = labels_[i].erase(0,x.length());
+      float current_float = values_[i];
+      std::pair<std::string, float> currentPair(current_string,current_float);
+      m_relativeIsolations.push_back(currentPair);        
+    }
+    else if (labels_[i].find("tauID_")==0)
+    {
+      /* store the rho label-value pairs */
+      std::string x = "tauID_";
+      std::string current_string = labels_[i].erase(0,x.length());
+      float current_float = values_[i];
+      std::pair<std::string, float> currentPair(current_string,current_float);
+      m_tauIDs.push_back(currentPair);        
+    }
+    else if(labels_[i]=="MVA_nonTrig_raw") {m_raw_electronMVA = values_[i];}  
+    else if(labels_[i]=="CATEGORY_nonTrigMVA") {m_category_electronMVA = values_[i];}  
 
 
-      }
-    else if(labels_[i].find("trigObjectPathSummary_")==0 && labels_[i].find("_filterListPassed")!=std::string::npos)
-      {
-
-        if(values_[i]==1)
-        {
-          std::string x = "trigObjectPathSummary_";
-          std::string y = "_filterListPassed";
-          std::string sansPrefix = labels_[i].erase(0,x.length());
-          m_pathSummary_filterListPassed.push_back(sansPrefix.erase(sansPrefix.length()-y.length(),sansPrefix.length()));
-        }
-
-
-      }
-    else if(labels_[i]=="MVA_NonTrigPhys14") {m_raw_electronMVA = values_[i];}  
-    else if(labels_[i]=="PASS_MVA_NonTrigPhys14") {m_passFail_electronMVA = values_[i];}  
+    else if(labels_[i]=="PASS_nonTrigMVA80") {m_passFail_electronMVA80 = values_[i];}  
+    else if(labels_[i]=="PASS_nonTrigMVA90") {m_passFail_electronMVA90 = values_[i];}  
+    else if(labels_[i]=="passCutBasedVetoID") {m_passFail_electronCutBasedID = values_[i];}  
+    else if(labels_[i]=="ooEmooP") {m_ooEmooP = values_[i];}  
+    else if(labels_[i]=="full5x5_sigmaIetaIeta") {m_full5x5_sigmaIetaIeta = values_[i];}  
     else if(labels_[i]=="TauEsVariant") {m_TauEsVariant = values_[i];}      
     else if(labels_[i]=="IP") {m_IP = values_[i];}      
     else if(labels_[i]=="IPerror") { m_IPerror = values_[i];}      
@@ -606,32 +518,15 @@ void NtupleLepton::userFloatVectorParser(stringVec & labels_,floatVec & values_)
     else if(labels_[i]=="numberOfMissingOuterHits") {m_numberOfMissingOuterHits = values_[i];}
     else if(labels_[i]=="numberOfTrackHits") {m_numberOfTrackHits = values_[i];}
     else if(labels_[i]=="passConversionVeto") {m_passConversionVeto = values_[i];}
-
-
     else if(labels_[i]=="numHadrons") {m_numHadrons = values_[i];}
     else if(labels_[i]=="numStrips") {m_numStrips = values_[i];}
-
+    else if(labels_[i]=="dzTauVertex") {m_dzTauVertex = values_[i];}
+    else if(labels_[i]=="ZimpactTau") {m_ZimpactTau = values_[i];}
     else std::cout<<" NOT STORED "<<labels_[i]<<" = "<<values_[i]<<"\n";
-
-  }
-  /////////////////////////////////////////
-  // set the trig 4-vectors
-  if(trigL1Pt==trigL1Pt)
-  {
-  TLorentzVector L1;
-  L1.SetPtEtaPhiM(trigL1Pt,trigL1Eta,trigL1Phi,trigL1Mass);
-  m_L1TrigObj_p4.SetXYZT(L1.X(),L1.Y(),L1.Z(),L1.T());
-  }
-
-  if(trigL3Pt==trigL3Pt)
-  {
-  TLorentzVector L3;
-  L3.SetPtEtaPhiM(trigL3Pt,trigL3Eta,trigL3Phi,trigL3Mass);
-  m_L3TrigObj_p4.SetXYZT(L3.X(),L3.Y(),L3.Z(),L3.T());
   }
 }
-
-
+    
+    
 ////////////////////////////////////////////////////////////////////
 // Fill Gen Lepton Info based on pat embedded GenParticle
 ////////////////////////////////////////////////////////////////////
@@ -784,9 +679,10 @@ int NtupleLepton::leptonType() const { return m_leptonType; }
 LorentzVector NtupleLepton::p4() const { return m_p4; }
 LorentzVector NtupleLepton::gen_p4() const { return m_gen_p4; }
 LorentzVector NtupleLepton::genMother_p4() const { return m_genMother_p4; }
-LorentzVector NtupleLepton::L1TrigObj_p4() const { return m_L1TrigObj_p4; }
-LorentzVector NtupleLepton::L3TrigObj_p4() const { return m_L3TrigObj_p4; }
 
+
+float NtupleLepton::pt() const { return m_p4.pt(); }
+float NtupleLepton::eta() const { return m_p4.eta(); }
 
 float NtupleLepton::dz() const { return m_dz; }
 float NtupleLepton::dxy() const { return m_dxy; }
@@ -795,17 +691,17 @@ int NtupleLepton::charge() const { return m_charge; }
 int NtupleLepton::PFpdgId() const { return m_PFpdgId; }
 int NtupleLepton::GENpdgId() const { return m_GENpdgId; }
 int NtupleLepton::GENMOTHERpdgId() const { return m_GENMOTHERpdgId; }
+float NtupleLepton::category_electronMVA() const {return m_category_electronMVA;}
 
-stringVec NtupleLepton::L1acceptedFilters() const { return m_L1acceptedFilters; }
-float NtupleLepton::L1TrigObjRecoObjDeltaR() const { return m_L1TrigObjRecoObjDeltaR; }
-stringVec NtupleLepton::L3acceptedFilters() const { return m_L3acceptedFilters; }
-float NtupleLepton::L3TrigObjRecoObjDeltaR() const { return m_L3TrigObjRecoObjDeltaR; }
-stringVec NtupleLepton::pathSummary_isBOTH() const { return m_pathSummary_isBOTH; }
-stringVec NtupleLepton::pathSummary_isL3() const { return m_pathSummary_isL3; }
-stringVec NtupleLepton::pathSummary_isLF() const { return m_pathSummary_isLF; }
-stringVec NtupleLepton::pathSummary_filterListPassed() const { return m_pathSummary_filterListPassed; }
 float NtupleLepton::raw_electronMVA() const {return m_raw_electronMVA;}
-float NtupleLepton::passFail_electronMVA() const {return m_passFail_electronMVA;} 
+float NtupleLepton::passFail_electronMVA80() const {return m_passFail_electronMVA80;} 
+float NtupleLepton::passFail_electronMVA90() const {return m_passFail_electronMVA90;} 
+
+
+float NtupleLepton::passFail_electronCutBasedID() const {return m_passFail_electronCutBasedID;} 
+float NtupleLepton::ooEmooP() const {return m_ooEmooP;} 
+float NtupleLepton::full5x5_sigmaIetaIeta() const {return m_full5x5_sigmaIetaIeta;} 
+
 float NtupleLepton::TauEsVariant() const {return m_TauEsVariant;} 
 float NtupleLepton::IP() const {return m_IP;} 
 float NtupleLepton::IPerror() const {return m_IPerror;} 
@@ -850,5 +746,8 @@ float NtupleLepton::passConversionVeto() const {return m_passConversionVeto;}
 
 
 LorentzVector NtupleLepton::genJet_p4() const {return m_genJet_p4;}
+float NtupleLepton::dzTauVertex() const {return m_dzTauVertex;}
 float NtupleLepton::numStrips() const {return m_numStrips;}
 float NtupleLepton::numHadrons() const {return m_numHadrons;}
+float NtupleLepton::ZimpactTau() const {return m_ZimpactTau;}
+
