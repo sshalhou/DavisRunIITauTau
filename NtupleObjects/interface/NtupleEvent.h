@@ -110,6 +110,7 @@ public:
   std::vector<double>  pfMET_cov10() const;
   std::vector<double>  pfMET_cov11() const;
 
+
 private:
 
 	int m_CandidateEventType; 
@@ -131,11 +132,11 @@ private:
   std::vector<double> m_MTmvaMET_leg2;
   std::vector<double> m_MTpfMET_leg2;
   std::vector<reco::PFMET>  m_mvaMET;
-  std::vector<pat::MET>  m_pfMET;
-  std::vector<double>  m_pfMET_cov00; // needed due to missing sig matrix in phys14 samples
-  std::vector<double>  m_pfMET_cov01; // needed due to missing sig matrix in phys14 samples
-  std::vector<double>  m_pfMET_cov10; // needed due to missing sig matrix in phys14 samples
-  std::vector<double>  m_pfMET_cov11; // needed due to missing sig matrix in phys14 samples
+  std::vector<pat::MET>  m_pfMET; 
+  std::vector<double>  m_pfMET_cov00; // needed due to missing sig matrix in phys14/Spring15 samples
+  std::vector<double>  m_pfMET_cov01; // needed due to missing sig matrix in phys14/Spring15 samples
+  std::vector<double>  m_pfMET_cov10; // needed due to missing sig matrix in phys14/Spring15 samples
+  std::vector<double>  m_pfMET_cov11; // needed due to missing sig matrix in phys14/Spring15 samples
   stringFloatPairVec m_isLeg1GoodForHLTPath; /* pair of HLT path : 1.0 meeting reco leg1 accept+match+filter */
   stringFloatPairVec m_isLeg2GoodForHLTPath; /* pair of HLT path : 1.0 meeting reco leg1 accept+match+filter */
 

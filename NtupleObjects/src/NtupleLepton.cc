@@ -16,6 +16,7 @@ NtupleLepton::NtupleLepton()
   m_dxy = NAN;
   m_EffectiveArea = NAN;
   m_raw_electronMVA = NAN;
+  m_category_electronMVA = NAN;
   m_passFail_electronMVA80 = NAN; 
   m_passFail_electronMVA90 = NAN; 
   m_passFail_electronCutBasedID = NAN;
@@ -354,8 +355,9 @@ void NtupleLepton::printLEP()
   std::cout<<"<LEPPRINT "<<type_print<<"> HLT ACCEPTED PATHS and PreScales : ";
     for(std::size_t i=0;i<m_HLTPaths.size();++i) std::cout<<"[ "<<m_HLTPaths[i].first<<" = "<<m_HLTPaths[i].second<<" ] ";
     std::cout<<"\n";
- 
+
   std::cout<<"<LEPPRINT "<<type_print<<"> ELECTRON MVA RAW "<<m_raw_electronMVA<<"\n";
+  std::cout<<"<LEPPRINT "<<type_print<<"> ELECTRON MVA CATEG. "<<m_category_electronMVA<<"\n";
   std::cout<<"<LEPPRINT "<<type_print<<"> ELECTRON MVA 80 PASSFAIL "<<m_passFail_electronMVA80<<"\n";
   std::cout<<"<LEPPRINT "<<type_print<<"> ELECTRON MVA 90 PASSFAIL "<<m_passFail_electronMVA90<<"\n";
   std::cout<<"<LEPPRINT "<<type_print<<"> ELECTRON CUT BASED VETO ID PASSFAIL "<<m_passFail_electronCutBasedID<<"\n";
@@ -467,6 +469,9 @@ void NtupleLepton::userFloatVectorParser(stringVec & labels_,floatVec & values_)
       m_tauIDs.push_back(currentPair);        
     }
     else if(labels_[i]=="MVA_nonTrig_raw") {m_raw_electronMVA = values_[i];}  
+    else if(labels_[i]=="CATEGORY_nonTrigMVA") {m_category_electronMVA = values_[i];}  
+
+
     else if(labels_[i]=="PASS_nonTrigMVA80") {m_passFail_electronMVA80 = values_[i];}  
     else if(labels_[i]=="PASS_nonTrigMVA90") {m_passFail_electronMVA90 = values_[i];}  
     else if(labels_[i]=="passCutBasedVetoID") {m_passFail_electronCutBasedID = values_[i];}  
@@ -686,6 +691,8 @@ int NtupleLepton::charge() const { return m_charge; }
 int NtupleLepton::PFpdgId() const { return m_PFpdgId; }
 int NtupleLepton::GENpdgId() const { return m_GENpdgId; }
 int NtupleLepton::GENMOTHERpdgId() const { return m_GENMOTHERpdgId; }
+float NtupleLepton::category_electronMVA() const {return m_category_electronMVA;}
+
 float NtupleLepton::raw_electronMVA() const {return m_raw_electronMVA;}
 float NtupleLepton::passFail_electronMVA80() const {return m_passFail_electronMVA80;} 
 float NtupleLepton::passFail_electronMVA90() const {return m_passFail_electronMVA90;} 

@@ -89,6 +89,7 @@ public:
 	float numHadrons() const;
 	float dzTauVertex() const;
 	float raw_electronMVA() const; 
+	float category_electronMVA() const;
 	float passFail_electronMVA80() const; 
 	float passFail_electronMVA90() const; 
     float passFail_electronCutBasedID() const;   
@@ -194,6 +195,7 @@ private:
 	// paramenters meaningful for electrons only
 	//////////////////////////////////////////////////
     float m_raw_electronMVA;						//  value of electron MVA score
+    float m_category_electronMVA;						//  category of electron MVA score
     float m_passFail_electronMVA80;         			//  pass fail of electron MVA 
     float m_passFail_electronMVA90;         			//  pass fail of electron MVA 
     float m_passFail_electronCutBasedID;         		//  pass fail of electron cut-based veto ID 

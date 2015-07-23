@@ -2,7 +2,7 @@
 DavisRunIITauTau : Code For H->tau tau Run II analysis
 ------------------
 
-For Quick Start (on SL6 only):
+For Quick Start (on SL6 only, CMSSW_7_4_7 and higher):
 
 - CMSSW/Certificate prelims :
 
@@ -15,51 +15,34 @@ For Quick Start (on SL6 only):
 
 - create a working area and then :
 
-		setenv SCRAM_ARCH slc6_amd64_gcc481 
+		setenv SCRAM_ARCH slc6_amd64_gcc491
 
-		cmsrel CMSSW_7_2_3_patch1
+		cmsrel CMSSW_7_4_7
 
-		cd CMSSW_7_2_3_patch1/src/
+		cd CMSSW_7_4_7/src/
 
 		cmsenv
 
-		(git cms-init) # might be needed
+- MVA MET :
 
-- To Start 
-
-		git cms-addpkg PhysicsTools/PatAlgos
-
-		git cms-addpkg FWCore/Version
-
-
-
-- for MVA MET (13 TeV Training) & MET SIG: (the cp and sed commands are all one long line)
-
-		(see : https://twiki.cern.ch/twiki/bin/view/CMS/MVAMet#CMSSW_7_2_X_requires_slc6_MiniAO)
-
-		git-cms-merge-topic -u cms-met:72X-13TeV-Training-30Jan15
-
-		git-cms-merge-topic -u cms-met:72X-MetSig-150311
-
-		sed -i 's/lPatPFTau->signalPFCands/lPatPFTau->signalCands/g' RecoMET/METPUSubtraction/plugins/PFMETProducerMVA.cc
-
+		git cms-addpkg RecoMET/METPUSubtraction/
+		
 		cd RecoMET/METPUSubtraction/
 
-		git clone https://github.com/rfriese/RecoMET-METPUSubtraction data -b 72X-13TeV-Phys14_25_V4-26Mar15
+		git clone https://github.com/rfriese/RecoMET-METPUSubtraction data -b 74X-13TeV-Summer15-July2015
+
+		(note ignore the message about detached head coming from last command, we don't contribute to this code only our Davis stuff)
 
 		cd -
 
-		cp /afs/cern.ch/user/s/sshalhou/public/INSTALL_PUBLIC_FILES/72X/mvaPFMEt_72X_Mar2015.db RecoMET/METPUSubtraction/data/.
+		# note need to update db file here , and root files in main python 
+		cp /afs/cern.ch/user/s/sshalhou/public/INSTALL_PUBLIC_FILES/74X/mvaPFMET_db_cfi.py RecoMET/METPUSubtraction/python/.
 
-		cp /afs/cern.ch/user/s/sshalhou/public/INSTALL_PUBLIC_FILES/72X/mvaPFMET_db_cfi.py RecoMET/METPUSubtraction/python/.
 
 		sed -i 's/puJetIdForPFMVAMEt = pileupJetIdEvaluator.clone/from RecoMET.METPUSubtraction.mvaPFMET_db_cfi import mvaPFMEtGBRForestsFromDB\npuJetIdForPFMVAMEt = pileupJetIdEvaluator.clone/g' RecoMET/METPUSubtraction/python/mvaPFMET_cff.py
 
-		scram b -j 20
-
-- For Electron MVA ID (Phys14 version)
-
-		git cms-merge-topic HuguesBrun:trigElecIdInCommonIsoSelection720
+		# needs updating
+		cp /afs/cern.ch/user/s/sshalhou/public/INSTALL_PUBLIC_FILES/74X/mvaPFMEt_747_25ns_Mar2015.db RecoMET/METPUSubtraction/data/.
 
 
 - For Muon Effective Area (following LLR's guide on this)
@@ -72,42 +55,33 @@ For Quick Start (on SL6 only):
 
 		cd -
 
+- SV mass code :
 
-- SVMass code :
-
-		git clone https://github.com/veelken/SVfit_standalone TauAnalysis/SVfitStandalone
+		git clone git@github.com:veelken/SVfit_standalone.git TauAnalysis/SVfitStandalone
+		
+		cd TauAnalysis/SVfitStandalone/
+		
+		git checkout svFit_2015Apr03
+		
+		cd -
 
 - PileUp Reweight Code (Only adding locally in order to turn off default prints) :
 
 		git cms-addpkg PhysicsTools/Utilities
+		
 		sed -i 's/std::cout/\/\/std::cout/g' PhysicsTools/Utilities/src/LumiReWeighting.cc
 
 - Clone the Davis Code :
 
 		git clone git@github.com:sshalhou/DavisRunIITauTau DavisRunIITauTau
+		
+		cd DavisRunIITauTau
+		
+		git checkout 7_4_X
+		
+		cd -
 
-- Compile : 
-
+- Compile :
+	
 		scram b -j 20
-
-- Test Run (remember to change the miniAOD input file):
-		
-		cmsRun DavisRunIITauTau/runIIntuple_v0.py
-
-- NOTE : for CRAB3 the code+data limit on the tarball size is 100MB,
-         in this case it is best to go to RecoMET/METPUSubtraction/data
-         and keep only the following files :
-
-		gbrmet_7_2_X_MINIAOD_BX25PU20_Mar2015.root
-		
-		gbrphi_7_2_X_MINIAOD_BX25PU20_Mar2015.root
-		
-		gbru1cov_7_2_X_MINIAOD_BX25PU20_Mar2015.root
-		
-		gbru2cov_7_2_X_MINIAOD_BX25PU20_Mar2015.root
-
-		mvaPFMEt_72X_Mar2015.db
-		
-		- make sure to also delete : RecoMET/METPUSubtraction/data/.git
-		- you should also remove : EgammaAnalysis/ElectronTools/data/CSA14
 

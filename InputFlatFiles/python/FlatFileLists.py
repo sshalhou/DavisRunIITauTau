@@ -1,8 +1,4 @@
-import time
-import sys
 import os
-from ROOT import gROOT,TChain, TLorentzVector, TSelector, TTree, TF1, TH1F, TCanvas, gStyle, TFile
-import math
 import glob
 
 

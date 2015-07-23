@@ -158,14 +158,14 @@ generalConfig = cms.PSet(
 
 
 			triggerSummaryChecks = cms.vstring(
-					"HLT_Mu23_TrkIsoVVL_Ele12_Gsf_CaloId_TrackId_Iso_MediumWP_v1",
-					"HLT_Mu8_TrkIsoVVL_Ele23_Gsf_CaloId_TrackId_Iso_MediumWP_v1",
-					"HLT_Ele22_eta2p1_WP85_Gsf_LooseIsoPFTau20_v1",
-					"HLT_Ele27_eta2p1_WP85_Gsf_v1",
-					"HLT_IsoMu17_eta2p1_LooseIsoPFTau20_v*",
-					"HLT_IsoMu24_eta2p1_IterTrk02_v1",
-					"HLT_DoubleMediumIsoPFTau40_Trk1_eta2p1_Reg_v1",
-					"HLT_LooseIsoPFTau50_Trk30_eta2p1_MET120_v1"),
+				"HLT_DoubleMediumIsoPFTau40_Trk1_eta2p1_Reg_v1",
+				"HLT_Ele22_eta2p1_WP75_Gsf_LooseIsoPFTau20_v1",
+				"HLT_Ele32_eta2p1_WP75_Gsf_v1",
+				"HLT_IsoMu17_eta2p1_LooseIsoPFTau20_v1",
+				"HLT_IsoMu24_eta2p1_v1",
+				"HLT_IsoMu27_v1",
+				"HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v1",
+				"HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v1"),
 
 
 			# the Tau IDs we would like to keep in the FlatTuple
@@ -194,8 +194,11 @@ generalConfig = cms.PSet(
 			###################
 			# jet & bjet ID cut strings
 			jetLeptonDRmin = cms.double(0.5),
-			jetIDcut = cms.string("pt>20 && abs(eta) < 4.7 && PU_jetIdPassed && PF_jetIdPassed"),
-			BjetIDcut = cms.string("pt>20 && abs(eta) < 2.4 && PU_jetIdPassed && PF_jetIdPassed && defaultBtagAlgorithm_isPassed")
+			# note PU jet ID is not to be applied yet
+			#jetIDcut = cms.string("pt>20 && abs(eta) < 4.7 && PU_jetIdPassed && PF_jetIdPassed"),
+			#BjetIDcut = cms.string("pt>20 && abs(eta) < 2.4 && PU_jetIdPassed && PF_jetIdPassed && defaultBtagAlgorithm_isPassed")
+			jetIDcut = cms.string("pt>20 && abs(eta) < 4.7  && PF_jetIdPassed"),
+			BjetIDcut = cms.string("pt>20 && abs(eta) < 2.4 && PF_jetIdPassed && defaultBtagAlgorithm_isPassed")
 
 					)
 

@@ -69,8 +69,7 @@ from JetMETCorrections.Configuration.DefaultJEC_cff import *
 ###################################
 
 myfilelist = cms.untracked.vstring()
-myfilelist.extend(['file:/uscms_data/d3/shalhout/Phys14signal_miniAOD.root'])
-#myfilelist.extend(['file:/uscms_data/d3/shalhout/Phys14DYJetsToLL_miniAOD.root'])
+myfilelist.extend(['file:/uscms_data/d3/shalhout/Spring15_SUSYGluGlu160diTau.root'])
 process.source = cms.Source("PoolSource",fileNames=myfilelist)
 
 
@@ -100,6 +99,22 @@ rhoSourceList = cms.VInputTag(
 	cms.InputTag('fixedGridRhoAll'))
 
 
+##################
+# set up the new electron mva (this is new compared to 7_2_X)
+
+from PhysicsTools.SelectorUtils.tools.vid_id_tools import *
+dataFormat = DataFormat.MiniAOD
+switchOnVIDElectronIdProducer(process, dataFormat)
+my_id_modules = ['RecoEgamma.ElectronIdentification.Identification.mvaElectronID_PHYS14_PU20bx25_nonTrig_V1_cff']
+for idmod in my_id_modules:
+    setupAllVIDIdsInModule(process,idmod,setupVIDElectronSelection)
+
+wp80 = cms.InputTag("egmGsfElectronIDs:mvaEleID-PHYS14-PU20bx25-nonTrig-V1-wp80")
+wp90 = cms.InputTag("egmGsfElectronIDs:mvaEleID-PHYS14-PU20bx25-nonTrig-V1-wp90")
+wpVals = cms.InputTag("electronMVAValueMapProducer:ElectronMVAEstimatorRun2Phys14NonTrigValues")
+wpCats = cms.InputTag("electronMVAValueMapProducer:ElectronMVAEstimatorRun2Phys14NonTrigCategories")
+
+
 ###################################
 # perform custom parameter embedding
 # in slimmed collections
@@ -110,7 +125,6 @@ rhoSourceList = cms.VInputTag(
 
 
 
-
 process.customSlimmedElectrons = cms.EDProducer('CustomPatElectronProducer' ,
 							electronSrc =cms.InputTag('slimmedElectrons::PAT'),
 							vertexSrc =cms.InputTag('filteredVertices::Ntuple'),
@@ -118,7 +132,11 @@ process.customSlimmedElectrons = cms.EDProducer('CustomPatElectronProducer' ,
 							triggerBitSrc = cms.InputTag("TriggerResults","","HLT"),
 							triggerPreScaleSrc = cms.InputTag("patTrigger"),
 							triggerObjectSrc = cms.InputTag("selectedPatTrigger"),							
-							rhoSources = rhoSourceList
+							rhoSources = rhoSourceList,
+							eleMediumIdMap = wp80,
+							eleTightIdMap = wp90,
+							mvaValuesMap     = wpVals,
+							mvaCategoriesMap = wpCats
 							                 )
 
 
@@ -252,7 +270,6 @@ from DavisRunIITauTau.PythonHelperClasses.pairContainer_cff import PairWiseMetHe
 
 
 mvaMEThelper = PairWiseMetHelper(process)
-#mvaMEThelper.initializeMVAmet()
 
 # we also need to remake PFMET since it lacks met significance in Phys14
 # this is unrelated to mvaMET
@@ -264,6 +281,7 @@ process.pfMet = pfMet.clone(src = "packedPFCandidates")
 process.pfMet.calculateSignificance = True
 # before setting the above to true need to follow 
 # https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideMETSignificance
+
 
 
 #################################
@@ -341,6 +359,7 @@ process.p = cms.Path(process.myProducerLabel)
 
 process.p *= process.filteredVertices
 
+process.p *= process.egmGsfElectronIDSequence
 process.p *= process.customSlimmedElectrons
 process.p *= process.customSlimmedMuons
 process.p *= process.customSlimmedTaus
@@ -356,7 +375,6 @@ process.p *= process.filteredVetoElectrons
 process.p *= process.filteredVetoMuons
 
 process.p *= process.requireCandidateHiggsPair
-
 
 
 # mva met - start

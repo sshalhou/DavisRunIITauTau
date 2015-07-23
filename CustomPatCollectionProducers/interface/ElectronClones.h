@@ -25,7 +25,6 @@
 
 #include "DataFormats/PatCandidates/interface/Electron.h"
 
-#include "EgammaAnalysis/ElectronTools/interface/EGammaMvaEleEstimatorCSA14.h"
 #include "DavisRunIITauTau/CustomPatCollectionProducers/interface/LeptonRelativeIsolationTool.h"
 
 #include "DavisRunIITauTau/CustomPatCollectionProducers/interface/TriggerInfoEmbeddingTool.h"
@@ -58,8 +57,7 @@ class electronClones
 
 
 
-	// the mva ID evaluators and the names of thier embedded userFloats
-	EGammaMvaEleEstimatorCSA14 & MVA_nonTrig;
+	
 
 	// trigger related collections
 
@@ -76,7 +74,6 @@ class electronClones
 
 	public:
 		electronClones(const slimmedPatElectronCollection&, const reco::Vertex &,
-				EGammaMvaEleEstimatorCSA14 &, 
 				edm::Handle<edm::TriggerResults> &,
 				edm::Handle<pat::TriggerObjectStandAloneCollection> &,
 				edm::Handle<pat::PackedTriggerPrescales>&,

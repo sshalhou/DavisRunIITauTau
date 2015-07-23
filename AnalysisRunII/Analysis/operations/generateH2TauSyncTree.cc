@@ -326,24 +326,27 @@ void generateH2TauSyncTree::handleEvent()
 
 	trigweight_1 = 0;
 	trigweight_2 = 0;
+				
 
 if(R.getI("CandidateEventType")==2)
 {
 	/* e+mu HLT Paths for Phys14 */
-	if(R.getF("leg1_HLT_Mu23_TrkIsoVVL_Ele12_Gsf_CaloId_TrackId_Iso_MediumWP") == 1.0) trigweight_1 = 1.0;
-	if(R.getF("leg1_HLT_Mu8_TrkIsoVVL_Ele23_Gsf_CaloId_TrackId_Iso_MediumWP") == 1.0) trigweight_1 = 1.0;
-	if(R.getF("leg2_HLT_Mu23_TrkIsoVVL_Ele12_Gsf_CaloId_TrackId_Iso_MediumWP") == 1.0) trigweight_2 = 1.0;
-	if(R.getF("leg2_HLT_Mu8_TrkIsoVVL_Ele23_Gsf_CaloId_TrackId_Iso_MediumWP") == 1.0) trigweight_2 = 1.0;
+	if(R.getF("leg1_HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL") == 1.0) trigweight_1 = 1.0;
+	if(R.getF("leg2_HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL") == 1.0) trigweight_2 = 1.0;
+
+	if(R.getF("leg1_HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL") == 1.0) trigweight_1 = 1.0;
+	if(R.getF("leg2_HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL") == 1.0) trigweight_2 = 1.0;
 
 }
 
 if(R.getI("CandidateEventType")==3)
 {
 	/* e+tau HLT Paths for Phys14 */
-	if(R.getF("leg1_HLT_Ele22_eta2p1_WP85_Gsf_LooseIsoPFTau20") == 1.0) trigweight_1 = 1.0;
-	if(R.getF("leg1_HLT_Ele27_eta2p1_WP85_Gsf") == 1.0) trigweight_1 = 1.0;
-	if(R.getF("leg2_HLT_Ele22_eta2p1_WP85_Gsf_LooseIsoPFTau20") == 1.0) trigweight_2 = 1.0;
-	/* no 2nd leg really */ if(R.getF("leg2_HLT_Ele27_eta2p1_WP85_Gsf") == 1.0) trigweight_2 = 1.0;
+	if(R.getF("leg1_HLT_Ele22_eta2p1_WP75_Gsf_LooseIsoPFTau20") == 1.0) trigweight_1 = 1.0;
+	if(R.getF("leg2_HLT_Ele22_eta2p1_WP75_Gsf_LooseIsoPFTau20") == 1.0) trigweight_2 = 1.0;
+
+	if(R.getF("leg1_HLT_Ele32_eta2p1_WP75_Gsf") == 1.0) trigweight_1 = 1.0;
+	/* no 2nd leg really */ if(R.getF("leg2_HLT_Ele32_eta2p1_WP75_Gsf") == 1.0) trigweight_2 = 1.0;
 
 }
 
@@ -352,9 +355,10 @@ if(R.getI("CandidateEventType")==5)
 {
 	/* mu+tau HLT Paths for Phys14 */
 	if(R.getF("leg1_HLT_IsoMu17_eta2p1_LooseIsoPFTau20") == 1.0) trigweight_1 = 1.0;
-	if(R.getF("leg1_HLT_IsoMu24_eta2p1_IterTrk02") == 1.0) trigweight_1 = 1.0;
 	if(R.getF("leg2_HLT_IsoMu17_eta2p1_LooseIsoPFTau20") == 1.0) trigweight_2 = 1.0;
-	/* no 2nd leg really */ if(R.getF("leg2_HLT_IsoMu24_eta2p1_IterTrk02") == 1.0) trigweight_2 = 1.0;
+	
+	if(R.getF("leg1_HLT_IsoMu24_eta2p1") == 1.0) trigweight_1 = 1.0;
+	/* no 2nd leg really */ if(R.getF("leg2_HLT_IsoMu24_eta2p1") == 1.0) trigweight_2 = 1.0;
 
 }
 
@@ -362,9 +366,7 @@ if(R.getI("CandidateEventType")==6)
 {
 	/* tau+tau HLT Paths for Phys14 */
 	if(R.getF("leg1_HLT_DoubleMediumIsoPFTau40_Trk1_eta2p1_Reg") == 1.0) trigweight_1 = 1.0;
-	if(R.getF("leg1_HLT_LooseIsoPFTau50_Trk30_eta2p1_MET120") == 1.0) trigweight_1 = 1.0;
 	if(R.getF("leg2_HLT_DoubleMediumIsoPFTau40_Trk1_eta2p1_Reg") == 1.0) trigweight_2 = 1.0;
-	if(R.getF("leg2_HLT_LooseIsoPFTau50_Trk30_eta2p1_MET120") == 1.0) trigweight_2 = 1.0;
 
 }
 

@@ -11,7 +11,6 @@
 #include "histogramLeptonQuantites.h"
 #include "generateH2TauSyncTree.h"
 
-
 int main(int argc, char* argv[])
 {
 

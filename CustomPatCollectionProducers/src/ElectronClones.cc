@@ -29,7 +29,6 @@ typedef edm::Handle<edm::View<pat::Electron> > 	slimmedPatElectronCollection;
 // constructor which clones and adds userFloats to the input collection
 
 electronClones::electronClones(const slimmedPatElectronCollection& inputColl, const reco::Vertex & input_vertex,
-				EGammaMvaEleEstimatorCSA14 & MVA_PHYS14nonTrig_, 
 				edm::Handle<edm::TriggerResults> & triggerBits_,
 				edm::Handle<pat::TriggerObjectStandAloneCollection> & triggerObjects_,
 				edm::Handle<pat::PackedTriggerPrescales> & triggerPreScales_,
@@ -38,7 +37,6 @@ electronClones::electronClones(const slimmedPatElectronCollection& inputColl, co
 				std::vector<double> rhoValues_):
 		electrons(inputColl),
 		first_vertex(input_vertex),
-		MVA_nonTrig(MVA_PHYS14nonTrig_),
 		triggerBits(triggerBits_),
 		triggerObjects(triggerObjects_),
 		triggerPreScales(triggerPreScales_),
@@ -271,9 +269,9 @@ void electronClones::fillUserFloats()
 		{
 		  	dxy = e.gsfTrack()->dxy(first_vertex.position());
 		  	dz = e.gsfTrack()->dz(first_vertex.position());
-		  	numberOfMissingInnerHits = e.gsfTrack()->hitPattern().numberOfHits(HitPattern::MISSING_INNER_HITS);
-			numberOfMissingOuterHits = e.gsfTrack()->hitPattern().numberOfHits(HitPattern::MISSING_OUTER_HITS);
-			numberOfTrackHits = e.gsfTrack()->hitPattern().numberOfHits(HitPattern::TRACK_HITS);
+		  	numberOfMissingInnerHits = e.gsfTrack()->hitPattern().numberOfHits(reco::HitPattern::HitCategory::MISSING_INNER_HITS);
+			numberOfMissingOuterHits = e.gsfTrack()->hitPattern().numberOfHits(reco::HitPattern::HitCategory::MISSING_OUTER_HITS);
+			numberOfTrackHits = e.gsfTrack()->hitPattern().numberOfHits(reco::HitPattern::HitCategory::TRACK_HITS);
 	
 		}
 
@@ -351,22 +349,7 @@ void electronClones::fillUserFloats()
 	  	double relIso = IsoTool.electronRelIso(e,deltaBeta);
 
 	  	e.addUserFloat("relativeIsol_DeltaBetaCorrectedRelIso",relIso);
-
-
-	  	///////////////////////////
-	  	// evaluate and add the mva IDs 
-
-	  	float mva_val = MVA_nonTrig.mvaValue(e,false);
-	    e.addUserFloat("MVA_nonTrig_raw",mva_val);
-
-	  	///////////////////////////
-	    // once ready add the pass/fail based on the mva
-
-	    float passMVA80 = passedMVA(mva_val, e.pt(), absSuperClusterEta,80);
-	    e.addUserFloat("PASS_nonTrigMVA80",passMVA80);
-
-	    float passMVA90 = passedMVA(mva_val, e.pt(), absSuperClusterEta,90);
-	    e.addUserFloat("PASS_nonTrigMVA90",passMVA90);
+	  	
 
 	    ////////////////
 	    // evaluate the cut based electron ID, and add some variables it needs

@@ -47,7 +47,6 @@ Implementation:
 #include "DataFormats/EgammaCandidates/interface/GsfElectron.h"
 #include "DataFormats/EgammaCandidates/interface/GsfElectronFwd.h"
 #include "DataFormats/Common/interface/ValueMap.h"
-#include "EgammaAnalysis/ElectronTools/interface/EGammaMvaEleEstimatorCSA14.h"
 #include "DavisRunIITauTau/CustomPatCollectionProducers/interface/LeptonRelativeIsolationTool.h"
 #include "DavisRunIITauTau/CustomPatCollectionProducers/interface/ElectronClones.h"
 
@@ -96,11 +95,12 @@ private:
   edm::EDGetTokenT<pat::PackedTriggerPrescales> triggerPreScaleSrc_;
   edm::EDGetTokenT<pat::TriggerObjectStandAloneCollection> triggerObjectSrc_; 
   vInputTag rhoSources_;
+  edm::InputTag eleMediumIdMap_;
+  edm::InputTag eleTightIdMap_;
+  edm::InputTag mvaValuesMap_;  
+  edm::InputTag mvaCategoriesMap_;
+  edm::InputTag gsfElectrons_; /* not an input argument! */
 
-  // the mva ID estimator for CSA14 and Phs14(?)
-  EGammaMvaEleEstimatorCSA14 MVA_NonTrigPhys14;
-
-  // note: if additonal MVAs are needed add them in ElectronClones.h
 
 };
 
@@ -123,30 +123,18 @@ vertexSrc_(iConfig.getParameter<edm::InputTag>("vertexSrc" )),
 triggerBitSrc_(consumes<edm::TriggerResults>(iConfig.getParameter<edm::InputTag>("triggerBitSrc"))),
 triggerPreScaleSrc_(consumes<pat::PackedTriggerPrescales>(iConfig.getParameter<edm::InputTag>("triggerPreScaleSrc"))),
 triggerObjectSrc_(consumes<pat::TriggerObjectStandAloneCollection>(iConfig.getParameter<edm::InputTag>("triggerObjectSrc"))),
-rhoSources_(iConfig.getParameter<vInputTag>("rhoSources" ))
+rhoSources_(iConfig.getParameter<vInputTag>("rhoSources" )),
+eleMediumIdMap_(iConfig.getParameter<edm::InputTag>("eleMediumIdMap" )),
+eleTightIdMap_(iConfig.getParameter<edm::InputTag>("eleTightIdMap" )),
+mvaValuesMap_(iConfig.getParameter<edm::InputTag>("mvaValuesMap" )),
+mvaCategoriesMap_(iConfig.getParameter<edm::InputTag>("mvaCategoriesMap" ))
 {
 
 
   produces<PatElectronCollection>(NAME_).setBranchAlias(NAME_);
 
 
-  // define the various MVA electron IDs that we want to (re)run on mini-AOD
-  // since these are likely to change soon will stick with one variant for now
 
-
-  std::vector<std::string> NonTrigPhys14;
-  NonTrigPhys14.push_back(edm::FileInPath ("EgammaAnalysis/ElectronTools/data/PHYS14/EIDmva_EB1_5_oldscenario2phys14_BDT.weights.xml").fullPath()) ; 
-  NonTrigPhys14.push_back(edm::FileInPath ("EgammaAnalysis/ElectronTools/data/PHYS14/EIDmva_EB2_5_oldscenario2phys14_BDT.weights.xml").fullPath()) ; 
-  NonTrigPhys14.push_back(edm::FileInPath ("EgammaAnalysis/ElectronTools/data/PHYS14/EIDmva_EE_5_oldscenario2phys14_BDT.weights.xml").fullPath()) ; 
-  NonTrigPhys14.push_back(edm::FileInPath ("EgammaAnalysis/ElectronTools/data/PHYS14/EIDmva_EB1_10_oldscenario2phys14_BDT.weights.xml").fullPath()) ; 
-  NonTrigPhys14.push_back(edm::FileInPath ("EgammaAnalysis/ElectronTools/data/PHYS14/EIDmva_EB2_10_oldscenario2phys14_BDT.weights.xml").fullPath()) ; 
-  NonTrigPhys14.push_back(edm::FileInPath ("EgammaAnalysis/ElectronTools/data/PHYS14/EIDmva_EE_10_oldscenario2phys14_BDT.weights.xml").fullPath()) ; 
-
-
-  MVA_NonTrigPhys14.initialize("BDT",
-                          EGammaMvaEleEstimatorCSA14::kNonTrigPhys14,
-                          true,
-                          NonTrigPhys14);
 
 
 
@@ -197,6 +185,11 @@ CustomPatElectronProducer::produce(edm::Event& iEvent, const edm::EventSetup& iS
   edm::Handle<edm::View<pat::Electron> > electrons;
   iEvent.getByLabel(electronSrc_,electrons);
 
+  // also cast pat::Electron into gsfElectron
+  edm::Handle< edm::View<reco::GsfElectron> > gsfElectrons;
+  iEvent.getByLabel(electronSrc_,gsfElectrons);
+
+
   // get the rho variants
 
   std::vector<std::string> rhoNames;
@@ -229,10 +222,26 @@ CustomPatElectronProducer::produce(edm::Event& iEvent, const edm::EventSetup& iS
     const edm::TriggerNames &names = iEvent.triggerNames(*triggerBits);
 
 
+  // get electron MVA related collections
+
+      edm::Handle< edm::ValueMap<bool> > eleMediumIdMap;
+      iEvent.getByLabel(eleMediumIdMap_,eleMediumIdMap);
+
+      edm::Handle< edm::ValueMap<bool> > eleTightIdMap;
+      iEvent.getByLabel(eleTightIdMap_,eleTightIdMap);
+
+      edm::Handle< edm::ValueMap<float> > mvaValuesMap;
+      iEvent.getByLabel(mvaValuesMap_,mvaValuesMap);
+   
+      edm::Handle< edm::ValueMap<int> > mvaCategoriesMap;
+      iEvent.getByLabel(mvaCategoriesMap_,mvaCategoriesMap);
+
+
+
 
   // clone & fill the electron with user-computed quantities including mva
 
-  electronClones ele(electrons,first_vertex,MVA_NonTrigPhys14,
+  electronClones ele(electrons,first_vertex,
                     triggerBits,triggerObjects,triggerPreScales,names,                    
                     rhoNames,rhos); 
 
@@ -246,26 +255,24 @@ CustomPatElectronProducer::produce(edm::Event& iEvent, const edm::EventSetup& iS
   {
 
 
+    /* now take care of the electron MVA ID here */
+    /* follows electron POG example */
+    
+    const auto el = gsfElectrons->ptrAt(i); /* share same index as electrons */
+    bool isPassMedium = (*eleMediumIdMap)[el];
+    bool isPassTight  = (*eleTightIdMap)[el];
+    float mvaRawValue = (*mvaValuesMap)[el];
+    int mvaCategory = (*mvaCategoriesMap)[el];
 
+   
 
-    const pat::Electron & electronToStore = ele.clones[i];
+    ele.clones[i].addUserFloat("MVA_nonTrig_raw",mvaRawValue);
+    ele.clones[i].addUserFloat("PASS_nonTrigMVA80",float(isPassMedium));
+    ele.clones[i].addUserFloat("PASS_nonTrigMVA90",float(isPassTight));
+    ele.clones[i].addUserFloat("CATEGORY_nonTrigMVA",float(mvaCategory));
 
-    // if(electronToStore.userFloat("dxy"))
-    // std::cout<<"TEST OK "<<electronToStore.userFloat("dxy")<<"\n";
-
-    // if(electronToStore.userFloat("MMMMMM"))
-    // std::cout<<"TEST NOT OK "<<electronToStore.userFloat("MMMMMM")<<"\n";
-  
-
-    // dump userFloats -- test start
-    // for (std::size_t ii = 0; ii < electronToStore.userFloatNames().size(); ii ++ )
-    // {
-    //     std::cout<<"electron "<<i<<" "<<electronToStore.userFloatNames().at(ii)<<" "<<electronToStore.userFloat(electronToStore.userFloatNames().at(ii))<<"\n";
-    // }
-    // dump userFloats -- test end
-
-
-    storedElectrons->push_back(electronToStore);
+   const pat::Electron & electronToStore = ele.clones[i];
+   storedElectrons->push_back(electronToStore);
 
   }
 

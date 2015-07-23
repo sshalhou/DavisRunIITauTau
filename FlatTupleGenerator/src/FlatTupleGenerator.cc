@@ -17,6 +17,7 @@ LeptonCutVecSrc_(iConfig.getParameter<std::vector<edm::ParameterSet>>("LeptonCut
 {
 
 
+
 	/* read in the EventCutSrc varaibles */
 
 	tauIDsToKeep = EventCutSrc_.getParameter<std::vector<std::string> >("tauIDsToKeep"); 
@@ -47,316 +48,7 @@ LeptonCutVecSrc_(iConfig.getParameter<std::vector<edm::ParameterSet>>("LeptonCut
   BjetIDcut  = EventCutSrc_.getParameter<std::string>("BjetIDcut");
   jetLeptonDRmin = EventCutSrc_.getParameter<double>("jetLeptonDRmin");
 
-  /* create TTree */
-   
-	edm::Service<TFileService> fs;
-	FlatTuple = fs->make<TTree>("FlatTuple", "FlatTuple");
-
-  //////////////
-  // init values
-
-	  reInit();	
-
-
-  /* the branches */
-
-  FlatTuple->Branch("run", &run);
-  FlatTuple->Branch("luminosityBlock", &luminosityBlock);
-  FlatTuple->Branch("event", &event);
-  FlatTuple->Branch("pairRank",&pairRank);
-  FlatTuple->Branch("isRealData", &isRealData);
-  FlatTuple->Branch("treeInfoString", &treeInfoString);
-  FlatTuple->Branch("AppliedLepCuts", &AppliedLepCuts);
-  FlatTuple->Branch("VISMass", &VISMass);
-
-  for(std::size_t x = 0; x<tauIDsToKeep.size();++x ) 
-  {
-
-  FlatTuple->Branch(("leg1_"+tauIDsToKeep.at(x)).c_str(), &leg1_tauIDs[x]);
-  FlatTuple->Branch(("leg2_"+tauIDsToKeep.at(x)).c_str(), &leg2_tauIDs[x]);
-  }
-
-
-  for(std::size_t x = 0; x<triggerSummaryChecks.size();++x ) 
-  {
-
-    std::string versionStrippedName = triggerSummaryChecks.at(x);
-    versionStrippedName.erase(versionStrippedName.find("_v"),versionStrippedName.length());
-
-    std::cout<<versionStrippedName<<"\n";
-
-    FlatTuple->Branch(("leg1_"+versionStrippedName).c_str(), &leg1_GoodForHLTPath[x]);
-    FlatTuple->Branch(("leg2_"+versionStrippedName).c_str(), &leg2_GoodForHLTPath[x]);
-  }
-
-  FlatTuple->Branch("CandidateEventType", &CandidateEventType);
-  FlatTuple->Branch("TauEsNumberSigmasShifted", &TauEsNumberSigmasShifted);
-  FlatTuple->Branch("isOsPair", &isOsPair);
-  FlatTuple->Branch("SVMass", &SVMass);
-  FlatTuple->Branch("MTmvaMET_leg1", &MTmvaMET_leg1);
-  FlatTuple->Branch("MTpfMET_leg1", &MTpfMET_leg1);
-  FlatTuple->Branch("MTmvaMET_leg2", &MTmvaMET_leg2);
-  FlatTuple->Branch("MTpfMET_leg2", &MTpfMET_leg2);
-  FlatTuple->Branch("mvaMET", &mvaMET);
-  FlatTuple->Branch("mvaMETphi", &mvaMETphi);
-  FlatTuple->Branch("mvaMET_cov00", &mvaMET_cov00);
-  FlatTuple->Branch("mvaMET_cov01", &mvaMET_cov01);
-  FlatTuple->Branch("mvaMET_cov10", &mvaMET_cov10);
-  FlatTuple->Branch("mvaMET_cov11", &mvaMET_cov11);
-  FlatTuple->Branch("pfMET", &pfMET);
-  FlatTuple->Branch("pfMETphi", &pfMETphi);
-  FlatTuple->Branch("pfMET_cov00", &pfMET_cov00);
-  FlatTuple->Branch("pfMET_cov01", &pfMET_cov01);
-  FlatTuple->Branch("pfMET_cov10", &pfMET_cov10);
-  FlatTuple->Branch("pfMET_cov11", &pfMET_cov11);
-
-  FlatTuple->Branch("leg1_leptonType", &leg1_leptonType);
-  FlatTuple->Branch("leg1_dz", &leg1_dz);
-  FlatTuple->Branch("leg1_dxy", &leg1_dxy);
-  FlatTuple->Branch("leg1_EffectiveArea", &leg1_EffectiveArea);
-  FlatTuple->Branch("leg1_charge", &leg1_charge);
-  FlatTuple->Branch("leg1_PFpdgId", &leg1_PFpdgId);
-  FlatTuple->Branch("leg1_GENpdgId", &leg1_GENpdgId);
-  FlatTuple->Branch("leg1_GENMOTHERpdgId", &leg1_GENMOTHERpdgId);
-  FlatTuple->Branch("leg1_IP", &leg1_IP);
-  FlatTuple->Branch("leg1_IPerror", &leg1_IPerror);
-  FlatTuple->Branch("leg1_PUchargedHadronIso", &leg1_PUchargedHadronIso);
-  FlatTuple->Branch("leg1_chargedHadronIso", &leg1_chargedHadronIso);
-  FlatTuple->Branch("leg1_neutralHadronIso", &leg1_neutralHadronIso);
-  FlatTuple->Branch("leg1_photonIso", &leg1_photonIso);
-  FlatTuple->Branch("leg1_DepositR03ECal", &leg1_DepositR03ECal);
-  FlatTuple->Branch("leg1_DepositR03Hcal", &leg1_DepositR03Hcal);
-  FlatTuple->Branch("leg1_DepositR03TrackerOfficial", &leg1_DepositR03TrackerOfficial);
-  FlatTuple->Branch("leg1_isGlobalMuon", &leg1_isGlobalMuon);
-  FlatTuple->Branch("leg1_isGoodGlobalMuon", &leg1_isGoodGlobalMuon);
-  FlatTuple->Branch("leg1_passesMediumMuonId", &leg1_passesMediumMuonId);
-  FlatTuple->Branch("leg1_isLooseMuon", &leg1_isLooseMuon);
-  FlatTuple->Branch("leg1_isPFMuon", &leg1_isPFMuon);
-  FlatTuple->Branch("leg1_isSoftMuon", &leg1_isSoftMuon);
-  FlatTuple->Branch("leg1_isTightMuon", &leg1_isTightMuon);
-  FlatTuple->Branch("leg1_isTrackerMuon", &leg1_isTrackerMuon);
-  FlatTuple->Branch("leg1_muonCombQualChi2LocalPosition", &leg1_muonCombQualChi2LocalPosition);
-  FlatTuple->Branch("leg1_muonCombQualTrkKink", &leg1_muonCombQualTrkKink);
-  FlatTuple->Branch("leg1_muonGlobalTrackNormChi2", &leg1_muonGlobalTrackNormChi2);
-  FlatTuple->Branch("leg1_muonInnerTrkValidFraction", &leg1_muonInnerTrkValidFraction);
-  FlatTuple->Branch("leg1_muonSegmentCompatibility", &leg1_muonSegmentCompatibility);
-  FlatTuple->Branch("leg1_raw_electronMVA", &leg1_raw_electronMVA);
-  FlatTuple->Branch("leg1_passFail_electronMVA80", &leg1_passFail_electronMVA80);
-  FlatTuple->Branch("leg1_passFail_electronMVA90", &leg1_passFail_electronMVA90);
-  FlatTuple->Branch("leg1_passFail_electronCutBasedID", &leg1_passFail_electronCutBasedID);
-  FlatTuple->Branch("leg1_ooEmooP", &leg1_ooEmooP);
-  FlatTuple->Branch("leg1_full5x5_sigmaIetaIeta", &leg1_full5x5_sigmaIetaIeta);
-  FlatTuple->Branch("leg1_SuperClusterEta", &leg1_SuperClusterEta);
-  FlatTuple->Branch("leg1_hadronicOverEm", &leg1_hadronicOverEm);
-  FlatTuple->Branch("leg1_isEB", &leg1_isEB);
-  FlatTuple->Branch("leg1_isEBEEGap", &leg1_isEBEEGap);
-  FlatTuple->Branch("leg1_isEBEtaGap", &leg1_isEBEtaGap);
-  FlatTuple->Branch("leg1_isEBPhiGap", &leg1_isEBPhiGap);
-  FlatTuple->Branch("leg1_isEE", &leg1_isEE);
-  FlatTuple->Branch("leg1_isEEDeeGap", &leg1_isEEDeeGap);
-  FlatTuple->Branch("leg1_isEERingGap", &leg1_isEERingGap);
-  FlatTuple->Branch("leg1_deltaEtaSuperClusterTrackAtVtx", &leg1_deltaEtaSuperClusterTrackAtVtx);
-  FlatTuple->Branch("leg1_deltaPhiSuperClusterTrackAtVtx", &leg1_deltaPhiSuperClusterTrackAtVtx);
-  FlatTuple->Branch("leg1_sigmaEtaEta", &leg1_sigmaEtaEta);
-  FlatTuple->Branch("leg1_sigmaIetaIeta", &leg1_sigmaIetaIeta);
-  FlatTuple->Branch("leg1_sigmaIphiIphi", &leg1_sigmaIphiIphi);
-  FlatTuple->Branch("leg1_numberOfMissingInnerHits", &leg1_numberOfMissingInnerHits);
-  FlatTuple->Branch("leg1_numberOfMissingOuterHits", &leg1_numberOfMissingOuterHits);
-  FlatTuple->Branch("leg1_numberOfTrackHits", &leg1_numberOfTrackHits);
-  FlatTuple->Branch("leg1_passConversionVeto", &leg1_passConversionVeto);
-  FlatTuple->Branch("leg1_ZimpactTau", &leg1_ZimpactTau);
-  FlatTuple->Branch("leg1_numStrips", &leg1_numStrips);
-  FlatTuple->Branch("leg1_dzTauVertex", &leg1_dzTauVertex);
-  FlatTuple->Branch("leg1_numHadrons", &leg1_numHadrons);
-  FlatTuple->Branch("leg2_leptonType", &leg2_leptonType);
-  FlatTuple->Branch("leg2_dz", &leg2_dz);
-  FlatTuple->Branch("leg2_dxy", &leg2_dxy);
-  FlatTuple->Branch("leg2_EffectiveArea", &leg2_EffectiveArea);
-  FlatTuple->Branch("leg2_charge", &leg2_charge);
-  FlatTuple->Branch("leg2_PFpdgId", &leg2_PFpdgId);
-  FlatTuple->Branch("leg2_GENpdgId", &leg2_GENpdgId);
-  FlatTuple->Branch("leg2_GENMOTHERpdgId", &leg2_GENMOTHERpdgId);
-  FlatTuple->Branch("leg2_IP", &leg2_IP);
-  FlatTuple->Branch("leg2_IPerror", &leg2_IPerror);
-  FlatTuple->Branch("leg2_PUchargedHadronIso", &leg2_PUchargedHadronIso);
-  FlatTuple->Branch("leg2_chargedHadronIso", &leg2_chargedHadronIso);
-  FlatTuple->Branch("leg2_neutralHadronIso", &leg2_neutralHadronIso);
-  FlatTuple->Branch("leg2_photonIso", &leg2_photonIso);
-  FlatTuple->Branch("leg2_DepositR03ECal", &leg2_DepositR03ECal);
-  FlatTuple->Branch("leg2_DepositR03Hcal", &leg2_DepositR03Hcal);
-  FlatTuple->Branch("leg2_DepositR03TrackerOfficial", &leg2_DepositR03TrackerOfficial);
-  FlatTuple->Branch("leg2_isGlobalMuon", &leg2_isGlobalMuon);
-  FlatTuple->Branch("leg2_isGoodGlobalMuon", &leg2_isGoodGlobalMuon);
-  FlatTuple->Branch("leg2_passesMediumMuonId", &leg2_passesMediumMuonId);
-  FlatTuple->Branch("leg2_isLooseMuon", &leg2_isLooseMuon);
-  FlatTuple->Branch("leg2_isPFMuon", &leg2_isPFMuon);
-  FlatTuple->Branch("leg2_isSoftMuon", &leg2_isSoftMuon);
-  FlatTuple->Branch("leg2_isTightMuon", &leg2_isTightMuon);
-  FlatTuple->Branch("leg2_isTrackerMuon", &leg2_isTrackerMuon);
-  FlatTuple->Branch("leg2_muonCombQualChi2LocalPosition", &leg2_muonCombQualChi2LocalPosition);
-  FlatTuple->Branch("leg2_muonCombQualTrkKink", &leg2_muonCombQualTrkKink);
-  FlatTuple->Branch("leg2_muonGlobalTrackNormChi2", &leg2_muonGlobalTrackNormChi2);
-  FlatTuple->Branch("leg2_muonInnerTrkValidFraction", &leg2_muonInnerTrkValidFraction);
-  FlatTuple->Branch("leg2_muonSegmentCompatibility", &leg2_muonSegmentCompatibility);
-  FlatTuple->Branch("leg2_raw_electronMVA", &leg2_raw_electronMVA);
-  FlatTuple->Branch("leg2_passFail_electronMVA80", &leg2_passFail_electronMVA80);
-  FlatTuple->Branch("leg2_passFail_electronMVA90", &leg2_passFail_electronMVA90);
-  FlatTuple->Branch("leg2_passFail_electronCutBasedID", &leg2_passFail_electronCutBasedID);
-  FlatTuple->Branch("leg2_ooEmooP", &leg2_ooEmooP);
-  FlatTuple->Branch("leg2_full5x5_sigmaIetaIeta", &leg2_full5x5_sigmaIetaIeta);
-  FlatTuple->Branch("leg2_SuperClusterEta", &leg2_SuperClusterEta);
-  FlatTuple->Branch("leg2_hadronicOverEm", &leg2_hadronicOverEm);
-  FlatTuple->Branch("leg2_isEB", &leg2_isEB);
-  FlatTuple->Branch("leg2_isEBEEGap", &leg2_isEBEEGap);
-  FlatTuple->Branch("leg2_isEBEtaGap", &leg2_isEBEtaGap);
-  FlatTuple->Branch("leg2_isEBPhiGap", &leg2_isEBPhiGap);
-  FlatTuple->Branch("leg2_isEE", &leg2_isEE);
-  FlatTuple->Branch("leg2_isEEDeeGap", &leg2_isEEDeeGap);
-  FlatTuple->Branch("leg2_isEERingGap", &leg2_isEERingGap);
-  FlatTuple->Branch("leg2_deltaEtaSuperClusterTrackAtVtx", &leg2_deltaEtaSuperClusterTrackAtVtx);
-  FlatTuple->Branch("leg2_deltaPhiSuperClusterTrackAtVtx", &leg2_deltaPhiSuperClusterTrackAtVtx);
-  FlatTuple->Branch("leg2_sigmaEtaEta", &leg2_sigmaEtaEta);
-  FlatTuple->Branch("leg2_sigmaIetaIeta", &leg2_sigmaIetaIeta);
-  FlatTuple->Branch("leg2_sigmaIphiIphi", &leg2_sigmaIphiIphi);
-  FlatTuple->Branch("leg2_numberOfMissingInnerHits", &leg2_numberOfMissingInnerHits);
-  FlatTuple->Branch("leg2_numberOfMissingOuterHits", &leg2_numberOfMissingOuterHits);
-  FlatTuple->Branch("leg2_numberOfTrackHits", &leg2_numberOfTrackHits);
-  FlatTuple->Branch("leg2_passConversionVeto", &leg2_passConversionVeto);
-  FlatTuple->Branch("leg2_ZimpactTau", &leg2_ZimpactTau);
-  FlatTuple->Branch("leg2_numStrips", &leg2_numStrips);
-  FlatTuple->Branch("leg2_numHadrons", &leg2_numHadrons);
-  FlatTuple->Branch("leg2_dzTauVertex", &leg2_dzTauVertex);
-
-  FlatTuple->Branch("leg2_pt", &leg2_pt);
-  FlatTuple->Branch("leg2_gen_pt", &leg2_gen_pt);
-  FlatTuple->Branch("leg2_genMother_pt", &leg2_genMother_pt);
-  FlatTuple->Branch("leg2_genJet_pt", &leg2_genJet_pt);
-  FlatTuple->Branch("leg1_pt", &leg1_pt);
-  FlatTuple->Branch("leg1_gen_pt", &leg1_gen_pt);
-  FlatTuple->Branch("leg1_genMother_pt", &leg1_genMother_pt);
-  FlatTuple->Branch("leg1_genJet_pt", &leg1_genJet_pt);
-  FlatTuple->Branch("leg2_eta", &leg2_eta);
-  FlatTuple->Branch("leg2_gen_eta", &leg2_gen_eta);
-  FlatTuple->Branch("leg2_genMother_eta", &leg2_genMother_eta);
-  FlatTuple->Branch("leg2_genJet_eta", &leg2_genJet_eta);
-  FlatTuple->Branch("leg1_eta", &leg1_eta);
-  FlatTuple->Branch("leg1_gen_eta", &leg1_gen_eta);
-  FlatTuple->Branch("leg1_genMother_eta", &leg1_genMother_eta);
-  FlatTuple->Branch("leg1_genJet_eta", &leg1_genJet_eta);
-  FlatTuple->Branch("leg2_phi", &leg2_phi);
-  FlatTuple->Branch("leg2_gen_phi", &leg2_gen_phi);
-  FlatTuple->Branch("leg2_genMother_phi", &leg2_genMother_phi);
-  FlatTuple->Branch("leg2_genJet_phi", &leg2_genJet_phi);
-  FlatTuple->Branch("leg1_phi", &leg1_phi);
-  FlatTuple->Branch("leg1_gen_phi", &leg1_gen_phi);
-  FlatTuple->Branch("leg1_genMother_phi", &leg1_genMother_phi);
-  FlatTuple->Branch("leg1_genJet_phi", &leg1_genJet_phi);
-  FlatTuple->Branch("leg2_M", &leg2_M);
-  FlatTuple->Branch("leg2_gen_M", &leg2_gen_M);
-  FlatTuple->Branch("leg2_genMother_M", &leg2_genMother_M);
-  FlatTuple->Branch("leg2_genJet_M", &leg2_genJet_M);
-  FlatTuple->Branch("leg1_M", &leg1_M);
-  FlatTuple->Branch("leg1_gen_M", &leg1_gen_M);
-  FlatTuple->Branch("leg1_genMother_M", &leg1_genMother_M);
-  FlatTuple->Branch("leg1_genJet_M", &leg1_genJet_M);
-  FlatTuple->Branch("leg1_RelIso",&leg1_RelIso);
-  FlatTuple->Branch("leg2_RelIso",&leg2_RelIso);
-
-
-  FlatTuple->Branch("veto_leptonType", &veto_leptonType);
-  FlatTuple->Branch("veto_pt", &veto_pt);
-  FlatTuple->Branch("veto_eta", &veto_eta);
-  FlatTuple->Branch("veto_phi", &veto_phi);
-  FlatTuple->Branch("veto_M", &veto_M);
-  FlatTuple->Branch("veto_charge", &veto_charge);
-
-  FlatTuple->Branch("veto_dxy", &veto_dxy);
-  FlatTuple->Branch("veto_dz", &veto_dz);
-  FlatTuple->Branch("veto_RelIso", &veto_RelIso);
-  FlatTuple->Branch("veto_passesMediumMuonId", &veto_passesMediumMuonId);
-  FlatTuple->Branch("veto_rawElectronMVA", &veto_rawElectronMVA);
-
-  FlatTuple->Branch("veto_passElectronMVA90", &veto_passElectronMVA90);
-  FlatTuple->Branch("veto_passElectronCutBased", &veto_passElectronCutBased);
-  FlatTuple->Branch("veto_isTrackerGlobalPFMuon", &veto_isTrackerGlobalPFMuon);
-
-  FlatTuple->Branch("NumberOfGoodVertices",&NumberOfGoodVertices);
-  FlatTuple->Branch("vertex_NDOF",&vertex_NDOF);
-  FlatTuple->Branch("vertex_CHI2",&vertex_CHI2);
-  FlatTuple->Branch("vertex_positionRho",&vertex_positionRho);
-  FlatTuple->Branch("vertex_positionX",&vertex_positionX);
-  FlatTuple->Branch("vertex_positionY",&vertex_positionY);
-  FlatTuple->Branch("vertex_positionZ",&vertex_positionZ);
-  FlatTuple->Branch("vertex_positionTheta",&vertex_positionTheta);
-  FlatTuple->Branch("vertex_positionEta",&vertex_positionEta);
-  FlatTuple->Branch("vertex_positionPhi",&vertex_positionPhi);
-
-  FlatTuple->Branch("puWeight",&puWeight);
-  FlatTuple->Branch("NumPileupInt",&NumPileupInt);
-  FlatTuple->Branch("NumTruePileUpInt",&NumTruePileUpInt);
-  FlatTuple->Branch("generatorEventWeight",&generatorEventWeight);
-  FlatTuple->Branch("hepNUP",&hepNUP);
-
-  FlatTuple->Branch("numberOfJets", &numberOfJets);
-  FlatTuple->Branch("numberOfJets30", &numberOfJets30);
-
-  FlatTuple->Branch("numberOfBJets", &numberOfBJets);
-  FlatTuple->Branch("jets_pt", &jets_pt);
-  FlatTuple->Branch("jets_eta", &jets_eta);
-  FlatTuple->Branch("jets_phi", &jets_phi);
-  FlatTuple->Branch("jets_M", &jets_M);
-  FlatTuple->Branch("jets_PU_jetIdRaw", &jets_PU_jetIdRaw);
-  FlatTuple->Branch("jets_PU_jetIdPassed", &jets_PU_jetIdPassed);
-  FlatTuple->Branch("jets_PF_jetIdPassed", &jets_PF_jetIdPassed);
-  FlatTuple->Branch("jets_defaultBtagAlgorithm_RawScore", &jets_defaultBtagAlgorithm_RawScore);
-  FlatTuple->Branch("jets_defaultBtagAlgorithm_isPassed", &jets_defaultBtagAlgorithm_isPassed);
-  FlatTuple->Branch("jets_PARTON_flavour", &jets_PARTON_flavour);
-  FlatTuple->Branch("jets_HADRON_flavour", &jets_HADRON_flavour);
-  FlatTuple->Branch("bjets_pt", &bjets_pt);
-  FlatTuple->Branch("bjets_eta", &bjets_eta);
-  FlatTuple->Branch("bjets_phi", &bjets_phi);
-  FlatTuple->Branch("bjets_M", &bjets_M);
-  FlatTuple->Branch("bjets_PU_jetIdRaw", &bjets_PU_jetIdRaw);
-  FlatTuple->Branch("bjets_PU_jetIdPassed", &bjets_PU_jetIdPassed);
-  FlatTuple->Branch("bjets_PF_jetIdPassed", &bjets_PF_jetIdPassed);
-  FlatTuple->Branch("bjets_defaultBtagAlgorithm_RawScore", &bjets_defaultBtagAlgorithm_RawScore);
-  FlatTuple->Branch("bjets_defaultBtagAlgorithm_isPassed", &bjets_defaultBtagAlgorithm_isPassed);
-  FlatTuple->Branch("bjets_PARTON_flavour", &bjets_PARTON_flavour);
-  FlatTuple->Branch("bjets_HADRON_flavour", &bjets_HADRON_flavour);
-
-  FlatTuple->Branch("genParticle_pdgId", &genParticle_pdgId);
-  FlatTuple->Branch("genParticle_status", &genParticle_status);
-  FlatTuple->Branch("genParticle_pt", &genParticle_pt);
-  FlatTuple->Branch("genParticle_eta", &genParticle_eta);
-  FlatTuple->Branch("genParticle_phi", &genParticle_phi);
-  FlatTuple->Branch("genParticle_M", &genParticle_M);
-  FlatTuple->Branch("genDaughter_pdgId", &genDaughter_pdgId);
-  FlatTuple->Branch("genDaughter_status", &genDaughter_status);
-  FlatTuple->Branch("genDaughter_pt", &genDaughter_pt);
-  FlatTuple->Branch("genDaughter_eta", &genDaughter_eta);
-  FlatTuple->Branch("genDaughter_phi", &genDaughter_phi);
-  FlatTuple->Branch("genDaughter_M", &genDaughter_M);
-  FlatTuple->Branch("genMother_pdgId", &genMother_pdgId);
-  FlatTuple->Branch("genMother_status", &genMother_status);
-  FlatTuple->Branch("genMother_pt", &genMother_pt);
-  FlatTuple->Branch("genMother_eta", &genMother_eta);
-  FlatTuple->Branch("genMother_phi", &genMother_phi);
-  FlatTuple->Branch("genMother_M", &genMother_M);
-
-  FlatTuple->Branch("EventHasZtoTauTau", &EventHasZtoTauTau);
-  FlatTuple->Branch("EventHasZtoEE", &EventHasZtoEE);
-  FlatTuple->Branch("EventHasZtoMM", &EventHasZtoMM);
-  FlatTuple->Branch("isDY_genZTTcase1", &isDY_genZTTcase1);
-  FlatTuple->Branch("isDY_genZTTcase2", &isDY_genZTTcase2);
-  FlatTuple->Branch("isDY_genZTTcaseEmbedded", &isDY_genZTTcaseEmbedded);
-  FlatTuple->Branch("isDY_genZL", &isDY_genZL);
-  FlatTuple->Branch("isDY_genZJcase1", &isDY_genZJcase1);
-  FlatTuple->Branch("isDY_genZJcase2", &isDY_genZJcase2);
-  FlatTuple->Branch("isDY_genZTTcase3", &isDY_genZTTcase3);
-  FlatTuple->Branch("isDY_genZLL", &isDY_genZLL);
-  FlatTuple->Branch("isDY_genZJcase3", &isDY_genZJcase3);
-
-  FlatTuple->Branch("rho", &rho);
+ 
 
 
 
@@ -376,6 +68,7 @@ FlatTupleGenerator::~FlatTupleGenerator(){}
 void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 {
 
+   using namespace edm;
 
 
 
@@ -547,11 +240,11 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
       mvaMET_cov11 = currentPair.mvaMET()[0].getSignificanceMatrix()[1][1];
       pfMET = currentPair.pfMET()[0].pt();
       pfMETphi = currentPair.pfMET()[0].phi();
+
       pfMET_cov00 = currentPair.pfMET_cov00()[0];
       pfMET_cov01 = currentPair.pfMET_cov01()[0];
       pfMET_cov10 = currentPair.pfMET_cov10()[0];
       pfMET_cov11 = currentPair.pfMET_cov11()[0];  
-
 
       leg1_leptonType = currentPair.leg1().leptonType();
       leg1_dz = currentPair.leg1().dz();
@@ -584,6 +277,7 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
       leg1_muonInnerTrkValidFraction = currentPair.leg1().muonInnerTrkValidFraction();
       leg1_muonSegmentCompatibility = currentPair.leg1().muonSegmentCompatibility();
       leg1_raw_electronMVA = currentPair.leg1().raw_electronMVA();
+      leg1_category_electronMVA = currentPair.leg1().category_electronMVA();
       leg1_passFail_electronMVA80 = currentPair.leg1().passFail_electronMVA80();
       leg1_passFail_electronMVA90 = currentPair.leg1().passFail_electronMVA90();
       leg1_passFail_electronCutBasedID = currentPair.leg1().passFail_electronCutBasedID();
@@ -642,6 +336,7 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
       leg2_muonInnerTrkValidFraction = currentPair.leg2().muonInnerTrkValidFraction();
       leg2_muonSegmentCompatibility = currentPair.leg2().muonSegmentCompatibility();
       leg2_raw_electronMVA = currentPair.leg2().raw_electronMVA();
+      leg2_category_electronMVA = currentPair.leg2().category_electronMVA();
       leg2_passFail_electronMVA80 = currentPair.leg2().passFail_electronMVA80();
       leg2_passFail_electronMVA90 = currentPair.leg2().passFail_electronMVA90();
       leg2_passFail_electronCutBasedID = currentPair.leg2().passFail_electronCutBasedID();
@@ -753,6 +448,8 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
           veto_dz.push_back(currentPair.vetoElectron()[v].dz());
           veto_passesMediumMuonId.push_back(currentPair.vetoElectron()[v].passesMediumMuonId());
           veto_rawElectronMVA.push_back(currentPair.vetoElectron()[v].raw_electronMVA());
+          veto_categoryElectronMVA.push_back(currentPair.vetoElectron()[v].category_electronMVA());
+          veto_passElectronMVA80.push_back(currentPair.vetoElectron()[v].passFail_electronMVA80());
           veto_passElectronMVA90.push_back(currentPair.vetoElectron()[v].passFail_electronMVA90());
           veto_passElectronCutBased.push_back(currentPair.vetoElectron()[v].passFail_electronCutBasedID());
           veto_isTrackerGlobalPFMuon.push_back(0.0);         
@@ -771,6 +468,8 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
           veto_dz.push_back(currentPair.vetoMuon()[v].dz());
           veto_passesMediumMuonId.push_back(currentPair.vetoMuon()[v].passesMediumMuonId());
           veto_rawElectronMVA.push_back(currentPair.vetoMuon()[v].raw_electronMVA());
+          veto_categoryElectronMVA.push_back(currentPair.vetoMuon()[v].category_electronMVA());
+          veto_passElectronMVA80.push_back(currentPair.vetoMuon()[v].passFail_electronMVA80());
           veto_passElectronMVA90.push_back(currentPair.vetoMuon()[v].passFail_electronMVA90());
           veto_passElectronCutBased.push_back(currentPair.vetoMuon()[v].passFail_electronCutBasedID());
          
@@ -989,6 +688,7 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
   leg1_muonInnerTrkValidFraction = NAN;
   leg1_muonSegmentCompatibility = NAN;
   leg1_raw_electronMVA = NAN;
+  leg1_category_electronMVA = NAN;
   leg1_passFail_electronMVA80 = NAN;
   leg1_passFail_electronMVA90 = NAN;
   leg1_passFail_electronCutBasedID = NAN;
@@ -1042,6 +742,7 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
   leg2_muonInnerTrkValidFraction = NAN;
   leg2_muonSegmentCompatibility = NAN;
   leg2_raw_electronMVA = NAN;
+  leg2_category_electronMVA = NAN;
   leg2_passFail_electronMVA80 = NAN;
   leg2_passFail_electronMVA90 = NAN;
   leg2_passFail_electronCutBasedID = NAN;
@@ -1129,7 +830,8 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
   veto_RelIso.clear(); 
   veto_passesMediumMuonId.clear(); 
   veto_rawElectronMVA.clear(); 
-
+  veto_categoryElectronMVA.clear(); 
+  veto_passElectronMVA80.clear(); 
   veto_passElectronMVA90.clear(); 
   veto_passElectronCutBased.clear(); 
   veto_isTrackerGlobalPFMuon.clear(); 
@@ -1219,7 +921,332 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
 // ------------ method called once each job just before starting event loop  ------------
 //////////////////////////////////////////////////
 
-void FlatTupleGenerator::beginJob() {}
+void FlatTupleGenerator::beginJob() 
+{
+
+   /* create TTree */
+   
+  edm::Service<TFileService> fs;
+  FlatTuple = fs->make<TTree>("FlatTuple","FlatTuple");
+
+
+
+
+
+
+
+  //////////////
+  // init values
+
+    reInit(); 
+
+
+
+  /* the branches */
+
+  FlatTuple->Branch("run", &run);
+  FlatTuple->Branch("luminosityBlock", &luminosityBlock);
+  FlatTuple->Branch("event", &event);
+  FlatTuple->Branch("pairRank",&pairRank);
+  FlatTuple->Branch("isRealData", &isRealData);
+  FlatTuple->Branch("treeInfoString", &treeInfoString);
+  FlatTuple->Branch("AppliedLepCuts", &AppliedLepCuts);
+  FlatTuple->Branch("VISMass", &VISMass);
+
+  for(std::size_t x = 0; x<tauIDsToKeep.size();++x ) 
+  {
+
+  FlatTuple->Branch(("leg1_"+tauIDsToKeep.at(x)).c_str(), &leg1_tauIDs[x]);
+  FlatTuple->Branch(("leg2_"+tauIDsToKeep.at(x)).c_str(), &leg2_tauIDs[x]);
+  }
+
+
+  for(std::size_t x = 0; x<triggerSummaryChecks.size();++x ) 
+  {
+
+    std::string versionStrippedName = triggerSummaryChecks.at(x);
+    versionStrippedName.erase(versionStrippedName.find("_v"),versionStrippedName.length());
+
+    std::cout<<versionStrippedName<<"\n";
+
+    FlatTuple->Branch(("leg1_"+versionStrippedName).c_str(), &leg1_GoodForHLTPath[x]);
+    FlatTuple->Branch(("leg2_"+versionStrippedName).c_str(), &leg2_GoodForHLTPath[x]);
+  }
+
+  FlatTuple->Branch("CandidateEventType", &CandidateEventType);
+  FlatTuple->Branch("TauEsNumberSigmasShifted", &TauEsNumberSigmasShifted);
+  FlatTuple->Branch("isOsPair", &isOsPair);
+  FlatTuple->Branch("SVMass", &SVMass);
+  FlatTuple->Branch("MTmvaMET_leg1", &MTmvaMET_leg1);
+  FlatTuple->Branch("MTpfMET_leg1", &MTpfMET_leg1);
+  FlatTuple->Branch("MTmvaMET_leg2", &MTmvaMET_leg2);
+  FlatTuple->Branch("MTpfMET_leg2", &MTpfMET_leg2);
+  FlatTuple->Branch("mvaMET", &mvaMET);
+  FlatTuple->Branch("mvaMETphi", &mvaMETphi);
+  FlatTuple->Branch("mvaMET_cov00", &mvaMET_cov00);
+  FlatTuple->Branch("mvaMET_cov01", &mvaMET_cov01);
+  FlatTuple->Branch("mvaMET_cov10", &mvaMET_cov10);
+  FlatTuple->Branch("mvaMET_cov11", &mvaMET_cov11);
+  FlatTuple->Branch("pfMET", &pfMET);
+  FlatTuple->Branch("pfMETphi", &pfMETphi);
+  FlatTuple->Branch("pfMET_cov00", &pfMET_cov00);
+  FlatTuple->Branch("pfMET_cov01", &pfMET_cov01);
+  FlatTuple->Branch("pfMET_cov10", &pfMET_cov10);
+  FlatTuple->Branch("pfMET_cov11", &pfMET_cov11);
+
+  FlatTuple->Branch("leg1_leptonType", &leg1_leptonType);
+  FlatTuple->Branch("leg1_dz", &leg1_dz);
+  FlatTuple->Branch("leg1_dxy", &leg1_dxy);
+  FlatTuple->Branch("leg1_EffectiveArea", &leg1_EffectiveArea);
+  FlatTuple->Branch("leg1_charge", &leg1_charge);
+  FlatTuple->Branch("leg1_PFpdgId", &leg1_PFpdgId);
+  FlatTuple->Branch("leg1_GENpdgId", &leg1_GENpdgId);
+  FlatTuple->Branch("leg1_GENMOTHERpdgId", &leg1_GENMOTHERpdgId);
+  FlatTuple->Branch("leg1_IP", &leg1_IP);
+  FlatTuple->Branch("leg1_IPerror", &leg1_IPerror);
+  FlatTuple->Branch("leg1_PUchargedHadronIso", &leg1_PUchargedHadronIso);
+  FlatTuple->Branch("leg1_chargedHadronIso", &leg1_chargedHadronIso);
+  FlatTuple->Branch("leg1_neutralHadronIso", &leg1_neutralHadronIso);
+  FlatTuple->Branch("leg1_photonIso", &leg1_photonIso);
+  FlatTuple->Branch("leg1_DepositR03ECal", &leg1_DepositR03ECal);
+  FlatTuple->Branch("leg1_DepositR03Hcal", &leg1_DepositR03Hcal);
+  FlatTuple->Branch("leg1_DepositR03TrackerOfficial", &leg1_DepositR03TrackerOfficial);
+  FlatTuple->Branch("leg1_isGlobalMuon", &leg1_isGlobalMuon);
+  FlatTuple->Branch("leg1_isGoodGlobalMuon", &leg1_isGoodGlobalMuon);
+  FlatTuple->Branch("leg1_passesMediumMuonId", &leg1_passesMediumMuonId);
+  FlatTuple->Branch("leg1_isLooseMuon", &leg1_isLooseMuon);
+  FlatTuple->Branch("leg1_isPFMuon", &leg1_isPFMuon);
+  FlatTuple->Branch("leg1_isSoftMuon", &leg1_isSoftMuon);
+  FlatTuple->Branch("leg1_isTightMuon", &leg1_isTightMuon);
+  FlatTuple->Branch("leg1_isTrackerMuon", &leg1_isTrackerMuon);
+  FlatTuple->Branch("leg1_muonCombQualChi2LocalPosition", &leg1_muonCombQualChi2LocalPosition);
+  FlatTuple->Branch("leg1_muonCombQualTrkKink", &leg1_muonCombQualTrkKink);
+  FlatTuple->Branch("leg1_muonGlobalTrackNormChi2", &leg1_muonGlobalTrackNormChi2);
+  FlatTuple->Branch("leg1_muonInnerTrkValidFraction", &leg1_muonInnerTrkValidFraction);
+  FlatTuple->Branch("leg1_muonSegmentCompatibility", &leg1_muonSegmentCompatibility);
+  FlatTuple->Branch("leg1_raw_electronMVA", &leg1_raw_electronMVA);
+  FlatTuple->Branch("leg1_category_electronMVA", &leg1_category_electronMVA);
+  FlatTuple->Branch("leg1_passFail_electronMVA80", &leg1_passFail_electronMVA80);
+  FlatTuple->Branch("leg1_passFail_electronMVA90", &leg1_passFail_electronMVA90);
+  FlatTuple->Branch("leg1_passFail_electronCutBasedID", &leg1_passFail_electronCutBasedID);
+  FlatTuple->Branch("leg1_ooEmooP", &leg1_ooEmooP);
+  FlatTuple->Branch("leg1_full5x5_sigmaIetaIeta", &leg1_full5x5_sigmaIetaIeta);
+  FlatTuple->Branch("leg1_SuperClusterEta", &leg1_SuperClusterEta);
+  FlatTuple->Branch("leg1_hadronicOverEm", &leg1_hadronicOverEm);
+  FlatTuple->Branch("leg1_isEB", &leg1_isEB);
+  FlatTuple->Branch("leg1_isEBEEGap", &leg1_isEBEEGap);
+  FlatTuple->Branch("leg1_isEBEtaGap", &leg1_isEBEtaGap);
+  FlatTuple->Branch("leg1_isEBPhiGap", &leg1_isEBPhiGap);
+  FlatTuple->Branch("leg1_isEE", &leg1_isEE);
+  FlatTuple->Branch("leg1_isEEDeeGap", &leg1_isEEDeeGap);
+  FlatTuple->Branch("leg1_isEERingGap", &leg1_isEERingGap);
+  FlatTuple->Branch("leg1_deltaEtaSuperClusterTrackAtVtx", &leg1_deltaEtaSuperClusterTrackAtVtx);
+  FlatTuple->Branch("leg1_deltaPhiSuperClusterTrackAtVtx", &leg1_deltaPhiSuperClusterTrackAtVtx);
+  FlatTuple->Branch("leg1_sigmaEtaEta", &leg1_sigmaEtaEta);
+  FlatTuple->Branch("leg1_sigmaIetaIeta", &leg1_sigmaIetaIeta);
+  FlatTuple->Branch("leg1_sigmaIphiIphi", &leg1_sigmaIphiIphi);
+  FlatTuple->Branch("leg1_numberOfMissingInnerHits", &leg1_numberOfMissingInnerHits);
+  FlatTuple->Branch("leg1_numberOfMissingOuterHits", &leg1_numberOfMissingOuterHits);
+  FlatTuple->Branch("leg1_numberOfTrackHits", &leg1_numberOfTrackHits);
+  FlatTuple->Branch("leg1_passConversionVeto", &leg1_passConversionVeto);
+  FlatTuple->Branch("leg1_ZimpactTau", &leg1_ZimpactTau);
+  FlatTuple->Branch("leg1_numStrips", &leg1_numStrips);
+  FlatTuple->Branch("leg1_dzTauVertex", &leg1_dzTauVertex);
+  FlatTuple->Branch("leg1_numHadrons", &leg1_numHadrons);
+  FlatTuple->Branch("leg2_leptonType", &leg2_leptonType);
+  FlatTuple->Branch("leg2_dz", &leg2_dz);
+  FlatTuple->Branch("leg2_dxy", &leg2_dxy);
+  FlatTuple->Branch("leg2_EffectiveArea", &leg2_EffectiveArea);
+  FlatTuple->Branch("leg2_charge", &leg2_charge);
+  FlatTuple->Branch("leg2_PFpdgId", &leg2_PFpdgId);
+  FlatTuple->Branch("leg2_GENpdgId", &leg2_GENpdgId);
+  FlatTuple->Branch("leg2_GENMOTHERpdgId", &leg2_GENMOTHERpdgId);
+  FlatTuple->Branch("leg2_IP", &leg2_IP);
+  FlatTuple->Branch("leg2_IPerror", &leg2_IPerror);
+  FlatTuple->Branch("leg2_PUchargedHadronIso", &leg2_PUchargedHadronIso);
+  FlatTuple->Branch("leg2_chargedHadronIso", &leg2_chargedHadronIso);
+  FlatTuple->Branch("leg2_neutralHadronIso", &leg2_neutralHadronIso);
+  FlatTuple->Branch("leg2_photonIso", &leg2_photonIso);
+  FlatTuple->Branch("leg2_DepositR03ECal", &leg2_DepositR03ECal);
+  FlatTuple->Branch("leg2_DepositR03Hcal", &leg2_DepositR03Hcal);
+  FlatTuple->Branch("leg2_DepositR03TrackerOfficial", &leg2_DepositR03TrackerOfficial);
+  FlatTuple->Branch("leg2_isGlobalMuon", &leg2_isGlobalMuon);
+  FlatTuple->Branch("leg2_isGoodGlobalMuon", &leg2_isGoodGlobalMuon);
+  FlatTuple->Branch("leg2_passesMediumMuonId", &leg2_passesMediumMuonId);
+  FlatTuple->Branch("leg2_isLooseMuon", &leg2_isLooseMuon);
+  FlatTuple->Branch("leg2_isPFMuon", &leg2_isPFMuon);
+  FlatTuple->Branch("leg2_isSoftMuon", &leg2_isSoftMuon);
+  FlatTuple->Branch("leg2_isTightMuon", &leg2_isTightMuon);
+  FlatTuple->Branch("leg2_isTrackerMuon", &leg2_isTrackerMuon);
+  FlatTuple->Branch("leg2_muonCombQualChi2LocalPosition", &leg2_muonCombQualChi2LocalPosition);
+  FlatTuple->Branch("leg2_muonCombQualTrkKink", &leg2_muonCombQualTrkKink);
+  FlatTuple->Branch("leg2_muonGlobalTrackNormChi2", &leg2_muonGlobalTrackNormChi2);
+  FlatTuple->Branch("leg2_muonInnerTrkValidFraction", &leg2_muonInnerTrkValidFraction);
+  FlatTuple->Branch("leg2_muonSegmentCompatibility", &leg2_muonSegmentCompatibility);
+  FlatTuple->Branch("leg2_raw_electronMVA", &leg2_raw_electronMVA);
+  FlatTuple->Branch("leg2_category_electronMVA", &leg2_category_electronMVA);
+  FlatTuple->Branch("leg2_passFail_electronMVA80", &leg2_passFail_electronMVA80);
+  FlatTuple->Branch("leg2_passFail_electronMVA90", &leg2_passFail_electronMVA90);
+  FlatTuple->Branch("leg2_passFail_electronCutBasedID", &leg2_passFail_electronCutBasedID);
+  FlatTuple->Branch("leg2_ooEmooP", &leg2_ooEmooP);
+  FlatTuple->Branch("leg2_full5x5_sigmaIetaIeta", &leg2_full5x5_sigmaIetaIeta);
+  FlatTuple->Branch("leg2_SuperClusterEta", &leg2_SuperClusterEta);
+  FlatTuple->Branch("leg2_hadronicOverEm", &leg2_hadronicOverEm);
+  FlatTuple->Branch("leg2_isEB", &leg2_isEB);
+  FlatTuple->Branch("leg2_isEBEEGap", &leg2_isEBEEGap);
+  FlatTuple->Branch("leg2_isEBEtaGap", &leg2_isEBEtaGap);
+  FlatTuple->Branch("leg2_isEBPhiGap", &leg2_isEBPhiGap);
+  FlatTuple->Branch("leg2_isEE", &leg2_isEE);
+  FlatTuple->Branch("leg2_isEEDeeGap", &leg2_isEEDeeGap);
+  FlatTuple->Branch("leg2_isEERingGap", &leg2_isEERingGap);
+  FlatTuple->Branch("leg2_deltaEtaSuperClusterTrackAtVtx", &leg2_deltaEtaSuperClusterTrackAtVtx);
+  FlatTuple->Branch("leg2_deltaPhiSuperClusterTrackAtVtx", &leg2_deltaPhiSuperClusterTrackAtVtx);
+  FlatTuple->Branch("leg2_sigmaEtaEta", &leg2_sigmaEtaEta);
+  FlatTuple->Branch("leg2_sigmaIetaIeta", &leg2_sigmaIetaIeta);
+  FlatTuple->Branch("leg2_sigmaIphiIphi", &leg2_sigmaIphiIphi);
+  FlatTuple->Branch("leg2_numberOfMissingInnerHits", &leg2_numberOfMissingInnerHits);
+  FlatTuple->Branch("leg2_numberOfMissingOuterHits", &leg2_numberOfMissingOuterHits);
+  FlatTuple->Branch("leg2_numberOfTrackHits", &leg2_numberOfTrackHits);
+  FlatTuple->Branch("leg2_passConversionVeto", &leg2_passConversionVeto);
+  FlatTuple->Branch("leg2_ZimpactTau", &leg2_ZimpactTau);
+  FlatTuple->Branch("leg2_numStrips", &leg2_numStrips);
+  FlatTuple->Branch("leg2_numHadrons", &leg2_numHadrons);
+  FlatTuple->Branch("leg2_dzTauVertex", &leg2_dzTauVertex);
+
+  FlatTuple->Branch("leg2_pt", &leg2_pt);
+  FlatTuple->Branch("leg2_gen_pt", &leg2_gen_pt);
+  FlatTuple->Branch("leg2_genMother_pt", &leg2_genMother_pt);
+  FlatTuple->Branch("leg2_genJet_pt", &leg2_genJet_pt);
+  FlatTuple->Branch("leg1_pt", &leg1_pt);
+  FlatTuple->Branch("leg1_gen_pt", &leg1_gen_pt);
+  FlatTuple->Branch("leg1_genMother_pt", &leg1_genMother_pt);
+  FlatTuple->Branch("leg1_genJet_pt", &leg1_genJet_pt);
+  FlatTuple->Branch("leg2_eta", &leg2_eta);
+  FlatTuple->Branch("leg2_gen_eta", &leg2_gen_eta);
+  FlatTuple->Branch("leg2_genMother_eta", &leg2_genMother_eta);
+  FlatTuple->Branch("leg2_genJet_eta", &leg2_genJet_eta);
+  FlatTuple->Branch("leg1_eta", &leg1_eta);
+  FlatTuple->Branch("leg1_gen_eta", &leg1_gen_eta);
+  FlatTuple->Branch("leg1_genMother_eta", &leg1_genMother_eta);
+  FlatTuple->Branch("leg1_genJet_eta", &leg1_genJet_eta);
+  FlatTuple->Branch("leg2_phi", &leg2_phi);
+  FlatTuple->Branch("leg2_gen_phi", &leg2_gen_phi);
+  FlatTuple->Branch("leg2_genMother_phi", &leg2_genMother_phi);
+  FlatTuple->Branch("leg2_genJet_phi", &leg2_genJet_phi);
+  FlatTuple->Branch("leg1_phi", &leg1_phi);
+  FlatTuple->Branch("leg1_gen_phi", &leg1_gen_phi);
+  FlatTuple->Branch("leg1_genMother_phi", &leg1_genMother_phi);
+  FlatTuple->Branch("leg1_genJet_phi", &leg1_genJet_phi);
+  FlatTuple->Branch("leg2_M", &leg2_M);
+  FlatTuple->Branch("leg2_gen_M", &leg2_gen_M);
+  FlatTuple->Branch("leg2_genMother_M", &leg2_genMother_M);
+  FlatTuple->Branch("leg2_genJet_M", &leg2_genJet_M);
+  FlatTuple->Branch("leg1_M", &leg1_M);
+  FlatTuple->Branch("leg1_gen_M", &leg1_gen_M);
+  FlatTuple->Branch("leg1_genMother_M", &leg1_genMother_M);
+  FlatTuple->Branch("leg1_genJet_M", &leg1_genJet_M);
+  FlatTuple->Branch("leg1_RelIso",&leg1_RelIso);
+  FlatTuple->Branch("leg2_RelIso",&leg2_RelIso);
+
+
+  FlatTuple->Branch("veto_leptonType", &veto_leptonType);
+  FlatTuple->Branch("veto_pt", &veto_pt);
+  FlatTuple->Branch("veto_eta", &veto_eta);
+  FlatTuple->Branch("veto_phi", &veto_phi);
+  FlatTuple->Branch("veto_M", &veto_M);
+  FlatTuple->Branch("veto_charge", &veto_charge);
+
+  FlatTuple->Branch("veto_dxy", &veto_dxy);
+  FlatTuple->Branch("veto_dz", &veto_dz);
+  FlatTuple->Branch("veto_RelIso", &veto_RelIso);
+  FlatTuple->Branch("veto_passesMediumMuonId", &veto_passesMediumMuonId);
+  FlatTuple->Branch("veto_rawElectronMVA", &veto_rawElectronMVA);
+  FlatTuple->Branch("veto_categoryElectronMVA", &veto_categoryElectronMVA);
+  FlatTuple->Branch("veto_passElectronMVA80", &veto_passElectronMVA80);
+  FlatTuple->Branch("veto_passElectronMVA90", &veto_passElectronMVA90);
+  FlatTuple->Branch("veto_passElectronCutBased", &veto_passElectronCutBased);
+  FlatTuple->Branch("veto_isTrackerGlobalPFMuon", &veto_isTrackerGlobalPFMuon);
+
+  FlatTuple->Branch("NumberOfGoodVertices",&NumberOfGoodVertices);
+  FlatTuple->Branch("vertex_NDOF",&vertex_NDOF);
+  FlatTuple->Branch("vertex_CHI2",&vertex_CHI2);
+  FlatTuple->Branch("vertex_positionRho",&vertex_positionRho);
+  FlatTuple->Branch("vertex_positionX",&vertex_positionX);
+  FlatTuple->Branch("vertex_positionY",&vertex_positionY);
+  FlatTuple->Branch("vertex_positionZ",&vertex_positionZ);
+  FlatTuple->Branch("vertex_positionTheta",&vertex_positionTheta);
+  FlatTuple->Branch("vertex_positionEta",&vertex_positionEta);
+  FlatTuple->Branch("vertex_positionPhi",&vertex_positionPhi);
+
+  FlatTuple->Branch("puWeight",&puWeight);
+  FlatTuple->Branch("NumPileupInt",&NumPileupInt);
+  FlatTuple->Branch("NumTruePileUpInt",&NumTruePileUpInt);
+  FlatTuple->Branch("generatorEventWeight",&generatorEventWeight);
+  FlatTuple->Branch("hepNUP",&hepNUP);
+
+  FlatTuple->Branch("numberOfJets", &numberOfJets);
+  FlatTuple->Branch("numberOfJets30", &numberOfJets30);
+
+  FlatTuple->Branch("numberOfBJets", &numberOfBJets);
+  FlatTuple->Branch("jets_pt", &jets_pt);
+  FlatTuple->Branch("jets_eta", &jets_eta);
+  FlatTuple->Branch("jets_phi", &jets_phi);
+  FlatTuple->Branch("jets_M", &jets_M);
+  FlatTuple->Branch("jets_PU_jetIdRaw", &jets_PU_jetIdRaw);
+  FlatTuple->Branch("jets_PU_jetIdPassed", &jets_PU_jetIdPassed);
+  FlatTuple->Branch("jets_PF_jetIdPassed", &jets_PF_jetIdPassed);
+  FlatTuple->Branch("jets_defaultBtagAlgorithm_RawScore", &jets_defaultBtagAlgorithm_RawScore);
+  FlatTuple->Branch("jets_defaultBtagAlgorithm_isPassed", &jets_defaultBtagAlgorithm_isPassed);
+  FlatTuple->Branch("jets_PARTON_flavour", &jets_PARTON_flavour);
+  FlatTuple->Branch("jets_HADRON_flavour", &jets_HADRON_flavour);
+  FlatTuple->Branch("bjets_pt", &bjets_pt);
+  FlatTuple->Branch("bjets_eta", &bjets_eta);
+  FlatTuple->Branch("bjets_phi", &bjets_phi);
+  FlatTuple->Branch("bjets_M", &bjets_M);
+  FlatTuple->Branch("bjets_PU_jetIdRaw", &bjets_PU_jetIdRaw);
+  FlatTuple->Branch("bjets_PU_jetIdPassed", &bjets_PU_jetIdPassed);
+  FlatTuple->Branch("bjets_PF_jetIdPassed", &bjets_PF_jetIdPassed);
+  FlatTuple->Branch("bjets_defaultBtagAlgorithm_RawScore", &bjets_defaultBtagAlgorithm_RawScore);
+  FlatTuple->Branch("bjets_defaultBtagAlgorithm_isPassed", &bjets_defaultBtagAlgorithm_isPassed);
+  FlatTuple->Branch("bjets_PARTON_flavour", &bjets_PARTON_flavour);
+  FlatTuple->Branch("bjets_HADRON_flavour", &bjets_HADRON_flavour);
+
+  FlatTuple->Branch("genParticle_pdgId", &genParticle_pdgId);
+  FlatTuple->Branch("genParticle_status", &genParticle_status);
+  FlatTuple->Branch("genParticle_pt", &genParticle_pt);
+  FlatTuple->Branch("genParticle_eta", &genParticle_eta);
+  FlatTuple->Branch("genParticle_phi", &genParticle_phi);
+  FlatTuple->Branch("genParticle_M", &genParticle_M);
+  FlatTuple->Branch("genDaughter_pdgId", &genDaughter_pdgId);
+  FlatTuple->Branch("genDaughter_status", &genDaughter_status);
+  FlatTuple->Branch("genDaughter_pt", &genDaughter_pt);
+  FlatTuple->Branch("genDaughter_eta", &genDaughter_eta);
+  FlatTuple->Branch("genDaughter_phi", &genDaughter_phi);
+  FlatTuple->Branch("genDaughter_M", &genDaughter_M);
+  FlatTuple->Branch("genMother_pdgId", &genMother_pdgId);
+  FlatTuple->Branch("genMother_status", &genMother_status);
+  FlatTuple->Branch("genMother_pt", &genMother_pt);
+  FlatTuple->Branch("genMother_eta", &genMother_eta);
+  FlatTuple->Branch("genMother_phi", &genMother_phi);
+  FlatTuple->Branch("genMother_M", &genMother_M);
+
+  FlatTuple->Branch("EventHasZtoTauTau", &EventHasZtoTauTau);
+  FlatTuple->Branch("EventHasZtoEE", &EventHasZtoEE);
+  FlatTuple->Branch("EventHasZtoMM", &EventHasZtoMM);
+  FlatTuple->Branch("isDY_genZTTcase1", &isDY_genZTTcase1);
+  FlatTuple->Branch("isDY_genZTTcase2", &isDY_genZTTcase2);
+  FlatTuple->Branch("isDY_genZTTcaseEmbedded", &isDY_genZTTcaseEmbedded);
+  FlatTuple->Branch("isDY_genZL", &isDY_genZL);
+  FlatTuple->Branch("isDY_genZJcase1", &isDY_genZJcase1);
+  FlatTuple->Branch("isDY_genZJcase2", &isDY_genZJcase2);
+  FlatTuple->Branch("isDY_genZTTcase3", &isDY_genZTTcase3);
+  FlatTuple->Branch("isDY_genZLL", &isDY_genZLL);
+  FlatTuple->Branch("isDY_genZJcase3", &isDY_genZJcase3);
+
+  FlatTuple->Branch("rho", &rho);
+
+
+}
 
 //////////////////////////////////////////////////
 // ------------ method called once each job just after ending the event loop  ------------
@@ -1227,6 +1254,8 @@ void FlatTupleGenerator::beginJob() {}
 
 void FlatTupleGenerator::endJob() {}
 
+
+/*
 //////////////////////////////////////////////////
 // ------------ method called when starting to processes a run  ------------
 //////////////////////////////////////////////////
@@ -1254,7 +1283,7 @@ void FlatTupleGenerator::endLuminosityBlock(edm::LuminosityBlock const&, edm::Ev
 //////////////////////////////////////////////////
 // ------------ method fills 'descriptions' with the allowed parameters for the module  ------------
 //////////////////////////////////////////////////
-
+*/
 void FlatTupleGenerator::fillDescriptions(edm::ConfigurationDescriptions& descriptions) {
     //The following says we do not know what parameters are allowed so do no validation
     // Please change this to state exactly what you do use, even if it is no parameters

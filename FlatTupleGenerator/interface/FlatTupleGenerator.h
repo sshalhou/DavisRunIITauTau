@@ -81,16 +81,22 @@ public:
 	static void fillDescriptions(edm::ConfigurationDescriptions& descriptions);
 
 
-private:
-	virtual void beginJob() ;
-	virtual void analyze(const edm::Event&, const edm::EventSetup&);
-	virtual void endJob() ;
+   private:
+      virtual void beginJob() override;
+      virtual void analyze(const edm::Event&, const edm::EventSetup&) override;
+      virtual void endJob() override;
+      virtual void reInit(); 
 
-	virtual void beginRun(edm::Run const&, edm::EventSetup const&);
-	virtual void endRun(edm::Run const&, edm::EventSetup const&);
-	virtual void beginLuminosityBlock(edm::LuminosityBlock const&, edm::EventSetup const&);
-	virtual void endLuminosityBlock(edm::LuminosityBlock const&, edm::EventSetup const&);
-	virtual void reInit();
+// private:
+// 	virtual void beginJob() ;
+// 	virtual void analyze(const edm::Event&, const edm::EventSetup&);
+// 	virtual void endJob() ;
+
+// 	virtual void beginRun(edm::Run const&, edm::EventSetup const&);
+// 	virtual void endRun(edm::Run const&, edm::EventSetup const&);
+// 	virtual void beginLuminosityBlock(edm::LuminosityBlock const&, edm::EventSetup const&);
+// 	virtual void endLuminosityBlock(edm::LuminosityBlock const&, edm::EventSetup const&);
+// 	virtual void reInit();
 
 	JetHelper jethelper;
 	GenHelper genhelper;
@@ -98,8 +104,9 @@ private:
 	// ----------member data ---------------------------
 
 
-  
-  
+	/* the TTree */
+	TTree * FlatTuple;
+
 	/* MASTER VALUE FOR Ntuples std::pair flattening, and generating branches on-the-fly based on
 	   FlatTupleGenerator/python/FlatTupleConfig_cfi.py   */
   
@@ -144,8 +151,7 @@ private:
 	/* the lepton cut helper object */
 	LeptonFlatTupleCutHelper LeptonCutHelper;
 
-	/* the TTree */
-	TTree * FlatTuple;
+
 
 	/* the leaves : Idea here is to be as flat as possible - stick to simple objects */
 
@@ -224,6 +230,7 @@ private:
 	/* electron ID related quanties, see CustomPatCollectionProducers/src/ElectronClones.cc */
 
 	float leg1_raw_electronMVA, leg2_raw_electronMVA;
+	float leg1_category_electronMVA, leg2_category_electronMVA;
 	float leg1_passFail_electronMVA80, leg2_passFail_electronMVA80;
 	float leg1_passFail_electronMVA90, leg2_passFail_electronMVA90;
     float leg1_passFail_electronCutBasedID,leg2_passFail_electronCutBasedID;
@@ -278,6 +285,8 @@ private:
 	std::vector<float> veto_RelIso;
 	std::vector<float> veto_passesMediumMuonId;
 	std::vector<float> veto_rawElectronMVA;
+	std::vector<float> veto_categoryElectronMVA;
+	std::vector<float> veto_passElectronMVA80;
 	std::vector<float> veto_passElectronMVA90;
 	std::vector<float> veto_passElectronCutBased;
 	std::vector<float> veto_isTrackerGlobalPFMuon;

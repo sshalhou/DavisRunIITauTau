@@ -70,7 +70,7 @@ GEN_PARTICLES_TO_KEEP.append(111) # keep pi0
 #        and is operated on by the BtagSF tool (if the applyBtagSF flag is set to True)
 ####################################################################################################
 
-DEFAULT_BTAG_ALGORITHM = "combinedInclusiveSecondaryVertexV2BJetTags"
+DEFAULT_BTAG_ALGORITHM = "pfCombinedInclusiveSecondaryVertexV2BJetTags"
 APPLY_BTAG_SF = True 						
 BTAG_SF_SEED = 123456	#############################################################################
 						# note : if BTAG_SF_SEED is anything other than 0, the seed of the TRandom3 
