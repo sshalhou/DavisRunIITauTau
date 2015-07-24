@@ -2,7 +2,6 @@
 
 # setup access
 
-setenv GIT_ASKPASS
 voms-proxy-init -voms cms --valid=72:00
 
 # some defaults

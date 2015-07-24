@@ -1,5 +1,3 @@
-
-export GIT_ASKPASS
 voms-proxy-init -voms cms --valid=72:00
 
 source /cvmfs/cms.cern.ch/cmsset_default.sh
