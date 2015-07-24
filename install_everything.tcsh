@@ -51,6 +51,10 @@ cd -
 git cms-addpkg PhysicsTools/Utilities
 sed -i 's/std::cout/\/\/std::cout/g' PhysicsTools/Utilities/src/LumiReWeighting.cc
 
+# move the Davis code into the reight area
+
+mv ../../DavisRunIITauTau .
+
 # compile
 
 scram b -j 20
