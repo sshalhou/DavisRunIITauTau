@@ -5,13 +5,6 @@ DavisRunIITauTau : Code For H->tau tau Run II analysis
 For Quick Start (on SL6 only, CMSSW_7_4_7 and higher):
 
 
-------------------
-DavisRunIITauTau : Code For H->tau tau Run II analysis
-------------------
-
-For Quick Start (on SL6 only, CMSSW_7_4_7 and higher):
-
-
 - Choose a location for your working directory :
 
 		
