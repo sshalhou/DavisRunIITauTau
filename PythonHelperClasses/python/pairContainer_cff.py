@@ -165,7 +165,7 @@ class PairWiseMetHelper:
 		# electron + muon
 		if BUILD_ELECTRON_MUON is True :
 			for i in range(0, self.max_leptons+1):
-				for j in range(i+1, self.max_leptons+1):
+				for j in range(0, self.max_leptons+1):
 					moduleName = "mvaMetElectronxMuon"+str(i)+"x"+str(j)
 					lep1SrcColl = cms.InputTag(self.electronList[i])
 					lep2SrcColl = cms.InputTag(self.muonList[j])
@@ -178,72 +178,77 @@ class PairWiseMetHelper:
 		# electron + electron
 		if BUILD_ELECTRON_ELECTRON is True :
 			for i in range(0, self.max_leptons+1):
-				for j in range(i+1, self.max_leptons+1):
-					moduleName = "mvaMetElectronxElectron"+str(i)+"x"+str(j)
-					lep1SrcColl = cms.InputTag(self.electronList[i])
-					lep2SrcColl = cms.InputTag(self.electronList[j])
-					module = self.process.pfMVAMEt.clone(
+				for j in range(0, self.max_leptons+1):
+					if i!=j :
+						moduleName = "mvaMetElectronxElectron"+str(i)+"x"+str(j)
+						lep1SrcColl = cms.InputTag(self.electronList[i])
+						lep2SrcColl = cms.InputTag(self.electronList[j])
+						module = self.process.pfMVAMEt.clone(
 							srcLeptons = cms.VInputTag(lep1SrcColl,lep2SrcColl))
-					setattr(self.process, moduleName, module)
-					self.LepPairAndMetList.append([lep1SrcColl,lep2SrcColl,cms.InputTag(moduleName+':'+':Ntuple'),str(i)+"x"+str(j)])
-					pairMets += module
+						setattr(self.process, moduleName, module)
+						self.LepPairAndMetList.append([lep1SrcColl,lep2SrcColl,cms.InputTag(moduleName+':'+':Ntuple'),str(i)+"x"+str(j)])
+						pairMets += module
 
 
 		# muon + muon
 		if BUILD_MUON_MUON is True :
 			for i in range(0, self.max_leptons+1):
-				for j in range(i+1, self.max_leptons+1):
-					moduleName = "mvaMetMuonxMuon"+str(i)+"x"+str(j)
-					lep1SrcColl = cms.InputTag(self.muonList[i])
-					lep2SrcColl = cms.InputTag(self.muonList[j])
-					module = self.process.pfMVAMEt.clone(
+				for j in range(0, self.max_leptons+1):
+					if i!=j :
+						moduleName = "mvaMetMuonxMuon"+str(i)+"x"+str(j)
+						lep1SrcColl = cms.InputTag(self.muonList[i])
+						lep2SrcColl = cms.InputTag(self.muonList[j])
+						module = self.process.pfMVAMEt.clone(
 							srcLeptons = cms.VInputTag(lep1SrcColl,lep2SrcColl))
-					setattr(self.process, moduleName, module)
-					self.LepPairAndMetList.append([lep1SrcColl,lep2SrcColl,cms.InputTag(moduleName+':'+':Ntuple'),str(i)+"x"+str(j)])
-					pairMets += module
+						setattr(self.process, moduleName, module)
+						self.LepPairAndMetList.append([lep1SrcColl,lep2SrcColl,cms.InputTag(moduleName+':'+':Ntuple'),str(i)+"x"+str(j)])
+						pairMets += module
 
 
 		# tau Es nominal + tau Es nominal
 		if BUILD_TAU_TAU is True :
 			for i in range(0, self.max_leptons+1):
-				for j in range(i+1, self.max_leptons+1):
-					moduleName = "mvaMetTauEsNominalxTauEsNominal"+str(i)+"x"+str(j)
-					lep1SrcColl = cms.InputTag(self.tauEsNominalList[i])
-					lep2SrcColl = cms.InputTag(self.tauEsNominalList[j])
-					module = self.process.pfMVAMEt.clone(
-							srcLeptons = cms.VInputTag(lep1SrcColl,lep2SrcColl))
-					setattr(self.process, moduleName, module)
-					self.LepPairAndMetList.append([lep1SrcColl,lep2SrcColl,cms.InputTag(moduleName+':'+':Ntuple'),str(i)+"x"+str(j)])
-					pairMets += module
+				for j in range(0, self.max_leptons+1):
+					if i!=j :
+						moduleName = "mvaMetTauEsNominalxTauEsNominal"+str(i)+"x"+str(j)
+						lep1SrcColl = cms.InputTag(self.tauEsNominalList[i])
+						lep2SrcColl = cms.InputTag(self.tauEsNominalList[j])
+						module = self.process.pfMVAMEt.clone(
+								srcLeptons = cms.VInputTag(lep1SrcColl,lep2SrcColl))
+						setattr(self.process, moduleName, module)
+						self.LepPairAndMetList.append([lep1SrcColl,lep2SrcColl,cms.InputTag(moduleName+':'+':Ntuple'),str(i)+"x"+str(j)])
+						pairMets += module
 
 
 		# tau Es Up + tau Es Up
 		if BUILD_TAU_TAU is True :
 			if BUILD_TAU_ES_VARIANTS is True :
 				for i in range(0, self.max_leptons+1):
-					for j in range(i+1, self.max_leptons+1):
-						moduleName = "mvaMetTauEsUpxTauEsUp"+str(i)+"x"+str(j)
-						lep1SrcColl = cms.InputTag(self.tauEsUpList[i])
-						lep2SrcColl = cms.InputTag(self.tauEsUpList[j])
-						module = self.process.pfMVAMEt.clone(
+					for j in range(0, self.max_leptons+1):
+						if i!=j :
+							moduleName = "mvaMetTauEsUpxTauEsUp"+str(i)+"x"+str(j)
+							lep1SrcColl = cms.InputTag(self.tauEsUpList[i])
+							lep2SrcColl = cms.InputTag(self.tauEsUpList[j])
+							module = self.process.pfMVAMEt.clone(
 								srcLeptons = cms.VInputTag(lep1SrcColl,lep2SrcColl))
-						setattr(self.process, moduleName, module)
-						self.LepPairAndMetList.append([lep1SrcColl,lep2SrcColl,cms.InputTag(moduleName+':'+':Ntuple'),str(i)+"x"+str(j)])
-						pairMets += module
+							setattr(self.process, moduleName, module)
+							self.LepPairAndMetList.append([lep1SrcColl,lep2SrcColl,cms.InputTag(moduleName+':'+':Ntuple'),str(i)+"x"+str(j)])
+							pairMets += module
 
 		# tau Es Down + tau Es Down
 		if BUILD_TAU_TAU is True :
 			if BUILD_TAU_ES_VARIANTS is True :
 				for i in range(0, self.max_leptons+1):
-					for j in range(i+1, self.max_leptons+1):
-						moduleName = "mvaMetTauEsDownxTauEsDown"+str(i)+"x"+str(j)
-						lep1SrcColl = cms.InputTag(self.tauEsDownList[i])
-						lep2SrcColl = cms.InputTag(self.tauEsDownList[j])
-						module = self.process.pfMVAMEt.clone(
+					for j in range(0, self.max_leptons+1):
+						if i!=j :
+							moduleName = "mvaMetTauEsDownxTauEsDown"+str(i)+"x"+str(j)
+							lep1SrcColl = cms.InputTag(self.tauEsDownList[i])
+							lep2SrcColl = cms.InputTag(self.tauEsDownList[j])
+							module = self.process.pfMVAMEt.clone(
 								srcLeptons = cms.VInputTag(lep1SrcColl,lep2SrcColl))
-						setattr(self.process, moduleName, module)
-						self.LepPairAndMetList.append([lep1SrcColl,lep2SrcColl,cms.InputTag(moduleName+':'+':Ntuple'),str(i)+"x"+str(j)])
-						pairMets += module
+							setattr(self.process, moduleName, module)
+							self.LepPairAndMetList.append([lep1SrcColl,lep2SrcColl,cms.InputTag(moduleName+':'+':Ntuple'),str(i)+"x"+str(j)])
+							pairMets += module
 
 		# electron + tau Es nominal
 		if BUILD_ELECTRON_TAU is True :
