@@ -61,13 +61,46 @@ bool LeptonFlatTupleCutHelper::cutEvaluator(NtupleEvent anEvent, std::vector<edm
 			StringCutObjectSelector<NtupleLepton> leg2Cut(getAppropriateCutString(
 													leg2.leptonType(), currentSet, 0));
 
-			if(leg1Cut(leg1) && leg2Cut(leg2)) passed_cuts++;
+
+			/* impose the cuts on pairs */
+			bool passPairDRCut = 1;
+			bool passPairTriggerCut = 1;
+
+			if(currentSet.exists("minDR"))
+			{
+
+				TLorentzVector d1(0,0,0,0);
+				TLorentzVector d2(0,0,0,0);
+				double minDR = currentSet.getParameter<double>("minDR");
+				d1.SetXYZT(leg1.p4().X(),leg1.p4().Y(),leg1.p4().Z(),leg1.p4().T());
+				d2.SetXYZT(leg2.p4().X(),leg2.p4().Y(),leg2.p4().Z(),leg2.p4().T());
+				if(d1.DeltaR(d2) < minDR) passPairDRCut = 0;
+			}
+
+
+			if(currentSet.exists("trigger"))
+			{
+				StringCutObjectSelector<NtupleEvent> triggerCut(currentSet.getParameter<std::string>("trigger"));
+
+				passPairTriggerCut = triggerCut(anEvent);
+
+			}
+
+
+
+			//std::cout<<currentSet.getParameter<double>("minDR")<<" = minDR pass fail = "<<passPairDRCut<<"\n";
+			//std::cout<<currentSet.getParameter<std::string>("trigger")<<" = trigger pass/fail = "<<passPairTriggerCut<<"\n";
+
+
+
+
+
+			if(leg1Cut(leg1) && leg2Cut(leg2) && passPairDRCut && passPairTriggerCut) passed_cuts++;
 
 		}
 
 
 	}
-
 
 return (valid_cuts==passed_cuts && valid_cuts!=0);
 }

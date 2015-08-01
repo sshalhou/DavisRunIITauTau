@@ -93,10 +93,25 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
 
   ///////////////////////////////////////////
   // for each event, store a vector of NtupleEvent (i.e. pair)
-  // objects that pass the specified selection /* coming soon, for now keep all */
+  // objects that pass the specified selection 
+  // this is done separately for each channel since they are ranked
+  // indep. from each other
 
-  std::vector<NtupleEvent> retainedPairs;
-  retainedPairs.clear();
+  std::vector<NtupleEvent> retainedPairs_EleTau;
+  retainedPairs_EleTau.clear();
+
+  std::vector<NtupleEvent> retainedPairs_MuonTau;
+  retainedPairs_MuonTau.clear();
+
+  std::vector<NtupleEvent> retainedPairs_TauTau;
+  retainedPairs_TauTau.clear();
+
+  std::vector<NtupleEvent> retainedPairs_EleMuon;
+  retainedPairs_EleMuon.clear();
+
+  /////////////////////////////
+  // 
+
 
   /////////////////////////////////////
   // now loop through the pairs in the current event
@@ -121,31 +136,97 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
     /* check if the cuts pass */
 
     bool leptonCutsPass = LeptonCutHelper.cutEvaluator(currentPair, LeptonCutVecSrc_);
-    //std::cout<<" lepton cuts ===> "<<leptonCutsPass<<"for type "<<currentPair.CandidateEventType()<<"\n";
 
 
-   if(keepSignPair && keepTauEsVariant && leptonCutsPass) retainedPairs.push_back(currentPair);
+   if(keepSignPair && keepTauEsVariant && leptonCutsPass) 
+   {
+
+    if(currentPair.CandidateEventType() == TupleCandidateEventTypes::EleTau) 
+    { 
+      retainedPairs_EleTau.push_back(currentPair);
+    }
+
+    else if(currentPair.CandidateEventType() == TupleCandidateEventTypes::MuonTau) 
+    { 
+      retainedPairs_MuonTau.push_back(currentPair);
+    }
+   
+    else if(currentPair.CandidateEventType() == TupleCandidateEventTypes::TauTau) 
+    { 
+      retainedPairs_TauTau.push_back(currentPair);
+    }
+
+    else if(currentPair.CandidateEventType() == TupleCandidateEventTypes::EleMuon) 
+    { 
+      retainedPairs_EleMuon.push_back(currentPair);
+    }
+   }
+
+
 
   }
-
-  //std::cout<<" retained pairs size = "<<retainedPairs.size()<<"\n";
-  if(retainedPairs.size()==0) return;
-
-
 
   /////////////////////////
   // next figure out how to rank the pairs 
 
 
-  PairRankHelper rankHelper;
+  PairRankHelper rankHelper_EleMuon;
+  PairRankHelper rankHelper_EleTau;
+  PairRankHelper rankHelper_MuonTau;
+  PairRankHelper rankHelper_TauTau;
 
-  if(rankByPtSum) rankHelper.init(retainedPairs);
-  else if(rankByIsolation) rankHelper.init(retainedPairs,electronIsolationForRank,muonIsolationForRank,tauIDisolationForRank);
+  if(rankByPtSum) 
+  {
+    rankHelper_EleMuon.init(retainedPairs_EleMuon);
+    rankHelper_EleTau.init(retainedPairs_EleTau);
+    rankHelper_MuonTau.init(retainedPairs_MuonTau);
+    rankHelper_TauTau.init(retainedPairs_TauTau);
 
-  std::vector<std::pair<std::size_t,NtupleEvent>> retainedPairsWithRank = rankHelper.returnRankedPairVec();
+  }
 
 
-  // rankHelper.process_pairs(retainedPairs);
+  else if(rankByIsolation) 
+  {
+    rankHelper_EleMuon.init(retainedPairs_EleMuon,electronIsolationForRank,muonIsolationForRank,tauIDisolationForRank);
+    rankHelper_EleTau.init(retainedPairs_EleTau,electronIsolationForRank,muonIsolationForRank,tauIDisolationForRank);
+    rankHelper_MuonTau.init(retainedPairs_MuonTau,electronIsolationForRank,muonIsolationForRank,tauIDisolationForRank);
+    rankHelper_TauTau.init(retainedPairs_TauTau,electronIsolationForRank,muonIsolationForRank,tauIDisolationForRank);
+  }
+
+  // get the individual rank-pair std::pairs
+
+  std::vector<std::pair<std::size_t,NtupleEvent>> retainedPairsWithRank_EleTau = rankHelper_EleTau.returnRankedPairVec();
+  std::vector<std::pair<std::size_t,NtupleEvent>> retainedPairsWithRank_EleMuon = rankHelper_EleMuon.returnRankedPairVec();
+  std::vector<std::pair<std::size_t,NtupleEvent>> retainedPairsWithRank_MuonTau = rankHelper_MuonTau.returnRankedPairVec();
+  std::vector<std::pair<std::size_t,NtupleEvent>> retainedPairsWithRank_TauTau = rankHelper_TauTau.returnRankedPairVec();
+
+  // combine the individual channel pairs into a single vector
+  
+  std::vector<std::pair<std::size_t,NtupleEvent>> retainedPairsWithRank;
+  retainedPairsWithRank.clear();
+
+
+  for(std::size_t v = 0; v<retainedPairsWithRank_EleTau.size(); ++v )
+  {
+    retainedPairsWithRank.push_back(retainedPairsWithRank_EleTau[v]);
+  }
+  for(std::size_t v = 0; v<retainedPairsWithRank_MuonTau.size(); ++v )
+  {
+    retainedPairsWithRank.push_back(retainedPairsWithRank_MuonTau[v]);
+  }
+  for(std::size_t v = 0; v<retainedPairsWithRank_TauTau.size(); ++v )
+  {
+    retainedPairsWithRank.push_back(retainedPairsWithRank_TauTau[v]);
+  }
+
+  for(std::size_t v = 0; v<retainedPairsWithRank_EleMuon.size(); ++v )
+  {
+    retainedPairsWithRank.push_back(retainedPairsWithRank_EleMuon[v]);
+  }
+
+  // check if any pairs from any channels are kept
+
+  if(retainedPairsWithRank.size()==0) return;
 
 
 
@@ -153,6 +234,10 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
   {
 
       reInit();
+
+      pairRank = retainedPairsWithRank[p].first;
+      if(pairRank!=0) continue; /* no reason to keep more than the best pair/event */
+
 
       ////////////////
       // fill some easy stuff first :
@@ -173,7 +258,7 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
 
 
       VISMass = currentPair.VISMass()[0];
-      pairRank = retainedPairsWithRank[p].first;
+      
       
       ////////////////
       // fill the tauIDs for tau legs
@@ -222,7 +307,6 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
 
 
       CandidateEventType = currentPair.CandidateEventType();
-
 
 
       TauEsNumberSigmasShifted = currentPair.TauEsNumberSigmasShifted();

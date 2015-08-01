@@ -83,7 +83,8 @@ from DavisRunIITauTau.TupleConfigurations.ConfigTupleOfflineVertices_cfi import 
 process.filteredVertices = cms.EDFilter(
     "VertexSelector",
     src = cms.InputTag('offlineSlimmedPrimaryVertices'),
-    cut = vertexFilter,
+    #cut = vertexFilter,
+    cut = cms.string(""), # off until studies show cuts are needed
     filter = cms.bool(True) # drop events without good quality veritces
 )
 
@@ -161,9 +162,12 @@ process.customSlimmedTaus = cms.EDProducer('CustomPatTauProducer' ,
 							tauSrc =cms.InputTag('slimmedTaus::PAT'),
 							vertexSrc =cms.InputTag('filteredVertices::Ntuple'),
 							NAME=cms.string("customSlimmedTaus"),
-							TauEsCorrection=cms.double(1.01),
-							TauEsUpSystematic=cms.double(1.03),
-							TauEsDownSystematic=cms.double(0.97),
+							TauEsCorrection=cms.double(1.0),
+							TauEsUpSystematic=cms.double(1.0),
+							TauEsDownSystematic=cms.double(1.0),
+							# TauEsCorrection=cms.double(1.01),
+							# TauEsUpSystematic=cms.double(1.03),
+							# TauEsDownSystematic=cms.double(0.97),
 							triggerBitSrc = cms.InputTag("TriggerResults","","HLT"),
 							triggerPreScaleSrc = cms.InputTag("patTrigger"),
 							triggerObjectSrc = cms.InputTag("selectedPatTrigger")

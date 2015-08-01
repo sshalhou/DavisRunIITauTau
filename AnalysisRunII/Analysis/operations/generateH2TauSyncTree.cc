@@ -7,6 +7,12 @@ generateH2TauSyncTree::generateH2TauSyncTree(FlatTreeReader R_, bool run_)
 	m_run = run_;
 	R = R_;
 
+	// init counters
+	num_et = 0;
+	num_em = 0;
+	num_tt = 0;
+	num_mt = 0;
+
 	if(m_run)
 	{
 
@@ -208,6 +214,8 @@ void generateH2TauSyncTree::handleEvent()
 	event = R.getUI("event");
 	lumi = R.getUI("luminosityBlock");
 
+	isOsPair = R.getI("isOsPair");
+	pairRank = R.getUI("pairRank");
 	npv = R.getI("NumberOfGoodVertices");
 	npu = R.getF("NumTruePileUpInt");
 	rho = R.getD("rho");
@@ -345,8 +353,9 @@ if(R.getI("CandidateEventType")==3)
 	if(R.getF("leg1_HLT_Ele22_eta2p1_WP75_Gsf_LooseIsoPFTau20") == 1.0) trigweight_1 = 1.0;
 	if(R.getF("leg2_HLT_Ele22_eta2p1_WP75_Gsf_LooseIsoPFTau20") == 1.0) trigweight_2 = 1.0;
 
+
 	if(R.getF("leg1_HLT_Ele32_eta2p1_WP75_Gsf") == 1.0) trigweight_1 = 1.0;
-	/* no 2nd leg really */ if(R.getF("leg2_HLT_Ele32_eta2p1_WP75_Gsf") == 1.0) trigweight_2 = 1.0;
+	/* no 2nd leg really, so use leg1 */ if(R.getF("leg1_HLT_Ele32_eta2p1_WP75_Gsf") == 1.0) trigweight_2 = 1.0;
 
 }
 
@@ -358,7 +367,7 @@ if(R.getI("CandidateEventType")==5)
 	if(R.getF("leg2_HLT_IsoMu17_eta2p1_LooseIsoPFTau20") == 1.0) trigweight_2 = 1.0;
 	
 	if(R.getF("leg1_HLT_IsoMu24_eta2p1") == 1.0) trigweight_1 = 1.0;
-	/* no 2nd leg really */ if(R.getF("leg2_HLT_IsoMu24_eta2p1") == 1.0) trigweight_2 = 1.0;
+	/* no 2nd leg really, so use leg1 */ if(R.getF("leg1_HLT_IsoMu24_eta2p1") == 1.0) trigweight_2 = 1.0;
 
 }
 
@@ -373,17 +382,31 @@ if(R.getI("CandidateEventType")==6)
 
 	// std::cout<<" --- --------------\n ";
 
-	// std::cout<<R.getI("CandidateEventType")<<"\n";
-	// std::cout<<R.getI("CandidateEventType")<<"\n";
+
+	
+	/* some additional cuts */
+	//if(R.getUI("pairRank") != 0) return;
+	//if(R.getI("isOsPair") != 1) return;
+	if(fabs(R.getI("leg1_charge")) != 1) return;
+	if(fabs(R.getI("leg2_charge")) != 1) return;
+
+
+
+
 	/////////// DON'T CHANGE VALUES AFTER THIS :)
 	/* see TupleCandidateEventTypes */
-	if(R.getI("CandidateEventType")==2 && l1.DeltaR(l2) > 0.3) tree_EleMu->Fill();
-	else if(R.getI("CandidateEventType")==3 && l1.DeltaR(l2) > 0.5) tree_EleTau->Fill();
-	else if(R.getI("CandidateEventType")==5 && l1.DeltaR(l2) > 0.5) tree_MuTau->Fill();
-	else if(R.getI("CandidateEventType")==6 && l1.DeltaR(l2) > 0.5) tree_TauTau->Fill();
+
+	if(R.getI("CandidateEventType")==3 && l1.DeltaR(l2) > 0.5) {num_et++; tree_EleTau->Fill();}
+	else if(R.getI("CandidateEventType")==2 && l1.DeltaR(l2) > 0.3){num_em++; tree_EleMu->Fill();}
+	else if(R.getI("CandidateEventType")==5 && l1.DeltaR(l2) > 0.5){num_mt++; tree_MuTau->Fill();}
+	else if(R.getI("CandidateEventType")==6 && l1.DeltaR(l2) > 0.5) {num_tt++; tree_TauTau->Fill();}
 	
-
-
+	if(num_et%1000==0){
+	 std::cout<<" etau = "<<num_et<<"\n";
+	 std::cout<<" mtau = "<<num_mt<<"\n";
+	 std::cout<<" tt = "<<num_tt<<"\n";
+	 std::cout<<" em = "<<num_em<<"\n";
+	}
 
 
 }
@@ -396,7 +419,9 @@ void generateH2TauSyncTree::setupBranches(TTree * T)
 	T->Branch("run",&run);
 	T->Branch("event",&event);
 	T->Branch("lumi",&lumi);
+	T->Branch("isOsPair",&isOsPair);
 	
+	T->Branch("pairRank",&pairRank);
 	T->Branch("npv",&npv);
 	T->Branch("npu",&npu);
 	T->Branch("rho",&rho);
@@ -720,7 +745,8 @@ void generateH2TauSyncTree::reset()
 	run = 0;
 	event = 0;
 	lumi = 0;
-	 
+	pairRank = 999;
+	isOsPair = -999;
 	npv =  0;
 	npu =  -999.0;
 	rho =  -999.0;

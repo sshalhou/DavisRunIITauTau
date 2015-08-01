@@ -54,8 +54,11 @@ typedef std::vector<edm::InputTag> VInputTag;
 
 /* ranking comparator */
 
-bool NtupleRankCompare(const std::pair<double, NtupleEvent>& , const std::pair<double, NtupleEvent>& ) ;
+/* the double is the sumPt */
+bool NtupleRankCompare_SumPt(const std::pair<double, NtupleEvent>& , const std::pair<double, NtupleEvent>& ) ;
 
+/* the double[0] = leg1 isol, while double[1] = leg2 isol */
+bool NtupleRankCompare_IsolLeg1(const std::pair<std::vector<double>, NtupleEvent>& , const std::pair<std::vector<double>, NtupleEvent>& ) ;
 
 class PairRankHelper {
 
@@ -67,16 +70,13 @@ public:
 
 // helpers
 
-
-
-
-  void process_pairs();
-  void print_ranking();
+  void process_pairs_SumPtRank();
+  void process_pairs_IsolRank();
 
   /* return sumPt or isolation product*/
 
   double getSumPt(NtupleEvent);
-  double getIsolProduct(NtupleEvent,std::string, std::string, std::string);
+  std::vector<double> getIsolOfLeg1andLeg2(NtupleEvent,std::string, std::string, std::string);
 
 
   /* for sumPt ranking */
@@ -94,11 +94,14 @@ public:
 
 private:
 
-	std::vector<std::pair<double, NtupleEvent>> m_CriterionLepPair; /* vec<std::pair> of the criterion for ranking and the pair */
-	std::vector<std::pair <double, NtupleEvent>> m_Ranking; /* the  ranked rank:LeptonPair std::pair */
-   	std::vector<std::pair <std::size_t, NtupleEvent>> m_finalRanking; /* the final ranked rank:LeptonPair std::pair */
-   	std::vector<std::pair <double, NtupleEvent>> m_finalRankedCriterion; /* the final ranked criterion:LeptonPair std::pair */
+  /* things need some cleanup since H2Tau method is different from what KLUB described */
 
+  std::string eIsol_;
+  std::string muIsol_;
+  std::string tauID_;
+  std::vector<std::pair <std::size_t, NtupleEvent>> m_finalRanking; /* the final ranked rank:LeptonPair std::pair */
+  std::vector< std::pair<double, NtupleEvent> > m_CriterionLepPair_SumPt;
+  std::vector< std::pair<std::vector<double>, NtupleEvent> > m_CriterionLepPair_Isol;
 
 
 

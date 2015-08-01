@@ -26,10 +26,11 @@ filter_ = []
 
 # ----------------------------------------------------
 # ------------[user edit here]------------------------
-filter_.append('pt>9.0')
+filter_.append('pt>10.0')
 filter_.append('abs(eta)<2.4')
 filter_.append('abs(userFloat("dxy"))<0.045')
 filter_.append('abs(userFloat("dz"))<0.2')
+filter_.append('userFloat("passesMediumMuonId")==1.0')
 # ----------------------------------------------------
 # ----------------------------------------------------
 

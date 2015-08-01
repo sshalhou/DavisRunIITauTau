@@ -16,6 +16,8 @@ ele_EleTau.append("abs(eta)<2.1")
 ele_EleTau.append("abs(dxy)<0.045")
 ele_EleTau.append("abs(dz)<0.2")
 ele_EleTau.append("passFail_electronMVA80==1.0")
+ele_EleTau.append("passConversionVeto==1.0")
+ele_EleTau.append("numberOfMissingInnerHits<=1")
 #ele_EleTau.append("relativeIsol('DeltaBetaCorrectedRelIso')<0.1")
 
 
@@ -26,6 +28,9 @@ ele_EleMuon.append("abs(eta)<2.5")
 ele_EleMuon.append("abs(dxy)<0.045")
 ele_EleMuon.append("abs(dz)<0.2")
 ele_EleMuon.append("passFail_electronMVA80==1.0")
+ele_EleMuon.append("passConversionVeto==1.0")
+ele_EleMuon.append("numberOfMissingInnerHits<=1")
+
 #ele_EleMuon.append("relativeIsol('DeltaBetaCorrectedRelIso')<0.15")
 
 
@@ -41,7 +46,7 @@ muon_MuonTau.append("passesMediumMuonId==1.0")
 
 # muon in EleMuon final state :
 muon_EleMuon = []
-muon_EleMuon.append("pt>9")
+muon_EleMuon.append("pt>10")
 muon_EleMuon.append("abs(eta)<2.4")
 muon_EleMuon.append("abs(dxy)<0.045")
 muon_EleMuon.append("abs(dz)<0.2")
@@ -57,7 +62,8 @@ tau_MuonTau.append("pt>20")
 tau_MuonTau.append("abs(eta)<2.3")
 tau_MuonTau.append("tauID('decayModeFindingNewDMs') > 0.5")                                        
 tau_MuonTau.append("abs(dz)<0.2")
-tau_MuonTau.append("abs(dzTauVertex)==0.0")
+#tau_MuonTau.append("abs(dzTauVertex)==0.0")
+tau_MuonTau.append("abs(charge)==1.0")
 
 
 # tau in TauTau final state :
@@ -66,7 +72,8 @@ tau_TauTau.append("pt>45")
 tau_TauTau.append("abs(eta)<2.1")
 tau_TauTau.append("tauID('decayModeFindingNewDMs') > 0.5")                                        
 tau_TauTau.append("abs(dz)<0.2")
-tau_TauTau.append("abs(dzTauVertex)==0.0")
+#tau_TauTau.append("abs(dzTauVertex)==0.0")
+tau_TauTau.append("abs(charge)==1.0")
 
 
 # tau in EleTau final state :
@@ -75,7 +82,8 @@ tau_EleTau.append("pt>20")
 tau_EleTau.append("abs(eta)<2.3")
 tau_EleTau.append("tauID('decayModeFindingNewDMs') > 0.5")                                        
 tau_EleTau.append("abs(dz)<0.2")
-tau_EleTau.append("abs(dzTauVertex)==0.0")
+#tau_EleTau.append("abs(dzTauVertex)==0.0")
+tau_EleTau.append("abs(charge)==1.0")
 
 
 
@@ -91,27 +99,59 @@ cut_tau_MuonTau = cms.string(and_string_concatonator(tau_MuonTau))
 
 
 
+# trigger requirements
+
+
+emuTriggerCut = cms.string("((isLeg1GoodForHLTPath('HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v1') &&\
+	isLeg2GoodForHLTPath('HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v1') && leg2.pt>24) ||\
+   (isLeg1GoodForHLTPath('HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v1') &&\
+	isLeg2GoodForHLTPath('HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v1') && leg1.pt>24))")
+
+
+
+tautauTriggerCut = cms.string("(isLeg1GoodForHLTPath('HLT_DoubleMediumIsoPFTau40_Trk1_eta2p1_Reg_v1') \
+	&& isLeg2GoodForHLTPath('HLT_DoubleMediumIsoPFTau40_Trk1_eta2p1_Reg_v1'))")
+
+etauTriggerCut = cms.string("(isLeg1GoodForHLTPath('HLT_Ele22_eta2p1_WP75_Gsf_LooseIsoPFTau20_v1')\
+	 && isLeg2GoodForHLTPath('HLT_Ele22_eta2p1_WP75_Gsf_LooseIsoPFTau20_v1')) \
+	|| ((isLeg1GoodForHLTPath('HLT_Ele32_eta2p1_WP75_Gsf_v1') && leg1.pt>33))")
+
+mtauTriggerCut = cms.string("(isLeg1GoodForHLTPath('HLT_IsoMu17_eta2p1_LooseIsoPFTau20_v1') \
+	&& isLeg2GoodForHLTPath('HLT_IsoMu17_eta2p1_LooseIsoPFTau20_v1'))\
+	|| ((isLeg1GoodForHLTPath('HLT_IsoMu24_eta2p1_v1') && leg1.pt>25))")
+
 # VPSet containing selections for different final states, if PSet is not
 # provided for a given final state the 
 # the events will omitted
+
 
 # main cut vector PSet :
 theCuts = cms.VPSet(
 
 		cms.PSet(   candidatePairType = cms.string("EleTau"),
 					electronID = cut_ele_EleTau,
-					tauID = cut_tau_EleTau
+					tauID = cut_tau_EleTau,
+					minDR = cms.double(0.5),
+					trigger = etauTriggerCut
 				),
 		cms.PSet(   candidatePairType = cms.string("EleMuon"),
 					electronID = cut_ele_EleMuon,
-					muonID = cut_muon_EleMuon
+					muonID = cut_muon_EleMuon,
+					minDR = cms.double(0.3),
+					trigger = emuTriggerCut
+
 				),
 		cms.PSet(   candidatePairType = cms.string("MuonTau"),
 					muonID = cut_muon_MuonTau,
-					tauID = cut_tau_MuonTau
+					tauID = cut_tau_MuonTau,
+					minDR = cms.double(0.5),
+					trigger = mtauTriggerCut
+
 				),
 		cms.PSet(   candidatePairType = cms.string("TauTau"),
-					tauID = cut_tau_TauTau
+					tauID = cut_tau_TauTau,
+					minDR = cms.double(0.5),
+					trigger = tautauTriggerCut
 
 				)
 	)
@@ -131,8 +171,8 @@ generalConfig = cms.PSet(
 			keepTauEsDown = cms.bool(False),
 
 			# how to rank pairs within this selection
-			rankByPtSum = cms.bool(True),
-			rankByIsolation = cms.bool(False),
+			rankByPtSum = cms.bool(False),
+			rankByIsolation = cms.bool(True), # checks leg1 isolation, then pt in case of tie
 			electronIsolationForRank = cms.string("DeltaBetaCorrectedRelIso"),
 			muonIsolationForRank = cms.string("DeltaBetaCorrectedRelIso"),
 			tauIDisolationForRank = cms.string("byCombinedIsolationDeltaBetaCorrRaw3Hits"),

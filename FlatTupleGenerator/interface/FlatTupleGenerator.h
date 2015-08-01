@@ -58,6 +58,7 @@
 #include "DavisRunIITauTau/FlatTupleGenerator/interface/JetHelper.h"
 #include "DavisRunIITauTau/FlatTupleGenerator/interface/GenHelper.h"
 #include "DavisRunIITauTau/TupleObjects/interface/TupleLeptonTypes.h"
+#include "DavisRunIITauTau/TupleObjects/interface/TupleCandidateEventTypes.h"
 #include "CommonTools/Utils/interface/StringCutObjectSelector.h"
 #include "DavisRunIITauTau/FlatTupleGenerator/interface/LeptonFlatTupleCutHelper.h"
 #include "DataFormats/PatCandidates/interface/MET.h"

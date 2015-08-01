@@ -52,6 +52,11 @@ private:
 	bool m_run; /* did we want to run this operation? */ 
 	void setupBranches(TTree*);
 		
+	// counters
+	int num_et;
+	int num_em;
+	int num_tt;
+	int num_mt;
 
 
 	// elements of the TTree 
@@ -59,6 +64,9 @@ private:
 	unsigned int run;
 	unsigned int lumi;
 	unsigned int event;
+
+	unsigned int pairRank; // davis specific
+	int isOsPair; // davis specific
 
 	int npv;
 	float npu;
