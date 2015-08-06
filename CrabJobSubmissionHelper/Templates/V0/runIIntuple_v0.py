@@ -5,8 +5,7 @@ process = cms.Process("Ntuple")
 # preliminaries 
 ###################################
 
-#dataSetName_ = "/SUSYGluGluToHToTauTau_M-160_TuneCUETP8M1_13TeV-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM"
-dataSetName_ = "/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v3/MINIAODSIM"
+dataSetName_ = "DUMMY_DATASET_NAME"
 process.myProducerLabel = cms.EDProducer('Ntuple')
 from DavisRunIITauTau.TupleConfigurations.ConfigNtupleContent_cfi import *
 
@@ -84,10 +83,11 @@ from JetMETCorrections.Configuration.DefaultJEC_cff import *
 # input - remove for crab running
 ###################################
 
-myfilelist = cms.untracked.vstring()
-myfilelist.extend(['file:/uscms_data/d3/shalhout/Spring15_SUSYGluGlu160diTau.root'])
-process.source = cms.Source("PoolSource",fileNames=myfilelist)
+#myfilelist = cms.untracked.vstring()
+#myfilelist.extend(['file:/uscms_data/d3/shalhout/Spring15_SUSYGluGlu160diTau.root'])
+#process.source = cms.Source("PoolSource",fileNames=myfilelist)
 
+process.source = cms.Source("PoolSource")
 
 ###################################
 # vertex filtering 
@@ -413,7 +413,7 @@ process.e = cms.EndPath(process.out)
 
 
 process.options   = cms.untracked.PSet( wantSummary = cms.untracked.bool(True) )
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(1000) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
 
 
 

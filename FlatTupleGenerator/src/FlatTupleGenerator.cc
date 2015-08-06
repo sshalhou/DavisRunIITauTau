@@ -650,6 +650,7 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
       genhelper.init(currentINDEP.genParticles(),currentPair.leg1(),currentPair.leg2(),
                      currentPair.CandidateEventType());
 
+      
       genParticle_pdgId = genhelper.genParticle_pdgId();
       genParticle_status = genhelper.genParticle_status();
       genParticle_pt = genhelper.genParticle_pt();

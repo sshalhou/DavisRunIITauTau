@@ -21,6 +21,7 @@
 #include "DataFormats/HepMCCandidate/interface/GenParticle.h"
 #include "PhysicsTools/Utilities/interface/LumiReWeighting.h"
 #include "SimDataFormats/PileupSummaryInfo/interface/PileupSummaryInfo.h"
+#include "FWCore/ParameterSet/interface/ParameterSet.h"
 
 
 typedef math::XYZTLorentzVector LorentzVector;
@@ -44,6 +45,10 @@ public:
 
   /* args are the 0th element in the vertex collection after quality cuts, size of the post-quality cut collection*/
   void fill_vertexInfo(reco::Vertex, unsigned int);
+
+  /* fill sample info */
+
+  void fill_sampleInfo(edm::ParameterSet);
 
   /* fill pileUp info */
   void fill_pileUpInfo(edm::Handle<std::vector<PileupSummaryInfo> >, std::string, std::string); /* strings are mc path, data path */
@@ -72,6 +77,15 @@ public:
   double generatorEventWeight() const;
   int hepNUP() const;
 
+  std::string DataSet() const;
+  int EventTotal() const;
+  std::string EventType() const;
+  std::string KeyName() const;
+  double CrossSection() const;
+  double FilterEff() const;
+  double CodeVersion() const;
+
+
 private:
 
   /* generator level particle records */
@@ -98,6 +112,18 @@ private:
 
   /* n partons at gen level */
   int m_hepNUP;
+
+  /* sample info */
+
+  std::string m_DataSet;
+  int m_EventTotal;
+  std::string m_EventType;
+  std::string m_KeyName;
+  double m_CrossSection;
+  double m_FilterEff;
+  double m_CodeVersion;
+
+
 
 };
 

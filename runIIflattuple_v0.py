@@ -14,12 +14,12 @@ from DavisRunIITauTau.InputFlatFiles.FlatFileLists import testList
 myfilelist = cms.untracked.vstring()
 
 ## turn off for crab jobs
-# for aFile in testList:
-# 	formatted_name = "file:"+aFile
-# 	print 'adding file', formatted_name
-# 	myfilelist.extend([formatted_name])
+for aFile in testList:
+	formatted_name = "file:"+aFile
+	print 'adding file', formatted_name
+	myfilelist.extend([formatted_name])
 
-myfilelist.extend(['file:/uscms_data/d3/shalhout/RunIIWorking/CMSSW_7_4_7/src/NtupleFile_originalConfg.root'])
+#myfilelist.extend(['file:/uscms_data/d3/shalhout/RunIIWorking/CMSSW_7_4_7/src/NtupleFile_originalConfg.root'])
 #myfilelist.extend(['file:/uscms_data/d3/shalhout/RunIIWorking/CMSSW_7_2_3_patch1/src/NtupleFile_SIGNAL.root'])
 #myfilelist.extend(['file:/uscms_data/d3/shalhout/RunIIWorking/CMSSW_7_2_3_patch1/src/NtupleFile_DY.root'])
 

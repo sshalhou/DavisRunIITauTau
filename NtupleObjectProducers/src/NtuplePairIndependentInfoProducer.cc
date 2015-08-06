@@ -98,6 +98,8 @@ private:
   edm::ParameterSet PUweightSettingsSrc_;
   edm::InputTag mcGenWeightSrc_;
   edm::InputTag LHEEventProductSrc_;
+  edm::ParameterSet sampleInfoSrc_;
+
 };
 
 //
@@ -127,7 +129,8 @@ vertexSrc_(iConfig.getParameter<edm::InputTag>("vertexSrc" )),
 pileupSrc_(iConfig.getParameter<edm::InputTag>("pileupSrc" )),
 PUweightSettingsSrc_(iConfig.getParameter<edm::ParameterSet>("PUweightSettingsSrc")),
 mcGenWeightSrc_(iConfig.getParameter<edm::InputTag>("mcGenWeightSrc")),
-LHEEventProductSrc_(iConfig.getParameter<edm::InputTag>("LHEEventProductSrc"))
+LHEEventProductSrc_(iConfig.getParameter<edm::InputTag>("LHEEventProductSrc")),
+sampleInfoSrc_(iConfig.getParameter<edm::ParameterSet>("sampleInfoSrc"))
 {
 
   produces<vector<NtuplePairIndependentInfo>>(NAME_).setBranchAlias(NAME_);
@@ -186,6 +189,12 @@ NtuplePairIndependentInfoProducer::produce(edm::Event& iEvent, const edm::EventS
 
   NtuplePairIndependentInfo InfoToWrite;
 
+
+  ////////////////////////////////////////
+  /* fill the sample info PSet   */
+  ////////////////////////////////////////
+
+  InfoToWrite.fill_sampleInfo(sampleInfoSrc_);
 
   /////////////////////////////////////////////////////////////////
   /* start by adding gen particles to InfoToWrite */
