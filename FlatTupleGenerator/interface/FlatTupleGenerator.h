@@ -144,6 +144,16 @@ public:
 	std::string vetoElectronIsolationForRelIsoBranch; 
 	std::string vetoMuonIsolationForRelIsoBranch;
 
+	/* some info about the dataset */
+	std::string DataSet; 	/* the dataset */
+    int EventTotal; 		/* the number of events in the MC sample */ 
+    std::string EventType;  /* description of the event, DATA, MC, EMBEDDED, etc. */
+    std::string KeyName;    /* description of the sample as given during crab job */
+    double CrossSection;    /* MC process cross section */
+    double FilterEff;       /* gen level filter eff. (needed if any is applied) */
+    double CodeVersion;     /* Davis code tracking version number */
+
+
 	/* jet and b-jet cut strings */
 	std::string jetIDcut;
 	std::string BjetIDcut;

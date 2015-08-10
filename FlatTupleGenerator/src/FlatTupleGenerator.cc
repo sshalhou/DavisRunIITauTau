@@ -573,6 +573,18 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
 
       NtuplePairIndependentInfo currentINDEP =   ((*pairIndepInfos)[0]);
 
+      /* info about the data sample */
+
+
+      DataSet = currentINDEP.DataSet();
+      EventTotal = currentINDEP.EventTotal();
+      EventType = currentINDEP.EventType();
+      KeyName = currentINDEP.KeyName();
+      CrossSection = currentINDEP.CrossSection();
+      FilterEff = currentINDEP.FilterEff();
+      CodeVersion = currentINDEP.CodeVersion();
+
+
       /* info about the primary vertex */
       NumberOfGoodVertices = currentINDEP.numberOfGoodVertices();
       vertex_NDOF = currentINDEP.primaryVertex().ndof();
@@ -682,6 +694,7 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
       isDY_genZTTcase3 = genhelper.isDY_genZTTcase3();
       isDY_genZLL = genhelper.isDY_genZLL();
       isDY_genZJcase3 = genhelper.isDY_genZJcase3();
+
 
       if(currentPair.leg1().leptonType() != TupleLeptonTypes::aTau)
       { /* same for both legs, but current ntuple forgot to include this for taus */
@@ -999,6 +1012,14 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
   isDY_genZLL = 0;             
   isDY_genZJcase3 = 0;         
   rho  = NAN;
+
+  DataSet = "NULL";
+  EventTotal = 0;
+  EventType = "NULL";
+  KeyName = "NULL";
+  CrossSection = 1.0;
+  FilterEff = 1.0;
+  CodeVersion = 0.0;
 
  }
 
@@ -1329,7 +1350,13 @@ void FlatTupleGenerator::beginJob()
   FlatTuple->Branch("isDY_genZJcase3", &isDY_genZJcase3);
 
   FlatTuple->Branch("rho", &rho);
-
+  FlatTuple->Branch("DataSet", &DataSet); 
+  FlatTuple->Branch("EventTotal", &EventTotal); 
+  FlatTuple->Branch("EventType", &EventType); 
+  FlatTuple->Branch("KeyName", &KeyName); 
+  FlatTuple->Branch("CrossSection", &CrossSection); 
+  FlatTuple->Branch("FilterEff", &FilterEff); 
+  FlatTuple->Branch("CodeVersion", &CodeVersion); 
 
 }
 
