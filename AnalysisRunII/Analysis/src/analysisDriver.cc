@@ -11,6 +11,7 @@
 #include "histogramLeptonQuantites.h"
 #include "generateH2TauSyncTree.h"
 #include "eleTauCutFlowTree.h"
+#include "singleEventHistogramExample.h"
 
 int main(int argc, char* argv[])
 {
@@ -56,7 +57,7 @@ simpleQuantityPrint 	 SQP(R,operations_map["simpleQuantityPrint"]);
 histogramLeptonQuantites HLQ(R,operations_map["histogramLeptonQuantites"]);
 generateH2TauSyncTree    SYNC(R,operations_map["generateH2TauSyncTree"]);
 eleTauCutFlowTree        ETAUCUT(R,operations_map["eleTauCutFlowTree"]);
-
+singleEventHistogramExample TWOD(R,operations_map["singleEventHistogramExample"]);
 
 long int entries = T->GetEntries();
 
@@ -79,6 +80,7 @@ for(long int e = 0; e<entries; ++e)
 	if(operations_map["histogramLeptonQuantites"]) HLQ.handleEvent();
 	if(operations_map["generateH2TauSyncTree"]) SYNC.handleEvent();
 	if(operations_map["eleTauCutFlowTree"]) ETAUCUT.handleEvent();
+    if(operations_map["singleEventHistogramExample"]) TWOD.handleEvent();
 
 
 ///////// EXAMPLE CODE SHOWING ACCESS  -- END
@@ -91,6 +93,7 @@ if(operations_map["simpleQuantityPrint"]) SQP.finish();
 if(operations_map["histogramLeptonQuantites"]) HLQ.finish();
 if(operations_map["generateH2TauSyncTree"]) SYNC.finish();
 if(operations_map["eleTauCutFlowTree"]) ETAUCUT.finish();
+if(operations_map["singleEventHistogramExample"]) TWOD.finish();
 
 
 return 0;	
