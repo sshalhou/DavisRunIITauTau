@@ -1,7 +1,7 @@
-#include "histogramLeptonQuantites.h"
+#include "histogramLeptonQuantities.h"
 
 
-histogramLeptonQuantites::histogramLeptonQuantites(FlatTreeReader R_, bool run_)
+histogramLeptonQuantities::histogramLeptonQuantities(FlatTreeReader R_, bool run_)
 {
 	run = run_;
 	R = R_;
@@ -35,7 +35,7 @@ histogramLeptonQuantites::histogramLeptonQuantites(FlatTreeReader R_, bool run_)
 
 
 
-void histogramLeptonQuantites::finish()
+void histogramLeptonQuantities::finish()
 {
 	if(run)
 	{
@@ -48,7 +48,7 @@ void histogramLeptonQuantites::finish()
 	}
 }
 
-histogramLeptonQuantites::~histogramLeptonQuantites()
+histogramLeptonQuantities::~histogramLeptonQuantities()
 {
 	if(!run) /* Close on the outFile deletes the TH1F pointers */
 	{
@@ -62,7 +62,7 @@ histogramLeptonQuantites::~histogramLeptonQuantites()
 
 };	
 
-void histogramLeptonQuantites::handleEvent()
+void histogramLeptonQuantities::handleEvent()
 {
 
 	if(R.getI("CandidateEventType")==5) /* see TupleCandidateEventTypes */

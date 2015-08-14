@@ -1,5 +1,6 @@
 
 #include <iostream>
+#include <fstream>
 #include <map>
 #include <vector>
 #include <TH2.h>
@@ -8,7 +9,7 @@
 #include <TFile.h>
 #include "FlatTreeReader.h"
 #include "simpleQuantityPrint.h"
-#include "histogramLeptonQuantites.h"
+#include "histogramLeptonQuantities.h"
 #include "generateH2TauSyncTree.h"
 #include "eleTauCutFlowTree.h"
 #include "singleEventHistogramExample.h"
@@ -17,33 +18,96 @@ int main(int argc, char* argv[])
 {
 
 /* check the arguments */
-/* at a minimum need the TTree name and a root file + 1 operation */
+/* at a minimum need the TTree name and a root file (or text file list of root files) + 1 operation */
 
 if (argc < 3 || argc==3) 
 {
-	std::cout<<" invoke as ./make_syncTree \"PASSCUTS/FlatTuple\" file.root operation1 operation2 ... operationN \n";
-
+	std::cout<<" invoke as ./run_analysis \"PASSCUTS/FlatTuple\" file.root operation1 operation2 ... operationN \n";
+	std::cout<<" or  as ./run_analysis \"PASSCUTS/FlatTuple\" file.txt operation1 operation2 ... operationN \n";
+	std::cout<<" where file.txt is a list of root files \n";
 	return -999;
 }
 
 
+/* master list ok known operations */
+
+std::vector <std::string> known_operations;
+known_operations.push_back("simpleQuantityPrint");
+known_operations.push_back("histogramLeptonQuantities");
+known_operations.push_back("generateH2TauSyncTree");
+known_operations.push_back("eleTauCutFlowTree");
+known_operations.push_back("singleEventHistogramExample");
+
+
+
 /* parse the operations into a name bool map */
+/* and check that all requested operations are valid */
 
 std::map <std::string, bool> operations_map;
-for(int i = 3; i<argc; i++) operations_map[std::string(argv[i])] = 1;	
+for(int i = 3; i<argc; i++) 
+{
+	operations_map[std::string(argv[i])] = 1;	
 
+	if (!(std::find(known_operations.begin(), known_operations.end(), std::string(argv[i])) != known_operations.end()))
+	{
+		std::cout<<" unknown operation : "<<std::string(argv[i])<<" please check known_operations in ./src/analysisDriver.cc \n";
+		return -999;
+	}
+	else 
+	{
+		std::cout<<" *** ADDING OPERATION : "<<std::string(argv[i])<<" \n";
+	}
+
+
+}
 
 
 
 
 /* read in a FlatTuple file and ttree */
+TChain * T = new TChain(std::string(argv[1]).c_str());
 
-TFile file(std::string(argv[2]).c_str(),"READ");
-TTree * T = (TTree*) file.Get(std::string(argv[1]).c_str());
+// case 1 : a single .root file name :
+
+if( std::string(argv[2]).find(".root") !=std::string::npos )
+{
+	std::cout<<" *** will process root file "<<std::string(argv[2])<<"\n";
+	T->Add(std::string(argv[2]).c_str());
+}
+	
+// case 2 : a txt file of .root file names :
+
+else if( std::string(argv[2]).find(".txt") !=std::string::npos )
+{
+	std::string fileLine;
+	std::ifstream txtFile ( std::string(argv[2]).c_str() );
+	if (txtFile.is_open())
+ 	{
+    	while ( getline (txtFile,fileLine) )
+    	{
+    		if( fileLine.find(".root") !=std::string::npos && fileLine.find("#") == std::string::npos) 
+    			{
+    				T->Add(fileLine.c_str());
+		      		std::cout <<" *** adding file "<< fileLine <<" from text file "<<std::string(argv[2]).c_str()<<"\n";
+    			}
+    	}
+    	txtFile.close();
+  	}
+}
+
+else 
+{
+	std::cout<<" sorry, you must provide an argument such as file.root or textFile.txt \n";
+	std::cout<<" invoke as ./run_analysis \"PASSCUTS/FlatTuple\" file.root operation1 operation2 ... operationN \n";
+	std::cout<<" or  as ./run_analysis \"PASSCUTS/FlatTuple\" file.txt operation1 operation2 ... operationN \n";
+	std::cout<<" where file.txt is a list of root files \n";
+	return -999;
+}
+
 
 if(!T) 
 {
-	std::cout<<"invalid file or tree, check command line arguments \n";
+	std::cout<<"invalid file, tree, or TChain, check command line arguments \n";
 	return -999;
 }
 
@@ -54,7 +118,7 @@ FlatTreeReader R(T);
 
 /* invoke the operations */
 simpleQuantityPrint 	 SQP(R,operations_map["simpleQuantityPrint"]);
-histogramLeptonQuantites HLQ(R,operations_map["histogramLeptonQuantites"]);
+histogramLeptonQuantities HLQ(R,operations_map["histogramLeptonQuantities"]);
 generateH2TauSyncTree    SYNC(R,operations_map["generateH2TauSyncTree"]);
 eleTauCutFlowTree        ETAUCUT(R,operations_map["eleTauCutFlowTree"]);
 singleEventHistogramExample TWOD(R,operations_map["singleEventHistogramExample"]);
@@ -77,7 +141,7 @@ for(long int e = 0; e<entries; ++e)
 
 	}
 
-	if(operations_map["histogramLeptonQuantites"]) HLQ.handleEvent();
+	if(operations_map["histogramLeptonQuantities"]) HLQ.handleEvent();
 	if(operations_map["generateH2TauSyncTree"]) SYNC.handleEvent();
 	if(operations_map["eleTauCutFlowTree"]) ETAUCUT.handleEvent();
     if(operations_map["singleEventHistogramExample"]) TWOD.handleEvent();
@@ -90,7 +154,7 @@ for(long int e = 0; e<entries; ++e)
  }
 
 if(operations_map["simpleQuantityPrint"]) SQP.finish();
-if(operations_map["histogramLeptonQuantites"]) HLQ.finish();
+if(operations_map["histogramLeptonQuantities"]) HLQ.finish();
 if(operations_map["generateH2TauSyncTree"]) SYNC.finish();
 if(operations_map["eleTauCutFlowTree"]) ETAUCUT.finish();
 if(operations_map["singleEventHistogramExample"]) TWOD.finish();

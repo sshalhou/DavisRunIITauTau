@@ -1,12 +1,12 @@
-/* class histogramLeptonQuantites 
+/* class histogramLeptonQuantities 
 demo : histogram some lepton quantities for muon+Tau and electron+Tau events
 
 -- Shalhout
 */
 
 
-#ifndef Analysis_histogramLeptonQuantites_h
-#define Analysis_histogramLeptonQuantites_h
+#ifndef Analysis_histogramLeptonQuantities_h
+#define Analysis_histogramLeptonQuantities_h
 
 ////////////////////////////
 
@@ -32,12 +32,12 @@ demo : histogram some lepton quantities for muon+Tau and electron+Tau events
 #include "FlatTreeReader.h"
 
 
-class histogramLeptonQuantites
+class histogramLeptonQuantities
 {
 
 public:
-	histogramLeptonQuantites(FlatTreeReader, bool);
-	virtual ~histogramLeptonQuantites();	
+	histogramLeptonQuantities(FlatTreeReader, bool);
+	virtual ~histogramLeptonQuantities();	
 	void handleEvent();
 	void finish();
 
