@@ -180,7 +180,7 @@ if __name__ == '__main__':
 
     for samp in sampleNames:
         config.Data.splitting = 'EventAwareLumiBased'
-        config.Data.unitsPerJob = 3000
+        config.Data.unitsPerJob = 25000
         config.Data.inputDataset = samp[0]
         config.General.requestName = samp[1]  
         config.JobType.psetName = samp[2]
