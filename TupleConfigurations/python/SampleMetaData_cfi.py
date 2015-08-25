@@ -27,16 +27,180 @@ aPSet = cms.PSet(
 sampleInfo.append(aPSet)
 
 
+###########################
+# first no-SVmass bkg run
 
-###############################
-aPSet = cms.PSet(	
-	DataSet = cms.string("/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v3/MINIAODSIM"),
-	EventTotal = cms.int32(28825132),
-	EventType = cms.string("MC"), # valid EventTypes are :  MC, DATA, EMBEDDED (expand as needed)
-	KeyName = cms.string("Spring15_MG5_aMCNLO_DYJetsToLL"), # a unique descriptor for this sample to be used throught all parts of the code
-	CrossSection = cms.double(6025.0), # cross section in pb (include *BR if needed)
-	FilterEff = cms.double(1.0), # generator level filter effi. 
-	CodeVersion = cms.double(0.0) # allow us to track differences as ntuples and flattuples evolve
-				)
+############
+aPSet = cms.PSet(
+     DataSet = cms.string("/WW_TuneCUETP8M1_13TeV-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM"),
+     EventTotal = cms.int32(994416),
+     EventType = cms.string("MC"),
+     KeyName = cms.string("WWinclusive"),
+     CrossSection = cms.double(63.21),
+     FilterEff = cms.double(1.0),
+     CodeVersion = cms.double(0.0)
+                 )
 sampleInfo.append(aPSet)
+############
+############
+aPSet = cms.PSet(
+     DataSet = cms.string("/WZ_TuneCUETP8M1_13TeV-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM"),
+     EventTotal = cms.int32(991232),
+     EventType = cms.string("MC"),
+     KeyName = cms.string("WZinclusive"),
+     CrossSection = cms.double(22.82),
+     FilterEff = cms.double(1.0),
+     CodeVersion = cms.double(0.0)
+                 )
+sampleInfo.append(aPSet)
+############
+############
+aPSet = cms.PSet(
+     DataSet = cms.string("/ZZ_TuneCUETP8M1_13TeV-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v3/MINIAODSIM"),
+     EventTotal = cms.int32(996168),
+     EventType = cms.string("MC"),
+     KeyName = cms.string("ZZinclusive"),
+     CrossSection = cms.double(10.32),
+     FilterEff = cms.double(1.0),
+     CodeVersion = cms.double(0.0)
+                 )
+sampleInfo.append(aPSet)
+############
+############
+aPSet = cms.PSet(
+     DataSet = cms.string("/ZZTo4L_13TeV_powheg_pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM"),
+     EventTotal = cms.int32(6652512),
+     EventType = cms.string("MC"),
+     KeyName = cms.string("ZZto4L"),
+     CrossSection = cms.double(1.256),
+     FilterEff = cms.double(1.0),
+     CodeVersion = cms.double(0.0)
+                 )
+sampleInfo.append(aPSet)
+############
+############
+aPSet = cms.PSet(
+     DataSet = cms.string("/WWTo2L2Nu_13TeV-powheg/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM"),
+     EventTotal = cms.int32(1930000),
+     EventType = cms.string("MC"),
+     KeyName = cms.string("WWTo2L2Nu"),
+     CrossSection = cms.double(10.481),
+     FilterEff = cms.double(1.0),
+     CodeVersion = cms.double(0.0)
+                 )
+sampleInfo.append(aPSet)
+############
+############
+aPSet = cms.PSet(
+     DataSet = cms.string("/WWTo4Q_13TeV-powheg/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v3/MINIAODSIM"),
+     EventTotal = cms.int32(1995200),
+     EventType = cms.string("MC"),
+     KeyName = cms.string("WWTo4Q"),
+     CrossSection = cms.double(45.2),
+     FilterEff = cms.double(1.0),
+     CodeVersion = cms.double(0.0)
+                 )
+sampleInfo.append(aPSet)
+############
+############
+aPSet = cms.PSet(
+     DataSet = cms.string("/WWToLNuQQ_13TeV-powheg/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM"),
+     EventTotal = cms.int32(1969600),
+     EventType = cms.string("MC"),
+     KeyName = cms.string("WWToLNuQQ"),
+     CrossSection = cms.double(43.53),
+     FilterEff = cms.double(1.0),
+     CodeVersion = cms.double(0.0)
+                 )
+sampleInfo.append(aPSet)
+############
+############
+aPSet = cms.PSet(
+     DataSet = cms.string("/WZTo1L1Nu2Q_13TeV_amcatnloFXFX_madspin_pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM"),
+     EventTotal = cms.int32(24711046),
+     EventType = cms.string("MC"),
+     KeyName = cms.string("WZTo1L1Nu2Q"),
+     CrossSection = cms.double(10.96),
+     FilterEff = cms.double(1.0),
+     CodeVersion = cms.double(0.0)
+                 )
+sampleInfo.append(aPSet)
+############
+############
+aPSet = cms.PSet(
+     DataSet = cms.string("/WZTo3LNu_TuneCUETP8M1_13TeV-powheg-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM"),
+     EventTotal = cms.int32(1925000),
+     EventType = cms.string("MC"),
+     KeyName = cms.string("WZTo3LNu"),
+     CrossSection = cms.double(4.42965),
+     FilterEff = cms.double(1.0),
+     CodeVersion = cms.double(0.0)
+                 )
+sampleInfo.append(aPSet)
+############
+############
+aPSet = cms.PSet(
+     DataSet = cms.string("/ST_tW_antitop_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M1/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM"),
+     EventTotal = cms.int32(1000000),
+     EventType = cms.string("MC"),
+     KeyName = cms.string("ST_tW_antitop"),
+     CrossSection = cms.double(35.6),
+     FilterEff = cms.double(1.0),
+     CodeVersion = cms.double(0.0)
+                 )
+sampleInfo.append(aPSet)
+############
+############
+aPSet = cms.PSet(
+     DataSet = cms.string("/ST_tW_top_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M1/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM"),
+     EventTotal = cms.int32(995600),
+     EventType = cms.string("MC"),
+     KeyName = cms.string("ST_tW_top"),
+     CrossSection = cms.double(35.6),
+     FilterEff = cms.double(1.0),
+     CodeVersion = cms.double(0.0)
+                 )
+sampleInfo.append(aPSet)
+############
+############
+aPSet = cms.PSet(
+     DataSet = cms.string("/WJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM"),
+     EventTotal = cms.int32(24151270),
+     EventType = cms.string("MC"),
+     KeyName = cms.string("WJetsToLNu"),
+     CrossSection = cms.double(61526.7),
+     FilterEff = cms.double(1.0),
+     CodeVersion = cms.double(0.0)
+                 )
+sampleInfo.append(aPSet)
+############
+############
+aPSet = cms.PSet(
+     DataSet = cms.string("/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v3/MINIAODSIM"),
+     EventTotal = cms.int32(28825132),
+     EventType = cms.string("MC"),
+     KeyName = cms.string("DYJetsToLL"),
+     CrossSection = cms.double(6025),
+     FilterEff = cms.double(1.0),
+     CodeVersion = cms.double(0.0)
+                 )
+sampleInfo.append(aPSet)
+############
+############
+aPSet = cms.PSet(
+     DataSet = cms.string("/TT_TuneCUETP8M1_13TeV-powheg-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v2/MINIAODSIM"),
+     EventTotal = cms.int32(19899500),
+     EventType = cms.string("MC"),
+     KeyName = cms.string("TTpowheg"),
+     CrossSection = cms.double(831.76),
+     FilterEff = cms.double(1.0),
+     CodeVersion = cms.double(0.0)
+                 )
+sampleInfo.append(aPSet)
+############
+
+
+
+
+
 ###############################
