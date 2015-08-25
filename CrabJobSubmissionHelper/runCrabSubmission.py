@@ -18,6 +18,7 @@ from DavisRunIITauTau.TupleConfigurations.getSampleInfoForDataSet import getSamp
 ############################
 from CRABClient.UserUtilities import config, getUsernameFromSiteDB
 config = config()
+from multiprocessing import Process
 
 ############################
 # setup an argument parser
@@ -145,7 +146,7 @@ config.Data.outLFNDirBase = '/store/user/%s/' % (getUsernameFromSiteDB())
 
 
 config.Data.publication = False
-config.Data.publishDataName = 'Try2'
+config.Data.publishDataName = 'Try3'
 config.Site.storageSite = 'T3_US_FNALLPC'
 config.Data.inputDBS = 'global'
 
@@ -188,6 +189,10 @@ if __name__ == '__main__':
         print "################# ", samp[1], " #################"
         print config
         print "#######################################################################################"
-        submit(config)
-
+        #submit(config) this line causes duplicate process fails on crab
+        # see https://twiki.cern.ch/twiki/bin/view/CMSPublic/CRAB3FAQ#Multiple_submission_fails_with_a
+        # the next 3 lines are suggested alt.
+        p = Process(target=submit, args=(config,))
+        p.start()
+        p.join()
          
