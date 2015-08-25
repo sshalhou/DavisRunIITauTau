@@ -1,5 +1,5 @@
 import FWCore.ParameterSet.Config as cms
-process = cms.Process("Ntuple")
+process = cms.Process("DavisNtuple")
 
 ###################################
 # preliminaries 
@@ -7,7 +7,7 @@ process = cms.Process("Ntuple")
 
 #dataSetName_ = "/SUSYGluGluToHToTauTau_M-160_TuneCUETP8M1_13TeV-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM"
 dataSetName_ = "/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v3/MINIAODSIM"
-process.myProducerLabel = cms.EDProducer('Ntuple')
+#process.myProducerLabel = cms.EDProducer('Ntuple')
 from DavisRunIITauTau.TupleConfigurations.ConfigNtupleContent_cfi import *
 
 ########################################
@@ -144,7 +144,7 @@ wpCats = cms.InputTag("electronMVAValueMapProducer:ElectronMVAEstimatorRun2Phys1
 
 process.customSlimmedElectrons = cms.EDProducer('CustomPatElectronProducer' ,
 							electronSrc =cms.InputTag('slimmedElectrons::PAT'),
-							vertexSrc =cms.InputTag('filteredVertices::Ntuple'),
+							vertexSrc =cms.InputTag('filteredVertices::DavisNtuple'),
 							NAME=cms.string("customSlimmedElectrons"),
 							triggerBitSrc = cms.InputTag("TriggerResults","","HLT"),
 							triggerPreScaleSrc = cms.InputTag("patTrigger"),
@@ -164,7 +164,7 @@ process.customSlimmedElectrons = cms.EDProducer('CustomPatElectronProducer' ,
 
 process.customSlimmedMuons = cms.EDProducer('CustomPatMuonProducer' ,
 							muonSrc =cms.InputTag('slimmedMuons::PAT'),
-							vertexSrc =cms.InputTag('filteredVertices::Ntuple'),
+							vertexSrc =cms.InputTag('filteredVertices::DavisNtuple'),
 							NAME=cms.string("customSlimmedMuons"),
 							triggerBitSrc = cms.InputTag("TriggerResults","","HLT"),
 							triggerPreScaleSrc = cms.InputTag("patTrigger"),
@@ -176,7 +176,7 @@ process.customSlimmedMuons = cms.EDProducer('CustomPatMuonProducer' ,
 # produces all 3 variants in ES at once 
 process.customSlimmedTaus = cms.EDProducer('CustomPatTauProducer' ,
 							tauSrc =cms.InputTag('slimmedTaus::PAT'),
-							vertexSrc =cms.InputTag('filteredVertices::Ntuple'),
+							vertexSrc =cms.InputTag('filteredVertices::DavisNtuple'),
 							NAME=cms.string("customSlimmedTaus"),
 							TauEsCorrection=cms.double(1.0),
 							TauEsUpSystematic=cms.double(1.0),
@@ -203,28 +203,28 @@ from DavisRunIITauTau.TupleConfigurations.ConfigTupleTaus_cfi import tauFilter
 
 
 process.filteredCustomElectrons = cms.EDFilter("PATElectronRefSelector",
-	src = cms.InputTag('customSlimmedElectrons:customSlimmedElectrons:Ntuple'),
+	src = cms.InputTag('customSlimmedElectrons:customSlimmedElectrons:DavisNtuple'),
 	cut = electronFilter
 	)
 
 process.filteredCustomMuons = cms.EDFilter("PATMuonRefSelector",
-	src = cms.InputTag('customSlimmedMuons:customSlimmedMuons:Ntuple'),
+	src = cms.InputTag('customSlimmedMuons:customSlimmedMuons:DavisNtuple'),
 	cut = muonFilter
 	)
 
 process.filteredCustomTausEsNominal = cms.EDFilter("PATTauRefSelector",
-	src = cms.InputTag('customSlimmedTaus:customSlimmedTausTauEsNominal:Ntuple'),
+	src = cms.InputTag('customSlimmedTaus:customSlimmedTausTauEsNominal:DavisNtuple'),
 	cut = tauFilter
 	)
 
 
 process.filteredCustomTausEsUp = cms.EDFilter("PATTauRefSelector",
-	src = cms.InputTag('customSlimmedTaus:customSlimmedTausTauEsUp:Ntuple'),
+	src = cms.InputTag('customSlimmedTaus:customSlimmedTausTauEsUp:DavisNtuple'),
 	cut = tauFilter
 	)
 
 process.filteredCustomTausEsDown = cms.EDFilter("PATTauRefSelector",
-	src = cms.InputTag('customSlimmedTaus:customSlimmedTausTauEsDown:Ntuple'),
+	src = cms.InputTag('customSlimmedTaus:customSlimmedTausTauEsDown:DavisNtuple'),
 	cut = tauFilter
 	)
 
@@ -253,12 +253,12 @@ from DavisRunIITauTau.TupleConfigurations.ConfigVetoMuons_cfi import muonVetoFil
 
 
 process.filteredVetoElectrons = cms.EDFilter("PATElectronRefSelector",
-	src = cms.InputTag('customSlimmedElectrons:customSlimmedElectrons:Ntuple'),
+	src = cms.InputTag('customSlimmedElectrons:customSlimmedElectrons:DavisNtuple'),
 	cut = electronVetoFilter
 	)
 
 process.filteredVetoMuons = cms.EDFilter("PATMuonRefSelector",
-	src = cms.InputTag('customSlimmedMuons:customSlimmedMuons:Ntuple'),
+	src = cms.InputTag('customSlimmedMuons:customSlimmedMuons:DavisNtuple'),
 	cut = muonVetoFilter
 	)
 
@@ -270,9 +270,9 @@ process.filteredVetoMuons = cms.EDFilter("PATMuonRefSelector",
 
 
 process.requireCandidateHiggsPair = cms.EDFilter("HiggsCandidateCountFilter",
-  	electronSource = cms.InputTag("filteredCustomElectrons::Ntuple"),
-	muonSource     = cms.InputTag("filteredCustomMuons::Ntuple"),
-	tauSource      = cms.InputTag("filteredCustomTausEsDown::Ntuple"), # always count with down ES shift
+  	electronSource = cms.InputTag("filteredCustomElectrons::DavisNtuple"),
+	muonSource     = cms.InputTag("filteredCustomMuons::DavisNtuple"),
+	tauSource      = cms.InputTag("filteredCustomTausEsDown::DavisNtuple"), # always count with down ES shift
 	countElectronElectrons = cms.bool(BUILD_ELECTRON_ELECTRON),
 	countElectronMuons  = cms.bool(BUILD_ELECTRON_MUON),
 	countElectronTaus = cms.bool(BUILD_ELECTRON_TAU),
@@ -320,13 +320,13 @@ process.pairIndep = cms.EDProducer('NtuplePairIndependentInfoProducer',
 							prundedGenSrc =  cms.InputTag('prunedGenParticles::PAT'),
 							NAME=cms.string("NtupleEventPairIndep"),
 							genParticlesToKeep = GEN_PARTICLES_TO_KEEP,
-							slimmedJetSrc = cms.InputTag('filteredSlimmedJets::Ntuple'),
+							slimmedJetSrc = cms.InputTag('filteredSlimmedJets::DavisNtuple'),
 							defaultBtagAlgorithmNameSrc = cms.string(DEFAULT_BTAG_ALGORITHM),
 							useBtagSFSrc = cms.bool(APPLY_BTAG_SF),
 							useBtagSFSeedSrc = cms.uint32(BTAG_SF_SEED),
 							PUjetIDworkingPointSrc = PUjetIDworkingPoint,
 							PFjetIDworkingPointSrc = PFjetIDworkingPoint,
-							vertexSrc =cms.InputTag('filteredVertices::Ntuple'),
+							vertexSrc =cms.InputTag('filteredVertices::DavisNtuple'),
 							pileupSrc = pileupSrcInputTag,
 							PUweightSettingsSrc = PUntupleWeightSettings,
 							mcGenWeightSrc = mcGenWeightSrcInputTag,
@@ -372,10 +372,11 @@ process.out = cms.OutputModule("PoolOutputModule",
 
 #process.out.outputCommands +=['keep *_l1extraParticles_*_*']
 process.out.outputCommands +=['drop *_*_*_*']
-#process.out.outputCommands += ['keep TupleCandidateEvents_*_*_Ntuple']
-process.out.outputCommands += ['keep NtupleEvents_NtupleEvent_*_Ntuple']
-process.out.outputCommands += ['keep NtuplePairIndependentInfos_pairIndep_NtupleEventPairIndep_Ntuple']
-process.p = cms.Path(process.myProducerLabel)
+#process.out.outputCommands += ['keep TupleCandidateEvents_*_*_DavisNtuple']
+process.out.outputCommands += ['keep NtupleEvents_NtupleEvent_*_DavisNtuple']
+process.out.outputCommands += ['keep NtuplePairIndependentInfos_pairIndep_NtupleEventPairIndep_DavisNtuple']
+#process.p = cms.Path(process.myProducerLabel)
+process.p = cms.Path()
 #process.p *= process.UserSpecifiedData
 
 process.p *= process.filteredVertices
@@ -413,7 +414,7 @@ process.e = cms.EndPath(process.out)
 
 
 process.options   = cms.untracked.PSet( wantSummary = cms.untracked.bool(True) )
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(1500) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(50) )
 
 
 

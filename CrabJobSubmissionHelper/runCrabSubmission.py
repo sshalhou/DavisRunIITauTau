@@ -145,7 +145,7 @@ config.Data.outLFNDirBase = '/store/user/%s/' % (getUsernameFromSiteDB())
 
 
 config.Data.publication = False
-config.Data.publishDataName = 'NULL'
+config.Data.publishDataName = 'Try2'
 config.Site.storageSite = 'T3_US_FNALLPC'
 config.Data.inputDBS = 'global'
 

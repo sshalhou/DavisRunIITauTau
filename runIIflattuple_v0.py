@@ -14,12 +14,12 @@ from DavisRunIITauTau.InputFlatFiles.FlatFileLists import testList
 myfilelist = cms.untracked.vstring()
 
 ## turn off for crab jobs
-for aFile in testList:
-	formatted_name = "file:"+aFile
-	print 'adding file', formatted_name
-	myfilelist.extend([formatted_name])
+# for aFile in testList:
+# 	formatted_name = "file:"+aFile
+# 	print 'adding file', formatted_name
+# 	myfilelist.extend([formatted_name])
 
-#myfilelist.extend(['file:/uscms_data/d3/shalhout/RunIIWorking/CMSSW_7_4_7/src/NtupleFile_originalConfg.root'])
+myfilelist.extend(['file:/uscms_data/d3/shalhout/RunIIWorking/CMSSW_7_4_7/src/NtupleFile.root'])
 #myfilelist.extend(['file:/uscms_data/d3/shalhout/RunIIWorking/CMSSW_7_2_3_patch1/src/NtupleFile_SIGNAL.root'])
 #myfilelist.extend(['file:/uscms_data/d3/shalhout/RunIIWorking/CMSSW_7_2_3_patch1/src/NtupleFile_DY.root'])
 
@@ -44,16 +44,16 @@ from DavisRunIITauTau.FlatTupleGenerator.FlatTupleConfig_cfi import theCuts
 
 
 process.PASSCUTS = cms.EDAnalyzer('FlatTupleGenerator',
-	pairSrc = cms.InputTag('NtupleEvent','NtupleEvent','Ntuple'),
-	indepSrc = cms.InputTag('pairIndep','NtupleEventPairIndep','Ntuple'),
+	pairSrc = cms.InputTag('NtupleEvent','NtupleEvent','DavisNtuple'),
+	indepSrc = cms.InputTag('pairIndep','NtupleEventPairIndep','DavisNtuple'),
 	NAME = cms.string("PASSCUTS"),
 	EventCutSrc = generalConfig,
 	LeptonCutVecSrc = theCuts
 	)
 
 process.NOCUTS = cms.EDAnalyzer('FlatTupleGenerator',
-	pairSrc = cms.InputTag('NtupleEvent','NtupleEvent','Ntuple'),
-	indepSrc = cms.InputTag('pairIndep','NtupleEventPairIndep','Ntuple'),
+	pairSrc = cms.InputTag('NtupleEvent','NtupleEvent','DavisNtuple'),
+	indepSrc = cms.InputTag('pairIndep','NtupleEventPairIndep','DavisNtuple'),
 	NAME = cms.string("NOCUTS"),
 	EventCutSrc = generalConfig,
 	LeptonCutVecSrc = cms.VPSet()
