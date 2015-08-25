@@ -146,7 +146,7 @@ config.Data.outLFNDirBase = '/store/user/%s/' % (getUsernameFromSiteDB())
 
 
 config.Data.publication = False
-config.Data.publishDataName = 'Try3'
+config.Data.publishDataName = 'Try4'
 config.Site.storageSite = 'T3_US_FNALLPC'
 config.Data.inputDBS = 'global'
 
@@ -178,6 +178,7 @@ if __name__ == '__main__':
     # OK now bring it all together
     # and submit !
     ######################
+    submitCommandList = []
 
     for samp in sampleNames:
         config.Data.splitting = 'EventAwareLumiBased'
@@ -187,12 +188,31 @@ if __name__ == '__main__':
         config.JobType.psetName = samp[2]
         print "################# -- setting up job as follows : -- ##################################"   
         print "################# ", samp[1], " #################"
-        print config
+        cragConfigPYfile = crabJobLocation + '/crabConfig_' + samp[1]+".py"
+        print config 
+        print 'saved in crab config file ', cragConfigPYfile
+        # print this config to a py file 
+        fi = open(cragConfigPYfile,'w')
+        print >> fi, config
+        fi.close()
+        submitCommandList.append("crab submit --config="+cragConfigPYfile)
+        #print config
         print "#######################################################################################"
         #submit(config) this line causes duplicate process fails on crab
+        # trying my own fix instead (the wiki fix does not fix)
         # see https://twiki.cern.ch/twiki/bin/view/CMSPublic/CRAB3FAQ#Multiple_submission_fails_with_a
         # the next 3 lines are suggested alt.
-        p = Process(target=submit, args=(config,))
-        p.start()
-        p.join()
+        # p = Process(target=submit, args=(config,))
+        # p.start()
+        # p.join()
+
+    print 'submitting jobs for ', len(submitCommandList), 'datasets'
+    for com in submitCommandList:
+        print 'issuing crab sumbit command: ', com
+        os.system(com)
+
+
+
+
+
          
