@@ -25,8 +25,8 @@ class PUPFjetIdHelper{
 
 
   /* return a pass fail for the PF jet ID given parameterSet and jet quantities */
-  /* args are PFjetIDworkingPoint, ETA, NHF, NEMF, NumConst, MUF, CHF, CHM,CEMF */
-  bool passPfId(edm::ParameterSet, double, double, double, double, double, double, double, double );
+  /* args are PFjetIDworkingPoint, ETA, NHF, NEMF, NumConst, MUF, CHF, CHM,CEMF,NumNeutralParticle  */
+  bool passPfId(edm::ParameterSet, double, double, double, double, double, double, double, double, double );
 
   /* helper to parse PFid vectors and apply cuts */
   /* returns 1 if cut passes */
@@ -60,49 +60,100 @@ PUPFjetIdHelper::~PUPFjetIdHelper() {}
 
   /* args are PFjetIDworkingPoint, NHF, NEMF, NumConst, MUF, CHF, CHM,CEMF */
   bool PUPFjetIdHelper::passPfId(edm::ParameterSet PFjetIDworkingPointSrc_, double ETA,
-  	 						double NHF, double NEMF, double NumConst, double MUF, double CHF, double CHM, double CEMF)
+  	 						double NHF, double NEMF, double NumConst, double MUF, double CHF, double CHM, double CEMF, double NumNeutralParticle)
 
   {
 
   	/* for each passed cut increment the score */
   	int score = 0;
 
+    /* NHF */
+    if(PFjetIDworkingPointSrc_.exists("NHF"))
+    {
+      std::vector<double> NHF_vec =  PFjetIDworkingPointSrc_.getParameter<std::vector<double> >("NHF");
+      score += processPfIdCut(ETA, NHF, NHF_vec);
+    } else score++;
 
-  	/* NHF */
-    std::vector<double> NHF_vec =  PFjetIDworkingPointSrc_.getParameter<std::vector<double> >("NHF");
-    score += processPfIdCut(ETA, NHF, NHF_vec);
 
   	/* NEMF */
-    std::vector<double> NEMF_vec =  PFjetIDworkingPointSrc_.getParameter<std::vector<double> >("NEMF");
-    score += processPfIdCut(ETA, NEMF, NEMF_vec);
+    if(PFjetIDworkingPointSrc_.exists("NEMF"))
+    {    
+      std::vector<double> NEMF_vec =  PFjetIDworkingPointSrc_.getParameter<std::vector<double> >("NEMF");
+      score += processPfIdCut(ETA, NEMF, NEMF_vec);
+    } else score++;
 
   	/* NumConst */
-    std::vector<double> NumConst_vec =  PFjetIDworkingPointSrc_.getParameter<std::vector<double> >("NumConst");
-    score += processPfIdCut(ETA, NumConst, NumConst_vec);
+    if(PFjetIDworkingPointSrc_.exists("NumConst"))
+    {        
+      std::vector<double> NumConst_vec =  PFjetIDworkingPointSrc_.getParameter<std::vector<double> >("NumConst");
+      score += processPfIdCut(ETA, NumConst, NumConst_vec);
+    } else score++;
 
 
   	/* MUF */
-    std::vector<double> MUF_vec =  PFjetIDworkingPointSrc_.getParameter<std::vector<double> >("MUF");
-    score += processPfIdCut(ETA, MUF, MUF_vec);
+    if(PFjetIDworkingPointSrc_.exists("MUF"))
+    {        
+      std::vector<double> MUF_vec =  PFjetIDworkingPointSrc_.getParameter<std::vector<double> >("MUF");
+      score += processPfIdCut(ETA, MUF, MUF_vec);
+    } else score++;
 
 
 
   	/* CHF */
-    std::vector<double> CHF_vec =  PFjetIDworkingPointSrc_.getParameter<std::vector<double> >("CHF");
-    score += processPfIdCut(ETA, CHF, CHF_vec);
+    if(PFjetIDworkingPointSrc_.exists("CHF"))
+    {        
+      std::vector<double> CHF_vec =  PFjetIDworkingPointSrc_.getParameter<std::vector<double> >("CHF");
+      score += processPfIdCut(ETA, CHF, CHF_vec);
+    } else score++;
 
   	/* CHM */
-    std::vector<double> CHM_vec =  PFjetIDworkingPointSrc_.getParameter<std::vector<double> >("CHM");
-    score += processPfIdCut(ETA, CHM, CHM_vec);
+    if(PFjetIDworkingPointSrc_.exists("CHM"))
+    {        
+      std::vector<double> CHM_vec =  PFjetIDworkingPointSrc_.getParameter<std::vector<double> >("CHM");
+      score += processPfIdCut(ETA, CHM, CHM_vec);
+    } else score++;
 
   	/* CEMF */
-    std::vector<double> CEMF_vec =  PFjetIDworkingPointSrc_.getParameter<std::vector<double> >("CEMF");
-    score += processPfIdCut(ETA, CEMF, CEMF_vec);
+    if(PFjetIDworkingPointSrc_.exists("CEMF"))
+    {        
+      std::vector<double> CEMF_vec =  PFjetIDworkingPointSrc_.getParameter<std::vector<double> >("CEMF");
+      score += processPfIdCut(ETA, CEMF, CEMF_vec);
+    } else score++;
+
+
+    /* NEMF_HIGH */
+    if(PFjetIDworkingPointSrc_.exists("NEMF_HIGH"))
+    {        
+      std::vector<double> NEMF_HIGH_vec =  PFjetIDworkingPointSrc_.getParameter<std::vector<double> >("NEMF_HIGH");
+      score += processPfIdCut(ETA, NEMF, NEMF_HIGH_vec);
+    } else score++;
+
+    /* NumNeutralParticle_HIGH */
+    if(PFjetIDworkingPointSrc_.exists("NumNeutralParticle_HIGH"))
+    {        
+      std::vector<double> NumNeutralParticle_HIGH_vec =  PFjetIDworkingPointSrc_.getParameter<std::vector<double> >("NumNeutralParticle_HIGH");
+      score += processPfIdCut(ETA, NumNeutralParticle, NumNeutralParticle_HIGH_vec);
+    } else score++;
+
+
+    /* NEMF_LOW */
+    if(PFjetIDworkingPointSrc_.exists("NEMF_LOW"))
+    {        
+      std::vector<double> NEMF_LOW_vec =  PFjetIDworkingPointSrc_.getParameter<std::vector<double> >("NEMF_LOW");
+      score += processPfIdCut(ETA, NEMF, NEMF_LOW_vec);
+    } else score++;
+
+    /* NumNeutralParticle_LOW */
+    if(PFjetIDworkingPointSrc_.exists("NumNeutralParticle_LOW"))
+    {        
+      std::vector<double> NumNeutralParticle_LOW_vec =  PFjetIDworkingPointSrc_.getParameter<std::vector<double> >("NumNeutralParticle_LOW");
+      score += processPfIdCut(ETA, NumNeutralParticle, NumNeutralParticle_LOW_vec);
+    } else score++;
 
 
 
 
-	if (score == 7) return 1;
+	if (score == 11) return 1;
 	return 0;
   }
 

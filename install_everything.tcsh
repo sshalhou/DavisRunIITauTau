@@ -21,6 +21,10 @@ cmsrel CMSSW_7_4_7
 cd CMSSW_7_4_7/src/
 cmsenv
 
+# new electron ID working point
+
+git cms-merge-topic ikrav:egm_id_747_v2
+
 # mva met installation
 
 git cms-addpkg RecoMET/METPUSubtraction/

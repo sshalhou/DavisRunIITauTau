@@ -696,10 +696,11 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
       isDY_genZJcase3 = genhelper.isDY_genZJcase3();
 
 
-      if(currentPair.leg1().leptonType() != TupleLeptonTypes::aTau)
-      { /* same for both legs, but current ntuple forgot to include this for taus */
-        rho = currentPair.leg1().rho("fixedGridRhoFastjetAll"); 
-      }
+      /* stored rho's are the same for both legs */
+      rho = currentPair.leg1().rho("fixedGridRhoFastjetAll"); 
+
+      
+      std::cout<<" SVMass "<<SVMass<<"\n";
 
       FlatTuple->Fill();
 

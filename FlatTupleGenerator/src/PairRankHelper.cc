@@ -17,30 +17,67 @@ best by rank == 1 etc.
 
 bool NtupleRankCompare_IsolLeg1( const std::pair<std::vector<double>, NtupleEvent>& p1, const std::pair<std::vector<double>, NtupleEvent>& p2) 
 {
+
+  // never compare non-similar lepton flavor pairs (i.e. eTau vs muTau is invalid)
+  assert ( p1.second.CandidateEventType() == p2.second.CandidateEventType() );
+
   ////////////////////////////////////////////////////
   // the H2Tau 2015 default
   // ranking logic is leg1 isolation, then leg1 pt,
   // then leg2 isolation, then leg2 pt
+  // -- special care needs to be used for e + mu channel
+  // where leg1 = muon ONLY FOR RANKING, and is electron in all other cases
   ////////////////////////////////////////////////////
  
   ///////////////
   // begin comparsion logic :
 
-  // compare leg1 isolations 1st, these are already set to first by getIsolOfLeg1 in init function
-  if(p1.first[0] != p2.first[0] && p1.first[0]!=-999)  return p1.first[0] < p2.first[0]; 
+  //////////////////////////////////////////////////
+  // logic for non e+mu channels
+  //////////////////////////////////////////////////
+  if(p1.second.CandidateEventType() != TupleCandidateEventTypes::EleMuon)
+  {
+    // compare leg1 isolations 1st, these are already set to first by getIsolOfLeg1 in init function
+    if(p1.first[0] != p2.first[0] && p1.first[0]!=-999)  return p1.first[0] < p2.first[0]; 
 
-  // if equal leg1 isolations go to leg1 pT
-  else if(p1.second.leg1().pt() != p2.second.leg1().pt())  return (p1.second.leg1().pt() > p2.second.leg1().pt());
+    // if equal leg1 isolations go to leg1 pT
+    else if(p1.second.leg1().pt() != p2.second.leg1().pt())  return (p1.second.leg1().pt() > p2.second.leg1().pt());
 
-  // if equal leg1 pT go to leg2 isolations
-  else if(p1.first[1] != p2.first[1] && p2.first[0]!=-999)  return p1.first[1] < p2.first[1]; 
+    // if equal leg1 pT go to leg2 isolations
+    else if(p1.first[1] != p2.first[1] && p2.first[0]!=-999)  return p1.first[1] < p2.first[1]; 
 
-  // if equal leg 2 isol go to leg2 pT
-  else if(p1.second.leg2().pt() != p2.second.leg2().pt())  return (p1.second.leg2().pt() > p2.second.leg2().pt());
+    // if equal leg 2 isol go to leg2 pT
+    else if(p1.second.leg2().pt() != p2.second.leg2().pt())  return (p1.second.leg2().pt() > p2.second.leg2().pt());
 
+    // finally just return true since the are the same pair and order does not matter
+    else return 1;
+  }
+  //////////////////////////////////////////////////
 
-  // finally just return true since the are the same pair and order does not matter
-  else return 1;
+  //////////////////////////////////////////////////
+  // logic for  e+mu channels
+  //////////////////////////////////////////////////
+  else 
+  {
+
+    // 1st compare muon (leg2) isolations :
+    if(p1.first[1] != p2.first[1] && p2.first[0]!=-999)  return p1.first[1] < p2.first[1]; 
+
+    // next compare muon (leg2) pT :
+    else if(p1.second.leg2().pt() != p2.second.leg2().pt())  return (p1.second.leg2().pt() > p2.second.leg2().pt());
+
+    // next compare electron (leg1) isolations :
+    if(p1.first[0] != p2.first[0] && p1.first[0]!=-999)  return p1.first[0] < p2.first[0]; 
+
+    // next compare electron (leg1) pT :
+    else if(p1.second.leg1().pt() != p2.second.leg1().pt())  return (p1.second.leg1().pt() > p2.second.leg1().pt());
+
+    // finally just return true since the are the same pair and order does not matter
+    else return 1;
+
+  }
+  //////////////////////////////////////////////////
+
 }
 
 bool NtupleRankCompare_SumPt( const std::pair<double, NtupleEvent>& p1, const std::pair<double, NtupleEvent>& p2) 

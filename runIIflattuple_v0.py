@@ -19,9 +19,7 @@ myfilelist = cms.untracked.vstring()
 # 	print 'adding file', formatted_name
 # 	myfilelist.extend([formatted_name])
 
-myfilelist.extend(['file:/uscms_data/d3/shalhout/RunIIWorking/CMSSW_7_4_7/src/NtupleFile.root'])
-#myfilelist.extend(['file:/uscms_data/d3/shalhout/RunIIWorking/CMSSW_7_2_3_patch1/src/NtupleFile_SIGNAL.root'])
-#myfilelist.extend(['file:/uscms_data/d3/shalhout/RunIIWorking/CMSSW_7_2_3_patch1/src/NtupleFile_DY.root'])
+myfilelist.extend(['file:/uscms_data/d3/shalhout/RunIIWorking/UpdateEId/CMSSW_7_4_7/src/NtupleFile.root'])
 
 process.source = cms.Source("PoolSource",
     # replace 'myfile.root' with the source file you want to use

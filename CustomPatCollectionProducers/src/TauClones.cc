@@ -37,7 +37,9 @@ TauClones::TauClones(const slimmedPatTauCollection& inputColl, const reco::Verte
 	edm::Handle<edm::TriggerResults> & triggerBits_,
 	edm::Handle<pat::TriggerObjectStandAloneCollection> & triggerObjects_,
 	edm::Handle<pat::PackedTriggerPrescales> & triggerPreScales_,
-	const edm::TriggerNames &names_):
+	const edm::TriggerNames &names_,
+	std::vector<std::string> rhoLabels_,
+	std::vector<double> rhoValues_):
 		taus(inputColl),
 		first_vertex(input_vertex),
 		EsCorrectionFactor(EsCorrectionFactor),
@@ -46,7 +48,9 @@ TauClones::TauClones(const slimmedPatTauCollection& inputColl, const reco::Verte
 		triggerBits(triggerBits_),
 		triggerObjects(triggerObjects_),
 		triggerPreScales(triggerPreScales_),
-		names(names_)
+		names(names_),
+		rhoLabels(rhoLabels_),
+		rhoValues(rhoValues_)
 		{
 
 		 clone();
@@ -184,7 +188,13 @@ void TauClones::ChangeEnergyAndFillUserFloats(std::vector <pat::Tau> & clones,
 		t.addUserFloat("numStrips",  float(t.signalGammaCands().size()));
 		t.addUserFloat("numHadrons", float(t.signalChargedHadrCands().size()));
 
+	  	// push in the rho variants, and the relative isol based on
+	  	// each
 
+	  	for (std::size_t x = 0; x<rhoLabels.size(); ++x )
+	  	{
+	  		t.addUserFloat("rho_"+rhoLabels[x],rhoValues[x]);
+	  	}
 
 
 	  	////////////////////////////

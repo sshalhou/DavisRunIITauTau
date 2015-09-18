@@ -318,7 +318,8 @@ NtuplePairIndependentInfoProducer::produce(edm::Event& iEvent, const edm::EventS
        bool passPF = puANDpf_IdHelper.passPfId(PFjetIDworkingPointSrc_, slimmedJets->at(i).eta(),
                 currentNtupleJet.NHF(), currentNtupleJet.NEMF(), 
                 currentNtupleJet.NumConst(), currentNtupleJet.MUF(), currentNtupleJet.CHF(),
-                 currentNtupleJet.CHM(), currentNtupleJet.CEMF());
+                 currentNtupleJet.CHM(), currentNtupleJet.CEMF(), currentNtupleJet.NumNeutralParticle());
+
 
       currentNtupleJet.fill_PFjetID(passPF);   
 
