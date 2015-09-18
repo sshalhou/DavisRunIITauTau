@@ -21,7 +21,7 @@ sampleData = getSampleInfoForDataSet(dataSetName_)
 ##################
 # print the run settings 
 print '******************************************'
-print '********  running Ntuple job over dataset with the following parameters : ' 
+print '********  running (transient) Ntuple+ (saved) FlatTuple job over dataset with the following parameters : ' 
 print '******************************************'
 
 print sampleData
@@ -30,16 +30,16 @@ print '******************************************'
 
 
 if COMPUTE_SVMASS :
-	print 'will compute SVmass with log_m term = ', SVMASS_LOG_M
+	print 'will compute SVmass (@ NTUPLE level) with log_m term = ', SVMASS_LOG_M
 	if USE_MVAMET :
 		print ' will use mva met in SVmass computation (no recoil corr yet)'
 	else :
 		print 'will use pfMET in SVmass computation (no recoil corr yet)'
 
 else :
-	print '******************************************'
-	print '***** WARNING SV MASS COMPUTE IS OFF *****'
-	print '******************************************'
+	print '**************************************************'
+	print '***** WARNING SV MASS COMPUTE IS OFF (@ NTUPLE level) *****'
+	print '**************************************************'
 
 
 print 'will build [',

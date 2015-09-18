@@ -4,6 +4,7 @@
 <use name="DataFormats/PatCandidates"/>
 <use name="DavisRunIITauTau/TupleObjects"/>
 <use name="DavisRunIITauTau/NtupleObjects"/>
+<use name="TauAnalysis/SVfitStandalone"/>
 
 <use name="PhysicsTools/UtilAlgos"/>
 <use name="FWCore/ServiceRegistry"/>

@@ -1,5 +1,7 @@
 /* FlatTupleGenerator imp */
 #include "DavisRunIITauTau/FlatTupleGenerator/interface/FlatTupleGenerator.h" 
+#include "TauAnalysis/SVfitStandalone/interface/SVfitStandaloneAlgorithm.h"
+#include "TMatrix.h"
 
 
 
@@ -700,7 +702,138 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
       rho = currentPair.leg1().rho("fixedGridRhoFastjetAll"); 
 
       
-      std::cout<<" SVMass "<<SVMass<<"\n";
+
+//////////////////////////////////////////////////////
+//////// begin an SVMass computation 
+
+      bool flatTuple_recomputeSVmass = 1;
+     
+      if (flatTuple_recomputeSVmass)
+      {     
+        bool flatTuple_useMVAmet = 0;
+        bool flatTuple_svMassVerbose = 1;
+        double flatTuple_logMterm = 2.0;
+
+        std::vector<svFitStandalone::MeasuredTauLepton> measuredTauLeptons;
+        measuredTauLeptons.clear();
+
+        //////////////////////////////////////
+        // set the tau decays for leg 1     //
+        //////////////////////////////////////
+
+        if(currentPair.leg1().leptonType() == TupleLeptonTypes::anElectron)
+        {
+
+          measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
+          svFitStandalone::kTauToElecDecay, 
+          currentPair.leg1().p4().pt(),currentPair.leg1().p4().eta(),currentPair.leg1().p4().phi(),
+          svFitStandalone::electronMass));
+
+        }
+
+        else if(currentPair.leg1().leptonType() == TupleLeptonTypes::aMuon)
+        {
+
+          measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
+          svFitStandalone::kTauToMuDecay, 
+          currentPair.leg1().p4().pt(),currentPair.leg1().p4().eta(),currentPair.leg1().p4().phi(),
+          svFitStandalone::muonMass));
+
+        }
+        
+        else if(currentPair.leg1().leptonType() == TupleLeptonTypes::aTau)
+        {
+
+          measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
+          svFitStandalone::kTauToHadDecay,
+          currentPair.leg1().p4().pt(),currentPair.leg1().p4().eta(),currentPair.leg1().p4().phi(),
+          currentPair.leg1().p4().mass()));
+
+        }
+
+        //////////////////////////////////////
+        // set the tau decays for leg 2     //
+        //////////////////////////////////////
+
+        if(currentPair.leg2().leptonType() == TupleLeptonTypes::anElectron)
+        {
+
+          measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
+          svFitStandalone::kTauToElecDecay, 
+          currentPair.leg2().p4().pt(),currentPair.leg2().p4().eta(),currentPair.leg2().p4().phi(),
+          svFitStandalone::electronMass));
+
+        }
+
+        else if(currentPair.leg2().leptonType() == TupleLeptonTypes::aMuon)
+        {
+
+          measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
+          svFitStandalone::kTauToMuDecay, 
+          currentPair.leg2().p4().pt(),currentPair.leg2().p4().eta(),currentPair.leg2().p4().phi(),
+          svFitStandalone::muonMass));
+
+        }
+        
+        else if(currentPair.leg2().leptonType() == TupleLeptonTypes::aTau)
+        {
+
+          measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
+          svFitStandalone::kTauToHadDecay,
+          currentPair.leg2().p4().pt(),currentPair.leg2().p4().eta(),currentPair.leg2().p4().phi(),
+          currentPair.leg2().p4().mass()));
+
+        }
+
+
+        ///////////////////////////////////////
+        // next set the met and cov matrix   //
+        ///////////////////////////////////////
+
+
+
+        TMatrixD covMET(2, 2); 
+        TLorentzVector svMassMET(0,0,0,0);
+
+        if(flatTuple_useMVAmet)
+        { 
+          svMassMET.SetPtEtaPhiM( mvaMET, 0.0, mvaMETphi, 0.0 );
+          covMET[0][0] = mvaMET_cov00;
+          covMET[1][0] = mvaMET_cov10;
+          covMET[0][1] = mvaMET_cov01;
+          covMET[1][1] = mvaMET_cov11;
+
+        }
+        else 
+        {
+          svMassMET.SetPtEtaPhiM( pfMET, 0.0, pfMETphi, 0.0 );
+          covMET[0][0] = pfMET_cov00;
+          covMET[1][0] = pfMET_cov10;
+          covMET[0][1] = pfMET_cov01;
+          covMET[1][1] = pfMET_cov11;
+
+        }
+
+
+      if (flatTuple_svMassVerbose)  covMET.Print();
+
+      SVfitStandaloneAlgorithm svFitAlgorithm(measuredTauLeptons, svMassMET.Px(),svMassMET.Py(), covMET, flatTuple_svMassVerbose);
+
+      if(flatTuple_logMterm>0)  svFitAlgorithm.addLogM(true, flatTuple_logMterm);
+      else svFitAlgorithm.addLogM(false, 0.);
+
+
+      svFitAlgorithm.integrateVEGAS();
+      
+      if( flatTuple_svMassVerbose ) std::cout<<" SVMass from ntuple "<<SVMass<<" ";
+
+
+      SVMass = svFitAlgorithm.getMass();
+
+      if( flatTuple_svMassVerbose ) std::cout<<" is replaced with flatTuple recalc of SVMass = "<<SVMass<<"\n";
+    
+    } 
+////////////// END SV MASS COMP ///////////////////////////////
 
       FlatTuple->Fill();
 
