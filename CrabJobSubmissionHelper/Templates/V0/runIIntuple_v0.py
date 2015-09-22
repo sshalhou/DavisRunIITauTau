@@ -29,16 +29,16 @@ print '******************************************'
 
 
 if COMPUTE_SVMASS :
-	print 'will compute SVmass with log_m term = ', SVMASS_LOG_M
+	print 'will compute SVmass (@ NTUPLE level) with log_m term = ', SVMASS_LOG_M
 	if USE_MVAMET :
 		print ' will use mva met in SVmass computation (no recoil corr yet)'
 	else :
 		print 'will use pfMET in SVmass computation (no recoil corr yet)'
 
 else :
-	print '******************************************'
-	print '***** WARNING SV MASS COMPUTE IS OFF *****'
-	print '******************************************'
+	print '**************************************************'
+	print '***** WARNING SV MASS COMPUTE IS OFF (@ NTUPLE level) *****'
+	print '**************************************************'
 
 
 print 'will build [',
@@ -122,14 +122,18 @@ rhoSourceList = cms.VInputTag(
 from PhysicsTools.SelectorUtils.tools.vid_id_tools import *
 dataFormat = DataFormat.MiniAOD
 switchOnVIDElectronIdProducer(process, dataFormat)
-my_id_modules = ['RecoEgamma.ElectronIdentification.Identification.mvaElectronID_PHYS14_PU20bx25_nonTrig_V1_cff']
+my_id_modules = ['RecoEgamma.ElectronIdentification.Identification.mvaElectronID_Spring15_25ns_nonTrig_V1_cff',
+                 'RecoEgamma.ElectronIdentification.Identification.cutBasedElectronID_Spring15_25ns_V1_cff']
+
+
 for idmod in my_id_modules:
     setupAllVIDIdsInModule(process,idmod,setupVIDElectronSelection)
 
-wp80 = cms.InputTag("egmGsfElectronIDs:mvaEleID-PHYS14-PU20bx25-nonTrig-V1-wp80")
-wp90 = cms.InputTag("egmGsfElectronIDs:mvaEleID-PHYS14-PU20bx25-nonTrig-V1-wp90")
-wpVals = cms.InputTag("electronMVAValueMapProducer:ElectronMVAEstimatorRun2Phys14NonTrigValues")
-wpCats = cms.InputTag("electronMVAValueMapProducer:ElectronMVAEstimatorRun2Phys14NonTrigCategories")
+wp80 = cms.InputTag("egmGsfElectronIDs:mvaEleID-Spring15-25ns-nonTrig-V1-wp80")
+wp90 = cms.InputTag("egmGsfElectronIDs:mvaEleID-Spring15-25ns-nonTrig-V1-wp90")
+wpVals = cms.InputTag("electronMVAValueMapProducer:ElectronMVAEstimatorRun2Spring15NonTrig25nsV1Values")
+wpCats = cms.InputTag("electronMVAValueMapProducer:ElectronMVAEstimatorRun2Spring15NonTrig25nsV1Categories")
+cutVeto = cms.InputTag("egmGsfElectronIDs:cutBasedElectronID-Spring15-25ns-V1-standalone-veto")
 
 
 ###################################
@@ -153,7 +157,8 @@ process.customSlimmedElectrons = cms.EDProducer('CustomPatElectronProducer' ,
 							eleMediumIdMap = wp80,
 							eleTightIdMap = wp90,
 							mvaValuesMap     = wpVals,
-							mvaCategoriesMap = wpCats
+							mvaCategoriesMap = wpCats,
+							eleVetoIdMap = cutVeto
 							                 )
 
 
@@ -186,7 +191,8 @@ process.customSlimmedTaus = cms.EDProducer('CustomPatTauProducer' ,
 							# TauEsDownSystematic=cms.double(0.97),
 							triggerBitSrc = cms.InputTag("TriggerResults","","HLT"),
 							triggerPreScaleSrc = cms.InputTag("patTrigger"),
-							triggerObjectSrc = cms.InputTag("selectedPatTrigger")
+							triggerObjectSrc = cms.InputTag("selectedPatTrigger"),
+							rhoSources = rhoSourceList
 							                 )
 
 

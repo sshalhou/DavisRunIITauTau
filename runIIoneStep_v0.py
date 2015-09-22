@@ -192,7 +192,6 @@ process.customSlimmedTaus = cms.EDProducer('CustomPatTauProducer' ,
 							triggerPreScaleSrc = cms.InputTag("patTrigger"),
 							triggerObjectSrc = cms.InputTag("selectedPatTrigger"),
 							rhoSources = rhoSourceList
-
 							                 )
 
 
