@@ -90,8 +90,8 @@ class electronClones
 		void clone();
 		void fillUserFloats();		  
 		/* return a pass/fail based on MVA score, pt, and absSuperClusterEta */
-		float passedMVA(float, float, float, int);  /* int is 80 or 90 for WP */
-		float passedCutBasedID(pat::Electron&); 
+		float passedMVA(float, float, float, int);  /* int is 80 or 90 for WP - not used any more!*/
+		float passedCutBasedID(pat::Electron&); /* not used any more */
 
 };
 

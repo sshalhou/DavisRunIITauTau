@@ -39,6 +39,7 @@ SkipEvent = cms.untracked.vstring('ProductNotFound')
 
 from DavisRunIITauTau.FlatTupleGenerator.FlatTupleConfig_cfi import generalConfig
 from DavisRunIITauTau.FlatTupleGenerator.FlatTupleConfig_cfi import theCuts
+from DavisRunIITauTau.FlatTupleGenerator.FlatTupleConfig_cfi import svMassAtFlatTupleConfig
 
 
 process.PASSCUTS = cms.EDAnalyzer('FlatTupleGenerator',
@@ -46,7 +47,8 @@ process.PASSCUTS = cms.EDAnalyzer('FlatTupleGenerator',
 	indepSrc = cms.InputTag('pairIndep','NtupleEventPairIndep','DavisNtuple'),
 	NAME = cms.string("PASSCUTS"),
 	EventCutSrc = generalConfig,
-	LeptonCutVecSrc = theCuts
+	LeptonCutVecSrc = theCuts,
+	SVMassConfig = svMassAtFlatTupleConfig
 	)
 
 process.NOCUTS = cms.EDAnalyzer('FlatTupleGenerator',
@@ -54,7 +56,8 @@ process.NOCUTS = cms.EDAnalyzer('FlatTupleGenerator',
 	indepSrc = cms.InputTag('pairIndep','NtupleEventPairIndep','DavisNtuple'),
 	NAME = cms.string("NOCUTS"),
 	EventCutSrc = generalConfig,
-	LeptonCutVecSrc = cms.VPSet()
+	LeptonCutVecSrc = cms.VPSet(),
+	SVMassConfig = svMassAtFlatTupleConfig
 	)
 
 

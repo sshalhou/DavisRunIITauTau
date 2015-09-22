@@ -123,7 +123,9 @@ rhoSourceList = cms.VInputTag(
 from PhysicsTools.SelectorUtils.tools.vid_id_tools import *
 dataFormat = DataFormat.MiniAOD
 switchOnVIDElectronIdProducer(process, dataFormat)
-my_id_modules = ['RecoEgamma.ElectronIdentification.Identification.mvaElectronID_Spring15_25ns_nonTrig_V1_cff']
+my_id_modules = ['RecoEgamma.ElectronIdentification.Identification.mvaElectronID_Spring15_25ns_nonTrig_V1_cff',
+                 'RecoEgamma.ElectronIdentification.Identification.cutBasedElectronID_Spring15_25ns_V1_cff']
+
 for idmod in my_id_modules:
     setupAllVIDIdsInModule(process,idmod,setupVIDElectronSelection)
 
@@ -131,6 +133,7 @@ wp80 = cms.InputTag("egmGsfElectronIDs:mvaEleID-Spring15-25ns-nonTrig-V1-wp80")
 wp90 = cms.InputTag("egmGsfElectronIDs:mvaEleID-Spring15-25ns-nonTrig-V1-wp90")
 wpVals = cms.InputTag("electronMVAValueMapProducer:ElectronMVAEstimatorRun2Spring15NonTrig25nsV1Values")
 wpCats = cms.InputTag("electronMVAValueMapProducer:ElectronMVAEstimatorRun2Spring15NonTrig25nsV1Categories")
+cutVeto = cms.InputTag("egmGsfElectronIDs:cutBasedElectronID-Spring15-25ns-V1-standalone-veto")
 
 ###################################
 # perform custom parameter embedding
@@ -153,7 +156,8 @@ process.customSlimmedElectrons = cms.EDProducer('CustomPatElectronProducer' ,
 							eleMediumIdMap = wp80,
 							eleTightIdMap = wp90,
 							mvaValuesMap     = wpVals,
-							mvaCategoriesMap = wpCats
+							mvaCategoriesMap = wpCats,
+							eleVetoIdMap = cutVeto
 							                 )
 
 
@@ -435,6 +439,7 @@ SkipEvent = cms.untracked.vstring('ProductNotFound')
 
 from DavisRunIITauTau.FlatTupleGenerator.FlatTupleConfig_cfi import generalConfig
 from DavisRunIITauTau.FlatTupleGenerator.FlatTupleConfig_cfi import theCuts
+from DavisRunIITauTau.FlatTupleGenerator.FlatTupleConfig_cfi import svMassAtFlatTupleConfig
 
 
 process.PASSCUTS = cms.EDAnalyzer('FlatTupleGenerator',
@@ -442,7 +447,8 @@ process.PASSCUTS = cms.EDAnalyzer('FlatTupleGenerator',
 	indepSrc = cms.InputTag('pairIndep','NtupleEventPairIndep','DavisNtuple'),
 	NAME = cms.string("PASSCUTS"),
 	EventCutSrc = generalConfig,
-	LeptonCutVecSrc = theCuts
+	LeptonCutVecSrc = theCuts,
+	SVMassConfig = svMassAtFlatTupleConfig
 	)
 
 
@@ -462,7 +468,7 @@ process.TFileService = cms.Service("TFileService", fileName = cms.string("FlatTu
 
 
 process.options   = cms.untracked.PSet( wantSummary = cms.untracked.bool(True) )
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(100) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(500) )
 
 
 

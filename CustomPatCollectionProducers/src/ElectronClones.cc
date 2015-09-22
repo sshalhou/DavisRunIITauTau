@@ -58,6 +58,9 @@ electronClones::~electronClones(){ clones.clear();}
 
 float electronClones::passedCutBasedID(pat::Electron& e)
 {	
+	assert(1==2); /* this function should not be called anymore! since CMSSW742 there is better way for e cut-based ID*/
+
+
 	float ABS_SC_ETA = abs(e.superCluster()->eta());
 
 	float c_dEtaIn  = 0;
@@ -120,6 +123,9 @@ float electronClones::passedCutBasedID(pat::Electron& e)
 
 float electronClones::passedMVA(float MVAOUT, float PT, float ABS_SUPERCLUSTER_ETA, int WP)
 {
+
+	assert(1==2); /* this function should not be called anymore! since CMSSW742 there is better way for e mva ID*/
+
 	float returnVal = 0.0;
 	float ABSETA  = fabs(ABS_SUPERCLUSTER_ETA); // always ensure abs
 
@@ -365,9 +371,9 @@ void electronClones::fillUserFloats()
 
 
 	    /* last call because needs all addUserFloats filled */
-	  
-	    float passCutBasedVetoID = passedCutBasedID(e);
-	   	e.addUserFloat("passCutBasedVetoID",passCutBasedVetoID);
+	  	// not needed in 74X and higher
+	    //float passCutBasedVetoID = passedCutBasedID(e);
+	   	//e.addUserFloat("passCutBasedVetoID",passCutBasedVetoID);
 
 	  	///////////////////////////
 	  	clones[i] = e;

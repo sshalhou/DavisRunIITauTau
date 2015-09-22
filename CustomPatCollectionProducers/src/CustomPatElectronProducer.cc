@@ -99,6 +99,7 @@ private:
   edm::InputTag eleTightIdMap_;
   edm::InputTag mvaValuesMap_;  
   edm::InputTag mvaCategoriesMap_;
+  edm::EDGetTokenT<edm::ValueMap<bool> > eleVetoIdMapToken_;
   edm::InputTag gsfElectrons_; /* not an input argument! */
 
 
@@ -127,7 +128,8 @@ rhoSources_(iConfig.getParameter<vInputTag>("rhoSources" )),
 eleMediumIdMap_(iConfig.getParameter<edm::InputTag>("eleMediumIdMap" )),
 eleTightIdMap_(iConfig.getParameter<edm::InputTag>("eleTightIdMap" )),
 mvaValuesMap_(iConfig.getParameter<edm::InputTag>("mvaValuesMap" )),
-mvaCategoriesMap_(iConfig.getParameter<edm::InputTag>("mvaCategoriesMap" ))
+mvaCategoriesMap_(iConfig.getParameter<edm::InputTag>("mvaCategoriesMap" )),
+eleVetoIdMapToken_(consumes<edm::ValueMap<bool> >(iConfig.getParameter<edm::InputTag>("eleVetoIdMap")))
 {
 
 
@@ -236,7 +238,10 @@ CustomPatElectronProducer::produce(edm::Event& iEvent, const edm::EventSetup& iS
       edm::Handle< edm::ValueMap<int> > mvaCategoriesMap;
       iEvent.getByLabel(mvaCategoriesMap_,mvaCategoriesMap);
 
+  // get the cut based ID (veto)
 
+      edm::Handle<edm::ValueMap<bool> > veto_id_decisions;
+      iEvent.getByToken(eleVetoIdMapToken_ ,veto_id_decisions);
 
 
   // clone & fill the electron with user-computed quantities including mva
@@ -263,13 +268,17 @@ CustomPatElectronProducer::produce(edm::Event& iEvent, const edm::EventSetup& iS
     bool isPassTight  = (*eleTightIdMap)[el];
     float mvaRawValue = (*mvaValuesMap)[el];
     int mvaCategory = (*mvaCategoriesMap)[el];
-
+    bool passCutBasedVetoID = (*veto_id_decisions)[el];
    
 
     ele.clones[i].addUserFloat("MVA_nonTrig_raw",mvaRawValue);
     ele.clones[i].addUserFloat("PASS_nonTrigMVA80",float(isPassMedium));
     ele.clones[i].addUserFloat("PASS_nonTrigMVA90",float(isPassTight));
     ele.clones[i].addUserFloat("CATEGORY_nonTrigMVA",float(mvaCategory));
+    ele.clones[i].addUserFloat("passCutBasedVetoID",passCutBasedVetoID);
+
+
+   // std::cout<<" isPassCutBasedVetoId "<<passCutBasedVetoID<<"\n";
 
    const pat::Electron & electronToStore = ele.clones[i];
    storedElectrons->push_back(electronToStore);

@@ -120,6 +120,15 @@ public:
 	std::string NAME_;  // use TauESNom, TauESUp, TauESDown, etc.
 	edm::ParameterSet EventCutSrc_;
 	std::vector<edm::ParameterSet> LeptonCutVecSrc_;
+	edm::ParameterSet svMassAtFlatTupleConfig_;	
+
+	/* the parameters to be read from SVMassConfig in FlatTupleConfig_cfi.py */
+
+
+	bool flatTuple_useMVAmet;
+	bool flatTuple_recomputeSVmass;
+	bool flatTuple_svMassVerbose;
+	double flatTuple_logMterm;
 
 
 

@@ -5,6 +5,50 @@
 import FWCore.ParameterSet.Config as cms
 from DavisRunIITauTau.TupleConfigurations.and_string_concatonator import and_string_concatonator
 
+##########################################
+# set up SVMass  @ FlatTuple level	     #
+##########################################
+# NOTE : turning this on will *strore* an SVMass 
+#        computed at FlatTuple stage instead of 
+#        using value contained in Ntuple 
+##########################################
+
+
+USE_MVAMET_FOR_SVMASS_FlatTuple = False #  True = MVA MET, False = PFMET
+COMPUTE_SVMASS_FlatTuple = False 
+SVMASS_LOG_M_FlatTuple = 2.0
+SVMASS_VERBOSE_FlatTuple = True
+
+print '******************************************'
+print '******************************************'
+
+if COMPUTE_SVMASS_FlatTuple :
+	print 'will (re-)compute SVmass (@ FLATTUPLE level) with log_m term = ', SVMASS_LOG_M_FlatTuple
+	print '*** this will cause FLATUPLE to ignore (& replace) any SVmass values read from NTUPLE level ***'
+	if USE_MVAMET_FOR_SVMASS_FlatTuple :
+		print ' will use mva met in SVmass computation @ FLATTUPLE LEVEL (no recoil corr yet)'
+	else :
+		print 'will use pfMET in SVmass computation @ FLATTUPLE LEVEL (no recoil corr yet)'
+
+else :
+	print '**************************************************'
+	print '***** WARNING SV MASS COMPUTE IS OFF (@ FLATTUPLE level) *****'
+	print '***** WILL DEFAULT TO USING VALUES FROM NTUPLE '
+	print '**************************************************'
+print '******************************************'
+print '******************************************'
+
+
+
+svMassAtFlatTupleConfig = cms.PSet(
+	flatTuple_useMVAmet = cms.bool(USE_MVAMET_FOR_SVMASS_FlatTuple),
+	flatTuple_recomputeSVmass = cms.bool(COMPUTE_SVMASS_FlatTuple),
+	flatTuple_svMassVerbose = cms.bool(SVMASS_VERBOSE_FlatTuple),
+	flatTuple_logMterm = cms.double(SVMASS_LOG_M_FlatTuple)
+	)
+
+
+
 
 # individual object cuts used to build the PSets 
 # each line appended will be concatenated (using &&) into a single cut string

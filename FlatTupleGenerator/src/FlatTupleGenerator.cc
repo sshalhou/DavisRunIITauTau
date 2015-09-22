@@ -15,9 +15,16 @@ pairSrc_(iConfig.getParameter<edm::InputTag>("pairSrc" )),
 indepSrc_(iConfig.getParameter<edm::InputTag>("indepSrc" )),
 NAME_(iConfig.getParameter<string>("NAME" )),
 EventCutSrc_(iConfig.getParameter<edm::ParameterSet>("EventCutSrc")),
-LeptonCutVecSrc_(iConfig.getParameter<std::vector<edm::ParameterSet>>("LeptonCutVecSrc"))
+LeptonCutVecSrc_(iConfig.getParameter<std::vector<edm::ParameterSet>>("LeptonCutVecSrc")),
+svMassAtFlatTupleConfig_(iConfig.getParameter<edm::ParameterSet>("SVMassConfig"))
 {
 
+  /* read in the svMassAtFlatTupleConfig_ parameters */
+
+  flatTuple_useMVAmet = svMassAtFlatTupleConfig_.getParameter<bool>("flatTuple_useMVAmet");
+  flatTuple_recomputeSVmass = svMassAtFlatTupleConfig_.getParameter<bool>("flatTuple_recomputeSVmass");
+  flatTuple_svMassVerbose = svMassAtFlatTupleConfig_.getParameter<bool>("flatTuple_svMassVerbose");
+  flatTuple_logMterm = svMassAtFlatTupleConfig_.getParameter<double>("flatTuple_logMterm");
 
 
 	/* read in the EventCutSrc varaibles */
@@ -706,13 +713,9 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
 //////////////////////////////////////////////////////
 //////// begin an SVMass computation 
 
-      bool flatTuple_recomputeSVmass = 1;
-     
       if (flatTuple_recomputeSVmass)
       {     
-        bool flatTuple_useMVAmet = 0;
-        bool flatTuple_svMassVerbose = 1;
-        double flatTuple_logMterm = 2.0;
+     
 
         std::vector<svFitStandalone::MeasuredTauLepton> measuredTauLeptons;
         measuredTauLeptons.clear();
