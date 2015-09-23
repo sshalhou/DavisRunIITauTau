@@ -12,9 +12,11 @@ from DavisRunIITauTau.TupleConfigurations.ConfigNtupleContent_cfi import *
 
 
 class PairWiseMetHelper:
-	def __init__(self,theProcess):
+	def __init__(self,theProcess,theSampleData):
 
 		self.process = theProcess
+		self.sampleData_ = theSampleData
+
 
 		# the maximum number of leptons (not pairs!) to consider
 		# note this will result in many, many empty collections if set too large
@@ -43,6 +45,10 @@ class PairWiseMetHelper:
 
 		self.tupleCandidateEvents = cms.VInputTag()
 
+	def printSampleInfo(self):
+		print self.sampleData_
+		return 
+		
 	def runSingleLeptonProducers(self,p):
 		singlePatLeptons = cms.Sequence()
 
@@ -430,12 +436,23 @@ class PairWiseMetHelper:
 
 
 	def writeToNtuple(self,p):
-		from DavisRunIITauTau.TupleConfigurations.ConfigTupleTriggers_cfi import (electronTriggerPathsAndFilters,
-				electronTriggerMatch_DR, electronTriggerMatch_Types)
-		from DavisRunIITauTau.TupleConfigurations.ConfigTupleTriggers_cfi import (muonTriggerPathsAndFilters,
-				muonTriggerMatch_DR, muonTriggerMatch_Types)
-		from DavisRunIITauTau.TupleConfigurations.ConfigTupleTriggers_cfi import (tauTriggerPathsAndFilters,
-				tauTriggerMatch_DR, tauTriggerMatch_Types)
+		from DavisRunIITauTau.TupleConfigurations.ConfigTupleTriggers_cfi import ConfigTriggerHelper
+
+		# this will set the correct trigger info for the given data type
+		ConfigTriggerHelperInstance = ConfigTriggerHelper(self.sampleData_)
+
+		electronTriggerPathsAndFilters = ConfigTriggerHelperInstance.electronTriggerPathsAndFilters
+		electronTriggerMatch_DR = ConfigTriggerHelperInstance.electronTriggerMatch_DR
+		electronTriggerMatch_Types = ConfigTriggerHelperInstance.electronTriggerMatch_Types
+
+		muonTriggerPathsAndFilters = ConfigTriggerHelperInstance.muonTriggerPathsAndFilters
+		muonTriggerMatch_DR = ConfigTriggerHelperInstance.muonTriggerMatch_DR
+		muonTriggerMatch_Types = ConfigTriggerHelperInstance.muonTriggerMatch_Types
+
+		tauTriggerPathsAndFilters = ConfigTriggerHelperInstance.tauTriggerPathsAndFilters
+		tauTriggerMatch_DR = ConfigTriggerHelperInstance.tauTriggerMatch_DR
+		tauTriggerMatch_Types = ConfigTriggerHelperInstance.tauTriggerMatch_Types
+
 		pairWriter = cms.Sequence()
 		moduleName = "NtupleEvent"
 		module = cms.EDProducer('NtupleEventProducer' ,

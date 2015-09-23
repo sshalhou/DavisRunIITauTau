@@ -294,7 +294,7 @@ process.requireCandidateHiggsPair = cms.EDFilter("HiggsCandidateCountFilter",
 from DavisRunIITauTau.PythonHelperClasses.pairContainer_cff import PairWiseMetHelper
 
 
-mvaMEThelper = PairWiseMetHelper(process)
+mvaMEThelper = PairWiseMetHelper(process,sampleData)
 
 # we also need to remake PFMET since it lacks met significance in Phys14
 # this is unrelated to mvaMET

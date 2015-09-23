@@ -239,7 +239,7 @@ generalConfig = cms.PSet(
 			# not requested in FlatTupleConfif_cfi.py summary variables
 			# note : the hardcoded THE_MAX variable in FlatTupleGenerator.cc limits the 
 			# number of these that we can keep 
-
+			# be sure to include the _v1, _v2 etc. version suffix 
 
 			triggerSummaryChecks = cms.vstring(
 				"HLT_DoubleMediumIsoPFTau40_Trk1_eta2p1_Reg_v1",

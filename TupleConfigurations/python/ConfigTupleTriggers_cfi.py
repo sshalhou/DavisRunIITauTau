@@ -57,157 +57,175 @@ from doubleHyphen_string_concatonator import doubleHyphen_string_concatonator
 # Configuration :
 ####################################################################################################
 
-# DR match between lepton at reco and the triggerObject
-
-electronTriggerMatch_DR = cms.double(0.5)
-muonTriggerMatch_DR = cms.double(0.5)
-tauTriggerMatch_DR = cms.double(0.5)
-
-# allowed types for triggerObject matching
-
-electronTriggerMatch_Types = cms.vint32(+81, +82)
-muonTriggerMatch_Types = cms.vint32(+83)
-tauTriggerMatch_Types = cms.vint32(-86,+84)
 
 
-########################
-# user should modify the append statements below to change lepton trigger settings
-# strings will be (--) concatenated to form one string 
+class ConfigTriggerHelper:
+	def __init__(self,sampleDataArg):
+		self.sampleData_ = sampleDataArg
 
-# master list to hold all paths & filters, will be converted to vsrting
+		# DR match between lepton at reco and the triggerObject
 
-electron_masterList_ = []
-muon_masterList_ = []
-tau_masterList_ = []
+		self.electronTriggerMatch_DR = cms.double(0.5)
+		self.muonTriggerMatch_DR = cms.double(0.5)
+		self.tauTriggerMatch_DR = cms.double(0.5)
 
+		# allowed types for triggerObject matching
 
-# specific path strings to be concatenated and then grouped into one vstring object
-# don't forget to append to masterList_ 
-
-#########################################################		
-# HLT paths and filters for Spring15 MC  				#
-#########################################################
-
-####  path : Mu23+Ele12 #####
-
-mlist1_ = []
-mlist1_.append('HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v1') # path
-mlist1_.append('AND') # AND or OR of the following filters
-mlist1_.append('hltMu23TrkIsoVVLEle12CaloIdLTrackIdLIsoVLMuonlegL3IsoFiltered23') # filter
-muon_masterList_.append(mlist1_)
-
-elist1_ = []
-elist1_.append('HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v1') # path
-elist1_.append('AND') # AND or OR of the following filters
-elist1_.append('hltMu23TrkIsoVVLEle12CaloIdLTrackIdLIsoVLElectronlegTrackIsoFilter') # filter
-electron_masterList_.append(elist1_)
-
-#### path : Mu8+Ele23 #####
-
-mlist2_ = []
-mlist2_.append('HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v1') # path
-mlist2_.append('AND') # AND or OR of the following filters
-mlist2_.append('hltMu8TrkIsoVVLEle23CaloIdLTrackIdLIsoVLMuonlegL3IsoFiltered8') # filter
-muon_masterList_.append(mlist2_)
-
-elist2_ = []
-elist2_.append('HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v1') # path
-elist2_.append('AND') # AND or OR of the following filters
-elist2_.append('hltMu8TrkIsoVVLEle23CaloIdLTrackIdLIsoVLElectronlegTrackIsoFilter') # filter
-electron_masterList_.append(elist2_)
-
-#### path : Iso Mu 24 #####
-
-mlist3_ = []
-mlist3_.append('HLT_IsoMu24_eta2p1_v1') # path
-mlist3_.append('AND') # AND or OR of the following filters
-mlist3_.append('hltL3crIsoL1sMu20Eta2p1L1f0L2f10QL3f24QL3trkIsoFiltered0p09') # filter
-muon_masterList_.append(mlist3_)
-
-#### path : Iso Mu 27 #####
-
-mlist4_ = []
-mlist4_.append('HLT_IsoMu27_v1') # path
-mlist4_.append('AND') # AND or OR of the following filters
-mlist4_.append('hltL3crIsoL1sMu25L1f0L2f10QL3f27QL3trkIsoFiltered0p09') # filter
-muon_masterList_.append(mlist4_)
+		self.electronTriggerMatch_Types = cms.vint32(+81, +82)
+		self.muonTriggerMatch_Types = cms.vint32(+83)
+		self.tauTriggerMatch_Types = cms.vint32(-86,+84)
 
 
-#### path : Iso Mu 17 PF tau 20 #####
+		########################
+		# user should modify the append statements below to change lepton trigger settings
+		# strings will be (--) concatenated to form one string 
 
-mlist5_ = []
-mlist5_.append('HLT_IsoMu17_eta2p1_LooseIsoPFTau20_v1') # path
-mlist5_.append('AND') # AND or OR of the following filters
-mlist5_.append('hltL3crIsoL1sMu16erTauJet20erL1f0L2f10QL3f17QL3trkIsoFiltered0p09') # filter
-mlist5_.append('hltOverlapFilterIsoMu17LooseIsoPFTau20') # filter
-muon_masterList_.append(mlist5_)
+		# master list to hold all paths & filters, will be converted to vsrting
 
-tlist1_ = []
-tlist1_.append('HLT_IsoMu17_eta2p1_LooseIsoPFTau20_v1') # path
-tlist1_.append('AND') # AND or OR of the following filters
-tlist1_.append('hltPFTau20TrackLooseIsoAgainstMuon') # filter
-tlist1_.append('hltOverlapFilterIsoMu17LooseIsoPFTau20') # filter
-tau_masterList_.append(tlist1_)
-
-#### path : Ele22 PF tau 20 #####
-
-elist3_ = []
-elist3_.append('HLT_Ele22_eta2p1_WP75_Gsf_LooseIsoPFTau20_v1') # path
-elist3_.append('AND') # AND or OR of the following filters
-elist3_.append('hltEle22WP75L1IsoEG20erTau20erGsfTrackIsoFilter') # filter
-elist3_.append('hltOverlapFilterIsoEle22WP75GsfLooseIsoPFTau20') # filter
-electron_masterList_.append(elist3_)
-
-tlist2_ = []
-tlist2_.append('HLT_Ele22_eta2p1_WP75_Gsf_LooseIsoPFTau20_v1') # path
-tlist2_.append('AND') # AND or OR of the following filters
-tlist2_.append('hltPFTau20TrackLooseIso') # filter
-tlist2_.append('hltOverlapFilterIsoEle22WP75GsfLooseIsoPFTau20') # filter
-tau_masterList_.append(tlist2_)
+		self.electron_masterList_ = []
+		self.muon_masterList_ = []
+		self.tau_masterList_ = []
 
 
-#### path : Ele32 #####
+		# specific path strings to be concatenated and then grouped into one vstring object
+		# don't forget to append to masterList_ 
 
-elist4_ = []
-elist4_.append('HLT_Ele32_eta2p1_WP75_Gsf_v1') # path
-elist4_.append('AND') # AND or OR of the following filters
-elist4_.append('hltEle32WP75GsfTrackIsoFilter') # filter
-electron_masterList_.append(elist4_)
+		if(self.sampleData_.ProductionInfo == 'Spring15MC'):
+			#########################################################		
+			# HLT paths and filters for Spring15MC   -- START		#
+			#########################################################
+			print '******** SETTING TRIGGER INFO FOR ', self.sampleData_.ProductionInfo
+			####  Spring15MC path : Mu23+Ele12 #####
 
-#### path : Double Med Iso PF Tau 40 #####
+			mlist1_ = []
+			mlist1_.append('HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v1') # path
+			mlist1_.append('AND') # AND or OR of the following filters
+			mlist1_.append('hltMu23TrkIsoVVLEle12CaloIdLTrackIdLIsoVLMuonlegL3IsoFiltered23') # filter
+			self.muon_masterList_.append(mlist1_)
 
-tlist3_ = []
-tlist3_.append('HLT_DoubleMediumIsoPFTau40_Trk1_eta2p1_Reg_v1') # path
-tlist3_.append('AND') # AND or OR of the following filters
-tlist3_.append('hltDoublePFTau40TrackPt1MediumIsolationDz02Reg') # filter
-tau_masterList_.append(tlist3_)
+			elist1_ = []
+			elist1_.append('HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v1') # path
+			elist1_.append('AND') # AND or OR of the following filters
+			elist1_.append('hltMu23TrkIsoVVLEle12CaloIdLTrackIdLIsoVLElectronlegTrackIsoFilter') # filter
+			self.electron_masterList_.append(elist1_)
+
+			#### Spring15MC path : Mu8+Ele23 #####
+
+			mlist2_ = []
+			mlist2_.append('HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v1') # path
+			mlist2_.append('AND') # AND or OR of the following filters
+			mlist2_.append('hltMu8TrkIsoVVLEle23CaloIdLTrackIdLIsoVLMuonlegL3IsoFiltered8') # filter
+			self.muon_masterList_.append(mlist2_)
+
+			elist2_ = []
+			elist2_.append('HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v1') # path
+			elist2_.append('AND') # AND or OR of the following filters
+			elist2_.append('hltMu8TrkIsoVVLEle23CaloIdLTrackIdLIsoVLElectronlegTrackIsoFilter') # filter
+			self.electron_masterList_.append(elist2_)
+
+			#### Spring15MC path : Iso Mu 24 #####
+
+			mlist3_ = []
+			mlist3_.append('HLT_IsoMu24_eta2p1_v1') # path
+			mlist3_.append('AND') # AND or OR of the following filters
+			mlist3_.append('hltL3crIsoL1sMu20Eta2p1L1f0L2f10QL3f24QL3trkIsoFiltered0p09') # filter
+			self.muon_masterList_.append(mlist3_)
+
+			#### Spring15MC path : Iso Mu 27 #####
+
+			mlist4_ = []
+			mlist4_.append('HLT_IsoMu27_v1') # path
+			mlist4_.append('AND') # AND or OR of the following filters
+			mlist4_.append('hltL3crIsoL1sMu25L1f0L2f10QL3f27QL3trkIsoFiltered0p09') # filter
+			self.muon_masterList_.append(mlist4_)
 
 
+			#### Spring15MC path : Iso Mu 17 PF tau 20 #####
 
-####################################################################################################
-# form the actual vsrting to be passed  -- electrons
+			mlist5_ = []
+			mlist5_.append('HLT_IsoMu17_eta2p1_LooseIsoPFTau20_v1') # path
+			mlist5_.append('AND') # AND or OR of the following filters
+			mlist5_.append('hltL3crIsoL1sMu16erTauJet20erL1f0L2f10QL3f17QL3trkIsoFiltered0p09') # filter
+			mlist5_.append('hltOverlapFilterIsoMu17LooseIsoPFTau20') # filter
+			self.muon_masterList_.append(mlist5_)
 
-electronTriggerPathsAndFilters = cms.vstring()
+			tlist1_ = []
+			tlist1_.append('HLT_IsoMu17_eta2p1_LooseIsoPFTau20_v1') # path
+			tlist1_.append('AND') # AND or OR of the following filters
+			tlist1_.append('hltPFTau20TrackLooseIsoAgainstMuon') # filter
+			tlist1_.append('hltOverlapFilterIsoMu17LooseIsoPFTau20') # filter
+			self.tau_masterList_.append(tlist1_)
 
-for alist in electron_masterList_:
-	electronTriggerPathsAndFilters.append(doubleHyphen_string_concatonator(alist))
+			#### Spring15MC path : Ele22 PF tau 20 #####
 
-####################################################################################################
-# form the actual vsrting to be passed  -- muons
+			elist3_ = []
+			elist3_.append('HLT_Ele22_eta2p1_WP75_Gsf_LooseIsoPFTau20_v1') # path
+			elist3_.append('AND') # AND or OR of the following filters
+			elist3_.append('hltEle22WP75L1IsoEG20erTau20erGsfTrackIsoFilter') # filter
+			elist3_.append('hltOverlapFilterIsoEle22WP75GsfLooseIsoPFTau20') # filter
+			self.electron_masterList_.append(elist3_)
 
-muonTriggerPathsAndFilters = cms.vstring()
+			tlist2_ = []
+			tlist2_.append('HLT_Ele22_eta2p1_WP75_Gsf_LooseIsoPFTau20_v1') # path
+			tlist2_.append('AND') # AND or OR of the following filters
+			tlist2_.append('hltPFTau20TrackLooseIso') # filter
+			tlist2_.append('hltOverlapFilterIsoEle22WP75GsfLooseIsoPFTau20') # filter
+			self.tau_masterList_.append(tlist2_)
 
-for alist in muon_masterList_:
-	muonTriggerPathsAndFilters.append(doubleHyphen_string_concatonator(alist))
 
-####################################################################################################
-# form the actual vsrting to be passed  -- taus
+			#### Spring15MC path : Ele32 #####
 
-tauTriggerPathsAndFilters = cms.vstring()
+			elist4_ = []
+			elist4_.append('HLT_Ele32_eta2p1_WP75_Gsf_v1') # path
+			elist4_.append('AND') # AND or OR of the following filters
+			elist4_.append('hltEle32WP75GsfTrackIsoFilter') # filter
+			self.electron_masterList_.append(elist4_)
 
-for alist in tau_masterList_:
-	tauTriggerPathsAndFilters.append(doubleHyphen_string_concatonator(alist))
+			#### Spring15MC path : Double Med Iso PF Tau 40 #####
 
+			tlist3_ = []
+			tlist3_.append('HLT_DoubleMediumIsoPFTau40_Trk1_eta2p1_Reg_v1') # path
+			tlist3_.append('AND') # AND or OR of the following filters
+			tlist3_.append('hltDoublePFTau40TrackPt1MediumIsolationDz02Reg') # filter
+			self.tau_masterList_.append(tlist3_)
+
+			#########################################################		
+			# HLT paths and filters for Spring15 MC   -- END		#
+			#########################################################
+
+		####################################################################################################
+		# form the actual vsrting to be passed  -- electrons
+
+		self.electronTriggerPathsAndFilters = cms.vstring()
+
+		for alist in self.electron_masterList_:
+			self.electronTriggerPathsAndFilters.append(doubleHyphen_string_concatonator(alist))
+
+		####################################################################################################
+		# form the actual vsrting to be passed  -- muons
+
+		self.muonTriggerPathsAndFilters = cms.vstring()
+
+		for alist in self.muon_masterList_:
+			self.muonTriggerPathsAndFilters.append(doubleHyphen_string_concatonator(alist))
+
+		####################################################################################################
+		# form the actual vsrting to be passed  -- taus
+
+		self.tauTriggerPathsAndFilters = cms.vstring()
+
+		for alist in self.tau_masterList_:
+			self.tauTriggerPathsAndFilters.append(doubleHyphen_string_concatonator(alist))
+
+	def printSampleInfo(self):
+		print self.sampleData_
+		return
+
+	def printTriggerInfo(self):
+		print 'e legs', self.electronTriggerPathsAndFilters
+		print 'mu legs', self.muonTriggerPathsAndFilters
+		print 'tau legs', self.tauTriggerPathsAndFilters
+		return
 
 
 ####################################################################################################
