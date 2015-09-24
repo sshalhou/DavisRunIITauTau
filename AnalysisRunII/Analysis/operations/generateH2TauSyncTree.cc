@@ -334,7 +334,18 @@ void generateH2TauSyncTree::handleEvent()
 
 	trigweight_1 = 0;
 	trigweight_2 = 0;
-				
+		
+
+	generatorEventWeight = R.getD("generatorEventWeight");
+	DataSet = R.getS("DataSet");
+    EventTotal = R.getI("EventTotal");
+    EventType = R.getS("EventType");
+    KeyName =  R.getS("KeyName");
+    CrossSection =  R.getD("CrossSection");  
+    FilterEff =  R.getD("FilterEff");
+
+
+
 
 if(R.getI("CandidateEventType")==2)
 {
@@ -553,6 +564,14 @@ void generateH2TauSyncTree::setupBranches(TTree * T)
 	T->Branch("trigweight_1", &trigweight_1);
 	T->Branch("trigweight_2", &trigweight_2);
 
+
+	T->Branch("generatorEventWeight", &generatorEventWeight);
+	T->Branch("DataSet", &DataSet);
+	T->Branch("EventTotal", &EventTotal);
+	T->Branch("EventType", &EventType);
+	T->Branch("KeyName", &KeyName);
+	T->Branch("CrossSection", &CrossSection);
+	T->Branch("FilterEff", &FilterEff);
 
 
 }
@@ -881,4 +900,12 @@ void generateH2TauSyncTree::reset()
 
 	trigweight_1 = 0;
 	trigweight_2 = 0;
+
+    generatorEventWeight = 1.0;
+	DataSet = "NULL";
+    EventTotal = 1;
+    EventType = "NULL";
+    KeyName = "NULL"; 
+    CrossSection = 1.0;    
+    FilterEff = 1.0; 
 }

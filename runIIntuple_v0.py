@@ -5,8 +5,9 @@ process = cms.Process("DavisNtuple")
 # preliminaries 
 ###################################
 
-dataSetName_ = "/SUSYGluGluToHToTauTau_M-160_TuneCUETP8M1_13TeV-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM"
+#dataSetName_ = "/SUSYGluGluToHToTauTau_M-160_TuneCUETP8M1_13TeV-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM"
 #dataSetName_ = "/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v3/MINIAODSIM"
+dataSetName_ = "/Tau/Run2015C-PromptReco-v1/MINIAOD"
 #process.myProducerLabel = cms.EDProducer('Ntuple')
 from DavisRunIITauTau.TupleConfigurations.ConfigNtupleContent_cfi import *
 
@@ -73,7 +74,17 @@ process.load('Configuration.StandardSequences.Services_cff')
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff')
 from Configuration.AlCa.GlobalTag_condDBv2 import GlobalTag
-process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:run2_mc', '')
+
+if sampleData.EventType == 'MC':
+	process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:run2_mc', '')
+
+if sampleData.EventType == 'DATA':
+	process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:run2_data', '')
+
+print '********** AUTO GLOBAL TAG SET TO  *********************'
+print '**********', process.GlobalTag.globaltag
+print '*******************************************************'
+
 from JetMETCorrections.Configuration.JetCorrectionServicesAllAlgos_cff import *
 from JetMETCorrections.Configuration.DefaultJEC_cff import *
 
@@ -85,7 +96,8 @@ from JetMETCorrections.Configuration.DefaultJEC_cff import *
 ###################################
 
 myfilelist = cms.untracked.vstring()
-myfilelist.extend(['file:/uscms_data/d3/shalhout/Spring15_SUSYGluGlu160diTau.root'])
+#myfilelist.extend(['file:/uscms_data/d3/shalhout/Spring15_SUSYGluGlu160diTau.root'])
+myfilelist.extend(['file:/uscms_data/d3/shalhout/Tau_RunC_miniAOD.root'])
 process.source = cms.Source("PoolSource",fileNames=myfilelist)
 
 
@@ -146,7 +158,7 @@ cutVeto = cms.InputTag("egmGsfElectronIDs:cutBasedElectronID-Spring15-25ns-V1-st
 
 
 process.customSlimmedElectrons = cms.EDProducer('CustomPatElectronProducer' ,
-							electronSrc =cms.InputTag('slimmedElectrons::PAT'),
+							electronSrc =cms.InputTag('slimmedElectrons'),
 							vertexSrc =cms.InputTag('filteredVertices::DavisNtuple'),
 							NAME=cms.string("customSlimmedElectrons"),
 							triggerBitSrc = cms.InputTag("TriggerResults","","HLT"),
@@ -167,7 +179,7 @@ process.customSlimmedElectrons = cms.EDProducer('CustomPatElectronProducer' ,
 
 
 process.customSlimmedMuons = cms.EDProducer('CustomPatMuonProducer' ,
-							muonSrc =cms.InputTag('slimmedMuons::PAT'),
+							muonSrc =cms.InputTag('slimmedMuons'),
 							vertexSrc =cms.InputTag('filteredVertices::DavisNtuple'),
 							NAME=cms.string("customSlimmedMuons"),
 							triggerBitSrc = cms.InputTag("TriggerResults","","HLT"),
@@ -179,7 +191,7 @@ process.customSlimmedMuons = cms.EDProducer('CustomPatMuonProducer' ,
 
 # produces all 3 variants in ES at once 
 process.customSlimmedTaus = cms.EDProducer('CustomPatTauProducer' ,
-							tauSrc =cms.InputTag('slimmedTaus::PAT'),
+							tauSrc =cms.InputTag('slimmedTaus'),
 							vertexSrc =cms.InputTag('filteredVertices::DavisNtuple'),
 							NAME=cms.string("customSlimmedTaus"),
 							TauEsCorrection=cms.double(1.0),
@@ -243,7 +255,7 @@ from DavisRunIITauTau.TupleConfigurations.ConfigJets_cfi import jetFilter
 
 
 process.filteredSlimmedJets = cms.EDFilter("PATJetRefSelector",
-	src = cms.InputTag('slimmedJets::PAT'),
+	src = cms.InputTag('slimmedJets'),
 	cut = jetFilter
 	)
 
@@ -321,8 +333,8 @@ from DavisRunIITauTau.TupleConfigurations.ConfigNtupleWeights_cfi import LHEEven
 from DavisRunIITauTau.TupleConfigurations.SampleMetaData_cfi import sampleInfo
 
 process.pairIndep = cms.EDProducer('NtuplePairIndependentInfoProducer',
-							packedGenSrc = cms.InputTag('packedGenParticles::PAT'),
-							prundedGenSrc =  cms.InputTag('prunedGenParticles::PAT'),
+							packedGenSrc = cms.InputTag('packedGenParticles'),
+							prundedGenSrc =  cms.InputTag('prunedGenParticles'),
 							NAME=cms.string("NtupleEventPairIndep"),
 							genParticlesToKeep = GEN_PARTICLES_TO_KEEP,
 							slimmedJetSrc = cms.InputTag('filteredSlimmedJets::DavisNtuple'),

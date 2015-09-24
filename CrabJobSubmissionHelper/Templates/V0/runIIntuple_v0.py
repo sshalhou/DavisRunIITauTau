@@ -72,7 +72,17 @@ process.load('Configuration.StandardSequences.Services_cff')
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff')
 from Configuration.AlCa.GlobalTag_condDBv2 import GlobalTag
-process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:run2_mc', '')
+
+if sampleData.EventType == 'MC':
+	process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:run2_mc', '')
+
+if sampleData.EventType == 'DATA':
+	process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:run2_data', '')
+
+print '********** AUTO GLOBAL TAG SET TO  *********************'
+print '**********', process.GlobalTag.globaltag
+print '*******************************************************'
+
 from JetMETCorrections.Configuration.JetCorrectionServicesAllAlgos_cff import *
 from JetMETCorrections.Configuration.DefaultJEC_cff import *
 
@@ -147,7 +157,7 @@ cutVeto = cms.InputTag("egmGsfElectronIDs:cutBasedElectronID-Spring15-25ns-V1-st
 
 
 process.customSlimmedElectrons = cms.EDProducer('CustomPatElectronProducer' ,
-							electronSrc =cms.InputTag('slimmedElectrons::PAT'),
+							electronSrc =cms.InputTag('slimmedElectrons'),
 							vertexSrc =cms.InputTag('filteredVertices::DavisNtuple'),
 							NAME=cms.string("customSlimmedElectrons"),
 							triggerBitSrc = cms.InputTag("TriggerResults","","HLT"),
@@ -168,7 +178,7 @@ process.customSlimmedElectrons = cms.EDProducer('CustomPatElectronProducer' ,
 
 
 process.customSlimmedMuons = cms.EDProducer('CustomPatMuonProducer' ,
-							muonSrc =cms.InputTag('slimmedMuons::PAT'),
+							muonSrc =cms.InputTag('slimmedMuons'),
 							vertexSrc =cms.InputTag('filteredVertices::DavisNtuple'),
 							NAME=cms.string("customSlimmedMuons"),
 							triggerBitSrc = cms.InputTag("TriggerResults","","HLT"),
@@ -180,7 +190,7 @@ process.customSlimmedMuons = cms.EDProducer('CustomPatMuonProducer' ,
 
 # produces all 3 variants in ES at once 
 process.customSlimmedTaus = cms.EDProducer('CustomPatTauProducer' ,
-							tauSrc =cms.InputTag('slimmedTaus::PAT'),
+							tauSrc =cms.InputTag('slimmedTaus'),
 							vertexSrc =cms.InputTag('filteredVertices::DavisNtuple'),
 							NAME=cms.string("customSlimmedTaus"),
 							TauEsCorrection=cms.double(1.0),
@@ -244,7 +254,7 @@ from DavisRunIITauTau.TupleConfigurations.ConfigJets_cfi import jetFilter
 
 
 process.filteredSlimmedJets = cms.EDFilter("PATJetRefSelector",
-	src = cms.InputTag('slimmedJets::PAT'),
+	src = cms.InputTag('slimmedJets'),
 	cut = jetFilter
 	)
 
@@ -322,8 +332,8 @@ from DavisRunIITauTau.TupleConfigurations.ConfigNtupleWeights_cfi import LHEEven
 from DavisRunIITauTau.TupleConfigurations.SampleMetaData_cfi import sampleInfo
 
 process.pairIndep = cms.EDProducer('NtuplePairIndependentInfoProducer',
-							packedGenSrc = cms.InputTag('packedGenParticles::PAT'),
-							prundedGenSrc =  cms.InputTag('prunedGenParticles::PAT'),
+							packedGenSrc = cms.InputTag('packedGenParticles'),
+							prundedGenSrc =  cms.InputTag('prunedGenParticles'),
 							NAME=cms.string("NtupleEventPairIndep"),
 							genParticlesToKeep = GEN_PARTICLES_TO_KEEP,
 							slimmedJetSrc = cms.InputTag('filteredSlimmedJets::DavisNtuple'),
@@ -378,7 +388,7 @@ process.out = cms.OutputModule("PoolOutputModule",
 
 #process.out.outputCommands +=['keep *_l1extraParticles_*_*']
 process.out.outputCommands +=['drop *_*_*_*']
-#process.out.outputCommands += ['keep TupleCandidateEvents_*_*_Ntuple']
+#process.out.outputCommands += ['keep TupleCandidateEvents_*_*_DavisNtuple']
 process.out.outputCommands += ['keep NtupleEvents_NtupleEvent_*_DavisNtuple']
 process.out.outputCommands += ['keep NtuplePairIndependentInfos_pairIndep_NtupleEventPairIndep_DavisNtuple']
 #process.p = cms.Path(process.myProducerLabel)

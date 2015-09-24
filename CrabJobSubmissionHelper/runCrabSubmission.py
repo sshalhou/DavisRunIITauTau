@@ -146,7 +146,7 @@ config.Data.outLFNDirBase = '/store/user/%s/' % (getUsernameFromSiteDB())
 
 
 config.Data.publication = False
-config.Data.publishDataName = 'Try4'
+config.Data.publishDataName = 'Try5'
 config.Site.storageSite = 'T3_US_FNALLPC'
 config.Data.inputDBS = 'global'
 
@@ -181,8 +181,17 @@ if __name__ == '__main__':
     submitCommandList = []
 
     for samp in sampleNames:
-        config.Data.splitting = 'EventAwareLumiBased'
-        config.Data.unitsPerJob = 25000
+
+        if int(args.isMC[0]) == 1:
+            config.Data.splitting = 'EventAwareLumiBased'
+            config.Data.unitsPerJob = 25000
+
+        if int(args.isMC[0]) == 0:
+            config.Data.splitting = 'LumiBased'
+            config.Data.unitsPerJob = 100 
+            config.Data.lumiMask = 'https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions15/13TeV/Cert_246908-255031_13TeV_PromptReco_Collisions15_25ns_JSON_v2.txt'
+           
+
         config.Data.inputDataset = samp[0]
         config.General.requestName = samp[1]  
         config.JobType.psetName = samp[2]

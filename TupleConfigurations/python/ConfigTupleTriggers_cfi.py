@@ -51,6 +51,7 @@ from doubleHyphen_string_concatonator import doubleHyphen_string_concatonator
 #
 #    these return 1.0 if  'specific path and filters to summarize' are satisfied by the given leg
 #
+#  [5] a unique if block should be defined for each sample type (based on ProductionInfo in the meta data)
 ####################################################################################################
 
 ####################################################################################################
@@ -89,6 +90,107 @@ class ConfigTriggerHelper:
 
 		# specific path strings to be concatenated and then grouped into one vstring object
 		# don't forget to append to masterList_ 
+
+		if(self.sampleData_.ProductionInfo == 'Run2015C'):
+			#########################################################		
+			# HLT paths and filters for Run2015C  Data -- START		#
+			#########################################################
+			print '******** SETTING TRIGGER INFO FOR ', self.sampleData_.ProductionInfo
+
+			####  Run2015C path : Mu23+Ele12 #####
+
+			mlist1_ = []
+			mlist1_.append('HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v2') # path
+			mlist1_.append('AND') # AND or OR of the following filters
+			mlist1_.append('hltMu23TrkIsoVVLEle12CaloIdLTrackIdLIsoVLMuonlegL3IsoFiltered23') # filter
+			self.muon_masterList_.append(mlist1_)
+
+			elist1_ = []
+			elist1_.append('HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v2') # path
+			elist1_.append('AND') # AND or OR of the following filters
+			elist1_.append('hltMu23TrkIsoVVLEle12CaloIdLTrackIdLIsoVLElectronlegTrackIsoFilter') # filter
+			self.electron_masterList_.append(elist1_)
+
+
+			#### Run2015C path : Mu8+Ele23 #####
+
+			mlist2_ = []
+			mlist2_.append('HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v2') # path
+			mlist2_.append('AND') # AND or OR of the following filters
+			mlist2_.append('hltMu8TrkIsoVVLEle23CaloIdLTrackIdLIsoVLMuonlegL3IsoFiltered8') # filter
+			self.muon_masterList_.append(mlist2_)
+
+			elist2_ = []
+			elist2_.append('HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v2') # path
+			elist2_.append('AND') # AND or OR of the following filters
+			elist2_.append('hltMu8TrkIsoVVLEle23CaloIdLTrackIdLIsoVLElectronlegTrackIsoFilter') # filter
+			self.electron_masterList_.append(elist2_)
+
+
+			#### Run2015C path : Iso Mu 17 PF tau 20 #####
+
+			mlist5_ = []
+			mlist5_.append('HLT_IsoMu17_eta2p1_LooseIsoPFTau20_v2') # path
+			mlist5_.append('AND') # AND or OR of the following filters
+			mlist5_.append('hltL3crIsoL1sMu16erTauJet20erL1f0L2f10QL3f17QL3trkIsoFiltered0p09') # filter
+			mlist5_.append('hltOverlapFilterIsoMu17LooseIsoPFTau20') # filter
+			self.muon_masterList_.append(mlist5_)
+
+			tlist1_ = []
+			tlist1_.append('HLT_IsoMu17_eta2p1_LooseIsoPFTau20_v2') # path
+			tlist1_.append('AND') # AND or OR of the following filters
+			tlist1_.append('hltPFTau20TrackLooseIsoAgainstMuon') # filter
+			tlist1_.append('hltOverlapFilterIsoMu17LooseIsoPFTau20') # filter
+			self.tau_masterList_.append(tlist1_)
+
+			#### Run2015C path : Iso Mu 24 #####
+
+			mlist3_ = []
+			mlist3_.append('HLT_IsoMu24_eta2p1_v2') # path
+			mlist3_.append('AND') # AND or OR of the following filters
+			mlist3_.append('hltL3crIsoL1sMu20Eta2p1L1f0L2f10QL3f24QL3trkIsoFiltered0p09') # filter
+			self.muon_masterList_.append(mlist3_)
+
+
+			#### Run2015C path : Ele22 PF tau 20 #####
+
+			elist3_ = []
+			elist3_.append('HLT_Ele22_eta2p1_WPLoose_Gsf_LooseIsoPFTau20_v1') # path
+			elist3_.append('AND') # AND or OR of the following filters
+			elist3_.append('hltEle22WPLooseL1IsoEG20erTau20erGsfTrackIsoFilter') # filter
+			elist3_.append('hltOverlapFilterIsoEle22WPLooseGsfLooseIsoPFTau20') # filter
+			self.electron_masterList_.append(elist3_)
+
+			tlist2_ = []
+			tlist2_.append('HLT_Ele22_eta2p1_WPLoose_Gsf_LooseIsoPFTau20_v1') # path
+			tlist2_.append('AND') # AND or OR of the following filters
+			tlist2_.append('hltPFTau20TrackLooseIso') # filter
+			tlist2_.append('hltOverlapFilterIsoEle22WPLooseGsfLooseIsoPFTau20') # filter
+			self.tau_masterList_.append(tlist2_)
+
+
+			#### Run2015C path : Ele32 #####
+
+			elist4_ = []
+			elist4_.append('HLT_Ele32_eta2p1_WPTight_Gsf_v1') # path
+			elist4_.append('AND') # AND or OR of the following filters
+			elist4_.append('hltEle32WPTightGsfTrackIsoFilter') # filter
+			self.electron_masterList_.append(elist4_)
+
+
+			#### Run2015C path : Double Med Iso PF Tau 40 #####
+
+			tlist3_ = []
+			tlist3_.append('HLT_DoubleMediumIsoPFTau40_Trk1_eta2p1_Reg_v2') # path
+			tlist3_.append('AND') # AND or OR of the following filters
+			tlist3_.append('hltDoublePFTau40TrackPt1MediumIsolationDz02Reg') # filter
+			self.tau_masterList_.append(tlist3_)
+
+
+			#########################################################		
+			# HLT paths and filters for Run2015C Data   -- END		#
+			#########################################################
+
 
 		if(self.sampleData_.ProductionInfo == 'Spring15MC'):
 			#########################################################		

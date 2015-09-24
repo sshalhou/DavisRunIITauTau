@@ -23,9 +23,110 @@ aPSet = cms.PSet(
 	CodeVersion = cms.double(0.0), # allow us to track differences as ntuples and flattuples evolve
     ProductionInfo = cms.string("Spring15MC") # needed for correct trigger settings
 				)
-
-
 sampleInfo.append(aPSet)
+
+
+##########################################
+# Run2015C Datasets                      #
+##########################################
+
+aPSet = cms.PSet(
+    DataSet = cms.string("/SingleMuon/Run2015C-PromptReco-v1/MINIAOD"),
+    EventTotal = cms.int32(15448925),
+    EventType = cms.string("DATA"),
+    KeyName = cms.string("Run2015C_SingleMuon"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(0.0),
+    ProductionInfo = cms.string("Run2015C")
+)
+sampleInfo.append(aPSet)
+
+aPSet = cms.PSet(
+    DataSet = cms.string("/SingleElectron/Run2015C-28Aug2015-v1/MINIAOD"),
+    EventTotal = cms.int32(837157),
+    EventType = cms.string("DATA"),
+    KeyName = cms.string("Run2015C_SingleElectron"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(0.0),
+    ProductionInfo = cms.string("Run2015C")
+)
+sampleInfo.append(aPSet)
+
+aPSet = cms.PSet(
+    DataSet = cms.string("/SingleElectron/Run2015C-PromptReco-v1/MINIAOD"),
+    EventTotal = cms.int32(5238946),
+    EventType = cms.string("DATA"),
+    KeyName = cms.string("Run2015C_SingleElectronPromptReco"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(0.0),
+    ProductionInfo = cms.string("Run2015C")
+)
+sampleInfo.append(aPSet)
+
+aPSet = cms.PSet(
+    DataSet = cms.string("/MuonEG/Run2015C-PromptReco-v1/MINIAOD"),
+    EventTotal = cms.int32(740507),
+    EventType = cms.string("DATA"),
+    KeyName = cms.string("Run2015C_MuonEG"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(0.0),
+    ProductionInfo = cms.string("Run2015C")
+)
+sampleInfo.append(aPSet)
+
+aPSet = cms.PSet(
+    DataSet = cms.string("/DoubleEG/Run2015C-PromptReco-v1/MINIAOD"),
+    EventTotal = cms.int32(16427605),
+    EventType = cms.string("DATA"),
+    KeyName = cms.string("Run2015C_DoubleEG"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(0.0),
+    ProductionInfo = cms.string("Run2015C")
+)
+sampleInfo.append(aPSet)
+
+aPSet = cms.PSet(
+    DataSet = cms.string("/DoubleMuon/Run2015C-PromptReco-v1/MINIAOD"),
+    EventTotal = cms.int32(12194649),
+    EventType = cms.string("DATA"),
+    KeyName = cms.string("Run2015C_DoubleMuon"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(0.0),
+    ProductionInfo = cms.string("Run2015C")
+)
+sampleInfo.append(aPSet)
+
+aPSet = cms.PSet(
+    DataSet = cms.string("/DoubleMuonLowMass/Run2015C-PromptReco-v1/MINIAOD"),
+    EventTotal = cms.int32(263374),
+    EventType = cms.string("DATA"),
+    KeyName = cms.string("Run2015C_DoubleMuonLowMass"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(0.0),
+    ProductionInfo = cms.string("Run2015C")
+)
+sampleInfo.append(aPSet)
+
+aPSet = cms.PSet(
+    DataSet = cms.string("/Tau/Run2015C-PromptReco-v1/MINIAOD"),
+    EventTotal = cms.int32(1290957),
+    EventType = cms.string("DATA"),
+    KeyName = cms.string("Run2015C_Tau"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(0.0),
+    ProductionInfo = cms.string("Run2015C")
+)
+sampleInfo.append(aPSet)
+
+
 
 
 ###########################

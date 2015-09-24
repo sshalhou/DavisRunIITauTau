@@ -453,6 +453,9 @@ class PairWiseMetHelper:
 		tauTriggerMatch_DR = ConfigTriggerHelperInstance.tauTriggerMatch_DR
 		tauTriggerMatch_Types = ConfigTriggerHelperInstance.tauTriggerMatch_Types
 
+
+		#ConfigTriggerHelperInstance.printTriggerInfo()
+
 		pairWriter = cms.Sequence()
 		moduleName = "NtupleEvent"
 		module = cms.EDProducer('NtupleEventProducer' ,

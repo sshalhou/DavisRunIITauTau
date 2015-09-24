@@ -142,27 +142,63 @@ cut_tau_MuonTau = cms.string(and_string_concatonator(tau_MuonTau))
 
 
 
+#################################################################
+# trigger cuts for Spring 15 MC  - HLT (_v) VERSION MATTERS!!!  #
+#################################################################
 
-# trigger requirements
-
-
-emuTriggerCut = cms.string("((isLeg1GoodForHLTPath('HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v1') &&\
+emuTriggerCutSpring15 = "((isLeg1GoodForHLTPath('HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v1') &&\
 	isLeg2GoodForHLTPath('HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v1') && leg2.pt>24) ||\
    (isLeg1GoodForHLTPath('HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v1') &&\
-	isLeg2GoodForHLTPath('HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v1') && leg1.pt>24))")
+	isLeg2GoodForHLTPath('HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v1') && leg1.pt>24))"
 
+tautauTriggerCutSpring15 = "(isLeg1GoodForHLTPath('HLT_DoubleMediumIsoPFTau40_Trk1_eta2p1_Reg_v1') \
+	&& isLeg2GoodForHLTPath('HLT_DoubleMediumIsoPFTau40_Trk1_eta2p1_Reg_v1'))"
 
-
-tautauTriggerCut = cms.string("(isLeg1GoodForHLTPath('HLT_DoubleMediumIsoPFTau40_Trk1_eta2p1_Reg_v1') \
-	&& isLeg2GoodForHLTPath('HLT_DoubleMediumIsoPFTau40_Trk1_eta2p1_Reg_v1'))")
-
-etauTriggerCut = cms.string("(isLeg1GoodForHLTPath('HLT_Ele22_eta2p1_WP75_Gsf_LooseIsoPFTau20_v1')\
+etauTriggerCutSpring15 = "(isLeg1GoodForHLTPath('HLT_Ele22_eta2p1_WP75_Gsf_LooseIsoPFTau20_v1')\
 	 && isLeg2GoodForHLTPath('HLT_Ele22_eta2p1_WP75_Gsf_LooseIsoPFTau20_v1')) \
-	|| ((isLeg1GoodForHLTPath('HLT_Ele32_eta2p1_WP75_Gsf_v1') && leg1.pt>33))")
+	|| ((isLeg1GoodForHLTPath('HLT_Ele32_eta2p1_WP75_Gsf_v1') && leg1.pt>33))"
 
-mtauTriggerCut = cms.string("(isLeg1GoodForHLTPath('HLT_IsoMu17_eta2p1_LooseIsoPFTau20_v1') \
+mtauTriggerCutSpring15 = "(isLeg1GoodForHLTPath('HLT_IsoMu17_eta2p1_LooseIsoPFTau20_v1') \
 	&& isLeg2GoodForHLTPath('HLT_IsoMu17_eta2p1_LooseIsoPFTau20_v1'))\
-	|| ((isLeg1GoodForHLTPath('HLT_IsoMu24_eta2p1_v1') && leg1.pt>25))")
+	|| ((isLeg1GoodForHLTPath('HLT_IsoMu24_eta2p1_v1') && leg1.pt>25))"
+
+
+
+
+#################################################################
+# trigger cuts for Run2015C Data  - HLT (_v) VERSION MATTERS!!! #
+#################################################################
+
+emuTriggerCutRun2015C = "((isLeg1GoodForHLTPath('HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v2') &&\
+	isLeg2GoodForHLTPath('HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v2') && leg2.pt>24) ||\
+   (isLeg1GoodForHLTPath('HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v2') &&\
+	isLeg2GoodForHLTPath('HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v2') && leg1.pt>24))"
+
+tautauTriggerCutRun2015C = "(isLeg1GoodForHLTPath('HLT_DoubleMediumIsoPFTau40_Trk1_eta2p1_Reg_v2') \
+	&& isLeg2GoodForHLTPath('HLT_DoubleMediumIsoPFTau40_Trk1_eta2p1_Reg_v2'))"
+
+
+
+etauTriggerCutRun2015C = "(isLeg1GoodForHLTPath('HLT_Ele22_eta2p1_WPLoose_Gsf_LooseIsoPFTau20_v1')\
+	 && isLeg2GoodForHLTPath('HLT_Ele22_eta2p1_WPLoose_Gsf_LooseIsoPFTau20_v1')) \
+	|| ((isLeg1GoodForHLTPath('HLT_Ele32_eta2p1_WPTight_Gsf_v1') && leg1.pt>33))"
+
+mtauTriggerCutRun2015C = "(isLeg1GoodForHLTPath('HLT_IsoMu17_eta2p1_LooseIsoPFTau20_v2') \
+	&& isLeg2GoodForHLTPath('HLT_IsoMu17_eta2p1_LooseIsoPFTau20_v2'))\
+	|| ((isLeg1GoodForHLTPath('HLT_IsoMu24_eta2p1_v2') && leg1.pt>25))"
+
+
+
+
+
+################################
+# concatenate trigger cuts     #
+################################
+
+emuTriggerCut = cms.string(emuTriggerCutSpring15+" || "+emuTriggerCutRun2015C)
+tautauTriggerCut = cms.string(tautauTriggerCutSpring15+" || "+tautauTriggerCutRun2015C)
+etauTriggerCut = cms.string(etauTriggerCutSpring15+" || "+etauTriggerCutRun2015C)
+mtauTriggerCut  = cms.string(mtauTriggerCutSpring15+" || "+mtauTriggerCutRun2015C)
 
 # VPSet containing selections for different final states, if PSet is not
 # provided for a given final state the 
@@ -239,18 +275,20 @@ generalConfig = cms.PSet(
 			# not requested in FlatTupleConfif_cfi.py summary variables
 			# note : the hardcoded THE_MAX variable in FlatTupleGenerator.cc limits the 
 			# number of these that we can keep 
-			# be sure to include the _v1, _v2 etc. version suffix 
+			# be sure to include the _v1, _v2 etc. version suffix as v* 
+			# also make sure none are repeats 
 
 			triggerSummaryChecks = cms.vstring(
-				"HLT_DoubleMediumIsoPFTau40_Trk1_eta2p1_Reg_v1",
-				"HLT_Ele22_eta2p1_WP75_Gsf_LooseIsoPFTau20_v1",
-				"HLT_Ele32_eta2p1_WP75_Gsf_v1",
-				"HLT_IsoMu17_eta2p1_LooseIsoPFTau20_v1",
-				"HLT_IsoMu24_eta2p1_v1",
-				"HLT_IsoMu27_v1",
-				"HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v1",
-				"HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v1"),
-
+				"HLT_DoubleMediumIsoPFTau40_Trk1_eta2p1_Reg_v*",
+				"HLT_Ele22_eta2p1_WP75_Gsf_LooseIsoPFTau20_v*",
+				"HLT_Ele32_eta2p1_WP75_Gsf_v*",
+				"HLT_IsoMu17_eta2p1_LooseIsoPFTau20_v*",
+				"HLT_IsoMu24_eta2p1_v*",
+				"HLT_IsoMu27_v*",
+				"HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v*",
+				"HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v*",
+				"HLT_Ele22_eta2p1_WPLoose_Gsf_LooseIsoPFTau20_v*",
+				"HLT_Ele32_eta2p1_WPTight_Gsf_v*"),
 
 			# the Tau IDs we would like to keep in the FlatTuple
 			# note : the hardcoded THE_MAX variable in FlatTupleGenerator.cc limits the 

@@ -13,6 +13,7 @@
 #include "generateH2TauSyncTree.h"
 #include "eleTauCutFlowTree.h"
 #include "singleEventHistogramExample.h"
+#include "syncTreeAnalysis.h"
 
 int main(int argc, char* argv[])
 {
@@ -37,7 +38,7 @@ known_operations.push_back("histogramLeptonQuantities");
 known_operations.push_back("generateH2TauSyncTree");
 known_operations.push_back("eleTauCutFlowTree");
 known_operations.push_back("singleEventHistogramExample");
-
+known_operations.push_back("syncTreeAnalysis");
 
 
 /* parse the operations into a name bool map */
@@ -122,6 +123,8 @@ histogramLeptonQuantities HLQ(R,operations_map["histogramLeptonQuantities"]);
 generateH2TauSyncTree    SYNC(R,operations_map["generateH2TauSyncTree"]);
 eleTauCutFlowTree        ETAUCUT(R,operations_map["eleTauCutFlowTree"]);
 singleEventHistogramExample TWOD(R,operations_map["singleEventHistogramExample"]);
+syncTreeAnalysis SYNCTREEANA(R,operations_map["syncTreeAnalysis"]);
+
 
 long int entries = T->GetEntries();
 
@@ -145,7 +148,7 @@ for(long int e = 0; e<entries; ++e)
 	if(operations_map["generateH2TauSyncTree"]) SYNC.handleEvent();
 	if(operations_map["eleTauCutFlowTree"]) ETAUCUT.handleEvent();
     if(operations_map["singleEventHistogramExample"]) TWOD.handleEvent();
-
+    if(operations_map["syncTreeAnalysis"]) SYNCTREEANA.handleEvent();
 
 ///////// EXAMPLE CODE SHOWING ACCESS  -- END
 
@@ -158,6 +161,7 @@ if(operations_map["histogramLeptonQuantities"]) HLQ.finish();
 if(operations_map["generateH2TauSyncTree"]) SYNC.finish();
 if(operations_map["eleTauCutFlowTree"]) ETAUCUT.finish();
 if(operations_map["singleEventHistogramExample"]) TWOD.finish();
+if(operations_map["syncTreeAnalysis"]) SYNCTREEANA.finish();
 
 
 return 0;	

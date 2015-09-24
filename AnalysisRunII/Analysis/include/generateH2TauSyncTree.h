@@ -217,6 +217,20 @@ private:
 	float trigweight_1 ;
 	float trigweight_2 ;
 
+
+	// information related to sample and weights
+
+
+	double generatorEventWeight;
+	std::string DataSet; 	/* the dataset */
+    int EventTotal; 		/* the number of events in the MC sample */ 
+    std::string EventType;  /* description of the event, DATA, MC, EMBEDDED, etc. */
+    std::string KeyName;    /* description of the sample as given during crab job */
+    double CrossSection;    /* MC process cross section */
+    double FilterEff;       /* gen level filter eff. (needed if any is applied) */
+
+
+
 	// member pointers to TTrees & TFiles 
 	
 	TFile * outFile_MuTau;

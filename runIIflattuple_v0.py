@@ -62,8 +62,8 @@ process.NOCUTS = cms.EDAnalyzer('FlatTupleGenerator',
 
 
 
-#process.p = cms.Path(process.PASSCUTS + process.NOCUTS)
-process.p = cms.Path(process.PASSCUTS)
+process.p = cms.Path(process.PASSCUTS + process.NOCUTS)
+#process.p = cms.Path(process.PASSCUTS)
 
 
 process.TFileService = cms.Service("TFileService", fileName = cms.string("FlatTuple.root"))

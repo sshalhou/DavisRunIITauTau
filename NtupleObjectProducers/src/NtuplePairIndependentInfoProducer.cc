@@ -181,9 +181,12 @@ NtuplePairIndependentInfoProducer::produce(edm::Event& iEvent, const edm::EventS
   iEvent.getByLabel(prunedGenSrc_,prunedGens);
 
 
-  std::size_t reserveSize =  prunedGens->size();
-  pairIndep->reserve( reserveSize );
-
+  std::size_t reserveSize = 0;
+  if(prunedGens.isValid())
+  { 
+    prunedGens->size();
+    pairIndep->reserve( reserveSize );
+  } 
 
   // the instance of NtuplePairIndependentInfo we want to add to the event output
 
