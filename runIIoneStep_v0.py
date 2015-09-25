@@ -7,7 +7,8 @@ process = cms.Process("DavisNtuple")
 
 #dataSetName_ = "DUMMY_DATASET_NAME"
 #dataSetName_ = "/SUSYGluGluToHToTauTau_M-160_TuneCUETP8M1_13TeV-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM"
-dataSetName_ = "/Tau/Run2015C-PromptReco-v1/MINIAOD"
+dataSetName_ = "/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v3/MINIAODSIM"
+#dataSetName_ = "/Tau/Run2015C-PromptReco-v1/MINIAOD"
 #process.myProducerLabel = cms.EDProducer('Ntuple')
 from DavisRunIITauTau.TupleConfigurations.ConfigNtupleContent_cfi import *
 
@@ -97,11 +98,26 @@ from JetMETCorrections.Configuration.DefaultJEC_cff import *
 
 myfilelist = cms.untracked.vstring()
 #myfilelist.extend(['file:/uscms_data/d3/shalhout/Spring15_SUSYGluGlu160diTau.root'])
-myfilelist.extend(['file:/uscms_data/d3/shalhout/Tau_RunC_miniAOD.root'])
+#myfilelist.extend(['file:/uscms_data/d3/shalhout/Tau_RunC_miniAOD.root'])
+myfilelist.extend(['file:/uscms_data/d3/shalhout/DY_miniAOD.root'])
 
 process.source = cms.Source("PoolSource",fileNames=myfilelist)
 
 #process.source = cms.Source("PoolSource")
+
+
+###################################
+# Cumulative Info
+#     - keep info about every event seen
+#     - before any selections are applied
+###################################
+
+from DavisRunIITauTau.TupleConfigurations.ConfigNtupleWeights_cfi import mcGenWeightSrcInputTag
+
+process.Cumulative = cms.EDAnalyzer('CumulativeInfoAdder',
+	mcGenWeightSrc = mcGenWeightSrcInputTag
+	)
+
 
 ###################################
 # vertex filtering 
@@ -400,7 +416,7 @@ process.SimpleMemoryCheck = cms.Service("SimpleMemoryCheck",ignoreTotal = cms.un
 process.p = cms.Path()
 
 #process.p *= process.UserSpecifiedData
-
+process.p *= process.Cumulative
 process.p *= process.filteredVertices
 
 process.p *= process.egmGsfElectronIDSequence

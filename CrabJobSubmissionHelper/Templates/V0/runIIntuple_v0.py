@@ -99,6 +99,21 @@ from JetMETCorrections.Configuration.DefaultJEC_cff import *
 
 process.source = cms.Source("PoolSource")
 
+
+###################################
+# Cumulative Info
+#     - keep info about every event seen
+#     - before any selections are applied
+###################################
+
+from DavisRunIITauTau.TupleConfigurations.ConfigNtupleWeights_cfi import mcGenWeightSrcInputTag
+
+process.Cumulative = cms.EDAnalyzer('CumulativeInfoAdder',
+	mcGenWeightSrc = mcGenWeightSrcInputTag
+	)
+
+
+
 ###################################
 # vertex filtering 
 #     - filter+clone vertex collection
@@ -327,7 +342,7 @@ from DavisRunIITauTau.TupleConfigurations.ConfigJets_cfi import PUjetIDworkingPo
 from DavisRunIITauTau.TupleConfigurations.ConfigJets_cfi import PFjetIDworkingPoint
 from DavisRunIITauTau.TupleConfigurations.ConfigNtupleWeights_cfi import PUntupleWeightSettings
 from DavisRunIITauTau.TupleConfigurations.ConfigNtupleWeights_cfi import pileupSrcInputTag
-from DavisRunIITauTau.TupleConfigurations.ConfigNtupleWeights_cfi import mcGenWeightSrcInputTag
+#from DavisRunIITauTau.TupleConfigurations.ConfigNtupleWeights_cfi import mcGenWeightSrcInputTag
 from DavisRunIITauTau.TupleConfigurations.ConfigNtupleWeights_cfi import LHEEventProductSrcInputTag
 from DavisRunIITauTau.TupleConfigurations.SampleMetaData_cfi import sampleInfo
 
@@ -395,6 +410,7 @@ process.out.outputCommands += ['keep NtuplePairIndependentInfos_pairIndep_Ntuple
 process.p = cms.Path()
 #process.p *= process.UserSpecifiedData
 
+process.p *= process.Cumulative
 process.p *= process.filteredVertices
 
 process.p *= process.egmGsfElectronIDSequence
@@ -433,6 +449,7 @@ process.options   = cms.untracked.PSet( wantSummary = cms.untracked.bool(True) )
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
 
 
+process.TFileService = cms.Service("TFileService", fileName = cms.string("NtupleFileCumulativeInfo.root"))
 
 
 

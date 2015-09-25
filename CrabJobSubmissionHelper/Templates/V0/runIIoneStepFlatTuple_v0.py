@@ -99,6 +99,20 @@ from JetMETCorrections.Configuration.DefaultJEC_cff import *
 
 process.source = cms.Source("PoolSource")
 
+
+###################################
+# Cumulative Info
+#     - keep info about every event seen
+#     - before any selections are applied
+###################################
+
+from DavisRunIITauTau.TupleConfigurations.ConfigNtupleWeights_cfi import mcGenWeightSrcInputTag
+
+process.Cumulative = cms.EDAnalyzer('CumulativeInfoAdder',
+	mcGenWeightSrc = mcGenWeightSrcInputTag
+	)
+
+
 ###################################
 # vertex filtering 
 #     - filter+clone vertex collection
@@ -391,9 +405,10 @@ process.pairIndep = cms.EDProducer('NtuplePairIndependentInfoProducer',
 #process.out.outputCommands += ['keep NtupleEvents_NtupleEvent_*_Ntuple']
 #process.out.outputCommands += ['keep NtuplePairIndependentInfos_pairIndep_NtupleEventPairIndep_Ntuple']
 # off process.p = cms.Path(process.myProducerLabel)
-#process.p *= process.UserSpecifiedData
-
 process.p = cms.Path()
+
+#process.p *= process.UserSpecifiedData
+process.p *= process.Cumulative
 process.p *= process.filteredVertices
 
 process.p *= process.egmGsfElectronIDSequence

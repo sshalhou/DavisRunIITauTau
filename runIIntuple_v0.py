@@ -6,8 +6,8 @@ process = cms.Process("DavisNtuple")
 ###################################
 
 #dataSetName_ = "/SUSYGluGluToHToTauTau_M-160_TuneCUETP8M1_13TeV-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM"
-#dataSetName_ = "/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v3/MINIAODSIM"
-dataSetName_ = "/Tau/Run2015C-PromptReco-v1/MINIAOD"
+dataSetName_ = "/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v3/MINIAODSIM"
+#dataSetName_ = "/Tau/Run2015C-PromptReco-v1/MINIAOD"
 #process.myProducerLabel = cms.EDProducer('Ntuple')
 from DavisRunIITauTau.TupleConfigurations.ConfigNtupleContent_cfi import *
 
@@ -97,9 +97,23 @@ from JetMETCorrections.Configuration.DefaultJEC_cff import *
 
 myfilelist = cms.untracked.vstring()
 #myfilelist.extend(['file:/uscms_data/d3/shalhout/Spring15_SUSYGluGlu160diTau.root'])
-myfilelist.extend(['file:/uscms_data/d3/shalhout/Tau_RunC_miniAOD.root'])
+#myfilelist.extend(['file:/uscms_data/d3/shalhout/Tau_RunC_miniAOD.root'])
+
+myfilelist.extend(['file:/uscms_data/d3/shalhout/DY_miniAOD.root'])
 process.source = cms.Source("PoolSource",fileNames=myfilelist)
 
+
+###################################
+# Cumulative Info
+#     - keep info about every event seen
+#     - before any selections are applied
+###################################
+
+from DavisRunIITauTau.TupleConfigurations.ConfigNtupleWeights_cfi import mcGenWeightSrcInputTag
+
+process.Cumulative = cms.EDAnalyzer('CumulativeInfoAdder',
+	mcGenWeightSrc = mcGenWeightSrcInputTag
+	)
 
 ###################################
 # vertex filtering 
@@ -328,7 +342,7 @@ from DavisRunIITauTau.TupleConfigurations.ConfigJets_cfi import PUjetIDworkingPo
 from DavisRunIITauTau.TupleConfigurations.ConfigJets_cfi import PFjetIDworkingPoint
 from DavisRunIITauTau.TupleConfigurations.ConfigNtupleWeights_cfi import PUntupleWeightSettings
 from DavisRunIITauTau.TupleConfigurations.ConfigNtupleWeights_cfi import pileupSrcInputTag
-from DavisRunIITauTau.TupleConfigurations.ConfigNtupleWeights_cfi import mcGenWeightSrcInputTag
+#from DavisRunIITauTau.TupleConfigurations.ConfigNtupleWeights_cfi import mcGenWeightSrcInputTag
 from DavisRunIITauTau.TupleConfigurations.ConfigNtupleWeights_cfi import LHEEventProductSrcInputTag
 from DavisRunIITauTau.TupleConfigurations.SampleMetaData_cfi import sampleInfo
 
@@ -396,6 +410,7 @@ process.out.outputCommands += ['keep NtuplePairIndependentInfos_pairIndep_Ntuple
 process.p = cms.Path()
 #process.p *= process.UserSpecifiedData
 
+process.p *= process.Cumulative
 process.p *= process.filteredVertices
 
 process.p *= process.egmGsfElectronIDSequence
@@ -434,6 +449,7 @@ process.options   = cms.untracked.PSet( wantSummary = cms.untracked.bool(True) )
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(500) )
 
 
+process.TFileService = cms.Service("TFileService", fileName = cms.string("NtupleFileCumulativeInfo.root"))
 
 
 
