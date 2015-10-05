@@ -146,10 +146,11 @@ config.Data.outLFNDirBase = '/store/user/%s/' % (getUsernameFromSiteDB())
 
 
 config.Data.publication = False
-config.Data.publishDataName = 'Try5cumul'
+config.Data.publishDataName = 'Try7noFNAL'
 config.Site.storageSite = 'T3_US_FNALLPC'
 config.Data.inputDBS = 'global'
 
+config.Site.blacklist = [ 'T1_US_FNAL' ]
 
 #####################################################
 # using the config template generate the jobs
@@ -189,7 +190,8 @@ if __name__ == '__main__':
         if int(args.isMC[0]) == 0:
             config.Data.splitting = 'LumiBased'
             config.Data.unitsPerJob = 100 
-            config.Data.lumiMask = 'https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions15/13TeV/Cert_246908-255031_13TeV_PromptReco_Collisions15_25ns_JSON_v2.txt'
+            config.Data.lumiMask = 'https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions15/13TeV/Cert_246908-251883_13TeV_PromptReco_Collisions15_JSON_v2.txt'
+            #config.Data.lumiMask = 'https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions15/13TeV/Cert_246908-255031_13TeV_PromptReco_Collisions15_25ns_JSON_v2.txt'
            
 
         config.Data.inputDataset = samp[0]

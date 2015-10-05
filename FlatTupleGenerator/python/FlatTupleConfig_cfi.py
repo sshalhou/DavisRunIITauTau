@@ -167,6 +167,8 @@ mtauTriggerCutSpring15 = "(isLeg1GoodForHLTPath('HLT_IsoMu17_eta2p1_LooseIsoPFTa
 
 #################################################################
 # trigger cuts for Run2015C Data  - HLT (_v) VERSION MATTERS!!! #
+# special note :  this is the same for Run2015B Data sine
+# it has identical path names to C (some filters differ though!)
 #################################################################
 
 emuTriggerCutRun2015C = "((isLeg1GoodForHLTPath('HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v2') &&\

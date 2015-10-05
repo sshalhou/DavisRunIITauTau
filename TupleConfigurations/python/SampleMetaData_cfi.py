@@ -27,6 +27,59 @@ sampleInfo.append(aPSet)
 
 
 ##########################################
+# Run2015B Datasets                      #
+##########################################
+
+aPSet = cms.PSet(
+    DataSet = cms.string("/SingleMuon/Run2015B-PromptReco-v1/MINIAOD"),
+    EventTotal = cms.int32(3633477),
+    EventType = cms.string("DATA"),
+    KeyName = cms.string("Run2015B_SingleMuon"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(0.0),
+    ProductionInfo = cms.string("Run2015B")
+)
+sampleInfo.append(aPSet)
+
+aPSet = cms.PSet(
+    DataSet = cms.string("/SingleElectron/Run2015B-PromptReco-v1/MINIAOD"),
+    EventTotal = cms.int32(2718409),
+    EventType = cms.string("DATA"),
+    KeyName = cms.string("Run2015B_SingleElectronPromptReco"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(0.0),
+    ProductionInfo = cms.string("Run2015B")
+)
+sampleInfo.append(aPSet)
+
+aPSet = cms.PSet(
+    DataSet = cms.string("/MuonEG/Run2015B-PromptReco-v1/MINIAOD"),
+    EventTotal = cms.int32(219680),
+    EventType = cms.string("DATA"),
+    KeyName = cms.string("Run2015B_MuonEG"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(0.0),
+    ProductionInfo = cms.string("Run2015B")
+)
+sampleInfo.append(aPSet)
+
+
+aPSet = cms.PSet(
+    DataSet = cms.string("/Tau/Run2015B-PromptReco-v1/MINIAOD"),
+    EventTotal = cms.int32(226198),
+    EventType = cms.string("DATA"),
+    KeyName = cms.string("Run2015B_Tau"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(0.0),
+    ProductionInfo = cms.string("Run2015B")
+)
+sampleInfo.append(aPSet)
+
+##########################################
 # Run2015C Datasets                      #
 ##########################################
 
