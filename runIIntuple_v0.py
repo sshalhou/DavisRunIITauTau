@@ -130,6 +130,22 @@ process.filteredVertices = cms.EDFilter(
     filter = cms.bool(True) # drop events without good quality veritces
 )
 
+#################################
+# one of the MET Filters needs to be re-run
+# from Mini-AOD
+# see https://twiki.cern.ch/twiki/bin/viewauth/CMS/
+# MissingETOptionalFiltersRun2#snippet_on_how_to_re_run_HBHE_fr
+
+##___________________________HCAL_Noise_Filter________________________________||
+process.load('CommonTools.RecoAlgos.HBHENoiseFilterResultProducer_cfi')
+process.HBHENoiseFilterResultProducer.minZeros = cms.int32(99999)
+
+# process.ApplyBaselineHBHENoiseFilter = cms.EDFilter('BooleanFlagFilter',
+#    inputLabel = cms.InputTag('HBHENoiseFilterResultProducer','HBHENoiseFilterResult'),
+#    reverseDecision = cms.bool(False)
+# )
+
+
 
 ############################
 # define rho sources to be used in isol variants
@@ -362,8 +378,10 @@ process.pairIndep = cms.EDProducer('NtuplePairIndependentInfoProducer',
 							PUweightSettingsSrc = PUntupleWeightSettings,
 							mcGenWeightSrc = mcGenWeightSrcInputTag,
 				  			LHEEventProductSrc = LHEEventProductSrcInputTag,
-				  			sampleInfoSrc = sampleData
-
+				  			sampleInfoSrc = sampleData,
+							HBHENoiseFilterResultSrc = cms.InputTag('HBHENoiseFilterResultProducer:HBHENoiseFilterResult:DavisNtuple'),
+							triggerResultsPatSrc = cms.InputTag("TriggerResults","","PAT"),
+							triggerResultsRecoSrc = cms.InputTag("TriggerResults","","RECO"),
 							                 )
 
 
@@ -402,7 +420,7 @@ process.out = cms.OutputModule("PoolOutputModule",
 # asked to keep trigger info 
 
 #process.out.outputCommands +=['keep *_l1extraParticles_*_*']
-process.out.outputCommands +=['drop *_*_*_*']
+process.out.outputCommands +=['keep *_*_*_*'] # was drop
 #process.out.outputCommands += ['keep TupleCandidateEvents_*_*_DavisNtuple']
 process.out.outputCommands += ['keep NtupleEvents_NtupleEvent_*_DavisNtuple']
 process.out.outputCommands += ['keep NtuplePairIndependentInfos_pairIndep_NtupleEventPairIndep_DavisNtuple']
@@ -412,6 +430,10 @@ process.p = cms.Path()
 
 process.p *= process.Cumulative
 process.p *= process.filteredVertices
+
+
+process.p *= process.HBHENoiseFilterResultProducer
+#process.p *= process.ApplyBaselineHBHENoiseFilter
 
 process.p *= process.egmGsfElectronIDSequence
 process.p *= process.customSlimmedElectrons
