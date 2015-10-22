@@ -606,6 +606,14 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
       vertex_positionEta = currentINDEP.primaryVertex().position().eta();
       vertex_positionPhi = currentINDEP.primaryVertex().position().phi();
 
+      /* MET filters */
+
+      HBHENoiseFilter = currentINDEP.HBHENoiseFilter();
+      CSCTightHaloFilter = currentINDEP.CSCTightHaloFilter();
+      goodVerticesFilter = currentINDEP.goodVerticesFilter();
+      eeBadScFilter = currentINDEP.eeBadScFilter();
+      EcalDeadCellTriggerPrimitiveFilter = currentINDEP.EcalDeadCellTriggerPrimitiveFilter();
+
       /* pileup & other weights */
   
       puWeight = currentINDEP.puWeight();
@@ -1088,7 +1096,11 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
   generatorEventWeight = NAN;
   hepNUP = -999;
 
-
+  HBHENoiseFilter = 1;
+  CSCTightHaloFilter = 1;
+  goodVerticesFilter = 1;
+  eeBadScFilter = 1;
+  EcalDeadCellTriggerPrimitiveFilter = 1;
 
   numberOfJets30 = -999;
   numberOfJets = -999;
@@ -1420,6 +1432,13 @@ void FlatTupleGenerator::beginJob()
   FlatTuple->Branch("vertex_positionTheta",&vertex_positionTheta);
   FlatTuple->Branch("vertex_positionEta",&vertex_positionEta);
   FlatTuple->Branch("vertex_positionPhi",&vertex_positionPhi);
+
+
+  FlatTuple->Branch("HBHENoiseFilter", &HBHENoiseFilter);
+  FlatTuple->Branch("CSCTightHaloFilter", &CSCTightHaloFilter);
+  FlatTuple->Branch("goodVerticesFilter", &goodVerticesFilter);
+  FlatTuple->Branch("eeBadScFilter", &eeBadScFilter);
+  FlatTuple->Branch("EcalDeadCellTriggerPrimitiveFilter", &EcalDeadCellTriggerPrimitiveFilter);
 
   FlatTuple->Branch("puWeight",&puWeight);
   FlatTuple->Branch("NumPileupInt",&NumPileupInt);

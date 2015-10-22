@@ -29,8 +29,44 @@ NtuplePairIndependentInfo::NtuplePairIndependentInfo()
   m_FilterEff = NAN;
   m_CodeVersion = NAN;
 
+  m_HBHENoiseFilter = 1;
+  m_CSCTightHaloFilter = 1;
+  m_goodVerticesFilter = 1;
+  m_eeBadScFilter = 1;
+  m_EcalDeadCellTriggerPrimitiveFilter = 1;
+
+
 
 }
+
+
+ 
+
+void  NtuplePairIndependentInfo::fill_HBHENoiseFilter(bool arg)
+  {
+    m_HBHENoiseFilter = arg;
+  }
+
+void  NtuplePairIndependentInfo::fill_CSCTightHaloFilter(bool arg)
+  {
+    m_CSCTightHaloFilter = arg;
+  }
+
+void  NtuplePairIndependentInfo::fill_goodVerticesFilter(bool arg)
+  {
+    m_goodVerticesFilter = arg;
+  }
+
+void  NtuplePairIndependentInfo::fill_eeBadScFilter(bool arg)
+  {
+    m_eeBadScFilter = arg;
+  }
+
+void  NtuplePairIndependentInfo::fill_EcalDeadCellTriggerPrimitiveFilter(bool arg)
+  {
+    m_EcalDeadCellTriggerPrimitiveFilter = arg;
+  }
+
 
 void  NtuplePairIndependentInfo::fill_sampleInfo(edm::ParameterSet argSet)
   {
@@ -192,6 +228,13 @@ std::string NtuplePairIndependentInfo::KeyName() const { return m_KeyName; };
 double NtuplePairIndependentInfo::CrossSection() const { return m_CrossSection; };
 double NtuplePairIndependentInfo::FilterEff() const { return m_FilterEff; };
 double NtuplePairIndependentInfo::CodeVersion() const { return m_CodeVersion; };
+
+
+bool NtuplePairIndependentInfo::HBHENoiseFilter() const { return m_HBHENoiseFilter; };
+bool NtuplePairIndependentInfo::CSCTightHaloFilter() const { return m_CSCTightHaloFilter; };
+bool NtuplePairIndependentInfo::goodVerticesFilter() const { return m_goodVerticesFilter; };
+bool NtuplePairIndependentInfo::eeBadScFilter() const { return m_eeBadScFilter; };
+bool NtuplePairIndependentInfo::EcalDeadCellTriggerPrimitiveFilter() const { return m_EcalDeadCellTriggerPrimitiveFilter; };
 
 
 

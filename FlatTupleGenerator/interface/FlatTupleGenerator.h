@@ -323,6 +323,15 @@ public:
 	double vertex_positionEta;		 /* the primary vertex's position.eta()  */ 	
 	double vertex_positionPhi;		 /* the primary vertex's position.phi()  */ 	
 
+	/* MET filters */
+
+	bool HBHENoiseFilter;
+	bool CSCTightHaloFilter;
+	bool goodVerticesFilter;
+	bool eeBadScFilter;
+	bool EcalDeadCellTriggerPrimitiveFilter;
+
+
 	/* pileUp & other weight info */
 
 	double puWeight;

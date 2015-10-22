@@ -1,5 +1,11 @@
+#import FWCore.ParameterSet.Config as cms
+#process = cms.Process("DavisNtuple")
+
+# to get the corretc met filter settings
 import FWCore.ParameterSet.Config as cms
-process = cms.Process("DavisNtuple")
+from Configuration.StandardSequences.Eras import eras
+process = cms.Process('DavisNtuple',eras.Run2_25ns) #for 25ns 13 TeV data
+
 
 ###################################
 # preliminaries 
@@ -133,6 +139,24 @@ process.filteredVertices = cms.EDFilter(
     cut = cms.string(""), # off until studies show cuts are needed
     filter = cms.bool(True) # drop events without good quality veritces
 )
+
+
+#################################
+# one of the MET Filters needs to be re-run
+# from Mini-AOD
+# see https://twiki.cern.ch/twiki/bin/viewauth/CMS/
+# MissingETOptionalFiltersRun2#snippet_on_how_to_re_run_HBHE_fr
+
+
+
+##___________________________HCAL_Noise_Filter________________________________||
+process.load('CommonTools.RecoAlgos.HBHENoiseFilterResultProducer_cfi')
+process.HBHENoiseFilterResultProducer.minZeros = cms.int32(99999)
+
+# process.ApplyBaselineHBHENoiseFilter = cms.EDFilter('BooleanFlagFilter',
+#    inputLabel = cms.InputTag('HBHENoiseFilterResultProducer','HBHENoiseFilterResult'),
+#    reverseDecision = cms.bool(False)
+# )
 
 
 ############################
@@ -345,7 +369,7 @@ from DavisRunIITauTau.TupleConfigurations.ConfigJets_cfi import PUjetIDworkingPo
 from DavisRunIITauTau.TupleConfigurations.ConfigJets_cfi import PFjetIDworkingPoint
 from DavisRunIITauTau.TupleConfigurations.ConfigNtupleWeights_cfi import PUntupleWeightSettings
 from DavisRunIITauTau.TupleConfigurations.ConfigNtupleWeights_cfi import pileupSrcInputTag
-from DavisRunIITauTau.TupleConfigurations.ConfigNtupleWeights_cfi import mcGenWeightSrcInputTag
+#from DavisRunIITauTau.TupleConfigurations.ConfigNtupleWeights_cfi import mcGenWeightSrcInputTag
 from DavisRunIITauTau.TupleConfigurations.ConfigNtupleWeights_cfi import LHEEventProductSrcInputTag
 from DavisRunIITauTau.TupleConfigurations.SampleMetaData_cfi import sampleInfo
 
@@ -365,8 +389,10 @@ process.pairIndep = cms.EDProducer('NtuplePairIndependentInfoProducer',
 							PUweightSettingsSrc = PUntupleWeightSettings,
 							mcGenWeightSrc = mcGenWeightSrcInputTag,
 				  			LHEEventProductSrc = LHEEventProductSrcInputTag,
-				  			sampleInfoSrc = sampleData
-
+				  			sampleInfoSrc = sampleData,
+							HBHENoiseFilterResultSrc = cms.InputTag('HBHENoiseFilterResultProducer:HBHENoiseFilterResult:DavisNtuple'),
+							triggerResultsPatSrc = cms.InputTag("TriggerResults","","PAT"),
+							triggerResultsRecoSrc = cms.InputTag("TriggerResults","","RECO")
 							                 )
 
 
@@ -419,6 +445,7 @@ process.p = cms.Path()
 process.p *= process.Cumulative
 process.p *= process.filteredVertices
 
+process.p *= process.HBHENoiseFilterResultProducer
 process.p *= process.egmGsfElectronIDSequence
 process.p *= process.customSlimmedElectrons
 process.p *= process.customSlimmedMuons

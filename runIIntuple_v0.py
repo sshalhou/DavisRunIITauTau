@@ -1,5 +1,11 @@
+#import FWCore.ParameterSet.Config as cms
+#process = cms.Process("DavisNtuple")
+
+# to get the corretc met filter settings
 import FWCore.ParameterSet.Config as cms
-process = cms.Process("DavisNtuple")
+from Configuration.StandardSequences.Eras import eras
+process = cms.Process('DavisNtuple',eras.Run2_25ns) #for 25ns 13 TeV data
+
 
 ###################################
 # preliminaries 
@@ -135,6 +141,8 @@ process.filteredVertices = cms.EDFilter(
 # from Mini-AOD
 # see https://twiki.cern.ch/twiki/bin/viewauth/CMS/
 # MissingETOptionalFiltersRun2#snippet_on_how_to_re_run_HBHE_fr
+
+
 
 ##___________________________HCAL_Noise_Filter________________________________||
 process.load('CommonTools.RecoAlgos.HBHENoiseFilterResultProducer_cfi')
@@ -381,7 +389,7 @@ process.pairIndep = cms.EDProducer('NtuplePairIndependentInfoProducer',
 				  			sampleInfoSrc = sampleData,
 							HBHENoiseFilterResultSrc = cms.InputTag('HBHENoiseFilterResultProducer:HBHENoiseFilterResult:DavisNtuple'),
 							triggerResultsPatSrc = cms.InputTag("TriggerResults","","PAT"),
-							triggerResultsRecoSrc = cms.InputTag("TriggerResults","","RECO"),
+							triggerResultsRecoSrc = cms.InputTag("TriggerResults","","RECO")
 							                 )
 
 
@@ -420,7 +428,7 @@ process.out = cms.OutputModule("PoolOutputModule",
 # asked to keep trigger info 
 
 #process.out.outputCommands +=['keep *_l1extraParticles_*_*']
-process.out.outputCommands +=['keep *_*_*_*'] # was drop
+process.out.outputCommands +=['drop *_*_*_*'] # was drop
 #process.out.outputCommands += ['keep TupleCandidateEvents_*_*_DavisNtuple']
 process.out.outputCommands += ['keep NtupleEvents_NtupleEvent_*_DavisNtuple']
 process.out.outputCommands += ['keep NtuplePairIndependentInfos_pairIndep_NtupleEventPairIndep_DavisNtuple']

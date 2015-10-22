@@ -59,6 +59,19 @@ public:
   /* fill NUP */
   void fill_hepNUP(int);
 
+
+  /* fill various MET filters */
+
+  void fill_HBHENoiseFilter(bool);
+  void fill_CSCTightHaloFilter(bool);
+  void fill_goodVerticesFilter(bool);
+  void fill_eeBadScFilter(bool);
+  void fill_EcalDeadCellTriggerPrimitiveFilter(bool);
+
+
+
+
+
   // getters
 
   std::vector<NtupleGenParticle> genParticles() const; 
@@ -84,6 +97,13 @@ public:
   double CrossSection() const;
   double FilterEff() const;
   double CodeVersion() const;
+
+  bool HBHENoiseFilter() const;
+  bool CSCTightHaloFilter() const;
+  bool goodVerticesFilter() const;
+  bool eeBadScFilter() const;
+  bool EcalDeadCellTriggerPrimitiveFilter() const;
+
 
 
 private:
@@ -122,6 +142,14 @@ private:
   double m_CrossSection;
   double m_FilterEff;
   double m_CodeVersion;
+
+  /* MET filters */
+
+  bool m_HBHENoiseFilter;
+  bool m_CSCTightHaloFilter;
+  bool m_goodVerticesFilter;
+  bool m_eeBadScFilter;
+  bool m_EcalDeadCellTriggerPrimitiveFilter;
 
 
 
