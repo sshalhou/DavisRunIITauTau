@@ -92,6 +92,8 @@ print '********** AUTO GLOBAL TAG SET TO  *********************'
 print '**********', process.GlobalTag.globaltag
 print '*******************************************************'
 
+process.load("Configuration.StandardSequences.Geometry_cff")
+
 from JetMETCorrections.Configuration.JetCorrectionServicesAllAlgos_cff import *
 from JetMETCorrections.Configuration.DefaultJEC_cff import *
 
@@ -420,7 +422,7 @@ process.out = cms.OutputModule("PoolOutputModule",
 # keep everything produced by Ntuple
 #################################
 #process.out.outputCommands +=['keep *_*_*_Ntuple']
-#process.SimpleMemoryCheck = cms.Service("SimpleMemoryCheck",ignoreTotal = cms.untracked.int32(1) )
+process.SimpleMemoryCheck = cms.Service("SimpleMemoryCheck",ignoreTotal = cms.untracked.int32(1) )
 
 ###################################
 # asked to keep trigger info 

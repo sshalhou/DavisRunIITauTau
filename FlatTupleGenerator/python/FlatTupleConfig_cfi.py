@@ -15,7 +15,7 @@ from DavisRunIITauTau.TupleConfigurations.and_string_concatonator import and_str
 
 
 USE_MVAMET_FOR_SVMASS_FlatTuple = False #  True = MVA MET, False = PFMET
-COMPUTE_SVMASS_FlatTuple = False 
+COMPUTE_SVMASS_FlatTuple = True 
 SVMASS_LOG_M_FlatTuple = 2.0
 SVMASS_VERBOSE_FlatTuple = True
 
@@ -305,15 +305,25 @@ generalConfig = cms.PSet(
 				"againstMuonLoose3",
 				"againstMuonTight3",
 				"byCombinedIsolationDeltaBetaCorrRaw3Hits",
-				"byIsolationMVA3newDMwoLTraw",
-				"byIsolationMVA3oldDMwoLTraw",
 				"byIsolationMVA3newDMwLTraw",
+				#"byIsolationMVA3newDMwoLTraw",
 				"byIsolationMVA3oldDMwLTraw",
+				#"byIsolationMVA3oldDMwoLTraw",
+				"byLooseCombinedIsolationDeltaBetaCorr3Hits",
+				"byLoosePileupWeightedIsolation3Hits",
+				"byMediumCombinedIsolationDeltaBetaCorr3Hits",
+				"byMediumPileupWeightedIsolation3Hits",
+				"byPileupWeightedIsolationRaw3Hits",
+				"byTightCombinedIsolationDeltaBetaCorr3Hits",
+				"byTightPileupWeightedIsolation3Hits",
 				"chargedIsoPtSum",
+				"decayModeFindingNewDMs",
 				#"decayModeFindingOldDMs",
+				"footprintCorrection",
 				"neutralIsoPtSum",
-				"puCorrPtSum",	
-				"decayModeFindingNewDMs"),
+				"neutralIsoPtSumWeight",
+				"photonPtSumOutsideSignalCone",
+				"puCorrPtSum"),
 
 			###################
 			# jet & bjet ID cut strings
