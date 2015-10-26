@@ -9,21 +9,21 @@ voms-proxy-init -voms cms --valid=72:00
 source /cvmfs/cms.cern.ch/cmsset_default.csh
 setenv SCRAM_ARCH slc6_amd64_gcc491
 
-if ( -d CMSSW_7_4_7) then
-        echo 'directory CMSSW_7_4_7 already exits, doing nothing further'
+if ( -d CMSSW_7_4_14) then
+        echo 'directory CMSSW_7_4_14 already exits, doing nothing further'
         exit 1
 endif
 
 
 # create the working area
 	
-cmsrel CMSSW_7_4_7
-cd CMSSW_7_4_7/src/
+cmsrel CMSSW_7_4_14
+cd CMSSW_7_4_14/src/
 cmsenv
 
 # new electron ID working point
 
-git cms-merge-topic ikrav:egm_id_747_v2
+git cms-merge-topic ikrav:egm_id_7.4.12_v1 # tested to work in 7.4.14
 
 # mva met installation
 
@@ -48,10 +48,10 @@ cd -
 # for sv mass
 git clone git@github.com:veelken/SVfit_standalone.git TauAnalysis/SVfitStandalone
 cd TauAnalysis/SVfitStandalone/
-git checkout svFit_2015Apr03
+git checkout master
 cd -
 
-# pilup reweight code
+# # pilup reweight code
 git cms-addpkg PhysicsTools/Utilities
 sed -i 's/std::cout/\/\/std::cout/g' PhysicsTools/Utilities/src/LumiReWeighting.cc
 

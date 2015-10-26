@@ -2,7 +2,7 @@
 DavisRunIITauTau : Code For H->tau tau Run II analysis
 ------------------
 
-For Quick Start (on SL6 only, CMSSW_7_4_7 and higher):
+For Quick Start (on SL6 only, CMSSW_7_4_14 and higher):
 
 
 - Choose a location for your working directory :
@@ -24,14 +24,14 @@ For Quick Start (on SL6 only, CMSSW_7_4_7 and higher):
 
 		cd DavisRunIITauTau
 
-		git checkout 7_4_X
+		git checkout miniAODv2_7_4_14
 
 		cd -
 
 		./DavisRunIITauTau/install_everything.tcsh 
 
 
-- Finally source the work env setup script (this step should be done each time you login from in CMSSW_7_4_7/src):
+- Finally source the work env setup script (this step should be done each time you login from in CMSSW_7_4_14/src):
 
 		source DavisRunIITauTau/setup_workEnv.*h [* = cs or b depending on your SHELL]
 
