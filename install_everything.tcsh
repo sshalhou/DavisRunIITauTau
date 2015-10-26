@@ -25,6 +25,10 @@ cmsenv
 
 git cms-merge-topic ikrav:egm_id_7.4.12_v1 # tested to work in 7.4.14
 
+# temp fix for PU jet ID and MVA MET incompatibility 
+
+git cms-merge-topic ahinzmann:fixMVAmetPUid
+
 # mva met installation
 
 git cms-addpkg RecoMET/METPUSubtraction/
