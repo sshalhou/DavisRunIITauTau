@@ -367,9 +367,21 @@ aPSet = cms.PSet(
                  )
 sampleInfo.append(aPSet)
 ############
+############
+aPSet = cms.PSet(
+     DataSet = cms.string("/ZHToTauTau_M125_13TeV_powheg_pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM"),
+     EventTotal = cms.int32(585353),
+     EventType = cms.string("MC"),
+     KeyName = cms.string("ZHpowheg"),
+     CrossSection = cms.double(1.0),
+     FilterEff = cms.double(1.0),
+     CodeVersion = cms.double(0.0),
+     ProductionInfo = cms.string("Spring15MC") # needed for correct trigger settings
+                 )
+sampleInfo.append(aPSet)
+############
 
-
-
+ 
 
 
 ###############################

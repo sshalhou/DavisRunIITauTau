@@ -146,11 +146,11 @@ config.Data.outLFNDirBase = '/store/user/%s/' % (getUsernameFromSiteDB())
 
 
 config.Data.publication = False
-config.Data.publishDataName = 'Try7noFNAL'
+config.Data.publishDataName = 'Try8'
 config.Site.storageSite = 'T3_US_FNALLPC'
 config.Data.inputDBS = 'global'
 
-config.Site.blacklist = [ 'T1_US_FNAL' ]
+#config.Site.blacklist = [ 'T1_US_FNAL' ]
 
 #####################################################
 # using the config template generate the jobs
