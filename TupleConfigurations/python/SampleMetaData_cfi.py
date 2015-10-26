@@ -25,6 +25,29 @@ aPSet = cms.PSet(
 				)
 sampleInfo.append(aPSet)
 
+#########################################
+# mini-AOD Version 2 MC samples         # 
+#########################################
+
+
+############
+aPSet = cms.PSet(   
+    DataSet = cms.string("/SUSYGluGluToHToTauTau_M-160_TuneCUETP8M1_13TeV-pythia8/RunIISpring15MiniAODv2-74X_mcRun2_asymptotic_v2-v1/MINIAODSIM"),
+    EventTotal = cms.int32(499610),
+    EventType = cms.string("MC"), # valid EventTypes are :  MC, DATA, EMBEDDED (expand as needed)
+    KeyName = cms.string("Spring15v2_SUSY_GGH_160GeV"), # a unique descriptor for this sample to be used throught all parts of the code
+    CrossSection = cms.double(1.0), # cross section in pb (include *BR if needed)
+    FilterEff = cms.double(1.0), # generator level filter effi. 
+    CodeVersion = cms.double(0.0), # allow us to track differences as ntuples and flattuples evolve
+    ProductionInfo = cms.string("Spring15MC") # needed for correct trigger settings
+                )
+sampleInfo.append(aPSet)
+
+############
+
+
+
+
 
 ##########################################
 # Run2015B Datasets                      #
