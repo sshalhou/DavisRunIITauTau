@@ -165,6 +165,123 @@ class PairWiseMetHelper:
 
 
 
+	def runPairWiseMetsNoMVAMET(self,p):
+		pairMets = cms.Sequence()		
+	
+		# electron + muon
+		if BUILD_ELECTRON_MUON is True :
+			for i in range(0, self.max_leptons+1):
+				for j in range(0, self.max_leptons+1):					
+					lep1SrcColl = cms.InputTag(self.electronList[i])
+					lep2SrcColl = cms.InputTag(self.muonList[j])
+					self.LepPairAndMetList.append([lep1SrcColl,lep2SrcColl,cms.InputTag("NULL"),str(i)+"x"+str(j)])
+
+		# electron + electron
+		if BUILD_ELECTRON_ELECTRON is True :
+			for i in range(0, self.max_leptons+1):
+				for j in range(0, self.max_leptons+1):
+					if i!=j :
+						lep1SrcColl = cms.InputTag(self.electronList[i])
+						lep2SrcColl = cms.InputTag(self.electronList[j])						
+						self.LepPairAndMetList.append([lep1SrcColl,lep2SrcColl,cms.InputTag("NULL"),str(i)+"x"+str(j)])
+
+
+		# muon + muon
+		if BUILD_MUON_MUON is True :
+			for i in range(0, self.max_leptons+1):
+				for j in range(0, self.max_leptons+1):
+					if i!=j :
+						lep1SrcColl = cms.InputTag(self.muonList[i])
+						lep2SrcColl = cms.InputTag(self.muonList[j])						
+						self.LepPairAndMetList.append([lep1SrcColl,lep2SrcColl,cms.InputTag("NULL"),str(i)+"x"+str(j)])
+
+
+		# tau Es nominal + tau Es nominal
+		if BUILD_TAU_TAU is True :
+			for i in range(0, self.max_leptons+1):
+				for j in range(0, self.max_leptons+1):
+					if i!=j :						
+						lep1SrcColl = cms.InputTag(self.tauEsNominalList[i])
+						lep2SrcColl = cms.InputTag(self.tauEsNominalList[j])
+						self.LepPairAndMetList.append([lep1SrcColl,lep2SrcColl,cms.InputTag("NULL"),str(i)+"x"+str(j)])
+
+
+		# tau Es Up + tau Es Up
+		if BUILD_TAU_TAU is True :
+			if BUILD_TAU_ES_VARIANTS is True :
+				for i in range(0, self.max_leptons+1):
+					for j in range(0, self.max_leptons+1):
+						if i!=j :							
+							lep1SrcColl = cms.InputTag(self.tauEsUpList[i])
+							lep2SrcColl = cms.InputTag(self.tauEsUpList[j])
+							self.LepPairAndMetList.append([lep1SrcColl,lep2SrcColl,cms.InputTag("NULL"),str(i)+"x"+str(j)])
+
+		# tau Es Down + tau Es Down
+		if BUILD_TAU_TAU is True :
+			if BUILD_TAU_ES_VARIANTS is True :
+				for i in range(0, self.max_leptons+1):
+					for j in range(0, self.max_leptons+1):
+						if i!=j :
+							lep1SrcColl = cms.InputTag(self.tauEsDownList[i])
+							lep2SrcColl = cms.InputTag(self.tauEsDownList[j])
+							self.LepPairAndMetList.append([lep1SrcColl,lep2SrcColl,cms.InputTag("NULL"),str(i)+"x"+str(j)])
+
+		# electron + tau Es nominal
+		if BUILD_ELECTRON_TAU is True :
+			for i in range(0, self.max_leptons+1):
+				for j in range(0, self.max_leptons+1):
+					lep1SrcColl = cms.InputTag(self.electronList[i])
+					lep2SrcColl = cms.InputTag(self.tauEsNominalList[j])
+					self.LepPairAndMetList.append([lep1SrcColl,lep2SrcColl,cms.InputTag("NULL"),str(i)+"x"+str(j)])
+
+		# electron + tau Es Up
+		if BUILD_ELECTRON_TAU is True :
+			if BUILD_TAU_ES_VARIANTS is True:
+				for i in range(0, self.max_leptons+1):
+					for j in range(0, self.max_leptons+1):
+						lep1SrcColl = cms.InputTag(self.electronList[i])
+						lep2SrcColl = cms.InputTag(self.tauEsUpList[j])
+						self.LepPairAndMetList.append([lep1SrcColl,lep2SrcColl,cms.InputTag("NULL"),str(i)+"x"+str(j)])
+
+		# electron + tau Es Down
+		if BUILD_ELECTRON_TAU is True :
+			if BUILD_TAU_ES_VARIANTS is True:		
+				for i in range(0, self.max_leptons+1):
+					for j in range(0, self.max_leptons+1):
+						lep1SrcColl = cms.InputTag(self.electronList[i])
+						lep2SrcColl = cms.InputTag(self.tauEsDownList[j])
+						self.LepPairAndMetList.append([lep1SrcColl,lep2SrcColl,cms.InputTag("NULL"),str(i)+"x"+str(j)])
+
+		# muon + tau Es nominal
+		if BUILD_MUON_TAU is True :
+			for i in range(0, self.max_leptons+1):
+				for j in range(0, self.max_leptons+1):
+					lep1SrcColl = cms.InputTag(self.muonList[i])
+					lep2SrcColl = cms.InputTag(self.tauEsNominalList[j])
+					self.LepPairAndMetList.append([lep1SrcColl,lep2SrcColl,cms.InputTag("NULL"),str(i)+"x"+str(j)])
+
+		# muon + tau Es Up
+		if BUILD_MUON_TAU is True :
+			if BUILD_TAU_ES_VARIANTS is True :
+				for i in range(0, self.max_leptons+1):
+					for j in range(0, self.max_leptons+1):
+						lep1SrcColl = cms.InputTag(self.muonList[i])
+						lep2SrcColl = cms.InputTag(self.tauEsUpList[j])
+						self.LepPairAndMetList.append([lep1SrcColl,lep2SrcColl,cms.InputTag("NULL"),str(i)+"x"+str(j)])
+
+		# muon + tau Es Down
+		if BUILD_MUON_TAU is True :
+			if BUILD_TAU_ES_VARIANTS is True :
+				for i in range(0, self.max_leptons+1):
+					for j in range(0, self.max_leptons+1):						
+						lep1SrcColl = cms.InputTag(self.muonList[i])
+						lep2SrcColl = cms.InputTag(self.tauEsDownList[j])					
+						self.LepPairAndMetList.append([lep1SrcColl,lep2SrcColl,cms.InputTag("NULL"),str(i)+"x"+str(j)])
+
+		p *= pairMets
+		return
+
+
 	def runPairWiseMets(self,p):
 		pairMets = cms.Sequence()		
 	

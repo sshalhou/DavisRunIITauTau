@@ -114,9 +114,9 @@ myfilelist = cms.untracked.vstring()
 #myfilelist.extend(['file:/uscms_data/d3/shalhout/miniAODv2SusyGGH160.root'])
 #myfilelist.extend(['file:/uscms/home/shalhout/no_backup/singleMu_miniAODv2_oct.root'])
 #myfilelist.extend(['file:/uscms/home/shalhout/no_backup/singleMu_miniAODv2_promptv4.root'])
-myfilelist.extend(['file:/uscms/home/shalhout/no_backup/ttCrashMiniAOdv2.root'])
-
-#myfilelist.extend(['file:/eos/uscms/store/user/gfunk/MonoH_Sensitivity/MZP1200_MA0300_p3/151028_143812/0000/step3_1.root'])
+#myfilelist.extend(['file:/uscms/home/shalhout/no_backup/ttCrashMiniAOdv2.root'])
+#myfilelist.extend(['file:/uscms/home/shalhout/no_backup/WW_SegFault_AAE0DDF4-3576-E511-AAEC-90E6BA5CBB68.root'])
+myfilelist.extend(['file:/eos/uscms/store/user/gfunk/MonoH_Sensitivity/MZP1200_MA0300_p3/151028_143812/0000/step3_1.root'])
 
 
 
@@ -479,9 +479,10 @@ process.p *= process.requireCandidateHiggsPair
 
 
 # mva met - start
-mvaMEThelper.initializeMVAmet(process.p)
+#off cause PU jet ID and MVA met hate each other -- mvaMEThelper.initializeMVAmet(process.p)
 mvaMEThelper.runSingleLeptonProducers(process.p)
-mvaMEThelper.runPairWiseMets(process.p)
+#off cause PU jet ID and MVA met hate each other -- mvaMEThelper.runPairWiseMets(process.p)
+mvaMEThelper.runPairWiseMetsNoMVAMET(process.p) # alternative
 process.p *= process.METSignificance
 mvaMEThelper.run_pairMaker(process.p)
 mvaMEThelper.writeToNtuple(process.p)
@@ -546,7 +547,7 @@ process.TFileService = cms.Service("TFileService", fileName = cms.string("FlatTu
 
 
 process.options   = cms.untracked.PSet( wantSummary = cms.untracked.bool(True) )
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(999) )
 
 
 

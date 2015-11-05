@@ -27,7 +27,7 @@ git cms-merge-topic ikrav:egm_id_7.4.12_v1 # tested to work in 7.4.14
 
 # temp fix for PU jet ID and MVA MET incompatibility 
 
-git cms-merge-topic ahinzmann:fixMVAmetPUid
+#git cms-merge-topic ahinzmann:fixMVAmetPUid
 
 # mva met installation
 
@@ -61,7 +61,10 @@ sed -i 's/std::cout/\/\/std::cout/g' PhysicsTools/Utilities/src/LumiReWeighting.
 
 # temp fix for PU jet ID and MVA MET incompatibility 
 
-git cms-merge-topic ahinzmann:fixMVAmetPUid
+#git cms-merge-topic ahinzmann:fixMVAmetPUid
+
+# add a local copy of PU jet ID
+git cms-addpkg RecoJets/JetProducers
 
 # move the Davis code into the reight area
 

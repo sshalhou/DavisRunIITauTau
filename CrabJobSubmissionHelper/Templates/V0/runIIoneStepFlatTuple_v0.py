@@ -457,9 +457,10 @@ process.p *= process.requireCandidateHiggsPair
 
 
 # mva met - start
-mvaMEThelper.initializeMVAmet(process.p)
+#off cause PU jet ID and MVA met hate each other -- mvaMEThelper.initializeMVAmet(process.p)
 mvaMEThelper.runSingleLeptonProducers(process.p)
-mvaMEThelper.runPairWiseMets(process.p)
+#off cause PU jet ID and MVA met hate each other -- mvaMEThelper.runPairWiseMets(process.p)
+mvaMEThelper.runPairWiseMetsNoMVAMET(process.p) # alternative
 process.p *= process.METSignificance
 mvaMEThelper.run_pairMaker(process.p)
 mvaMEThelper.writeToNtuple(process.p)

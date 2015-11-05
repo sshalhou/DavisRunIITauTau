@@ -327,16 +327,16 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
       isOsPair = currentPair.isOsPair();
       SVMass = currentPair.SVMass()[0];
       SVTransverseMass = currentPair.SVTransverseMass()[0];
-      MTmvaMET_leg1 = currentPair.MTmvaMET_leg1()[0];
+      //MTmvaMET_leg1 = currentPair.MTmvaMET_leg1()[0];
       MTpfMET_leg1 = currentPair.MTpfMET_leg1()[0];
-      MTmvaMET_leg2 = currentPair.MTmvaMET_leg2()[0];
+      //MTmvaMET_leg2 = currentPair.MTmvaMET_leg2()[0];
       MTpfMET_leg2 = currentPair.MTpfMET_leg2()[0];
-      mvaMET = currentPair.mvaMET()[0].pt();
-      mvaMETphi = currentPair.mvaMET()[0].phi();
-      mvaMET_cov00 = currentPair.mvaMET()[0].getSignificanceMatrix()[0][0];
-      mvaMET_cov01 = currentPair.mvaMET()[0].getSignificanceMatrix()[0][1];
-      mvaMET_cov10 = currentPair.mvaMET()[0].getSignificanceMatrix()[1][0];
-      mvaMET_cov11 = currentPair.mvaMET()[0].getSignificanceMatrix()[1][1];
+      //mvaMET = currentPair.mvaMET()[0].pt();
+      //mvaMETphi = currentPair.mvaMET()[0].phi();
+      //mvaMET_cov00 = currentPair.mvaMET()[0].getSignificanceMatrix()[0][0];
+      //mvaMET_cov01 = currentPair.mvaMET()[0].getSignificanceMatrix()[0][1];
+      //mvaMET_cov10 = currentPair.mvaMET()[0].getSignificanceMatrix()[1][0];
+      //mvaMET_cov11 = currentPair.mvaMET()[0].getSignificanceMatrix()[1][1];
       pfMET = currentPair.pfMET()[0].pt();
       pfMETphi = currentPair.pfMET()[0].phi();
 

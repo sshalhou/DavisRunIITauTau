@@ -250,7 +250,7 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
 
           TupleCandidateEvent CurrentCandidateEvent;
           CurrentCandidateEvent.set_pair(electrons->at(i),second_electrons->at(ii));
-          CurrentCandidateEvent.set_mvaMET(mvamets->at(0));
+          if(mvamets.isValid()) CurrentCandidateEvent.set_mvaMET(mvamets->at(0));
           CurrentCandidateEvent.set_puppiMET(puppimets->at(0));
           CurrentCandidateEvent.set_pfMET(pfmets->at(0));
           CurrentCandidateEvent.set_pfMET_covMatrix(PFsig00, PFsig01, PFsig10, PFsig11);
@@ -337,7 +337,7 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
 
           TupleCandidateEvent CurrentCandidateEvent;
           CurrentCandidateEvent.set_pair(electrons->at(i),muons->at(ii));
-          CurrentCandidateEvent.set_mvaMET(mvamets->at(0));
+          if(mvamets.isValid())CurrentCandidateEvent.set_mvaMET(mvamets->at(0));
           CurrentCandidateEvent.set_puppiMET(puppimets->at(0));
           CurrentCandidateEvent.set_pfMET(pfmets->at(0));
           CurrentCandidateEvent.set_pfMET_covMatrix(PFsig00, PFsig01, PFsig10, PFsig11);
@@ -419,7 +419,7 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
 
           TupleCandidateEvent CurrentCandidateEvent;
           CurrentCandidateEvent.set_pair(electrons->at(i),taus->at(ii));
-          CurrentCandidateEvent.set_mvaMET(mvamets->at(0));          
+          if(mvamets.isValid())CurrentCandidateEvent.set_mvaMET(mvamets->at(0));          
           CurrentCandidateEvent.set_puppiMET(puppimets->at(0));
           CurrentCandidateEvent.set_pfMET(pfmets->at(0));
           CurrentCandidateEvent.set_pfMET_covMatrix(PFsig00, PFsig01, PFsig10, PFsig11);         
@@ -520,7 +520,7 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
 
           TupleCandidateEvent CurrentCandidateEvent;
           CurrentCandidateEvent.set_pair(muons->at(i),second_muons->at(ii));
-          CurrentCandidateEvent.set_mvaMET(mvamets->at(0));  
+          if(mvamets.isValid())CurrentCandidateEvent.set_mvaMET(mvamets->at(0));  
           CurrentCandidateEvent.set_puppiMET(puppimets->at(0));
           CurrentCandidateEvent.set_pfMET(pfmets->at(0));
           CurrentCandidateEvent.set_pfMET_covMatrix(PFsig00, PFsig01, PFsig10, PFsig11);
@@ -604,7 +604,7 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
 
           TupleCandidateEvent CurrentCandidateEvent;
           CurrentCandidateEvent.set_pair(muons->at(i),taus->at(ii));
-          CurrentCandidateEvent.set_mvaMET(mvamets->at(0));    
+          if(mvamets.isValid())CurrentCandidateEvent.set_mvaMET(mvamets->at(0));    
           CurrentCandidateEvent.set_puppiMET(puppimets->at(0));
           CurrentCandidateEvent.set_pfMET(pfmets->at(0));
           CurrentCandidateEvent.set_pfMET_covMatrix(PFsig00, PFsig01, PFsig10, PFsig11);
@@ -714,7 +714,7 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
 
           TupleCandidateEvent CurrentCandidateEvent;
           CurrentCandidateEvent.set_pair(taus->at(i),second_taus->at(ii));
-          CurrentCandidateEvent.set_mvaMET(mvamets->at(0));     
+          if(mvamets.isValid())CurrentCandidateEvent.set_mvaMET(mvamets->at(0));     
           CurrentCandidateEvent.set_puppiMET(puppimets->at(0));
           CurrentCandidateEvent.set_pfMET(pfmets->at(0));
           CurrentCandidateEvent.set_pfMET_covMatrix(PFsig00, PFsig01, PFsig10, PFsig11);
