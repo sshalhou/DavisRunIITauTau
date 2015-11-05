@@ -178,6 +178,84 @@ sampleInfo.append(aPSet)
 # mini-AOD Version 2 MC samples         # 
 #########################################
 
+dataSetName_ = "MZP600_MA0300"
+dataSetName_ = "MZP800_MA0300"
+dataSetName_ = "MZP1000_MA0300"
+dataSetName_ = "MZP1200_MA0300"
+dataSetName_ = "MZP1400_MA0300"
+
+############
+aPSet = cms.PSet(   
+    DataSet = cms.string("MZP600_MA0300"),
+    EventTotal = cms.int32(1000),
+    EventType = cms.string("MC"), # valid EventTypes are :  MC, DATA, EMBEDDED (expand as needed)
+    KeyName = cms.string("Spring15v2_monoHiggsMZP600_MA0300"), # a unique descriptor for this sample to be used throught all parts of the code
+    CrossSection = cms.double(1.0), # cross section in pb (include *BR if needed)
+    FilterEff = cms.double(1.0), # generator level filter effi. 
+    CodeVersion = cms.double(0.0), # allow us to track differences as ntuples and flattuples evolve
+    ProductionInfo = cms.string("Spring15MCminiAODv2") # needed for correct trigger settings
+                )
+sampleInfo.append(aPSet)
+############
+
+############
+aPSet = cms.PSet(   
+    DataSet = cms.string("MZP800_MA0300"),
+    EventTotal = cms.int32(998),
+    EventType = cms.string("MC"), # valid EventTypes are :  MC, DATA, EMBEDDED (expand as needed)
+    KeyName = cms.string("Spring15v2_monoHiggsMZP800_MA0300"), # a unique descriptor for this sample to be used throught all parts of the code
+    CrossSection = cms.double(1.0), # cross section in pb (include *BR if needed)
+    FilterEff = cms.double(1.0), # generator level filter effi. 
+    CodeVersion = cms.double(0.0), # allow us to track differences as ntuples and flattuples evolve
+    ProductionInfo = cms.string("Spring15MCminiAODv2") # needed for correct trigger settings
+                )
+sampleInfo.append(aPSet)
+############
+
+############
+aPSet = cms.PSet(   
+    DataSet = cms.string("MZP1000_MA0300"),
+    EventTotal = cms.int32(998),
+    EventType = cms.string("MC"), # valid EventTypes are :  MC, DATA, EMBEDDED (expand as needed)
+    KeyName = cms.string("Spring15v2_monoHiggsMZP1000_MA0300"), # a unique descriptor for this sample to be used throught all parts of the code
+    CrossSection = cms.double(1.0), # cross section in pb (include *BR if needed)
+    FilterEff = cms.double(1.0), # generator level filter effi. 
+    CodeVersion = cms.double(0.0), # allow us to track differences as ntuples and flattuples evolve
+    ProductionInfo = cms.string("Spring15MCminiAODv2") # needed for correct trigger settings
+                )
+sampleInfo.append(aPSet)
+############
+
+############
+aPSet = cms.PSet(   
+    DataSet = cms.string("MZP1200_MA0300"),
+    EventTotal = cms.int32(999),
+    EventType = cms.string("MC"), # valid EventTypes are :  MC, DATA, EMBEDDED (expand as needed)
+    KeyName = cms.string("Spring15v2_monoHiggsMZP1200_MA0300"), # a unique descriptor for this sample to be used throught all parts of the code
+    CrossSection = cms.double(1.0), # cross section in pb (include *BR if needed)
+    FilterEff = cms.double(1.0), # generator level filter effi. 
+    CodeVersion = cms.double(0.0), # allow us to track differences as ntuples and flattuples evolve
+    ProductionInfo = cms.string("Spring15MCminiAODv2") # needed for correct trigger settings
+                )
+sampleInfo.append(aPSet)
+############
+
+############
+aPSet = cms.PSet(   
+    DataSet = cms.string("MZP1400_MA0300"),
+    EventTotal = cms.int32(1000),
+    EventType = cms.string("MC"), # valid EventTypes are :  MC, DATA, EMBEDDED (expand as needed)
+    KeyName = cms.string("Spring15v2_monoHiggsMZP1400_MA0300"), # a unique descriptor for this sample to be used throught all parts of the code
+    CrossSection = cms.double(1.0), # cross section in pb (include *BR if needed)
+    FilterEff = cms.double(1.0), # generator level filter effi. 
+    CodeVersion = cms.double(0.0), # allow us to track differences as ntuples and flattuples evolve
+    ProductionInfo = cms.string("Spring15MCminiAODv2") # needed for correct trigger settings
+                )
+sampleInfo.append(aPSet)
+############
+
+
+
 ############
 aPSet = cms.PSet(   
     DataSet = cms.string("/SUSYGluGluToHToTauTau_M-160_TuneCUETP8M1_13TeV-pythia8/RunIISpring15MiniAODv2-74X_mcRun2_asymptotic_v2-v1/MINIAODSIM"),

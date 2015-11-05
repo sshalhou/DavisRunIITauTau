@@ -11,10 +11,16 @@ process = cms.Process('DavisNtuple',eras.Run2_25ns) #for 25ns 13 TeV data
 # preliminaries 
 ###################################
 
+#dataSetName_ = "MZP600_MA0300"
+#dataSetName_ = "MZP800_MA0300"
+#dataSetName_ = "MZP1000_MA0300"
+#dataSetName_ = "MZP1200_MA0300"
+dataSetName_ = "MZP1400_MA0300"
+
 #dataSetName_ = "/SingleMuon/Run2015D-05Oct2015-v1/MINIAOD"
 #dataSetName_ = "/SingleMuon/Run2015D-PromptReco-v4/MINIAOD"
 
-dataSetName_ = "/TT_TuneCUETP8M1_13TeV-powheg-pythia8/RunIISpring15MiniAODv2-74X_mcRun2_asymptotic_v2_ext3-v1/MINIAODSIM"
+#dataSetName_ = "/TT_TuneCUETP8M1_13TeV-powheg-pythia8/RunIISpring15MiniAODv2-74X_mcRun2_asymptotic_v2_ext3-v1/MINIAODSIM"
 
 #dataSetName_ = "/SUSYGluGluToHToTauTau_M-160_TuneCUETP8M1_13TeV-pythia8/RunIISpring15MiniAODv2-74X_mcRun2_asymptotic_v2-v1/MINIAODSIM"
 #dataSetName_ = "DUMMY_DATASET_NAME"
@@ -116,7 +122,13 @@ myfilelist = cms.untracked.vstring()
 #myfilelist.extend(['file:/uscms/home/shalhout/no_backup/singleMu_miniAODv2_promptv4.root'])
 #myfilelist.extend(['file:/uscms/home/shalhout/no_backup/ttCrashMiniAOdv2.root'])
 #myfilelist.extend(['file:/uscms/home/shalhout/no_backup/WW_SegFault_AAE0DDF4-3576-E511-AAEC-90E6BA5CBB68.root'])
-myfilelist.extend(['file:/eos/uscms/store/user/gfunk/MonoH_Sensitivity/MZP1200_MA0300_p3/151028_143812/0000/step3_1.root'])
+
+
+#myfilelist.extend(['file:/eos/uscms/store/user/gfunk/MonoH_Sensitivity/MZP600_MA0300_p3/151026_182214/0000/step3_1.root'])
+#myfilelist.extend(['file:/eos/uscms/store/user/gfunk/MonoH_Sensitivity/MZP800_MA0300_p3/151027_223026/0000/step3_1.root'])
+#myfilelist.extend(['file:/eos/uscms/store/user/gfunk/MonoH_Sensitivity/MZP1000_MA0300_p3/151028_143445/0000/step3_1.root'])
+#myfilelist.extend(['file:/eos/uscms/store/user/gfunk/MonoH_Sensitivity/MZP1200_MA0300_p3/151028_143812/0000/step3_1.root'])
+myfilelist.extend(['file:/eos/uscms/store/user/gfunk/MonoH_Sensitivity/MZP1400_MA0300_p3/151027_193031/0000/step3_1.root'])
 
 
 
@@ -547,7 +559,7 @@ process.TFileService = cms.Service("TFileService", fileName = cms.string("FlatTu
 
 
 process.options   = cms.untracked.PSet( wantSummary = cms.untracked.bool(True) )
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(999) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
 
 
 

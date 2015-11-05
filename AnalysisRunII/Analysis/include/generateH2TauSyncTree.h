@@ -242,7 +242,15 @@ private:
 	TTree * tree_EleTau;
 	TTree * tree_TauTau;
 	TTree * tree_EleMu;
-	
+
+	// to hold run:lumi:event from MET 
+	// filter veto files 	
+
+	std::vector < std::string > metFilter_DoubleEG;
+	std::vector < std::string > metFilter_MuonEG;
+	std::vector < std::string > metFilter_SingleElectron;
+	std::vector < std::string > metFilter_SingleMuon;
+	std::vector < std::string > metFilter_Tau;
 
 
 };
