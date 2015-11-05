@@ -30,6 +30,7 @@ NtuplePairIndependentInfo::NtuplePairIndependentInfo()
   m_CodeVersion = NAN;
 
   m_HBHENoiseFilter = 1;
+  m_HBHEIsoNoiseFilter = 1;
   m_CSCTightHaloFilter = 1;
   m_goodVerticesFilter = 1;
   m_eeBadScFilter = 1;
@@ -39,6 +40,10 @@ NtuplePairIndependentInfo::NtuplePairIndependentInfo()
 
 }
 
+void  NtuplePairIndependentInfo::fill_HBHEIsoNoiseFilter(bool arg)
+  {
+    m_HBHEIsoNoiseFilter = arg;
+  }
 
  
 
@@ -229,6 +234,7 @@ double NtuplePairIndependentInfo::CrossSection() const { return m_CrossSection; 
 double NtuplePairIndependentInfo::FilterEff() const { return m_FilterEff; };
 double NtuplePairIndependentInfo::CodeVersion() const { return m_CodeVersion; };
 
+bool NtuplePairIndependentInfo::HBHEIsoNoiseFilter() const { return m_HBHEIsoNoiseFilter; };
 
 bool NtuplePairIndependentInfo::HBHENoiseFilter() const { return m_HBHENoiseFilter; };
 bool NtuplePairIndependentInfo::CSCTightHaloFilter() const { return m_CSCTightHaloFilter; };

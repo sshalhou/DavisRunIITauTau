@@ -16,7 +16,7 @@ from DavisRunIITauTau.TupleConfigurations.and_string_concatonator import and_str
 
 USE_MVAMET_FOR_SVMASS_FlatTuple = False #  True = MVA MET, False = PFMET
 COMPUTE_SVMASS_FlatTuple = False
-SVMASS_LOG_M_FlatTuple = 2.0
+SVMASS_LOG_M_FlatTuple = 0.0
 SVMASS_VERBOSE_FlatTuple = True
 
 print '******************************************'
@@ -142,6 +142,27 @@ cut_tau_MuonTau = cms.string(and_string_concatonator(tau_MuonTau))
 
 
 
+
+#################################################################
+# trigger cuts for Spring 15 MC mini aod v2  - HLT (_v) VERSION MATTERS!!!  #
+#################################################################
+
+emuTriggerCutSpring15MCminiAODv2 = "((isLeg1GoodForHLTPath('HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v*') &&\
+	isLeg2GoodForHLTPath('HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v*') && leg2.pt>24) ||\
+   (isLeg1GoodForHLTPath('HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v*') &&\
+	isLeg2GoodForHLTPath('HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v*') && leg1.pt>24))"
+
+tautauTriggerCutSpring15MCminiAODv2 = "(isLeg1GoodForHLTPath('HLT_DoubleMediumIsoPFTau40_Trk1_eta2p1_Reg_v*') \
+	&& isLeg2GoodForHLTPath('HLT_DoubleMediumIsoPFTau40_Trk1_eta2p1_Reg_v*'))"
+
+etauTriggerCutSpring15MCminiAODv2 = "(isLeg1GoodForHLTPath('HLT_Ele22_eta2p1_WP75_Gsf_v*') && leg1MaxPtTriggerObjMatch > 23)"
+
+mtauTriggerCutSpring15MCminiAODv2 = "(isLeg1GoodForHLTPath('HLT_IsoMu17_eta2p1_v*') && leg1MaxPtTriggerObjMatch > 18)"
+
+
+
+
+
 #################################################################
 # trigger cuts for Spring 15 MC  - HLT (_v) VERSION MATTERS!!!  #
 #################################################################
@@ -190,6 +211,27 @@ mtauTriggerCutRun2015C = "(isLeg1GoodForHLTPath('HLT_IsoMu17_eta2p1_LooseIsoPFTa
 	|| ((isLeg1GoodForHLTPath('HLT_IsoMu24_eta2p1_v2') && leg1.pt>25))"
 
 
+#################################################################
+# trigger cuts for Run2015D Data  - HLT (_v) VERSION MATTERS!!! #
+# special note :  this is the same for Run2015B Data sine
+# it has identical path names to D (some filters differ though!)
+#################################################################
+
+emuTriggerCutRun2015D = "((isLeg1GoodForHLTPath('HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v*') &&\
+	isLeg2GoodForHLTPath('HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v*') && leg2.pt>24) ||\
+   (isLeg1GoodForHLTPath('HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v*') &&\
+	isLeg2GoodForHLTPath('HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v*') && leg1.pt>24))"
+
+tautauTriggerCutRun2015D = "(isLeg1GoodForHLTPath('HLT_DoubleMediumIsoPFTau35_Trk1_eta2p1_Reg_v*') \
+	&& isLeg2GoodForHLTPath('HLT_DoubleMediumIsoPFTau35_Trk1_eta2p1_Reg_v*'))"
+
+
+
+etauTriggerCutRun2015D = "(isLeg1GoodForHLTPath('HLT_Ele23_WPLoose_Gsf_v*'))"
+
+
+mtauTriggerCutRun2015D = "(isLeg1GoodForHLTPath('HLT_IsoMu18_v*'))"
+
 
 
 
@@ -197,10 +239,30 @@ mtauTriggerCutRun2015C = "(isLeg1GoodForHLTPath('HLT_IsoMu17_eta2p1_LooseIsoPFTa
 # concatenate trigger cuts     #
 ################################
 
-emuTriggerCut = cms.string(emuTriggerCutSpring15+" || "+emuTriggerCutRun2015C)
-tautauTriggerCut = cms.string(tautauTriggerCutSpring15+" || "+tautauTriggerCutRun2015C)
-etauTriggerCut = cms.string(etauTriggerCutSpring15+" || "+etauTriggerCutRun2015C)
-mtauTriggerCut  = cms.string(mtauTriggerCutSpring15+" || "+mtauTriggerCutRun2015C)
+
+
+emuTriggerCut = cms.string(emuTriggerCutSpring15MCminiAODv2+" || "+emuTriggerCutRun2015D)
+tautauTriggerCut = cms.string(tautauTriggerCutSpring15MCminiAODv2+" || "+tautauTriggerCutRun2015D)
+etauTriggerCut = cms.string(etauTriggerCutSpring15MCminiAODv2+" || "+etauTriggerCutRun2015D)
+mtauTriggerCut  = cms.string(mtauTriggerCutSpring15MCminiAODv2+" || "+mtauTriggerCutRun2015D)
+
+
+
+# emuTriggerCut = cms.string("1==1")
+# tautauTriggerCut = cms.string("1==1")
+# etauTriggerCut = cms.string("1==1")
+# mtauTriggerCut  = cms.string("1==1")
+
+
+print "*********************************************************"
+print "FlatTuple trigger cuts set to : "
+print "*********************************************************"
+print " emuTriggerCut = ", emuTriggerCut
+print " tautauTriggerCut = ", tautauTriggerCut
+print " etauTriggerCut = ", etauTriggerCut
+print " mtauTriggerCut = ", mtauTriggerCut
+print "*********************************************************"
+print " should make code so that you don't need to manually adjust this "
 
 # VPSet containing selections for different final states, if PSet is not
 # provided for a given final state the 
@@ -280,6 +342,7 @@ generalConfig = cms.PSet(
 			# be sure to include the _v1, _v2 etc. version suffix as v* 
 			# also make sure none are repeats 
 
+
 			triggerSummaryChecks = cms.vstring(
 				"HLT_DoubleMediumIsoPFTau40_Trk1_eta2p1_Reg_v*",
 				"HLT_Ele22_eta2p1_WP75_Gsf_LooseIsoPFTau20_v*",
@@ -290,7 +353,15 @@ generalConfig = cms.PSet(
 				"HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v*",
 				"HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v*",
 				"HLT_Ele22_eta2p1_WPLoose_Gsf_LooseIsoPFTau20_v*",
-				"HLT_Ele32_eta2p1_WPTight_Gsf_v*"),
+				"HLT_Ele32_eta2p1_WPTight_Gsf_v*",
+				"HLT_Ele22_eta2p1_WP75_Gsf_v*",
+				"HLT_IsoMu17_eta2p1_v*",
+				"HLT_DoubleMediumIsoPFTau35_Trk1_eta2p1_Reg_v*",
+				"HLT_Ele23_WPLoose_Gsf_v*",
+				"HLT_IsoMu18_v*"
+				),
+
+
 
 			# the Tau IDs we would like to keep in the FlatTuple
 			# note : the hardcoded THE_MAX variable in FlatTupleGenerator.cc limits the 

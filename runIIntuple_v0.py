@@ -388,6 +388,7 @@ process.pairIndep = cms.EDProducer('NtuplePairIndependentInfoProducer',
 				  			LHEEventProductSrc = LHEEventProductSrcInputTag,
 				  			sampleInfoSrc = sampleData,
 							HBHENoiseFilterResultSrc = cms.InputTag('HBHENoiseFilterResultProducer:HBHENoiseFilterResult:DavisNtuple'),
+							HBHEIsoNoiseFilterResultSrc = cms.InputTag('HBHENoiseFilterResultProducer:HBHEIsoNoiseFilterResult:DavisNtuple'),
 							triggerResultsPatSrc = cms.InputTag("TriggerResults","","PAT"),
 							triggerResultsRecoSrc = cms.InputTag("TriggerResults","","RECO")
 							                 )
@@ -476,7 +477,7 @@ process.e = cms.EndPath(process.out)
 
 
 process.options   = cms.untracked.PSet( wantSummary = cms.untracked.bool(True) )
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(500) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(50) )
 
 
 process.TFileService = cms.Service("TFileService", fileName = cms.string("NtupleFileCumulativeInfo.root"))

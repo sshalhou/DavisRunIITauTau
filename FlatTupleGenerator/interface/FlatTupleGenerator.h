@@ -186,19 +186,34 @@ public:
 	int CandidateEventType;  		/* see TupleObjects/interface/TupleCandidateEventTypes.h */
 	float TauEsNumberSigmasShifted; /* number of sigmas the tau ES was shifted in this event */
 	double SVMass; 		  			/* SVFit Mass could have used pfMET or mvaMET, see TupleConfigurations/python/ConfigNtupleContent_cfi.py */
+	double SVTransverseMass; 		/* SVFit Transverse Mass could have used pfMET or mvaMET, see TupleConfigurations/python/ConfigNtupleContent_cfi.py */
 	double VISMass; 	  			/* the visible mass  */
 	double MTmvaMET_leg1; 			/* MT using mva MET & leg1 */
 	double MTmvaMET_leg2; 			/* MT using mva MET & leg2 */
 	double MTpfMET_leg1;  			/* MT using pf MET & leg1 */ 	
 	double MTpfMET_leg2;  			/* MT using pf MET & leg2 */
+	double MTpuppiMET_leg1;  		/* MT using puppi MET & leg1 */ 	
+	double MTpuppiMET_leg2;  		/* MT using puppi MET & leg2 */
 	double mvaMET;		  			/* the MVA MET   - computed pairwise for leg1 and leg2 */
 	double mvaMETphi;	  			/* the MVA MET phi - computed pairwise for leg1 and leg2 */	
 	double mvaMET_cov00;  			/* MVA MET significnace matrix element 00 */
 	double mvaMET_cov01;  			/* MVA MET significnace matrix element 01 */	
 	double mvaMET_cov10;  			/* MVA MET significnace matrix element 10 */	
 	double mvaMET_cov11;  			/* MVA MET significnace matrix element 11 */	  
-	double pfMET;					/* the PF MET   - computed pairwise for leg1 and leg2 */
-	double pfMETphi;				/* the PF MET phi  - computed pairwise for leg1 and leg2 */
+	double pfMET;					/* the PF MET   - type 1 corr */
+	double pfMETphi;				/* the PF MET phi  - type 1 corr */
+	double puppiMET;				/* the puppi MET   - type 1 corr(?) */
+	double puppiMETphi;				/* the puppi MET phi  - type 1 corr(?) */
+
+	double genMET;					/* the gen-level MET   */
+	double genMETphi;				/* the gen-level MET phi  */
+
+	double RAWpfMET;				/* the PF MET   - RAW */
+	double RAWpfMETphi;				/* the PF MET phi  - RAW */
+	double RAWpuppiMET;				/* the puppi MET   - RAW */
+	double RAWpuppiMETphi;			/* the puppi MET phi  - RAW */
+
+
 	double pfMET_cov00; 			/* PF MET significnace matrix element 00 */
 	double pfMET_cov01; 			/* PF MET significnace matrix element 01 */
 	double pfMET_cov10; 			/* PF MET significnace matrix element 10 */
@@ -325,6 +340,7 @@ public:
 
 	/* MET filters */
 
+	bool HBHEIsoNoiseFilter;
 	bool HBHENoiseFilter;
 	bool CSCTightHaloFilter;
 	bool goodVerticesFilter;
@@ -378,6 +394,12 @@ public:
   	
   	std::vector <std::pair< int, int>> genParticle_pdgId;
   	std::vector <std::pair< int, int>> genParticle_status;
+  	std::vector <std::pair< int, int>> genParticle_isPrompt;
+  	std::vector <std::pair< int, int>> genParticle_isPromptFinalState;
+  	std::vector <std::pair< int, int>> genParticle_isDirectPromptTauDecayProduct;
+  	std::vector <std::pair< int, int>> genParticle_isDirectPromptTauDecayProductFinalState;
+
+
   	std::vector <std::pair< int, double>> genParticle_pt;
   	std::vector <std::pair< int, double>> genParticle_eta;
   	std::vector <std::pair< int, double>> genParticle_phi;

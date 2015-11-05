@@ -299,6 +299,76 @@ class ConfigTriggerHelper:
 			# HLT paths and filters for Run2015C Data   -- END		#
 			#########################################################
 
+		if(self.sampleData_.ProductionInfo == 'Run2015D'):
+			#########################################################		
+			# HLT paths and filters for Run2015D  Data -- START		#
+			#########################################################
+			print '******** SETTING TRIGGER INFO FOR ', self.sampleData_.ProductionInfo
+
+
+			####  Run2015D path : Mu23+Ele12 #####
+
+			mlist1_ = []
+			mlist1_.append('HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v*') # path
+			mlist1_.append('AND') # AND or OR of the following filters
+			mlist1_.append('hltMu23TrkIsoVVLEle12CaloIdLTrackIdLIsoVLMuonlegL3IsoFiltered23') # filter
+			self.muon_masterList_.append(mlist1_)
+
+			elist1_ = []
+			elist1_.append('HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v*') # path
+			elist1_.append('AND') # AND or OR of the following filters
+			elist1_.append('hltMu23TrkIsoVVLEle12CaloIdLTrackIdLIsoVLElectronlegTrackIsoFilter') # filter
+			self.electron_masterList_.append(elist1_)
+
+
+			#### Run2015D path : Mu8+Ele23 #####
+
+			mlist2_ = []
+			mlist2_.append('HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v*') # path
+			mlist2_.append('AND') # AND or OR of the following filters
+			mlist2_.append('hltMu8TrkIsoVVLEle23CaloIdLTrackIdLIsoVLMuonlegL3IsoFiltered8') # filter
+			self.muon_masterList_.append(mlist2_)
+
+			elist2_ = []
+			elist2_.append('HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v*') # path
+			elist2_.append('AND') # AND or OR of the following filters
+			elist2_.append('hltMu8TrkIsoVVLEle23CaloIdLTrackIdLIsoVLElectronlegTrackIsoFilter') # filter
+			self.electron_masterList_.append(elist2_)
+
+	
+			#### Run2015D path : Iso Mu 18 #####
+
+			mlist3_ = []
+			mlist3_.append('HLT_IsoMu18_v*') # path
+			mlist3_.append('AND') # AND or OR of the following filters
+			mlist3_.append('hltL3crIsoL1sMu16L1f0L2f10QL3f18QL3trkIsoFiltered0p09') # filter
+			self.muon_masterList_.append(mlist3_)
+
+
+			#### Run2015D path : Ele23 #####
+
+
+			elist4_ = []
+			elist4_.append('HLT_Ele23_WPLoose_Gsf_v*') # path
+			elist4_.append('AND') # AND or OR of the following filters
+			elist4_.append('hltEle23WPLooseGsfTrackIsoFilter') # filter
+			self.electron_masterList_.append(elist4_)
+
+
+
+			#### Run2015D path : Double Med Iso PF Tau 35 #####
+
+			tlist3_ = []
+			tlist3_.append('HLT_DoubleMediumIsoPFTau35_Trk1_eta2p1_Reg_v*') # path
+			tlist3_.append('AND') # AND or OR of the following filters
+			tlist3_.append('hltDoublePFTau35TrackPt1MediumIsolationDz02Reg') # filter
+			self.tau_masterList_.append(tlist3_)
+
+
+			#########################################################		
+			# HLT paths and filters for Run2015D Data   -- END		#
+			#########################################################
+
 
 		if(self.sampleData_.ProductionInfo == 'Spring15MC'):
 			#########################################################		
@@ -402,6 +472,127 @@ class ConfigTriggerHelper:
 			#########################################################		
 			# HLT paths and filters for Spring15 MC   -- END		#
 			#########################################################
+
+		if(self.sampleData_.ProductionInfo == 'Spring15MCminiAODv2'):
+			#########################################################		
+			# HLT paths and filters for Spring15MCminiAODv2   -- START		#
+			#########################################################
+			print '******** SETTING TRIGGER INFO FOR ', self.sampleData_.ProductionInfo
+			####  Spring15MCminiAODv2 path : Mu23+Ele12 #####
+
+			mlist1_ = []
+			mlist1_.append('HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v*') # path
+			mlist1_.append('AND') # AND or OR of the following filters
+			mlist1_.append('hltMu23TrkIsoVVLEle12CaloIdLTrackIdLIsoVLMuonlegL3IsoFiltered23') # filter
+			self.muon_masterList_.append(mlist1_)
+
+			elist1_ = []
+			elist1_.append('HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v*') # path
+			elist1_.append('AND') # AND or OR of the following filters
+			elist1_.append('hltMu23TrkIsoVVLEle12CaloIdLTrackIdLIsoVLElectronlegTrackIsoFilter') # filter
+			self.electron_masterList_.append(elist1_)
+
+			#### Spring15MCminiAODv2 path : Mu8+Ele23 #####
+
+			mlist2_ = []
+			mlist2_.append('HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v*') # path
+			mlist2_.append('AND') # AND or OR of the following filters
+			mlist2_.append('hltMu8TrkIsoVVLEle23CaloIdLTrackIdLIsoVLMuonlegL3IsoFiltered8') # filter
+			self.muon_masterList_.append(mlist2_)
+
+			elist2_ = []
+			elist2_.append('HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v*') # path
+			elist2_.append('AND') # AND or OR of the following filters
+			elist2_.append('hltMu8TrkIsoVVLEle23CaloIdLTrackIdLIsoVLElectronlegTrackIsoFilter') # filter
+			self.electron_masterList_.append(elist2_)
+
+			#### Spring15MCminiAODv2 path : Iso Mu 24 #####
+
+			mlist3_ = []
+			mlist3_.append('HLT_IsoMu24_eta2p1_v*') # path
+			mlist3_.append('AND') # AND or OR of the following filters
+			mlist3_.append('hltL3crIsoL1sMu20Eta2p1L1f0L2f10QL3f24QL3trkIsoFiltered0p09') # filter
+			self.muon_masterList_.append(mlist3_)
+
+			#### Spring15MCminiAODv2 path : Iso Mu 27 #####
+
+			mlist4_ = []
+			mlist4_.append('HLT_IsoMu27_v*') # path
+			mlist4_.append('AND') # AND or OR of the following filters
+			mlist4_.append('hltL3crIsoL1sMu25L1f0L2f10QL3f27QL3trkIsoFiltered0p09') # filter
+			self.muon_masterList_.append(mlist4_)
+
+
+			#### Spring15MCminiAODv2 path : Iso Mu 17 PF tau 20 #####
+
+			mlist5_ = []
+			mlist5_.append('HLT_IsoMu17_eta2p1_LooseIsoPFTau20_v*') # path
+			mlist5_.append('AND') # AND or OR of the following filters
+			mlist5_.append('hltL3crIsoL1sMu16erTauJet20erL1f0L2f10QL3f17QL3trkIsoFiltered0p09') # filter
+			mlist5_.append('hltOverlapFilterIsoMu17LooseIsoPFTau20') # filter
+			self.muon_masterList_.append(mlist5_)
+
+			tlist1_ = []
+			tlist1_.append('HLT_IsoMu17_eta2p1_LooseIsoPFTau20_v*') # path
+			tlist1_.append('AND') # AND or OR of the following filters
+			tlist1_.append('hltPFTau20TrackLooseIsoAgainstMuon') # filter
+			tlist1_.append('hltOverlapFilterIsoMu17LooseIsoPFTau20') # filter
+			self.tau_masterList_.append(tlist1_)
+
+			#### Spring15MCminiAODv2 path : Ele22 PF tau 20 #####
+
+			elist3_ = []
+			elist3_.append('HLT_Ele22_eta2p1_WP75_Gsf_LooseIsoPFTau20_v*') # path
+			elist3_.append('AND') # AND or OR of the following filters
+			elist3_.append('hltEle22WP75L1IsoEG20erTau20erGsfTrackIsoFilter') # filter
+			elist3_.append('hltOverlapFilterIsoEle22WP75GsfLooseIsoPFTau20') # filter
+			self.electron_masterList_.append(elist3_)
+
+			tlist2_ = []
+			tlist2_.append('HLT_Ele22_eta2p1_WP75_Gsf_LooseIsoPFTau20_v*') # path
+			tlist2_.append('AND') # AND or OR of the following filters
+			tlist2_.append('hltPFTau20TrackLooseIso') # filter
+			tlist2_.append('hltOverlapFilterIsoEle22WP75GsfLooseIsoPFTau20') # filter
+			self.tau_masterList_.append(tlist2_)
+
+
+			#### Spring15MCminiAODv2 path : Ele32 #####
+
+			elist4_ = []
+			elist4_.append('HLT_Ele32_eta2p1_WP75_Gsf_v*') # path
+			elist4_.append('AND') # AND or OR of the following filters
+			elist4_.append('hltEle32WP75GsfTrackIsoFilter') # filter
+			self.electron_masterList_.append(elist4_)
+
+			#### Spring15MCminiAODv2 path : Double Med Iso PF Tau 40 #####
+
+			tlist3_ = []
+			tlist3_.append('HLT_DoubleMediumIsoPFTau40_Trk1_eta2p1_Reg_v*') # path
+			tlist3_.append('AND') # AND or OR of the following filters
+			tlist3_.append('hltDoublePFTau40TrackPt1MediumIsolationDz02Reg') # filter
+			self.tau_masterList_.append(tlist3_)
+
+			#### Spring15MCminiAODv2 path : Iso Mu 17 ##### 
+
+			mlist6_ = []
+			mlist6_.append('HLT_IsoMu17_eta2p1_v*') # path
+			mlist6_.append('AND') # AND or OR of the following filters
+			mlist6_.append('hltL3crIsoL1sSingleMu16erL1f0L2f10QL3f17QL3trkIsoFiltered0p09') # filter
+			self.muon_masterList_.append(mlist6_)
+
+			#### Spring15MCminiAODv2 path : Ele22 ##### 
+
+			elist5_ = []
+			elist5_.append('HLT_Ele22_eta2p1_WP75_Gsf_v*') # path
+			elist5_.append('AND') # AND or OR of the following filters
+			elist5_.append('hltSingleEle22WP75GsfTrackIsoFilter') # filter
+			self.electron_masterList_.append(elist5_)
+
+
+			#########################################################		
+			# HLT paths and filters for Spring15MCminiAODv2 MC   -- END		#
+			#########################################################
+
 
 		####################################################################################################
 		# form the actual vsrting to be passed  -- electrons

@@ -411,6 +411,7 @@ class PairWiseMetHelper:
 							second_tauSrc = second_tauSrc_,
 							second_electronSrc = second_electronSrc_,
 							second_muonSrc = second_muonSrc_,							
+							puppiMETSrc = cms.InputTag("slimmedMETsPuppi"),
 							pfMETSrc = cms.InputTag("slimmedMETs"),
 							mvaMETSrc = leplepmet[2],
 						    electronVetoSrc =cms.InputTag("filteredVetoElectrons","","DavisNtuple"),

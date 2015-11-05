@@ -11,9 +11,15 @@ process = cms.Process('DavisNtuple',eras.Run2_25ns) #for 25ns 13 TeV data
 # preliminaries 
 ###################################
 
+#dataSetName_ = "/SingleMuon/Run2015D-05Oct2015-v1/MINIAOD"
+#dataSetName_ = "/SingleMuon/Run2015D-PromptReco-v4/MINIAOD"
+
+dataSetName_ = "/TT_TuneCUETP8M1_13TeV-powheg-pythia8/RunIISpring15MiniAODv2-74X_mcRun2_asymptotic_v2_ext3-v1/MINIAODSIM"
+
+#dataSetName_ = "/SUSYGluGluToHToTauTau_M-160_TuneCUETP8M1_13TeV-pythia8/RunIISpring15MiniAODv2-74X_mcRun2_asymptotic_v2-v1/MINIAODSIM"
 #dataSetName_ = "DUMMY_DATASET_NAME"
 #dataSetName_ = "/SUSYGluGluToHToTauTau_M-160_TuneCUETP8M1_13TeV-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM"
-dataSetName_ = "/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v3/MINIAODSIM"
+#dataSetName_ = "/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v3/MINIAODSIM"
 #dataSetName_ = "/Tau/Run2015C-PromptReco-v1/MINIAOD"
 #process.myProducerLabel = cms.EDProducer('Ntuple')
 from DavisRunIITauTau.TupleConfigurations.ConfigNtupleContent_cfi import *
@@ -92,6 +98,8 @@ print '********** AUTO GLOBAL TAG SET TO  *********************'
 print '**********', process.GlobalTag.globaltag
 print '*******************************************************'
 
+process.load("Configuration.StandardSequences.Geometry_cff")
+
 from JetMETCorrections.Configuration.JetCorrectionServicesAllAlgos_cff import *
 from JetMETCorrections.Configuration.DefaultJEC_cff import *
 
@@ -103,9 +111,14 @@ from JetMETCorrections.Configuration.DefaultJEC_cff import *
 ###################################
 
 myfilelist = cms.untracked.vstring()
-#myfilelist.extend(['file:/uscms_data/d3/shalhout/Spring15_SUSYGluGlu160diTau.root'])
-#myfilelist.extend(['file:/uscms_data/d3/shalhout/Tau_RunC_miniAOD.root'])
-myfilelist.extend(['file:/uscms_data/d3/shalhout/DY_miniAOD.root'])
+#myfilelist.extend(['file:/uscms_data/d3/shalhout/miniAODv2SusyGGH160.root'])
+#myfilelist.extend(['file:/uscms/home/shalhout/no_backup/singleMu_miniAODv2_oct.root'])
+#myfilelist.extend(['file:/uscms/home/shalhout/no_backup/singleMu_miniAODv2_promptv4.root'])
+myfilelist.extend(['file:/uscms/home/shalhout/no_backup/ttCrashMiniAOdv2.root'])
+
+#myfilelist.extend(['file:/eos/uscms/store/user/gfunk/MonoH_Sensitivity/MZP1200_MA0300_p3/151028_143812/0000/step3_1.root'])
+
+
 
 process.source = cms.Source("PoolSource",fileNames=myfilelist)
 
@@ -391,6 +404,7 @@ process.pairIndep = cms.EDProducer('NtuplePairIndependentInfoProducer',
 				  			LHEEventProductSrc = LHEEventProductSrcInputTag,
 				  			sampleInfoSrc = sampleData,
 							HBHENoiseFilterResultSrc = cms.InputTag('HBHENoiseFilterResultProducer:HBHENoiseFilterResult:DavisNtuple'),
+							HBHEIsoNoiseFilterResultSrc = cms.InputTag('HBHENoiseFilterResultProducer:HBHEIsoNoiseFilterResult:DavisNtuple'),
 							triggerResultsPatSrc = cms.InputTag("TriggerResults","","PAT"),
 							triggerResultsRecoSrc = cms.InputTag("TriggerResults","","RECO")
 							                 )
@@ -507,10 +521,19 @@ process.PASSCUTS = cms.EDAnalyzer('FlatTupleGenerator',
 	)
 
 
+process.NOCUTS = cms.EDAnalyzer('FlatTupleGenerator',
+	pairSrc = cms.InputTag('NtupleEvent','NtupleEvent','DavisNtuple'),
+	indepSrc = cms.InputTag('pairIndep','NtupleEventPairIndep','DavisNtuple'),
+	NAME = cms.string("NOCUTS"),
+	EventCutSrc = generalConfig,
+	LeptonCutVecSrc = cms.VPSet(),
+	SVMassConfig = svMassAtFlatTupleConfig
+	)
 
 
 
 process.p *= process.PASSCUTS 
+process.p *= process.NOCUTS 
 
 process.TFileService = cms.Service("TFileService", fileName = cms.string("FlatTuple.root"))
 
@@ -523,7 +546,7 @@ process.TFileService = cms.Service("TFileService", fileName = cms.string("FlatTu
 
 
 process.options   = cms.untracked.PSet( wantSummary = cms.untracked.bool(True) )
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(500) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
 
 
 

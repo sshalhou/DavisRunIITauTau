@@ -75,6 +75,13 @@ public:
 
 	  std::vector <std::pair< int, int>> genParticle_pdgId();
   	std::vector <std::pair< int, int>> genParticle_status();
+
+    std::vector<std::pair< int, int>> genParticle_isPrompt();
+    std::vector<std::pair< int, int>> genParticle_isPromptFinalState();
+    std::vector<std::pair< int, int>> genParticle_isDirectPromptTauDecayProduct();
+    std::vector<std::pair< int, int>> genParticle_isDirectPromptTauDecayProductFinalState();
+
+
   	std::vector <std::pair< int, double>> genParticle_pt();
   	std::vector <std::pair< int, double>> genParticle_eta();
   	std::vector <std::pair< int, double>> genParticle_phi();
@@ -145,6 +152,13 @@ private:
 
   std::vector <std::pair< int, int>> m_genParticle_pdgId;
   std::vector <std::pair< int, int>> m_genParticle_status;
+
+  std::vector<std::pair< int, int>> m_genParticle_isPrompt;
+  std::vector<std::pair< int, int>> m_genParticle_isPromptFinalState;
+  std::vector<std::pair< int, int>> m_genParticle_isDirectPromptTauDecayProduct;
+  std::vector<std::pair< int, int>> m_genParticle_isDirectPromptTauDecayProductFinalState;
+
+
   std::vector <std::pair< int, double>> m_genParticle_pt;
   std::vector <std::pair< int, double>> m_genParticle_eta;
   std::vector <std::pair< int, double>> m_genParticle_phi;

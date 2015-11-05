@@ -522,7 +522,7 @@ void NtupleLepton::userFloatVectorParser(stringVec & labels_,floatVec & values_)
     else if(labels_[i]=="numStrips") {m_numStrips = values_[i];}
     else if(labels_[i]=="dzTauVertex") {m_dzTauVertex = values_[i];}
     else if(labels_[i]=="ZimpactTau") {m_ZimpactTau = values_[i];}
-    else std::cout<<" NOT STORED "<<labels_[i]<<" = "<<values_[i]<<"\n";
+    //else std::cout<<" NOT STORED "<<labels_[i]<<" = "<<values_[i]<<"\n";
   }
 }
     

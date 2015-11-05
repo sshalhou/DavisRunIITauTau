@@ -63,6 +63,7 @@ public:
   /* fill various MET filters */
 
   void fill_HBHENoiseFilter(bool);
+  void fill_HBHEIsoNoiseFilter(bool);
   void fill_CSCTightHaloFilter(bool);
   void fill_goodVerticesFilter(bool);
   void fill_eeBadScFilter(bool);
@@ -99,6 +100,7 @@ public:
   double CodeVersion() const;
 
   bool HBHENoiseFilter() const;
+  bool HBHEIsoNoiseFilter() const;
   bool CSCTightHaloFilter() const;
   bool goodVerticesFilter() const;
   bool eeBadScFilter() const;
@@ -146,6 +148,7 @@ private:
   /* MET filters */
 
   bool m_HBHENoiseFilter;
+  bool m_HBHEIsoNoiseFilter;
   bool m_CSCTightHaloFilter;
   bool m_goodVerticesFilter;
   bool m_eeBadScFilter;

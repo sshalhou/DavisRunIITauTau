@@ -59,6 +59,10 @@ cd -
 git cms-addpkg PhysicsTools/Utilities
 sed -i 's/std::cout/\/\/std::cout/g' PhysicsTools/Utilities/src/LumiReWeighting.cc
 
+# temp fix for PU jet ID and MVA MET incompatibility 
+
+git cms-merge-topic ahinzmann:fixMVAmetPUid
+
 # move the Davis code into the reight area
 
 mv ../../DavisRunIITauTau .

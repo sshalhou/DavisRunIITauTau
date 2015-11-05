@@ -89,6 +89,8 @@ print '********** AUTO GLOBAL TAG SET TO  *********************'
 print '**********', process.GlobalTag.globaltag
 print '*******************************************************'
 
+process.load("Configuration.StandardSequences.Geometry_cff")
+
 from JetMETCorrections.Configuration.JetCorrectionServicesAllAlgos_cff import *
 from JetMETCorrections.Configuration.DefaultJEC_cff import *
 
@@ -388,6 +390,7 @@ process.pairIndep = cms.EDProducer('NtuplePairIndependentInfoProducer',
 				  			LHEEventProductSrc = LHEEventProductSrcInputTag,
 				  			sampleInfoSrc = sampleData,
 							HBHENoiseFilterResultSrc = cms.InputTag('HBHENoiseFilterResultProducer:HBHENoiseFilterResult:DavisNtuple'),
+							HBHEIsoNoiseFilterResultSrc = cms.InputTag('HBHENoiseFilterResultProducer:HBHEIsoNoiseFilterResult:DavisNtuple'),
 							triggerResultsPatSrc = cms.InputTag("TriggerResults","","PAT"),
 							triggerResultsRecoSrc = cms.InputTag("TriggerResults","","RECO")
 							                 )

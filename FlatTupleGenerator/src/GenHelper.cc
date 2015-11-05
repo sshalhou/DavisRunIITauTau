@@ -36,6 +36,14 @@ void GenHelper::init(std::vector<NtupleGenParticle> genVec, NtupleLepton leg1, N
 
 	m_genParticle_pdgId.clear();
 	m_genParticle_status.clear();
+
+
+	m_genParticle_isPrompt.clear();
+	m_genParticle_isPromptFinalState.clear();
+	m_genParticle_isDirectPromptTauDecayProduct.clear();
+	m_genParticle_isDirectPromptTauDecayProductFinalState.clear();
+
+
 	m_genParticle_pt.clear();
 	m_genParticle_eta.clear();
 	m_genParticle_phi.clear();
@@ -60,7 +68,16 @@ void GenHelper::init(std::vector<NtupleGenParticle> genVec, NtupleLepton leg1, N
     NtupleGenParticle GEN = m_genVec[g];  
     
     m_genParticle_pdgId.push_back(std::make_pair(g,  GEN.gen_pdgId()));
-    m_genParticle_status.push_back(std::make_pair(g, GEN.gen_status()));        
+    m_genParticle_status.push_back(std::make_pair(g, GEN.gen_status())); 
+
+
+	m_genParticle_isPrompt.push_back(std::make_pair(g, GEN.gen_isPrompt())); 
+	m_genParticle_isPromptFinalState.push_back(std::make_pair(g, GEN.gen_isPromptFinalState())); 
+	m_genParticle_isDirectPromptTauDecayProduct.push_back(std::make_pair(g, GEN.gen_isDirectPromptTauDecayProduct())); 
+	m_genParticle_isDirectPromptTauDecayProductFinalState.push_back(std::make_pair(g, GEN.gen_isDirectPromptTauDecayProductFinalState())); 
+
+
+
     m_genParticle_pt.push_back(std::make_pair(g, GEN.gen_p4().pt()));
     m_genParticle_eta.push_back(std::make_pair(g, GEN.gen_p4().eta()));
     m_genParticle_phi.push_back(std::make_pair(g, GEN.gen_p4().phi()));
@@ -298,6 +315,15 @@ bool GenHelper::isRecoTauGenEorMu_FROMZ_Matched(NtupleLepton legX,std::vector<Nt
 
 	std::vector <std::pair< int, int>> GenHelper::genParticle_pdgId()  {return m_genParticle_pdgId; };
   	std::vector <std::pair< int, int>> GenHelper::genParticle_status() {return m_genParticle_status; };
+
+  	std::vector <std::pair< int, int>> GenHelper::genParticle_isPrompt() {return m_genParticle_isPrompt; };
+  	std::vector <std::pair< int, int>> GenHelper::genParticle_isPromptFinalState() {return m_genParticle_isPromptFinalState; };
+  	std::vector <std::pair< int, int>> GenHelper::genParticle_isDirectPromptTauDecayProduct() {return m_genParticle_isDirectPromptTauDecayProduct; };
+  	std::vector <std::pair< int, int>> GenHelper::genParticle_isDirectPromptTauDecayProductFinalState() {return m_genParticle_isDirectPromptTauDecayProductFinalState; };
+
+
+
+
   	std::vector <std::pair< int, double>> GenHelper::genParticle_pt()  {return m_genParticle_pt; };
   	std::vector <std::pair< int, double>> GenHelper::genParticle_eta() {return m_genParticle_eta; };
   	std::vector <std::pair< int, double>> GenHelper::genParticle_phi() {return m_genParticle_phi; };

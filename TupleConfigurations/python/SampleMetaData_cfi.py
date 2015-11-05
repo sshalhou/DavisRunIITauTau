@@ -25,25 +25,271 @@ aPSet = cms.PSet(
 				)
 sampleInfo.append(aPSet)
 
+
+
+#########################################
+# 2015Run D Data                        # 
+#########################################
+
+
+
+############
+aPSet = cms.PSet(
+    DataSet = cms.string("/SingleMuon/Run2015D-05Oct2015-v1/MINIAOD"),
+    EventTotal = cms.int32(31298328),
+    EventType = cms.string("DATA"),
+    KeyName = cms.string("Run2015D_SingleMuonOct"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(0.0),
+    ProductionInfo = cms.string("Run2015D")
+)
+sampleInfo.append(aPSet)
+############
+
+############
+aPSet = cms.PSet(
+    DataSet = cms.string("/SingleMuon/Run2015D-PromptReco-v4/MINIAOD"),
+    EventTotal = cms.int32(48914840),
+    EventType = cms.string("DATA"),
+    KeyName = cms.string("Run2015D_SingleMuonPromptRv4"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(0.0),
+    ProductionInfo = cms.string("Run2015D")
+)
+sampleInfo.append(aPSet)
+############
+
+############
+aPSet = cms.PSet(
+    DataSet = cms.string("/SingleElectron/Run2015D-05Oct2015-v1/MINIAOD"),
+    EventTotal = cms.int32(48123667),
+    EventType = cms.string("DATA"),
+    KeyName = cms.string("Run2015D_SingleElectronOct"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(0.0),
+    ProductionInfo = cms.string("Run2015D")
+)
+sampleInfo.append(aPSet)
+############
+
+############
+aPSet = cms.PSet(
+    DataSet = cms.string("/SingleElectron/Run2015D-PromptReco-v4/MINIAOD"),
+    EventTotal = cms.int32(66419726),
+    EventType = cms.string("DATA"),
+    KeyName = cms.string("Run2015D_SingleElectronPromptRv4"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(0.0),
+    ProductionInfo = cms.string("Run2015D")
+)
+sampleInfo.append(aPSet)
+############
+
+############
+aPSet = cms.PSet(
+    DataSet = cms.string("/DoubleEG/Run2015D-05Oct2015-v1/MINIAOD"),
+    EventTotal = cms.int32(37848934),
+    EventType = cms.string("DATA"),
+    KeyName = cms.string("Run2015D_DoubleEGOct"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(0.0),
+    ProductionInfo = cms.string("Run2015D")
+)
+sampleInfo.append(aPSet)
+############
+
+############
+aPSet = cms.PSet(
+    DataSet = cms.string("/DoubleEG/Run2015D-PromptReco-v4/MINIAOD"),
+    EventTotal = cms.int32(42441153),
+    EventType = cms.string("DATA"),
+    KeyName = cms.string("Run2015D_DoubleEGPromptRv4"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(0.0),
+    ProductionInfo = cms.string("Run2015D")
+)
+sampleInfo.append(aPSet)
+############
+
+############
+aPSet = cms.PSet(
+    DataSet = cms.string("/MuonEG/Run2015D-05Oct2015-v2/MINIAOD"),
+    EventTotal = cms.int32(4825579),
+    EventType = cms.string("DATA"),
+    KeyName = cms.string("Run2015D_MuonEGOct"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(0.0),
+    ProductionInfo = cms.string("Run2015D")
+)
+sampleInfo.append(aPSet)
+############
+
+############
+aPSet = cms.PSet(
+    DataSet = cms.string("/MuonEG/Run2015D-PromptReco-v4/MINIAOD"),
+    EventTotal = cms.int32(6593259),
+    EventType = cms.string("DATA"),
+    KeyName = cms.string("Run2015D_MuonEGPromptRv4"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(0.0),
+    ProductionInfo = cms.string("Run2015D")
+)
+sampleInfo.append(aPSet)
+############
+
+############
+aPSet = cms.PSet(
+    DataSet = cms.string("/Tau/Run2015D-05Oct2015-v1/MINIAOD"),
+    EventTotal = cms.int32(6101221),
+    EventType = cms.string("DATA"),
+    KeyName = cms.string("Run2015D_TauOct"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(0.0),
+    ProductionInfo = cms.string("Run2015D")
+)
+sampleInfo.append(aPSet)
+############
+
+############
+aPSet = cms.PSet(
+    DataSet = cms.string("/Tau/Run2015D-PromptReco-v4/MINIAOD"),
+    EventTotal = cms.int32(7767762),
+    EventType = cms.string("DATA"),
+    KeyName = cms.string("Run2015D_TauPromptRv4"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(0.0),
+    ProductionInfo = cms.string("Run2015D")
+)
+sampleInfo.append(aPSet)
+############
+
+
 #########################################
 # mini-AOD Version 2 MC samples         # 
 #########################################
-
 
 ############
 aPSet = cms.PSet(   
     DataSet = cms.string("/SUSYGluGluToHToTauTau_M-160_TuneCUETP8M1_13TeV-pythia8/RunIISpring15MiniAODv2-74X_mcRun2_asymptotic_v2-v1/MINIAODSIM"),
     EventTotal = cms.int32(499610),
     EventType = cms.string("MC"), # valid EventTypes are :  MC, DATA, EMBEDDED (expand as needed)
-    KeyName = cms.string("Spring15v2_SUSY_GGH_160GeV"), # a unique descriptor for this sample to be used throught all parts of the code
+    KeyName = cms.string("Spring15v2_SusyGG160"), # a unique descriptor for this sample to be used throught all parts of the code
     CrossSection = cms.double(1.0), # cross section in pb (include *BR if needed)
     FilterEff = cms.double(1.0), # generator level filter effi. 
     CodeVersion = cms.double(0.0), # allow us to track differences as ntuples and flattuples evolve
-    ProductionInfo = cms.string("Spring15MC") # needed for correct trigger settings
+    ProductionInfo = cms.string("Spring15MCminiAODv2") # needed for correct trigger settings
                 )
 sampleInfo.append(aPSet)
+############
 
 ############
+aPSet = cms.PSet(   
+    DataSet = cms.string("/ZZ_TuneCUETP8M1_13TeV-pythia8/RunIISpring15MiniAODv2-74X_mcRun2_asymptotic_v2-v1/MINIAODSIM"),
+    EventTotal = cms.int32(996944),
+    EventType = cms.string("MC"), # valid EventTypes are :  MC, DATA, EMBEDDED (expand as needed)
+    KeyName = cms.string("Spring15v2_ZZ"), # a unique descriptor for this sample to be used throught all parts of the code
+    CrossSection = cms.double(16.523), # cross section in pb (include *BR if needed)
+    FilterEff = cms.double(1.0), # generator level filter effi. 
+    CodeVersion = cms.double(0.0), # allow us to track differences as ntuples and flattuples evolve
+    ProductionInfo = cms.string("Spring15MCminiAODv2") # needed for correct trigger settings
+                )
+sampleInfo.append(aPSet)
+############
+
+############
+aPSet = cms.PSet(   
+    DataSet = cms.string("/WW_TuneCUETP8M1_13TeV-pythia8/RunIISpring15MiniAODv2-74X_mcRun2_asymptotic_v2-v1/MINIAODSIM"),
+    EventTotal = cms.int32(993640),
+    EventType = cms.string("MC"), # valid EventTypes are :  MC, DATA, EMBEDDED (expand as needed)
+    KeyName = cms.string("Spring15v2_WW"), # a unique descriptor for this sample to be used throught all parts of the code
+    CrossSection = cms.double(115.0), # cross section in pb (include *BR if needed)
+    FilterEff = cms.double(1.0), # generator level filter effi. 
+    CodeVersion = cms.double(0.0), # allow us to track differences as ntuples and flattuples evolve
+    ProductionInfo = cms.string("Spring15MCminiAODv2") # needed for correct trigger settings
+                )
+sampleInfo.append(aPSet)
+############
+
+############
+aPSet = cms.PSet(   
+    DataSet = cms.string("/WZ_TuneCUETP8M1_13TeV-pythia8/RunIISpring15MiniAODv2-74X_mcRun2_asymptotic_v2-v1/MINIAODSIM"),
+    EventTotal = cms.int32(978512),
+    EventType = cms.string("MC"), # valid EventTypes are :  MC, DATA, EMBEDDED (expand as needed)
+    KeyName = cms.string("Spring15v2_WZ"), # a unique descriptor for this sample to be used throught all parts of the code
+    CrossSection = cms.double(47.13), # cross section in pb (include *BR if needed)
+    FilterEff = cms.double(1.0), # generator level filter effi. 
+    CodeVersion = cms.double(0.0), # allow us to track differences as ntuples and flattuples evolve
+    ProductionInfo = cms.string("Spring15MCminiAODv2") # needed for correct trigger settings
+                )
+sampleInfo.append(aPSet)
+############
+
+############
+aPSet = cms.PSet(   
+    DataSet = cms.string("/WJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/RunIISpring15MiniAODv2-74X_mcRun2_asymptotic_v2-v1/MINIAODSIM"),
+    EventTotal = cms.int32(24184766),
+    EventType = cms.string("MC"), # valid EventTypes are :  MC, DATA, EMBEDDED (expand as needed)
+    KeyName = cms.string("Spring15v2_WJets"), # a unique descriptor for this sample to be used throught all parts of the code
+    CrossSection = cms.double(61526.7), # cross section in pb (include *BR if needed)
+    FilterEff = cms.double(1.0), # generator level filter effi. 
+    CodeVersion = cms.double(0.0), # allow us to track differences as ntuples and flattuples evolve
+    ProductionInfo = cms.string("Spring15MCminiAODv2") # needed for correct trigger settings
+                )
+sampleInfo.append(aPSet)
+############
+
+############
+aPSet = cms.PSet(   
+    DataSet = cms.string("/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/RunIISpring15MiniAODv2-74X_mcRun2_asymptotic_v2-v1/MINIAODSIM"),
+    EventTotal = cms.int32(28747969),
+    EventType = cms.string("MC"), # valid EventTypes are :  MC, DATA, EMBEDDED (expand as needed)
+    KeyName = cms.string("Spring15v2_DYJets"), # a unique descriptor for this sample to be used throught all parts of the code
+    CrossSection = cms.double(6025.0), # cross section in pb (include *BR if needed)
+    FilterEff = cms.double(1.0), # generator level filter effi. 
+    CodeVersion = cms.double(0.0), # allow us to track differences as ntuples and flattuples evolve
+    ProductionInfo = cms.string("Spring15MCminiAODv2") # needed for correct trigger settings
+                )
+sampleInfo.append(aPSet)
+############
+
+############
+aPSet = cms.PSet(   
+    DataSet = cms.string("/TT_TuneCUETP8M1_13TeV-powheg-pythia8/RunIISpring15MiniAODv2-74X_mcRun2_asymptotic_v2_ext3-v1/MINIAODSIM"),
+    EventTotal = cms.int32(96834559),
+    EventType = cms.string("MC"), # valid EventTypes are :  MC, DATA, EMBEDDED (expand as needed)
+    KeyName = cms.string("Spring15v2_TTbar"), # a unique descriptor for this sample to be used throught all parts of the code
+    CrossSection = cms.double(831.76), # cross section in pb (include *BR if needed)
+    FilterEff = cms.double(1.0), # generator level filter effi. 
+    CodeVersion = cms.double(0.0), # allow us to track differences as ntuples and flattuples evolve
+    ProductionInfo = cms.string("Spring15MCminiAODv2") # needed for correct trigger settings
+                )
+sampleInfo.append(aPSet)
+############
+
+############
+aPSet = cms.PSet(   
+    DataSet = cms.string("/ZHToTauTau_M125_13TeV_powheg_pythia8/RunIISpring15MiniAODv2-74X_mcRun2_asymptotic_v2-v1/MINIAODSIM"),
+    EventTotal = cms.int32(585353),
+    EventType = cms.string("MC"), # valid EventTypes are :  MC, DATA, EMBEDDED (expand as needed)
+    KeyName = cms.string("Spring15v2_ZH"), # a unique descriptor for this sample to be used throught all parts of the code
+    CrossSection = cms.double(0.0549587), # cross section in pb (include *BR if needed)
+    FilterEff = cms.double(1.0), # generator level filter effi. 
+    CodeVersion = cms.double(0.0), # allow us to track differences as ntuples and flattuples evolve
+    ProductionInfo = cms.string("Spring15MCminiAODv2") # needed for correct trigger settings
+                )
+sampleInfo.append(aPSet)
+############
+
 
 
 

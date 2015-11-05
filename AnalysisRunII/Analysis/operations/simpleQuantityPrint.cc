@@ -64,13 +64,26 @@ void simpleQuantityPrint::handleEvent()
 	std::vector<std::pair<int,int> > genParticle_pdgId = R.getVPII("genParticle_pdgId");
 	std::vector<std::pair<int,double> > genParticle_pt = R.getVPID("genParticle_pt");
 	std::vector<std::pair<int,int> > genDaughter_pdgId = R.getVPII("genDaughter_pdgId");
+	std::vector<std::pair<int,int> > genParticle_isPrompt = R.getVPII("genParticle_isPrompt");
+	std::vector<std::pair<int,int> > genParticle_isPromptFinalState = R.getVPII("genParticle_isPromptFinalState");
+	std::vector<std::pair<int,int> > genParticle_isDirectPromptTauDecayProduct = R.getVPII("genParticle_isDirectPromptTauDecayProduct");
+	std::vector<std::pair<int,int> > genParticle_isDirectPromptTauDecayProductFinalState = R.getVPII("genParticle_isDirectPromptTauDecayProductFinalState");
 	std::vector<std::pair<int,double> > genDaughter_pt = R.getVPID("genDaughter_pt");
 
 	for(std::size_t g = 0; g < genParticle_pdgId.size(); ++g)
 	{
 		std::cout<<" gen partcile @ index "<<g<<" has id = "<<genParticle_pdgId[g].second<<" ";
+		std::cout<<" and has isPrompt "<<genParticle_isPrompt[g].second<<" ";	
+		std::cout<<" and has isPromptFinalState "<<genParticle_isPromptFinalState[g].second<<" ";	
+		std::cout<<" and has isDirectPromptTauDecayProduct "<<genParticle_isDirectPromptTauDecayProduct[g].second<<" ";	
+		std::cout<<" and has isDirectPromptTauDecayProductFinalState "<<genParticle_isDirectPromptTauDecayProductFinalState[g].second<<" ";	
 		std::cout<<"and has pT = "<<genParticle_pt[g].second<<" and has daughters with (id,Pt) of  = [ ";
-		
+	
+
+
+
+
+
 		for(std::size_t d = 0; d < genDaughter_pt.size(); ++d)
 		{
 			/* the first element links daughters/mothers to the genPartcile */
