@@ -1,4 +1,4 @@
-To use the find_limits_13tev script, a yields.txt file must be present in the FindLimits directory. 
+To use the find_limits_13tev script, a yields.txt file must be present in the FindLimits directory. There also must be template datacards for each channel. These will be edited to include the rates and uncertanties from the analysis. Systematics unique to each channel are already present in the templates and will not be edited by the the find_limits_13tev script. 
 
 The mass spectrum parameters can be edited for different ranges of mass points. mass_0 is the lowest mass used, mass_Increment is the increment between mass points, and mass_spec is the number of mass points. 
 
