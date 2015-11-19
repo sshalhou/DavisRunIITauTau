@@ -12,9 +12,11 @@ from DavisRunIITauTau.TupleConfigurations.ConfigNtupleContent_cfi import *
 
 
 class PairWiseMetHelper:
-	def __init__(self,theProcess):
+	def __init__(self,theProcess,theSampleData):
 
 		self.process = theProcess
+		self.sampleData_ = theSampleData
+
 
 		# the maximum number of leptons (not pairs!) to consider
 		# note this will result in many, many empty collections if set too large
@@ -24,11 +26,11 @@ class PairWiseMetHelper:
 
 		# the lepton collection sources (cange defaults with setLeptonSources)
 
-		self.electronSrc 		= 'filteredCustomElectrons::Ntuple'
-		self.muonSrc 			= 'filteredCustomMuons::Ntuple'
-		self.tauEsNominalSrc 	= 'filteredCustomTausEsNominal::Ntuple'
-		self.tauEsUpSrc 		= 'filteredCustomTausEsUp::Ntuple'
-		self.tauEsDownSrc 		= 'filteredCustomTausEsDown::Ntuple'
+		self.electronSrc 		= 'filteredCustomElectrons::DavisNtuple'
+		self.muonSrc 			= 'filteredCustomMuons::DavisNtuple'
+		self.tauEsNominalSrc 	= 'filteredCustomTausEsNominal::DavisNtuple'
+		self.tauEsUpSrc 		= 'filteredCustomTausEsUp::DavisNtuple'
+		self.tauEsDownSrc 		= 'filteredCustomTausEsDown::DavisNtuple'
 
 		# lists containing single lepton collections
 
@@ -43,6 +45,10 @@ class PairWiseMetHelper:
 
 		self.tupleCandidateEvents = cms.VInputTag()
 
+	def printSampleInfo(self):
+		print self.sampleData_
+		return 
+		
 	def runSingleLeptonProducers(self,p):
 		singlePatLeptons = cms.Sequence()
 
@@ -55,7 +61,7 @@ class PairWiseMetHelper:
 				     NAME=cms.string(moduleName))
 			setattr(self.process, moduleName, module)
 			singlePatLeptons += module
-			self.electronList.append(moduleName+':'+moduleName+':Ntuple')
+			self.electronList.append(moduleName+':'+moduleName+':DavisNtuple')
 
 		# the single muons
 		for i in range(0,self.max_leptons+1):
@@ -66,7 +72,7 @@ class PairWiseMetHelper:
 				     NAME=cms.string(moduleName))
 			setattr(self.process, moduleName, module)
 			singlePatLeptons += module
-			self.muonList.append(moduleName+':'+moduleName+':Ntuple')
+			self.muonList.append(moduleName+':'+moduleName+':DavisNtuple')
 
 
 
@@ -79,7 +85,7 @@ class PairWiseMetHelper:
 				     NAME=cms.string(moduleName))
 			setattr(self.process, moduleName, module)
 			singlePatLeptons += module
-			self.tauEsNominalList.append(moduleName+':'+moduleName+':Ntuple')
+			self.tauEsNominalList.append(moduleName+':'+moduleName+':DavisNtuple')
 
 
 		# the single taus Es Up
@@ -92,7 +98,7 @@ class PairWiseMetHelper:
 					     NAME=cms.string(moduleName))
 				setattr(self.process, moduleName, module)
 				singlePatLeptons += module
-				self.tauEsUpList.append(moduleName+':'+moduleName+':Ntuple')
+				self.tauEsUpList.append(moduleName+':'+moduleName+':DavisNtuple')
 
 		# the single taus Es Down
 		if BUILD_TAU_ES_VARIANTS is True :
@@ -104,7 +110,7 @@ class PairWiseMetHelper:
 					     NAME=cms.string(moduleName))
 				setattr(self.process, moduleName, module)
 				singlePatLeptons += module
-				self.tauEsDownList.append(moduleName+':'+moduleName+':Ntuple')
+				self.tauEsDownList.append(moduleName+':'+moduleName+':DavisNtuple')
 
 
 		p *= singlePatLeptons
@@ -125,12 +131,12 @@ class PairWiseMetHelper:
 		#process.pfMVAMEt.srcLeptons = cms.VInputTag("slimmedElectrons")
 		self.process.pfMVAMEt.loadMVAfromDB = cms.bool(True)		
 		#use only if root file access :
-		# self.process.pfMVAMEt.inputFileNames = cms.PSet(
-		#       	U     = cms.FileInPath('RecoMET/METPUSubtraction/data/gbru_7_4_X_miniAOD_25NS_July2015.root'),
-		#        	DPhi  = cms.FileInPath('RecoMET/METPUSubtraction/data/gbrphi_7_4_X_miniAOD_25NS_July2015.root'),
-		#   	    CovU1 = cms.FileInPath('RecoMET/METPUSubtraction/data/gbru1cov_7_4_X_miniAOD_25NS_July2015.root'),
-		#       	CovU2 = cms.FileInPath('RecoMET/METPUSubtraction/data/gbru2cov_7_4_X_miniAOD_25NS_July2015.root')
-		#    )   
+		self.process.pfMVAMEt.inputFileNames = cms.PSet(
+		      	U     = cms.FileInPath('RecoMET/METPUSubtraction/data/gbru_7_4_X_miniAOD_25NS_July2015.root'),
+		       	DPhi  = cms.FileInPath('RecoMET/METPUSubtraction/data/gbrphi_7_4_X_miniAOD_25NS_July2015.root'),
+		  	    CovU1 = cms.FileInPath('RecoMET/METPUSubtraction/data/gbru1cov_7_4_X_miniAOD_25NS_July2015.root'),
+		      	CovU2 = cms.FileInPath('RecoMET/METPUSubtraction/data/gbru2cov_7_4_X_miniAOD_25NS_July2015.root')
+		   )   
 	    # use only if DB access		:
 		self.process.pfMVAMEt.inputRecords = cms.PSet(
 			U     = cms.string('mvaPFMET_747_July2015_U'),
@@ -159,91 +165,213 @@ class PairWiseMetHelper:
 
 
 
-	def runPairWiseMets(self,p):
+	def runPairWiseMetsNoMVAMET(self,p):
 		pairMets = cms.Sequence()		
 	
 		# electron + muon
 		if BUILD_ELECTRON_MUON is True :
 			for i in range(0, self.max_leptons+1):
-				for j in range(i+1, self.max_leptons+1):
-					moduleName = "mvaMetElectronxMuon"+str(i)+"x"+str(j)
+				for j in range(0, self.max_leptons+1):					
 					lep1SrcColl = cms.InputTag(self.electronList[i])
 					lep2SrcColl = cms.InputTag(self.muonList[j])
-					module = self.process.pfMVAMEt.clone(
-							srcLeptons = cms.VInputTag(lep1SrcColl,lep2SrcColl))
-					setattr(self.process, moduleName, module)
-					self.LepPairAndMetList.append([lep1SrcColl,lep2SrcColl,cms.InputTag(moduleName+':'+':Ntuple'),str(i)+"x"+str(j)])
-					pairMets += module
+					self.LepPairAndMetList.append([lep1SrcColl,lep2SrcColl,cms.InputTag("NULL"),str(i)+"x"+str(j)])
 
 		# electron + electron
 		if BUILD_ELECTRON_ELECTRON is True :
 			for i in range(0, self.max_leptons+1):
-				for j in range(i+1, self.max_leptons+1):
-					moduleName = "mvaMetElectronxElectron"+str(i)+"x"+str(j)
-					lep1SrcColl = cms.InputTag(self.electronList[i])
-					lep2SrcColl = cms.InputTag(self.electronList[j])
-					module = self.process.pfMVAMEt.clone(
-							srcLeptons = cms.VInputTag(lep1SrcColl,lep2SrcColl))
-					setattr(self.process, moduleName, module)
-					self.LepPairAndMetList.append([lep1SrcColl,lep2SrcColl,cms.InputTag(moduleName+':'+':Ntuple'),str(i)+"x"+str(j)])
-					pairMets += module
+				for j in range(0, self.max_leptons+1):
+					if i!=j :
+						lep1SrcColl = cms.InputTag(self.electronList[i])
+						lep2SrcColl = cms.InputTag(self.electronList[j])						
+						self.LepPairAndMetList.append([lep1SrcColl,lep2SrcColl,cms.InputTag("NULL"),str(i)+"x"+str(j)])
 
 
 		# muon + muon
 		if BUILD_MUON_MUON is True :
 			for i in range(0, self.max_leptons+1):
-				for j in range(i+1, self.max_leptons+1):
-					moduleName = "mvaMetMuonxMuon"+str(i)+"x"+str(j)
-					lep1SrcColl = cms.InputTag(self.muonList[i])
-					lep2SrcColl = cms.InputTag(self.muonList[j])
-					module = self.process.pfMVAMEt.clone(
-							srcLeptons = cms.VInputTag(lep1SrcColl,lep2SrcColl))
-					setattr(self.process, moduleName, module)
-					self.LepPairAndMetList.append([lep1SrcColl,lep2SrcColl,cms.InputTag(moduleName+':'+':Ntuple'),str(i)+"x"+str(j)])
-					pairMets += module
+				for j in range(0, self.max_leptons+1):
+					if i!=j :
+						lep1SrcColl = cms.InputTag(self.muonList[i])
+						lep2SrcColl = cms.InputTag(self.muonList[j])						
+						self.LepPairAndMetList.append([lep1SrcColl,lep2SrcColl,cms.InputTag("NULL"),str(i)+"x"+str(j)])
 
 
 		# tau Es nominal + tau Es nominal
 		if BUILD_TAU_TAU is True :
 			for i in range(0, self.max_leptons+1):
-				for j in range(i+1, self.max_leptons+1):
-					moduleName = "mvaMetTauEsNominalxTauEsNominal"+str(i)+"x"+str(j)
-					lep1SrcColl = cms.InputTag(self.tauEsNominalList[i])
-					lep2SrcColl = cms.InputTag(self.tauEsNominalList[j])
-					module = self.process.pfMVAMEt.clone(
-							srcLeptons = cms.VInputTag(lep1SrcColl,lep2SrcColl))
-					setattr(self.process, moduleName, module)
-					self.LepPairAndMetList.append([lep1SrcColl,lep2SrcColl,cms.InputTag(moduleName+':'+':Ntuple'),str(i)+"x"+str(j)])
-					pairMets += module
+				for j in range(0, self.max_leptons+1):
+					if i!=j :						
+						lep1SrcColl = cms.InputTag(self.tauEsNominalList[i])
+						lep2SrcColl = cms.InputTag(self.tauEsNominalList[j])
+						self.LepPairAndMetList.append([lep1SrcColl,lep2SrcColl,cms.InputTag("NULL"),str(i)+"x"+str(j)])
 
 
 		# tau Es Up + tau Es Up
 		if BUILD_TAU_TAU is True :
 			if BUILD_TAU_ES_VARIANTS is True :
 				for i in range(0, self.max_leptons+1):
-					for j in range(i+1, self.max_leptons+1):
-						moduleName = "mvaMetTauEsUpxTauEsUp"+str(i)+"x"+str(j)
-						lep1SrcColl = cms.InputTag(self.tauEsUpList[i])
-						lep2SrcColl = cms.InputTag(self.tauEsUpList[j])
-						module = self.process.pfMVAMEt.clone(
-								srcLeptons = cms.VInputTag(lep1SrcColl,lep2SrcColl))
-						setattr(self.process, moduleName, module)
-						self.LepPairAndMetList.append([lep1SrcColl,lep2SrcColl,cms.InputTag(moduleName+':'+':Ntuple'),str(i)+"x"+str(j)])
-						pairMets += module
+					for j in range(0, self.max_leptons+1):
+						if i!=j :							
+							lep1SrcColl = cms.InputTag(self.tauEsUpList[i])
+							lep2SrcColl = cms.InputTag(self.tauEsUpList[j])
+							self.LepPairAndMetList.append([lep1SrcColl,lep2SrcColl,cms.InputTag("NULL"),str(i)+"x"+str(j)])
 
 		# tau Es Down + tau Es Down
 		if BUILD_TAU_TAU is True :
 			if BUILD_TAU_ES_VARIANTS is True :
 				for i in range(0, self.max_leptons+1):
-					for j in range(i+1, self.max_leptons+1):
-						moduleName = "mvaMetTauEsDownxTauEsDown"+str(i)+"x"+str(j)
-						lep1SrcColl = cms.InputTag(self.tauEsDownList[i])
+					for j in range(0, self.max_leptons+1):
+						if i!=j :
+							lep1SrcColl = cms.InputTag(self.tauEsDownList[i])
+							lep2SrcColl = cms.InputTag(self.tauEsDownList[j])
+							self.LepPairAndMetList.append([lep1SrcColl,lep2SrcColl,cms.InputTag("NULL"),str(i)+"x"+str(j)])
+
+		# electron + tau Es nominal
+		if BUILD_ELECTRON_TAU is True :
+			for i in range(0, self.max_leptons+1):
+				for j in range(0, self.max_leptons+1):
+					lep1SrcColl = cms.InputTag(self.electronList[i])
+					lep2SrcColl = cms.InputTag(self.tauEsNominalList[j])
+					self.LepPairAndMetList.append([lep1SrcColl,lep2SrcColl,cms.InputTag("NULL"),str(i)+"x"+str(j)])
+
+		# electron + tau Es Up
+		if BUILD_ELECTRON_TAU is True :
+			if BUILD_TAU_ES_VARIANTS is True:
+				for i in range(0, self.max_leptons+1):
+					for j in range(0, self.max_leptons+1):
+						lep1SrcColl = cms.InputTag(self.electronList[i])
+						lep2SrcColl = cms.InputTag(self.tauEsUpList[j])
+						self.LepPairAndMetList.append([lep1SrcColl,lep2SrcColl,cms.InputTag("NULL"),str(i)+"x"+str(j)])
+
+		# electron + tau Es Down
+		if BUILD_ELECTRON_TAU is True :
+			if BUILD_TAU_ES_VARIANTS is True:		
+				for i in range(0, self.max_leptons+1):
+					for j in range(0, self.max_leptons+1):
+						lep1SrcColl = cms.InputTag(self.electronList[i])
 						lep2SrcColl = cms.InputTag(self.tauEsDownList[j])
+						self.LepPairAndMetList.append([lep1SrcColl,lep2SrcColl,cms.InputTag("NULL"),str(i)+"x"+str(j)])
+
+		# muon + tau Es nominal
+		if BUILD_MUON_TAU is True :
+			for i in range(0, self.max_leptons+1):
+				for j in range(0, self.max_leptons+1):
+					lep1SrcColl = cms.InputTag(self.muonList[i])
+					lep2SrcColl = cms.InputTag(self.tauEsNominalList[j])
+					self.LepPairAndMetList.append([lep1SrcColl,lep2SrcColl,cms.InputTag("NULL"),str(i)+"x"+str(j)])
+
+		# muon + tau Es Up
+		if BUILD_MUON_TAU is True :
+			if BUILD_TAU_ES_VARIANTS is True :
+				for i in range(0, self.max_leptons+1):
+					for j in range(0, self.max_leptons+1):
+						lep1SrcColl = cms.InputTag(self.muonList[i])
+						lep2SrcColl = cms.InputTag(self.tauEsUpList[j])
+						self.LepPairAndMetList.append([lep1SrcColl,lep2SrcColl,cms.InputTag("NULL"),str(i)+"x"+str(j)])
+
+		# muon + tau Es Down
+		if BUILD_MUON_TAU is True :
+			if BUILD_TAU_ES_VARIANTS is True :
+				for i in range(0, self.max_leptons+1):
+					for j in range(0, self.max_leptons+1):						
+						lep1SrcColl = cms.InputTag(self.muonList[i])
+						lep2SrcColl = cms.InputTag(self.tauEsDownList[j])					
+						self.LepPairAndMetList.append([lep1SrcColl,lep2SrcColl,cms.InputTag("NULL"),str(i)+"x"+str(j)])
+
+		p *= pairMets
+		return
+
+
+	def runPairWiseMets(self,p):
+		pairMets = cms.Sequence()		
+	
+		# electron + muon
+		if BUILD_ELECTRON_MUON is True :
+			for i in range(0, self.max_leptons+1):
+				for j in range(0, self.max_leptons+1):
+					moduleName = "mvaMetElectronxMuon"+str(i)+"x"+str(j)
+					lep1SrcColl = cms.InputTag(self.electronList[i])
+					lep2SrcColl = cms.InputTag(self.muonList[j])
+					module = self.process.pfMVAMEt.clone(
+							srcLeptons = cms.VInputTag(lep1SrcColl,lep2SrcColl))
+					setattr(self.process, moduleName, module)
+					self.LepPairAndMetList.append([lep1SrcColl,lep2SrcColl,cms.InputTag(moduleName+':'+':DavisNtuple'),str(i)+"x"+str(j)])
+					pairMets += module
+
+		# electron + electron
+		if BUILD_ELECTRON_ELECTRON is True :
+			for i in range(0, self.max_leptons+1):
+				for j in range(0, self.max_leptons+1):
+					if i!=j :
+						moduleName = "mvaMetElectronxElectron"+str(i)+"x"+str(j)
+						lep1SrcColl = cms.InputTag(self.electronList[i])
+						lep2SrcColl = cms.InputTag(self.electronList[j])
+						module = self.process.pfMVAMEt.clone(
+							srcLeptons = cms.VInputTag(lep1SrcColl,lep2SrcColl))
+						setattr(self.process, moduleName, module)
+						self.LepPairAndMetList.append([lep1SrcColl,lep2SrcColl,cms.InputTag(moduleName+':'+':DavisNtuple'),str(i)+"x"+str(j)])
+						pairMets += module
+
+
+		# muon + muon
+		if BUILD_MUON_MUON is True :
+			for i in range(0, self.max_leptons+1):
+				for j in range(0, self.max_leptons+1):
+					if i!=j :
+						moduleName = "mvaMetMuonxMuon"+str(i)+"x"+str(j)
+						lep1SrcColl = cms.InputTag(self.muonList[i])
+						lep2SrcColl = cms.InputTag(self.muonList[j])
+						module = self.process.pfMVAMEt.clone(
+							srcLeptons = cms.VInputTag(lep1SrcColl,lep2SrcColl))
+						setattr(self.process, moduleName, module)
+						self.LepPairAndMetList.append([lep1SrcColl,lep2SrcColl,cms.InputTag(moduleName+':'+':DavisNtuple'),str(i)+"x"+str(j)])
+						pairMets += module
+
+
+		# tau Es nominal + tau Es nominal
+		if BUILD_TAU_TAU is True :
+			for i in range(0, self.max_leptons+1):
+				for j in range(0, self.max_leptons+1):
+					if i!=j :
+						moduleName = "mvaMetTauEsNominalxTauEsNominal"+str(i)+"x"+str(j)
+						lep1SrcColl = cms.InputTag(self.tauEsNominalList[i])
+						lep2SrcColl = cms.InputTag(self.tauEsNominalList[j])
 						module = self.process.pfMVAMEt.clone(
 								srcLeptons = cms.VInputTag(lep1SrcColl,lep2SrcColl))
 						setattr(self.process, moduleName, module)
-						self.LepPairAndMetList.append([lep1SrcColl,lep2SrcColl,cms.InputTag(moduleName+':'+':Ntuple'),str(i)+"x"+str(j)])
+						self.LepPairAndMetList.append([lep1SrcColl,lep2SrcColl,cms.InputTag(moduleName+':'+':DavisNtuple'),str(i)+"x"+str(j)])
 						pairMets += module
+
+
+		# tau Es Up + tau Es Up
+		if BUILD_TAU_TAU is True :
+			if BUILD_TAU_ES_VARIANTS is True :
+				for i in range(0, self.max_leptons+1):
+					for j in range(0, self.max_leptons+1):
+						if i!=j :
+							moduleName = "mvaMetTauEsUpxTauEsUp"+str(i)+"x"+str(j)
+							lep1SrcColl = cms.InputTag(self.tauEsUpList[i])
+							lep2SrcColl = cms.InputTag(self.tauEsUpList[j])
+							module = self.process.pfMVAMEt.clone(
+								srcLeptons = cms.VInputTag(lep1SrcColl,lep2SrcColl))
+							setattr(self.process, moduleName, module)
+							self.LepPairAndMetList.append([lep1SrcColl,lep2SrcColl,cms.InputTag(moduleName+':'+':DavisNtuple'),str(i)+"x"+str(j)])
+							pairMets += module
+
+		# tau Es Down + tau Es Down
+		if BUILD_TAU_TAU is True :
+			if BUILD_TAU_ES_VARIANTS is True :
+				for i in range(0, self.max_leptons+1):
+					for j in range(0, self.max_leptons+1):
+						if i!=j :
+							moduleName = "mvaMetTauEsDownxTauEsDown"+str(i)+"x"+str(j)
+							lep1SrcColl = cms.InputTag(self.tauEsDownList[i])
+							lep2SrcColl = cms.InputTag(self.tauEsDownList[j])
+							module = self.process.pfMVAMEt.clone(
+								srcLeptons = cms.VInputTag(lep1SrcColl,lep2SrcColl))
+							setattr(self.process, moduleName, module)
+							self.LepPairAndMetList.append([lep1SrcColl,lep2SrcColl,cms.InputTag(moduleName+':'+':DavisNtuple'),str(i)+"x"+str(j)])
+							pairMets += module
 
 		# electron + tau Es nominal
 		if BUILD_ELECTRON_TAU is True :
@@ -255,7 +383,7 @@ class PairWiseMetHelper:
 					module = self.process.pfMVAMEt.clone(
 							srcLeptons = cms.VInputTag(lep1SrcColl,lep2SrcColl))
 					setattr(self.process, moduleName, module)
-					self.LepPairAndMetList.append([lep1SrcColl,lep2SrcColl,cms.InputTag(moduleName+':'+':Ntuple'),str(i)+"x"+str(j)])
+					self.LepPairAndMetList.append([lep1SrcColl,lep2SrcColl,cms.InputTag(moduleName+':'+':DavisNtuple'),str(i)+"x"+str(j)])
 					pairMets += module
 
 		# electron + tau Es Up
@@ -269,7 +397,7 @@ class PairWiseMetHelper:
 						module = self.process.pfMVAMEt.clone(
 								srcLeptons = cms.VInputTag(lep1SrcColl,lep2SrcColl))
 						setattr(self.process, moduleName, module)
-						self.LepPairAndMetList.append([lep1SrcColl,lep2SrcColl,cms.InputTag(moduleName+':'+':Ntuple'),str(i)+"x"+str(j)])
+						self.LepPairAndMetList.append([lep1SrcColl,lep2SrcColl,cms.InputTag(moduleName+':'+':DavisNtuple'),str(i)+"x"+str(j)])
 						pairMets += module
 
 		# electron + tau Es Down
@@ -283,7 +411,7 @@ class PairWiseMetHelper:
 						module = self.process.pfMVAMEt.clone(
 								srcLeptons = cms.VInputTag(lep1SrcColl,lep2SrcColl))
 						setattr(self.process, moduleName, module)
-						self.LepPairAndMetList.append([lep1SrcColl,lep2SrcColl,cms.InputTag(moduleName+':'+':Ntuple'),str(i)+"x"+str(j)])
+						self.LepPairAndMetList.append([lep1SrcColl,lep2SrcColl,cms.InputTag(moduleName+':'+':DavisNtuple'),str(i)+"x"+str(j)])
 						pairMets += module
 
 		# muon + tau Es nominal
@@ -296,7 +424,7 @@ class PairWiseMetHelper:
 					module = self.process.pfMVAMEt.clone(
 							srcLeptons = cms.VInputTag(lep1SrcColl,lep2SrcColl))
 					setattr(self.process, moduleName, module)
-					self.LepPairAndMetList.append([lep1SrcColl,lep2SrcColl,cms.InputTag(moduleName+':'+':Ntuple'),str(i)+"x"+str(j)])
+					self.LepPairAndMetList.append([lep1SrcColl,lep2SrcColl,cms.InputTag(moduleName+':'+':DavisNtuple'),str(i)+"x"+str(j)])
 					pairMets += module
 
 		# muon + tau Es Up
@@ -310,7 +438,7 @@ class PairWiseMetHelper:
 						module = self.process.pfMVAMEt.clone(
 								srcLeptons = cms.VInputTag(lep1SrcColl,lep2SrcColl))
 						setattr(self.process, moduleName, module)
-						self.LepPairAndMetList.append([lep1SrcColl,lep2SrcColl,cms.InputTag(moduleName+':'+':Ntuple'),str(i)+"x"+str(j)])
+						self.LepPairAndMetList.append([lep1SrcColl,lep2SrcColl,cms.InputTag(moduleName+':'+':DavisNtuple'),str(i)+"x"+str(j)])
 						pairMets += module
 
 		# muon + tau Es Down
@@ -324,7 +452,7 @@ class PairWiseMetHelper:
 						module = self.process.pfMVAMEt.clone(
 								srcLeptons = cms.VInputTag(lep1SrcColl,lep2SrcColl))
 						setattr(self.process, moduleName, module)
-						self.LepPairAndMetList.append([lep1SrcColl,lep2SrcColl,cms.InputTag(moduleName+':'+':Ntuple'),str(i)+"x"+str(j)])
+						self.LepPairAndMetList.append([lep1SrcColl,lep2SrcColl,cms.InputTag(moduleName+':'+':DavisNtuple'),str(i)+"x"+str(j)])
 						pairMets += module
 
 		p *= pairMets
@@ -400,10 +528,11 @@ class PairWiseMetHelper:
 							second_tauSrc = second_tauSrc_,
 							second_electronSrc = second_electronSrc_,
 							second_muonSrc = second_muonSrc_,							
+							puppiMETSrc = cms.InputTag("slimmedMETsPuppi"),
 							pfMETSrc = cms.InputTag("slimmedMETs"),
 							mvaMETSrc = leplepmet[2],
-						    electronVetoSrc =cms.InputTag("filteredVetoElectrons","","Ntuple"),
-						    muonVetoSrc = cms.InputTag("filteredVetoMuons","","Ntuple"),				
+						    electronVetoSrc =cms.InputTag("filteredVetoElectrons","","DavisNtuple"),
+						    muonVetoSrc = cms.InputTag("filteredVetoMuons","","DavisNtuple"),				
 						    pairDeltaRmin = cms.double(0.3), 
 						    # should be small since don't want one of the pair in the veto list
 						    # note : this is used for DR(leg1, leg2) >, and for overlap removal from the
@@ -414,23 +543,37 @@ class PairWiseMetHelper:
 						    useMVAMET = cms.bool(USE_MVAMET),
 						    logMterm = cms.double(SVMASS_LOG_M),
 						    svMassVerbose = cms.int32(SVMASS_VERBOSE),
-						    pfMetSig = cms.InputTag("METSignificance:METCovariance:Ntuple")
+						    pfMetSig = cms.InputTag("METSignificance:METCovariance:DavisNtuple")
 									)	
 			setattr(self.process, moduleName, module)
 			pairMaker += module
-			self.tupleCandidateEvents.append(cms.InputTag(moduleName+":"+moduleName+":Ntuple"))		
+			self.tupleCandidateEvents.append(cms.InputTag(moduleName+":"+moduleName+":DavisNtuple"))		
 		p *= pairMaker
 		#print self.tupleCandidateEvents
 		return
 
 
 	def writeToNtuple(self,p):
-		from DavisRunIITauTau.TupleConfigurations.ConfigTupleTriggers_cfi import (electronTriggerPathsAndFilters,
-				electronTriggerMatch_DR, electronTriggerMatch_Types)
-		from DavisRunIITauTau.TupleConfigurations.ConfigTupleTriggers_cfi import (muonTriggerPathsAndFilters,
-				muonTriggerMatch_DR, muonTriggerMatch_Types)
-		from DavisRunIITauTau.TupleConfigurations.ConfigTupleTriggers_cfi import (tauTriggerPathsAndFilters,
-				tauTriggerMatch_DR, tauTriggerMatch_Types)
+		from DavisRunIITauTau.TupleConfigurations.ConfigTupleTriggers_cfi import ConfigTriggerHelper
+
+		# this will set the correct trigger info for the given data type
+		ConfigTriggerHelperInstance = ConfigTriggerHelper(self.sampleData_)
+
+		electronTriggerPathsAndFilters = ConfigTriggerHelperInstance.electronTriggerPathsAndFilters
+		electronTriggerMatch_DR = ConfigTriggerHelperInstance.electronTriggerMatch_DR
+		electronTriggerMatch_Types = ConfigTriggerHelperInstance.electronTriggerMatch_Types
+
+		muonTriggerPathsAndFilters = ConfigTriggerHelperInstance.muonTriggerPathsAndFilters
+		muonTriggerMatch_DR = ConfigTriggerHelperInstance.muonTriggerMatch_DR
+		muonTriggerMatch_Types = ConfigTriggerHelperInstance.muonTriggerMatch_Types
+
+		tauTriggerPathsAndFilters = ConfigTriggerHelperInstance.tauTriggerPathsAndFilters
+		tauTriggerMatch_DR = ConfigTriggerHelperInstance.tauTriggerMatch_DR
+		tauTriggerMatch_Types = ConfigTriggerHelperInstance.tauTriggerMatch_Types
+
+
+		#ConfigTriggerHelperInstance.printTriggerInfo()
+
 		pairWriter = cms.Sequence()
 		moduleName = "NtupleEvent"
 		module = cms.EDProducer('NtupleEventProducer' ,

@@ -21,6 +21,7 @@
 #include "DataFormats/HepMCCandidate/interface/GenParticle.h"
 #include "PhysicsTools/Utilities/interface/LumiReWeighting.h"
 #include "SimDataFormats/PileupSummaryInfo/interface/PileupSummaryInfo.h"
+#include "FWCore/ParameterSet/interface/ParameterSet.h"
 
 
 typedef math::XYZTLorentzVector LorentzVector;
@@ -45,6 +46,10 @@ public:
   /* args are the 0th element in the vertex collection after quality cuts, size of the post-quality cut collection*/
   void fill_vertexInfo(reco::Vertex, unsigned int);
 
+  /* fill sample info */
+
+  void fill_sampleInfo(edm::ParameterSet);
+
   /* fill pileUp info */
   void fill_pileUpInfo(edm::Handle<std::vector<PileupSummaryInfo> >, std::string, std::string); /* strings are mc path, data path */
 
@@ -53,6 +58,20 @@ public:
 
   /* fill NUP */
   void fill_hepNUP(int);
+
+
+  /* fill various MET filters */
+
+  void fill_HBHENoiseFilter(bool);
+  void fill_HBHEIsoNoiseFilter(bool);
+  void fill_CSCTightHaloFilter(bool);
+  void fill_goodVerticesFilter(bool);
+  void fill_eeBadScFilter(bool);
+  void fill_EcalDeadCellTriggerPrimitiveFilter(bool);
+
+
+
+
 
   // getters
 
@@ -71,6 +90,23 @@ public:
   float NumTruePileUpIntP1() const;
   double generatorEventWeight() const;
   int hepNUP() const;
+
+  std::string DataSet() const;
+  int EventTotal() const;
+  std::string EventType() const;
+  std::string KeyName() const;
+  double CrossSection() const;
+  double FilterEff() const;
+  double CodeVersion() const;
+
+  bool HBHENoiseFilter() const;
+  bool HBHEIsoNoiseFilter() const;
+  bool CSCTightHaloFilter() const;
+  bool goodVerticesFilter() const;
+  bool eeBadScFilter() const;
+  bool EcalDeadCellTriggerPrimitiveFilter() const;
+
+
 
 private:
 
@@ -98,6 +134,27 @@ private:
 
   /* n partons at gen level */
   int m_hepNUP;
+
+  /* sample info */
+
+  std::string m_DataSet;
+  int m_EventTotal;
+  std::string m_EventType;
+  std::string m_KeyName;
+  double m_CrossSection;
+  double m_FilterEff;
+  double m_CodeVersion;
+
+  /* MET filters */
+
+  bool m_HBHENoiseFilter;
+  bool m_HBHEIsoNoiseFilter;
+  bool m_CSCTightHaloFilter;
+  bool m_goodVerticesFilter;
+  bool m_eeBadScFilter;
+  bool m_EcalDeadCellTriggerPrimitiveFilter;
+
+
 
 };
 

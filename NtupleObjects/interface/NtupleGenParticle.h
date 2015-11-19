@@ -14,7 +14,7 @@
 #include "DataFormats/Math/interface/LorentzVector.h"
 #include "DavisRunIITauTau/TupleObjects/interface/TupleLepton.h"
 #include "DataFormats/HepMCCandidate/interface/GenParticle.h"
-
+#include "DataFormats/HepMCCandidate/interface/GenStatusFlags.h"
 
 typedef math::XYZTLorentzVector LorentzVector;
 typedef std::vector<std::string> stringVec;
@@ -42,6 +42,13 @@ public:
  
   int gen_pdgId() const; 
   int gen_status() const; 
+
+  int gen_isPrompt() const; 
+  int gen_isPromptFinalState() const; 
+  int gen_isDirectPromptTauDecayProduct() const; 
+  int gen_isDirectPromptTauDecayProductFinalState() const; 
+
+
   LorentzVector gen_p4() const; 
   float gen_vertex_x() const; 
   float gen_vertex_y() const; 
@@ -59,6 +66,10 @@ private:
   /* idea is that every genParticle contains knowledge of mother and all daughters */
   int m_gen_pdgId;
   int m_gen_status;
+  int m_gen_isPrompt;
+  int m_gen_isPromptFinalState;
+  int m_gen_isDirectPromptTauDecayProduct;
+  int m_gen_isDirectPromptTauDecayProductFinalState;
   LorentzVector m_gen_p4;
   float m_gen_vertex_x;
   float m_gen_vertex_y;

@@ -98,6 +98,20 @@ private:
   edm::ParameterSet PUweightSettingsSrc_;
   edm::InputTag mcGenWeightSrc_;
   edm::InputTag LHEEventProductSrc_;
+  edm::ParameterSet sampleInfoSrc_;
+
+  /* parameters for MET Filters; we code 2 versions of TriggerResults 
+     to support both PAT and RECO processes (only used if isValid checks out) */  
+
+  edm::InputTag HBHENoiseFilterResultSrc_;  
+  edm::InputTag HBHEIsoNoiseFilterResultSrc_;  
+
+  edm::EDGetTokenT<edm::TriggerResults> triggerResultsPatSrc_;
+  edm::EDGetTokenT<edm::TriggerResults> triggerResultsRecoSrc_;
+
+
+
+
 };
 
 //
@@ -127,7 +141,12 @@ vertexSrc_(iConfig.getParameter<edm::InputTag>("vertexSrc" )),
 pileupSrc_(iConfig.getParameter<edm::InputTag>("pileupSrc" )),
 PUweightSettingsSrc_(iConfig.getParameter<edm::ParameterSet>("PUweightSettingsSrc")),
 mcGenWeightSrc_(iConfig.getParameter<edm::InputTag>("mcGenWeightSrc")),
-LHEEventProductSrc_(iConfig.getParameter<edm::InputTag>("LHEEventProductSrc"))
+LHEEventProductSrc_(iConfig.getParameter<edm::InputTag>("LHEEventProductSrc")),
+sampleInfoSrc_(iConfig.getParameter<edm::ParameterSet>("sampleInfoSrc")),
+HBHENoiseFilterResultSrc_(iConfig.getParameter<edm::InputTag>("HBHENoiseFilterResultSrc")),
+HBHEIsoNoiseFilterResultSrc_(iConfig.getParameter<edm::InputTag>("HBHEIsoNoiseFilterResultSrc")),
+triggerResultsPatSrc_(consumes<edm::TriggerResults>(iConfig.getParameter<edm::InputTag>("triggerResultsPatSrc"))),
+triggerResultsRecoSrc_(consumes<edm::TriggerResults>(iConfig.getParameter<edm::InputTag>("triggerResultsRecoSrc")))
 {
 
   produces<vector<NtuplePairIndependentInfo>>(NAME_).setBranchAlias(NAME_);
@@ -178,14 +197,23 @@ NtuplePairIndependentInfoProducer::produce(edm::Event& iEvent, const edm::EventS
   iEvent.getByLabel(prunedGenSrc_,prunedGens);
 
 
-  std::size_t reserveSize =  prunedGens->size();
-  pairIndep->reserve( reserveSize );
-
+  std::size_t reserveSize = 0;
+  if(prunedGens.isValid())
+  { 
+    prunedGens->size();
+    pairIndep->reserve( reserveSize );
+  } 
 
   // the instance of NtuplePairIndependentInfo we want to add to the event output
 
   NtuplePairIndependentInfo InfoToWrite;
 
+
+  ////////////////////////////////////////
+  /* fill the sample info PSet   */
+  ////////////////////////////////////////
+
+  InfoToWrite.fill_sampleInfo(sampleInfoSrc_);
 
   /////////////////////////////////////////////////////////////////
   /* start by adding gen particles to InfoToWrite */
@@ -309,7 +337,8 @@ NtuplePairIndependentInfoProducer::produce(edm::Event& iEvent, const edm::EventS
        bool passPF = puANDpf_IdHelper.passPfId(PFjetIDworkingPointSrc_, slimmedJets->at(i).eta(),
                 currentNtupleJet.NHF(), currentNtupleJet.NEMF(), 
                 currentNtupleJet.NumConst(), currentNtupleJet.MUF(), currentNtupleJet.CHF(),
-                 currentNtupleJet.CHM(), currentNtupleJet.CEMF());
+                 currentNtupleJet.CHM(), currentNtupleJet.CEMF(), currentNtupleJet.NumNeutralParticle());
+
 
       currentNtupleJet.fill_PFjetID(passPF);   
 
@@ -369,6 +398,108 @@ NtuplePairIndependentInfoProducer::produce(edm::Event& iEvent, const edm::EventS
     LHE = LHEHandle.product();
     InfoToWrite.fill_hepNUP((LHE->hepeup()).NUP);
   }
+
+  ////////////////////////////////////////////////////////////////////
+  /* check the met filters and write them to the event              */ 
+  ////////////////////////////////////////////////////////////////////
+
+  ///////////////////////////////////
+  // filters re-run on MINI-AOD    //
+  ///////////////////////////////////
+
+  bool Flag_HBHENoiseFilter = 0;
+  bool Flag_HBHEIsoNoiseFilter = 0;
+
+  edm::Handle<bool> HBHENoiseFilterResult;
+  iEvent.getByLabel(HBHENoiseFilterResultSrc_,HBHENoiseFilterResult);
+  Flag_HBHENoiseFilter = *HBHENoiseFilterResult;
+
+  edm::Handle<bool> HBHEIsoNoiseFilterResult;
+  iEvent.getByLabel(HBHEIsoNoiseFilterResultSrc_,HBHEIsoNoiseFilterResult);
+  Flag_HBHEIsoNoiseFilter = *HBHEIsoNoiseFilterResult;
+
+  ///////////////////////////////////
+  // filters read from MINI-AOD    //
+  ///////////////////////////////////
+
+  bool Flag_CSCTightHaloFilter = 0;
+  bool Flag_goodVertices = 0;
+  bool Flag_eeBadScFilter = 0;
+  bool Flag_EcalDeadCellTriggerPrimitiveFilter = 0;
+  //bool Flag_HBHENoiseFilterEX = 0;
+
+  /* mini-AOD existing met filters; for some samples the process is PAT
+  for others it is RECO */
+
+  edm::Handle<edm::TriggerResults> triggerBitsPat;
+  iEvent.getByToken(triggerResultsPatSrc_, triggerBitsPat);
+  
+  edm::Handle<edm::TriggerResults> triggerBitsReco;
+  iEvent.getByToken(triggerResultsRecoSrc_, triggerBitsReco);
+  
+  if( triggerBitsPat.isValid() )
+  {
+    const edm::TriggerNames &namesPat = iEvent.triggerNames(*triggerBitsPat);
+    /////////////
+    for (unsigned int i = 0, n = triggerBitsPat->size(); i < n; ++i) 
+    {
+      if( namesPat.triggerName(i) == "Flag_CSCTightHaloFilter") Flag_CSCTightHaloFilter = triggerBitsPat->accept(i);
+      else if( namesPat.triggerName(i) == "Flag_goodVertices") Flag_goodVertices = triggerBitsPat->accept(i);
+      else if( namesPat.triggerName(i) == "Flag_eeBadScFilter") Flag_eeBadScFilter = triggerBitsPat->accept(i);
+      else if( namesPat.triggerName(i) == "Flag_EcalDeadCellTriggerPrimitiveFilter") Flag_EcalDeadCellTriggerPrimitiveFilter = triggerBitsPat->accept(i);
+      //else if( namesPat.triggerName(i) == "Flag_HBHENoiseFilter") Flag_HBHENoiseFilterEX = triggerBitsPat->accept(i);
+
+    } 
+    /////////////
+  } 
+
+  else if( triggerBitsReco.isValid() )
+  {
+    const edm::TriggerNames &namesReco = iEvent.triggerNames(*triggerBitsReco);
+    /////////////
+    for (unsigned int i = 0, n = triggerBitsReco->size(); i < n; ++i) 
+    {
+      if( namesReco.triggerName(i) == "Flag_CSCTightHaloFilter") Flag_CSCTightHaloFilter = triggerBitsReco->accept(i);
+      else if( namesReco.triggerName(i) == "Flag_goodVertices") Flag_goodVertices = triggerBitsReco->accept(i);
+      else if( namesReco.triggerName(i) == "Flag_eeBadScFilter") Flag_eeBadScFilter = triggerBitsReco->accept(i);
+      else if( namesReco.triggerName(i) == "Flag_EcalDeadCellTriggerPrimitiveFilter") Flag_EcalDeadCellTriggerPrimitiveFilter = triggerBitsReco->accept(i);
+      //else if( namesReco.triggerName(i) == "Flag_HBHENoiseFilter") Flag_HBHENoiseFilterEX = triggerBitsReco->accept(i);
+
+    } 
+    /////////////
+  } 
+
+
+  /////////////////////////////////////
+  // print the filters we care about //
+  /////////////////////////////////////
+
+  // std::cout<<" (re-run) HBHENoiseFilter pass/fail = "<<Flag_HBHENoiseFilter<<"\n";
+  // std::cout<<" (re-run) Flag_HBHEIsoNoiseFilter pass/fail = "<<Flag_HBHEIsoNoiseFilter<<"\n";
+  // std::cout<<" (existing) Flag_HBHENoiseFilterEX pass/fail = "<<Flag_HBHENoiseFilterEX<<"\n";
+  // std::cout<<" (existing) CSCTightHaloFilter pass/fail = "<<Flag_CSCTightHaloFilter<<"\n";
+  // std::cout<<" (existing) goodVertices pass/fail = "<<Flag_goodVertices<<"\n";
+  // std::cout<<" (existing) eeBadScFilter pass/fail = "<<Flag_eeBadScFilter<<"\n";
+  // std::cout<<" (existing) EcalDeadCellTriggerPrimitiveFilter pass/fail = "<<Flag_EcalDeadCellTriggerPrimitiveFilter<<"\n";
+
+
+  //////////////////////////////////////////////////
+  // set the flag values into the InfoToWrite     //
+  //////////////////////////////////////////////////
+
+  InfoToWrite.fill_HBHENoiseFilter(Flag_HBHENoiseFilter); /* careful to take the re-run version */
+  InfoToWrite.fill_HBHEIsoNoiseFilter(Flag_HBHEIsoNoiseFilter); /* careful to take the re-run version */
+
+  InfoToWrite.fill_CSCTightHaloFilter(Flag_CSCTightHaloFilter);
+  InfoToWrite.fill_goodVerticesFilter(Flag_goodVertices);
+  InfoToWrite.fill_eeBadScFilter(Flag_eeBadScFilter);
+  InfoToWrite.fill_EcalDeadCellTriggerPrimitiveFilter(Flag_EcalDeadCellTriggerPrimitiveFilter);
+
+
+  
+
+
+
 
 
   /////////////////////////////////////////////////////////////////

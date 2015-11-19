@@ -70,8 +70,10 @@ private:
   virtual void endRun(edm::Run&, edm::EventSetup const&);
   virtual void beginLuminosityBlock(edm::LuminosityBlock&, edm::EventSetup const&);
   virtual void endLuminosityBlock(edm::LuminosityBlock&, edm::EventSetup const&);
-  double computeSVMass(reco::PFMET,std::vector<svFitStandalone::MeasuredTauLepton>);
-  double computeSVMass(pat::MET,std::vector<svFitStandalone::MeasuredTauLepton>,double,double,double,double);
+
+  /* sv mass is element 0, sv transverse mass is element 1 */
+  std::vector<double> computeSVMassAndSVTransverseMass(reco::PFMET,std::vector<svFitStandalone::MeasuredTauLepton>);
+  std::vector<double> computeSVMassAndSVTransverseMass(pat::MET,std::vector<svFitStandalone::MeasuredTauLepton>,double,double,double,double);
 
 
   // ----------member data ---------------------------
@@ -82,6 +84,7 @@ private:
   edm::InputTag second_tauSrc_;
   edm::InputTag second_electronSrc_;
   edm::InputTag second_muonSrc_;
+  edm::InputTag puppiMETSrc_;
   edm::InputTag pfMETSrc_;
   edm::InputTag mvaMETSrc_;
   edm::InputTag electronVetoSrc_;
@@ -116,6 +119,7 @@ muonSrc_(iConfig.getParameter<edm::InputTag>("muonSrc" )),
 second_tauSrc_(iConfig.getParameter<edm::InputTag>("second_tauSrc" )),
 second_electronSrc_(iConfig.getParameter<edm::InputTag>("second_electronSrc" )),
 second_muonSrc_(iConfig.getParameter<edm::InputTag>("second_muonSrc" )),
+puppiMETSrc_(iConfig.getParameter<edm::InputTag>("puppiMETSrc" )),
 pfMETSrc_(iConfig.getParameter<edm::InputTag>("pfMETSrc" )),
 mvaMETSrc_(iConfig.getParameter<edm::InputTag>("mvaMETSrc" )),
 electronVetoSrc_(iConfig.getParameter<edm::InputTag>("electronVetoSrc" )),
@@ -207,6 +211,11 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
   edm::Handle <std::vector<reco::PFMET> >  mvamets;
   iEvent.getByLabel(mvaMETSrc_,mvamets);
 
+// get puppiMET collection
+  edm::Handle <std::vector<pat::MET> >  puppimets;
+  iEvent.getByLabel(puppiMETSrc_,puppimets);
+
+
   // get pfMET collection
   edm::Handle <std::vector<pat::MET> >  pfmets;
   iEvent.getByLabel(pfMETSrc_,pfmets);
@@ -241,7 +250,8 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
 
           TupleCandidateEvent CurrentCandidateEvent;
           CurrentCandidateEvent.set_pair(electrons->at(i),second_electrons->at(ii));
-          CurrentCandidateEvent.set_mvaMET(mvamets->at(0));
+          if(mvamets.isValid()) CurrentCandidateEvent.set_mvaMET(mvamets->at(0));
+          CurrentCandidateEvent.set_puppiMET(puppimets->at(0));
           CurrentCandidateEvent.set_pfMET(pfmets->at(0));
           CurrentCandidateEvent.set_pfMET_covMatrix(PFsig00, PFsig01, PFsig10, PFsig11);
 
@@ -291,16 +301,18 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
           svFitStandalone::electronMass));
 
 
-        double sv_mass = 0.0;          
+        std::vector<double> sv_mass;
+        sv_mass.clear();         
 
         if(useMVAMET_ && mvamets.isValid())
-          sv_mass = computeSVMass(mvamets->at(0),measuredTauLeptons);
+          sv_mass = computeSVMassAndSVTransverseMass(mvamets->at(0),measuredTauLeptons);
         else if (!useMVAMET_)
-          sv_mass = computeSVMass(pfmets->at(0),measuredTauLeptons,PFsig00,PFsig10,PFsig01,PFsig11);
+          sv_mass = computeSVMassAndSVTransverseMass(pfmets->at(0),measuredTauLeptons,PFsig00,PFsig10,PFsig01,PFsig11);
 
 
 
-        CurrentCandidateEvent.set_SVMass(sv_mass);
+        CurrentCandidateEvent.set_SVMass(sv_mass[0]); // the sv mass
+        CurrentCandidateEvent.set_SVTransverseMass(sv_mass[1]); // the sv transverse mass
 
         TupleCandidateEvents->push_back(CurrentCandidateEvent);
 
@@ -325,7 +337,8 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
 
           TupleCandidateEvent CurrentCandidateEvent;
           CurrentCandidateEvent.set_pair(electrons->at(i),muons->at(ii));
-          CurrentCandidateEvent.set_mvaMET(mvamets->at(0));
+          if(mvamets.isValid())CurrentCandidateEvent.set_mvaMET(mvamets->at(0));
+          CurrentCandidateEvent.set_puppiMET(puppimets->at(0));
           CurrentCandidateEvent.set_pfMET(pfmets->at(0));
           CurrentCandidateEvent.set_pfMET_covMatrix(PFsig00, PFsig01, PFsig10, PFsig11);
 
@@ -375,16 +388,19 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
           svFitStandalone::muonMass));
 
 
-        double sv_mass = 0.0;          
+
+        std::vector<double> sv_mass;
+        sv_mass.clear();              
 
         if(useMVAMET_ && mvamets.isValid())
-          sv_mass = computeSVMass(mvamets->at(0),measuredTauLeptons);
+          sv_mass = computeSVMassAndSVTransverseMass(mvamets->at(0),measuredTauLeptons);
         else if (!useMVAMET_)
-         sv_mass = computeSVMass(pfmets->at(0),measuredTauLeptons,PFsig00,PFsig10,PFsig01,PFsig11);
+          sv_mass = computeSVMassAndSVTransverseMass(pfmets->at(0),measuredTauLeptons,PFsig00,PFsig10,PFsig01,PFsig11);
 
 
 
-        CurrentCandidateEvent.set_SVMass(sv_mass);
+        CurrentCandidateEvent.set_SVMass(sv_mass[0]); // the sv mass
+        CurrentCandidateEvent.set_SVTransverseMass(sv_mass[1]); // the sv transverse mass
 
           TupleCandidateEvents->push_back(CurrentCandidateEvent);
 
@@ -403,7 +419,8 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
 
           TupleCandidateEvent CurrentCandidateEvent;
           CurrentCandidateEvent.set_pair(electrons->at(i),taus->at(ii));
-          CurrentCandidateEvent.set_mvaMET(mvamets->at(0));          
+          if(mvamets.isValid())CurrentCandidateEvent.set_mvaMET(mvamets->at(0));          
+          CurrentCandidateEvent.set_puppiMET(puppimets->at(0));
           CurrentCandidateEvent.set_pfMET(pfmets->at(0));
           CurrentCandidateEvent.set_pfMET_covMatrix(PFsig00, PFsig01, PFsig10, PFsig11);         
 
@@ -454,17 +471,21 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
           taus->at(ii).p4().mass()));
 
 
-        double sv_mass = 0.0;          
+        std::vector<double> sv_mass;
+        sv_mass.clear();         
+
+        
 
         if(useMVAMET_ && mvamets.isValid())
-          sv_mass = computeSVMass(mvamets->at(0),measuredTauLeptons);
+          sv_mass = computeSVMassAndSVTransverseMass(mvamets->at(0),measuredTauLeptons);
         else if (!useMVAMET_)
-          sv_mass = computeSVMass(pfmets->at(0),measuredTauLeptons,PFsig00,PFsig10,PFsig01,PFsig11);
+          sv_mass = computeSVMassAndSVTransverseMass(pfmets->at(0),measuredTauLeptons,PFsig00,PFsig10,PFsig01,PFsig11);
 
 
 
-        CurrentCandidateEvent.set_SVMass(sv_mass);
-
+        CurrentCandidateEvent.set_SVMass(sv_mass[0]); // the sv mass
+        CurrentCandidateEvent.set_SVTransverseMass(sv_mass[1]); // the sv transverse mass
+       
         /* TEMP START */ 
 
         // if(taus->at(ii).userFloat("TauEsVariant")==0.0)
@@ -499,7 +520,8 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
 
           TupleCandidateEvent CurrentCandidateEvent;
           CurrentCandidateEvent.set_pair(muons->at(i),second_muons->at(ii));
-          CurrentCandidateEvent.set_mvaMET(mvamets->at(0));  
+          if(mvamets.isValid())CurrentCandidateEvent.set_mvaMET(mvamets->at(0));  
+          CurrentCandidateEvent.set_puppiMET(puppimets->at(0));
           CurrentCandidateEvent.set_pfMET(pfmets->at(0));
           CurrentCandidateEvent.set_pfMET_covMatrix(PFsig00, PFsig01, PFsig10, PFsig11);
 
@@ -549,21 +571,20 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
           svFitStandalone::muonMass));
 
 
-
-
-
-        double sv_mass = 0.0;          
+        std::vector<double> sv_mass;
+        sv_mass.clear();
 
         if(useMVAMET_ && mvamets.isValid())
-          sv_mass = computeSVMass(mvamets->at(0),measuredTauLeptons);
+          sv_mass = computeSVMassAndSVTransverseMass(mvamets->at(0),measuredTauLeptons);
         else if (!useMVAMET_)
-          sv_mass = computeSVMass(pfmets->at(0),measuredTauLeptons,PFsig00,PFsig10,PFsig01,PFsig11);
+          sv_mass = computeSVMassAndSVTransverseMass(pfmets->at(0),measuredTauLeptons,PFsig00,PFsig10,PFsig01,PFsig11);
 
 
 
-        CurrentCandidateEvent.set_SVMass(sv_mass);
-
-          TupleCandidateEvents->push_back(CurrentCandidateEvent);
+        CurrentCandidateEvent.set_SVMass(sv_mass[0]); // the sv mass
+        CurrentCandidateEvent.set_SVTransverseMass(sv_mass[1]); // the sv transverse mass
+        
+        TupleCandidateEvents->push_back(CurrentCandidateEvent);
 
       }
     }
@@ -583,7 +604,8 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
 
           TupleCandidateEvent CurrentCandidateEvent;
           CurrentCandidateEvent.set_pair(muons->at(i),taus->at(ii));
-          CurrentCandidateEvent.set_mvaMET(mvamets->at(0));    
+          if(mvamets.isValid())CurrentCandidateEvent.set_mvaMET(mvamets->at(0));    
+          CurrentCandidateEvent.set_puppiMET(puppimets->at(0));
           CurrentCandidateEvent.set_pfMET(pfmets->at(0));
           CurrentCandidateEvent.set_pfMET_covMatrix(PFsig00, PFsig01, PFsig10, PFsig11);
 
@@ -637,17 +659,20 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
 
 
 
-        double sv_mass = 0.0;          
+
+
+        std::vector<double> sv_mass;
+        sv_mass.clear(); 
 
         if(useMVAMET_ && mvamets.isValid())
-          sv_mass = computeSVMass(mvamets->at(0),measuredTauLeptons);
+          sv_mass = computeSVMassAndSVTransverseMass(mvamets->at(0),measuredTauLeptons);
         else if (!useMVAMET_)
-          sv_mass = computeSVMass(pfmets->at(0),measuredTauLeptons,PFsig00,PFsig10,PFsig01,PFsig11);
+          sv_mass = computeSVMassAndSVTransverseMass(pfmets->at(0),measuredTauLeptons,PFsig00,PFsig10,PFsig01,PFsig11);
 
 
 
-        CurrentCandidateEvent.set_SVMass(sv_mass);
-
+        CurrentCandidateEvent.set_SVMass(sv_mass[0]); // the sv mass
+        CurrentCandidateEvent.set_SVTransverseMass(sv_mass[1]); // the sv transverse mass
 
         /* TEMP START */ 
 
@@ -689,7 +714,8 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
 
           TupleCandidateEvent CurrentCandidateEvent;
           CurrentCandidateEvent.set_pair(taus->at(i),second_taus->at(ii));
-          CurrentCandidateEvent.set_mvaMET(mvamets->at(0));     
+          if(mvamets.isValid())CurrentCandidateEvent.set_mvaMET(mvamets->at(0));     
+          CurrentCandidateEvent.set_puppiMET(puppimets->at(0));
           CurrentCandidateEvent.set_pfMET(pfmets->at(0));
           CurrentCandidateEvent.set_pfMET_covMatrix(PFsig00, PFsig01, PFsig10, PFsig11);
 
@@ -743,16 +769,18 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
 
 
 
-        double sv_mass = 0.0;          
 
+
+        std::vector<double> sv_mass;
+        sv_mass.clear();         
+        
         if(useMVAMET_ && mvamets.isValid())
-          sv_mass = computeSVMass(mvamets->at(0),measuredTauLeptons);
+          sv_mass = computeSVMassAndSVTransverseMass(mvamets->at(0),measuredTauLeptons);
         else if (!useMVAMET_)
-          sv_mass = computeSVMass(pfmets->at(0),measuredTauLeptons,PFsig00,PFsig10,PFsig01,PFsig11);
+          sv_mass = computeSVMassAndSVTransverseMass(pfmets->at(0),measuredTauLeptons,PFsig00,PFsig10,PFsig01,PFsig11);
 
-
-        CurrentCandidateEvent.set_SVMass(sv_mass);
-
+        CurrentCandidateEvent.set_SVMass(sv_mass[0]); // the sv mass
+        CurrentCandidateEvent.set_SVTransverseMass(sv_mass[1]); // the sv transverse mass
 
           TupleCandidateEvents->push_back(CurrentCandidateEvent);
 
@@ -841,11 +869,15 @@ TupleCandidateEventProducer::fillDescriptions(edm::ConfigurationDescriptions& de
   descriptions.addDefault(desc);
 }
 
-double TupleCandidateEventProducer::computeSVMass(reco::PFMET MET,std::vector<svFitStandalone::MeasuredTauLepton> MTL)
+std::vector<double> TupleCandidateEventProducer::computeSVMassAndSVTransverseMass(reco::PFMET MET,std::vector<svFitStandalone::MeasuredTauLepton> MTL)
 {
 
-  if(!doSVMass_) return 0.0;
+  std::vector<double> zero_return;
+  zero_return.clear();
+  zero_return.push_back(0.0);
+  zero_return.push_back(0.0);
 
+  if(!doSVMass_) return zero_return;
 
 
 
@@ -858,14 +890,29 @@ double TupleCandidateEventProducer::computeSVMass(reco::PFMET MET,std::vector<sv
   covMET[1][1] = MET.getSignificanceMatrix()[1][1];
   if (svMassVerbose_)  covMET.Print();
 
+ std::cout<<MTL.size()<<" size *** \n";
  SVfitStandaloneAlgorithm svFitAlgorithm(MTL, MET.px(),MET.py(), covMET, svMassVerbose_);
 
  if(logMterm_>0)  svFitAlgorithm.addLogM(true, logMterm_);
  else svFitAlgorithm.addLogM(false, 0.);
 
 
- svFitAlgorithm.integrateVEGAS();
- double retSVmass = svFitAlgorithm.getMass();
+ //svFitAlgorithm.integrateVEGAS();
+ //double retSVmass = svFitAlgorithm.getMass();
+
+
+  //edm::FileInPath inputFileName_visPtResolution("TauAnalysis/SVfitStandalone/data/svFitVisMassAndPtResolutionPDF.root");
+  //TH1::AddDirectory(false);  
+  // TFile* inputFile_visPtResolution = new TFile(inputFileName_visPtResolution.fullPath().data());
+  // svFitAlgorithm.shiftVisPt(true, inputFile_visPtResolution);
+  svFitAlgorithm.integrateMarkovChain();
+  std::vector<double> retSVmass;
+  retSVmass.clear();
+
+  retSVmass.push_back(svFitAlgorithm.getMass());
+  retSVmass.push_back(svFitAlgorithm.transverseMass());
+
+  std::cout<<" mass, transverseMass "<<retSVmass[0]<<" "<<retSVmass[1]<<"\n";
 
  return retSVmass;
 
@@ -874,12 +921,17 @@ double TupleCandidateEventProducer::computeSVMass(reco::PFMET MET,std::vector<sv
 
 
 
-double TupleCandidateEventProducer::computeSVMass(pat::MET MET,std::vector<svFitStandalone::MeasuredTauLepton> MTL,
+std::vector<double> TupleCandidateEventProducer::computeSVMassAndSVTransverseMass(pat::MET MET,std::vector<svFitStandalone::MeasuredTauLepton> MTL,
  double sig00, double sig10, double sig01, double sig11)
 {
 
 /* this is a bit complicated since MET SIG is not in PHYS14 (and Spring15?) samples for slimmedMET */
-  if(!doSVMass_) return 0.0;
+  std::vector<double> zero_return;
+  zero_return.clear();
+  zero_return.push_back(0.0);
+  zero_return.push_back(0.0);
+
+  if(!doSVMass_) return zero_return;
 
 
 
@@ -893,12 +945,41 @@ double TupleCandidateEventProducer::computeSVMass(pat::MET MET,std::vector<svFit
 
  SVfitStandaloneAlgorithm svFitAlgorithm(MTL, MET.px(),MET.py(), covMET, svMassVerbose_);
 
+ // std::cout<<" cov 00, 10, 01, 11 "<<sig00<<" , "<<sig10<<" , "<<sig01<<" , "<<sig11<<"\n";
+ // std::cout<<" met x, met y "<<MET.px()<<" "<<MET.py()<<"\n";
+ // std::cout<<" leg 1 pt,eta,phi,M "<<MTL[0].pt()<<" "<<MTL[0].eta()<<" "<<MTL[0].phi()<<" "<<MTL[0].mass()<<"\n";
+ // std::cout<<" leg 2 pt,eta,phi,M "<<MTL[1].pt()<<" "<<MTL[1].eta()<<" "<<MTL[1].phi()<<" "<<MTL[1].mass()<<"\n";
+
+
  if(logMterm_>0)  svFitAlgorithm.addLogM(true, logMterm_);
  else svFitAlgorithm.addLogM(false, 0.);
 
 
- svFitAlgorithm.integrateVEGAS();
- double retSVmass = svFitAlgorithm.getMass();
+ //svFitAlgorithm.integrateVEGAS();
+ //double retSVmass = svFitAlgorithm.getMass();
+
+
+//   edm::FileInPath inputFileName_visPtResolution("TauAnalysis/SVfitStandalone/data/svFitVisMassAndPtResolutionPDF.root");
+//   TH1::AddDirectory(false);  
+//   TFile* inputFile_visPtResolution = new TFile(inputFileName_visPtResolution.fullPath().data());
+//   svFitAlgorithm.shiftVisPt(true, inputFile_visPtResolution);
+
+// std::cout<<" cov 00, 10, 01, 11 "<<sig00<<" , "<<sig10<<" , "<<sig01<<" , "<<sig11<<"\n";
+//  std::cout<<" met x, met y "<<MET.px()<<" "<<MET.py()<<"\n";
+//  std::cout<<" leg 1 pt,eta,phi,M "<<MTL[0].pt()<<" "<<MTL[0].eta()<<" "<<MTL[0].phi()<<" "<<MTL[0].mass()<<"\n";
+//  std::cout<<" leg 2 pt,eta,phi,M "<<MTL[1].pt()<<" "<<MTL[1].eta()<<" "<<MTL[1].phi()<<" "<<MTL[1].mass()<<"\n";
+
+
+
+  svFitAlgorithm.integrateMarkovChain();
+  
+  std::vector<double> retSVmass;
+  retSVmass.clear();
+
+  retSVmass.push_back(svFitAlgorithm.getMass());
+  retSVmass.push_back(svFitAlgorithm.transverseMass());
+
+  std::cout<<" mass, transverseMass "<<retSVmass[0]<<" "<<retSVmass[1]<<"\n";
 
  return retSVmass;
 

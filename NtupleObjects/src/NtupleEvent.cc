@@ -16,10 +16,41 @@ NtupleEvent::NtupleEvent()
 
 }
 
+///// get max pt of all trigger objects match to a given reco leg
 
 
+float NtupleEvent::leg1MaxPtTriggerObjMatch() const
+{
+
+	float max_pt = -9999.999;
+	for(std::size_t i = 0; i< m_leg1_trigMatches.size(); ++i)
+	{
+		if(m_leg1_trigMatches[i].p4().pt()> max_pt) max_pt = m_leg1_trigMatches[i].p4().pt();
+	}
 
 
+//	std::cout<<" leg 1 max pt "<<max_pt<<"\n";
+	return max_pt;
+}
+
+float NtupleEvent::leg2MaxPtTriggerObjMatch() const
+{
+
+
+	float max_pt = -9999.999;
+	for(std::size_t i = 0; i< m_leg2_trigMatches.size(); ++i)
+	{
+		if(m_leg2_trigMatches[i].p4().pt()> max_pt) max_pt = m_leg2_trigMatches[i].p4().pt();
+	}
+
+
+//	std::cout<<" leg 2 max pt "<<max_pt<<"\n";
+	return max_pt;
+
+}
+
+
+/////
 
 void NtupleEvent::fillTriggerMatchesLeg1andLeg2(std::vector<NtupleTrigObject> trigVec1,std::vector<NtupleTrigObject> trigVec2)
 {
@@ -125,19 +156,27 @@ void NtupleEvent::fill(TupleCandidateEvent TCE)
 
 
 	m_SVMass = TCE.SVMass();
+	m_SVTransverseMass = TCE.SVTransverseMass();
 	m_VISMass.push_back((m_leg1.p4()+m_leg2.p4()).M());
-	math::PtEtaPhiMLorentzVector mvamet(TCE.mvaMET()[0].pt(),0.0,TCE.mvaMET()[0].phi(),0.0);
+	// off math::PtEtaPhiMLorentzVector mvamet(TCE.mvaMET()[0].pt(),0.0,TCE.mvaMET()[0].phi(),0.0);
 	math::PtEtaPhiMLorentzVector pfmet(TCE.pfMET()[0].pt(),0.0,TCE.pfMET()[0].phi(),0.0);
+	math::PtEtaPhiMLorentzVector puppimet(TCE.puppiMET()[0].pt(),0.0,TCE.puppiMET()[0].phi(),0.0);
 
 
-	m_MTmvaMET_leg1.push_back(GetTransverseMass(m_leg1.p4(),mvamet));
+	// off m_MTmvaMET_leg1.push_back(GetTransverseMass(m_leg1.p4(),mvamet));
 	m_MTpfMET_leg1.push_back(GetTransverseMass(m_leg1.p4(),pfmet));
+	m_MTpuppiMET_leg1.push_back(GetTransverseMass(m_leg1.p4(),puppimet));
 
-	m_MTmvaMET_leg2.push_back(GetTransverseMass(m_leg2.p4(),mvamet));
+
+	// off m_MTmvaMET_leg2.push_back(GetTransverseMass(m_leg2.p4(),mvamet));
 	m_MTpfMET_leg2.push_back(GetTransverseMass(m_leg2.p4(),pfmet));
+	m_MTpuppiMET_leg2.push_back(GetTransverseMass(m_leg2.p4(),puppimet));
 
-	m_mvaMET = TCE.mvaMET();
+
+	// off m_mvaMET = TCE.mvaMET();
 	m_pfMET = TCE.pfMET();
+	m_puppiMET = TCE.puppiMET();
+
 	m_pfMET_cov00 = TCE.pfMET_cov00();
 	m_pfMET_cov01 = TCE.pfMET_cov01();
 	m_pfMET_cov10 = TCE.pfMET_cov10();
@@ -176,14 +215,21 @@ std::vector<NtupleTrigObject> NtupleEvent::leg2_trigMatches() const { return m_l
 std::vector<NtupleLepton> NtupleEvent::vetoElectron() const {return m_vetoElectron;}
 std::vector<NtupleLepton> NtupleEvent::vetoMuon() const {return  m_vetoMuon;}
 std::vector<double> NtupleEvent::SVMass() const {return  m_SVMass;}
+std::vector<double> NtupleEvent::SVTransverseMass() const {return m_SVTransverseMass;}
 std::vector<double> NtupleEvent::VISMass() const {return  m_VISMass;}
 int NtupleEvent::isOsPair() const {return m_isOsPair;}
 std::vector<double> NtupleEvent::MTmvaMET_leg1() const {return m_MTmvaMET_leg1;}
 std::vector<double> NtupleEvent::MTpfMET_leg1() const {return m_MTpfMET_leg1;}
+std::vector<double> NtupleEvent::MTpuppiMET_leg1() const {return m_MTpuppiMET_leg1;}
+
 std::vector<double> NtupleEvent::MTmvaMET_leg2() const {return m_MTmvaMET_leg2;}
 std::vector<double> NtupleEvent::MTpfMET_leg2() const {return m_MTpfMET_leg2;}
+std::vector<double> NtupleEvent::MTpuppiMET_leg2() const {return m_MTpuppiMET_leg2;}
+
 std::vector<reco::PFMET>  NtupleEvent::mvaMET() const {return m_mvaMET;}
 std::vector<pat::MET>  NtupleEvent::pfMET() const {return m_pfMET;}
+std::vector<pat::MET>  NtupleEvent::puppiMET() const {return m_puppiMET;}
+
 std::vector<double>  NtupleEvent::pfMET_cov00() const {return m_pfMET_cov00;}
 std::vector<double>  NtupleEvent::pfMET_cov01() const {return m_pfMET_cov01;}
 std::vector<double>  NtupleEvent::pfMET_cov10() const {return m_pfMET_cov10;}

@@ -23,6 +23,7 @@ NtupleJet::NtupleJet()
   m_chargedEmEnergyFraction = NAN;
   m_chargedMultiplicityPlusNeutralMultiplicity = NAN;
   m_chargedMultiplicity = NAN;
+  m_neutralMultiplicity = NAN;
   m_defaultBtagAlgorithm_Name = "NULL";
   m_defaultBtagAlgorithm_RawScore = NAN;
   m_defaultBtagAlgorithm_isPassed = 0;
@@ -94,6 +95,7 @@ NtupleJet::NtupleJet()
     m_chargedEmEnergyFraction = aPatJet.chargedEmEnergyFraction();
     m_chargedMultiplicityPlusNeutralMultiplicity = aPatJet.chargedMultiplicity() + aPatJet.neutralMultiplicity();
     m_chargedMultiplicity = aPatJet.chargedMultiplicity();
+    m_neutralMultiplicity = aPatJet.neutralMultiplicity();
 
 
 
@@ -263,6 +265,7 @@ NtupleJet::NtupleJet()
   double NtupleJet::chargedEmEnergyFraction() const { return m_chargedEmEnergyFraction; } 
   double NtupleJet::chargedMultiplicityPlusNeutralMultiplicity() const { return m_chargedMultiplicityPlusNeutralMultiplicity; } 
   double NtupleJet::chargedMultiplicity() const { return m_chargedMultiplicity; } 
+  double NtupleJet::neutralMultiplicity() const { return m_neutralMultiplicity; }
 
   /* we will also access the PF jet ID relevant info using standard names */
   double NtupleJet::NHF() const { return m_neutralHadronEnergyFraction; } 
@@ -272,6 +275,7 @@ NtupleJet::NtupleJet()
   double NtupleJet::CEMF() const { return m_chargedEmEnergyFraction; } 
   double NtupleJet::NumConst() const { return m_chargedMultiplicityPlusNeutralMultiplicity; } 
   double NtupleJet::CHM() const { return m_chargedMultiplicity; } 
+  double NtupleJet::NumNeutralParticle() const {return m_neutralMultiplicity; }
 
   std::string NtupleJet::defaultBtagAlgorithm_Name() const { return m_defaultBtagAlgorithm_Name; }
   double NtupleJet::defaultBtagAlgorithm_RawScore() const { return m_defaultBtagAlgorithm_RawScore; }

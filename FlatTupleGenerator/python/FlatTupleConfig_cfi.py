@@ -5,6 +5,50 @@
 import FWCore.ParameterSet.Config as cms
 from DavisRunIITauTau.TupleConfigurations.and_string_concatonator import and_string_concatonator
 
+##########################################
+# set up SVMass  @ FlatTuple level	     #
+##########################################
+# NOTE : turning this on will *strore* an SVMass 
+#        computed at FlatTuple stage instead of 
+#        using value contained in Ntuple 
+##########################################
+
+
+USE_MVAMET_FOR_SVMASS_FlatTuple = False #  True = MVA MET, False = PFMET
+COMPUTE_SVMASS_FlatTuple = False
+SVMASS_LOG_M_FlatTuple = 0.0
+SVMASS_VERBOSE_FlatTuple = True
+
+print '******************************************'
+print '******************************************'
+
+if COMPUTE_SVMASS_FlatTuple :
+	print 'will (re-)compute SVmass (@ FLATTUPLE level) with log_m term = ', SVMASS_LOG_M_FlatTuple
+	print '*** this will cause FLATUPLE to ignore (& replace) any SVmass values read from NTUPLE level ***'
+	if USE_MVAMET_FOR_SVMASS_FlatTuple :
+		print ' will use mva met in SVmass computation @ FLATTUPLE LEVEL (no recoil corr yet)'
+	else :
+		print 'will use pfMET in SVmass computation @ FLATTUPLE LEVEL (no recoil corr yet)'
+
+else :
+	print '**************************************************'
+	print '***** WARNING SV MASS COMPUTE IS OFF (@ FLATTUPLE level) *****'
+	print '***** WILL DEFAULT TO USING VALUES FROM NTUPLE '
+	print '**************************************************'
+print '******************************************'
+print '******************************************'
+
+
+
+svMassAtFlatTupleConfig = cms.PSet(
+	flatTuple_useMVAmet = cms.bool(USE_MVAMET_FOR_SVMASS_FlatTuple),
+	flatTuple_recomputeSVmass = cms.bool(COMPUTE_SVMASS_FlatTuple),
+	flatTuple_svMassVerbose = cms.bool(SVMASS_VERBOSE_FlatTuple),
+	flatTuple_logMterm = cms.double(SVMASS_LOG_M_FlatTuple)
+	)
+
+
+
 
 # individual object cuts used to build the PSets 
 # each line appended will be concatenated (using &&) into a single cut string
@@ -16,6 +60,8 @@ ele_EleTau.append("abs(eta)<2.1")
 ele_EleTau.append("abs(dxy)<0.045")
 ele_EleTau.append("abs(dz)<0.2")
 ele_EleTau.append("passFail_electronMVA80==1.0")
+ele_EleTau.append("passConversionVeto==1.0")
+ele_EleTau.append("numberOfMissingInnerHits<=1")
 #ele_EleTau.append("relativeIsol('DeltaBetaCorrectedRelIso')<0.1")
 
 
@@ -26,6 +72,9 @@ ele_EleMuon.append("abs(eta)<2.5")
 ele_EleMuon.append("abs(dxy)<0.045")
 ele_EleMuon.append("abs(dz)<0.2")
 ele_EleMuon.append("passFail_electronMVA80==1.0")
+ele_EleMuon.append("passConversionVeto==1.0")
+ele_EleMuon.append("numberOfMissingInnerHits<=1")
+
 #ele_EleMuon.append("relativeIsol('DeltaBetaCorrectedRelIso')<0.15")
 
 
@@ -41,7 +90,7 @@ muon_MuonTau.append("passesMediumMuonId==1.0")
 
 # muon in EleMuon final state :
 muon_EleMuon = []
-muon_EleMuon.append("pt>9")
+muon_EleMuon.append("pt>10")
 muon_EleMuon.append("abs(eta)<2.4")
 muon_EleMuon.append("abs(dxy)<0.045")
 muon_EleMuon.append("abs(dz)<0.2")
@@ -57,7 +106,8 @@ tau_MuonTau.append("pt>20")
 tau_MuonTau.append("abs(eta)<2.3")
 tau_MuonTau.append("tauID('decayModeFindingNewDMs') > 0.5")                                        
 tau_MuonTau.append("abs(dz)<0.2")
-tau_MuonTau.append("abs(dzTauVertex)==0.0")
+#tau_MuonTau.append("abs(dzTauVertex)==0.0")
+tau_MuonTau.append("abs(charge)==1.0")
 
 
 # tau in TauTau final state :
@@ -66,7 +116,8 @@ tau_TauTau.append("pt>45")
 tau_TauTau.append("abs(eta)<2.1")
 tau_TauTau.append("tauID('decayModeFindingNewDMs') > 0.5")                                        
 tau_TauTau.append("abs(dz)<0.2")
-tau_TauTau.append("abs(dzTauVertex)==0.0")
+#tau_TauTau.append("abs(dzTauVertex)==0.0")
+tau_TauTau.append("abs(charge)==1.0")
 
 
 # tau in EleTau final state :
@@ -75,7 +126,8 @@ tau_EleTau.append("pt>20")
 tau_EleTau.append("abs(eta)<2.3")
 tau_EleTau.append("tauID('decayModeFindingNewDMs') > 0.5")                                        
 tau_EleTau.append("abs(dz)<0.2")
-tau_EleTau.append("abs(dzTauVertex)==0.0")
+#tau_EleTau.append("abs(dzTauVertex)==0.0")
+tau_EleTau.append("abs(charge)==1.0")
 
 
 
@@ -91,27 +143,159 @@ cut_tau_MuonTau = cms.string(and_string_concatonator(tau_MuonTau))
 
 
 
+#################################################################
+# trigger cuts for Spring 15 MC mini aod v2  - HLT (_v) VERSION MATTERS!!!  #
+#################################################################
+
+emuTriggerCutSpring15MCminiAODv2 = "((isLeg1GoodForHLTPath('HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v*') &&\
+	isLeg2GoodForHLTPath('HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v*') && leg2.pt>24) ||\
+   (isLeg1GoodForHLTPath('HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v*') &&\
+	isLeg2GoodForHLTPath('HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v*') && leg1.pt>24))"
+
+tautauTriggerCutSpring15MCminiAODv2 = "(isLeg1GoodForHLTPath('HLT_DoubleMediumIsoPFTau40_Trk1_eta2p1_Reg_v*') \
+	&& isLeg2GoodForHLTPath('HLT_DoubleMediumIsoPFTau40_Trk1_eta2p1_Reg_v*'))"
+
+etauTriggerCutSpring15MCminiAODv2 = "(isLeg1GoodForHLTPath('HLT_Ele22_eta2p1_WP75_Gsf_v*') && leg1MaxPtTriggerObjMatch > 23)"
+
+mtauTriggerCutSpring15MCminiAODv2 = "(isLeg1GoodForHLTPath('HLT_IsoMu17_eta2p1_v*') && leg1MaxPtTriggerObjMatch > 18)"
+
+
+
+
+
+#################################################################
+# trigger cuts for Spring 15 MC  - HLT (_v) VERSION MATTERS!!!  #
+#################################################################
+
+emuTriggerCutSpring15 = "((isLeg1GoodForHLTPath('HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v1') &&\
+	isLeg2GoodForHLTPath('HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v1') && leg2.pt>24) ||\
+   (isLeg1GoodForHLTPath('HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v1') &&\
+	isLeg2GoodForHLTPath('HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v1') && leg1.pt>24))"
+
+tautauTriggerCutSpring15 = "(isLeg1GoodForHLTPath('HLT_DoubleMediumIsoPFTau40_Trk1_eta2p1_Reg_v1') \
+	&& isLeg2GoodForHLTPath('HLT_DoubleMediumIsoPFTau40_Trk1_eta2p1_Reg_v1'))"
+
+etauTriggerCutSpring15 = "(isLeg1GoodForHLTPath('HLT_Ele22_eta2p1_WP75_Gsf_LooseIsoPFTau20_v1')\
+	 && isLeg2GoodForHLTPath('HLT_Ele22_eta2p1_WP75_Gsf_LooseIsoPFTau20_v1')) \
+	|| ((isLeg1GoodForHLTPath('HLT_Ele32_eta2p1_WP75_Gsf_v1') && leg1.pt>33))"
+
+mtauTriggerCutSpring15 = "(isLeg1GoodForHLTPath('HLT_IsoMu17_eta2p1_LooseIsoPFTau20_v1') \
+	&& isLeg2GoodForHLTPath('HLT_IsoMu17_eta2p1_LooseIsoPFTau20_v1'))\
+	|| ((isLeg1GoodForHLTPath('HLT_IsoMu24_eta2p1_v1') && leg1.pt>25))"
+
+
+
+
+#################################################################
+# trigger cuts for Run2015C Data  - HLT (_v) VERSION MATTERS!!! #
+# special note :  this is the same for Run2015B Data sine
+# it has identical path names to C (some filters differ though!)
+#################################################################
+
+emuTriggerCutRun2015C = "((isLeg1GoodForHLTPath('HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v2') &&\
+	isLeg2GoodForHLTPath('HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v2') && leg2.pt>24) ||\
+   (isLeg1GoodForHLTPath('HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v2') &&\
+	isLeg2GoodForHLTPath('HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v2') && leg1.pt>24))"
+
+tautauTriggerCutRun2015C = "(isLeg1GoodForHLTPath('HLT_DoubleMediumIsoPFTau40_Trk1_eta2p1_Reg_v2') \
+	&& isLeg2GoodForHLTPath('HLT_DoubleMediumIsoPFTau40_Trk1_eta2p1_Reg_v2'))"
+
+
+
+etauTriggerCutRun2015C = "(isLeg1GoodForHLTPath('HLT_Ele22_eta2p1_WPLoose_Gsf_LooseIsoPFTau20_v1')\
+	 && isLeg2GoodForHLTPath('HLT_Ele22_eta2p1_WPLoose_Gsf_LooseIsoPFTau20_v1')) \
+	|| ((isLeg1GoodForHLTPath('HLT_Ele32_eta2p1_WPTight_Gsf_v1') && leg1.pt>33))"
+
+mtauTriggerCutRun2015C = "(isLeg1GoodForHLTPath('HLT_IsoMu17_eta2p1_LooseIsoPFTau20_v2') \
+	&& isLeg2GoodForHLTPath('HLT_IsoMu17_eta2p1_LooseIsoPFTau20_v2'))\
+	|| ((isLeg1GoodForHLTPath('HLT_IsoMu24_eta2p1_v2') && leg1.pt>25))"
+
+
+#################################################################
+# trigger cuts for Run2015D Data  - HLT (_v) VERSION MATTERS!!! #
+# special note :  this is the same for Run2015B Data sine
+# it has identical path names to D (some filters differ though!)
+#################################################################
+
+emuTriggerCutRun2015D = "((isLeg1GoodForHLTPath('HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v*') &&\
+	isLeg2GoodForHLTPath('HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v*') && leg2.pt>24) ||\
+   (isLeg1GoodForHLTPath('HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v*') &&\
+	isLeg2GoodForHLTPath('HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v*') && leg1.pt>24))"
+
+tautauTriggerCutRun2015D = "(isLeg1GoodForHLTPath('HLT_DoubleMediumIsoPFTau35_Trk1_eta2p1_Reg_v*') \
+	&& isLeg2GoodForHLTPath('HLT_DoubleMediumIsoPFTau35_Trk1_eta2p1_Reg_v*'))"
+
+
+
+etauTriggerCutRun2015D = "(isLeg1GoodForHLTPath('HLT_Ele23_WPLoose_Gsf_v*'))"
+
+
+mtauTriggerCutRun2015D = "(isLeg1GoodForHLTPath('HLT_IsoMu18_v*'))"
+
+
+
+
+################################
+# concatenate trigger cuts     #
+################################
+
+
+
+emuTriggerCut = cms.string(emuTriggerCutSpring15MCminiAODv2+" || "+emuTriggerCutRun2015D)
+tautauTriggerCut = cms.string(tautauTriggerCutSpring15MCminiAODv2+" || "+tautauTriggerCutRun2015D)
+etauTriggerCut = cms.string(etauTriggerCutSpring15MCminiAODv2+" || "+etauTriggerCutRun2015D)
+mtauTriggerCut  = cms.string(mtauTriggerCutSpring15MCminiAODv2+" || "+mtauTriggerCutRun2015D)
+
+
+
+# emuTriggerCut = cms.string("1==1")
+# tautauTriggerCut = cms.string("1==1")
+# etauTriggerCut = cms.string("1==1")
+# mtauTriggerCut  = cms.string("1==1")
+
+
+print "*********************************************************"
+print "FlatTuple trigger cuts set to : "
+print "*********************************************************"
+print " emuTriggerCut = ", emuTriggerCut
+print " tautauTriggerCut = ", tautauTriggerCut
+print " etauTriggerCut = ", etauTriggerCut
+print " mtauTriggerCut = ", mtauTriggerCut
+print "*********************************************************"
+print " should make code so that you don't need to manually adjust this "
+
 # VPSet containing selections for different final states, if PSet is not
 # provided for a given final state the 
 # the events will omitted
+
 
 # main cut vector PSet :
 theCuts = cms.VPSet(
 
 		cms.PSet(   candidatePairType = cms.string("EleTau"),
 					electronID = cut_ele_EleTau,
-					tauID = cut_tau_EleTau
+					tauID = cut_tau_EleTau,
+					minDR = cms.double(0.5),
+					trigger = etauTriggerCut
 				),
 		cms.PSet(   candidatePairType = cms.string("EleMuon"),
 					electronID = cut_ele_EleMuon,
-					muonID = cut_muon_EleMuon
+					muonID = cut_muon_EleMuon,
+					minDR = cms.double(0.3),
+					trigger = emuTriggerCut
+
 				),
 		cms.PSet(   candidatePairType = cms.string("MuonTau"),
 					muonID = cut_muon_MuonTau,
-					tauID = cut_tau_MuonTau
+					tauID = cut_tau_MuonTau,
+					minDR = cms.double(0.5),
+					trigger = mtauTriggerCut
+
 				),
 		cms.PSet(   candidatePairType = cms.string("TauTau"),
-					tauID = cut_tau_TauTau
+					tauID = cut_tau_TauTau,
+					minDR = cms.double(0.5),
+					trigger = tautauTriggerCut
 
 				)
 	)
@@ -131,8 +315,8 @@ generalConfig = cms.PSet(
 			keepTauEsDown = cms.bool(False),
 
 			# how to rank pairs within this selection
-			rankByPtSum = cms.bool(True),
-			rankByIsolation = cms.bool(False),
+			rankByPtSum = cms.bool(False),
+			rankByIsolation = cms.bool(True), # checks leg1 isolation, then pt in case of tie
 			electronIsolationForRank = cms.string("DeltaBetaCorrectedRelIso"),
 			muonIsolationForRank = cms.string("DeltaBetaCorrectedRelIso"),
 			tauIDisolationForRank = cms.string("byCombinedIsolationDeltaBetaCorrRaw3Hits"),
@@ -155,17 +339,28 @@ generalConfig = cms.PSet(
 			# not requested in FlatTupleConfif_cfi.py summary variables
 			# note : the hardcoded THE_MAX variable in FlatTupleGenerator.cc limits the 
 			# number of these that we can keep 
+			# be sure to include the _v1, _v2 etc. version suffix as v* 
+			# also make sure none are repeats 
 
 
 			triggerSummaryChecks = cms.vstring(
-				"HLT_DoubleMediumIsoPFTau40_Trk1_eta2p1_Reg_v1",
-				"HLT_Ele22_eta2p1_WP75_Gsf_LooseIsoPFTau20_v1",
-				"HLT_Ele32_eta2p1_WP75_Gsf_v1",
-				"HLT_IsoMu17_eta2p1_LooseIsoPFTau20_v1",
-				"HLT_IsoMu24_eta2p1_v1",
-				"HLT_IsoMu27_v1",
-				"HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v1",
-				"HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v1"),
+				"HLT_DoubleMediumIsoPFTau40_Trk1_eta2p1_Reg_v*",
+				"HLT_Ele22_eta2p1_WP75_Gsf_LooseIsoPFTau20_v*",
+				"HLT_Ele32_eta2p1_WP75_Gsf_v*",
+				"HLT_IsoMu17_eta2p1_LooseIsoPFTau20_v*",
+				"HLT_IsoMu24_eta2p1_v*",
+				"HLT_IsoMu27_v*",
+				"HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v*",
+				"HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v*",
+				"HLT_Ele22_eta2p1_WPLoose_Gsf_LooseIsoPFTau20_v*",
+				"HLT_Ele32_eta2p1_WPTight_Gsf_v*",
+				"HLT_Ele22_eta2p1_WP75_Gsf_v*",
+				"HLT_IsoMu17_eta2p1_v*",
+				"HLT_DoubleMediumIsoPFTau35_Trk1_eta2p1_Reg_v*",
+				"HLT_Ele23_WPLoose_Gsf_v*",
+				"HLT_IsoMu18_v*"
+				),
+
 
 
 			# the Tau IDs we would like to keep in the FlatTuple
@@ -181,15 +376,25 @@ generalConfig = cms.PSet(
 				"againstMuonLoose3",
 				"againstMuonTight3",
 				"byCombinedIsolationDeltaBetaCorrRaw3Hits",
-				"byIsolationMVA3newDMwoLTraw",
-				"byIsolationMVA3oldDMwoLTraw",
 				"byIsolationMVA3newDMwLTraw",
+				#"byIsolationMVA3newDMwoLTraw",
 				"byIsolationMVA3oldDMwLTraw",
+				#"byIsolationMVA3oldDMwoLTraw",
+				"byLooseCombinedIsolationDeltaBetaCorr3Hits",
+				"byLoosePileupWeightedIsolation3Hits",
+				"byMediumCombinedIsolationDeltaBetaCorr3Hits",
+				"byMediumPileupWeightedIsolation3Hits",
+				"byPileupWeightedIsolationRaw3Hits",
+				"byTightCombinedIsolationDeltaBetaCorr3Hits",
+				"byTightPileupWeightedIsolation3Hits",
 				"chargedIsoPtSum",
+				"decayModeFindingNewDMs",
 				#"decayModeFindingOldDMs",
+				"footprintCorrection",
 				"neutralIsoPtSum",
-				"puCorrPtSum",	
-				"decayModeFindingNewDMs"),
+				"neutralIsoPtSumWeight",
+				"photonPtSumOutsideSignalCone",
+				"puCorrPtSum"),
 
 			###################
 			# jet & bjet ID cut strings
@@ -198,7 +403,7 @@ generalConfig = cms.PSet(
 			#jetIDcut = cms.string("pt>20 && abs(eta) < 4.7 && PU_jetIdPassed && PF_jetIdPassed"),
 			#BjetIDcut = cms.string("pt>20 && abs(eta) < 2.4 && PU_jetIdPassed && PF_jetIdPassed && defaultBtagAlgorithm_isPassed")
 			jetIDcut = cms.string("pt>20 && abs(eta) < 4.7  && PF_jetIdPassed"),
-			BjetIDcut = cms.string("pt>20 && abs(eta) < 2.4 && PF_jetIdPassed && defaultBtagAlgorithm_isPassed")
+			BjetIDcut = cms.string("pt>20 && abs(eta) < 2.4 && PF_jetIdPassed && defaultBtagAlgorithm_RawScore > 0.89") # medium w.p.
 
 					)
 

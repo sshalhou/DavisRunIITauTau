@@ -1,6 +1,8 @@
 /* FlatTupleGenerator imp */
 #include "DavisRunIITauTau/FlatTupleGenerator/interface/FlatTupleGenerator.h" 
-
+#include "TauAnalysis/SVfitStandalone/interface/SVfitStandaloneAlgorithm.h"
+#include "TMatrix.h"
+//#include <signal.h>
 
 
 ////////////////////////////////////////////
@@ -13,9 +15,16 @@ pairSrc_(iConfig.getParameter<edm::InputTag>("pairSrc" )),
 indepSrc_(iConfig.getParameter<edm::InputTag>("indepSrc" )),
 NAME_(iConfig.getParameter<string>("NAME" )),
 EventCutSrc_(iConfig.getParameter<edm::ParameterSet>("EventCutSrc")),
-LeptonCutVecSrc_(iConfig.getParameter<std::vector<edm::ParameterSet>>("LeptonCutVecSrc"))
+LeptonCutVecSrc_(iConfig.getParameter<std::vector<edm::ParameterSet>>("LeptonCutVecSrc")),
+svMassAtFlatTupleConfig_(iConfig.getParameter<edm::ParameterSet>("SVMassConfig"))
 {
 
+  /* read in the svMassAtFlatTupleConfig_ parameters */
+
+  flatTuple_useMVAmet = svMassAtFlatTupleConfig_.getParameter<bool>("flatTuple_useMVAmet");
+  flatTuple_recomputeSVmass = svMassAtFlatTupleConfig_.getParameter<bool>("flatTuple_recomputeSVmass");
+  flatTuple_svMassVerbose = svMassAtFlatTupleConfig_.getParameter<bool>("flatTuple_svMassVerbose");
+  flatTuple_logMterm = svMassAtFlatTupleConfig_.getParameter<double>("flatTuple_logMterm");
 
 
 	/* read in the EventCutSrc varaibles */
@@ -68,6 +77,7 @@ FlatTupleGenerator::~FlatTupleGenerator(){}
 void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 {
 
+//raise(SIGSEGV);
    using namespace edm;
 
 
@@ -93,10 +103,25 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
 
   ///////////////////////////////////////////
   // for each event, store a vector of NtupleEvent (i.e. pair)
-  // objects that pass the specified selection /* coming soon, for now keep all */
+  // objects that pass the specified selection 
+  // this is done separately for each channel since they are ranked
+  // indep. from each other
 
-  std::vector<NtupleEvent> retainedPairs;
-  retainedPairs.clear();
+  std::vector<NtupleEvent> retainedPairs_EleTau;
+  retainedPairs_EleTau.clear();
+
+  std::vector<NtupleEvent> retainedPairs_MuonTau;
+  retainedPairs_MuonTau.clear();
+
+  std::vector<NtupleEvent> retainedPairs_TauTau;
+  retainedPairs_TauTau.clear();
+
+  std::vector<NtupleEvent> retainedPairs_EleMuon;
+  retainedPairs_EleMuon.clear();
+
+  /////////////////////////////
+  // 
+
 
   /////////////////////////////////////
   // now loop through the pairs in the current event
@@ -121,31 +146,97 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
     /* check if the cuts pass */
 
     bool leptonCutsPass = LeptonCutHelper.cutEvaluator(currentPair, LeptonCutVecSrc_);
-    //std::cout<<" lepton cuts ===> "<<leptonCutsPass<<"for type "<<currentPair.CandidateEventType()<<"\n";
 
 
-   if(keepSignPair && keepTauEsVariant && leptonCutsPass) retainedPairs.push_back(currentPair);
+   if(keepSignPair && keepTauEsVariant && leptonCutsPass) 
+   {
+
+    if(currentPair.CandidateEventType() == TupleCandidateEventTypes::EleTau) 
+    { 
+      retainedPairs_EleTau.push_back(currentPair);
+    }
+
+    else if(currentPair.CandidateEventType() == TupleCandidateEventTypes::MuonTau) 
+    { 
+      retainedPairs_MuonTau.push_back(currentPair);
+    }
+   
+    else if(currentPair.CandidateEventType() == TupleCandidateEventTypes::TauTau) 
+    { 
+      retainedPairs_TauTau.push_back(currentPair);
+    }
+
+    else if(currentPair.CandidateEventType() == TupleCandidateEventTypes::EleMuon) 
+    { 
+      retainedPairs_EleMuon.push_back(currentPair);
+    }
+   }
+
+
 
   }
-
-  //std::cout<<" retained pairs size = "<<retainedPairs.size()<<"\n";
-  if(retainedPairs.size()==0) return;
-
-
 
   /////////////////////////
   // next figure out how to rank the pairs 
 
 
-  PairRankHelper rankHelper;
+  PairRankHelper rankHelper_EleMuon;
+  PairRankHelper rankHelper_EleTau;
+  PairRankHelper rankHelper_MuonTau;
+  PairRankHelper rankHelper_TauTau;
 
-  if(rankByPtSum) rankHelper.init(retainedPairs);
-  else if(rankByIsolation) rankHelper.init(retainedPairs,electronIsolationForRank,muonIsolationForRank,tauIDisolationForRank);
+  if(rankByPtSum) 
+  {
+    rankHelper_EleMuon.init(retainedPairs_EleMuon);
+    rankHelper_EleTau.init(retainedPairs_EleTau);
+    rankHelper_MuonTau.init(retainedPairs_MuonTau);
+    rankHelper_TauTau.init(retainedPairs_TauTau);
 
-  std::vector<std::pair<std::size_t,NtupleEvent>> retainedPairsWithRank = rankHelper.returnRankedPairVec();
+  }
 
 
-  // rankHelper.process_pairs(retainedPairs);
+  else if(rankByIsolation) 
+  {
+    rankHelper_EleMuon.init(retainedPairs_EleMuon,electronIsolationForRank,muonIsolationForRank,tauIDisolationForRank);
+    rankHelper_EleTau.init(retainedPairs_EleTau,electronIsolationForRank,muonIsolationForRank,tauIDisolationForRank);
+    rankHelper_MuonTau.init(retainedPairs_MuonTau,electronIsolationForRank,muonIsolationForRank,tauIDisolationForRank);
+    rankHelper_TauTau.init(retainedPairs_TauTau,electronIsolationForRank,muonIsolationForRank,tauIDisolationForRank);
+  }
+
+  // get the individual rank-pair std::pairs
+
+  std::vector<std::pair<std::size_t,NtupleEvent>> retainedPairsWithRank_EleTau = rankHelper_EleTau.returnRankedPairVec();
+  std::vector<std::pair<std::size_t,NtupleEvent>> retainedPairsWithRank_EleMuon = rankHelper_EleMuon.returnRankedPairVec();
+  std::vector<std::pair<std::size_t,NtupleEvent>> retainedPairsWithRank_MuonTau = rankHelper_MuonTau.returnRankedPairVec();
+  std::vector<std::pair<std::size_t,NtupleEvent>> retainedPairsWithRank_TauTau = rankHelper_TauTau.returnRankedPairVec();
+
+  // combine the individual channel pairs into a single vector
+  
+  std::vector<std::pair<std::size_t,NtupleEvent>> retainedPairsWithRank;
+  retainedPairsWithRank.clear();
+
+
+  for(std::size_t v = 0; v<retainedPairsWithRank_EleTau.size(); ++v )
+  {
+    retainedPairsWithRank.push_back(retainedPairsWithRank_EleTau[v]);
+  }
+  for(std::size_t v = 0; v<retainedPairsWithRank_MuonTau.size(); ++v )
+  {
+    retainedPairsWithRank.push_back(retainedPairsWithRank_MuonTau[v]);
+  }
+  for(std::size_t v = 0; v<retainedPairsWithRank_TauTau.size(); ++v )
+  {
+    retainedPairsWithRank.push_back(retainedPairsWithRank_TauTau[v]);
+  }
+
+  for(std::size_t v = 0; v<retainedPairsWithRank_EleMuon.size(); ++v )
+  {
+    retainedPairsWithRank.push_back(retainedPairsWithRank_EleMuon[v]);
+  }
+
+  // check if any pairs from any channels are kept
+
+  if(retainedPairsWithRank.size()==0) return;
 
 
 
@@ -153,6 +244,10 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
   {
 
       reInit();
+
+      pairRank = retainedPairsWithRank[p].first;
+      if(pairRank!=0) continue; /* no reason to keep more than the best pair/event */
+
 
       ////////////////
       // fill some easy stuff first :
@@ -173,7 +268,7 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
 
 
       VISMass = currentPair.VISMass()[0];
-      pairRank = retainedPairsWithRank[p].first;
+      
       
       ////////////////
       // fill the tauIDs for tau legs
@@ -199,6 +294,8 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
       // fill the triggerSummaryChecks for both legs
 
 
+
+
       for(std::size_t x = 0; x<triggerSummaryChecks.size();++x ) 
       {
 
@@ -221,30 +318,63 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
       }
 
 
-      CandidateEventType = currentPair.CandidateEventType();
 
+
+      CandidateEventType = currentPair.CandidateEventType();
 
 
       TauEsNumberSigmasShifted = currentPair.TauEsNumberSigmasShifted();
       isOsPair = currentPair.isOsPair();
       SVMass = currentPair.SVMass()[0];
-      MTmvaMET_leg1 = currentPair.MTmvaMET_leg1()[0];
+      SVTransverseMass = currentPair.SVTransverseMass()[0];
+      //MTmvaMET_leg1 = currentPair.MTmvaMET_leg1()[0];
       MTpfMET_leg1 = currentPair.MTpfMET_leg1()[0];
-      MTmvaMET_leg2 = currentPair.MTmvaMET_leg2()[0];
+      //MTmvaMET_leg2 = currentPair.MTmvaMET_leg2()[0];
       MTpfMET_leg2 = currentPair.MTpfMET_leg2()[0];
-      mvaMET = currentPair.mvaMET()[0].pt();
-      mvaMETphi = currentPair.mvaMET()[0].phi();
-      mvaMET_cov00 = currentPair.mvaMET()[0].getSignificanceMatrix()[0][0];
-      mvaMET_cov01 = currentPair.mvaMET()[0].getSignificanceMatrix()[0][1];
-      mvaMET_cov10 = currentPair.mvaMET()[0].getSignificanceMatrix()[1][0];
-      mvaMET_cov11 = currentPair.mvaMET()[0].getSignificanceMatrix()[1][1];
+      //mvaMET = currentPair.mvaMET()[0].pt();
+      //mvaMETphi = currentPair.mvaMET()[0].phi();
+      //mvaMET_cov00 = currentPair.mvaMET()[0].getSignificanceMatrix()[0][0];
+      //mvaMET_cov01 = currentPair.mvaMET()[0].getSignificanceMatrix()[0][1];
+      //mvaMET_cov10 = currentPair.mvaMET()[0].getSignificanceMatrix()[1][0];
+      //mvaMET_cov11 = currentPair.mvaMET()[0].getSignificanceMatrix()[1][1];
       pfMET = currentPair.pfMET()[0].pt();
       pfMETphi = currentPair.pfMET()[0].phi();
+
+     // std::cout<<" about to access genMET without safety check with isRealData = "<<isRealData<<"\n";
+
+      if(!currentPair.pfMET()[0].genMET())
+      {
+        genMET = 0;
+        genMETphi = 0;
+      } 
+      else 
+      {
+       
+        genMET = currentPair.pfMET()[0].genMET()->pt();
+        genMETphi = currentPair.pfMET()[0].genMET()->phi();
+      }
+    
+  //  std::cout<<genMET<<" = genMET \n";
+
+      RAWpfMET = currentPair.pfMET()[0].uncorPt();
+      RAWpfMETphi = currentPair.pfMET()[0].uncorPhi();
+
+      puppiMET  = currentPair.puppiMET()[0].pt();
+      puppiMETphi = currentPair.puppiMET()[0].phi();
+      RAWpuppiMET = currentPair.puppiMET()[0].uncorPt();
+      RAWpuppiMETphi = currentPair.puppiMET()[0].uncorPhi();
+
+      MTpuppiMET_leg1  = currentPair.MTpuppiMET_leg1()[0];
+      MTpuppiMET_leg2  = currentPair.MTpuppiMET_leg2()[0];
+
 
       pfMET_cov00 = currentPair.pfMET_cov00()[0];
       pfMET_cov01 = currentPair.pfMET_cov01()[0];
       pfMET_cov10 = currentPair.pfMET_cov10()[0];
       pfMET_cov11 = currentPair.pfMET_cov11()[0];  
+
+
+
 
       leg1_leptonType = currentPair.leg1().leptonType();
       leg1_dz = currentPair.leg1().dz();
@@ -437,6 +567,8 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
 
       /* fill veto lepton parameters, MUST FILL IN SAME ORDER FOR ELECTRONS & MUONS */
 
+
+
       for(std::size_t v = 0; v<currentPair.vetoElectron().size(); ++v)
       {
           veto_leptonType.push_back(currentPair.vetoElectron()[v].leptonType());
@@ -489,6 +621,19 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
 
       NtuplePairIndependentInfo currentINDEP =   ((*pairIndepInfos)[0]);
 
+      /* info about the data sample */
+
+
+      DataSet = currentINDEP.DataSet();
+      EventTotal = currentINDEP.EventTotal();
+      EventType = currentINDEP.EventType();
+      KeyName = currentINDEP.KeyName();
+      CrossSection = currentINDEP.CrossSection();
+      FilterEff = currentINDEP.FilterEff();
+      CodeVersion = currentINDEP.CodeVersion();
+
+
+
       /* info about the primary vertex */
       NumberOfGoodVertices = currentINDEP.numberOfGoodVertices();
       vertex_NDOF = currentINDEP.primaryVertex().ndof();
@@ -500,6 +645,18 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
       vertex_positionTheta = currentINDEP.primaryVertex().position().theta();
       vertex_positionEta = currentINDEP.primaryVertex().position().eta();
       vertex_positionPhi = currentINDEP.primaryVertex().position().phi();
+
+      /* MET filters */
+
+      HBHEIsoNoiseFilter = currentINDEP.HBHEIsoNoiseFilter();
+
+      HBHENoiseFilter = currentINDEP.HBHENoiseFilter();
+      CSCTightHaloFilter = currentINDEP.CSCTightHaloFilter();
+      goodVerticesFilter = currentINDEP.goodVerticesFilter();
+      eeBadScFilter = currentINDEP.eeBadScFilter();
+      EcalDeadCellTriggerPrimitiveFilter = currentINDEP.EcalDeadCellTriggerPrimitiveFilter();
+
+
 
       /* pileup & other weights */
   
@@ -520,6 +677,7 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
       numberOfJets =   goodJets.size();
       numberOfBJets =  goodBJets.size();
       numberOfJets30 = 0;
+
 
 
 
@@ -561,13 +719,20 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
       }
  
 
+
+
       /* fill the gen level info, for now ~ exaclty as in Ntuple */
 
       genhelper.init(currentINDEP.genParticles(),currentPair.leg1(),currentPair.leg2(),
                      currentPair.CandidateEventType());
 
+      
       genParticle_pdgId = genhelper.genParticle_pdgId();
       genParticle_status = genhelper.genParticle_status();
+      genParticle_isPrompt = genhelper.genParticle_isPrompt();
+      genParticle_isPromptFinalState = genhelper.genParticle_isPromptFinalState();
+      genParticle_isDirectPromptTauDecayProduct = genhelper.genParticle_isDirectPromptTauDecayProduct();
+      genParticle_isDirectPromptTauDecayProductFinalState = genhelper.genParticle_isDirectPromptTauDecayProductFinalState();
       genParticle_pt = genhelper.genParticle_pt();
       genParticle_eta = genhelper.genParticle_eta();
       genParticle_phi = genhelper.genParticle_phi();
@@ -598,10 +763,143 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
       isDY_genZLL = genhelper.isDY_genZLL();
       isDY_genZJcase3 = genhelper.isDY_genZJcase3();
 
-      if(currentPair.leg1().leptonType() != TupleLeptonTypes::aTau)
-      { /* same for both legs, but current ntuple forgot to include this for taus */
-        rho = currentPair.leg1().rho("fixedGridRhoFastjetAll"); 
-      }
+
+
+      /* stored rho's are the same for both legs */
+      rho = currentPair.leg1().rho("fixedGridRhoFastjetAll"); 
+
+
+
+//////////////////////////////////////////////////////
+//////// begin an SVMass computation 
+
+      if (flatTuple_recomputeSVmass)
+      {     
+     
+
+        std::vector<svFitStandalone::MeasuredTauLepton> measuredTauLeptons;
+        measuredTauLeptons.clear();
+
+        //////////////////////////////////////
+        // set the tau decays for leg 1     //
+        //////////////////////////////////////
+
+        if(currentPair.leg1().leptonType() == TupleLeptonTypes::anElectron)
+        {
+
+          measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
+          svFitStandalone::kTauToElecDecay, 
+          currentPair.leg1().p4().pt(),currentPair.leg1().p4().eta(),currentPair.leg1().p4().phi(),
+          svFitStandalone::electronMass));
+
+        }
+
+        else if(currentPair.leg1().leptonType() == TupleLeptonTypes::aMuon)
+        {
+
+          measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
+          svFitStandalone::kTauToMuDecay, 
+          currentPair.leg1().p4().pt(),currentPair.leg1().p4().eta(),currentPair.leg1().p4().phi(),
+          svFitStandalone::muonMass));
+
+        }
+        
+        else if(currentPair.leg1().leptonType() == TupleLeptonTypes::aTau)
+        {
+
+          measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
+          svFitStandalone::kTauToHadDecay,
+          currentPair.leg1().p4().pt(),currentPair.leg1().p4().eta(),currentPair.leg1().p4().phi(),
+          currentPair.leg1().p4().mass()));
+
+        }
+
+        //////////////////////////////////////
+        // set the tau decays for leg 2     //
+        //////////////////////////////////////
+
+        if(currentPair.leg2().leptonType() == TupleLeptonTypes::anElectron)
+        {
+
+          measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
+          svFitStandalone::kTauToElecDecay, 
+          currentPair.leg2().p4().pt(),currentPair.leg2().p4().eta(),currentPair.leg2().p4().phi(),
+          svFitStandalone::electronMass));
+
+        }
+
+        else if(currentPair.leg2().leptonType() == TupleLeptonTypes::aMuon)
+        {
+
+          measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
+          svFitStandalone::kTauToMuDecay, 
+          currentPair.leg2().p4().pt(),currentPair.leg2().p4().eta(),currentPair.leg2().p4().phi(),
+          svFitStandalone::muonMass));
+
+        }
+        
+        else if(currentPair.leg2().leptonType() == TupleLeptonTypes::aTau)
+        {
+
+          measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
+          svFitStandalone::kTauToHadDecay,
+          currentPair.leg2().p4().pt(),currentPair.leg2().p4().eta(),currentPair.leg2().p4().phi(),
+          currentPair.leg2().p4().mass()));
+
+        }
+
+
+        ///////////////////////////////////////
+        // next set the met and cov matrix   //
+        ///////////////////////////////////////
+
+
+
+        TMatrixD covMET(2, 2); 
+        TLorentzVector svMassMET(0,0,0,0);
+
+        if(flatTuple_useMVAmet)
+        { 
+          svMassMET.SetPtEtaPhiM( mvaMET, 0.0, mvaMETphi, 0.0 );
+          covMET[0][0] = mvaMET_cov00;
+          covMET[1][0] = mvaMET_cov10;
+          covMET[0][1] = mvaMET_cov01;
+          covMET[1][1] = mvaMET_cov11;
+
+        }
+        else 
+        {
+          svMassMET.SetPtEtaPhiM( pfMET, 0.0, pfMETphi, 0.0 );
+          covMET[0][0] = pfMET_cov00;
+          covMET[1][0] = pfMET_cov10;
+          covMET[0][1] = pfMET_cov01;
+          covMET[1][1] = pfMET_cov11;
+
+        }
+
+
+      if (flatTuple_svMassVerbose)  covMET.Print();
+
+      SVfitStandaloneAlgorithm svFitAlgorithm(measuredTauLeptons, svMassMET.Px(),svMassMET.Py(), covMET, flatTuple_svMassVerbose);
+
+      if(flatTuple_logMterm>0)  svFitAlgorithm.addLogM(true, flatTuple_logMterm);
+      else svFitAlgorithm.addLogM(false, 0.);
+
+
+      //svFitAlgorithm.integrateVEGAS();
+      svFitAlgorithm.integrateMarkovChain();
+
+      if( flatTuple_svMassVerbose ) std::cout<<" SVMass from ntuple "<<SVMass<<" ";
+      SVMass = svFitAlgorithm.getMass();
+      if( flatTuple_svMassVerbose ) std::cout<<" is replaced with flatTuple recalc of SVMass = "<<SVMass<<"\n";
+
+
+      if( flatTuple_svMassVerbose ) std::cout<<" SVTransverseMass from ntuple "<<SVTransverseMass<<" ";
+      SVTransverseMass = svFitAlgorithm.transverseMass();
+      if( flatTuple_svMassVerbose ) std::cout<<" is replaced with flatTuple recalc of SVTransverseMass = "<<SVTransverseMass<<"\n";
+    
+    } 
+////////////// END SV MASS COMP ///////////////////////////////
 
       FlatTuple->Fill();
 
@@ -645,6 +943,7 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
   TauEsNumberSigmasShifted = NAN;
   isOsPair = -999;
   SVMass = NAN;
+  SVTransverseMass = NAN;
   MTmvaMET_leg1 = NAN;
   MTpfMET_leg1 = NAN;
   MTmvaMET_leg2 = NAN;
@@ -661,6 +960,17 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
   pfMET_cov01 = NAN; 
   pfMET_cov10 = NAN; 
   pfMET_cov11 = NAN;   
+
+  genMET = NAN; 
+  genMETphi = NAN; 
+  MTpuppiMET_leg1 = NAN; 
+  MTpuppiMET_leg2 = NAN; 
+  puppiMET = NAN; 
+  puppiMETphi = NAN; 
+  RAWpfMET = NAN; 
+  RAWpfMETphi = NAN; 
+  RAWpuppiMET = NAN; 
+  RAWpuppiMETphi = NAN; 
 
   leg1_dz = NAN;
   leg1_dxy = NAN;
@@ -853,7 +1163,13 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
   generatorEventWeight = NAN;
   hepNUP = -999;
 
+  HBHEIsoNoiseFilter = 1;
 
+  HBHENoiseFilter = 1;
+  CSCTightHaloFilter = 1;
+  goodVerticesFilter = 1;
+  eeBadScFilter = 1;
+  EcalDeadCellTriggerPrimitiveFilter = 1;
 
   numberOfJets30 = -999;
   numberOfJets = -999;
@@ -884,6 +1200,13 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
 
   genParticle_pdgId.clear();
   genParticle_status.clear();
+  genParticle_isPrompt.clear();
+  genParticle_isPromptFinalState.clear();
+  genParticle_isDirectPromptTauDecayProduct.clear();
+  genParticle_isDirectPromptTauDecayProductFinalState.clear();
+
+
+
   genParticle_pt.clear();
   genParticle_eta.clear();
   genParticle_phi.clear();
@@ -914,6 +1237,14 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
   isDY_genZLL = 0;             
   isDY_genZJcase3 = 0;         
   rho  = NAN;
+
+  DataSet = "NULL";
+  EventTotal = 0;
+  EventType = "NULL";
+  KeyName = "NULL";
+  CrossSection = 1.0;
+  FilterEff = 1.0;
+  CodeVersion = 0.0;
 
  }
 
@@ -977,6 +1308,7 @@ void FlatTupleGenerator::beginJob()
   FlatTuple->Branch("TauEsNumberSigmasShifted", &TauEsNumberSigmasShifted);
   FlatTuple->Branch("isOsPair", &isOsPair);
   FlatTuple->Branch("SVMass", &SVMass);
+  FlatTuple->Branch("SVTransverseMass",&SVTransverseMass);
   FlatTuple->Branch("MTmvaMET_leg1", &MTmvaMET_leg1);
   FlatTuple->Branch("MTpfMET_leg1", &MTpfMET_leg1);
   FlatTuple->Branch("MTmvaMET_leg2", &MTmvaMET_leg2);
@@ -989,6 +1321,18 @@ void FlatTupleGenerator::beginJob()
   FlatTuple->Branch("mvaMET_cov11", &mvaMET_cov11);
   FlatTuple->Branch("pfMET", &pfMET);
   FlatTuple->Branch("pfMETphi", &pfMETphi);
+  FlatTuple->Branch("genMET", &genMET);
+  FlatTuple->Branch("genMETphi", &genMETphi);
+  FlatTuple->Branch("MTpuppiMET_leg1", &MTpuppiMET_leg1);
+  FlatTuple->Branch("MTpuppiMET_leg2", &MTpuppiMET_leg2);
+  FlatTuple->Branch("puppiMET", &puppiMET);
+  FlatTuple->Branch("puppiMETphi", &puppiMETphi);
+  FlatTuple->Branch("RAWpfMET", &RAWpfMET);
+  FlatTuple->Branch("RAWpfMETphi", &RAWpfMETphi);
+  FlatTuple->Branch("RAWpuppiMET", &RAWpuppiMET);
+  FlatTuple->Branch("RAWpuppiMETphi", &RAWpuppiMETphi);
+
+
   FlatTuple->Branch("pfMET_cov00", &pfMET_cov00);
   FlatTuple->Branch("pfMET_cov01", &pfMET_cov01);
   FlatTuple->Branch("pfMET_cov10", &pfMET_cov10);
@@ -1178,6 +1522,15 @@ void FlatTupleGenerator::beginJob()
   FlatTuple->Branch("vertex_positionEta",&vertex_positionEta);
   FlatTuple->Branch("vertex_positionPhi",&vertex_positionPhi);
 
+
+  FlatTuple->Branch("HBHEIsoNoiseFilter", &HBHEIsoNoiseFilter);
+
+  FlatTuple->Branch("HBHENoiseFilter", &HBHENoiseFilter);
+  FlatTuple->Branch("CSCTightHaloFilter", &CSCTightHaloFilter);
+  FlatTuple->Branch("goodVerticesFilter", &goodVerticesFilter);
+  FlatTuple->Branch("eeBadScFilter", &eeBadScFilter);
+  FlatTuple->Branch("EcalDeadCellTriggerPrimitiveFilter", &EcalDeadCellTriggerPrimitiveFilter);
+
   FlatTuple->Branch("puWeight",&puWeight);
   FlatTuple->Branch("NumPileupInt",&NumPileupInt);
   FlatTuple->Branch("NumTruePileUpInt",&NumTruePileUpInt);
@@ -1213,6 +1566,12 @@ void FlatTupleGenerator::beginJob()
 
   FlatTuple->Branch("genParticle_pdgId", &genParticle_pdgId);
   FlatTuple->Branch("genParticle_status", &genParticle_status);
+  FlatTuple->Branch("genParticle_isPrompt", &genParticle_isPrompt);
+  FlatTuple->Branch("genParticle_isPromptFinalState", &genParticle_isPromptFinalState);
+  FlatTuple->Branch("genParticle_isDirectPromptTauDecayProduct", &genParticle_isDirectPromptTauDecayProduct);
+  FlatTuple->Branch("genParticle_isDirectPromptTauDecayProductFinalState", &genParticle_isDirectPromptTauDecayProductFinalState);
+
+
   FlatTuple->Branch("genParticle_pt", &genParticle_pt);
   FlatTuple->Branch("genParticle_eta", &genParticle_eta);
   FlatTuple->Branch("genParticle_phi", &genParticle_phi);
@@ -1244,7 +1603,13 @@ void FlatTupleGenerator::beginJob()
   FlatTuple->Branch("isDY_genZJcase3", &isDY_genZJcase3);
 
   FlatTuple->Branch("rho", &rho);
-
+  FlatTuple->Branch("DataSet", &DataSet); 
+  FlatTuple->Branch("EventTotal", &EventTotal); 
+  FlatTuple->Branch("EventType", &EventType); 
+  FlatTuple->Branch("KeyName", &KeyName); 
+  FlatTuple->Branch("CrossSection", &CrossSection); 
+  FlatTuple->Branch("FilterEff", &FilterEff); 
+  FlatTuple->Branch("CodeVersion", &CodeVersion); 
 
 }
 

@@ -56,6 +56,7 @@ using namespace std;
 using namespace edm;
 using namespace pat;
 typedef std::vector<pat::Tau> PatTauCollection;
+typedef std::vector<edm::InputTag> vInputTag;
 
 
 
@@ -95,6 +96,8 @@ private:
   std::string NAME_NOMINAL;
   std::string NAME_UP;
   std::string NAME_DOWN;
+  vInputTag rhoSources_;
+
 
 
 };
@@ -120,7 +123,8 @@ TauEsUpSystematic_(iConfig.getParameter<double>("TauEsUpSystematic" )),
 TauEsDownSystematic_(iConfig.getParameter<double>("TauEsDownSystematic" )),
 triggerBitSrc_(consumes<edm::TriggerResults>(iConfig.getParameter<edm::InputTag>("triggerBitSrc"))),
 triggerPreScaleSrc_(consumes<pat::PackedTriggerPrescales>(iConfig.getParameter<edm::InputTag>("triggerPreScaleSrc"))),
-triggerObjectSrc_(consumes<pat::TriggerObjectStandAloneCollection>(iConfig.getParameter<edm::InputTag>("triggerObjectSrc")))
+triggerObjectSrc_(consumes<pat::TriggerObjectStandAloneCollection>(iConfig.getParameter<edm::InputTag>("triggerObjectSrc"))),
+rhoSources_(iConfig.getParameter<vInputTag>("rhoSources" ))
 {
 
   NAME_NOMINAL = NAME_+"TauEsNominal";
@@ -178,6 +182,24 @@ CustomPatTauProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
   edm::Handle<edm::View<pat::Tau> > taus;
   iEvent.getByLabel(tauSrc_,taus);
 
+  // get the rho variants
+
+  std::vector<std::string> rhoNames;
+  std::vector<double> rhos;
+
+  for(  edm::InputTag rs : rhoSources_ )
+  {
+
+  edm::Handle<double> arho;
+  iEvent.getByLabel(rs,arho);
+
+  rhoNames.push_back(rs.label());
+  rhos.push_back(*arho);
+  //std::cout<<rs.label()<<" "<<*arho<<std::endl;
+
+  }
+
+
 // get trigger-related collections
 
     edm::Handle<edm::TriggerResults> triggerBits;
@@ -195,7 +217,7 @@ CustomPatTauProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
   // need to be careful about this when embedded samples arrive
 
   TauClones allClones(taus,first_vertex,TauEsCorrection_,TauEsUpSystematic_,TauEsDownSystematic_,
-                      triggerBits,triggerObjects,triggerPreScales,names);
+                      triggerBits,triggerObjects,triggerPreScales,names,rhoNames,rhos);
 
 
 

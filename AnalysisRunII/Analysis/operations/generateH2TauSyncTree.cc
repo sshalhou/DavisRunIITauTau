@@ -1,11 +1,19 @@
 #include "generateH2TauSyncTree.h"
-
+#include <iostream>
+#include <fstream>
+#include <string>
 
 
 generateH2TauSyncTree::generateH2TauSyncTree(FlatTreeReader R_, bool run_)
 {
 	m_run = run_;
 	R = R_;
+
+	// init counters
+	num_et = 0;
+	num_em = 0;
+	num_tt = 0;
+	num_mt = 0;
 
 	if(m_run)
 	{
@@ -24,7 +32,71 @@ generateH2TauSyncTree::generateH2TauSyncTree(FlatTreeReader R_, bool run_)
 	setupBranches(tree_EleTau);
 	setupBranches(tree_TauTau);
 	setupBranches(tree_EleMu);
-	
+
+
+	// READ IN THE MET FILTER VETO FILES
+	std::ifstream file_DoubleEG("MET_FILTER/eventlist_DoubleEG_csc2015.txt");
+	std::ifstream file_MuonEG("MET_FILTER/eventlist_MuonEG_csc2015.txt");
+	std::ifstream file_SingleElectron("MET_FILTER/eventlist_SingleElectron_csc2015.txt");
+	std::ifstream file_SingleMuon("MET_FILTER/eventlist_SingleMuon_csc2015.txt");
+	std::ifstream file_Tau("MET_FILTER/eventlist_Tau_csc2015.txt");
+
+	std::string aline;
+	if (file_DoubleEG.is_open())
+	{
+		while ( getline (file_DoubleEG,aline) )
+		{
+		  metFilter_DoubleEG.push_back(aline);
+		}
+		file_DoubleEG.close();
+	}
+
+	if (file_MuonEG.is_open())
+	{
+		while ( getline (file_MuonEG,aline) )
+		{
+		  metFilter_MuonEG.push_back(aline);
+		}
+		file_MuonEG.close();
+	}
+
+	if (file_SingleElectron.is_open())
+	{
+		while ( getline (file_SingleElectron,aline) )
+		{
+		  metFilter_SingleElectron.push_back(aline);
+		}
+		file_SingleElectron.close();
+	}
+
+	if (file_SingleMuon.is_open())
+	{
+		while ( getline (file_SingleMuon,aline) )
+		{
+		  metFilter_SingleMuon.push_back(aline);
+		}
+		file_SingleMuon.close();
+	}
+
+	if (file_Tau.is_open())
+	{
+		while ( getline (file_Tau,aline) )
+		{
+		  metFilter_Tau.push_back(aline);
+		}
+		file_Tau.close();
+	}
+
+	std::cout<<" file_DoubleEG "<<metFilter_DoubleEG.size()<<"\n";
+	std::cout<<" file_MuonEG "<<metFilter_MuonEG.size()<<"\n";
+	std::cout<<" file_SingleElectron "<<metFilter_SingleElectron.size()<<"\n";
+	std::cout<<" file_SingleMuon "<<metFilter_SingleMuon.size()<<"\n";
+	std::cout<<" file_Tau "<<metFilter_Tau.size()<<"\n";
+
+
+
+
+
 	}
 
 	else
@@ -208,6 +280,8 @@ void generateH2TauSyncTree::handleEvent()
 	event = R.getUI("event");
 	lumi = R.getUI("luminosityBlock");
 
+	isOsPair = R.getI("isOsPair");
+	pairRank = R.getUI("pairRank");
 	npv = R.getI("NumberOfGoodVertices");
 	npu = R.getF("NumTruePileUpInt");
 	rho = R.getD("rho");
@@ -236,10 +310,10 @@ void generateH2TauSyncTree::handleEvent()
 		againstMuonLoose3_1 = R.getF("leg1_againstMuonLoose3");
 		againstMuonTight3_1 = R.getF("leg1_againstMuonTight3");
 		byCombinedIsolationDeltaBetaCorrRaw3Hits_1 = R.getF("leg1_byCombinedIsolationDeltaBetaCorrRaw3Hits");
-		byIsolationMVA3newDMwoLTraw_1 = R.getF("leg1_byIsolationMVA3newDMwoLTraw");
-		byIsolationMVA3oldDMwoLTraw_1 = R.getF("leg1_byIsolationMVA3oldDMwoLTraw");
-		byIsolationMVA3newDMwLTraw_1 = R.getF("leg1_byIsolationMVA3newDMwLTraw");
-		byIsolationMVA3oldDMwLTraw_1 = R.getF("leg1_byIsolationMVA3oldDMwLTraw");
+		// byIsolationMVA3newDMwoLTraw_1 = R.getF("leg1_byIsolationMVA3newDMwoLTraw");
+		// byIsolationMVA3oldDMwoLTraw_1 = R.getF("leg1_byIsolationMVA3oldDMwoLTraw");
+		// byIsolationMVA3newDMwLTraw_1 = R.getF("leg1_byIsolationMVA3newDMwLTraw");
+		// byIsolationMVA3oldDMwLTraw_1 = R.getF("leg1_byIsolationMVA3oldDMwLTraw");
 		chargedIsoPtSum_1 = R.getF("leg1_chargedIsoPtSum");
 		decayModeFindingNewDMs_1 = R.getF("leg1_decayModeFindingNewDMs");
 		neutralIsoPtSum_1 = R.getF("leg1_neutralIsoPtSum");
@@ -270,10 +344,10 @@ void generateH2TauSyncTree::handleEvent()
 		againstMuonLoose3_2 = R.getF("leg2_againstMuonLoose3");
 		againstMuonTight3_2 = R.getF("leg2_againstMuonTight3");
 		byCombinedIsolationDeltaBetaCorrRaw3Hits_2 = R.getF("leg2_byCombinedIsolationDeltaBetaCorrRaw3Hits");
-		byIsolationMVA3newDMwoLTraw_2 = R.getF("leg2_byIsolationMVA3newDMwoLTraw");
-		byIsolationMVA3oldDMwoLTraw_2 = R.getF("leg2_byIsolationMVA3oldDMwoLTraw");
-		byIsolationMVA3newDMwLTraw_2 = R.getF("leg2_byIsolationMVA3newDMwLTraw");
-		byIsolationMVA3oldDMwLTraw_2 = R.getF("leg2_byIsolationMVA3oldDMwLTraw");
+		//byIsolationMVA3newDMwoLTraw_2 = R.getF("leg2_byIsolationMVA3newDMwoLTraw");
+		//byIsolationMVA3oldDMwoLTraw_2 = R.getF("leg2_byIsolationMVA3oldDMwoLTraw");
+		//byIsolationMVA3newDMwLTraw_2 = R.getF("leg2_byIsolationMVA3newDMwLTraw");
+		//byIsolationMVA3oldDMwLTraw_2 = R.getF("leg2_byIsolationMVA3oldDMwLTraw");
 		chargedIsoPtSum_2 = R.getF("leg2_chargedIsoPtSum");
 		decayModeFindingNewDMs_2 = R.getF("leg2_decayModeFindingNewDMs");
 		neutralIsoPtSum_2 = R.getF("leg2_neutralIsoPtSum");
@@ -326,7 +400,18 @@ void generateH2TauSyncTree::handleEvent()
 
 	trigweight_1 = 0;
 	trigweight_2 = 0;
-				
+		
+
+	generatorEventWeight = R.getD("generatorEventWeight");
+	DataSet = R.getS("DataSet");
+    EventTotal = R.getI("EventTotal");
+    EventType = R.getS("EventType");
+    KeyName =  R.getS("KeyName");
+    CrossSection =  R.getD("CrossSection");  
+    FilterEff =  R.getD("FilterEff");
+
+
+
 
 if(R.getI("CandidateEventType")==2)
 {
@@ -345,8 +430,9 @@ if(R.getI("CandidateEventType")==3)
 	if(R.getF("leg1_HLT_Ele22_eta2p1_WP75_Gsf_LooseIsoPFTau20") == 1.0) trigweight_1 = 1.0;
 	if(R.getF("leg2_HLT_Ele22_eta2p1_WP75_Gsf_LooseIsoPFTau20") == 1.0) trigweight_2 = 1.0;
 
+
 	if(R.getF("leg1_HLT_Ele32_eta2p1_WP75_Gsf") == 1.0) trigweight_1 = 1.0;
-	/* no 2nd leg really */ if(R.getF("leg2_HLT_Ele32_eta2p1_WP75_Gsf") == 1.0) trigweight_2 = 1.0;
+	/* no 2nd leg really, so use leg1 */ if(R.getF("leg1_HLT_Ele32_eta2p1_WP75_Gsf") == 1.0) trigweight_2 = 1.0;
 
 }
 
@@ -358,7 +444,7 @@ if(R.getI("CandidateEventType")==5)
 	if(R.getF("leg2_HLT_IsoMu17_eta2p1_LooseIsoPFTau20") == 1.0) trigweight_2 = 1.0;
 	
 	if(R.getF("leg1_HLT_IsoMu24_eta2p1") == 1.0) trigweight_1 = 1.0;
-	/* no 2nd leg really */ if(R.getF("leg2_HLT_IsoMu24_eta2p1") == 1.0) trigweight_2 = 1.0;
+	/* no 2nd leg really, so use leg1 */ if(R.getF("leg1_HLT_IsoMu24_eta2p1") == 1.0) trigweight_2 = 1.0;
 
 }
 
@@ -373,17 +459,94 @@ if(R.getI("CandidateEventType")==6)
 
 	// std::cout<<" --- --------------\n ";
 
-	// std::cout<<R.getI("CandidateEventType")<<"\n";
-	// std::cout<<R.getI("CandidateEventType")<<"\n";
+
+	
+	/* some additional cuts */
+	//if(R.getUI("pairRank") != 0) return;
+	//if(R.getI("isOsPair") != 1) return;
+	if(fabs(R.getI("leg1_charge")) != 1) return;
+	if(fabs(R.getI("leg2_charge")) != 1) return;
+
+
+
+	// MET FILTER FLAGS
+	
+	std::string checkString = std::to_string(run)+":"+std::to_string(lumi)+":"+std::to_string(event);
+	bool GOOD_MET_FLAG = 1;
+
+
+
+
+
+	if(KeyName == "Run2015D_TauOct" || KeyName == "Run2015D_TauPromptRv4")
+	{
+		if (std::find(metFilter_Tau.begin(), metFilter_Tau.end(), 
+		checkString) != metFilter_Tau.end()) 
+			{
+				std::cout<<" BAD in metFilter_Tau "<<checkString<<"\n";
+				GOOD_MET_FLAG = 0;
+			}
+	}
+
+	if(KeyName == "Run2015D_MuonEGOct" || KeyName == "Run2015D_MuonEGPromptRv4")
+	{
+		if (std::find(metFilter_MuonEG.begin(), metFilter_MuonEG.end(), 
+		checkString) != metFilter_MuonEG.end()) 
+			{
+				std::cout<<" BAD in metFilter_MuonEG "<<checkString<<"\n";
+				GOOD_MET_FLAG = 0;
+			}
+	}
+
+
+
+	if(KeyName == "Run2015D_DoubleEGPromptRv4" || KeyName == "Run2015D_DoubleEGOct")
+	{
+		if (std::find(metFilter_DoubleEG.begin(), metFilter_DoubleEG.end(), 
+		checkString) != metFilter_DoubleEG.end()) 
+			{
+				std::cout<<" BAD in metFilter_DoubleEG "<<checkString<<"\n";
+				GOOD_MET_FLAG = 0;
+			}
+	}
+
+
+
+	if(KeyName == "Run2015D_SingleElectronPromptRv4" || KeyName == "Run2015D_SingleElectronOct")
+	{
+		if (std::find(metFilter_SingleElectron.begin(), metFilter_SingleElectron.end(), 
+		checkString) != metFilter_SingleElectron.end()) 
+			{
+				std::cout<<" BAD in metFilter_SingleElectron "<<checkString<<"\n";
+				GOOD_MET_FLAG = 0;
+			}
+	}
+
+
+	if(KeyName == "Run2015D_SingleMuonPromptRv4" || KeyName == "Run2015D_SingleMuonOct")
+	{
+		if (std::find(metFilter_SingleMuon.begin(), metFilter_SingleMuon.end(), 
+		checkString) != metFilter_SingleMuon.end()) 
+			{
+				std::cout<<" BAD in metFilter_SingleMuon "<<checkString<<"\n";
+				GOOD_MET_FLAG = 0;
+			}
+	}
+
 	/////////// DON'T CHANGE VALUES AFTER THIS :)
 	/* see TupleCandidateEventTypes */
-	if(R.getI("CandidateEventType")==2 && l1.DeltaR(l2) > 0.3) tree_EleMu->Fill();
-	else if(R.getI("CandidateEventType")==3 && l1.DeltaR(l2) > 0.5) tree_EleTau->Fill();
-	else if(R.getI("CandidateEventType")==5 && l1.DeltaR(l2) > 0.5) tree_MuTau->Fill();
-	else if(R.getI("CandidateEventType")==6 && l1.DeltaR(l2) > 0.5) tree_TauTau->Fill();
+
+	if(R.getI("CandidateEventType")==3 && l1.DeltaR(l2) > 0.5 && l1.Pt()>24 && GOOD_MET_FLAG) {num_et++; tree_EleTau->Fill();}
+	else if(R.getI("CandidateEventType")==2 && l1.DeltaR(l2) > 0.3  && GOOD_MET_FLAG ){num_em++; tree_EleMu->Fill();}
+	else if(R.getI("CandidateEventType")==5 && l1.DeltaR(l2) > 0.5 && l1.Pt()>19  && GOOD_MET_FLAG){num_mt++; tree_MuTau->Fill();}
+	else if(R.getI("CandidateEventType")==6 && l1.DeltaR(l2) > 0.5  && GOOD_MET_FLAG) {num_tt++; tree_TauTau->Fill();}
 	
-
-
+	if(num_et%1000==0){
+	 std::cout<<" etau = "<<num_et<<"\n";
+	 std::cout<<" mtau = "<<num_mt<<"\n";
+	 std::cout<<" tt = "<<num_tt<<"\n";
+	 std::cout<<" em = "<<num_em<<"\n";
+	}
 
 
 }
@@ -396,7 +559,9 @@ void generateH2TauSyncTree::setupBranches(TTree * T)
 	T->Branch("run",&run);
 	T->Branch("event",&event);
 	T->Branch("lumi",&lumi);
+	T->Branch("isOsPair",&isOsPair);
 	
+	T->Branch("pairRank",&pairRank);
 	T->Branch("npv",&npv);
 	T->Branch("npu",&npu);
 	T->Branch("rho",&rho);
@@ -528,6 +693,14 @@ void generateH2TauSyncTree::setupBranches(TTree * T)
 	T->Branch("trigweight_1", &trigweight_1);
 	T->Branch("trigweight_2", &trigweight_2);
 
+
+	T->Branch("generatorEventWeight", &generatorEventWeight);
+	T->Branch("DataSet", &DataSet);
+	T->Branch("EventTotal", &EventTotal);
+	T->Branch("EventType", &EventType);
+	T->Branch("KeyName", &KeyName);
+	T->Branch("CrossSection", &CrossSection);
+	T->Branch("FilterEff", &FilterEff);
 
 
 }
@@ -720,7 +893,8 @@ void generateH2TauSyncTree::reset()
 	run = 0;
 	event = 0;
 	lumi = 0;
-	 
+	pairRank = 999;
+	isOsPair = -999;
 	npv =  0;
 	npu =  -999.0;
 	rho =  -999.0;
@@ -855,4 +1029,12 @@ void generateH2TauSyncTree::reset()
 
 	trigweight_1 = 0;
 	trigweight_2 = 0;
+
+    generatorEventWeight = 1.0;
+	DataSet = "NULL";
+    EventTotal = 1;
+    EventType = "NULL";
+    KeyName = "NULL"; 
+    CrossSection = 1.0;    
+    FilterEff = 1.0; 
 }

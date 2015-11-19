@@ -52,6 +52,11 @@ private:
 	bool m_run; /* did we want to run this operation? */ 
 	void setupBranches(TTree*);
 		
+	// counters
+	int num_et;
+	int num_em;
+	int num_tt;
+	int num_mt;
 
 
 	// elements of the TTree 
@@ -59,6 +64,9 @@ private:
 	unsigned int run;
 	unsigned int lumi;
 	unsigned int event;
+
+	unsigned int pairRank; // davis specific
+	int isOsPair; // davis specific
 
 	int npv;
 	float npu;
@@ -209,6 +217,20 @@ private:
 	float trigweight_1 ;
 	float trigweight_2 ;
 
+
+	// information related to sample and weights
+
+
+	double generatorEventWeight;
+	std::string DataSet; 	/* the dataset */
+    int EventTotal; 		/* the number of events in the MC sample */ 
+    std::string EventType;  /* description of the event, DATA, MC, EMBEDDED, etc. */
+    std::string KeyName;    /* description of the sample as given during crab job */
+    double CrossSection;    /* MC process cross section */
+    double FilterEff;       /* gen level filter eff. (needed if any is applied) */
+
+
+
 	// member pointers to TTrees & TFiles 
 	
 	TFile * outFile_MuTau;
@@ -220,7 +242,15 @@ private:
 	TTree * tree_EleTau;
 	TTree * tree_TauTau;
 	TTree * tree_EleMu;
-	
+
+	// to hold run:lumi:event from MET 
+	// filter veto files 	
+
+	std::vector < std::string > metFilter_DoubleEG;
+	std::vector < std::string > metFilter_MuonEG;
+	std::vector < std::string > metFilter_SingleElectron;
+	std::vector < std::string > metFilter_SingleMuon;
+	std::vector < std::string > metFilter_Tau;
 
 
 };

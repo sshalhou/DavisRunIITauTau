@@ -51,6 +51,7 @@ void TriggerInfoEmbeddingTool::fillAcceptedPathsAndPrescales(std::vector<std::st
 	{
 			for (unsigned int i = 0, n = triggerBits->size(); i < n; ++i) 
 			{
+				//std::cout<<names.triggerName(i)<<"\n";
 				if(triggerBits->accept(i)) 
 				{
 

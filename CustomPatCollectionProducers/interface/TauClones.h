@@ -54,6 +54,9 @@ class TauClones
 	edm::Handle<pat::PackedTriggerPrescales> & triggerPreScales;
 	const edm::TriggerNames & names;
 
+	// rho related info
+	std::vector<std::string> rhoLabels;
+	std::vector<double> rhoValues;
 
 
 
@@ -62,7 +65,9 @@ class TauClones
 			edm::Handle<edm::TriggerResults> &,
 			edm::Handle<pat::TriggerObjectStandAloneCollection> &,
 			edm::Handle<pat::PackedTriggerPrescales>&,
-			const edm::TriggerNames &);
+			const edm::TriggerNames &,
+			std::vector<std::string>,
+			std::vector<double>);
 
 		virtual ~TauClones();
 

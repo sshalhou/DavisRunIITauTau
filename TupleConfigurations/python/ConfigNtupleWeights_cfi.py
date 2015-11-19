@@ -12,7 +12,10 @@ import FWCore.ParameterSet.Config as cms
 
 
 # note pileupSrcInputTag was different for MC, embedded MC, and embedded Data in RunI
-pileupSrcInputTag = cms.InputTag('addPileupInfo')
+# pileupSrcInputTag = cms.InputTag('addPileupInfo') # for miniAODv1
+pileupSrcInputTag = cms.InputTag('slimmedAddPileupInfo') # for miniAODv2
+
+
 
 PUntupleWeightSettings = cms.PSet(
 			pileup_mcFilePath = cms.string("DavisRunIITauTau/RunTimeDataInput/data/PileUpReWeightFiles/MC_Summer12_PU_S10-600bins.root"),

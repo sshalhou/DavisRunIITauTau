@@ -74,6 +74,7 @@ public:
   double chargedEmEnergyFraction() const; 
   double chargedMultiplicityPlusNeutralMultiplicity() const; 
   double chargedMultiplicity() const; 
+  double neutralMultiplicity() const;
 
   /* we will also access the PF jet ID relevant info using standard names */
   double NHF() const; 
@@ -83,6 +84,7 @@ public:
   double CEMF() const; 
   double NumConst() const; 
   double CHM() const; 
+  double NumNeutralParticle() const;
 
   std::string defaultBtagAlgorithm_Name() const;
   double defaultBtagAlgorithm_RawScore() const;
@@ -113,6 +115,7 @@ private:
   double m_chargedEmEnergyFraction;                     /* CEMF for PF jet ID */
   double m_chargedMultiplicityPlusNeutralMultiplicity;  /* NumConst for PF jet ID */
   double m_chargedMultiplicity;                         /* CHM for PF jet ID */
+  double m_neutralMultiplicity;                         /* NumNeutralParticle for PF jet ID */
   std::string m_defaultBtagAlgorithm_Name;              /* name of the default b-tag algorithm from ConfigNtupleContent_cfi.py */
   float m_defaultBtagAlgorithm_RawScore;                /* raw output of default b-tag algo */
   bool m_defaultBtagAlgorithm_isPassed;                 /* pass-fail of default b-tag algo after btagSF applied */

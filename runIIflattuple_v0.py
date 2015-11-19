@@ -3,7 +3,7 @@ import FWCore.ParameterSet.Config as cms
 process = cms.Process("FlatTuple")
 
 process.load("FWCore.MessageService.MessageLogger_cfi")
-process.MessageLogger.cerr.FwkReport.reportEvery = cms.untracked.int32(50)
+process.MessageLogger.cerr.FwkReport.reportEvery = cms.untracked.int32(1000)
 
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
 
@@ -12,14 +12,14 @@ from DavisRunIITauTau.InputFlatFiles.FlatFileLists import testList
 #print testList
 
 myfilelist = cms.untracked.vstring()
+
+## turn off for crab jobs
 # for aFile in testList:
 # 	formatted_name = "file:"+aFile
 # 	print 'adding file', formatted_name
 # 	myfilelist.extend([formatted_name])
 
-myfilelist.extend(['file:/uscms_data/d3/shalhout/RunIIWorking/CMSSW_7_4_7/src/NtupleFile.root'])
-#myfilelist.extend(['file:/uscms_data/d3/shalhout/RunIIWorking/CMSSW_7_2_3_patch1/src/NtupleFile_SIGNAL.root'])
-#myfilelist.extend(['file:/uscms_data/d3/shalhout/RunIIWorking/CMSSW_7_2_3_patch1/src/NtupleFile_DY.root'])
+myfilelist.extend(['file:/uscms_data/d3/shalhout/RunIIWorking/miniAODv2_7_4_14/CMSSW_7_4_14/src/NtupleFile.root'])
 
 process.source = cms.Source("PoolSource",
     # replace 'myfile.root' with the source file you want to use
@@ -39,28 +39,31 @@ SkipEvent = cms.untracked.vstring('ProductNotFound')
 
 from DavisRunIITauTau.FlatTupleGenerator.FlatTupleConfig_cfi import generalConfig
 from DavisRunIITauTau.FlatTupleGenerator.FlatTupleConfig_cfi import theCuts
+from DavisRunIITauTau.FlatTupleGenerator.FlatTupleConfig_cfi import svMassAtFlatTupleConfig
 
 
 process.PASSCUTS = cms.EDAnalyzer('FlatTupleGenerator',
-	pairSrc = cms.InputTag('NtupleEvent','NtupleEvent','Ntuple'),
-	indepSrc = cms.InputTag('pairIndep','NtupleEventPairIndep','Ntuple'),
+	pairSrc = cms.InputTag('NtupleEvent','NtupleEvent','DavisNtuple'),
+	indepSrc = cms.InputTag('pairIndep','NtupleEventPairIndep','DavisNtuple'),
 	NAME = cms.string("PASSCUTS"),
 	EventCutSrc = generalConfig,
-	LeptonCutVecSrc = theCuts
+	LeptonCutVecSrc = theCuts,
+	SVMassConfig = svMassAtFlatTupleConfig
 	)
 
 process.NOCUTS = cms.EDAnalyzer('FlatTupleGenerator',
-	pairSrc = cms.InputTag('NtupleEvent','NtupleEvent','Ntuple'),
-	indepSrc = cms.InputTag('pairIndep','NtupleEventPairIndep','Ntuple'),
+	pairSrc = cms.InputTag('NtupleEvent','NtupleEvent','DavisNtuple'),
+	indepSrc = cms.InputTag('pairIndep','NtupleEventPairIndep','DavisNtuple'),
 	NAME = cms.string("NOCUTS"),
 	EventCutSrc = generalConfig,
-	LeptonCutVecSrc = cms.VPSet()
+	LeptonCutVecSrc = cms.VPSet(),
+	SVMassConfig = svMassAtFlatTupleConfig
 	)
 
 
 
 process.p = cms.Path(process.PASSCUTS + process.NOCUTS)
-#process.p = cms.Path(process.NOCUTS)
+#process.p = cms.Path(process.PASSCUTS)
 
 
 process.TFileService = cms.Service("TFileService", fileName = cms.string("FlatTuple.root"))

@@ -4,10 +4,25 @@ import os
 import math
 from array import array
 
-FILE = "/uscms_data/d3/shalhout/RunIIWorking/CMSSW_7_2_3_patch1/src/NtupleFile.root"
+FILE = "/uscms_data/d3/shalhout/RunIIWorking/CMSSW_7_4_7/src/NtupleFile.root"
 
-import ROOT
-import sys
+
+# import ROOT in batch mode                                                                                                                                                                                                                  
+import sys                                                                                                                                                                                                                                   
+oldargv = sys.argv[:]                                                                                                                                                                                                                        
+sys.argv = [ '-b-' ]                                                                                                                                                                                                                         
+import ROOT                                                                                                                                                                                                                                                                    
+ROOT.gROOT.SetBatch(True)                                                                                                                                                                                                                                                      
+sys.argv = oldargv                                                                                                                                                                                                                                                             
+                                                                                                                                                                                                                                                                               
+# load FWLite C++ libraries                                                                                                                                                                                                                                                    
+ROOT.gSystem.Load("libFWCoreFWLite.so");                                                                                                                                                                                                                                       
+ROOT.gSystem.Load("libDataFormatsFWLite.so");                                                                                                                                                                                                                                  
+ROOT.AutoLibraryLoader.enable()   
+
+
+#import ROOT
+#import sys
 from DataFormats.FWLite import Events, Handle
 
 from FWCore.ParameterSet.VarParsing import VarParsing
@@ -21,8 +36,9 @@ options.parseArguments()
 doExample1 = False
 doExample2 = False
 doExample3 = False
-doExample4 = True
+doExample4 = False
 doExample5 = False
+doExample6 = True
 
 ####################################
 # EX-1 : print candidateType & isolations
@@ -30,7 +46,7 @@ doExample5 = False
 if doExample1 :
     events = Events (FILE)
     handle = Handle ("std::vector<NtupleEvent>")
-    label = ("NtupleEvent","NtupleEvent","Ntuple")
+    label = "NtupleEvent:NtupleEvent:Ntuple"
 
 
 
@@ -51,7 +67,7 @@ if doExample2 :
 
     events2 = Events (FILE)
     handle2 = Handle ("std::vector<NtuplePairIndependentInfo>")
-    label2 = ("pairIndep","NtupleEventPairIndep","Ntuple")
+    label2 = "pairIndep:NtupleEventPairIndep:Ntuple"
 
 
     for event2 in events2:
@@ -78,7 +94,7 @@ if doExample3 :
 
     events3 = Events (FILE)
     handle3 = Handle ("std::vector<NtuplePairIndependentInfo>")
-    label3 = ("pairIndep","NtupleEventPairIndep","Ntuple")
+    label3 = "pairIndep:NtupleEventPairIndep:Ntuple"
 
     # set up a file to hold the histogram
     outFileEx3 = TFile("outFileEx3.root","RECREATE")
@@ -114,7 +130,7 @@ if doExample4 :
 
     events4 = Events (FILE)
     handle4 = Handle ("std::vector<NtupleEvent>")
-    label4 = ("NtupleEvent","NtupleEvent","Ntuple")
+    label4 = "NtupleEvent:NtupleEvent:Ntuple"
 
 
 
@@ -163,7 +179,7 @@ if doExample5 :
 
     events5 = Events (FILE)
     handle5 = Handle ("std::vector<NtupleEvent>")
-    label5 = ("NtupleEvent","NtupleEvent","Ntuple")
+    label5 = "NtupleEvent:NtupleEvent:Ntuple"
 
     print '********************************************************'    
     print 'printing triggers from ConfigTupleTriggers_cfi with at least one leg passing all requirements : '    
@@ -232,46 +248,47 @@ if doExample5 :
     triggerInfo.Write()
     outFileEx5.Close()    
 
-                # elif p.isLeg1GoodForHLTPath(apath)==0.0 and p.isLeg2GoodForHLTPath(apath)==0.0 :
-                #     print 'for path ', apath , type1,'+',type2,
-                #     print ' both fail '
 
 
 
+####################################
+# EX-6 : study HLT  for e+mu channel
 
-            # print type, 'L3 PATHS = [',
-            # for l3 in leg1.pathSummary_isL3():
-            #     print l3, ',',
-            # print '] Filters = [',    
-            # for filter in leg1.pathSummary_filterListPassed():
-            #     print filter, ',',
-            # print '], L1 accepted filters = [',
-            # for filter in leg1.L1acceptedFilters():
-            #     print filter, ',',                
-            # print '], L3 accepted filters = [',    
-            # for filter in leg1.L3acceptedFilters():
-            #     print filter, ',', 
-            # print ']'
+if doExample6 :
+    
+    events6 = Events (FILE)
+    handle6 = Handle ("std::vector<NtupleEvent>")
+    label6 = "NtupleEvent:NtupleEvent:Ntuple"
 
-            # if leg2.leptonType()==0:
-            #     type = '----- ELECTRON ----' 
-            # if leg2.leptonType()==1:
-            #     type = '----- MUON ----' 
-            # if leg2.leptonType()==2:
-            #     type = '----- TAU ----' 
+    print '********************************************************'    
+    print ' searching for ele+muon events in FILE ', FILE    
+    print '********************************************************'    
+
+ 
+
+    for event6 in events6:
+        event6.getByLabel (label6, handle6)
+        pairs = handle6.product()
+        for p in pairs:
+            leg1 = p.leg1()
+            leg2 = p.leg2()
+            type = p.CandidateEventType()
+            if type == 2:
+                print '--> found e+mu event with pTs of ', leg1.pt(), 'and', leg2.pt()
+                print 'for HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoV_v1 have isGOOD == ',
+                print p.isLeg1GoodForHLTPath('HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v1'), 'and',
+                print p.isLeg2GoodForHLTPath('HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v1')
+                print 'for HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v1 have isGOOD == ',
+                print p.isLeg1GoodForHLTPath('HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v1'), 'and',
+                print p.isLeg2GoodForHLTPath('HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v1')
+
+                print 'all good leg1 paths : \n',
+                for path in p.isLeg1GoodForHLTPath_Labels():
+                    print '-------> ',path
+                print 'all good leg2 paths : \n',
+                for path in p.isLeg2GoodForHLTPath_Labels():
+                    print '-------> ',path
 
 
-            # print type, 'L3 PATHS = [',
-            # for l3 in leg2.pathSummary_isL3():
-            #     print l3, ',',
-            # print '] Filters = [',    
-            # for filter in leg2.pathSummary_filterListPassed():
-            #     print filter, ',',
-            # print '], L1 accepted filters = [',
-            # for filter in leg2.L1acceptedFilters():
-            #     print filter, ',',                
-            # print '], L3 accepted filters = [',    
-            # for filter in leg2.L3acceptedFilters():
-            #     print filter, ',', 
-            # print ']'
+
 

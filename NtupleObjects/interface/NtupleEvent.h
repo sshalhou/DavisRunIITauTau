@@ -75,6 +75,12 @@ public:
      (note : can still find non-summary requested trig info using leg1_trigMatches & leg1_trigMatches)
   */  
 
+  /* return the highest pt of all matched trigger objects to each reco leg */
+  float leg1MaxPtTriggerObjMatch() const;  
+  float leg2MaxPtTriggerObjMatch() const;  
+   
+
+
   float isLeg1GoodForHLTPath(std::string) const;  
   float isLeg2GoodForHLTPath(std::string) const;  
 
@@ -95,15 +101,20 @@ public:
 	std::vector<NtupleLepton> vetoElectron() const; 
  	std::vector<NtupleLepton> vetoMuon() const;
   std::vector<double> SVMass() const;
+  std::vector<double> SVTransverseMass() const;
   std::vector<double> VISMass() const;
   int isOsPair() const;
   std::vector<double> MTmvaMET_leg1() const;
   std::vector<double> MTpfMET_leg1() const;
+  std::vector<double> MTpuppiMET_leg1() const;
+
   std::vector<double> MTmvaMET_leg2() const;
   std::vector<double> MTpfMET_leg2() const;
+  std::vector<double> MTpuppiMET_leg2() const;
 
   std::vector<reco::PFMET>  mvaMET() const;
   std::vector<pat::MET>  pfMET() const;
+  std::vector<pat::MET>  puppiMET() const;
 
   std::vector<double>  pfMET_cov00() const;
   std::vector<double>  pfMET_cov01() const;
@@ -123,16 +134,21 @@ private:
 	std::vector<NtupleLepton> m_vetoElectron; 
  	std::vector<NtupleLepton> m_vetoMuon;
   std::vector<double> m_SVMass;
+  std::vector<double> m_SVTransverseMass;
   std::vector<double> m_VISMass;
   /* for now these are just MT(leg1, MET) : later on we will want to rank leg1 & leg2 */
   std::vector<double> m_MTmvaMET_leg1;
   std::vector<double> m_MTpfMET_leg1;
+  std::vector<double> m_MTpuppiMET_leg1;
 
   /* for now these are just MT(leg2, MET) : later on we will want to rank leg1 & leg2 */
   std::vector<double> m_MTmvaMET_leg2;
   std::vector<double> m_MTpfMET_leg2;
+  std::vector<double> m_MTpuppiMET_leg2;
+
   std::vector<reco::PFMET>  m_mvaMET;
   std::vector<pat::MET>  m_pfMET; 
+  std::vector<pat::MET>  m_puppiMET; 
   std::vector<double>  m_pfMET_cov00; // needed due to missing sig matrix in phys14/Spring15 samples
   std::vector<double>  m_pfMET_cov01; // needed due to missing sig matrix in phys14/Spring15 samples
   std::vector<double>  m_pfMET_cov10; // needed due to missing sig matrix in phys14/Spring15 samples

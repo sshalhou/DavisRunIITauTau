@@ -140,8 +140,15 @@ void muonClones::fillUserFloats()
 
 
 	  	m.addUserFloat("isGoodGlobalMuon",isGoodGlobalMuon);
+		
+	  	/* new for 7-4-7 simple access via isMediumMuon */
+
+	  	passesMediumMuonId = m.isMediumMuon();
+
 		m.addUserFloat("passesMediumMuonId",passesMediumMuonId);
 	  
+
+
 		/////////////
 	  	// trigger info
 

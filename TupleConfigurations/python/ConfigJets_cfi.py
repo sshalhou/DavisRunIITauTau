@@ -76,27 +76,41 @@ PUjetIDworkingPoint  = cms.PSet(
 
 ####################################################################################################
 #	Set up the cut values for the PF jet ID working point
-#   based on loose 8 TeV point for now 
-#   see : https://twiki.cern.ch/twiki/bin/viewauth/CMS/JetID#Recommendations_for_13_TeV_data
+#   based on (updated) loose 13 TeV point 
+#   see : https://twiki.cern.ch/twiki/bin/view/CMS/JetID#Recommendations_for_13_TeV_data
 ####################################################################################################
 	
 	# each cms.vdouble in this PSet has the following format : ETA_MIN, ETA_MAX, CUT_VAL, isCutValMaximum
 	# note : if isCutValMaximum = 1.0 then the requirement is parameter < CUT_VAL
 	#		 if isCutValMaximum = 0 then the requirement is parameter > CUT_VAL	
 	#		 the jet's eta must fall between ETA_MIN and ETA_MAX for the cut to be applied 
+	# be sure to sync changes with : DavisRunIITauTau/External/interface/PUPFjetIdHelper.hh (PUPFjetIdHelper::passPfId)
 
 PFjetIDworkingPoint = cms.PSet(
 
-		# for any eta
-		NHF  				= cms.vdouble(-1000.0,1000.0,0.99,1.0), 	# NHF < 0.99
-		NEMF  				= cms.vdouble(-1000.0,1000.0,0.99,1.0), 	# NEMF < 0.99	
-		NumConst  			= cms.vdouble(-1000.0,1000.0,1.0,0.0),		# NumConst > 1
-		MUF  			    = cms.vdouble(-1000.0,1000.0,0.8,1.0),	    # MUF < 0.8
-		
-		# for eta range -2.4 <= eta <= 2.4
-		CHF 				= cms.vdouble(-2.4,2.4,0.0,0.0),			# CHF > 0
-		CHM  				= cms.vdouble(-2.4,2.4,0.0,0.0),			# CHM > 0
-		CEMF  				= cms.vdouble(-2.4,2.4,0.99,1.0)  			# CEMF < 0.99
+		# for eta range: |eta| <= 3.0
+
+		NHF  				= cms.vdouble(-3.0,3.0,0.99,1.0), 	# NHF < 0.99
+		NEMF  				= cms.vdouble(-3.0,3.0,0.99,1.0), 	# NEMF < 0.99	
+		NumConst  			= cms.vdouble(-3.0,3.0,1.0,0.0),	# NumConst > 1
+
+		# for eta range: |eta| <= 2.4
+
+		CHF 				= cms.vdouble(-2.4,2.4,0.0,0.0),	    # CHF > 0
+		CHM  				= cms.vdouble(-2.4,2.4,0.0,0.0),	    # CHM > 0
+		CEMF  				= cms.vdouble(-2.4,2.4,0.99,1.0),  	    # CEMF < 0.99
+
+
+		# for eta range: eta > 3.0
+		# note par names can't be repeated 
+		NEMF_HIGH 			     = cms.vdouble(3.0,1000.0,0.90,1.0), 	    # NEMF < 0.99	
+		NumNeutralParticle_HIGH  = cms.vdouble(3.0,1000.0,10.0,0), 	    # NumNeutralParticle > 10.0	
+
+
+		# for eta range: eta < -3.0
+		NEMF_LOW  				= cms.vdouble(-1000.0,-3.0,0.90,1.0), 	# NEMF < 0.90	
+		NumNeutralParticle_LOW  = cms.vdouble(-1000.0,-3.0,10.0,0) 	# NumNeutralParticle > 10.0	
+
 
 
 

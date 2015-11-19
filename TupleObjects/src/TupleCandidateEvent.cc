@@ -77,6 +77,11 @@ void TupleCandidateEvent::set_pfMET(pat::MET dummy_)
 	}
 
 
+void TupleCandidateEvent::set_puppiMET(pat::MET dummy_) 
+	{ 
+		m_puppiMET.push_back(dummy_);
+	}
+
 void TupleCandidateEvent::set_pfMET_covMatrix(double cov00,double cov01,double cov10,double cov11)
 	{
  		m_pfMET_cov00.push_back(cov00);
@@ -103,6 +108,14 @@ void TupleCandidateEvent::set_SVMass(double dummy_)
 	}
 
 
+void TupleCandidateEvent::set_SVTransverseMass(double dummy_) 
+	{ 
+		m_SVTransverseMass.push_back(dummy_);
+	}
+
+
+
+
 //////////////////
 // accessors
 //////////////////
@@ -111,6 +124,7 @@ TupleLepton TupleCandidateEvent::leg1() const { return m_leg1; }
 TupleLepton TupleCandidateEvent::leg2() const { return m_leg2; }
 std::vector<reco::PFMET> TupleCandidateEvent::mvaMET() const { return m_mvaMET; }
 std::vector<pat::MET> TupleCandidateEvent::pfMET() const { return m_pfMET; }
+std::vector<pat::MET> TupleCandidateEvent::puppiMET() const { return m_puppiMET; }
 std::vector<double> TupleCandidateEvent::pfMET_cov00() const { return m_pfMET_cov00; }
 std::vector<double> TupleCandidateEvent::pfMET_cov01() const { return m_pfMET_cov01; }
 std::vector<double> TupleCandidateEvent::pfMET_cov10() const { return m_pfMET_cov10; }
@@ -118,5 +132,6 @@ std::vector<double> TupleCandidateEvent::pfMET_cov11() const { return m_pfMET_co
 std::vector<pat::Electron> TupleCandidateEvent::vetoElectron() const { return m_vetoElectron; }
 std::vector<pat::Muon> TupleCandidateEvent::vetoMuon() const { return m_vetoMuon; }
 std::vector<double> TupleCandidateEvent::SVMass() const {return m_SVMass;} 
+std::vector<double> TupleCandidateEvent::SVTransverseMass() const {return m_SVTransverseMass;} 
 
 
