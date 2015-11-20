@@ -66,6 +66,14 @@ sed -i 's/std::cout/\/\/std::cout/g' PhysicsTools/Utilities/src/LumiReWeighting.
 # add a local copy of PU jet ID
 git cms-addpkg RecoJets/JetProducers
 
+# add CL software
+
+git clone https://github.com/cms-analysis/HiggsAnalysis-CombinedLimit.git HiggsAnalysis/CombinedLimit
+cd HiggsAnalysis/CombinedLimit
+git checkout 74x-root6
+
+cd -
+
 # move the Davis code into the reight area
 
 mv ../../DavisRunIITauTau .
