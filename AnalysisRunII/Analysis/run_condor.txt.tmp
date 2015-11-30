@@ -1,0 +1,12 @@
+getenv = True
+Executable = run_analysis
+Output = runMessages.stout
+Error = runErrors.stderr
+universe = vanilla
+Log = runLog.log
+Should_Transfer_Files = YES
+WhenToTransferOutput = ON_EXIT
+
+Place Directory
+
+Queue 1
