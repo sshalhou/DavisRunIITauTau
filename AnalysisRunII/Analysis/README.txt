@@ -10,12 +10,14 @@ All command line options below must be used:
 
 -i specify name of FlatTuple root file or txt file containing list of root files. The txt file must be in the Analysis directory and list files as (“<path>/<file.root>”)
 
--o specify list of operations to be performed. Must escape spaces with backslashes if using more than one operation. 
+-o specify list of operations to be performed. Must escape spaces with backslashes if using more than one operation.
+
+-d specify path where output from the job will go
 
 Example:
 
-python operation_submit.py -c -t "PASSCUTS/FlatTuple" -i “/eos/uscms/store/user/gfunk/MonoH_Backgrounds/FlatTuple_Wjets.root” -o generateH2TauSyncTree\ histogramLeptonQuantities
+python operation_submit.py -c -t "PASSCUTS/FlatTuple" -i “/eos/uscms/store/user/gfunk/MonoH_Backgrounds/FlatTuple_Wjets.root” -o generateH2TauSyncTree\ histogramLeptonQuantities -d /eos/uscms/store/user/gfunk/NewTest
 
 or 
 
-python operation_submit.py -c -t "PASSCUTS/FlatTuple" -i rootFiles.txt -o generateH2TauSyncTree\ histogramLeptonQuantities
+python operation_submit.py -c -t "PASSCUTS/FlatTuple" -i rootFiles.txt -o generateH2TauSyncTree\ histogramLeptonQuantities -d /eos/uscms/store/user/gfunk/NewTest
