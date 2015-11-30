@@ -8,14 +8,15 @@ def getOptions(argv):
   tTree = ""
   inFile = ""
   operationList = []
+  outputDir = ""
   try:
-    opts, args = getopt.getopt(argv,"hct:i:o:",["tTree=","iFile=","opList="])
+    opts, args = getopt.getopt(argv,"hct:i:o:d:",["tTree=","iFile=","opList=","outDir="])
   except getopt.GetoptError:
-    print 'Usage: python operation_submit.py -c (to use condor) -i [TTree in FlatTuple] -i [input FlatTuple root file or txt file with list of root files] -o [operations to perform]'
+    print 'Usage: python operation_submit.py -c (to use condor) -i [TTree in FlatTuple] -i [input FlatTuple root file or txt file with list of root files] -o [operations to perform] -d [output path]'
     sys.exit(2)
   for opt, arg in opts:
     if opt == '-h':
-      print 'Usage: python operation_submit.py -c (to use condor) -t [TTree in FlatTuple] -i [input FlatTuple root file or txt file with list of root files] -o [operations to perform]'
+      print 'Usage: python operation_submit.py -c (to use condor) -t [TTree in FlatTuple] -i [input FlatTuple root file or txt file with list of root files] -o [operations to perform] -d [output path]'
       sys.exit()
     elif opt == '-c':
       useCondor = 1
@@ -25,8 +26,10 @@ def getOptions(argv):
       inFile = arg
     elif opt in ("-o", "--opList"):
       operationList = arg.split()
+    elif opt in ("-d", "--outDir"):
+      outputDir = arg
   print len(operationList)
-  return [useCondor,tTree , inFile, operationList]
+  return [useCondor,tTree , inFile, operationList, outputDir]
 
 def editAnalysisDriver(List):
   analysisDriverFileTmp = open(os.getcwd() + '/src/analysisDriver.cc.tmp')
@@ -53,10 +56,23 @@ def editAnalysisDriver(List):
   analysisDriverFileUse.close()
   analysisDriverFileTmp.close()
 
+def editCondorConfig(List):
+  condorConfigFileTmp = open(os.getcwd() + '/run_condor.txt.tmp')
+  condorConfigFileUse = open(os.getcwd() + '/run_condor.txt', 'w')
+  for line in condorConfigFileTmp:
+    if 'Place Directory' in line:
+      line = 'Initialdir = ' + List[4] + '\n'
+    condorConfigFileUse.write(line)
+  condorConfigFileUse.close()
+  condorConfigFileTmp.close()
+
 allParams = getOptions(sys.argv[1:])
 print allParams
 editAnalysisDriver(allParams)
+editCondorConfig(allParams)
 
+if os.path.isdir(allParams[4]) == 0:
+  subprocess.call('mkdir ' + allParams[4], shell = True)
 subprocess.call('make clean', shell = True)
 subprocess.call('make dict', shell = True)
 subprocess.call('make', shell = True)
