@@ -1,0 +1,10 @@
+getenv = True
+Executable = run_analysis
+Output = ./condorJobLog/runCondor.stout
+Error = ./condorJobLog/runCondorError.stderr
+universe = vanilla
+Log = ./condorJobLog/runCondorLog.log
+Should_Transfer_Files = YES
+WhenToTransferOutput = ON_EXIT
+Queue 1
+
