@@ -77,6 +77,8 @@ subprocess.call('make clean', shell = True)
 subprocess.call('make dict', shell = True)
 subprocess.call('make', shell = True)
 if allParams[0] == 1:
+  if os.path.isdir(allParams[4]) == 0:
+    subprocess.call('mkdir ' + allParams[4], shell = True)
   subprocess.call('condor_submit run_condor.txt', shell = True)
 else:
   subprocess.call('./run_analysis', shell = True)
