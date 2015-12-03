@@ -12,7 +12,7 @@ All command line options below must be used:
 
 -o specify list of operations to be performed. Must escape spaces with backslashes if using more than one operation.
 
--d specify path where output from the job will go (must be specified if condor is used, locally running the operation does not use this path) 
+-d specify path where output from condor job will go (must be specified if condor is used, locally running the operation does not use this path) 
 
 Example:
 
