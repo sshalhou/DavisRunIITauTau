@@ -146,7 +146,7 @@ config.Data.outLFNDirBase = '/store/user/%s/' % (getUsernameFromSiteDB())
 
 
 config.Data.publication = False
-config.Data.publishDataName = 'ExoWkshopTry3NoMVAMET'
+config.Data.outputDatasetTag = 'ExoWkshopTry3NoMVAMET'
 config.Site.storageSite = 'T3_US_FNALLPC'
 config.Data.inputDBS = 'global'
 
