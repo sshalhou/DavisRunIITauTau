@@ -14,6 +14,7 @@
 #include "eleTauCutFlowTree.h"
 #include "singleEventHistogramExample.h"
 #include "syncTreeAnalysis.h"
+#include "generateIdEff.h"
 
 int main()
 {
@@ -30,6 +31,7 @@ int main()
   known_operations.push_back("eleTauCutFlowTree");
   known_operations.push_back("singleEventHistogramExample");
   known_operations.push_back("syncTreeAnalysis");
+  known_operations.push_back("generateIdEff");
 
   /* parse the operations into a name bool map */
   /* and check that all requested operations are valid */
@@ -66,7 +68,7 @@ int main()
   eleTauCutFlowTree        ETAUCUT(R,operations_map["eleTauCutFlowTree"]);
   singleEventHistogramExample TWOD(R,operations_map["singleEventHistogramExample"]);
   syncTreeAnalysis SYNCTREEANA(R,operations_map["syncTreeAnalysis"]);
-
+  generateIdEff GENIDEFF(R,operations_map["generateIdEff"]);
 
   long int entries = T->GetEntries();
 
@@ -91,6 +93,7 @@ int main()
       if(operations_map["eleTauCutFlowTree"]) ETAUCUT.handleEvent();
       if(operations_map["singleEventHistogramExample"]) TWOD.handleEvent();
       if(operations_map["syncTreeAnalysis"]) SYNCTREEANA.handleEvent();
+      if(operations_map["generateIdEff"]) GENIDEFF.handleEvent();
 
       ///////// EXAMPLE CODE SHOWING ACCESS  -- END
 
@@ -104,7 +107,7 @@ int main()
   if(operations_map["eleTauCutFlowTree"]) ETAUCUT.finish();
   if(operations_map["singleEventHistogramExample"]) TWOD.finish();
   if(operations_map["syncTreeAnalysis"]) SYNCTREEANA.finish();
-
+  if(operations_map["generateIdEff"]) GENIDEFF.finish();
 
   return 0;
 }
