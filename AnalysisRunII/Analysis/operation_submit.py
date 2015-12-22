@@ -71,7 +71,7 @@ print allParams
 editAnalysisDriver(allParams)
 editCondorConfig(allParams)
 
-if os.path.isdir(allParams[4]) == 0:
+if not os.path.isdir(allParams[4]) == "":
   subprocess.call('mkdir ' + allParams[4], shell = True)
 subprocess.call('make clean', shell = True)
 subprocess.call('make dict', shell = True)
