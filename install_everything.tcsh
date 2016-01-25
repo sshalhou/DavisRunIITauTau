@@ -41,6 +41,7 @@ cp /afs/cern.ch/user/s/sshalhou/public/INSTALL_PUBLIC_FILES/74X/mvaPFMET_db_cfi.
 sed -i 's/puJetIdForPFMVAMEt = pileupJetIdEvaluator.clone/from RecoMET.METPUSubtraction.mvaPFMET_db_cfi import mvaPFMEtGBRForestsFromDB\npuJetIdForPFMVAMEt = pileupJetIdEvaluator.clone/g' RecoMET/METPUSubtraction/python/mvaPFMET_cff.py
 cp /afs/cern.ch/user/s/sshalhou/public/INSTALL_PUBLIC_FILES/74X/mvaPFMEt_747_25ns_Mar2015.db RecoMET/METPUSubtraction/data/.
 rm -rf RecoMET/METPUSubtraction/data/.git
+sed -i 's/tmvaSpectators/\n        etaBinnedWeights=cms.bool(False),\n        tmvaSpectators/g' RecoMET/METPUSubtraction/python/mvaPFMET_cff.py
 
 # for muon effective area
 
