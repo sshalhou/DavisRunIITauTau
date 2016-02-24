@@ -41,6 +41,7 @@ cp /afs/cern.ch/user/s/sshalhou/public/INSTALL_PUBLIC_FILES/74X/mvaPFMET_db_cfi.
 sed -i 's/puJetIdForPFMVAMEt = pileupJetIdEvaluator.clone/from RecoMET.METPUSubtraction.mvaPFMET_db_cfi import mvaPFMEtGBRForestsFromDB\npuJetIdForPFMVAMEt = pileupJetIdEvaluator.clone/g' RecoMET/METPUSubtraction/python/mvaPFMET_cff.py
 cp /afs/cern.ch/user/s/sshalhou/public/INSTALL_PUBLIC_FILES/74X/mvaPFMEt_747_25ns_Mar2015.db RecoMET/METPUSubtraction/data/.
 rm -rf RecoMET/METPUSubtraction/data/.git
+sed -i 's/tmvaSpectators/\n        etaBinnedWeights=cms.bool(False),\n        tmvaSpectators/g' RecoMET/METPUSubtraction/python/mvaPFMET_cff.py
 
 # for muon effective area
 
@@ -65,6 +66,14 @@ sed -i 's/std::cout/\/\/std::cout/g' PhysicsTools/Utilities/src/LumiReWeighting.
 
 # add a local copy of PU jet ID
 git cms-addpkg RecoJets/JetProducers
+
+# add CL software
+
+git clone https://github.com/cms-analysis/HiggsAnalysis-CombinedLimit.git HiggsAnalysis/CombinedLimit
+cd HiggsAnalysis/CombinedLimit
+git checkout 74x-root6
+
+cd -
 
 # move the Davis code into the reight area
 
