@@ -2,7 +2,7 @@
 DavisRunIITauTau : Code For H->tau tau Run II analysis
 ------------------
 
-For Quick Start (on SL6 only, CMSSW_7_4_14 and higher):
+For Quick Start (on SL6 only, CMSSW_7_6_3 and higher):
 
 
 - Choose a location for your working directory :
@@ -24,7 +24,7 @@ For Quick Start (on SL6 only, CMSSW_7_4_14 and higher):
 
 		cd DavisRunIITauTau
 
-		git checkout miniAODv2_7_4_14
+		git checkout fall15_7_6_3_patch2
 
 		cd -
 
