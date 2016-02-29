@@ -115,6 +115,6 @@ mv ../../DavisRunIITauTau .
 
 # mv ../../DavisRunIITauTau .
 
-# # compile
+# compile
 
-# scram b -j 20
+scram b -j 20
