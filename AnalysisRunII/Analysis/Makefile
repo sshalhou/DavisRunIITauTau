@@ -1,5 +1,6 @@
 CC= g++
 CFLAGS= -std=c++11 -c -g -Wall -MMD -MP -I `root-config --incdir` -I./include 
+#CFLAGS= -std=c++0x -c -g -Wall -MMD -MP -I `root-config --incdir` -I./include 
 LDFLAGS=`root-config --libs`
 SOURCES=$(wildcard ./src/*.cc)
 SOURCES += $(wildcard ./operations/*.cc)
