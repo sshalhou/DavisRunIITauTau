@@ -26,6 +26,25 @@ aPSet = cms.PSet(
 sampleInfo.append(aPSet)
 
 
+####################################################
+# mini AOD Fall15 MC Samples                           #
+####################################################
+
+
+############
+aPSet = cms.PSet(   
+    DataSet = cms.string("/SUSYGluGluToHToTauTau_M-160_TuneCUETP8M1_13TeV-pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM"),
+    EventTotal = cms.int32(469976),
+    EventType = cms.string("MC"), # valid EventTypes are :  MC, DATA, EMBEDDED (expand as needed)
+    KeyName = cms.string("Fall15_SusyGG160"), # a unique descriptor for this sample to be used throught all parts of the code
+    CrossSection = cms.double(1.0), # cross section in pb (include *BR if needed)
+    FilterEff = cms.double(1.0), # generator level filter effi. 
+    CodeVersion = cms.double(0.0), # allow us to track differences as ntuples and flattuples evolve
+    ProductionInfo = cms.string("Fall15MCminiAOD") # needed for correct trigger settings
+                )
+sampleInfo.append(aPSet)
+############
+
 
 #########################################
 # 2015Run D Data                        # 
