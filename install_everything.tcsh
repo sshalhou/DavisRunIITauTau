@@ -61,8 +61,8 @@ sed -i 's/std::cout/\/\/std::cout/g' PhysicsTools/Utilities/src/LumiReWeighting.
 git cms-addpkg RecoMET/METPUSubtraction
 git cms-addpkg DataFormats/METReco
 git remote add -f mvamet https://github.com/rfriese/cmssw.git
-git checkout MVAMET2_beta_0.5 -b mvamet
-# rm -rf RecoMET/METPUSubtraction/data/.git 
+git checkout MVAMET2_beta_0.6 -b mvamet
+rm -rf RecoMET/METPUSubtraction/data/.git 
 
 
 # add CL software
