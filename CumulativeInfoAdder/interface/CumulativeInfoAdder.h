@@ -106,6 +106,8 @@ public:
 
 	/* input */
 	edm::InputTag mcGenWeightSrc_;
+    edm::EDGetTokenT<GenEventInfoProduct> mcGenWeightToken_;
+
 
 	/* variables for the TTree */
 

@@ -1,6 +1,7 @@
 ####################################################################################################
 # config file containing jet pre-selections
 # contains : 
+#			   StartingJetCollection - the source of jets in the mini-AOD (usually slimmedJets)	
 #              jetFilter - cms.string of initial cuts imposed on slimmedJets
 #			   jets failing these requirements will not be kept in the ntuple! 
 #
@@ -18,6 +19,14 @@
 
 import FWCore.ParameterSet.Config as cms
 from and_string_concatonator import and_string_concatonator
+
+
+########################
+# starting jet collection
+
+StartingJetCollection = "slimmedJets"
+
+
 
 ####################################################################################################
 ####################################################################################################

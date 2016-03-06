@@ -89,18 +89,40 @@ private:
 
   // ----------member data ---------------------------
   edm::InputTag electronSrc_;
+  edm::EDGetTokenT<edm::View< pat::Electron > > electronToken_;
+
   string NAME_;
+
   edm::InputTag vertexSrc_;
+  edm::EDGetTokenT< edm::View<reco::Vertex> > vertexToken_;
+
+
   edm::EDGetTokenT<edm::TriggerResults> triggerBitSrc_;
   edm::EDGetTokenT<pat::PackedTriggerPrescales> triggerPreScaleSrc_;
   edm::EDGetTokenT<pat::TriggerObjectStandAloneCollection> triggerObjectSrc_; 
+
   vInputTag rhoSources_;
+  std::vector < edm::EDGetTokenT<double> > rhoTokens_;
+
+
+
   edm::InputTag eleMediumIdMap_;
+  edm::EDGetTokenT< edm::ValueMap<bool> > eleMediumIdMapToken_;
+
   edm::InputTag eleTightIdMap_;
+  edm::EDGetTokenT< edm::ValueMap<bool> > eleTightIdMapToken_;
+
   edm::InputTag mvaValuesMap_;  
+  edm::EDGetTokenT< edm::ValueMap<float> > mvaValuesMapToken_;
+
   edm::InputTag mvaCategoriesMap_;
+  edm::EDGetTokenT< edm::ValueMap<int> > mvaCategoriesMapToken_;
+
+
   edm::EDGetTokenT<edm::ValueMap<bool> > eleVetoIdMapToken_;
-  edm::InputTag gsfElectrons_; /* not an input argument! */
+ 
+
+  edm::EDGetTokenT<edm::View< reco::GsfElectron > > GSFelectronToken_; /* not an input arg */
 
 
 };
@@ -136,12 +158,19 @@ eleVetoIdMapToken_(consumes<edm::ValueMap<bool> >(iConfig.getParameter<edm::Inpu
   produces<PatElectronCollection>(NAME_).setBranchAlias(NAME_);
 
 
+  electronToken_ = consumes< edm::View<pat::Electron> >(electronSrc_);
+  vertexToken_ = consumes< edm::View<reco::Vertex> >(vertexSrc_);
+  GSFelectronToken_ = consumes< edm::View<reco::GsfElectron> >(iConfig.getParameter<edm::InputTag>("electronSrc" ));
+
+  eleMediumIdMapToken_  = consumes< edm::ValueMap<bool> >(eleMediumIdMap_);
+  eleTightIdMapToken_ = consumes< edm::ValueMap<bool> >(eleTightIdMap_);
+  mvaValuesMapToken_  = consumes< edm::ValueMap<float> >(mvaValuesMap_);
+  mvaCategoriesMapToken_ = consumes< edm::ValueMap<int> >(mvaCategoriesMap_);
 
 
-
-
-
-
+  for(vInputTag::const_iterator it=rhoSources_.begin();it!=rhoSources_.end();it++) {
+    rhoTokens_.push_back( consumes<double >( *it ) );
+  }
 
   //register your products
   /* Examples
@@ -180,16 +209,17 @@ CustomPatElectronProducer::produce(edm::Event& iEvent, const edm::EventSetup& iS
 
   // get vertex collection
   edm::Handle<edm::View<reco::Vertex> > vertices;
-  iEvent.getByLabel(vertexSrc_,vertices);
+  iEvent.getByToken(vertexToken_,vertices);
   const reco::Vertex & first_vertex = vertices->at(0);
+
 
   // get electron collection
   edm::Handle<edm::View<pat::Electron> > electrons;
-  iEvent.getByLabel(electronSrc_,electrons);
+  iEvent.getByToken(electronToken_,electrons);
 
   // also cast pat::Electron into gsfElectron
   edm::Handle< edm::View<reco::GsfElectron> > gsfElectrons;
-  iEvent.getByLabel(electronSrc_,gsfElectrons);
+  iEvent.getByToken(GSFelectronToken_,gsfElectrons);
 
 
   // get the rho variants
@@ -197,18 +227,17 @@ CustomPatElectronProducer::produce(edm::Event& iEvent, const edm::EventSetup& iS
   std::vector<std::string> rhoNames;
   std::vector<double> rhos;
 
-  for(  edm::InputTag rs : rhoSources_ )
+
+  for(std::size_t r = 0; r<rhoTokens_.size(); ++r)
   {
+    edm::Handle<double> arho;
+    iEvent.getByToken(rhoTokens_[r],arho);
 
-  edm::Handle<double> arho;
-  iEvent.getByLabel(rs,arho);
-
-  rhoNames.push_back(rs.label());
-  rhos.push_back(*arho);
-  //std::cout<<rs.label()<<" "<<*arho<<std::endl;
+    rhoNames.push_back(rhoSources_[r].label());
+    rhos.push_back(*arho);
+    std::cout<<rhoSources_[r].label()<<" "<<*arho<<std::endl;
 
   }
-
 
 
   // get trigger-related collections
@@ -227,16 +256,16 @@ CustomPatElectronProducer::produce(edm::Event& iEvent, const edm::EventSetup& iS
   // get electron MVA related collections
 
       edm::Handle< edm::ValueMap<bool> > eleMediumIdMap;
-      iEvent.getByLabel(eleMediumIdMap_,eleMediumIdMap);
+      iEvent.getByToken(eleMediumIdMapToken_,eleMediumIdMap);
 
       edm::Handle< edm::ValueMap<bool> > eleTightIdMap;
-      iEvent.getByLabel(eleTightIdMap_,eleTightIdMap);
+      iEvent.getByToken(eleTightIdMapToken_,eleTightIdMap);
 
       edm::Handle< edm::ValueMap<float> > mvaValuesMap;
-      iEvent.getByLabel(mvaValuesMap_,mvaValuesMap);
+      iEvent.getByToken(mvaValuesMapToken_,mvaValuesMap);
    
       edm::Handle< edm::ValueMap<int> > mvaCategoriesMap;
-      iEvent.getByLabel(mvaCategoriesMap_,mvaCategoriesMap);
+      iEvent.getByToken(mvaCategoriesMapToken_,mvaCategoriesMap);
 
   // get the cut based ID (veto)
 

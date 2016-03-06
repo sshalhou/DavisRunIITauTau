@@ -1,11 +1,5 @@
-#import FWCore.ParameterSet.Config as cms
-#process = cms.Process("DavisNtuple")
-
-# to get the corretc met filter settings
 import FWCore.ParameterSet.Config as cms
-from Configuration.StandardSequences.Eras import eras
-process = cms.Process('DavisNtuple',eras.Run2_25ns) #for 25ns 13 TeV data
-
+process = cms.Process('DavisNtuple') 
 
 ###################################
 # preliminaries 
@@ -92,49 +86,161 @@ print '********** HAVE MANUALLY SET GLOBAL TAG SET TO  *********************'
 print '**********', process.GlobalTag.globaltag
 print '*******************************************************'
 
-# process.load("Configuration.StandardSequences.Geometry_cff")
+print '********** Running in unscheduled mode **********'
+process.options = cms.untracked.PSet(wantSummary = cms.untracked.bool(True))
+process.options.allowUnscheduled = cms.untracked.bool(True)
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(500) )
+
+###################################
+# input - remove for crab running
+###################################
+
+myfilelist = cms.untracked.vstring()
+myfilelist.extend(['file:/uscms_data/d3/shalhout/miniAODv2_SyncSample.root'])
+process.source = cms.Source("PoolSource",fileNames=myfilelist)
+
+
+
+###################################
+# Cumulative Info
+#     - keep info about every event seen
+#     - before any selections are applied
+###################################
+
+from DavisRunIITauTau.TupleConfigurations.ConfigNtupleWeights_cfi import mcGenWeightSrcInputTag
+
+process.Cumulative = cms.EDAnalyzer('CumulativeInfoAdder',
+	mcGenWeightSrc = mcGenWeightSrcInputTag
+	)
+
+
+###################################
+# vertex filtering 
+#     - filter+clone vertex collection
+###################################
+
+from DavisRunIITauTau.TupleConfigurations.ConfigTupleOfflineVertices_cfi import vertexFilter
+
+process.filteredVertices = cms.EDFilter(
+    "VertexSelector",
+    src = cms.InputTag('offlineSlimmedPrimaryVertices'),
+    #cut = vertexFilter,
+    cut = cms.string(""), # off until studies show cuts are needed
+    filter = cms.bool(True) # drop events without good quality veritces
+)
+
+
+###################################
+# re-apply Jet Energy Corrections
+# will use tools already available in MVA MET
+####################################
+
+process.load('Configuration.StandardSequences.GeometryRecoDB_cff')
+process.load('Configuration.StandardSequences.MagneticField_38T_cff')
+process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff")
+
+from DavisRunIITauTau.TupleConfigurations.ConfigJets_cfi import StartingJetCollection
+print "******* starting jet collection = ", StartingJetCollection, " *******"
+
+from RecoMET.METPUSubtraction.localSqlite import recorrectJets
+
+if sampleData.EventType == 'MC':
+	recorrectJets(process, False)
+
+if sampleData.EventType == 'DATA':
+	recorrectJets(process, True)
+
+###################################
+# apply jet filter onto 
+# slimmed jet collection
+###################################
+
+from DavisRunIITauTau.TupleConfigurations.ConfigJets_cfi import jetFilter
+
+
+process.filteredSlimmedJets = cms.EDFilter("PATJetRefSelector",
+	src = cms.InputTag('patJetsReapplyJEC'),
+	cut = jetFilter
+	)
+
+
+
+
+
+############################
+# define rho sources to be used in isol variants
+
+rhoSourceList = cms.VInputTag(
+	cms.InputTag('fixedGridRhoFastjetAll'),
+	cms.InputTag('fixedGridRhoFastjetAllCalo'),
+	cms.InputTag('fixedGridRhoFastjetCentralCalo'),
+	cms.InputTag('fixedGridRhoFastjetCentralChargedPileUp'),
+	cms.InputTag('fixedGridRhoFastjetCentralNeutral'),
+	cms.InputTag('fixedGridRhoAll'))
+
+
+
+
+##################
+# set up the electron ID (including mvas)
+
+from PhysicsTools.SelectorUtils.tools.vid_id_tools import *
+dataFormat = DataFormat.MiniAOD
+switchOnVIDElectronIdProducer(process, dataFormat)
+my_id_modules = ['RecoEgamma.ElectronIdentification.Identification.mvaElectronID_Spring15_25ns_nonTrig_V1_cff',
+                 'RecoEgamma.ElectronIdentification.Identification.cutBasedElectronID_Spring15_25ns_V1_cff']
+
+
+for idmod in my_id_modules:
+    setupAllVIDIdsInModule(process,idmod,setupVIDElectronSelection)
+
+wp80 = cms.InputTag("egmGsfElectronIDs:mvaEleID-Spring15-25ns-nonTrig-V1-wp80")
+wp90 = cms.InputTag("egmGsfElectronIDs:mvaEleID-Spring15-25ns-nonTrig-V1-wp90")
+wpVals = cms.InputTag("electronMVAValueMapProducer:ElectronMVAEstimatorRun2Spring15NonTrig25nsV1Values")
+wpCats = cms.InputTag("electronMVAValueMapProducer:ElectronMVAEstimatorRun2Spring15NonTrig25nsV1Categories")
+cutVeto = cms.InputTag("egmGsfElectronIDs:cutBasedElectronID-Spring15-25ns-V1-standalone-veto")
+
+
+
+
+
+
 
 # from JetMETCorrections.Configuration.JetCorrectionServicesAllAlgos_cff import *
 # from JetMETCorrections.Configuration.DefaultJEC_cff import *
 
 
-# # mva MET -- end
-
-# ###################################
-# # input - remove for crab running
-# ###################################
-
-# myfilelist = cms.untracked.vstring()
-# myfilelist.extend(['file:/uscms_data/d3/shalhout/miniAODv2SusyGGH160.root'])
-# process.source = cms.Source("PoolSource",fileNames=myfilelist)
 
 
-# ###################################
-# # Cumulative Info
-# #     - keep info about every event seen
-# #     - before any selections are applied
-# ###################################
+###################################
+# perform custom parameter embedding
+# in slimmed collections
+#    - e.g. dz, relIso, mva outputs
+# in the case of taus also handle
+# the Energy scale variation
+###################################
 
-# from DavisRunIITauTau.TupleConfigurations.ConfigNtupleWeights_cfi import mcGenWeightSrcInputTag
 
-# process.Cumulative = cms.EDAnalyzer('CumulativeInfoAdder',
-# 	mcGenWeightSrc = mcGenWeightSrcInputTag
-# 	)
 
-# ###################################
-# # vertex filtering 
-# #     - filter+clone vertex collection
-# ###################################
+process.customSlimmedElectrons = cms.EDProducer('CustomPatElectronProducer' ,
+							electronSrc =cms.InputTag('slimmedElectrons'),
+							vertexSrc =cms.InputTag('filteredVertices::DavisNtuple'),
+							NAME=cms.string("customSlimmedElectrons"),
+							triggerBitSrc = cms.InputTag("TriggerResults","","HLT"),
+							triggerPreScaleSrc = cms.InputTag("patTrigger"),
+							triggerObjectSrc = cms.InputTag("selectedPatTrigger"),							
+							rhoSources = rhoSourceList,
+							eleMediumIdMap = wp80,
+							eleTightIdMap = wp90,
+							mvaValuesMap     = wpVals,
+							mvaCategoriesMap = wpCats,
+							eleVetoIdMap = cutVeto
+							                 )
 
-# from DavisRunIITauTau.TupleConfigurations.ConfigTupleOfflineVertices_cfi import vertexFilter
 
-# process.filteredVertices = cms.EDFilter(
-#     "VertexSelector",
-#     src = cms.InputTag('offlineSlimmedPrimaryVertices'),
-#     #cut = vertexFilter,
-#     cut = cms.string(""), # off until studies show cuts are needed
-#     filter = cms.bool(True) # drop events without good quality veritces
-# )
+
+
+
 
 # #################################
 # # one of the MET Filters needs to be re-run
@@ -155,60 +261,6 @@ print '*******************************************************'
 
 
 
-# ############################
-# # define rho sources to be used in isol variants
-# rhoSourceList = cms.VInputTag(
-# 	cms.InputTag('fixedGridRhoFastjetAll'),
-# 	cms.InputTag('fixedGridRhoFastjetAllCalo'),
-# 	cms.InputTag('fixedGridRhoFastjetCentralCalo'),
-# 	cms.InputTag('fixedGridRhoFastjetCentralChargedPileUp'),
-# 	cms.InputTag('fixedGridRhoFastjetCentralNeutral'),
-# 	cms.InputTag('fixedGridRhoAll'))
-
-
-# ##################
-# # set up the new electron mva (this is new compared to 7_2_X)
-
-# from PhysicsTools.SelectorUtils.tools.vid_id_tools import *
-# dataFormat = DataFormat.MiniAOD
-# switchOnVIDElectronIdProducer(process, dataFormat)
-# my_id_modules = ['RecoEgamma.ElectronIdentification.Identification.mvaElectronID_Spring15_25ns_nonTrig_V1_cff',
-#                  'RecoEgamma.ElectronIdentification.Identification.cutBasedElectronID_Spring15_25ns_V1_cff']
-
-
-# for idmod in my_id_modules:
-#     setupAllVIDIdsInModule(process,idmod,setupVIDElectronSelection)
-
-# wp80 = cms.InputTag("egmGsfElectronIDs:mvaEleID-Spring15-25ns-nonTrig-V1-wp80")
-# wp90 = cms.InputTag("egmGsfElectronIDs:mvaEleID-Spring15-25ns-nonTrig-V1-wp90")
-# wpVals = cms.InputTag("electronMVAValueMapProducer:ElectronMVAEstimatorRun2Spring15NonTrig25nsV1Values")
-# wpCats = cms.InputTag("electronMVAValueMapProducer:ElectronMVAEstimatorRun2Spring15NonTrig25nsV1Categories")
-# cutVeto = cms.InputTag("egmGsfElectronIDs:cutBasedElectronID-Spring15-25ns-V1-standalone-veto")
-
-# ###################################
-# # perform custom parameter embedding
-# # in slimmed collections
-# #    - e.g. dz, relIso, mva outputs
-# # in the case of taus also handle
-# # the Energy scale variation
-# ###################################
-
-
-
-# process.customSlimmedElectrons = cms.EDProducer('CustomPatElectronProducer' ,
-# 							electronSrc =cms.InputTag('slimmedElectrons'),
-# 							vertexSrc =cms.InputTag('filteredVertices::DavisNtuple'),
-# 							NAME=cms.string("customSlimmedElectrons"),
-# 							triggerBitSrc = cms.InputTag("TriggerResults","","HLT"),
-# 							triggerPreScaleSrc = cms.InputTag("patTrigger"),
-# 							triggerObjectSrc = cms.InputTag("selectedPatTrigger"),							
-# 							rhoSources = rhoSourceList,
-# 							eleMediumIdMap = wp80,
-# 							eleTightIdMap = wp90,
-# 							mvaValuesMap     = wpVals,
-# 							mvaCategoriesMap = wpCats,
-# 							eleVetoIdMap = cutVeto
-# 							                 )
 
 
 
@@ -284,18 +336,6 @@ print '*******************************************************'
 # 	)
 
 
-# ###################################
-# # apply jet filter onto 
-# # slimmed jet collection
-# ###################################
-
-# from DavisRunIITauTau.TupleConfigurations.ConfigJets_cfi import jetFilter
-
-
-# process.filteredSlimmedJets = cms.EDFilter("PATJetRefSelector",
-# 	src = cms.InputTag('slimmedJets'),
-# 	cut = jetFilter
-# 	)
 
 
 # ###################################
@@ -396,17 +436,19 @@ print '*******************************************************'
 
 
 
-# ###################################
-# # output config
-# ###################################
+###################################
+# output config
+###################################
 
-# process.out = cms.OutputModule("PoolOutputModule",
-# 			fileName = cms.untracked.string('NtupleFile.root'),
-# 			SelectEvents = cms.untracked.PSet(
-# 			                SelectEvents = cms.vstring('p')
-# 			                ),
-# 			outputCommands = cms.untracked.vstring('drop *')
-# )
+process.out = cms.OutputModule("PoolOutputModule",
+			fileName = cms.untracked.string('NtupleFile.root'),
+			SelectEvents = cms.untracked.PSet(
+			                SelectEvents = cms.vstring('p')
+			                ),
+			#outputCommands = cms.untracked.vstring('drop *')
+			outputCommands = cms.untracked.vstring('keep *')
+
+)
 
 
 # #################################
@@ -434,18 +476,25 @@ print '*******************************************************'
 # process.out.outputCommands += ['keep NtupleEvents_NtupleEvent_*_DavisNtuple']
 # process.out.outputCommands += ['keep NtuplePairIndependentInfos_pairIndep_NtupleEventPairIndep_DavisNtuple']
 # #process.p = cms.Path(process.myProducerLabel)
-# process.p = cms.Path()
+process.p = cms.Path()
 # #process.p *= process.UserSpecifiedData
 
-# process.p *= process.Cumulative
-# process.p *= process.filteredVertices
+process.p *= process.Cumulative
+process.p *= process.filteredVertices
 
+# next two lines probably not needed
+# once full mva met is on
+process.p *= process.patJetCorrFactorsReapplyJEC 
+process.p *= process.patJetsReapplyJEC
+
+
+process.p *= process.filteredSlimmedJets
 
 # process.p *= process.HBHENoiseFilterResultProducer
 # #process.p *= process.ApplyBaselineHBHENoiseFilter
 
-# process.p *= process.egmGsfElectronIDSequence
-# process.p *= process.customSlimmedElectrons
+process.p *= process.egmGsfElectronIDSequence
+process.p *= process.customSlimmedElectrons
 # process.p *= process.customSlimmedMuons
 # process.p *= process.customSlimmedTaus
 
@@ -473,16 +522,14 @@ print '*******************************************************'
 # # mva met -- end
 
 
-# process.p *= process.filteredSlimmedJets
+
 # process.p *= process.pairIndep
-# process.e = cms.EndPath(process.out)
+process.e = cms.EndPath(process.out)
 
 
-# process.options   = cms.untracked.PSet( wantSummary = cms.untracked.bool(True) )
-# process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(50) )
 
 
-# process.TFileService = cms.Service("TFileService", fileName = cms.string("NtupleFileCumulativeInfo.root"))
+process.TFileService = cms.Service("TFileService", fileName = cms.string("NtupleFileCumulativeInfo.root"))
 
 
 

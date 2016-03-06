@@ -12,6 +12,9 @@
 CumulativeInfoAdder::CumulativeInfoAdder(const edm::ParameterSet& iConfig):
 mcGenWeightSrc_(iConfig.getParameter<edm::InputTag>("mcGenWeightSrc"))
 {
+
+  mcGenWeightToken_ = consumes<GenEventInfoProduct>(mcGenWeightSrc_);
+
 }
 
 
@@ -43,7 +46,7 @@ void CumulativeInfoAdder::analyze(const edm::Event& iEvent, const edm::EventSetu
   ///////////////////////////////////////////////////////////////////////////
 
   edm::Handle<GenEventInfoProduct> genEvtWeight;
-  iEvent.getByLabel(mcGenWeightSrc_,genEvtWeight);
+  iEvent.getByToken(mcGenWeightToken_, genEvtWeight);
 
   if(genEvtWeight.isValid()) 
     {
