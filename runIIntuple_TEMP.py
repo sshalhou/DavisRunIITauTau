@@ -89,7 +89,7 @@ print '*******************************************************'
 print '********** Running in unscheduled mode **********'
 process.options = cms.untracked.PSet(wantSummary = cms.untracked.bool(True))
 process.options.allowUnscheduled = cms.untracked.bool(True)
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(500) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(5000) )
 
 ###################################
 # input - remove for crab running
@@ -203,15 +203,6 @@ cutVeto = cms.InputTag("egmGsfElectronIDs:cutBasedElectronID-Spring15-25ns-V1-st
 
 
 
-
-
-
-# from JetMETCorrections.Configuration.JetCorrectionServicesAllAlgos_cff import *
-# from JetMETCorrections.Configuration.DefaultJEC_cff import *
-
-
-
-
 ###################################
 # perform custom parameter embedding
 # in slimmed collections
@@ -238,6 +229,124 @@ process.customSlimmedElectrons = cms.EDProducer('CustomPatElectronProducer' ,
 							                 )
 
 
+process.customSlimmedMuons = cms.EDProducer('CustomPatMuonProducer' ,
+							muonSrc =cms.InputTag('slimmedMuons'),
+							vertexSrc =cms.InputTag('filteredVertices::DavisNtuple'),
+							NAME=cms.string("customSlimmedMuons"),
+							triggerBitSrc = cms.InputTag("TriggerResults","","HLT"),
+							triggerPreScaleSrc = cms.InputTag("patTrigger"),
+							triggerObjectSrc = cms.InputTag("selectedPatTrigger"),
+							rhoSources = rhoSourceList
+							                 )
+
+
+
+
+# produces all 3 tau variants in ES at once 
+process.customSlimmedTaus = cms.EDProducer('CustomPatTauProducer' ,
+							tauSrc =cms.InputTag('slimmedTaus'),
+							vertexSrc =cms.InputTag('filteredVertices::DavisNtuple'),
+							NAME=cms.string("customSlimmedTaus"),
+							TauEsCorrection=cms.double(1.0),
+							TauEsUpSystematic=cms.double(1.0),
+							TauEsDownSystematic=cms.double(1.0),
+							# TauEsCorrection=cms.double(1.01),
+							# TauEsUpSystematic=cms.double(1.03),
+							# TauEsDownSystematic=cms.double(0.97),
+							triggerBitSrc = cms.InputTag("TriggerResults","","HLT"),
+							triggerPreScaleSrc = cms.InputTag("patTrigger"),
+							triggerObjectSrc = cms.InputTag("selectedPatTrigger"),
+							rhoSources = rhoSourceList
+							                 )
+
+
+
+
+
+
+###################################
+# apply lepton filters onto 
+# custom slimmed lepton collections
+###################################
+
+from DavisRunIITauTau.TupleConfigurations.ConfigTupleElectrons_cfi import electronFilter
+from DavisRunIITauTau.TupleConfigurations.ConfigTupleMuons_cfi import muonFilter
+from DavisRunIITauTau.TupleConfigurations.ConfigTupleTaus_cfi import tauFilter
+
+
+
+process.filteredCustomElectrons = cms.EDFilter("PATElectronRefSelector",
+	src = cms.InputTag('customSlimmedElectrons:customSlimmedElectrons:DavisNtuple'),
+	cut = electronFilter
+	)
+
+process.filteredCustomMuons = cms.EDFilter("PATMuonRefSelector",
+	src = cms.InputTag('customSlimmedMuons:customSlimmedMuons:DavisNtuple'),
+	cut = muonFilter
+	)
+
+process.filteredCustomTausEsNominal = cms.EDFilter("PATTauRefSelector",
+	src = cms.InputTag('customSlimmedTaus:customSlimmedTausTauEsNominal:DavisNtuple'),
+	cut = tauFilter
+	)
+
+
+process.filteredCustomTausEsUp = cms.EDFilter("PATTauRefSelector",
+	src = cms.InputTag('customSlimmedTaus:customSlimmedTausTauEsUp:DavisNtuple'),
+	cut = tauFilter
+	)
+
+process.filteredCustomTausEsDown = cms.EDFilter("PATTauRefSelector",
+	src = cms.InputTag('customSlimmedTaus:customSlimmedTausTauEsDown:DavisNtuple'),
+	cut = tauFilter
+	)
+
+
+
+
+###################################
+# apply e/mu veto filters onto 
+# custom slimmed lepton collections
+###################################
+
+from DavisRunIITauTau.TupleConfigurations.ConfigVetoElectrons_cfi import electronVetoFilter
+from DavisRunIITauTau.TupleConfigurations.ConfigVetoMuons_cfi import muonVetoFilter
+
+
+process.filteredVetoElectrons = cms.EDFilter("PATElectronRefSelector",
+	src = cms.InputTag('customSlimmedElectrons:customSlimmedElectrons:DavisNtuple'),
+	cut = electronVetoFilter
+	)
+
+process.filteredVetoMuons = cms.EDFilter("PATMuonRefSelector",
+	src = cms.InputTag('customSlimmedMuons:customSlimmedMuons:DavisNtuple'),
+	cut = muonVetoFilter
+	)
+
+
+
+###################################
+# double lepton requirement
+###################################
+
+
+process.requireCandidateHiggsPair = cms.EDFilter("HiggsCandidateCountFilter",
+  	electronSource = cms.InputTag("filteredCustomElectrons::DavisNtuple"),
+	muonSource     = cms.InputTag("filteredCustomMuons::DavisNtuple"),
+	tauSource      = cms.InputTag("filteredCustomTausEsDown::DavisNtuple"), # always count with down ES shift
+	countElectronElectrons = cms.bool(BUILD_ELECTRON_ELECTRON),
+	countElectronMuons  = cms.bool(BUILD_ELECTRON_MUON),
+	countElectronTaus = cms.bool(BUILD_ELECTRON_TAU),
+	countMuonMuons = cms.bool(BUILD_MUON_MUON),
+	countMuonTaus = cms.bool(BUILD_MUON_TAU),
+	countTauTaus = cms.bool(BUILD_TAU_TAU),
+    filter = cms.bool(True)
+)
+
+
+
+# from JetMETCorrections.Configuration.JetCorrectionServicesAllAlgos_cff import *
+# from JetMETCorrections.Configuration.DefaultJEC_cff import *
 
 
 
@@ -268,114 +377,8 @@ process.customSlimmedElectrons = cms.EDProducer('CustomPatElectronProducer' ,
 
 
 
-# process.customSlimmedMuons = cms.EDProducer('CustomPatMuonProducer' ,
-# 							muonSrc =cms.InputTag('slimmedMuons'),
-# 							vertexSrc =cms.InputTag('filteredVertices::DavisNtuple'),
-# 							NAME=cms.string("customSlimmedMuons"),
-# 							triggerBitSrc = cms.InputTag("TriggerResults","","HLT"),
-# 							triggerPreScaleSrc = cms.InputTag("patTrigger"),
-# 							triggerObjectSrc = cms.InputTag("selectedPatTrigger"),
-# 							rhoSources = rhoSourceList
-# 							                 )
 
 
-# # produces all 3 variants in ES at once 
-# process.customSlimmedTaus = cms.EDProducer('CustomPatTauProducer' ,
-# 							tauSrc =cms.InputTag('slimmedTaus'),
-# 							vertexSrc =cms.InputTag('filteredVertices::DavisNtuple'),
-# 							NAME=cms.string("customSlimmedTaus"),
-# 							TauEsCorrection=cms.double(1.0),
-# 							TauEsUpSystematic=cms.double(1.0),
-# 							TauEsDownSystematic=cms.double(1.0),
-# 							# TauEsCorrection=cms.double(1.01),
-# 							# TauEsUpSystematic=cms.double(1.03),
-# 							# TauEsDownSystematic=cms.double(0.97),
-# 							triggerBitSrc = cms.InputTag("TriggerResults","","HLT"),
-# 							triggerPreScaleSrc = cms.InputTag("patTrigger"),
-# 							triggerObjectSrc = cms.InputTag("selectedPatTrigger"),
-# 							rhoSources = rhoSourceList
-# 							                 )
-
-
-
-# ###################################
-# # apply lepton filters onto 
-# # custom slimmed lepton collections
-# ###################################
-
-# from DavisRunIITauTau.TupleConfigurations.ConfigTupleElectrons_cfi import electronFilter
-# from DavisRunIITauTau.TupleConfigurations.ConfigTupleMuons_cfi import muonFilter
-# from DavisRunIITauTau.TupleConfigurations.ConfigTupleTaus_cfi import tauFilter
-
-
-
-# process.filteredCustomElectrons = cms.EDFilter("PATElectronRefSelector",
-# 	src = cms.InputTag('customSlimmedElectrons:customSlimmedElectrons:DavisNtuple'),
-# 	cut = electronFilter
-# 	)
-
-# process.filteredCustomMuons = cms.EDFilter("PATMuonRefSelector",
-# 	src = cms.InputTag('customSlimmedMuons:customSlimmedMuons:DavisNtuple'),
-# 	cut = muonFilter
-# 	)
-
-# process.filteredCustomTausEsNominal = cms.EDFilter("PATTauRefSelector",
-# 	src = cms.InputTag('customSlimmedTaus:customSlimmedTausTauEsNominal:DavisNtuple'),
-# 	cut = tauFilter
-# 	)
-
-
-# process.filteredCustomTausEsUp = cms.EDFilter("PATTauRefSelector",
-# 	src = cms.InputTag('customSlimmedTaus:customSlimmedTausTauEsUp:DavisNtuple'),
-# 	cut = tauFilter
-# 	)
-
-# process.filteredCustomTausEsDown = cms.EDFilter("PATTauRefSelector",
-# 	src = cms.InputTag('customSlimmedTaus:customSlimmedTausTauEsDown:DavisNtuple'),
-# 	cut = tauFilter
-# 	)
-
-
-
-
-# ###################################
-# # apply e/mu veto filters onto 
-# # custom slimmed lepton collections
-# ###################################
-
-# from DavisRunIITauTau.TupleConfigurations.ConfigVetoElectrons_cfi import electronVetoFilter
-# from DavisRunIITauTau.TupleConfigurations.ConfigVetoMuons_cfi import muonVetoFilter
-
-
-# process.filteredVetoElectrons = cms.EDFilter("PATElectronRefSelector",
-# 	src = cms.InputTag('customSlimmedElectrons:customSlimmedElectrons:DavisNtuple'),
-# 	cut = electronVetoFilter
-# 	)
-
-# process.filteredVetoMuons = cms.EDFilter("PATMuonRefSelector",
-# 	src = cms.InputTag('customSlimmedMuons:customSlimmedMuons:DavisNtuple'),
-# 	cut = muonVetoFilter
-# 	)
-
-
-# ###################################
-# # double lepton requirement
-# # should go here
-# ###################################
-
-
-# process.requireCandidateHiggsPair = cms.EDFilter("HiggsCandidateCountFilter",
-#   	electronSource = cms.InputTag("filteredCustomElectrons::DavisNtuple"),
-# 	muonSource     = cms.InputTag("filteredCustomMuons::DavisNtuple"),
-# 	tauSource      = cms.InputTag("filteredCustomTausEsDown::DavisNtuple"), # always count with down ES shift
-# 	countElectronElectrons = cms.bool(BUILD_ELECTRON_ELECTRON),
-# 	countElectronMuons  = cms.bool(BUILD_ELECTRON_MUON),
-# 	countElectronTaus = cms.bool(BUILD_ELECTRON_TAU),
-# 	countMuonMuons = cms.bool(BUILD_MUON_MUON),
-# 	countMuonTaus = cms.bool(BUILD_MUON_TAU),
-# 	countTauTaus = cms.bool(BUILD_TAU_TAU),
-#     filter = cms.bool(True)
-# )
 
 # ###############################
 # # test -- start
@@ -495,20 +498,16 @@ process.p *= process.filteredSlimmedJets
 
 process.p *= process.egmGsfElectronIDSequence
 process.p *= process.customSlimmedElectrons
-# process.p *= process.customSlimmedMuons
-# process.p *= process.customSlimmedTaus
-
-# process.p *= process.filteredCustomElectrons
-# process.p *= process.filteredCustomMuons
-# process.p *= process.filteredCustomTausEsNominal
-# process.p *= process.filteredCustomTausEsUp
-# process.p *= process.filteredCustomTausEsDown
-
-
-# process.p *= process.filteredVetoElectrons
-# process.p *= process.filteredVetoMuons
-
-# process.p *= process.requireCandidateHiggsPair
+process.p *= process.customSlimmedMuons
+process.p *= process.customSlimmedTaus
+process.p *= process.filteredCustomElectrons
+process.p *= process.filteredCustomMuons
+process.p *= process.filteredCustomTausEsNominal
+process.p *= process.filteredCustomTausEsUp
+process.p *= process.filteredCustomTausEsDown
+process.p *= process.filteredVetoElectrons
+process.p *= process.filteredVetoMuons
+process.p *= process.requireCandidateHiggsPair
 
 
 # # mva met - start

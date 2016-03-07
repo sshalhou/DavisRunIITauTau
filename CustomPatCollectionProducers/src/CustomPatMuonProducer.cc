@@ -84,12 +84,21 @@ private:
 
   // ----------member data ---------------------------
   edm::InputTag muonSrc_;
+  edm::EDGetTokenT<edm::View< pat::Muon > > muonToken_;
+
+
   string NAME_;
+
   edm::InputTag vertexSrc_;
+  edm::EDGetTokenT< edm::View<reco::Vertex> > vertexToken_;
+
   edm::EDGetTokenT<edm::TriggerResults> triggerBitSrc_;
   edm::EDGetTokenT<pat::PackedTriggerPrescales> triggerPreScaleSrc_;
   edm::EDGetTokenT<pat::TriggerObjectStandAloneCollection> triggerObjectSrc_;
+
   vInputTag rhoSources_;
+  std::vector < edm::EDGetTokenT<double> > rhoTokens_;
+
 
 };
 
@@ -116,6 +125,17 @@ rhoSources_(iConfig.getParameter<vInputTag>("rhoSources" ))
 {
 
   produces<PatMuonCollection>(NAME_).setBranchAlias(NAME_);
+
+
+  muonToken_ = consumes< edm::View<pat::Muon> >(muonSrc_);
+
+  vertexToken_ = consumes< edm::View<reco::Vertex> >(vertexSrc_);
+
+  for(vInputTag::const_iterator it=rhoSources_.begin();it!=rhoSources_.end();it++) 
+  {
+    rhoTokens_.push_back( consumes<double >( *it ) );
+  }
+
 
 
   //register your products
@@ -155,29 +175,35 @@ CustomPatMuonProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup
 
   // get vertex collection
   edm::Handle<edm::View<reco::Vertex> > vertices;
-  iEvent.getByLabel(vertexSrc_,vertices);
+  iEvent.getByToken(vertexToken_,vertices);
   const reco::Vertex & first_vertex = vertices->at(0);
 
   // get muon collection
   edm::Handle<edm::View<pat::Muon> > muons;
-  iEvent.getByLabel(muonSrc_,muons);
+  iEvent.getByToken(muonToken_,muons);
 
- // get the rho variants
+
+
+
+  // get the rho variants
 
   std::vector<std::string> rhoNames;
   std::vector<double> rhos;
 
-  for(  edm::InputTag rs : rhoSources_ )
+
+  for(std::size_t r = 0; r<rhoTokens_.size(); ++r)
   {
+    edm::Handle<double> arho;
+    iEvent.getByToken(rhoTokens_[r],arho);
 
-  edm::Handle<double> arho;
-  iEvent.getByLabel(rs,arho);
-
-  rhoNames.push_back(rs.label());
-  rhos.push_back(*arho);
-  //std::cout<<rs.label()<<" "<<*arho<<std::endl;
+    rhoNames.push_back(rhoSources_[r].label());
+    rhos.push_back(*arho);
+    //std::cout<<rhoSources_[r].label()<<" "<<*arho<<std::endl;
 
   }
+
+
+
 
 
 // get trigger-related collections

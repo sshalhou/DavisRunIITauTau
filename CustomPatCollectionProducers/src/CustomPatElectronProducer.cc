@@ -168,7 +168,8 @@ eleVetoIdMapToken_(consumes<edm::ValueMap<bool> >(iConfig.getParameter<edm::Inpu
   mvaCategoriesMapToken_ = consumes< edm::ValueMap<int> >(mvaCategoriesMap_);
 
 
-  for(vInputTag::const_iterator it=rhoSources_.begin();it!=rhoSources_.end();it++) {
+  for(vInputTag::const_iterator it=rhoSources_.begin();it!=rhoSources_.end();it++) 
+  {
     rhoTokens_.push_back( consumes<double >( *it ) );
   }
 
@@ -235,7 +236,7 @@ CustomPatElectronProducer::produce(edm::Event& iEvent, const edm::EventSetup& iS
 
     rhoNames.push_back(rhoSources_[r].label());
     rhos.push_back(*arho);
-    std::cout<<rhoSources_[r].label()<<" "<<*arho<<std::endl;
+    //std::cout<<rhoSources_[r].label()<<" "<<*arho<<std::endl;
 
   }
 

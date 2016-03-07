@@ -83,8 +83,15 @@ private:
 
   // ----------member data ---------------------------
   edm::InputTag tauSrc_;
+  edm::EDGetTokenT<edm::View< pat::Tau > > tauToken_;
+
   string NAME_;
+ 
   edm::InputTag vertexSrc_;
+  edm::EDGetTokenT< edm::View<reco::Vertex> > vertexToken_;
+
+
+
   double TauEsCorrection_;
   double TauEsUpSystematic_;
   double TauEsDownSystematic_;
@@ -96,7 +103,10 @@ private:
   std::string NAME_NOMINAL;
   std::string NAME_UP;
   std::string NAME_DOWN;
+
   vInputTag rhoSources_;
+  std::vector < edm::EDGetTokenT<double> > rhoTokens_;
+
 
 
 
@@ -134,6 +144,15 @@ rhoSources_(iConfig.getParameter<vInputTag>("rhoSources" ))
   produces<PatTauCollection>(NAME_NOMINAL).setBranchAlias(NAME_NOMINAL);
   produces<PatTauCollection>(NAME_UP).setBranchAlias(NAME_UP);
   produces<PatTauCollection>(NAME_DOWN).setBranchAlias(NAME_DOWN);
+
+  tauToken_ = consumes< edm::View<pat::Tau> >(tauSrc_);
+
+  vertexToken_ = consumes< edm::View<reco::Vertex> >(vertexSrc_);
+
+  for(vInputTag::const_iterator it=rhoSources_.begin();it!=rhoSources_.end();it++) 
+  {
+    rhoTokens_.push_back( consumes<double >( *it ) );
+  }
 
 
 
@@ -175,27 +194,27 @@ CustomPatTauProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
 
   // get vertex collection
   edm::Handle<edm::View<reco::Vertex> > vertices;
-  iEvent.getByLabel(vertexSrc_,vertices);
+  iEvent.getByToken(vertexToken_,vertices);
   const reco::Vertex & first_vertex = vertices->at(0);
 
   // get Tau collection
   edm::Handle<edm::View<pat::Tau> > taus;
-  iEvent.getByLabel(tauSrc_,taus);
+  iEvent.getByToken(tauToken_,taus);
 
   // get the rho variants
 
   std::vector<std::string> rhoNames;
   std::vector<double> rhos;
 
-  for(  edm::InputTag rs : rhoSources_ )
+
+  for(std::size_t r = 0; r<rhoTokens_.size(); ++r)
   {
+    edm::Handle<double> arho;
+    iEvent.getByToken(rhoTokens_[r],arho);
 
-  edm::Handle<double> arho;
-  iEvent.getByLabel(rs,arho);
-
-  rhoNames.push_back(rs.label());
-  rhos.push_back(*arho);
-  //std::cout<<rs.label()<<" "<<*arho<<std::endl;
+    rhoNames.push_back(rhoSources_[r].label());
+    rhos.push_back(*arho);
+    //std::cout<<rhoSources_[r].label()<<" "<<*arho<<std::endl;
 
   }
 

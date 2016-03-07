@@ -28,6 +28,11 @@ HiggsCandidateCountFilter::HiggsCandidateCountFilter(const edm::ParameterSet & i
   countMuonMuons_     = iConfig.getParameter<bool>         ( "countMuonMuons" );
   countMuonTaus_     = iConfig.getParameter<bool>         ( "countMuonTaus" );
   countTauTaus_ = iConfig.getParameter<bool>         ( "countTauTaus" );
+
+  electronToken_ = consumes< edm::View<pat::Electron> >(electronSource_);
+  muonToken_ = consumes< edm::View<pat::Muon> >(muonSource_);
+  tauToken_ = consumes< edm::View<pat::Tau> >(tauSource_);
+
 }
 
 
@@ -37,11 +42,13 @@ HiggsCandidateCountFilter::~HiggsCandidateCountFilter() {
 
 bool HiggsCandidateCountFilter::filter(edm::Event & iEvent, const edm::EventSetup & iSetup) {
   edm::Handle<edm::View<Electron> > electrons;
-  iEvent.getByLabel(electronSource_, electrons);
+  iEvent.getByToken(electronToken_, electrons);
+  
   edm::Handle<edm::View<Muon> > muons;
-  iEvent.getByLabel(muonSource_, muons);
+  iEvent.getByToken(muonToken_, muons);
+  
   edm::Handle<edm::View<Tau> > taus;
-  iEvent.getByLabel(tauSource_, taus);
+  iEvent.getByToken(tauToken_, taus);
 
 
   std::size_t NUM_TAUS = taus->size();
