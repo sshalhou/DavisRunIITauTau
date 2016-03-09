@@ -89,7 +89,7 @@ print '*******************************************************'
 print '********** Running in unscheduled mode **********'
 process.options = cms.untracked.PSet(wantSummary = cms.untracked.bool(True))
 process.options.allowUnscheduled = cms.untracked.bool(True)
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(5000) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(500) )
 
 ###################################
 # input - remove for crab running
@@ -343,6 +343,62 @@ process.requireCandidateHiggsPair = cms.EDFilter("HiggsCandidateCountFilter",
     filter = cms.bool(True)
 )
 
+#########################################
+# new MVA MET (pairwise) interface
+##########################################
+
+
+from RecoMET.METPUSubtraction.MVAMETConfiguration_cff import runMVAMET
+
+runMVAMET( process, jetCollectionPF = "patJetsReapplyJEC"  )
+
+if BUILD_TAU_ES_VARIANTS is False :
+	process.MVAMET.srcLeptons  = cms.VInputTag("filteredCustomMuons", 
+											   "filteredCustomElectrons", 
+											   "filteredCustomTausEsNominal")
+else:
+	process.MVAMET.srcLeptons  = cms.VInputTag("filteredCustomMuons",
+											   "filteredCustomElectrons", 
+											   "filteredCustomTausEsNominal",
+											   "filteredCustomTausEsUp",
+											   "filteredCustomTausEsDown")
+
+
+process.MVAMET.requireOS = cms.bool(False)
+
+
+
+##################
+# memory check 
+
+if RUN_MEM_CHECK is True:
+	process.SimpleMemoryCheck = cms.Service("SimpleMemoryCheck",ignoreTotal = cms.untracked.int32(1) )
+
+
+# 
+
+####################
+# produce the TupleCandidateEvent pair + MET container
+
+
+process.TupleCandidateEvents = cms.EDProducer('TupleCandidateEventProducer' ,
+	puppiMETSrc = cms.InputTag("slimmedMETsPuppi"),
+	pfMETSrc = cms.InputTag("patpfMETT1"), # this has the updated JECs
+	mvaMETSrc = cms.InputTag("MVAMET:MVAMET:DavisNtuple"),
+	electronVetoSrc =cms.InputTag("filteredVetoElectrons","","DavisNtuple"),
+	muonVetoSrc = cms.InputTag("filteredVetoMuons","","DavisNtuple"),				
+	pairDeltaRmin = cms.double(0.3), 
+    # should be small since don't want one of the pair in the veto list
+    # note : this is used for DR(leg1, leg2) >, and for overlap removal from the
+    # veto e and mu lists
+    vetoDeltaRmin = cms.double(0.15), 
+	NAME=cms.string("TupleCandidateEvents"),
+    doSVMass = cms.bool(COMPUTE_SVMASS),
+    useMVAMET = cms.bool(USE_MVAMET),
+    logMterm = cms.double(SVMASS_LOG_M),
+    svMassVerbose = cms.int32(SVMASS_VERBOSE)#,
+						)	
+
 
 
 # from JetMETCorrections.Configuration.JetCorrectionServicesAllAlgos_cff import *
@@ -379,7 +435,6 @@ process.requireCandidateHiggsPair = cms.EDFilter("HiggsCandidateCountFilter",
 
 
 
-
 # ###############################
 # # test -- start
 # ################################
@@ -389,16 +444,7 @@ process.requireCandidateHiggsPair = cms.EDFilter("HiggsCandidateCountFilter",
 
 # mvaMEThelper = PairWiseMetHelper(process,sampleData)
 
-# # we also need to remake PFMET since it lacks met significance in Phys14
-# # this is unrelated to mvaMET
 
-# from RecoMET.METProducers.PFMET_cfi import pfMet
-# process.load("RecoMET/METProducers.METSignificance_cfi")
-# process.load("RecoMET/METProducers.METSignificanceParams_cfi")
-# process.pfMet = pfMet.clone(src = "packedPFCandidates")
-# process.pfMet.calculateSignificance = True
-# # before setting the above to true need to follow 
-# # https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideMETSignificance
 
 
 
@@ -468,7 +514,6 @@ process.out = cms.OutputModule("PoolOutputModule",
 # # keep everything produced by Ntuple
 # #################################
 # #process.out.outputCommands +=['keep *_*_*_Ntuple']
-# process.SimpleMemoryCheck = cms.Service("SimpleMemoryCheck",ignoreTotal = cms.untracked.int32(1) )
 
 # ###################################
 # # asked to keep trigger info 
@@ -509,6 +554,7 @@ process.p *= process.filteredVetoElectrons
 process.p *= process.filteredVetoMuons
 process.p *= process.requireCandidateHiggsPair
 
+process.p *= process.TupleCandidateEvents
 
 # # mva met - start
 # #off cause PU jet ID and MVA met hate each other -- mvaMEThelper.initializeMVAmet(process.p)

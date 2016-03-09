@@ -39,13 +39,22 @@ public:
 
   // setters
 
+  void set_leg1(const pat::Electron);
+  void set_leg2(const pat::Electron);
+  void set_leg1(const pat::Muon);
+  void set_leg2(const pat::Muon);
+  void set_leg1(const pat::Tau);
+  void set_leg2(const pat::Tau);
+  void set_CandidateEventType(); // dont forget to call this!
+
+
   void set_pair(pat::Electron, pat::Electron);
   void set_pair(pat::Electron, pat::Muon);
   void set_pair(pat::Electron, pat::Tau);
   void set_pair(pat::Muon, pat::Muon);
   void set_pair(pat::Muon, pat::Tau);
   void set_pair(pat::Tau, pat::Tau);
-  void set_mvaMET(reco::PFMET); 
+  void set_mvaMET(pat::MET); 
   void set_puppiMET(pat::MET); 
   void set_pfMET(pat::MET); 
   void set_pfMET_covMatrix(double,double,double,double);  // 00, 01, 10, 11 is the order  
@@ -59,7 +68,7 @@ public:
   int CandidateEventType() const;
   TupleLepton leg1() const;
   TupleLepton leg2() const;
-  std::vector<reco::PFMET>  mvaMET() const;
+  std::vector<pat::MET>  mvaMET() const;
   std::vector<pat::MET>  pfMET() const;
   std::vector<pat::MET>  puppiMET() const;
   std::vector<double>  pfMET_cov00() const;
@@ -77,7 +86,7 @@ private:
   int m_CandidateEventType; 
   TupleLepton m_leg1;
   TupleLepton m_leg2;
-  std::vector<reco::PFMET>  m_mvaMET; // note : keep as a vector in case systematic variants are needed 
+  std::vector<pat::MET>  m_mvaMET; // note : keep as a vector in case systematic variants are needed 
   std::vector<pat::MET>  m_pfMET; 
   std::vector<pat::MET>  m_puppiMET; 
   std::vector<double>  m_pfMET_cov00; // needed due to missing sig matrix in phys14/Spring15 samples
