@@ -532,15 +532,16 @@ process.pairIndep = cms.EDProducer('NtuplePairIndependentInfoProducer',
 # output config
 ###################################
 
-process.out = cms.OutputModule("PoolOutputModule",
-			fileName = cms.untracked.string('NtupleFile.root'),
-			SelectEvents = cms.untracked.PSet(
-			                SelectEvents = cms.vstring('p')
-			                ),
-			#outputCommands = cms.untracked.vstring('drop *')
-			outputCommands = cms.untracked.vstring('keep *')
 
-)
+# process.out = cms.OutputModule("PoolOutputModule",
+# 			fileName = cms.untracked.string('NtupleFile.root'),
+# 			SelectEvents = cms.untracked.PSet(
+# 			                SelectEvents = cms.vstring('p')
+# 			                ),
+# 			#outputCommands = cms.untracked.vstring('drop *')
+# 			outputCommands = cms.untracked.vstring('keep *')
+
+# )
 
 
 # #################################
@@ -612,12 +613,50 @@ process.p *= process.TupleCandidateEvents
 
 process.p *= process.NtupleEvents
 process.p *= process.pairIndep
-process.e = cms.EndPath(process.out)
+
+
+
+# -- start test
+
+from DavisRunIITauTau.FlatTupleGenerator.FlatTupleConfig_cfi import generalConfig
+from DavisRunIITauTau.FlatTupleGenerator.FlatTupleConfig_cfi import theCuts
+from DavisRunIITauTau.FlatTupleGenerator.FlatTupleConfig_cfi import svMassAtFlatTupleConfig
 
 
 
 
-process.TFileService = cms.Service("TFileService", fileName = cms.string("NtupleFileCumulativeInfo.root"))
+process.PASSCUTS = cms.EDAnalyzer('FlatTupleGenerator',
+	pairSrc = cms.InputTag('NtupleEvents','NtupleEvents','DavisNtuple'),
+	indepSrc = cms.InputTag('pairIndep','NtupleEventPairIndep','DavisNtuple'),
+	NAME = cms.string("PASSCUTS"),
+	EventCutSrc = generalConfig,
+	LeptonCutVecSrc = theCuts,
+	SVMassConfig = svMassAtFlatTupleConfig
+	)
+
+process.NOCUTS = cms.EDAnalyzer('FlatTupleGenerator',
+	pairSrc = cms.InputTag('NtupleEvents','NtupleEvents','DavisNtuple'),
+	indepSrc = cms.InputTag('pairIndep','NtupleEventPairIndep','DavisNtuple'),
+	NAME = cms.string("NOCUTS"),
+	EventCutSrc = generalConfig,
+	LeptonCutVecSrc = cms.VPSet(),
+	SVMassConfig = svMassAtFlatTupleConfig
+	)
+
+
+process.p *= process.PASSCUTS
+process.p *= process.NOCUTS
+# -- end test
+
+
+
+#process.e = cms.EndPath(process.out)
+
+
+
+
+process.TFileService = cms.Service("TFileService", fileName = cms.string("FlatTuple.root"))
+process.e = cms.EndPath()
 
 
 

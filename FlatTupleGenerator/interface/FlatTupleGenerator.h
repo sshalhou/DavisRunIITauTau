@@ -116,7 +116,12 @@ public:
 	/* the input collection sources */
 
 	edm::InputTag pairSrc_;
+    edm::EDGetTokenT<edm::View< NtupleEvent > > pairToken_;
+
+
 	edm::InputTag indepSrc_;
+	edm::EDGetTokenT<edm::View< NtuplePairIndependentInfo > > indepToken_;
+	
 	std::string NAME_;  // use TauESNom, TauESUp, TauESDown, etc.
 	edm::ParameterSet EventCutSrc_;
 	std::vector<edm::ParameterSet> LeptonCutVecSrc_;

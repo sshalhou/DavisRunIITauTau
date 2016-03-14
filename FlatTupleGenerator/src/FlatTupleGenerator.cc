@@ -19,6 +19,10 @@ LeptonCutVecSrc_(iConfig.getParameter<std::vector<edm::ParameterSet>>("LeptonCut
 svMassAtFlatTupleConfig_(iConfig.getParameter<edm::ParameterSet>("SVMassConfig"))
 {
 
+  pairToken_ = consumes < edm::View<NtupleEvent> >(pairSrc_);
+  indepToken_ = consumes < edm::View<NtuplePairIndependentInfo> >(indepSrc_);
+
+
   /* read in the svMassAtFlatTupleConfig_ parameters */
 
   flatTuple_useMVAmet = svMassAtFlatTupleConfig_.getParameter<bool>("flatTuple_useMVAmet");
@@ -91,11 +95,12 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
   ///////////////
   // get inputs 
 
-  edm::Handle< NtupleEventCollection > pairs;
-  iEvent.getByLabel(pairSrc_, pairs);
+  edm::Handle< edm::View<NtupleEvent> > pairs;
+  iEvent.getByToken(pairToken_, pairs);
 
-  edm::Handle< NtuplePairIndependentInfoCollection > pairIndepInfos;
-  iEvent.getByLabel(indepSrc_, pairIndepInfos);
+
+  edm::Handle< edm::View<NtuplePairIndependentInfo> > pairIndepInfos;
+  iEvent.getByToken(indepToken_, pairIndepInfos);
 
 
 
@@ -123,13 +128,19 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
   // 
 
 
+
   /////////////////////////////////////
   // now loop through the pairs in the current event
   // and figure out which ones to retain 
 
+
+  std::cout<<pairs->size()<<" PAIR COUNT \n";
+
   for(std::size_t p = 0; p<pairs->size(); ++p )
   {
     NtupleEvent currentPair =   ((*pairs)[p]);
+
+
 
     bool keepSignPair = ((keepOS && currentPair.isOsPair()==1) || (keepSS && currentPair.isOsPair()!=1));
     
@@ -141,6 +152,7 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
       (keepTauEsDown && currentPair.TauEsNumberSigmasShifted()==-1.0) 
 
       );
+
 
 
     /* check if the cuts pass */
@@ -185,6 +197,8 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
   PairRankHelper rankHelper_MuonTau;
   PairRankHelper rankHelper_TauTau;
 
+
+
   if(rankByPtSum) 
   {
     rankHelper_EleMuon.init(retainedPairs_EleMuon);
@@ -193,7 +207,6 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
     rankHelper_TauTau.init(retainedPairs_TauTau);
 
   }
-
 
   else if(rankByIsolation) 
   {
@@ -209,6 +222,7 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
   std::vector<std::pair<std::size_t,NtupleEvent>> retainedPairsWithRank_EleMuon = rankHelper_EleMuon.returnRankedPairVec();
   std::vector<std::pair<std::size_t,NtupleEvent>> retainedPairsWithRank_MuonTau = rankHelper_MuonTau.returnRankedPairVec();
   std::vector<std::pair<std::size_t,NtupleEvent>> retainedPairsWithRank_TauTau = rankHelper_TauTau.returnRankedPairVec();
+
 
   // combine the individual channel pairs into a single vector
   
@@ -249,6 +263,7 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
       if(pairRank!=0) continue; /* no reason to keep more than the best pair/event */
 
 
+
       ////////////////
       // fill some easy stuff first :
 
@@ -268,7 +283,7 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
 
 
       VISMass = currentPair.VISMass()[0];
-      
+   
       
       ////////////////
       // fill the tauIDs for tau legs
@@ -323,22 +338,31 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
       CandidateEventType = currentPair.CandidateEventType();
 
 
+
       TauEsNumberSigmasShifted = currentPair.TauEsNumberSigmasShifted();
       isOsPair = currentPair.isOsPair();
       SVMass = currentPair.SVMass()[0];
       SVTransverseMass = currentPair.SVTransverseMass()[0];
+
+
       //MTmvaMET_leg1 = currentPair.MTmvaMET_leg1()[0];
       MTpfMET_leg1 = currentPair.MTpfMET_leg1()[0];
       //MTmvaMET_leg2 = currentPair.MTmvaMET_leg2()[0];
       MTpfMET_leg2 = currentPair.MTpfMET_leg2()[0];
+ 
+
       //mvaMET = currentPair.mvaMET()[0].pt();
       //mvaMETphi = currentPair.mvaMET()[0].phi();
       //mvaMET_cov00 = currentPair.mvaMET()[0].getSignificanceMatrix()[0][0];
       //mvaMET_cov01 = currentPair.mvaMET()[0].getSignificanceMatrix()[0][1];
       //mvaMET_cov10 = currentPair.mvaMET()[0].getSignificanceMatrix()[1][0];
       //mvaMET_cov11 = currentPair.mvaMET()[0].getSignificanceMatrix()[1][1];
+  
+
       pfMET = currentPair.pfMET()[0].pt();
       pfMETphi = currentPair.pfMET()[0].phi();
+
+
 
      // std::cout<<" about to access genMET without safety check with isRealData = "<<isRealData<<"\n";
 
@@ -353,11 +377,15 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
         genMET = currentPair.pfMET()[0].genMET()->pt();
         genMETphi = currentPair.pfMET()[0].genMET()->phi();
       }
-    
+   
+
+
   //  std::cout<<genMET<<" = genMET \n";
 
-      RAWpfMET = currentPair.pfMET()[0].uncorPt();
-      RAWpfMETphi = currentPair.pfMET()[0].uncorPhi();
+    //  RAWpfMET = currentPair.pfMET()[0].uncorPt();
+    //  RAWpfMETphi = currentPair.pfMET()[0].uncorPhi();
+
+
 
       puppiMET  = currentPair.puppiMET()[0].pt();
       puppiMETphi = currentPair.puppiMET()[0].phi();
@@ -619,7 +647,10 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
 
       /* access the pair independent info, making any needed adjustments for the current pair */
 
+
       NtuplePairIndependentInfo currentINDEP =   ((*pairIndepInfos)[0]);
+
+
 
       /* info about the data sample */
 
@@ -901,6 +932,7 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
     } 
 ////////////// END SV MASS COMP ///////////////////////////////
 
+      std::cout<<" FILL YAH! \n";
       FlatTuple->Fill();
 
   }

@@ -32,7 +32,7 @@ USE_MVAMET = True #  True = MVA MET, False = PFMET
 # edit the following SVMass settings 
 ####################################################################################################
 
-COMPUTE_SVMASS = True 
+COMPUTE_SVMASS = False 
 SVMASS_LOG_M = 0.0
 SVMASS_VERBOSE = 1
 

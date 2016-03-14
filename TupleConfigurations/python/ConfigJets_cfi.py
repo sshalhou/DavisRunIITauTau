@@ -46,7 +46,7 @@ filter_ = []
 
 # ----------------------------------------------------
 # ------------[user edit here]------------------------
-filter_.append('pt>15.0') # be careful here to allow for JEC variation 
+filter_.append('pt>10.0') # be careful here to allow for JEC variation 
 filter_.append('abs(eta)<4.7') 
 # ----------------------------------------------------
 # ----------------------------------------------------

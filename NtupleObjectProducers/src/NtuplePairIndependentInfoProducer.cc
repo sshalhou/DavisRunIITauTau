@@ -84,27 +84,56 @@ private:
   // ----------member data ---------------------------
 
   edm::InputTag packedGenSrc_;
+  edm::EDGetTokenT<edm::View< pat::PackedGenParticle > > packedGenToken_;
+
   edm::InputTag prunedGenSrc_;
+  edm::EDGetTokenT<edm::View< reco::GenParticle > > prunedGenToken_;
+
   string NAME_;
   std::vector<int> genParticlesToKeep_;
+  
   edm::InputTag slimmedJetSrc_;
+  edm::EDGetTokenT<edm::View< pat::Jet > > slimmedJetToken_;
+
+
   string defaultBtagAlgorithmNameSrc_;
   bool useBtagSFSrc_;
   unsigned int useBtagSFSeedSrc_;
   edm::ParameterSet PUjetIDworkingPointSrc_;
   edm::ParameterSet PFjetIDworkingPointSrc_;
+  
   edm::InputTag vertexSrc_;
+  edm::EDGetTokenT<edm::View< reco::Vertex > > vertexToken_;
+  
+
   edm::InputTag pileupSrc_;
+  edm::EDGetTokenT< std::vector<PileupSummaryInfo> > pileupToken_;
+  
+
+
   edm::ParameterSet PUweightSettingsSrc_;
+  
   edm::InputTag mcGenWeightSrc_;
+  edm::EDGetTokenT< GenEventInfoProduct > mcGenWeightToken_;
+
+
   edm::InputTag LHEEventProductSrc_;
+  edm::EDGetTokenT<LHEEventProduct> LHEEventProductToken_;
+  
+
+
   edm::ParameterSet sampleInfoSrc_;
 
   /* parameters for MET Filters; we code 2 versions of TriggerResults 
      to support both PAT and RECO processes (only used if isValid checks out) */  
 
   edm::InputTag HBHENoiseFilterResultSrc_;  
+  edm::EDGetTokenT<bool> HBHENoiseFilterResultToken_;
+
+
   edm::InputTag HBHEIsoNoiseFilterResultSrc_;  
+  edm::EDGetTokenT<bool> HBHEIsoNoiseFilterResultToken_;
+
 
   edm::EDGetTokenT<edm::TriggerResults> triggerResultsPatSrc_;
   edm::EDGetTokenT<edm::TriggerResults> triggerResultsRecoSrc_;
@@ -151,6 +180,17 @@ triggerResultsRecoSrc_(consumes<edm::TriggerResults>(iConfig.getParameter<edm::I
 
   produces<vector<NtuplePairIndependentInfo>>(NAME_).setBranchAlias(NAME_);
 
+  HBHENoiseFilterResultToken_ = consumes< bool > (HBHENoiseFilterResultSrc_);
+  HBHEIsoNoiseFilterResultToken_ = consumes< bool > (HBHEIsoNoiseFilterResultSrc_);
+  LHEEventProductToken_ = consumes<LHEEventProduct> (LHEEventProductSrc_);
+  mcGenWeightToken_ = consumes< GenEventInfoProduct > (mcGenWeightSrc_);
+  pileupToken_ = consumes< std::vector<PileupSummaryInfo> >  (pileupSrc_);
+  slimmedJetToken_ = consumes<edm::View< pat::Jet > > (slimmedJetSrc_);
+  vertexToken_ = consumes<edm::View< reco::Vertex > > (vertexSrc_);
+  packedGenToken_ = consumes<edm::View< pat::PackedGenParticle > > (packedGenSrc_);
+  prunedGenToken_ = consumes<edm::View< reco::GenParticle > > (prunedGenSrc_);
+
+
 
   //register your products
   /* Examples
@@ -190,11 +230,11 @@ NtuplePairIndependentInfoProducer::produce(edm::Event& iEvent, const edm::EventS
 
   // get packedGen collection
   edm::Handle<edm::View<pat::PackedGenParticle> > packedGens;
-  iEvent.getByLabel(packedGenSrc_,packedGens);
+  iEvent.getByToken(packedGenToken_,packedGens);
 
   // get prunedGen collection
   edm::Handle<edm::View<reco::GenParticle> > prunedGens;
-  iEvent.getByLabel(prunedGenSrc_,prunedGens);
+  iEvent.getByToken(prunedGenToken_,prunedGens);
 
 
   std::size_t reserveSize = 0;
@@ -283,7 +323,7 @@ NtuplePairIndependentInfoProducer::produce(edm::Event& iEvent, const edm::EventS
 
   // get slimmedJet collection
   edm::Handle<edm::View<pat::Jet> > slimmedJets;
-  iEvent.getByLabel(slimmedJetSrc_,slimmedJets);
+  iEvent.getByToken(slimmedJetToken_,slimmedJets);
 
   // instance of our PUPFjetIdHelper 
 
@@ -354,7 +394,7 @@ NtuplePairIndependentInfoProducer::produce(edm::Event& iEvent, const edm::EventS
   ///////////////////////////////////////////////////////////////////////////
 
   edm::Handle<edm::View<reco::Vertex> > vertices;
-  iEvent.getByLabel(vertexSrc_,vertices);
+  iEvent.getByToken(vertexToken_,vertices);
   
   InfoToWrite.fill_vertexInfo(vertices->at(0),vertices->size());
 
@@ -363,7 +403,7 @@ NtuplePairIndependentInfoProducer::produce(edm::Event& iEvent, const edm::EventS
   ///////////////////////////////////////////////////////////////////////////
 
   edm::Handle<std::vector<PileupSummaryInfo> > PupInfo;
-  iEvent.getByLabel(pileupSrc_, PupInfo);
+  iEvent.getByToken(pileupToken_, PupInfo);
 
   /* get the mc and data pu file paths */
   
@@ -376,7 +416,7 @@ NtuplePairIndependentInfoProducer::produce(edm::Event& iEvent, const edm::EventS
   ///////////////////////////////////////////////////////////////////////////
 
   edm::Handle<GenEventInfoProduct> genEvtWeight;
-  iEvent.getByLabel(mcGenWeightSrc_,genEvtWeight);
+  iEvent.getByToken(mcGenWeightToken_,genEvtWeight);
 
   if(genEvtWeight.isValid()) 
     {
@@ -388,11 +428,11 @@ NtuplePairIndependentInfoProducer::produce(edm::Event& iEvent, const edm::EventS
   /////////////////////////////////////////////////////////////////////////////////////
 
   edm::Handle<LHEEventProduct> LHEEventProductSrc;
-  iEvent.getByLabel(LHEEventProductSrc_,LHEEventProductSrc);
+  iEvent.getByToken(LHEEventProductToken_,LHEEventProductSrc);
 
   edm::Handle<LHEEventProduct > LHEHandle;
   const LHEEventProduct* LHE = 0;
-  iEvent.getByLabel(LHEEventProductSrc_,LHEHandle);
+  iEvent.getByToken(LHEEventProductToken_,LHEHandle);
   if(LHEHandle.isValid())
   {
     LHE = LHEHandle.product();
@@ -411,11 +451,11 @@ NtuplePairIndependentInfoProducer::produce(edm::Event& iEvent, const edm::EventS
   bool Flag_HBHEIsoNoiseFilter = 0;
 
   edm::Handle<bool> HBHENoiseFilterResult;
-  iEvent.getByLabel(HBHENoiseFilterResultSrc_,HBHENoiseFilterResult);
+  iEvent.getByToken(HBHENoiseFilterResultToken_,HBHENoiseFilterResult);
   Flag_HBHENoiseFilter = *HBHENoiseFilterResult;
 
   edm::Handle<bool> HBHEIsoNoiseFilterResult;
-  iEvent.getByLabel(HBHEIsoNoiseFilterResultSrc_,HBHEIsoNoiseFilterResult);
+  iEvent.getByToken(HBHEIsoNoiseFilterResultToken_,HBHEIsoNoiseFilterResult);
   Flag_HBHEIsoNoiseFilter = *HBHEIsoNoiseFilterResult;
 
   ///////////////////////////////////

@@ -75,6 +75,9 @@ cd -
 # relocate the davis code
 mv ../../DavisRunIITauTau .
 
+# copy the PU reweight files 
+
+cp /afs/cern.ch/work/a/adewit/public/pileup-hists/*root DavisRunIITauTau/RunTimeDataInput/data/PileUpReWeightFiles/.
 
 # # temp fix for PU jet ID and MVA MET incompatibility 
 

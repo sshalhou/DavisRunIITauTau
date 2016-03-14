@@ -84,7 +84,11 @@ private:
 
   // ----------member data ---------------------------
 
-  VInputTag tupleCandidateEventSrc_;
+  edm::InputTag tupleCandidateEventSrc_;
+  edm::EDGetTokenT<edm::View< TupleCandidateEvent > > tupleCandidateEventToken_;
+
+
+
   edm::EDGetTokenT<edm::TriggerResults> triggerBitSrc_;
   edm::EDGetTokenT<pat::PackedTriggerPrescales> triggerPreScaleSrc_;
   edm::EDGetTokenT<pat::TriggerObjectStandAloneCollection> triggerObjectSrc_;
@@ -115,7 +119,7 @@ private:
 // constructors and destructor
 //
 NtupleEventProducer::NtupleEventProducer(const edm::ParameterSet& iConfig):
-tupleCandidateEventSrc_(iConfig.getParameter<VInputTag>("tupleCandidateEventSrc" )),
+tupleCandidateEventSrc_(iConfig.getParameter<edm::InputTag>("tupleCandidateEventSrc" )),
 triggerBitSrc_(consumes<edm::TriggerResults>(iConfig.getParameter<edm::InputTag>("triggerBitSrc"))),
 triggerPreScaleSrc_(consumes<pat::PackedTriggerPrescales>(iConfig.getParameter<edm::InputTag>("triggerPreScaleSrc"))),
 triggerObjectSrc_(consumes<pat::TriggerObjectStandAloneCollection>(iConfig.getParameter<edm::InputTag>("triggerObjectSrc"))),
@@ -134,6 +138,7 @@ NAME_(iConfig.getParameter<string>("NAME" ))
 
   produces<vector<NtupleEvent>>(NAME_).setBranchAlias(NAME_);
 
+  tupleCandidateEventToken_ = consumes < edm::View<TupleCandidateEvent> >(tupleCandidateEventSrc_);
 
   //register your products
   /* Examples
@@ -169,8 +174,8 @@ NtupleEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
 {
 
   auto_ptr<NtupleEventCollection> NtupleEvents (new NtupleEventCollection);
-  std::size_t reserveSize =  tupleCandidateEventSrc_.size();
-  NtupleEvents->reserve( reserveSize );
+  //std::size_t reserveSize =  tupleCandidateEventSrc_.size();
+  //NtupleEvents->reserve( reserveSize );
 
     // get trigger-related collections
 
@@ -184,20 +189,14 @@ NtupleEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
 
     const edm::TriggerNames &TRIGGERnames = iEvent.triggerNames(*triggerBits);
 
+    // get the CandidateEvent collection
 
+    edm::Handle<edm::View<TupleCandidateEvent> > pairs;
+    iEvent.getByToken(tupleCandidateEventToken_,pairs);
 
+    if(pairs.isValid()) 
+    {
 
-
-  for(std::size_t i = 0; i < tupleCandidateEventSrc_.size(); ++i)
-  {
-
-
-    // get the ith pair collection
-
-      edm::Handle<std::vector<TupleCandidateEvent> > pairs;
-      iEvent.getByLabel(tupleCandidateEventSrc_[i],pairs);
-
-      if(!pairs.isValid()) continue;
 
       for(std::size_t ii = 0; ii<pairs->size(); ii++)
       {
@@ -233,8 +232,8 @@ NtupleEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
 
       }
 
-
-  }
+    }
+  
 
 iEvent.put( NtupleEvents, NAME_ );
 
