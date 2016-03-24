@@ -1,6 +1,7 @@
 #!/usr/local/bin/python
 import subprocess
 import os
+import datetime
 
 # This script calculates limits with the CombinedLimit tool, taking normalized event yields 
 # from the output of plotStack4l.C
@@ -8,6 +9,11 @@ import os
 # Input yields file
 yields = 'yields.txt'
 
+outDir = 'limitOut_' + str(datetime.datetime.now())
+outDir = outDir.split('.')[0]
+outDir = outDir.split(' ')[0] + '_' + outDir.split(' ')[1]
+print str(outDir)
+subprocess.call('mkdir ' + outDir, shell=True)
 #mass spectrum parameters
 mass_0 = 600
 mass_Increment = 200
@@ -112,8 +118,8 @@ for i in range (0, 8):
       bkgtotals [i][j] += yieldMat [i][j*2][k]
   print bkgtotals [i]
 
-for j in range (0,8):
-  subprocess.call('rm limits_' + channelMap[j] + '_13tev.txt', shell=True)
+#for j in range (0,8):
+#  subprocess.call('rm limits_' + channelMap[j] + '_13tev.txt', shell=True)
 
 for i in range (0,8):
   print 'finding ' + str(channelMap[i]) + ' channel limits'
@@ -140,7 +146,6 @@ for i in range (0,8):
     process = subprocess.Popen(cmd.split(), shell=False, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     outfile.write(process.communicate()[0])
     outfile.close()
-
 
 # Parse the limits_13tev.txt log file to find the expected limits and error bands, outputting to
 # simple rows in a file, multiplied by signal xsecs
@@ -174,18 +179,20 @@ for i in range (0, 8):
   limout.write(str975)
   limin.close()
   limout.close()
+  subprocess.call('mv limits_' + channelMap[i] + '_13tev_out.txt' + ' ' + outDir, shell=True)
 
-subprocess.call('rm limits_Combined_13tev.txt', shell=True)
+#subprocess.call('rm limits_Combined_13tev.txt', shell=True)
 
 for j in range (0, mass_spec):
   massName = str(mass_0 + j * mass_Increment) + 'GeV'
   print 'Creating datacard for combined channel limits at ' + massName
-  subprocess.call('combineCards.py eTau=datacard_et_' + massName + '_out.txt muTau=datacard_mt_' + massName + '_out.txt tauTau=datacard_tt_' + massName + '_out.txt eMu=datacard_em_' + massName + '_out.txt hi_eTau=datacard_hi_et_' + massName + '_out.txt hi_muTau=datacard_hi_mt_' + massName + '_out.txt hi_tauTau=datacard_hi_tt_' + massName + '_out.txt hi_eMu=datacard_hi_em_' + massName + '_out.txt > datacard_' + massName + '_Combined_out.txt', shell = True )
+  subprocess.call('combineCards.py eTau=datacard_et_' + massName + '_out.txt muTau=datacard_mt_' + massName + '_out.txt tauTau=datacard_tt_' + massName + '_out.txt eMu=datacard_em_' + massName + '_out.txt hi_eTau=datacard_hi_et_' + massName + '_out.txt hi_muTau=datacard_hi_mt_' + massName + '_out.txt hi_tauTau=datacard_hi_tt_' + massName + '_out.txt hi_eMu=datacard_hi_em_' + massName + '_out.txt > datacard_' + massName + '_Combined_out.txt', shell = True)
   cmd = 'combine -M Asymptotic datacard_' + str(massName) + '_Combined_out.txt -n ' + str(massName) + ' -m 125'
   outfile = open('limits_Combined_13tev.txt','a+')
   process = subprocess.Popen(cmd.split(), shell=False, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
   outfile.write(process.communicate()[0])
   outfile.close()
+  subprocess.call('mv datacard_' + str(massName) + '_Combined_out.txt' + ' ' + outDir, shell=True)
 
 limin = open('limits_Combined_13tev.txt','a+')
 limout = open('limits_Combined_13tev_out.txt','w')
@@ -215,4 +222,8 @@ limout.write(str84+'\n')
 limout.write(str975)
 limin.close()
 limout.close()
+subprocess.call('mv  limits_Combined_13tev_out.txt ' + outDir, shell=True)
+subprocess.call('mv  *root ' + outDir, shell=True)
+subprocess.call('rm  limits*tev.txt', shell=True)
+subprocess.call('mv datacard_*_out.txt ' + outDir, shell=True)
 
