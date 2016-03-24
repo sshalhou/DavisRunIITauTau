@@ -1,0 +1,27 @@
+# Simple counting experiment, with one signal and a few background processes
+# Simplified version of the H -> e_Mu analysis for mZp
+imax 1  number of channels
+jmax 6  number of backgrounds
+kmax 8  number of nuisance parameters (sources of systematical uncertainties)
+------------
+# we have just one channel, in which we observe 0 events
+bin 1
+observation 0
+------------
+# now we list the expected events for signal and all backgrounds in that bin
+# the second 'process' line must have a positive number for backgrounds, and 0 for signal
+# then we list the independent sources of uncertainties, and give their effect (syst. error)
+# on each process and bin
+bin              1     1     1     1     1     1     1
+process         sig   Wjet   VV    DY   QCD    tt    ZH
+process          0     1     2     3     4     5     6
+rate          24  1  1.41  10.3237  30.7749  17.0845  0.0898526
+------------
+lumi    lnN    1.12  1.12  1.12  1.12  1.12  1.12  1.12
+l_IdReTr lnN   1.02  1.02  1.02  1.02    -   1.02  1.02
+JES     lnN    1.10  1.10  1.10  1.10    -   1.10  1.10
+e_mu_ES lnN    1.01  1.01  1.01  1.01    -   1.01  1.01
+MET     lnN    1.05  1.05  1.05  1.05    -   1.05  1.05
+XS_MC   lnN    1.10    -   1.15  1.05    -   1.10  1.25
+DataBKG lnN      -   1.10    -     -   1.10    -     -
+Stat    lnN    1.35  2.00  1.29  1.74  1.14  1.04  1.06
