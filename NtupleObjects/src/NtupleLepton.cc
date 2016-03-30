@@ -67,6 +67,7 @@ NtupleLepton::NtupleLepton()
   m_genJet_p4.SetXYZT(NAN,NAN,NAN,NAN);
   m_numStrips = NAN;
   m_numHadrons  = NAN;
+  m_decayMode = -999;
   m_dzTauVertex = NAN;
   m_ZimpactTau = NAN;
 }
@@ -414,6 +415,7 @@ std::cout<<"<LEPPRINT "<<type_print<<"> dzTauVertex : " << m_dzTauVertex << std:
 std::cout<<"<LEPPRINT "<<type_print<<"> ZimpactTau : " << m_ZimpactTau << std::endl;
 std::cout<<"<LEPPRINT "<<type_print<<"> num strips : " << m_numStrips << std::endl;
 std::cout<<"<LEPPRINT "<<type_print<<"> num hadrons : " << m_numHadrons << std::endl;
+std::cout<<"<LEPPRINT "<<type_print<<"> tau decay mode : " << m_decayMode << std::endl;
 std::cout<<"<LEPPRINT "<<type_print<<"> genJet p4 pt :  " << m_genJet_p4.pt() << std::endl;
 
   std::cout<<" END: printing lepton <------------------\n";
@@ -519,6 +521,7 @@ void NtupleLepton::userFloatVectorParser(stringVec & labels_,floatVec & values_)
     else if(labels_[i]=="numberOfTrackHits") {m_numberOfTrackHits = values_[i];}
     else if(labels_[i]=="passConversionVeto") {m_passConversionVeto = values_[i];}
     else if(labels_[i]=="numHadrons") {m_numHadrons = values_[i];}
+    else if(labels_[i]=="decayMode") {m_decayMode = values_[i];}
     else if(labels_[i]=="numStrips") {m_numStrips = values_[i];}
     else if(labels_[i]=="dzTauVertex") {m_dzTauVertex = values_[i];}
     else if(labels_[i]=="ZimpactTau") {m_ZimpactTau = values_[i];}
@@ -651,6 +654,8 @@ void NtupleLepton::fill(pat::Tau dummy_)
   m_p4 = dummy_.p4();
   m_PFpdgId = dummy_.pdgId();
   m_charge = dummy_.charge();
+  m_decayMode = dummy_.decayMode();
+
   
   if(dummy_.genJet()) { m_genJet_p4 = dummy_.genJet()->p4(); }
 
@@ -749,5 +754,6 @@ LorentzVector NtupleLepton::genJet_p4() const {return m_genJet_p4;}
 float NtupleLepton::dzTauVertex() const {return m_dzTauVertex;}
 float NtupleLepton::numStrips() const {return m_numStrips;}
 float NtupleLepton::numHadrons() const {return m_numHadrons;}
+int NtupleLepton::decayMode() const {return m_decayMode;}
 float NtupleLepton::ZimpactTau() const {return m_ZimpactTau;}
 

@@ -112,7 +112,7 @@ public:
   std::vector<double> MTpfMET_leg2() const;
   std::vector<double> MTpuppiMET_leg2() const;
 
-  std::vector<reco::PFMET>  mvaMET() const;
+  std::vector<pat::MET>  mvaMET() const;
   std::vector<pat::MET>  pfMET() const;
   std::vector<pat::MET>  puppiMET() const;
 
@@ -146,7 +146,7 @@ private:
   std::vector<double> m_MTpfMET_leg2;
   std::vector<double> m_MTpuppiMET_leg2;
 
-  std::vector<reco::PFMET>  m_mvaMET;
+  std::vector<pat::MET>  m_mvaMET;
   std::vector<pat::MET>  m_pfMET; 
   std::vector<pat::MET>  m_puppiMET; 
   std::vector<double>  m_pfMET_cov00; // needed due to missing sig matrix in phys14/Spring15 samples

@@ -32,9 +32,9 @@ USE_MVAMET = True #  True = MVA MET, False = PFMET
 # edit the following SVMass settings 
 ####################################################################################################
 
-COMPUTE_SVMASS = False 
+COMPUTE_SVMASS = True 
 SVMASS_LOG_M = 0.0
-SVMASS_VERBOSE = 1
+SVMASS_VERBOSE = 2
 
 ####################################################################################################
 # Set RUN_MEM_CHECK to True to run SimpleMemoryCheck

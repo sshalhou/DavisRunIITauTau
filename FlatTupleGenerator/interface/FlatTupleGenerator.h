@@ -300,6 +300,7 @@ public:
 	float leg1_numStrips, leg2_numStrips;
 	float leg1_dzTauVertex, leg2_dzTauVertex;
 	float leg1_numHadrons, leg2_numHadrons;
+	int leg1_decayMode, leg2_decayMode;
 	float leg1_tauIDs[THE_MAX]; 		/* leg 1 tau IDs */
 	float leg2_tauIDs[THE_MAX]; 		/* leg 2 tau IDs */
 

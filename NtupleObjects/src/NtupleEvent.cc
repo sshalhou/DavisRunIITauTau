@@ -158,22 +158,22 @@ void NtupleEvent::fill(TupleCandidateEvent TCE)
 	m_SVMass = TCE.SVMass();
 	m_SVTransverseMass = TCE.SVTransverseMass();
 	m_VISMass.push_back((m_leg1.p4()+m_leg2.p4()).M());
-	// off math::PtEtaPhiMLorentzVector mvamet(TCE.mvaMET()[0].pt(),0.0,TCE.mvaMET()[0].phi(),0.0);
+	math::PtEtaPhiMLorentzVector mvamet(TCE.mvaMET()[0].pt(),0.0,TCE.mvaMET()[0].phi(),0.0);
 	math::PtEtaPhiMLorentzVector pfmet(TCE.pfMET()[0].pt(),0.0,TCE.pfMET()[0].phi(),0.0);
 	math::PtEtaPhiMLorentzVector puppimet(TCE.puppiMET()[0].pt(),0.0,TCE.puppiMET()[0].phi(),0.0);
 
 
-	// off m_MTmvaMET_leg1.push_back(GetTransverseMass(m_leg1.p4(),mvamet));
+	m_MTmvaMET_leg1.push_back(GetTransverseMass(m_leg1.p4(),mvamet));
 	m_MTpfMET_leg1.push_back(GetTransverseMass(m_leg1.p4(),pfmet));
 	m_MTpuppiMET_leg1.push_back(GetTransverseMass(m_leg1.p4(),puppimet));
 
 
-	// off m_MTmvaMET_leg2.push_back(GetTransverseMass(m_leg2.p4(),mvamet));
+	m_MTmvaMET_leg2.push_back(GetTransverseMass(m_leg2.p4(),mvamet));
 	m_MTpfMET_leg2.push_back(GetTransverseMass(m_leg2.p4(),pfmet));
 	m_MTpuppiMET_leg2.push_back(GetTransverseMass(m_leg2.p4(),puppimet));
 
 
-	// off m_mvaMET = TCE.mvaMET();
+	m_mvaMET = TCE.mvaMET();
 	m_pfMET = TCE.pfMET();
 	m_puppiMET = TCE.puppiMET();
 
@@ -226,7 +226,7 @@ std::vector<double> NtupleEvent::MTmvaMET_leg2() const {return m_MTmvaMET_leg2;}
 std::vector<double> NtupleEvent::MTpfMET_leg2() const {return m_MTpfMET_leg2;}
 std::vector<double> NtupleEvent::MTpuppiMET_leg2() const {return m_MTpuppiMET_leg2;}
 
-std::vector<reco::PFMET>  NtupleEvent::mvaMET() const {return m_mvaMET;}
+std::vector<pat::MET>  NtupleEvent::mvaMET() const {return m_mvaMET;}
 std::vector<pat::MET>  NtupleEvent::pfMET() const {return m_pfMET;}
 std::vector<pat::MET>  NtupleEvent::puppiMET() const {return m_puppiMET;}
 

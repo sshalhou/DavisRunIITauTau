@@ -325,6 +325,10 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
           std::vector<svFitStandalone::MeasuredTauLepton> measuredTauLeptons;
           measuredTauLeptons.clear();
 
+
+
+
+
           ////////////////////////////////////////////////////////
           // ele + ele choose higher pt leg to push back 1st    //
           ////////////////////////////////////////////////////////
@@ -380,21 +384,25 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
 
           if(CurrentCandidateEvent.CandidateEventType()==TupleCandidateEventTypes::TauTau)
           {
+
+            std::cout<<" TEST PRINT TAU 1 DECAY MODE : "<<CurrentCandidateEvent.leg1().Tau()[0].decayMode()<<"\n";
+            std::cout<<" TEST PRINT TAU 2 DECAY MODE : "<<CurrentCandidateEvent.leg2().Tau()[0].decayMode()<<"\n";
+
             if(l1.Pt() >= l2.Pt())
             {
               measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
-                svFitStandalone::kTauToHadDecay,l1.Pt(),l1.Eta(),l1.Phi(),l1.M()));
+                svFitStandalone::kTauToHadDecay,l1.Pt(),l1.Eta(),l1.Phi(),l1.M(), CurrentCandidateEvent.leg1().Tau()[0].decayMode()));
 
               measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
-                svFitStandalone::kTauToHadDecay,l2.Pt(),l2.Eta(),l2.Phi(),l2.M()));
+                svFitStandalone::kTauToHadDecay,l2.Pt(),l2.Eta(),l2.Phi(),l2.M(), CurrentCandidateEvent.leg2().Tau()[0].decayMode()));
             }
             else
             {
               measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
-                svFitStandalone::kTauToHadDecay,l2.Pt(),l2.Eta(),l2.Phi(),l2.M()));
+                svFitStandalone::kTauToHadDecay,l2.Pt(),l2.Eta(),l2.Phi(),l2.M(), CurrentCandidateEvent.leg2().Tau()[0].decayMode()));
 
               measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
-                svFitStandalone::kTauToHadDecay,l1.Pt(),l1.Eta(),l1.Phi(),l1.M()));
+                svFitStandalone::kTauToHadDecay,l1.Pt(),l1.Eta(),l1.Phi(),l1.M(), CurrentCandidateEvent.leg1().Tau()[0].decayMode()));
             }
           }
 
@@ -438,7 +446,7 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
                 svFitStandalone::kTauToElecDecay,l1.Pt(),l1.Eta(),l1.Phi(),svFitStandalone::electronMass));
 
               measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
-                svFitStandalone::kTauToHadDecay,l2.Pt(),l2.Eta(),l2.Phi(),l2.M()));
+                svFitStandalone::kTauToHadDecay,l2.Pt(),l2.Eta(),l2.Phi(),l2.M(), CurrentCandidateEvent.leg2().Tau()[0].decayMode()));
             }
             else
             {
@@ -446,7 +454,7 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
                 svFitStandalone::kTauToElecDecay,l2.Pt(),l2.Eta(),l2.Phi(),svFitStandalone::electronMass));
 
               measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
-                svFitStandalone::kTauToHadDecay,l1.Pt(),l1.Eta(),l1.Phi(),l1.M()));            
+                svFitStandalone::kTauToHadDecay,l1.Pt(),l1.Eta(),l1.Phi(),l1.M(), CurrentCandidateEvent.leg1().Tau()[0].decayMode()));            
             }
           }
 
@@ -464,7 +472,7 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
                 svFitStandalone::kTauToMuDecay,l1.Pt(),l1.Eta(),l1.Phi(),svFitStandalone::muonMass));
 
               measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
-                svFitStandalone::kTauToHadDecay,l2.Pt(),l2.Eta(),l2.Phi(),l2.M()));
+                svFitStandalone::kTauToHadDecay,l2.Pt(),l2.Eta(),l2.Phi(),l2.M(), CurrentCandidateEvent.leg2().Tau()[0].decayMode()));
             }
             else
             {
@@ -472,19 +480,41 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
                 svFitStandalone::kTauToMuDecay,l2.Pt(),l2.Eta(),l2.Phi(),svFitStandalone::muonMass));
 
               measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
-                svFitStandalone::kTauToHadDecay,l1.Pt(),l1.Eta(),l1.Phi(),l1.M()));            
+                svFitStandalone::kTauToHadDecay,l1.Pt(),l1.Eta(),l1.Phi(),l1.M(), CurrentCandidateEvent.leg1().Tau()[0].decayMode()));            
             }
           }
 
           std::vector<double> sv_mass;
           sv_mass.clear();         
           
-          if(useMVAMET_ && mvamets.isValid())
-            sv_mass = computeSVMassAndSVTransverseMass(mvamets->at(0),measuredTauLeptons);
-          else if (!useMVAMET_ ) 
-            sv_mass = computeSVMassAndSVTransverseMass(pfmets->at(0),measuredTauLeptons,pfmets->at(0).getSignificanceMatrix()[0][0], 
-            pfmets->at(0).getSignificanceMatrix()[1][0], pfmets->at(0).getSignificanceMatrix()[0][1], 
-            pfmets->at(0).getSignificanceMatrix()[1][1]);
+          // need to make sure any hadronically decaying taus pass the new
+          // decay mode finding otherwise svFit may crash or give random results
+
+          bool goodTauDecays = 1;
+
+
+          if(CurrentCandidateEvent.leg1().leptonType()==TupleLeptonTypes::aTau)
+          {
+            if( CurrentCandidateEvent.leg1().Tau()[0].tauID("decayModeFindingNewDMs") < 0.5 )  goodTauDecays = 0;
+          }
+
+          if(CurrentCandidateEvent.leg2().leptonType()==TupleLeptonTypes::aTau)
+          {
+            if( CurrentCandidateEvent.leg2().Tau()[0].tauID("decayModeFindingNewDMs") < 0.5 )  goodTauDecays = 0;
+          }            
+
+          std::cout<<" CHECKING GOOD TAU DECAYS AT NTUPLE LEVEL AND GET :  "<<goodTauDecays<<"\n";
+
+          if(goodTauDecays) /* only call if no hadronic taus, or if hadronic taus have good decay */
+          {  
+            if(useMVAMET_ && mvamets.isValid())
+              sv_mass = computeSVMassAndSVTransverseMass(mvamets->at(m),measuredTauLeptons);
+            else if (!useMVAMET_ ) 
+              sv_mass = computeSVMassAndSVTransverseMass(pfmets->at(0),measuredTauLeptons,pfmets->at(0).getSignificanceMatrix()[0][0], 
+              pfmets->at(0).getSignificanceMatrix()[1][0], pfmets->at(0).getSignificanceMatrix()[0][1], 
+              pfmets->at(0).getSignificanceMatrix()[1][1]);
+          }
+          else {sv_mass.push_back(0); sv_mass.push_back(0);}            
 
           CurrentCandidateEvent.set_SVMass(sv_mass[0]); // the sv mass
           CurrentCandidateEvent.set_SVTransverseMass(sv_mass[1]); // the sv transverse mass
@@ -616,6 +646,8 @@ std::vector<double> TupleCandidateEventProducer::computeSVMassAndSVTransverseMas
 
   retSVmass.push_back(svFitAlgorithm.getMass());
   retSVmass.push_back(svFitAlgorithm.transverseMass());
+
+  std::cout<<" TESTINGXX in NTuple (mass, metx, mety) "<<retSVmass[0]<<" "<<MET.px()<<" "<<MET.py()<<"\n";
 
   std::cout<<" mass, transverseMass "<<retSVmass[0]<<" "<<retSVmass[1]<<"\n";
 

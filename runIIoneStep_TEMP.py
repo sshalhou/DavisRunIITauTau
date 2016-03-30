@@ -89,7 +89,7 @@ print '*******************************************************'
 print '********** Running in unscheduled mode **********'
 process.options = cms.untracked.PSet(wantSummary = cms.untracked.bool(True))
 process.options.allowUnscheduled = cms.untracked.bool(True)
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(100) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
 
 ###################################
 # input - remove for crab running
@@ -645,7 +645,7 @@ process.NOCUTS = cms.EDAnalyzer('FlatTupleGenerator',
 
 
 process.p *= process.PASSCUTS
-process.p *= process.NOCUTS
+#process.p *= process.NOCUTS
 # -- end test
 
 

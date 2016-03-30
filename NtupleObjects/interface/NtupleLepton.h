@@ -87,6 +87,7 @@ public:
 	float ZimpactTau() const;
 	float numStrips() const;
 	float numHadrons() const;
+	int   decayMode() const;
 	float dzTauVertex() const;
 	float raw_electronMVA() const; 
 	float category_electronMVA() const;
@@ -228,6 +229,7 @@ private:
 	float m_ZimpactTau; 							// tau-event vertex match quality parameter
 	float m_numStrips;								//  number strips
 	float m_numHadrons;								//	number hadrons
+	int m_decayMode; 								//  tau decay mode code
 	stringFloatPairVec m_tauIDs;                    //  pair rho name : value 
 	float m_dzTauVertex; 							//  tau.z - vertex.z
 

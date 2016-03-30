@@ -59,7 +59,6 @@ private:
   std::vector<pat::Muon> m_Muon;
   std::vector<pat::Tau> m_Tau;
 
-
 };
 
 typedef std::vector<TupleLepton> TupleLeptonCollection;
