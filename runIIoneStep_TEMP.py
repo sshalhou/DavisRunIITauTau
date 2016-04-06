@@ -67,7 +67,7 @@ if APPLY_BTAG_SF :
 
 # import of standard configurations
 process.load("FWCore.MessageService.MessageLogger_cfi")
-process.MessageLogger.cerr.FwkReport.reportEvery = 500
+process.MessageLogger.cerr.FwkReport.reportEvery = 1
 
 process.load('Configuration.StandardSequences.Services_cff')
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
@@ -89,7 +89,7 @@ print '*******************************************************'
 print '********** Running in unscheduled mode **********'
 process.options = cms.untracked.PSet(wantSummary = cms.untracked.bool(True))
 process.options.allowUnscheduled = cms.untracked.bool(True)
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(20) )
 
 ###################################
 # input - remove for crab running
@@ -645,7 +645,7 @@ process.NOCUTS = cms.EDAnalyzer('FlatTupleGenerator',
 
 
 process.p *= process.PASSCUTS
-#process.p *= process.NOCUTS
+process.p *= process.NOCUTS
 # -- end test
 
 

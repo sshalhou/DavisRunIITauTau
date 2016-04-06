@@ -393,6 +393,7 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
               measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
                 svFitStandalone::kTauToHadDecay,l1.Pt(),l1.Eta(),l1.Phi(),l1.M(), CurrentCandidateEvent.leg1().Tau()[0].decayMode()));
 
+
               measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
                 svFitStandalone::kTauToHadDecay,l2.Pt(),l2.Eta(),l2.Phi(),l2.M(), CurrentCandidateEvent.leg2().Tau()[0].decayMode()));
             }
@@ -403,6 +404,8 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
 
               measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
                 svFitStandalone::kTauToHadDecay,l1.Pt(),l1.Eta(),l1.Phi(),l1.M(), CurrentCandidateEvent.leg1().Tau()[0].decayMode()));
+
+           
             }
           }
 
@@ -636,6 +639,7 @@ std::vector<double> TupleCandidateEventProducer::computeSVMassAndSVTransverseMas
  //double retSVmass = svFitAlgorithm.getMass();
 
 
+  //std::cout<<" shiftVisPt turned off \n";
   edm::FileInPath inputFileName_visPtResolution("TauAnalysis/SVfitStandalone/data/svFitVisMassAndPtResolutionPDF.root");
   TH1::AddDirectory(false);  
   TFile* inputFile_visPtResolution = new TFile(inputFileName_visPtResolution.fullPath().data());
@@ -652,6 +656,8 @@ std::vector<double> TupleCandidateEventProducer::computeSVMassAndSVTransverseMas
   std::cout<<" mass, transverseMass "<<retSVmass[0]<<" "<<retSVmass[1]<<"\n";
 
   delete inputFile_visPtResolution;
+  //        std::cout<<" **** TURN ON delete inputFile_visPtResolution \n";
+
   return retSVmass;
 
 

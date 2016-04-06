@@ -824,7 +824,7 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
 
         if(currentPair.leg2().leptonType() == TupleLeptonTypes::aTau)
         {
-          if(currentPair.leg1().tauID("decayModeFindingNewDMs") < 0.5 ) goodTauDecays = 0;
+          if(currentPair.leg2().tauID("decayModeFindingNewDMs") < 0.5 ) goodTauDecays = 0;
         }
 
 
@@ -1117,7 +1117,7 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
 
 
         //svFitAlgorithm.integrateVEGAS();
-
+        //std::cout<<" shiftVisPt turned off \n";
         edm::FileInPath inputFileName_visPtResolution("TauAnalysis/SVfitStandalone/data/svFitVisMassAndPtResolutionPDF.root");
         TH1::AddDirectory(false);  
         TFile* inputFile_visPtResolution = new TFile(inputFileName_visPtResolution.fullPath().data());
@@ -1142,7 +1142,7 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
         if( flatTuple_svMassVerbose ) std::cout<<" is replaced with flatTuple recalc of SVTransverseMass = "<<SVTransverseMass<<"\n";
       
         delete inputFile_visPtResolution;
-
+        //std::cout<<" **** TURN ON delete inputFile_visPtResolution \n";
       } // good tau decays
     } 
 ////////////// END SV MASS COMP ///////////////////////////////
