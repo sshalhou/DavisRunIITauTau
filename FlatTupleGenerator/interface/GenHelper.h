@@ -41,6 +41,8 @@
 #include "DavisRunIITauTau/NtupleObjects/interface/NtupleEvent.h"
 #include "CommonTools/Utils/interface/StringCutObjectSelector.h"
 #include "DataFormats/Math/interface/deltaR.h"
+#include "DavisRunIITauTau/FlatTupleGenerator/interface/GenMcMatchTypes.h"
+
 
 typedef math::XYZTLorentzVector LorentzVector;
 using namespace std;
@@ -59,16 +61,19 @@ public:
 // init
 
     void init(std::vector<NtupleGenParticle>, NtupleLepton, NtupleLepton, int ); 
-    void classifyTheEventForDY();
+    void classifyTheEventForDY(); /* run 1 only */
+    void classifyTheEventForRun2_DY();
 
 // helper functions
 
-    /* check at gen level if event is Z->XX where the int argument is the |pdgID| of X */
-    bool isZXXatGenLevel(std::vector<NtupleGenParticle>, int);
-    bool isRecoTauGenTauMatched(NtupleLepton);
-    bool isRecoTauGenEorMuMatched(NtupleLepton,std::vector<NtupleGenParticle>);
-    bool isRecoTauGenEorMu_FROMZ_Matched(NtupleLepton,std::vector<NtupleGenParticle>);
+    /* new RunII MC Matching function */
+    void checkLegsForEorMuorGenJetMatches(int); /* argument is 1 for leg1 or 2 for leg2 */
 
+    /* check at gen level if event is Z->XX where the int argument is the |pdgID| of X */
+    bool isZXXatGenLevel(std::vector<NtupleGenParticle>, int); /* run 1 only */
+    bool isRecoTauGenTauMatched(NtupleLepton); /* run 1 only */
+    bool isRecoTauGenEorMuMatched(NtupleLepton,std::vector<NtupleGenParticle>); /* run 1 only */
+    bool isRecoTauGenEorMu_FROMZ_Matched(NtupleLepton,std::vector<NtupleGenParticle>); /* run 1 only */
 
 
 // getters 
@@ -102,6 +107,32 @@ public:
   	std::vector <std::pair< int, double>> genMother_phi();
   	std::vector <std::pair< int, double>> genMother_M();
 
+    /* Access Run II MC matching info */
+
+    int leg1_MCMatchType(); /* match codes defined in GenMcMatchTypes.h */
+    double leg1_genMCmatch_pt();
+    double leg1_genMCmatch_eta(); 
+    double leg1_genMCmatch_phi(); 
+    double leg1_genMCmatch_M();
+    int leg1_MCMatchPdgId();
+
+    int leg2_MCMatchType(); /* match codes defined in GenMcMatchTypes.h */
+    double leg2_genMCmatch_pt();
+    double leg2_genMCmatch_eta(); 
+    double leg2_genMCmatch_phi(); 
+    double leg2_genMCmatch_M();
+    int leg2_MCMatchPdgId();
+
+
+    /* run II Z decay modes */
+
+    int IsZTT();
+    int IsZL();
+    int IsZJ();
+    int IsZLL();
+
+
+
     /* see https://twiki.cern.ch/twiki/bin/viewauth/CMS/HiggsToTauTauWorkingSummer2013#Backgrounds_Methods */
 
     bool EventHasZtoTauTau();        /* for events with a Z boson, is there a Z->tau tau decay */
@@ -122,6 +153,9 @@ public:
 
 private:
 
+  float MCdrMatchRun2; /* should make this a python arg */
+
+
 
 	NtupleLepton m_leg1;
 	NtupleLepton m_leg2;
@@ -129,7 +163,32 @@ private:
 	std::vector<NtupleGenParticle> m_genVec;
 
 
-  /* decay mode of the Z */
+  /* Private member Run II MC matching info */
+
+  int m_leg1_MCMatchType; /* match codes defined in GenMcMatchTypes.h */
+  double m_leg1_genMCmatch_pt;
+  double m_leg1_genMCmatch_eta; 
+  double m_leg1_genMCmatch_phi; 
+  double m_leg1_genMCmatch_M;
+  int m_leg1_MCMatchPdgId;
+
+  int m_leg2_MCMatchType; /* match codes defined in GenMcMatchTypes.h */
+  double m_leg2_genMCmatch_pt;
+  double m_leg2_genMCmatch_eta; 
+  double m_leg2_genMCmatch_phi;
+  double m_leg2_genMCmatch_M;
+  int m_leg2_MCMatchPdgId;
+
+
+  /* run II Z decay modes */
+
+  int m_IsZTT;
+  int m_IsZL;
+  int m_IsZJ;
+  int m_IsZLL;
+
+
+  /* decay mode of the Z (old run 1 info)*/
   /* see https://twiki.cern.ch/twiki/bin/viewauth/CMS/HiggsToTauTauWorkingSummer2013#Backgrounds_Methods */
 	
   bool m_EventHasZtoTauTau; /* for events with a Z boson, is there a Z->tau tau decay */

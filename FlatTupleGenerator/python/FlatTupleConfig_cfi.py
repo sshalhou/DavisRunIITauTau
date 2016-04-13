@@ -15,7 +15,7 @@ from DavisRunIITauTau.TupleConfigurations.and_string_concatonator import and_str
 
 
 USE_MVAMET_FOR_SVMASS_FlatTuple = True #  True = MVA MET, False = PFMET
-COMPUTE_SVMASS_FlatTuple = True
+COMPUTE_SVMASS_FlatTuple = False
 SVMASS_LOG_M_FlatTuple = 0.0
 SVMASS_VERBOSE_FlatTuple = True
 

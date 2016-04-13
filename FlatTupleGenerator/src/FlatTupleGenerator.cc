@@ -786,19 +786,29 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
       genMother_phi = genhelper.genMother_phi();
       genMother_M = genhelper.genMother_M();
 
-      EventHasZtoTauTau = genhelper.EventHasZtoTauTau();
-      EventHasZtoEE = genhelper.EventHasZtoEE();
-      EventHasZtoMM = genhelper.EventHasZtoMM();
-      isDY_genZTTcase1 = genhelper.isDY_genZTTcase1();
-      isDY_genZTTcase2 = genhelper.isDY_genZTTcase2();
-      isDY_genZTTcaseEmbedded = genhelper.isDY_genZTTcaseEmbedded();
-      isDY_genZL = genhelper.isDY_genZL();
-      isDY_genZJcase1 = genhelper.isDY_genZJcase1();
-      isDY_genZJcase2 = genhelper.isDY_genZJcase2();
-      isDY_genZTTcase3 = genhelper.isDY_genZTTcase3();
-      isDY_genZLL = genhelper.isDY_genZLL();
-      isDY_genZJcase3 = genhelper.isDY_genZJcase3();
+     
+      /*  MC match type vals - new for 76X */
 
+
+      leg1_MCMatchType = genhelper.leg1_MCMatchType();
+      leg1_genMCmatch_pt = genhelper.leg1_genMCmatch_pt();
+      leg1_genMCmatch_eta = genhelper.leg1_genMCmatch_eta();
+      leg1_genMCmatch_phi = genhelper.leg1_genMCmatch_phi();
+      leg1_genMCmatch_M = genhelper.leg1_genMCmatch_M();
+      leg1_MCMatchPdgId = genhelper.leg1_MCMatchPdgId();
+
+      leg2_MCMatchType = genhelper.leg2_MCMatchType();
+      leg2_genMCmatch_pt = genhelper.leg2_genMCmatch_pt();
+      leg2_genMCmatch_eta = genhelper.leg2_genMCmatch_eta();
+      leg2_genMCmatch_phi = genhelper.leg2_genMCmatch_phi();
+      leg2_genMCmatch_M = genhelper.leg2_genMCmatch_M();
+      leg2_MCMatchPdgId = genhelper.leg2_MCMatchPdgId();
+   
+
+       IsZTT = genhelper.IsZTT();
+       IsZL = genhelper.IsZL();
+       IsZJ = genhelper.IsZJ();
+       IsZLL = genhelper.IsZLL();
 
 
       /* stored rho's are the same for both legs */
@@ -1473,18 +1483,28 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
   genMother_phi.clear();
   genMother_M.clear();
 
-  EventHasZtoTauTau = 0;       
-  EventHasZtoEE = 0;          
-  EventHasZtoMM = 0;          
-  isDY_genZTTcase1 = 0;       
-  isDY_genZTTcase2 = 0;       
-  isDY_genZTTcaseEmbedded = 0; 
-  isDY_genZL = 0;              
-  isDY_genZJcase1 = 0;         
-  isDY_genZJcase2 = 0;         
-  isDY_genZTTcase3 = 0;        
-  isDY_genZLL = 0;             
-  isDY_genZJcase3 = 0;         
+
+  leg1_MCMatchType = -999;
+  leg1_genMCmatch_pt = NAN;
+  leg1_genMCmatch_eta = NAN;
+  leg1_genMCmatch_phi = NAN;
+  leg1_genMCmatch_M = NAN;
+  leg1_MCMatchPdgId = -999;    
+  leg2_MCMatchType = -999;
+  leg2_genMCmatch_pt = NAN;
+  leg2_genMCmatch_eta = NAN;
+  leg2_genMCmatch_phi = NAN;
+  leg2_genMCmatch_M = NAN;
+  leg2_MCMatchPdgId = -999;
+
+
+  IsZTT = -999;
+  IsZL = -999;
+  IsZJ = -999;
+  IsZLL = -999;
+
+
+
   rho  = NAN;
 
   DataSet = "NULL";
@@ -1840,18 +1860,25 @@ void FlatTupleGenerator::beginJob()
   FlatTuple->Branch("genMother_phi", &genMother_phi);
   FlatTuple->Branch("genMother_M", &genMother_M);
 
-  FlatTuple->Branch("EventHasZtoTauTau", &EventHasZtoTauTau);
-  FlatTuple->Branch("EventHasZtoEE", &EventHasZtoEE);
-  FlatTuple->Branch("EventHasZtoMM", &EventHasZtoMM);
-  FlatTuple->Branch("isDY_genZTTcase1", &isDY_genZTTcase1);
-  FlatTuple->Branch("isDY_genZTTcase2", &isDY_genZTTcase2);
-  FlatTuple->Branch("isDY_genZTTcaseEmbedded", &isDY_genZTTcaseEmbedded);
-  FlatTuple->Branch("isDY_genZL", &isDY_genZL);
-  FlatTuple->Branch("isDY_genZJcase1", &isDY_genZJcase1);
-  FlatTuple->Branch("isDY_genZJcase2", &isDY_genZJcase2);
-  FlatTuple->Branch("isDY_genZTTcase3", &isDY_genZTTcase3);
-  FlatTuple->Branch("isDY_genZLL", &isDY_genZLL);
-  FlatTuple->Branch("isDY_genZJcase3", &isDY_genZJcase3);
+  FlatTuple->Branch("leg1_MCMatchType", &leg1_MCMatchType);
+  FlatTuple->Branch("leg1_genMCmatch_pt", &leg1_genMCmatch_pt);
+  FlatTuple->Branch("leg1_genMCmatch_eta", &leg1_genMCmatch_eta);
+  FlatTuple->Branch("leg1_genMCmatch_phi", &leg1_genMCmatch_phi);
+  FlatTuple->Branch("leg1_genMCmatch_M", &leg1_genMCmatch_M);
+  FlatTuple->Branch("leg1_MCMatchPdgId", &leg1_MCMatchPdgId);
+ 
+  FlatTuple->Branch("leg2_MCMatchType", &leg2_MCMatchType);
+  FlatTuple->Branch("leg2_genMCmatch_pt", &leg2_genMCmatch_pt);
+  FlatTuple->Branch("leg2_genMCmatch_eta", &leg2_genMCmatch_eta);
+  FlatTuple->Branch("leg2_genMCmatch_phi", &leg2_genMCmatch_phi);
+  FlatTuple->Branch("leg2_genMCmatch_M", &leg2_genMCmatch_M);
+  FlatTuple->Branch("leg2_MCMatchPdgId", &leg2_MCMatchPdgId);
+
+
+  FlatTuple->Branch("IsZTT", &IsZTT);
+  FlatTuple->Branch("IsZL", &IsZL);
+  FlatTuple->Branch("IsZJ", &IsZJ);
+  FlatTuple->Branch("IsZLL", &IsZLL);
 
   FlatTuple->Branch("rho", &rho);
   FlatTuple->Branch("DataSet", &DataSet); 

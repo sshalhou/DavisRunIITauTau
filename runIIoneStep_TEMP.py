@@ -89,7 +89,7 @@ print '*******************************************************'
 print '********** Running in unscheduled mode **********'
 process.options = cms.untracked.PSet(wantSummary = cms.untracked.bool(True))
 process.options.allowUnscheduled = cms.untracked.bool(True)
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(20) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(500) )
 
 ###################################
 # input - remove for crab running
@@ -396,7 +396,9 @@ process.TupleCandidateEvents = cms.EDProducer('TupleCandidateEventProducer' ,
     doSVMass = cms.bool(COMPUTE_SVMASS),
     useMVAMET = cms.bool(USE_MVAMET),
     logMterm = cms.double(SVMASS_LOG_M),
-    svMassVerbose = cms.int32(SVMASS_VERBOSE)
+    svMassVerbose = cms.int32(SVMASS_VERBOSE),
+    # need to order the taus by isolation in tau_h + tau_h pairs
+    tauIsolForOrderingPair = cms.string("byCombinedIsolationDeltaBetaCorrRaw3Hits")
 						)	
 
 

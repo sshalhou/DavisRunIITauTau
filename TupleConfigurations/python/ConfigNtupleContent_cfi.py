@@ -32,7 +32,7 @@ USE_MVAMET = True #  True = MVA MET, False = PFMET
 # edit the following SVMass settings 
 ####################################################################################################
 
-COMPUTE_SVMASS = True 
+COMPUTE_SVMASS = False 
 SVMASS_LOG_M = 0.0
 SVMASS_VERBOSE = 2
 
@@ -52,9 +52,9 @@ GEN_PARTICLES_TO_KEEP = cms.vint32()
 
 GEN_PARTICLES_TO_KEEP.append(5) # keep b-quarks
 GEN_PARTICLES_TO_KEEP.append(6) # keep top-quarks
-GEN_PARTICLES_TO_KEEP.append(11) # keep electrons
-GEN_PARTICLES_TO_KEEP.append(13) # keep muons
-GEN_PARTICLES_TO_KEEP.append(15) # keep taus
+GEN_PARTICLES_TO_KEEP.append(11) # keep electrons (Must Always Keep!)
+GEN_PARTICLES_TO_KEEP.append(13) # keep muons (Must Always Keep!)
+GEN_PARTICLES_TO_KEEP.append(15) # keep taus (Must Always Keep!)
 GEN_PARTICLES_TO_KEEP.append(12) # keep electron-neutrino
 GEN_PARTICLES_TO_KEEP.append(14) # keep muon-neutrino
 GEN_PARTICLES_TO_KEEP.append(16) # keep tau-neutrino

@@ -105,6 +105,7 @@ private:
   bool useMVAMET_;
   double logMterm_;
   int svMassVerbose_;
+  string tauIsolForOrderingPair_;
 
 };
 
@@ -132,7 +133,8 @@ NAME_(iConfig.getParameter<string>("NAME" )),
 doSVMass_(iConfig.getParameter<bool>("doSVMass" )),
 useMVAMET_(iConfig.getParameter<bool>("useMVAMET" )),
 logMterm_(iConfig.getParameter<double>("logMterm" )),
-svMassVerbose_(iConfig.getParameter<int>("svMassVerbose" ))
+svMassVerbose_(iConfig.getParameter<int>("svMassVerbose" )),
+tauIsolForOrderingPair_(iConfig.getParameter<string>("tauIsolForOrderingPair" ))
 {
 
 
@@ -235,52 +237,128 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
 
         TLorentzVector l1,l2,vetoCand;
 
-        // electrons
+        //////////////////////////////////////////////////////////
 
-        if(mvamets->at(m).userCand("lepton0").get()->isElectron())  
+        /* Need to invert MU + E pair leg ordering */
+        if(mvamets->at(m).userCand("lepton0").get()->isMuon() &&\
+           mvamets->at(m).userCand("lepton1").get()->isElectron())
+        {
+
+          const pat::Electron* leg1 = dynamic_cast<const pat::Electron*>(mvamets->at(m).userCand("lepton1").get());
+          CurrentCandidateEvent.set_leg1(*leg1);
+          l1.SetPtEtaPhiM(leg1->pt(), leg1->eta(), leg1->phi(),leg1->mass());          
+
+          const pat::Muon* leg2 = dynamic_cast<const pat::Muon*>(mvamets->at(m).userCand("lepton0").get());
+          CurrentCandidateEvent.set_leg2(*leg2);
+          l2.SetPtEtaPhiM(leg2->pt(), leg2->eta(), leg2->phi(),leg2->mass());
+
+        }
+
+        /* In the case of tau_h + tau_h leg1 has to be the lowest isolation tau */
+        else if(abs(mvamets->at(m).userCand("lepton0").get()->pdgId())==15 &&\
+                abs(mvamets->at(m).userCand("lepton1").get()->pdgId())==15)
+        {
+
+          /* try default ordering */
+
+          const pat::Tau* legA = dynamic_cast<const pat::Tau*>(mvamets->at(m).userCand("lepton0").get());
+          const pat::Tau* legB = dynamic_cast<const pat::Tau*>(mvamets->at(m).userCand("lepton1").get());
+            
+          if(legA->tauID(tauIsolForOrderingPair_) <=\
+             legB->tauID(tauIsolForOrderingPair_))
           {
-            const pat::Electron* leg1 = dynamic_cast<const pat::Electron*>(mvamets->at(m).userCand("lepton0").get());
-            CurrentCandidateEvent.set_leg1(*leg1);
-            l1.SetPtEtaPhiM(leg1->pt(), leg1->eta(), leg1->phi(),leg1->mass());
+
+            CurrentCandidateEvent.set_leg1(*legA);
+            l1.SetPtEtaPhiM(legA->pt(), legA->eta(), legA->phi(),legA->mass());
+        
+            CurrentCandidateEvent.set_leg2(*legB);
+            l2.SetPtEtaPhiM(legB->pt(), legB->eta(), legB->phi(),legB->mass());
+
+            std::cout<<"DEFAULT DOUBLE TAU PAIR @ mvaMET INDEX "<<m<<" pt1 = "<<l1.Pt()<<" pt2 = "<<l2.Pt()<<" ";
+            std::cout<<" isol 1 "<<legA->tauID(tauIsolForOrderingPair_)<<" ";
+            std::cout<<" isol 2 "<<legB->tauID(tauIsolForOrderingPair_)<<"\n";
+
           }
-        if(mvamets->at(m).userCand("lepton1").get()->isElectron())  
+
+
+          else /* invert */
           {
-            const pat::Electron* leg2 = dynamic_cast<const pat::Electron*>(mvamets->at(m).userCand("lepton1").get());
-            CurrentCandidateEvent.set_leg2(*leg2);
-            l2.SetPtEtaPhiM(leg2->pt(), leg2->eta(), leg2->phi(),leg2->mass());
+
+            CurrentCandidateEvent.set_leg1(*legB);
+            l1.SetPtEtaPhiM(legB->pt(), legB->eta(), legB->phi(),legB->mass());
+        
+            CurrentCandidateEvent.set_leg2(*legB);
+            l2.SetPtEtaPhiM(legA->pt(), legA->eta(), legA->phi(),legA->mass());
+
+            std::cout<<"INVERTED DOUBLE TAU PAIR @ mvaMET INDEX "<<m<<" pt1 = "<<l1.Pt()<<" pt2 = "<<l2.Pt()<<" ";
+            std::cout<<" isol 1 "<<legB->tauID(tauIsolForOrderingPair_)<<" ";
+            std::cout<<" isol 2 "<<legA->tauID(tauIsolForOrderingPair_)<<"\n";
+
           }
+           
 
 
-        // muons
-
-        if(mvamets->at(m).userCand("lepton0").get()->isMuon())  
-          {
-            const pat::Muon* leg1 = dynamic_cast<const pat::Muon*>(mvamets->at(m).userCand("lepton0").get());
-            CurrentCandidateEvent.set_leg1(*leg1);
-            l1.SetPtEtaPhiM(leg1->pt(), leg1->eta(), leg1->phi(),leg1->mass());
-          }
-        if(mvamets->at(m).userCand("lepton1").get()->isMuon())  
-          {
-            const pat::Muon* leg2 = dynamic_cast<const pat::Muon*>(mvamets->at(m).userCand("lepton1").get());
-            CurrentCandidateEvent.set_leg2(*leg2);
-            l2.SetPtEtaPhiM(leg2->pt(), leg2->eta(), leg2->phi(),leg2->mass());
-          }
 
 
-        // taus        
+        }
 
-        if(abs(mvamets->at(m).userCand("lepton0").get()->pdgId())==15)  
-          {
-            const pat::Tau* leg1 = dynamic_cast<const pat::Tau*>(mvamets->at(m).userCand("lepton0").get());
-            CurrentCandidateEvent.set_leg1(*leg1);
-            l1.SetPtEtaPhiM(leg1->pt(), leg1->eta(), leg1->phi(),leg1->mass());
-          }
-        if(abs(mvamets->at(m).userCand("lepton1").get()->pdgId())==15)  
-          {
-            const pat::Tau* leg2 = dynamic_cast<const pat::Tau*>(mvamets->at(m).userCand("lepton1").get());
-            CurrentCandidateEvent.set_leg2(*leg2);
-            l2.SetPtEtaPhiM(leg2->pt(), leg2->eta(), leg2->phi(),leg2->mass());
-          }
+        else
+        {
+          /////////////////////////////
+          // electrons
+
+          if(mvamets->at(m).userCand("lepton0").get()->isElectron())  
+            {
+              const pat::Electron* leg1 = dynamic_cast<const pat::Electron*>(mvamets->at(m).userCand("lepton0").get());
+              CurrentCandidateEvent.set_leg1(*leg1);
+              l1.SetPtEtaPhiM(leg1->pt(), leg1->eta(), leg1->phi(),leg1->mass());
+            }
+          if(mvamets->at(m).userCand("lepton1").get()->isElectron())  
+            {
+              const pat::Electron* leg2 = dynamic_cast<const pat::Electron*>(mvamets->at(m).userCand("lepton1").get());
+              CurrentCandidateEvent.set_leg2(*leg2);
+              l2.SetPtEtaPhiM(leg2->pt(), leg2->eta(), leg2->phi(),leg2->mass());
+            }
+
+          /////////////////////////////
+          // muons
+
+          if(mvamets->at(m).userCand("lepton0").get()->isMuon())  
+            {
+              const pat::Muon* leg1 = dynamic_cast<const pat::Muon*>(mvamets->at(m).userCand("lepton0").get());
+              CurrentCandidateEvent.set_leg1(*leg1);
+              l1.SetPtEtaPhiM(leg1->pt(), leg1->eta(), leg1->phi(),leg1->mass());
+            }
+          if(mvamets->at(m).userCand("lepton1").get()->isMuon())  
+            {
+              const pat::Muon* leg2 = dynamic_cast<const pat::Muon*>(mvamets->at(m).userCand("lepton1").get());
+              CurrentCandidateEvent.set_leg2(*leg2);
+              l2.SetPtEtaPhiM(leg2->pt(), leg2->eta(), leg2->phi(),leg2->mass());
+            }
+
+          /////////////////////////////
+          // taus        
+
+          if(abs(mvamets->at(m).userCand("lepton0").get()->pdgId())==15)  
+            {
+              const pat::Tau* leg1 = dynamic_cast<const pat::Tau*>(mvamets->at(m).userCand("lepton0").get());
+              CurrentCandidateEvent.set_leg1(*leg1);
+              l1.SetPtEtaPhiM(leg1->pt(), leg1->eta(), leg1->phi(),leg1->mass());
+            }
+          if(abs(mvamets->at(m).userCand("lepton1").get()->pdgId())==15)  
+            {
+              const pat::Tau* leg2 = dynamic_cast<const pat::Tau*>(mvamets->at(m).userCand("lepton1").get());
+              CurrentCandidateEvent.set_leg2(*leg2);
+              l2.SetPtEtaPhiM(leg2->pt(), leg2->eta(), leg2->phi(),leg2->mass());
+            }
+
+
+          //////////////////////////////////////////////////////////
+        
+        }
+
+
+
 
           // set the CandidateEventType
 

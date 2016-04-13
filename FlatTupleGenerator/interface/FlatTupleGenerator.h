@@ -57,6 +57,7 @@
 #include "DavisRunIITauTau/FlatTupleGenerator/interface/PairRankHelper.h"
 #include "DavisRunIITauTau/FlatTupleGenerator/interface/JetHelper.h"
 #include "DavisRunIITauTau/FlatTupleGenerator/interface/GenHelper.h"
+#include "DavisRunIITauTau/FlatTupleGenerator/interface/GenMcMatchTypes.h"
 #include "DavisRunIITauTau/TupleObjects/interface/TupleLeptonTypes.h"
 #include "DavisRunIITauTau/TupleObjects/interface/TupleCandidateEventTypes.h"
 #include "CommonTools/Utils/interface/StringCutObjectSelector.h"
@@ -426,25 +427,25 @@ public:
   	std::vector <std::pair< int, double>> genMother_phi;
   	std::vector <std::pair< int, double>> genMother_M;
 
+  	// new gen level classification for leg 1 and 2
+  	// note this (along with Recoil corrections and MET Systematics are ONLY available
+  	// at the FlatTuple level)
+  	// note the gen matches are not the same as the pat embedded 4-vectors above
 
-  	/* the DY ZTT, ZL, ZJ, ZLL categories */
-    /* see https://twiki.cern.ch/twiki/bin/viewauth/CMS/HiggsToTauTauWorkingSummer2013#Backgrounds_Methods */
+  	int leg1_MCMatchType; /* match codes defined in GenMcMatchTypes.h */
+  	double leg1_genMCmatch_pt, leg1_genMCmatch_eta, leg1_genMCmatch_phi, leg1_genMCmatch_M; /* see https://twiki.cern.ch/twiki/bin/viewauth/CMS/HiggsToTauTauWorking2015#MC_Matching */ 
+    int leg1_MCMatchPdgId;
 
+  	int leg2_MCMatchType; /* match codes defined in GenMcMatchTypes.h */
+  	double leg2_genMCmatch_pt, leg2_genMCmatch_eta, leg2_genMCmatch_phi, leg2_genMCmatch_M; /* see https://twiki.cern.ch/twiki/bin/viewauth/CMS/HiggsToTauTauWorking2015#MC_Matching */ 
+    int leg2_MCMatchPdgId;
 
-    bool EventHasZtoTauTau;        /* for events with a Z boson, is there a Z->tau tau decay */
-    bool EventHasZtoEE;            /* for events with a Z boson, is there a Z->e e decay */
-    bool EventHasZtoMM;            /* for events with a Z boson, is there a Z->mu mu decay */
-    bool isDY_genZTTcase1;         /* (for e/mu + tau_h) : gen. Z->tau tau && tau_h leg has gen-tau match but no gen-e/mu match */
-    bool isDY_genZTTcase2;         /* (for e/mu + tau_h) : gen. Z->tau tau && tau_h leg has gen-e/mu match */
-    bool isDY_genZTTcaseEmbedded;  /* (for e/mu + tau_h in embedded samples) : tau_h leg has a gen tau match */
-    bool isDY_genZL;               /* (for e/mu + tau_h) : NOT gen. Z->tau tau && tau_h leg a gen-e/mu match */ 
-    bool isDY_genZJcase1;          /* (for e/mu + tau_h) : NOT gen. Z->tau tau && tau_h leg has no gen-e/mu match */     
-    bool isDY_genZJcase2;          /* (for e/mu + tau_h) : gen. Z->tau tau && tau_h leg has no gen-e/mu match or gen tau match */  
-    bool isDY_genZTTcase3;         /* (for tau_h+tau_h)  : gen. Z->tau tau is present */
-    bool isDY_genZLL;              /* (for tau_h+tau_h)  : gen. Z->e e or Z->m m is present, both tau_h have gen-e/mu (from Z) match */ 
-    bool isDY_genZJcase3;          /* (for tau_h+tau_h) :  defined as !m_isDY_genZTTcase3 && !m_isDY_genZLL */
+    int IsZTT;
+    int IsZL;
+    int IsZJ;
+    int IsZLL;
 
-  	/* things missing from sync tree */
+   	/* things missing from sync tree */
 
   	double rho;                    /* fixedGridRhoFastjetAll */
 

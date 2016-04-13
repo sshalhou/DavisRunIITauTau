@@ -12,6 +12,10 @@ GenHelper::GenHelper(){}
 void GenHelper::init(std::vector<NtupleGenParticle> genVec, NtupleLepton leg1, NtupleLepton leg2, int CandidateEventType )
 {
 
+	/* DR match max */
+
+	MCdrMatchRun2 = 0.2;
+
 	/* member data set to arguments */
 	m_genVec.clear();
 	m_genVec = genVec;
@@ -21,6 +25,27 @@ void GenHelper::init(std::vector<NtupleGenParticle> genVec, NtupleLepton leg1, N
 
 	/* init member data */
 	
+	m_leg1_MCMatchType = -999;
+    m_leg1_genMCmatch_pt = NAN;
+    m_leg1_genMCmatch_eta = NAN; 
+    m_leg1_genMCmatch_phi = NAN;
+    m_leg1_genMCmatch_M = NAN;
+    m_leg1_MCMatchPdgId = -999;
+
+    m_leg2_MCMatchType = -999;
+    m_leg2_genMCmatch_pt = NAN;
+    m_leg2_genMCmatch_eta = NAN;
+    m_leg2_genMCmatch_phi = NAN;
+    m_leg2_genMCmatch_M = NAN;
+    m_leg2_MCMatchPdgId = -999;
+
+    m_IsZTT = -999;
+    m_IsZL = -999;
+    m_IsZJ = -999;
+    m_IsZLL = -999;
+
+
+
 	m_EventHasZtoTauTau = 0;
 	m_EventHasZtoEE = 0;
 	m_EventHasZtoMM = 0;
@@ -111,8 +136,24 @@ void GenHelper::init(std::vector<NtupleGenParticle> genVec, NtupleLepton leg1, N
 
   }
 
+
+	/* perform the Run II MC Matching and classification of the two legs
+	based on Run II guidelines */
+	// see https://twiki.cern.ch/twiki/bin/viewauth/CMS/HiggsToTauTauWorking2015#MC_Matching
+
+	
+	checkLegsForEorMuorGenJetMatches(1);
+	checkLegsForEorMuorGenJetMatches(2);
+
+	std::cout<<" leg 1 mc match is type "<<m_leg1_MCMatchType<<" pdgId "<<m_leg1_MCMatchPdgId<<" pt "<<m_leg1_genMCmatch_pt<<"\n";
+	std::cout<<" leg 2 mc match is type "<<m_leg2_MCMatchType<<" pdgId "<<m_leg2_MCMatchPdgId<<" pt "<<m_leg2_genMCmatch_pt<<"\n";
+
+
+
   /* now classify the event, only valid for DY MC */
-  classifyTheEventForDY();
+  classifyTheEventForRun2_DY();	
+
+  // old run 1 method : classifyTheEventForDY();
 
 
 }
@@ -120,7 +161,283 @@ void GenHelper::init(std::vector<NtupleGenParticle> genVec, NtupleLepton leg1, N
 
 // helpers 
 
-/* assign DY classification : ZTT, ZL, ZJ, ZLL */
+/* set the Run II leg matches to gen E or Mu or genJet */
+/* this function fills member data if matches are found */
+
+void GenHelper::checkLegsForEorMuorGenJetMatches(int legIndex) /* legIndex = 1 for leg1 or 2 for leg2 */
+{
+	/* only 1 or 2 are valid values for arg legIndex */
+	assert(legIndex==1 || legIndex==2);
+
+	TLorentzVector leg, genTemp, genTauJet;
+
+	if(legIndex==1) leg.SetPtEtaPhiM(m_leg1.p4().pt(), m_leg1.p4().eta(), m_leg1.p4().phi(), m_leg1.p4().M());
+	else leg.SetPtEtaPhiM(m_leg2.p4().pt(), m_leg2.p4().eta(), m_leg2.p4().phi(), m_leg2.p4().M());
+
+	for(std::size_t g = 0; g < m_genParticle_pdgId.size(); ++g)
+	{
+
+		/* zero 4-vector */
+		genTemp.SetPtEtaPhiM(0,0,0,0);
+
+		/* check for promptElectron/promptMuon/tauToElectronDecay/tauToMuonDecay */
+		if(abs(m_genParticle_pdgId[g].second) == 11 ||  abs(m_genParticle_pdgId[g].second) == 13)
+		{
+
+			if(m_genParticle_pt[g].second > 8)
+			{
+
+				genTemp.SetPtEtaPhiM(m_genParticle_pt[g].second, m_genParticle_eta[g].second, 
+									 m_genParticle_phi[g].second, m_genParticle_M[g].second);
+
+				if(leg.DeltaR(genTemp) < MCdrMatchRun2)
+				{
+
+					if(m_genParticle_isPrompt[g].second == 1 || m_genParticle_isDirectPromptTauDecayProduct[g].second == 1)
+					{
+						if(legIndex==1)
+						{
+							m_leg1_genMCmatch_pt = m_genParticle_pt[g].second;
+							m_leg1_genMCmatch_eta = m_genParticle_eta[g].second;
+							m_leg1_genMCmatch_phi = m_genParticle_phi[g].second;
+							m_leg1_genMCmatch_M = m_genParticle_M[g].second;
+							m_leg1_MCMatchPdgId = m_genParticle_pdgId[g].second;
+							
+							if(abs(m_genParticle_pdgId[g].second) == 11 && m_genParticle_isPrompt[g].second == 1)
+							{
+								m_leg1_MCMatchType = GenMcMatchTypes::promptElectron;
+							}
+							else if(abs(m_genParticle_pdgId[g].second) == 11 && m_genParticle_isDirectPromptTauDecayProduct[g].second == 1)
+							{
+								m_leg1_MCMatchType = GenMcMatchTypes::tauToElectronDecay;
+							}
+
+							else if(abs(m_genParticle_pdgId[g].second) == 13 && m_genParticle_isPrompt[g].second == 1)
+							{
+								m_leg1_MCMatchType = GenMcMatchTypes::promptMuon;
+							}
+							else if(abs(m_genParticle_pdgId[g].second) == 13 && m_genParticle_isDirectPromptTauDecayProduct[g].second == 1)
+							{
+								m_leg1_MCMatchType = GenMcMatchTypes::tauToMuonDecay;
+							}
+
+
+						}
+						else if(legIndex==2)
+						{
+							m_leg2_genMCmatch_pt = m_genParticle_pt[g].second;
+							m_leg2_genMCmatch_eta = m_genParticle_eta[g].second;
+							m_leg2_genMCmatch_phi = m_genParticle_phi[g].second;
+							m_leg2_genMCmatch_M = m_genParticle_M[g].second;
+							m_leg2_MCMatchPdgId = m_genParticle_pdgId[g].second;
+
+							if(abs(m_genParticle_pdgId[g].second) == 11 && m_genParticle_isPrompt[g].second == 1)
+							{
+								m_leg2_MCMatchType = GenMcMatchTypes::promptElectron;
+							}
+							else if(abs(m_genParticle_pdgId[g].second) == 11 && m_genParticle_isDirectPromptTauDecayProduct[g].second == 1)
+							{
+								m_leg2_MCMatchType = GenMcMatchTypes::tauToElectronDecay;
+							}
+
+							else if(abs(m_genParticle_pdgId[g].second) == 13 && m_genParticle_isPrompt[g].second == 1)
+							{
+								m_leg2_MCMatchType = GenMcMatchTypes::promptMuon;
+							}
+							else if(abs(m_genParticle_pdgId[g].second) == 13 && m_genParticle_isDirectPromptTauDecayProduct[g].second == 1)
+							{
+								m_leg2_MCMatchType = GenMcMatchTypes::tauToMuonDecay;
+							}
+						}
+					}
+				}
+
+			}
+
+		}
+
+		/* check for hadronicTau */
+		else if(abs(m_genParticle_pdgId[g].second) == 15 && m_genParticle_isPrompt[g].second == 1)
+		{
+
+			/* zero 4-vector */
+			genTauJet.SetPtEtaPhiM(0,0,0,0);
+
+			/* Build a Gen-tau jet, rebuilt by summing 4-momenta of visible gen tau decay products, 
+			excluding electrons and muons. The pT of the gen tau jet should be >15 GeV. 
+			Only consider the decay products of those gen taus that fulfill status flag IsPrompt. */
+
+
+		    /* nested loop on daughters */
+		    for(std::size_t gg = 0; gg < m_genDaughter_pdgId.size(); ++gg)
+		    {
+
+		    	TLorentzVector GenVecToSum(0,0,0,0);
+
+		    
+		      /* all daugthers of the current gen tau have first element == g	 */
+		     
+		    	if( m_genDaughter_pdgId[gg].first == (int)g ) 
+		    	{
+		    		/* should veto electrons, muons, and neutrinos */
+
+		    		if( abs(m_genDaughter_pdgId[gg].second) != 11 &&\
+		    			abs(m_genDaughter_pdgId[gg].second) != 12 &&\
+		    			abs(m_genDaughter_pdgId[gg].second) != 13 &&\
+		    			abs(m_genDaughter_pdgId[gg].second) != 14 &&\
+		    			abs(m_genDaughter_pdgId[gg].second) != 15 &&\
+		    			abs(m_genDaughter_pdgId[gg].second) != 16)
+						{
+		    				GenVecToSum.SetPtEtaPhiM(m_genDaughter_pt[gg].second, m_genDaughter_eta[gg].second,
+											 m_genDaughter_phi[gg].second, m_genDaughter_M[gg].second);		    		 
+
+			    			genTauJet += GenVecToSum;
+			    		}	
+
+		    	}	
+
+		    }
+
+			if(leg.DeltaR(genTauJet) < MCdrMatchRun2 && genTauJet.Pt()>15)
+			{
+
+				if(legIndex==1 && m_leg1_MCMatchType==-999)
+				{
+					m_leg1_genMCmatch_pt = genTauJet.Pt();
+					m_leg1_genMCmatch_eta = genTauJet.Eta();
+					m_leg1_genMCmatch_phi = genTauJet.Phi();
+					m_leg1_genMCmatch_M = genTauJet.M();
+					m_leg1_MCMatchPdgId = m_genParticle_pdgId[g].second;
+					m_leg1_MCMatchType = GenMcMatchTypes::hadronicTau;							
+				}	
+
+				else if(legIndex==2 && m_leg2_MCMatchType==-999)
+				{
+					m_leg2_genMCmatch_pt = genTauJet.Pt();
+					m_leg2_genMCmatch_eta = genTauJet.Eta();
+					m_leg2_genMCmatch_phi = genTauJet.Phi();
+					m_leg2_genMCmatch_M = genTauJet.M();
+					m_leg2_MCMatchPdgId = m_genParticle_pdgId[g].second;
+					m_leg2_MCMatchType = GenMcMatchTypes::hadronicTau;							
+				}	
+
+
+		    	// std::cout<<" test : reco Pt "<<leg.Pt()<<" genJet Pt "<<genTauJet.Pt()<<" ";
+		    	// if(legIndex==1 && m_leg1.leptonType()==TupleLeptonTypes::aTau ) std::cout<<" pat tau embedded gen jet pt = "<<m_leg1.genJet_p4().pt()<<"\n";
+		    	// else if(legIndex==2 && m_leg2.leptonType()==TupleLeptonTypes::aTau )std::cout<<" pat tau embedded gen jet pt = "<<m_leg2.genJet_p4().pt()<<" ";
+		    	// std::cout<<"\n";
+		    }
+		}
+
+	}
+
+	/* if reached here, and still no MC match, then likely a fake */
+	if(legIndex==1 && m_leg1_MCMatchType==-999)
+	{
+					m_leg1_genMCmatch_pt = 0;
+					m_leg1_genMCmatch_eta = 0;
+					m_leg1_genMCmatch_phi = 0;
+					m_leg1_genMCmatch_M = 0;
+					m_leg1_MCMatchPdgId = 0;
+					m_leg1_MCMatchType = GenMcMatchTypes::jetOrPuFake;
+	}
+	else if(legIndex==2 && m_leg2_MCMatchType==-999)
+	{
+					m_leg2_genMCmatch_pt = 0;
+					m_leg2_genMCmatch_eta = 0;
+					m_leg2_genMCmatch_phi = 0;
+					m_leg2_genMCmatch_M = 0;
+					m_leg2_MCMatchPdgId = 0;
+					m_leg2_MCMatchType = GenMcMatchTypes::jetOrPuFake;
+	}
+
+
+}
+
+
+/* updated Run II DY classification (sets vals to IsZTT, IsZL, IsZJ,and IsZLL) */
+void GenHelper::classifyTheEventForRun2_DY()
+{
+
+	 // code only valid if GenMcMatchTypes looks like this
+     // promptElectron = 1,
+     // promptMuon = 2,
+     // tauToElectronDecay = 3,
+     // tauToMuonDecay = 4,
+     // hadronicTau = 5,
+     // jetOrPuFake = 6
+
+	/* reset */
+	m_IsZTT = 0;
+	m_IsZL = 0;
+	m_IsZJ = 0;
+	m_IsZLL = 0;
+
+	int m1 = m_leg1_MCMatchType;
+	int m2 = m_leg2_MCMatchType;
+	int c12 = m_CandidateEventType;
+
+	if(c12 == TupleCandidateEventTypes::EleTau || c12 == TupleCandidateEventTypes::MuonTau)
+	{
+		/* defined as : 
+		ZTT : For etau and mutau channels: gen_match_2==5
+		ZL :  For etau and mutau channels: gen_match_2<5
+		ZJ :  For etau and mutau: gen_match_2==6
+		ZLL : For etau, mutau and tautau channels = ZL+ZJ
+		*/
+
+		if(m2 == 5)    		 { m_IsZTT = 1; }
+		else if(m2 < 5) 	 { m_IsZL = 1;  }
+		else if(m2 == 6)	 { m_IsZJ = 1;  }
+		if(m_IsZL || m_IsZJ) { m_IsZLL = 1; }
+
+
+	}
+	else if(c12 == TupleCandidateEventTypes::TauTau)
+	{
+
+		/* defined as : 
+		ZTT : For tautau channel: gen_match_1==5 && gen_match_2==5;
+		ZL :  For tautau channel: gen_match_1<6&&gen_match_2<6&&!(gen_match_1==5&&gen_match_2==5).
+		ZJ :  For tautau channel: gen_match_2==6 or gen_match_1==6.
+		ZLL : For etau, mutau and tautau channels = ZL+ZJ
+		*/
+
+		if(m1==5 && m2==5)       { m_IsZTT = 1; }
+		else if(m1<6 && m2<6) 	 { m_IsZL = 1;  }
+		else if(m1==6 || m2==6)	 { m_IsZJ = 1;  }
+		if(m_IsZL || m_IsZJ)     { m_IsZLL = 1; }
+
+
+
+	}
+	else if(c12 == TupleCandidateEventTypes::EleMuon)
+	{
+		/* defined as : 
+		ZTT : For emu channel: gen_match_1>2 && gen_match_2>3 
+		ZL :  Not present in emu 
+		ZJ :  Not present in emu 
+		ZLL : For emu channel: gen_match_1< 3 or gen_match_2<4" 
+		*/
+
+
+		if(m1>2 && m2>3)  { m_IsZTT = 1; }
+		else if(m1<3 || m2<4)     { m_IsZLL = 1; }
+		m_IsZL = 0;
+		m_IsZJ = 0;
+	}
+
+
+	std::cout<<" PAIR IS ";
+	if(m_IsZTT) std::cout<<" ZTT ";
+	if(m_IsZL) std::cout<<" ZL ";
+	if(m_IsZJ) std::cout<<" ZJ ";
+	if(m_IsZLL) std::cout<<" ZLL ";
+	std::cout<<"\n";
+}
+
+
+/* OLD RUN I : assign DY classification : ZTT, ZL, ZJ, ZLL */
 /* see : https://twiki.cern.ch/twiki/bin/viewauth/CMS/HiggsToTauTauWorkingSummer2013#Backgrounds_Methods */
 
 void GenHelper::classifyTheEventForDY()
@@ -298,6 +615,29 @@ bool GenHelper::isRecoTauGenEorMu_FROMZ_Matched(NtupleLepton legX,std::vector<Nt
 }
 
 // getters 
+
+
+	int GenHelper::leg1_MCMatchType() { return m_leg1_MCMatchType; };
+    double GenHelper::leg1_genMCmatch_pt() { return m_leg1_genMCmatch_pt; };
+    double GenHelper::leg1_genMCmatch_eta() { return m_leg1_genMCmatch_eta; };
+    double GenHelper::leg1_genMCmatch_phi() { return m_leg1_genMCmatch_phi; };
+    double GenHelper::leg1_genMCmatch_M() { return m_leg1_genMCmatch_M; };
+    int GenHelper::leg1_MCMatchPdgId() { return m_leg1_MCMatchPdgId; };
+
+    int GenHelper::leg2_MCMatchType() { return m_leg2_MCMatchType; };
+    double GenHelper::leg2_genMCmatch_pt() { return m_leg2_genMCmatch_pt; };
+    double GenHelper::leg2_genMCmatch_eta() { return m_leg2_genMCmatch_eta; };
+    double GenHelper::leg2_genMCmatch_phi() { return m_leg2_genMCmatch_phi; };
+    double GenHelper::leg2_genMCmatch_M() { return m_leg2_genMCmatch_M; };
+    int GenHelper::leg2_MCMatchPdgId() { return m_leg2_MCMatchPdgId; };
+
+
+
+    int GenHelper::IsZTT() { return m_IsZTT; };
+    int GenHelper::IsZL()  { return m_IsZL; };
+    int GenHelper::IsZJ()  { return m_IsZJ; };
+    int GenHelper::IsZLL() { return m_IsZLL; };
+
 
 	bool GenHelper::EventHasZtoTauTau() { return m_EventHasZtoTauTau; };
 	bool GenHelper::EventHasZtoEE() { return m_EventHasZtoEE; };
