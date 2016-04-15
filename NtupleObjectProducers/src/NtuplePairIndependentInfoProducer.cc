@@ -264,9 +264,38 @@ NtuplePairIndependentInfoProducer::produce(edm::Event& iEvent, const edm::EventS
   if(prunedGens.isValid()) 
   {
 
+    /* need to keep Z/W/Higgs 4-momentums summed both vis and total */
+
+    LorentzVector GenBosonVisibleMomentum(0,0,0,0);
+    LorentzVector GenBosonTotalMomentum(0,0,0,0);
+
+
     for(std::size_t i = 0; i<prunedGens->size(); ++i)
     {
-    
+
+      int fromHardProcessFinalState = prunedGens->at(i).fromHardProcessFinalState();
+      int isElectron = prunedGens->at(i).isElectron();
+      int isMuon = prunedGens->at(i).isMuon();
+      int isDirectHardProcessTauDecayProduct = prunedGens->at(i).statusFlags().isDirectHardProcessTauDecayProduct();
+      int isNeutrino = (abs(prunedGens->at(i).pdgId())==12 || abs(prunedGens->at(i).pdgId())==14 || abs(prunedGens->at(i).pdgId())==16);
+
+      if( (fromHardProcessFinalState && (isMuon || isElectron || isNeutrino)) || isDirectHardProcessTauDecayProduct )
+      {
+        GenBosonTotalMomentum += prunedGens->at(i).p4();
+      }
+      if( (fromHardProcessFinalState && (isMuon || isElectron)) || (isDirectHardProcessTauDecayProduct && !isNeutrino) )
+      {
+        GenBosonVisibleMomentum += prunedGens->at(i).p4();
+      }
+
+      std::cout<<" TOT MOM "<<GenBosonTotalMomentum.Pt()<<" ";
+      std::cout<<" VIS MOM "<<GenBosonVisibleMomentum.Pt()<<"\n";
+
+      InfoToWrite.fill_GenBosonTotalMomentum(GenBosonTotalMomentum); 
+      InfoToWrite.fill_GenBosonVisibleMomentum(GenBosonVisibleMomentum);
+
+
+
       //////////////////////////////////////////
       // check that pdgId is in typesTokeep
 

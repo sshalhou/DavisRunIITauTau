@@ -36,9 +36,21 @@ NtuplePairIndependentInfo::NtuplePairIndependentInfo()
   m_eeBadScFilter = 1;
   m_EcalDeadCellTriggerPrimitiveFilter = 1;
 
-
+  m_GenBosonVisibleMomentum.SetXYZT(NAN,NAN,NAN,NAN);
+  m_GenBosonTotalMomentum.SetXYZT(NAN,NAN,NAN,NAN);
 
 }
+
+
+void  NtuplePairIndependentInfo::fill_GenBosonVisibleMomentum(LorentzVector X)
+{  
+  m_GenBosonVisibleMomentum  = X;
+}
+void  NtuplePairIndependentInfo::fill_GenBosonTotalMomentum(LorentzVector X) 
+{
+  m_GenBosonTotalMomentum  = X;
+}
+
 
 void  NtuplePairIndependentInfo::fill_HBHEIsoNoiseFilter(bool arg)
   {
@@ -242,5 +254,6 @@ bool NtuplePairIndependentInfo::goodVerticesFilter() const { return m_goodVertic
 bool NtuplePairIndependentInfo::eeBadScFilter() const { return m_eeBadScFilter; };
 bool NtuplePairIndependentInfo::EcalDeadCellTriggerPrimitiveFilter() const { return m_EcalDeadCellTriggerPrimitiveFilter; };
 
-
+LorentzVector  NtuplePairIndependentInfo::GenBosonVisibleMomentum() const { return m_GenBosonVisibleMomentum; };
+LorentzVector  NtuplePairIndependentInfo::GenBosonTotalMomentum() const { return m_GenBosonTotalMomentum; };
 

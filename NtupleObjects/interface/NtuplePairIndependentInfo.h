@@ -70,6 +70,10 @@ public:
   void fill_EcalDeadCellTriggerPrimitiveFilter(bool);
 
 
+  /* fill the boson 4-vectors at gen level */
+
+  void fill_GenBosonVisibleMomentum(LorentzVector);
+  void fill_GenBosonTotalMomentum(LorentzVector); 
 
 
 
@@ -106,6 +110,11 @@ public:
   bool eeBadScFilter() const;
   bool EcalDeadCellTriggerPrimitiveFilter() const;
 
+
+  /* gen boson 4-vectors */
+
+  LorentzVector GenBosonVisibleMomentum() const;
+  LorentzVector GenBosonTotalMomentum() const;
 
 
 private:
@@ -154,7 +163,10 @@ private:
   bool m_eeBadScFilter;
   bool m_EcalDeadCellTriggerPrimitiveFilter;
 
+  /* gen boson 4-vectors */
 
+  LorentzVector m_GenBosonVisibleMomentum;
+  LorentzVector m_GenBosonTotalMomentum;
 
 };
 

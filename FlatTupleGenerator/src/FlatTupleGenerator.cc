@@ -814,6 +814,21 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
       /* stored rho's are the same for both legs */
       rho = currentPair.leg1().rho("fixedGridRhoFastjetAll"); 
 
+      /* 4-vectors of gen level boson */
+      genBosonTotal_pt = currentINDEP.GenBosonTotalMomentum().pt();
+      genBosonTotal_eta = currentINDEP.GenBosonTotalMomentum().eta();
+      genBosonTotal_phi = currentINDEP.GenBosonTotalMomentum().phi();
+      genBosonTotal_M = currentINDEP.GenBosonTotalMomentum().M();
+
+      genBosonVisible_pt = currentINDEP.GenBosonVisibleMomentum().pt();
+      genBosonVisible_eta = currentINDEP.GenBosonVisibleMomentum().eta();
+      genBosonVisible_phi = currentINDEP.GenBosonVisibleMomentum().phi();
+      genBosonVisible_M = currentINDEP.GenBosonVisibleMomentum().M();
+
+
+
+
+
 
 
 //////////////////////////////////////////////////////
@@ -1515,6 +1530,19 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
   FilterEff = 1.0;
   CodeVersion = 0.0;
 
+
+  genBosonTotal_pt = NAN;
+  genBosonTotal_eta = NAN;
+  genBosonTotal_phi = NAN;
+  genBosonTotal_M = NAN;
+
+  genBosonVisible_pt = NAN;
+  genBosonVisible_eta = NAN;
+  genBosonVisible_phi = NAN;
+  genBosonVisible_M = NAN;
+
+
+
  }
 
  //////////////////////////////////////////////////
@@ -1888,6 +1916,20 @@ void FlatTupleGenerator::beginJob()
   FlatTuple->Branch("CrossSection", &CrossSection); 
   FlatTuple->Branch("FilterEff", &FilterEff); 
   FlatTuple->Branch("CodeVersion", &CodeVersion); 
+
+
+
+
+  FlatTuple->Branch("genBosonTotal_pt", &genBosonTotal_pt); 
+  FlatTuple->Branch("genBosonTotal_eta", &genBosonTotal_eta); 
+  FlatTuple->Branch("genBosonTotal_phi", &genBosonTotal_phi); 
+  FlatTuple->Branch("genBosonTotal_M", &genBosonTotal_M); 
+
+  FlatTuple->Branch("genBosonVisible_pt", &genBosonVisible_pt); 
+  FlatTuple->Branch("genBosonVisible_eta", &genBosonVisible_eta); 
+  FlatTuple->Branch("genBosonVisible_phi", &genBosonVisible_phi); 
+  FlatTuple->Branch("genBosonVisible_M", &genBosonVisible_M); 
+
 
 }
 

@@ -380,6 +380,10 @@ if RUN_MEM_CHECK is True:
 ####################
 # produce the TupleCandidateEvent pair + MET container
 
+from DavisRunIITauTau.FlatTupleGenerator.FlatTupleConfig_cfi import generalConfig as TauIsoConfigRank
+tauIsolForOrderingPair_ = TauIsoConfigRank.getParameter("tauIDisolationForRank")
+
+
 
 process.TupleCandidateEvents = cms.EDProducer('TupleCandidateEventProducer' ,
 	puppiMETSrc = cms.InputTag("slimmedMETsPuppi"),
@@ -398,7 +402,7 @@ process.TupleCandidateEvents = cms.EDProducer('TupleCandidateEventProducer' ,
     logMterm = cms.double(SVMASS_LOG_M),
     svMassVerbose = cms.int32(SVMASS_VERBOSE),
     # need to order the taus by isolation in tau_h + tau_h pairs
-    tauIsolForOrderingPair = cms.string("byCombinedIsolationDeltaBetaCorrRaw3Hits")
+    tauIsolForOrderingPair = tauIsolForOrderingPair_
 						)	
 
 

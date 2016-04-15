@@ -449,7 +449,9 @@ public:
 
   	double rho;                    /* fixedGridRhoFastjetAll */
 
-
+    /* gen level boson 4-vectors Z/W/H */
+    double genBosonTotal_pt, genBosonTotal_eta, genBosonTotal_phi, genBosonTotal_M; 	    /* the gen total 4-vector of W/Z/H */
+	double genBosonVisible_pt, genBosonVisible_eta, genBosonVisible_phi, genBosonVisible_M; /* the gen visible 4-vector of W/Z/H */
 
 };  
 
