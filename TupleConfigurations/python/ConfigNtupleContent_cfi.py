@@ -14,12 +14,25 @@ BUILD_ELECTRON_TAU = True
 BUILD_MUON_MUON = False
 BUILD_MUON_TAU = True
 BUILD_TAU_TAU = True
+# new options (any one of these will run eff. flatTuple options)
+BUILD_ELECTRON_X = False
+BUILD_MUON_X = False
+BUILD_TAU_X = False
+
+####################################################################################################
+# MAX SIZE OF LEPTON LISTS-only keep 1st MAX_X_COUNT leptons passing all selections for pair formation)
+####################################################################################################
+
+MAX_ELECTRON_COUNT = 7
+MAX_MUON_COUNT = 7
+MAX_TAU_COUNT = 7
+
 
 ####################################################################################################
 # edit the following to turn on/off Tau ES variants
 ####################################################################################################
 
-BUILD_TAU_ES_VARIANTS = False # not needed in early sync
+BUILD_TAU_ES_VARIANTS = True # not needed in early sync
 
 
 ####################################################################################################
@@ -40,7 +53,7 @@ SVMASS_VERBOSE = 2
 # Set RUN_MEM_CHECK to True to run SimpleMemoryCheck
 ####################################################################################################
 
-RUN_MEM_CHECK = False
+RUN_MEM_CHECK = True
 
 
 ####################################################################################################

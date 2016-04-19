@@ -26,6 +26,8 @@ TupleCandidateEvent::TupleCandidateEvent()
   	{
   		m_CandidateEventType = TupleCandidateEventTypes::EleEle;
   	}
+  	
+
   	else if(m_leg1.leptonType()==TupleLeptonTypes::anElectron && m_leg2.leptonType()==TupleLeptonTypes::aMuon)
   	{
   		m_CandidateEventType = TupleCandidateEventTypes::EleMuon;
@@ -34,6 +36,8 @@ TupleCandidateEvent::TupleCandidateEvent()
   	{
   		m_CandidateEventType = TupleCandidateEventTypes::EleMuon;
   	}
+  	
+
   	else if(m_leg1.leptonType()==TupleLeptonTypes::anElectron && m_leg2.leptonType()==TupleLeptonTypes::aTau)
   	{
   		m_CandidateEventType = TupleCandidateEventTypes::EleTau;
@@ -63,7 +67,7 @@ TupleCandidateEvent::TupleCandidateEvent()
   		m_CandidateEventType = TupleCandidateEventTypes::TauTau;
   	}
 
-
+  	std::cout<<" ASSIGNED "<<m_CandidateEventType<<"\n";
 
   }
 

@@ -301,7 +301,31 @@ theCuts = cms.VPSet(
 	)
 
 
+minimalCuts = cms.VPSet(
 
+		cms.PSet(   candidatePairType = cms.string("EleTau"),
+					electronID = cut_ele_EleTau,
+					tauID = cut_tau_EleTau,
+					minDR = cms.double(0.5),
+				),
+		cms.PSet(   candidatePairType = cms.string("EleMuon"),
+					electronID = cut_ele_EleMuon,
+					muonID = cut_muon_EleMuon,
+					minDR = cms.double(0.3),
+
+				),
+		cms.PSet(   candidatePairType = cms.string("MuonTau"),
+					muonID = cut_muon_MuonTau,
+					tauID = cut_tau_MuonTau,
+					minDR = cms.double(0.5),
+
+				),
+		cms.PSet(   candidatePairType = cms.string("TauTau"),
+					tauID = cut_tau_TauTau,
+					minDR = cms.double(0.5),
+
+				)
+	)
 		
 
 # config for basic settings 
@@ -309,11 +333,7 @@ generalConfig = cms.PSet(
 
 			Mt = cms.vdouble(-1.0e30,30.0), # not used at the moment
 			keepOS = cms.bool(True),
-			keepSS = cms.bool(True),
-			keepTauEsNominal = cms.bool(True),
-			keepTauEsUp = cms.bool(False),
-			keepTauEsDown = cms.bool(False),
-
+			keepSS = cms.bool(True),			
 			# how to rank pairs within this selection
 			rankByPtSum = cms.bool(False),
 			rankByIsolation = cms.bool(True), # checks leg1 isolation, then pt in case of tie

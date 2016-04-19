@@ -206,7 +206,7 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
   edm::Handle<edm::View<pat::Muon> > veto_muons;
   iEvent.getByToken(muonVetoToken_,veto_muons);
 
-
+  std::cout<<" met valid ? "<<mvamets.isValid()<<NAME_<<"\n";
   if(mvamets.isValid())
   {
 
@@ -277,7 +277,7 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
             std::cout<<"DEFAULT DOUBLE TAU PAIR @ mvaMET INDEX "<<m<<" pt1 = "<<l1.Pt()<<" pt2 = "<<l2.Pt()<<" ";
             std::cout<<" isol 1 "<<legA->tauID(tauIsolForOrderingPair_)<<" ";
             std::cout<<" isol 2 "<<legB->tauID(tauIsolForOrderingPair_)<<"\n";
-
+            
           }
 
 
@@ -287,7 +287,7 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
             CurrentCandidateEvent.set_leg1(*legB);
             l1.SetPtEtaPhiM(legB->pt(), legB->eta(), legB->phi(),legB->mass());
         
-            CurrentCandidateEvent.set_leg2(*legB);
+            CurrentCandidateEvent.set_leg2(*legA);
             l2.SetPtEtaPhiM(legA->pt(), legA->eta(), legA->phi(),legA->mass());
 
             std::cout<<"INVERTED DOUBLE TAU PAIR @ mvaMET INDEX "<<m<<" pt1 = "<<l1.Pt()<<" pt2 = "<<l2.Pt()<<" ";
@@ -298,7 +298,7 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
            
 
 
-
+          std::cout<<" JUST CREATED A TAU TAU DR = "<<l1.DeltaR(l2)<<"\n";
 
         }
 
@@ -364,8 +364,12 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
 
           CurrentCandidateEvent.set_CandidateEventType();
 
+          std::cout<<" PT CHECK "<<l1.Pt()<<" "<<l2.Pt()<<" candidate type "<<CurrentCandidateEvent.CandidateEventType()<<"\n";
+          assert( CurrentCandidateEvent.CandidateEventType()>=1 && CurrentCandidateEvent.CandidateEventType()<=10 );
 
-          if(l1.DeltaR(l2)<vetoDeltaRmin_) continue;
+          if(l1.DeltaR(l2)<pairDeltaRmin_) continue;
+
+          std::cout<<" AFTER DR CUT  of "<<pairDeltaRmin_<<" get DR = "<<l1.DeltaR(l2)<<" pts are "<<l1.Pt()<<" "<<l2.Pt()<<"\n";
 
           ///////////////////
           /////// VETO ELECTRONS /////////////////////////////////////////////
@@ -600,6 +604,10 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
           CurrentCandidateEvent.set_SVMass(sv_mass[0]); // the sv mass
           CurrentCandidateEvent.set_SVTransverseMass(sv_mass[1]); // the sv transverse mass
 
+          std::cout<<" PUSHING BACK TYPE "<<CurrentCandidateEvent.CandidateEventType()<<"\n";
+          
+          std::cout<<" TLOR DR = "<<l1.DeltaR(l2)<<"\n";
+          
           TupleCandidateEvents->push_back(CurrentCandidateEvent);
 
       } // correctly formed mva met + leg1 + leg2
@@ -614,7 +622,7 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
 
 
 
-
+std::cout<<" EVENT PAIR COUNT "<<TupleCandidateEvents->size()<<"\n";
 
 iEvent.put( TupleCandidateEvents, NAME_ );
 

@@ -1,9 +1,9 @@
 // -*- C++ -*-
 //
-// Package:    SinglePatElectronProducer
-// Class:      SinglePatElectronProducer
+// Package:    TrimmedPatTauProducer
+// Class:      TrimmedPatTauProducer
 //
-/**\class SinglePatElectronProducer SinglePatElectronProducer.cc TEMP/SinglePatElectronProducer/src/SinglePatElectronProducer.cc
+/**\class TrimmedPatTauProducer TrimmedPatTauProducer.cc TEMP/TrimmedPatTauProducer/src/TrimmedPatTauProducer.cc
 
 Description: [one line class summary]
 
@@ -28,10 +28,10 @@ Implementation:
 #include "FWCore/Framework/interface/MakerMacros.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 
-// needed by ntuple electron producer
+// needed by ntuple tau producer
 #include <vector>
 #include <iostream>
-#include "DataFormats/PatCandidates/interface/Electron.h"
+#include "DataFormats/PatCandidates/interface/Tau.h"
 #include "RecoEgamma/EgammaTools/interface/ConversionTools.h"
 #include "EgammaAnalysis/ElectronTools/interface/EGammaCutBasedEleId.h"
 #include "DataFormats/PatCandidates/interface/Conversion.h"
@@ -57,10 +57,10 @@ using namespace pat;
 // class declaration
 //
 
-class SinglePatElectronProducer : public edm::EDProducer {
+class TrimmedPatTauProducer : public edm::EDProducer {
 public:
-  explicit SinglePatElectronProducer(const edm::ParameterSet&);
-  ~SinglePatElectronProducer();
+  explicit TrimmedPatTauProducer(const edm::ParameterSet&);
+  ~TrimmedPatTauProducer();
 
   static void fillDescriptions(edm::ConfigurationDescriptions& descriptions);
 
@@ -78,8 +78,10 @@ private:
 
   // ----------member data ---------------------------
 
-  edm::InputTag electronSrc_;
-  unsigned int INDEX_;
+  edm::InputTag tauSrc_;
+  edm::EDGetTokenT<edm::View< pat::Tau > > tauToken_;
+
+  unsigned int MAX_TO_KEEP_;
   string NAME_;
 
 };
@@ -96,15 +98,16 @@ private:
 //
 // constructors and destructor
 //
-SinglePatElectronProducer::SinglePatElectronProducer(const edm::ParameterSet& iConfig):
-electronSrc_(iConfig.getParameter<edm::InputTag>("electronSrc" )),
-INDEX_(iConfig.getParameter<unsigned int>("INDEX" )),
+TrimmedPatTauProducer::TrimmedPatTauProducer(const edm::ParameterSet& iConfig):
+tauSrc_(iConfig.getParameter<edm::InputTag>("tauSrc" )),
+MAX_TO_KEEP_(iConfig.getParameter<unsigned int>("MAX_TO_KEEP" )),
 NAME_(iConfig.getParameter<string>("NAME" ))
 {
 
 
-  produces<vector<pat::Electron>>(NAME_).setBranchAlias(NAME_);
+  produces<vector<pat::Tau>>(NAME_).setBranchAlias(NAME_);
 
+  tauToken_ = consumes< edm::View<pat::Tau> >(tauSrc_);
 
 
 
@@ -123,7 +126,7 @@ NAME_(iConfig.getParameter<string>("NAME" ))
 }
 
 
-SinglePatElectronProducer::~SinglePatElectronProducer()
+TrimmedPatTauProducer::~TrimmedPatTauProducer()
 {
 
   // do anything here that needs to be done at desctruction time
@@ -138,30 +141,31 @@ SinglePatElectronProducer::~SinglePatElectronProducer()
 
 // ------------ method called to produce the data  ------------
 void
-SinglePatElectronProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
+TrimmedPatTauProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
 {
 
 
+  // get Tau collection
+  edm::Handle<edm::View<pat::Tau> > taus;
+  iEvent.getByToken(tauToken_,taus);
 
-  // get electron collection
-  edm::Handle<edm::View<pat::Electron> > electrons;
-  iEvent.getByLabel(electronSrc_,electrons);
-
-  std::vector<pat::Electron> * storedElectrons = new std::vector<pat::Electron>();
+  std::vector<pat::Tau> * storedTaus = new std::vector<pat::Tau>();
 
 
-  if(INDEX_<electrons->size())
+  for (std::size_t i = 0; i<taus->size(); i++)
   {
-
-
-    const pat::Electron & electronToStore = electrons->at(INDEX_);
-    storedElectrons->push_back(electronToStore);
-
-
+    if(i<MAX_TO_KEEP_)
+    {
+       const pat::Tau & tauToStore = taus->at(i);
+       storedTaus->push_back(tauToStore);
+    }
   }
 
-  // add the electrons to the event output
-  std::auto_ptr<std::vector<pat::Electron> > eptr(storedElectrons);
+
+  std::cout<<"MAX_TO_KEEP = "<<MAX_TO_KEEP_<<"\n";
+  std::cout<<"KEEPING ONLY "<<storedTaus->size()<<" of "<<taus->size()<<" TOTAL TAUS \n";
+  // add the taus to the event output
+  std::auto_ptr<std::vector<pat::Tau> > eptr(storedTaus);
   iEvent.put(eptr,NAME_);
 
 
@@ -169,42 +173,42 @@ SinglePatElectronProducer::produce(edm::Event& iEvent, const edm::EventSetup& iS
 
 // ------------ method called once each job just before starting event loop  ------------
 void
-SinglePatElectronProducer::beginJob()
+TrimmedPatTauProducer::beginJob()
 {
 }
 
 // ------------ method called once each job just after ending the event loop  ------------
 void
-SinglePatElectronProducer::endJob() {
+TrimmedPatTauProducer::endJob() {
 }
 
 // ------------ method called when starting to processes a run  ------------
 void
-SinglePatElectronProducer::beginRun(edm::Run&, edm::EventSetup const&)
+TrimmedPatTauProducer::beginRun(edm::Run&, edm::EventSetup const&)
 {
 }
 
 // ------------ method called when ending the processing of a run  ------------
 void
-SinglePatElectronProducer::endRun(edm::Run&, edm::EventSetup const&)
+TrimmedPatTauProducer::endRun(edm::Run&, edm::EventSetup const&)
 {
 }
 
 // ------------ method called when starting to processes a luminosity block  ------------
 void
-SinglePatElectronProducer::beginLuminosityBlock(edm::LuminosityBlock&, edm::EventSetup const&)
+TrimmedPatTauProducer::beginLuminosityBlock(edm::LuminosityBlock&, edm::EventSetup const&)
 {
 }
 
 // ------------ method called when ending the processing of a luminosity block  ------------
 void
-SinglePatElectronProducer::endLuminosityBlock(edm::LuminosityBlock&, edm::EventSetup const&)
+TrimmedPatTauProducer::endLuminosityBlock(edm::LuminosityBlock&, edm::EventSetup const&)
 {
 }
 
 // ------------ method fills 'descriptions' with the allowed parameters for the module  ------------
 void
-SinglePatElectronProducer::fillDescriptions(edm::ConfigurationDescriptions& descriptions) {
+TrimmedPatTauProducer::fillDescriptions(edm::ConfigurationDescriptions& descriptions) {
   //The following says we do not know what parameters are allowed so do no validation
   // Please change this to state exactly what you do use, even if it is no parameters
   edm::ParameterSetDescription desc;
@@ -213,4 +217,4 @@ SinglePatElectronProducer::fillDescriptions(edm::ConfigurationDescriptions& desc
 }
 
 //define this as a plug-in
-DEFINE_FWK_MODULE(SinglePatElectronProducer);
+DEFINE_FWK_MODULE(TrimmedPatTauProducer);

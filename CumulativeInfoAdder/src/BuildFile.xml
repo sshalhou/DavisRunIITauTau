@@ -13,4 +13,4 @@
 <use   name="roottmva"/>
 <use name="rootrflx"/>
 <flags EDM_PLUGIN="1"/>
-
+<Flags CXXFLAGS="-g"/>

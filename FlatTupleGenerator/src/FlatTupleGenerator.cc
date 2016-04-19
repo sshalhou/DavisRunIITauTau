@@ -15,6 +15,7 @@ pairSrc_(iConfig.getParameter<edm::InputTag>("pairSrc" )),
 indepSrc_(iConfig.getParameter<edm::InputTag>("indepSrc" )),
 NAME_(iConfig.getParameter<string>("NAME" )),
 EventCutSrc_(iConfig.getParameter<edm::ParameterSet>("EventCutSrc")),
+TauEsVariantToKeep_(iConfig.getParameter<string>("TauEsVariantToKeep")),
 LeptonCutVecSrc_(iConfig.getParameter<std::vector<edm::ParameterSet>>("LeptonCutVecSrc")),
 svMassAtFlatTupleConfig_(iConfig.getParameter<edm::ParameterSet>("SVMassConfig"))
 {
@@ -41,10 +42,20 @@ svMassAtFlatTupleConfig_(iConfig.getParameter<edm::ParameterSet>("SVMassConfig")
 
 	keepOS = EventCutSrc_.getParameter<bool>("keepOS");
 	keepSS = EventCutSrc_.getParameter<bool>("keepSS");
-	keepTauEsNominal = EventCutSrc_.getParameter<bool>("keepTauEsNominal");
-	keepTauEsUp = EventCutSrc_.getParameter<bool>("keepTauEsUp");
-	keepTauEsDown = EventCutSrc_.getParameter<bool>("keepTauEsDown");
-	rankByPtSum = EventCutSrc_.getParameter<bool>("rankByPtSum");
+	
+  assert(TauEsVariantToKeep_=="NOMINAL" || TauEsVariantToKeep_=="UP" || TauEsVariantToKeep_=="DOWN");
+  keepTauEsNominal = 0;
+  keepTauEsUp = 0;
+  keepTauEsDown = 0;
+  
+  if( TauEsVariantToKeep_=="NOMINAL" ) keepTauEsNominal = 1;
+  else if( TauEsVariantToKeep_=="UP" ) keepTauEsUp = 1;
+  else if( TauEsVariantToKeep_=="DOWN" ) keepTauEsDown = 1;
+
+
+
+
+  rankByPtSum = EventCutSrc_.getParameter<bool>("rankByPtSum");
 	rankByIsolation = EventCutSrc_.getParameter<bool>("rankByIsolation");
 	assert(rankByPtSum!=rankByIsolation);
 	electronIsolationForRank = EventCutSrc_.getParameter<std::string>("electronIsolationForRank");
@@ -159,28 +170,56 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
 
     bool leptonCutsPass = LeptonCutHelper.cutEvaluator(currentPair, LeptonCutVecSrc_);
 
+    std::cout<<" have a pair of type "<<currentPair.CandidateEventType()<<" at index "<<p<<" ";
+    std::cout<<" with leg1 pt = "<<currentPair.leg1().p4().pt()<<" ";
+    std::cout<<" & with leg2 pt = "<<currentPair.leg2().p4().pt()<<" **** ";
+
+    TLorentzVector a1, a2;
+
+    a1.SetPtEtaPhiM(currentPair.leg1().p4().pt(), currentPair.leg1().p4().eta(),
+      currentPair.leg1().p4().phi(),currentPair.leg1().p4().mass());
+
+    a2.SetPtEtaPhiM(currentPair.leg2().p4().pt(), currentPair.leg2().p4().eta(),
+      currentPair.leg2().p4().phi(),currentPair.leg2().p4().mass());
+
+    std::cout<<" DR is "<<a1.DeltaR(a2)<<"\n";
+
+
+    std::size_t MAX_ONEKIND = 1000;
 
    if(keepSignPair && keepTauEsVariant && leptonCutsPass) 
    {
 
     if(currentPair.CandidateEventType() == TupleCandidateEventTypes::EleTau) 
     { 
-      retainedPairs_EleTau.push_back(currentPair);
+      if(retainedPairs_EleTau.size()<=MAX_ONEKIND)
+      {
+        retainedPairs_EleTau.push_back(currentPair);
+      }
     }
 
     else if(currentPair.CandidateEventType() == TupleCandidateEventTypes::MuonTau) 
     { 
-      retainedPairs_MuonTau.push_back(currentPair);
+      if(retainedPairs_MuonTau.size()<=MAX_ONEKIND)
+      {
+        retainedPairs_MuonTau.push_back(currentPair);
+      }
     }
    
     else if(currentPair.CandidateEventType() == TupleCandidateEventTypes::TauTau) 
     { 
-      retainedPairs_TauTau.push_back(currentPair);
+      if(retainedPairs_TauTau.size()<=MAX_ONEKIND)
+      {      
+        retainedPairs_TauTau.push_back(currentPair);
+      }
     }
 
     else if(currentPair.CandidateEventType() == TupleCandidateEventTypes::EleMuon) 
     { 
-      retainedPairs_EleMuon.push_back(currentPair);
+      if(retainedPairs_EleMuon.size()<=MAX_ONEKIND)
+      {         
+        retainedPairs_EleMuon.push_back(currentPair);
+      }
     }
    }
 
@@ -197,6 +236,10 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
   PairRankHelper rankHelper_MuonTau;
   PairRankHelper rankHelper_TauTau;
 
+  std::cout<<"et size "<<retainedPairs_EleTau.size()<<" ";
+  std::cout<<"mt size "<<retainedPairs_MuonTau.size()<<" ";
+  std::cout<<"em size "<<retainedPairs_EleMuon.size()<<" ";
+  std::cout<<"tt size "<<retainedPairs_TauTau.size()<<"\n";
 
 
   if(rankByPtSum) 
@@ -232,27 +275,53 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
 
   for(std::size_t v = 0; v<retainedPairsWithRank_EleTau.size(); ++v )
   {
-    retainedPairsWithRank.push_back(retainedPairsWithRank_EleTau[v]);
+    if(retainedPairsWithRank_EleTau[v].first==0) /* only keep best EleTau */
+      {
+        retainedPairsWithRank.push_back(retainedPairsWithRank_EleTau[v]);
+      }
   }
+
+  retainedPairsWithRank_EleTau.clear();
+
   for(std::size_t v = 0; v<retainedPairsWithRank_MuonTau.size(); ++v )
   {
-    retainedPairsWithRank.push_back(retainedPairsWithRank_MuonTau[v]);
+    if(retainedPairsWithRank_MuonTau[v].first==0) /* only keep best MuonTau */
+      {    
+        retainedPairsWithRank.push_back(retainedPairsWithRank_MuonTau[v]);
+      }
   }
+
+    retainedPairsWithRank_MuonTau.clear();
+
   for(std::size_t v = 0; v<retainedPairsWithRank_TauTau.size(); ++v )
   {
-    retainedPairsWithRank.push_back(retainedPairsWithRank_TauTau[v]);
+    if(retainedPairsWithRank_TauTau[v].first==0) /* only keep best TauTau */
+      {    
+        retainedPairsWithRank.push_back(retainedPairsWithRank_TauTau[v]);
+      }
   }
+
+    retainedPairsWithRank_TauTau.clear();
+
 
   for(std::size_t v = 0; v<retainedPairsWithRank_EleMuon.size(); ++v )
   {
-    retainedPairsWithRank.push_back(retainedPairsWithRank_EleMuon[v]);
+    if(retainedPairsWithRank_EleMuon[v].first==0) /* only keep best EleMuon */
+      {
+        retainedPairsWithRank.push_back(retainedPairsWithRank_EleMuon[v]);
+      }  
   }
+
+
+    retainedPairsWithRank_EleMuon.clear();
+
+
 
   // check if any pairs from any channels are kept
 
   if(retainedPairsWithRank.size()==0) return;
 
-
+std::cout<<retainedPairsWithRank.size()<<" retainedPairsWithRank.size() \n";
 
   for(std::size_t p = 0; p<retainedPairsWithRank.size(); ++p )
   {
@@ -1556,7 +1625,6 @@ void FlatTupleGenerator::beginJob()
    
   edm::Service<TFileService> fs;
   FlatTuple = fs->make<TTree>("FlatTuple","FlatTuple");
-
 
 
 

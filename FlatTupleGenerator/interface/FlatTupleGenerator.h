@@ -123,8 +123,9 @@ public:
 	edm::InputTag indepSrc_;
 	edm::EDGetTokenT<edm::View< NtuplePairIndependentInfo > > indepToken_;
 	
-	std::string NAME_;  // use TauESNom, TauESUp, TauESDown, etc.
+	std::string NAME_;  // use a descriptive name for your FlatTuple
 	edm::ParameterSet EventCutSrc_;
+	std::string TauEsVariantToKeep_;  // should be NOMINAL, UP or DOWN
 	std::vector<edm::ParameterSet> LeptonCutVecSrc_;
 	edm::ParameterSet svMassAtFlatTupleConfig_;	
 
