@@ -12,8 +12,40 @@ bool NtupleJetOrderCompare( const std::pair<double, NtupleJet>& p1, const std::p
 
 JetHelper::JetHelper(){}
 
+/* initialization function for eff lepton vector */
+/* no DR lep-jet cuts are applied here */
 
-/* initialization function */
+void JetHelper::init(std::vector<NtupleJet> jetVec, std::string jetCut, std::string bjetCut)
+{
+
+	m_PtJetPairs.clear();
+	m_PtBJetPairs.clear();
+
+	/* create the cut selectors */
+
+	StringCutObjectSelector<NtupleJet> jetSelector(jetCut);
+	StringCutObjectSelector<NtupleJet> BjetSelector(bjetCut);
+
+	/* begin loop over jets, and fill the unordered pt:jet vector of pair*/
+
+	for(std::size_t j = 0; j < jetVec.size(); ++j) 
+	{
+
+		
+		/* next check the jet ID & B jet ID, & if passes add to the pair vectors,
+		allowing jets to enter both vectors - cause that is what H2Tau Does */
+
+		if(	jetSelector(jetVec[j]) ) m_PtJetPairs.push_back( std::make_pair(jetVec[j].pt(), jetVec[j]) );
+
+		if(	BjetSelector(jetVec[j]) ) m_PtBJetPairs.push_back( std::make_pair(jetVec[j].pt(), jetVec[j]) );
+	
+	}
+
+} 
+
+
+
+/* initialization function for regular leg1 + leg2 candidate pair */
 
 void JetHelper::init(std::vector<NtupleJet> jetVec, std::string jetCut, std::string bjetCut,
 					double minDR, NtupleLepton leg1, NtupleLepton leg2)

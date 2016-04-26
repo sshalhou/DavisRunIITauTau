@@ -60,14 +60,20 @@ public:
 
 // init
 
-    void init(std::vector<NtupleGenParticle>, NtupleLepton, NtupleLepton, int ); 
+    void init(std::vector<NtupleGenParticle>, NtupleLepton, NtupleLepton, int );  // for regular pairs
+    void init(std::vector<NtupleGenParticle>, std::vector<NtupleLepton>, int );   // for eff leptons
+    
+// functions called in init    
+    void resetVars();
+    void fillRecoIndependentInfo();
+
     void classifyTheEventForDY(); /* run 1 only */
     void classifyTheEventForRun2_DY();
 
 // helper functions
 
     /* new RunII MC Matching function */
-    void checkLegsForEorMuorGenJetMatches(int); /* argument is 1 for leg1 or 2 for leg2 */
+    void checkLegsForEorMuorGenJetMatches(int); /* argument is 1 for leg1 or 2 for leg2 or 3 for an effCand */
 
     /* check at gen level if event is Z->XX where the int argument is the |pdgID| of X */
     bool isZXXatGenLevel(std::vector<NtupleGenParticle>, int); /* run 1 only */
@@ -124,6 +130,15 @@ public:
     int leg2_MCMatchPdgId();
 
 
+    std::vector<int> effLep_MCMatchType(); /* match codes defined in GenMcMatchTypes.h */
+    std::vector<double> effLep_genMCmatch_pt();
+    std::vector<double> effLep_genMCmatch_eta(); 
+    std::vector<double> effLep_genMCmatch_phi(); 
+    std::vector<double> effLep_genMCmatch_M();
+    std::vector<int> effLep_MCMatchPdgId();
+
+
+
     /* run II Z decay modes */
 
     int IsZTT();
@@ -159,6 +174,9 @@ private:
 
 	NtupleLepton m_leg1;
 	NtupleLepton m_leg2;
+  NtupleLepton temp_effLep;
+
+  std::vector<NtupleLepton> m_effLep;
 	int m_CandidateEventType;
 	std::vector<NtupleGenParticle> m_genVec;
 
@@ -178,6 +196,21 @@ private:
   double m_leg2_genMCmatch_phi;
   double m_leg2_genMCmatch_M;
   int m_leg2_MCMatchPdgId;
+
+  int temp_effLep_MCMatchType; /* match codes defined in GenMcMatchTypes.h */
+  double temp_effLep_genMCmatch_pt;
+  double temp_effLep_genMCmatch_eta; 
+  double temp_effLep_genMCmatch_phi; 
+  double temp_effLep_genMCmatch_M;
+  int temp_effLep_MCMatchPdgId;
+
+  std::vector<int> m_effLep_MCMatchType; /* match codes defined in GenMcMatchTypes.h */
+  std::vector<double> m_effLep_genMCmatch_pt;
+  std::vector<double> m_effLep_genMCmatch_eta; 
+  std::vector<double> m_effLep_genMCmatch_phi; 
+  std::vector<double> m_effLep_genMCmatch_M;
+  std::vector<int> m_effLep_MCMatchPdgId;
+
 
 
   /* run II Z decay modes */

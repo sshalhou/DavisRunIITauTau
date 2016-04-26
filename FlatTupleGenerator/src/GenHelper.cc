@@ -6,86 +6,10 @@
 GenHelper::GenHelper(){}
 
 
+/* fill reco-independent info */
 
-/* initialization function */
-
-void GenHelper::init(std::vector<NtupleGenParticle> genVec, NtupleLepton leg1, NtupleLepton leg2, int CandidateEventType )
+void GenHelper::fillRecoIndependentInfo()
 {
-
-	/* DR match max */
-
-	MCdrMatchRun2 = 0.2;
-
-	/* member data set to arguments */
-	m_genVec.clear();
-	m_genVec = genVec;
-	m_leg1 = leg1;
-	m_leg2 = leg2;
-	m_CandidateEventType = CandidateEventType;	
-
-	/* init member data */
-	
-	m_leg1_MCMatchType = -999;
-    m_leg1_genMCmatch_pt = NAN;
-    m_leg1_genMCmatch_eta = NAN; 
-    m_leg1_genMCmatch_phi = NAN;
-    m_leg1_genMCmatch_M = NAN;
-    m_leg1_MCMatchPdgId = -999;
-
-    m_leg2_MCMatchType = -999;
-    m_leg2_genMCmatch_pt = NAN;
-    m_leg2_genMCmatch_eta = NAN;
-    m_leg2_genMCmatch_phi = NAN;
-    m_leg2_genMCmatch_M = NAN;
-    m_leg2_MCMatchPdgId = -999;
-
-    m_IsZTT = -999;
-    m_IsZL = -999;
-    m_IsZJ = -999;
-    m_IsZLL = -999;
-
-
-
-	m_EventHasZtoTauTau = 0;
-	m_EventHasZtoEE = 0;
-	m_EventHasZtoMM = 0;
-	m_isDY_genZTTcase1 = 0;        
-	m_isDY_genZTTcase2 = 0;        
-	m_isDY_genZTTcaseEmbedded = 0; 
-	m_isDY_genZL = 0;              
-	m_isDY_genZJcase1 = 0;         
-	m_isDY_genZJcase2 = 0;         
-	m_isDY_genZTTcase3 = 0;        
-	m_isDY_genZLL = 0;             
-	m_isDY_genZJcase3 = 0;         
-
-	m_genParticle_pdgId.clear();
-	m_genParticle_status.clear();
-
-
-	m_genParticle_isPrompt.clear();
-	m_genParticle_isPromptFinalState.clear();
-	m_genParticle_isDirectPromptTauDecayProduct.clear();
-	m_genParticle_isDirectPromptTauDecayProductFinalState.clear();
-
-
-	m_genParticle_pt.clear();
-	m_genParticle_eta.clear();
-	m_genParticle_phi.clear();
-	m_genParticle_M.clear();
-	m_genDaughter_pdgId.clear();
-	m_genDaughter_status.clear();
-	m_genDaughter_pt.clear();
-	m_genDaughter_eta.clear();
-	m_genDaughter_phi.clear();
-	m_genDaughter_M.clear();
-	m_genMother_pdgId.clear();
-	m_genMother_status.clear();
-	m_genMother_pt.clear();
-	m_genMother_eta.clear();
-	m_genMother_phi.clear();
-	m_genMother_M.clear();
-
 
   for(std::size_t g = 0; g < m_genVec.size(); ++g)
   {
@@ -136,6 +60,161 @@ void GenHelper::init(std::vector<NtupleGenParticle> genVec, NtupleLepton leg1, N
 
   }
 
+}
+
+/* reset variables to zero/empty vectors */
+void GenHelper::resetVars()
+{
+	/* DR match max */
+
+	MCdrMatchRun2 = 0.2;
+
+	/* member data set to arguments */
+	m_genVec.clear();
+	m_effLep.clear();
+	m_CandidateEventType = -999;	
+
+	/* init member data */
+	
+	m_leg1_MCMatchType = -999;
+    m_leg1_genMCmatch_pt = NAN;
+    m_leg1_genMCmatch_eta = NAN; 
+    m_leg1_genMCmatch_phi = NAN;
+    m_leg1_genMCmatch_M = NAN;
+    m_leg1_MCMatchPdgId = -999;
+
+    m_leg2_MCMatchType = -999;
+    m_leg2_genMCmatch_pt = NAN;
+    m_leg2_genMCmatch_eta = NAN;
+    m_leg2_genMCmatch_phi = NAN;
+    m_leg2_genMCmatch_M = NAN;
+    m_leg2_MCMatchPdgId = -999;
+
+	m_effLep_MCMatchType.clear();
+    m_effLep_genMCmatch_pt.clear();
+    m_effLep_genMCmatch_eta.clear();
+    m_effLep_genMCmatch_phi.clear();
+    m_effLep_genMCmatch_M.clear();
+    m_effLep_MCMatchPdgId.clear();
+
+
+	temp_effLep_MCMatchType = -999;
+    temp_effLep_genMCmatch_pt = NAN;
+    temp_effLep_genMCmatch_eta = NAN;
+    temp_effLep_genMCmatch_phi = NAN;
+    temp_effLep_genMCmatch_M = NAN;
+    temp_effLep_MCMatchPdgId = -999;
+
+
+    m_IsZTT = -999;
+    m_IsZL = -999;
+    m_IsZJ = -999;
+    m_IsZLL = -999;
+
+
+
+	m_EventHasZtoTauTau = 0;
+	m_EventHasZtoEE = 0;
+	m_EventHasZtoMM = 0;
+	m_isDY_genZTTcase1 = 0;        
+	m_isDY_genZTTcase2 = 0;        
+	m_isDY_genZTTcaseEmbedded = 0; 
+	m_isDY_genZL = 0;              
+	m_isDY_genZJcase1 = 0;         
+	m_isDY_genZJcase2 = 0;         
+	m_isDY_genZTTcase3 = 0;        
+	m_isDY_genZLL = 0;             
+	m_isDY_genZJcase3 = 0;         
+
+	m_genParticle_pdgId.clear();
+	m_genParticle_status.clear();
+
+
+	m_genParticle_isPrompt.clear();
+	m_genParticle_isPromptFinalState.clear();
+	m_genParticle_isDirectPromptTauDecayProduct.clear();
+	m_genParticle_isDirectPromptTauDecayProductFinalState.clear();
+
+
+	m_genParticle_pt.clear();
+	m_genParticle_eta.clear();
+	m_genParticle_phi.clear();
+	m_genParticle_M.clear();
+	m_genDaughter_pdgId.clear();
+	m_genDaughter_status.clear();
+	m_genDaughter_pt.clear();
+	m_genDaughter_eta.clear();
+	m_genDaughter_phi.clear();
+	m_genDaughter_M.clear();
+	m_genMother_pdgId.clear();
+	m_genMother_status.clear();
+	m_genMother_pt.clear();
+	m_genMother_eta.clear();
+	m_genMother_phi.clear();
+	m_genMother_M.clear();
+
+
+}
+
+/* initialization function for EffCand Pairs (i.e. not EleMu, EleTau, etc.)*/
+
+void GenHelper::init(std::vector<NtupleGenParticle> genVec, std::vector<NtupleLepton> effLep, int CandidateEventType )
+{
+
+	/* make sure not called for incorrect type */
+	assert( CandidateEventType == TupleCandidateEventTypes::EffCand);
+
+	/* reset variables */	
+	resetVars();
+
+	/* set some data members */
+
+	m_genVec = genVec;
+	m_effLep = effLep;
+	m_CandidateEventType = CandidateEventType;	
+
+	/* set some other info - need m_genVec to be set before this call */
+
+	fillRecoIndependentInfo();
+
+	/* perform the Run II MC Matching and classification of the two legs
+	based on Run II guidelines */
+	// see https://twiki.cern.ch/twiki/bin/viewauth/CMS/HiggsToTauTauWorking2015#MC_Matching	
+
+	for(std::size_t e = 0; e<m_effLep.size(); ++e)
+	{
+		temp_effLep = effLep.at(e);
+		std::cout<<" checking MC matches for an EffLep at index "<<e<<" with ";
+		std::cout<<"pt = "<<temp_effLep.p4().pt()<<" and type "<<temp_effLep.leptonType()<<"\n";
+		checkLegsForEorMuorGenJetMatches(3);
+	}
+
+}
+
+
+/* initialization function for regular H2TauTau Pairs (i.e. not EffCand)*/
+
+void GenHelper::init(std::vector<NtupleGenParticle> genVec, NtupleLepton leg1, NtupleLepton leg2, int CandidateEventType )
+{
+
+	/* make sure not called for incorrect type */
+	assert( CandidateEventType != TupleCandidateEventTypes::EffCand);
+
+	/* reset variables */	
+	resetVars();
+
+	/* set some data members */
+
+	m_genVec = genVec;
+	m_leg1 = leg1;
+	m_leg2 = leg2;
+	m_CandidateEventType = CandidateEventType;	
+
+
+	/* set some other info - need m_genVec to be set before this call */
+
+	fillRecoIndependentInfo();
+
 
 	/* perform the Run II MC Matching and classification of the two legs
 	based on Run II guidelines */
@@ -148,12 +227,8 @@ void GenHelper::init(std::vector<NtupleGenParticle> genVec, NtupleLepton leg1, N
 	std::cout<<" leg 1 mc match is type "<<m_leg1_MCMatchType<<" pdgId "<<m_leg1_MCMatchPdgId<<" pt "<<m_leg1_genMCmatch_pt<<"\n";
 	std::cout<<" leg 2 mc match is type "<<m_leg2_MCMatchType<<" pdgId "<<m_leg2_MCMatchPdgId<<" pt "<<m_leg2_genMCmatch_pt<<"\n";
 
-
-
-  /* now classify the event, only valid for DY MC */
-  classifyTheEventForRun2_DY();	
-
-  // old run 1 method : classifyTheEventForDY();
+	/* now classify the event, only valid for DY MC */
+	classifyTheEventForRun2_DY();	
 
 
 }
@@ -163,22 +238,41 @@ void GenHelper::init(std::vector<NtupleGenParticle> genVec, NtupleLepton leg1, N
 
 /* set the Run II leg matches to gen E or Mu or genJet */
 /* this function fills member data if matches are found */
+/* the argument legIndex = 1 for leg1, 2 for leg2, 3 for EffCand */
 
-void GenHelper::checkLegsForEorMuorGenJetMatches(int legIndex) /* legIndex = 1 for leg1 or 2 for leg2 */
+void GenHelper::checkLegsForEorMuorGenJetMatches(int legIndex) 
 {
 	/* only 1 or 2 are valid values for arg legIndex */
-	assert(legIndex==1 || legIndex==2);
+	assert(legIndex==1 || legIndex==2 || legIndex==3);
+
+	if(legIndex==3)
+	{
+		temp_effLep_MCMatchType = -999;
+	    temp_effLep_genMCmatch_pt = NAN;
+    	temp_effLep_genMCmatch_eta = NAN;
+	    temp_effLep_genMCmatch_phi = NAN;
+    	temp_effLep_genMCmatch_M = NAN;
+	    temp_effLep_MCMatchPdgId = -999;
+	}
+
 
 	TLorentzVector leg, genTemp, genTauJet;
 
 	if(legIndex==1) leg.SetPtEtaPhiM(m_leg1.p4().pt(), m_leg1.p4().eta(), m_leg1.p4().phi(), m_leg1.p4().M());
-	else leg.SetPtEtaPhiM(m_leg2.p4().pt(), m_leg2.p4().eta(), m_leg2.p4().phi(), m_leg2.p4().M());
+	else if(legIndex==2) leg.SetPtEtaPhiM(m_leg2.p4().pt(), m_leg2.p4().eta(), m_leg2.p4().phi(), m_leg2.p4().M());
+	else if(legIndex==3) leg.SetPtEtaPhiM(temp_effLep.p4().pt(), temp_effLep.p4().eta(), temp_effLep.p4().phi(), temp_effLep.p4().M());
+
+		std::cout<<" check--> lepton pt "<<leg.Pt()<<"\n";
+		std::cout<<"check--> gen particle size "<<m_genParticle_pdgId.size()<<"\n";
 
 	for(std::size_t g = 0; g < m_genParticle_pdgId.size(); ++g)
 	{
 
 		/* zero 4-vector */
 		genTemp.SetPtEtaPhiM(0,0,0,0);
+
+		std::cout<<" check-->  genTemp pt "<<genTemp.Pt()<<"\n";
+
 
 		/* check for promptElectron/promptMuon/tauToElectronDecay/tauToMuonDecay */
 		if(abs(m_genParticle_pdgId[g].second) == 11 ||  abs(m_genParticle_pdgId[g].second) == 13)
@@ -249,6 +343,34 @@ void GenHelper::checkLegsForEorMuorGenJetMatches(int legIndex) /* legIndex = 1 f
 								m_leg2_MCMatchType = GenMcMatchTypes::tauToMuonDecay;
 							}
 						}
+
+						else if(legIndex==3)
+						{							
+							temp_effLep_genMCmatch_pt = m_genParticle_pt[g].second;
+							temp_effLep_genMCmatch_eta = m_genParticle_eta[g].second;
+							temp_effLep_genMCmatch_phi = m_genParticle_phi[g].second;
+							temp_effLep_genMCmatch_M = m_genParticle_M[g].second;
+							temp_effLep_MCMatchPdgId = m_genParticle_pdgId[g].second;
+
+							if(abs(m_genParticle_pdgId[g].second) == 11 && m_genParticle_isPrompt[g].second == 1)
+							{
+								temp_effLep_MCMatchType = GenMcMatchTypes::promptElectron;
+							}
+							else if(abs(m_genParticle_pdgId[g].second) == 11 && m_genParticle_isDirectPromptTauDecayProduct[g].second == 1)
+							{
+								temp_effLep_MCMatchType = GenMcMatchTypes::tauToElectronDecay;
+							}
+
+							else if(abs(m_genParticle_pdgId[g].second) == 13 && m_genParticle_isPrompt[g].second == 1)
+							{
+								temp_effLep_MCMatchType = GenMcMatchTypes::promptMuon;
+							}
+							else if(abs(m_genParticle_pdgId[g].second) == 13 && m_genParticle_isDirectPromptTauDecayProduct[g].second == 1)
+							{
+								temp_effLep_MCMatchType = GenMcMatchTypes::tauToMuonDecay;
+							}
+						}
+
 					}
 				}
 
@@ -262,6 +384,7 @@ void GenHelper::checkLegsForEorMuorGenJetMatches(int legIndex) /* legIndex = 1 f
 
 			/* zero 4-vector */
 			genTauJet.SetPtEtaPhiM(0,0,0,0);
+
 
 			/* Build a Gen-tau jet, rebuilt by summing 4-momenta of visible gen tau decay products, 
 			excluding electrons and muons. The pT of the gen tau jet should be >15 GeV. 
@@ -298,6 +421,9 @@ void GenHelper::checkLegsForEorMuorGenJetMatches(int legIndex) /* legIndex = 1 f
 
 		    }
 
+		   std::cout<<" check-->  genTauJet pt "<<genTauJet.Pt()<<"\n";
+
+
 			if(leg.DeltaR(genTauJet) < MCdrMatchRun2 && genTauJet.Pt()>15)
 			{
 
@@ -319,6 +445,17 @@ void GenHelper::checkLegsForEorMuorGenJetMatches(int legIndex) /* legIndex = 1 f
 					m_leg2_genMCmatch_M = genTauJet.M();
 					m_leg2_MCMatchPdgId = m_genParticle_pdgId[g].second;
 					m_leg2_MCMatchType = GenMcMatchTypes::hadronicTau;							
+				}	
+
+
+				else if(legIndex==3 && temp_effLep_MCMatchType==-999)
+				{
+					temp_effLep_genMCmatch_pt = genTauJet.Pt();
+					temp_effLep_genMCmatch_eta = genTauJet.Eta();
+					temp_effLep_genMCmatch_phi = genTauJet.Phi();
+					temp_effLep_genMCmatch_M = genTauJet.M();
+					temp_effLep_MCMatchPdgId = m_genParticle_pdgId[g].second;
+					temp_effLep_MCMatchType = GenMcMatchTypes::hadronicTau;							
 				}	
 
 
@@ -349,6 +486,29 @@ void GenHelper::checkLegsForEorMuorGenJetMatches(int legIndex) /* legIndex = 1 f
 					m_leg2_genMCmatch_M = 0;
 					m_leg2_MCMatchPdgId = 0;
 					m_leg2_MCMatchType = GenMcMatchTypes::jetOrPuFake;
+	}
+	else if(legIndex==3 && temp_effLep_MCMatchType==-999)
+	{
+					temp_effLep_genMCmatch_pt = 0;
+					temp_effLep_genMCmatch_eta = 0;
+					temp_effLep_genMCmatch_phi = 0;
+					temp_effLep_genMCmatch_M = 0;
+					temp_effLep_MCMatchPdgId = 0;
+					temp_effLep_MCMatchType = GenMcMatchTypes::jetOrPuFake;
+	}
+
+
+	if(legIndex==3)
+	{
+		m_effLep_MCMatchType.push_back(temp_effLep_MCMatchType);
+		m_effLep_genMCmatch_pt.push_back(temp_effLep_genMCmatch_pt);
+		m_effLep_genMCmatch_eta.push_back(temp_effLep_genMCmatch_eta);
+		m_effLep_genMCmatch_phi.push_back(temp_effLep_genMCmatch_phi);
+		m_effLep_genMCmatch_M.push_back(temp_effLep_genMCmatch_M);
+		m_effLep_MCMatchPdgId.push_back(temp_effLep_MCMatchPdgId);
+
+		std::cout<<" have effLepton MC matches with type, genPt, recoPt, pdgID = "<<temp_effLep_MCMatchType<<" , "<<temp_effLep_genMCmatch_pt<<" , "<<temp_effLep.p4().pt()<<"  , "<<temp_effLep_MCMatchPdgId<<"\n";
+
 	}
 
 
@@ -630,6 +790,15 @@ bool GenHelper::isRecoTauGenEorMu_FROMZ_Matched(NtupleLepton legX,std::vector<Nt
     double GenHelper::leg2_genMCmatch_phi() { return m_leg2_genMCmatch_phi; };
     double GenHelper::leg2_genMCmatch_M() { return m_leg2_genMCmatch_M; };
     int GenHelper::leg2_MCMatchPdgId() { return m_leg2_MCMatchPdgId; };
+
+
+
+    std::vector<int> GenHelper::effLep_MCMatchType()  { return m_effLep_MCMatchType; };
+    std::vector<double> GenHelper::effLep_genMCmatch_pt()  { return m_effLep_genMCmatch_pt; };
+    std::vector<double> GenHelper::effLep_genMCmatch_eta()  { return m_effLep_genMCmatch_eta; };
+    std::vector<double> GenHelper::effLep_genMCmatch_phi()  { return m_effLep_genMCmatch_phi; };
+    std::vector<double> GenHelper::effLep_genMCmatch_M() { return m_effLep_genMCmatch_M; };
+    std::vector<int> GenHelper::effLep_MCMatchPdgId() { return m_effLep_MCMatchPdgId; };
 
 
 

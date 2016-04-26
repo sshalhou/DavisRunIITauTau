@@ -43,6 +43,9 @@ public:
 
 	void fill(TupleCandidateEvent);
   void fillTriggerMatchesLeg1andLeg2(std::vector<NtupleTrigObject>,std::vector<NtupleTrigObject>);
+  void fillTriggerMatchesForEffLepton(  std::vector<NtupleTrigObject> );
+  void fillL1IsoTauMatchInfoLeg1andLeg2(edm::Handle<l1extra::L1JetParticleCollection>);
+  void fillL1IsoTauMatchInfoForEffLepton(edm::Handle<l1extra::L1JetParticleCollection>);
 
 
   // helpers 
@@ -78,17 +81,28 @@ public:
   /* return the highest pt of all matched trigger objects to each reco leg */
   float leg1MaxPtTriggerObjMatch() const;  
   float leg2MaxPtTriggerObjMatch() const;  
+  float EffLeptonMaxPtTriggerObjMatch(std::size_t) const;  /* arg is the index of the EffLepton */
    
 
 
-  float isLeg1GoodForHLTPath(std::string) const;  
+  float isLeg1GoodForHLTPath(std::string) const;   /* for an HLT path, return 1 if the leg is good for that path */
   float isLeg2GoodForHLTPath(std::string) const;  
+  float isEffLeptonGoodForHLTPath(std::string, std::size_t) const;   /* 2nd arg is index of EffLepton */
+
+
 
   stringVec isLeg1GoodForHLTPath_Labels() ;         /* return the list of HLT path names (requested in ConfigTupleTriggers_cfi) for which reco lepton is GOOD */
   stringVec isLeg2GoodForHLTPath_Labels() ;         
+  stringVec isEffLeptonGoodForHLTPath_Labels(std::size_t) ;  /* return the list of HLT path names (requested in ConfigTupleTriggers_cfi) for which eff lepton at index (arg) is GOOD */
+
+
 
   void fillTriggerSummariesLeg1andLeg2(stringFloatPairVec , 
                                         stringFloatPairVec ); /* fill the member data */
+
+  void fillTriggerSummariesEffLepton(stringFloatPairVec); /* fill the member data */
+
+
 
   // getters
 
@@ -96,8 +110,18 @@ public:
   float TauEsNumberSigmasShifted() const;
 	NtupleLepton leg1() const; 
 	NtupleLepton leg2() const; 
+  std::vector< NtupleLepton > EffLepton() const;
+
+
   std::vector<NtupleTrigObject> leg1_trigMatches() const; 
-  std::vector<NtupleTrigObject> leg2_trigMatches() const;   
+  std::vector<NtupleTrigObject> leg2_trigMatches() const; 
+  std::vector < std::vector<NtupleTrigObject> > EffLepton_trigMatches() const; 
+
+  std::vector <LorentzVector> leg1_L1IsoTauDR05Matches() const; 
+  std::vector <LorentzVector> leg2_L1IsoTauDR05Matches() const; 
+  std::vector < std::vector <LorentzVector> > EffLepton_L1IsoTauDR05Matches() const; 
+
+
 	std::vector<NtupleLepton> vetoElectron() const; 
  	std::vector<NtupleLepton> vetoMuon() const;
   std::vector<double> SVMass() const;
@@ -129,8 +153,20 @@ private:
   int m_isOsPair;
 	NtupleLepton m_leg1; 
 	NtupleLepton m_leg2; 
+  
+  std::vector<NtupleLepton> m_EffLepton;
+
+
   std::vector<NtupleTrigObject> m_leg1_trigMatches; 
   std::vector<NtupleTrigObject> m_leg2_trigMatches; 
+  std::vector < std::vector<NtupleTrigObject> > m_EffLepton_trigMatches; 
+
+  std::vector <LorentzVector> m_leg1_L1IsoTauDR05Matches; 
+  std::vector <LorentzVector> m_leg2_L1IsoTauDR05Matches; 
+  std::vector < std::vector <LorentzVector> > m_EffLepton_L1IsoTauDR05Matches; 
+
+
+
 	std::vector<NtupleLepton> m_vetoElectron; 
  	std::vector<NtupleLepton> m_vetoMuon;
   std::vector<double> m_SVMass;
@@ -154,8 +190,8 @@ private:
   std::vector<double>  m_pfMET_cov10; // needed due to missing sig matrix in phys14/Spring15 samples
   std::vector<double>  m_pfMET_cov11; // needed due to missing sig matrix in phys14/Spring15 samples
   stringFloatPairVec m_isLeg1GoodForHLTPath; /* pair of HLT path : 1.0 meeting reco leg1 accept+match+filter */
-  stringFloatPairVec m_isLeg2GoodForHLTPath; /* pair of HLT path : 1.0 meeting reco leg1 accept+match+filter */
-
+  stringFloatPairVec m_isLeg2GoodForHLTPath; /* pair of HLT path : 1.0 meeting reco leg2 accept+match+filter */
+  std::vector < stringFloatPairVec > m_isEffLeptonGoodForHLTPath;
 
 };
 

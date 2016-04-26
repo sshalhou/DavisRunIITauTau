@@ -51,9 +51,7 @@ if BUILD_MUON_MUON : print 'mu-mu',
 if BUILD_MUON_TAU : print 'mu-tau',
 if BUILD_TAU_TAU : print 'tau-tau',
 if BUILD_TAU_ES_VARIANTS : print ' + tau Es Variants',
-if BUILD_ELECTRON_X : print ' will generate eff tree for e+X',
-if BUILD_MUON_X : print ' will generate eff tree for mu+X',
-if BUILD_TAU_X : print ' will generate eff tree for tau+X',
+if BUILD_EFFICIENCY_TREE : print ' will generate eff tree for e+X, mu+X, and tau+X',
 print ']'
 
 print '-----------------------------------------------------------------'
@@ -97,7 +95,7 @@ print '*******************************************************'
 print '********** Running in unscheduled mode **********'
 process.options = cms.untracked.PSet(wantSummary = cms.untracked.bool(True))
 process.options.allowUnscheduled = cms.untracked.bool(True)
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(150) )
 
 ###################################
 # input - remove for crab running
@@ -372,9 +370,7 @@ process.filteredVetoMuons = cms.EDFilter("PATMuonRefSelector",
 ###################################
 # double lepton requirement
 # only applied if 
-# BUILD_ELECTRON_X
-# BUILD_MUON_X
-# BUILD_TAU_X
+# BUILD_EFFICIENCY_TREE
 # are all False
 ###################################
 
@@ -454,7 +450,11 @@ process.TupleCandidateEvents = cms.EDProducer('TupleCandidateEventProducer' ,
     logMterm = cms.double(SVMASS_LOG_M),
     svMassVerbose = cms.int32(SVMASS_VERBOSE),
     # need to order the taus by isolation in tau_h + tau_h pairs
-    tauIsolForOrderingPair = tauIsolForOrderingPair_
+    tauIsolForOrderingPair = tauIsolForOrderingPair_,
+    EffElectronSrc = cms.InputTag("TrimmedFilteredCustomElectrons:TrimmedFilteredCustomElectrons:DavisNtuple"),
+    EffMuonSrc = cms.InputTag("TrimmedFilteredCustomMuons:TrimmedFilteredCustomMuons:DavisNtuple"),
+    EffTauSrc = cms.InputTag("TrimmedFilteredCustomTausEsNominal:TrimmedFilteredCustomTausEsNominal:DavisNtuple"),
+    BuildEfficiencyTree = cms.bool(BUILD_EFFICIENCY_TREE)
 						)	
 
 
@@ -475,7 +475,11 @@ process.TupleCandidateEventsTauEsUp = cms.EDProducer('TupleCandidateEventProduce
     logMterm = cms.double(SVMASS_LOG_M),
     svMassVerbose = cms.int32(SVMASS_VERBOSE),
     # need to order the taus by isolation in tau_h + tau_h pairs
-    tauIsolForOrderingPair = tauIsolForOrderingPair_
+    tauIsolForOrderingPair = tauIsolForOrderingPair_,
+    EffElectronSrc = cms.InputTag("TrimmedFilteredCustomElectrons:TrimmedFilteredCustomElectrons:DavisNtuple"),
+    EffMuonSrc = cms.InputTag("TrimmedFilteredCustomMuons:TrimmedFilteredCustomMuons:DavisNtuple"),
+    EffTauSrc = cms.InputTag("TrimmedFilteredCustomTausEsUp:TrimmedFilteredCustomTausEsUp:DavisNtuple"),
+    BuildEfficiencyTree = cms.bool(False)
 						)	
 
 process.TupleCandidateEventsTauEsDown = cms.EDProducer('TupleCandidateEventProducer' ,
@@ -495,7 +499,11 @@ process.TupleCandidateEventsTauEsDown = cms.EDProducer('TupleCandidateEventProdu
     logMterm = cms.double(SVMASS_LOG_M),
     svMassVerbose = cms.int32(SVMASS_VERBOSE),
     # need to order the taus by isolation in tau_h + tau_h pairs
-    tauIsolForOrderingPair = tauIsolForOrderingPair_
+    tauIsolForOrderingPair = tauIsolForOrderingPair_,
+    EffElectronSrc = cms.InputTag("TrimmedFilteredCustomElectrons:TrimmedFilteredCustomElectrons:DavisNtuple"),
+    EffMuonSrc = cms.InputTag("TrimmedFilteredCustomMuons:TrimmedFilteredCustomMuons:DavisNtuple"),
+    EffTauSrc = cms.InputTag("TrimmedFilteredCustomTausEsDown:TrimmedFilteredCustomTausEsDown:DavisNtuple"),
+    BuildEfficiencyTree = cms.bool(False)
 						)	
 
 
@@ -523,6 +531,7 @@ tauTriggerMatch_Types = ConfigTriggerHelperInstance.tauTriggerMatch_Types
 
 process.NtupleEvents = cms.EDProducer('NtupleEventProducer' ,
 				 tupleCandidateEventSrc = cms.InputTag("TupleCandidateEvents","TupleCandidateEvents","DavisNtuple"),
+				 l1extraParticlesSrc = cms.InputTag("l1extraParticles","IsoTau","RECO"),
 				 triggerBitSrc = cms.InputTag("TriggerResults","","HLT"),
 				 triggerPreScaleSrc = cms.InputTag("patTrigger"),
 				 triggerObjectSrc = cms.InputTag("selectedPatTrigger"),				 
@@ -541,6 +550,7 @@ process.NtupleEvents = cms.EDProducer('NtupleEventProducer' ,
 
 process.NtupleEventsTauEsUp = cms.EDProducer('NtupleEventProducer' ,
 				 tupleCandidateEventSrc = cms.InputTag("TupleCandidateEventsTauEsUp","TupleCandidateEventsTauEsUp","DavisNtuple"),
+				 l1extraParticlesSrc = cms.InputTag("l1extraParticles","IsoTau","RECO"),
 				 triggerBitSrc = cms.InputTag("TriggerResults","","HLT"),
 				 triggerPreScaleSrc = cms.InputTag("patTrigger"),
 				 triggerObjectSrc = cms.InputTag("selectedPatTrigger"),				 
@@ -558,6 +568,7 @@ process.NtupleEventsTauEsUp = cms.EDProducer('NtupleEventProducer' ,
 
 process.NtupleEventsTauEsDown = cms.EDProducer('NtupleEventProducer' ,
 				 tupleCandidateEventSrc = cms.InputTag("TupleCandidateEventsTauEsDown","TupleCandidateEventsTauEsDown","DavisNtuple"),
+				 l1extraParticlesSrc = cms.InputTag("l1extraParticles","IsoTau","RECO"),
 				 triggerBitSrc = cms.InputTag("TriggerResults","","HLT"),
 				 triggerPreScaleSrc = cms.InputTag("patTrigger"),
 				 triggerObjectSrc = cms.InputTag("selectedPatTrigger"),				 
@@ -727,8 +738,8 @@ process.NOCUTS = cms.EDAnalyzer('FlatTupleGenerator',
 	NAME = cms.string("NOCUTS"),
 	EventCutSrc = generalConfig,
 	TauEsVariantToKeep = cms.string("NOMINAL"), # only NOMINAL, UP or DOWN are valid
-	#LeptonCutVecSrc = minimalCuts,
-	LeptonCutVecSrc = cms.VPSet(),
+	LeptonCutVecSrc = minimalCuts,
+	#LeptonCutVecSrc = cms.VPSet(),
 	SVMassConfig = svMassAtFlatTupleConfig
 	)
 
@@ -739,8 +750,8 @@ process.NOCUTSupTau = cms.EDAnalyzer('FlatTupleGenerator',
 	NAME = cms.string("NOCUTSupTau"),
 	EventCutSrc = generalConfig,
 	TauEsVariantToKeep = cms.string("UP"), # only NOMINAL, UP or DOWN are valid
-	#LeptonCutVecSrc = minimalCuts,
-	LeptonCutVecSrc = cms.VPSet(),	
+	LeptonCutVecSrc = minimalCuts,
+	#LeptonCutVecSrc = cms.VPSet(),	
 	SVMassConfig = svMassAtFlatTupleConfig
 	)
 
@@ -750,8 +761,8 @@ process.NOCUTSdownTau = cms.EDAnalyzer('FlatTupleGenerator',
 	NAME = cms.string("NOCUTSdownTau"),
 	EventCutSrc = generalConfig,
 	TauEsVariantToKeep = cms.string("DOWN"), # only NOMINAL, UP or DOWN are valid
-	#LeptonCutVecSrc = minimalCuts,
-	LeptonCutVecSrc = cms.VPSet(),
+	LeptonCutVecSrc = minimalCuts,
+	#LeptonCutVecSrc = cms.VPSet(),
 	SVMassConfig = svMassAtFlatTupleConfig
 	)
 
@@ -795,7 +806,7 @@ process.p *= process.filteredVetoElectrons
 process.p *= process.filteredVetoMuons
 
 
-if BUILD_ELECTRON_X is False and BUILD_MUON_X is False and BUILD_TAU_X is False:
+if BUILD_EFFICIENCY_TREE is False:
 	process.p *= process.requireCandidateHiggsPair
 
 if BUILD_TAU_ES_VARIANTS is True :

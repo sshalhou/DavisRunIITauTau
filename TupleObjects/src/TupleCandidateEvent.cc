@@ -20,6 +20,33 @@ TupleCandidateEvent::TupleCandidateEvent()
   void TupleCandidateEvent::set_leg1(const pat::Tau dummy1_) {m_leg1.fill(dummy1_);}
   void TupleCandidateEvent::set_leg2(const pat::Tau dummy2_) {m_leg2.fill(dummy2_);}
 
+// add leptons for efficiency measurements 
+
+  void TupleCandidateEvent::add_EfficiencyLepton(const pat::Electron dummy_)
+  {
+  	TupleLepton TEMP;
+  	TEMP.fill(dummy_);
+  	m_EfficiencyLepton.push_back(TEMP);
+  } 
+  void TupleCandidateEvent::add_EfficiencyLepton(const pat::Muon dummy_) 
+  {
+   	TupleLepton TEMP;
+  	TEMP.fill(dummy_);
+  	m_EfficiencyLepton.push_back(TEMP); 	
+  } 
+  void TupleCandidateEvent::add_EfficiencyLepton(const pat::Tau dummy_) 
+  {
+    TupleLepton TEMP;
+  	TEMP.fill(dummy_);
+  	m_EfficiencyLepton.push_back(TEMP);	
+  } 
+
+void TupleCandidateEvent::set_CandidateEventType(int dummy_)
+  {
+  	m_CandidateEventType = dummy_;
+  }
+
+
   void TupleCandidateEvent::set_CandidateEventType()
   {
   	if(m_leg1.leptonType()==TupleLeptonTypes::anElectron && m_leg2.leptonType()==TupleLeptonTypes::anElectron)
@@ -187,6 +214,7 @@ void TupleCandidateEvent::set_SVTransverseMass(double dummy_)
 int TupleCandidateEvent::CandidateEventType() const { return m_CandidateEventType; }
 TupleLepton TupleCandidateEvent::leg1() const { return m_leg1; }
 TupleLepton TupleCandidateEvent::leg2() const { return m_leg2; }
+std::vector<TupleLepton> TupleCandidateEvent::EfficiencyLepton() const {return m_EfficiencyLepton;}
 std::vector<pat::MET> TupleCandidateEvent::mvaMET() const { return m_mvaMET; }
 std::vector<pat::MET> TupleCandidateEvent::pfMET() const { return m_pfMET; }
 std::vector<pat::MET> TupleCandidateEvent::puppiMET() const { return m_puppiMET; }

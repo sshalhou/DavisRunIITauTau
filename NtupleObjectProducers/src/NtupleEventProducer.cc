@@ -51,6 +51,7 @@ Implementation:
 #include "DataFormats/PatCandidates/interface/PackedTriggerPrescales.h"
 #include "DavisRunIITauTau/TupleObjects/interface/TupleLeptonTypes.h"
 #include "DavisRunIITauTau/NtupleObjectProducers/interface/NtupleTriggerObjectHelper.h"
+#include "DavisRunIITauTau/TupleObjects/interface/TupleCandidateEventTypes.h"
 
 
 typedef math::XYZTLorentzVector LorentzVector;
@@ -87,6 +88,9 @@ private:
   edm::InputTag tupleCandidateEventSrc_;
   edm::EDGetTokenT<edm::View< TupleCandidateEvent > > tupleCandidateEventToken_;
 
+  edm::InputTag l1extraParticlesSrc_;
+  edm::EDGetTokenT<l1extra::L1JetParticleCollection> l1extraParticlesToken_;
+
 
 
   edm::EDGetTokenT<edm::TriggerResults> triggerBitSrc_;
@@ -120,6 +124,7 @@ private:
 //
 NtupleEventProducer::NtupleEventProducer(const edm::ParameterSet& iConfig):
 tupleCandidateEventSrc_(iConfig.getParameter<edm::InputTag>("tupleCandidateEventSrc" )),
+l1extraParticlesSrc_(iConfig.getParameter<edm::InputTag>("l1extraParticlesSrc" )),
 triggerBitSrc_(consumes<edm::TriggerResults>(iConfig.getParameter<edm::InputTag>("triggerBitSrc"))),
 triggerPreScaleSrc_(consumes<pat::PackedTriggerPrescales>(iConfig.getParameter<edm::InputTag>("triggerPreScaleSrc"))),
 triggerObjectSrc_(consumes<pat::TriggerObjectStandAloneCollection>(iConfig.getParameter<edm::InputTag>("triggerObjectSrc"))),
@@ -139,6 +144,11 @@ NAME_(iConfig.getParameter<string>("NAME" ))
   produces<vector<NtupleEvent>>(NAME_).setBranchAlias(NAME_);
 
   tupleCandidateEventToken_ = consumes < edm::View<TupleCandidateEvent> >(tupleCandidateEventSrc_);
+
+  l1extraParticlesToken_ = consumes <l1extra::L1JetParticleCollection>(l1extraParticlesSrc_);
+
+
+
 
   //register your products
   /* Examples
@@ -194,6 +204,11 @@ NtupleEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
     edm::Handle<edm::View<TupleCandidateEvent> > pairs;
     iEvent.getByToken(tupleCandidateEventToken_,pairs);
 
+    // get the L1 isoTaus 
+
+    edm::Handle<l1extra::L1JetParticleCollection> L1IsoTaus;
+    iEvent.getByToken(l1extraParticlesToken_,L1IsoTaus);
+
     if(pairs.isValid()) 
     {
 
@@ -202,33 +217,68 @@ NtupleEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
       {
 
         const TupleCandidateEvent aPair =  (*pairs)[ii];
-        NtupleEvent anNtupleEvent;
-        anNtupleEvent.fill(aPair);
+        
+        if(aPair.CandidateEventType()==TupleCandidateEventTypes::EffCand)
+        {
+
+          NtupleEvent anNtupleEffEvent;
+          anNtupleEffEvent.fill(aPair);
+
+
+          /* fill the trigger info for the EffCands */
+
+            NtupleTriggerObjectHelper trigObjHelper(triggerBits,triggerObjects,triggerPreScales,TRIGGERnames,
+                         electron_triggerMatchDRSrc_,electron_triggerMatchTypesSrc_,electron_triggerMatchPathsAndFiltersSrc_,
+                         muon_triggerMatchDRSrc_,muon_triggerMatchTypesSrc_,muon_triggerMatchPathsAndFiltersSrc_,
+                         tau_triggerMatchDRSrc_,tau_triggerMatchTypesSrc_,tau_triggerMatchPathsAndFiltersSrc_);
+
+
+
+            for(std::size_t k = 0; k<anNtupleEffEvent.EffLepton().size(); ++k)
+            {
+              anNtupleEffEvent.fillTriggerMatchesForEffLepton(
+                trigObjHelper.getMatchedNtupleTrigObjectVector(anNtupleEffEvent.EffLepton().at(k)));
+
+              anNtupleEffEvent.fillTriggerSummariesEffLepton(trigObjHelper.isNtupleLeptonGoodForHLTPath(anNtupleEffEvent.EffLepton().at(k)));
+
+            }
+
+          /* push back the current pair */
+          NtupleEvents->push_back(anNtupleEffEvent);
+
+
+        }
+
+
+        else if(aPair.CandidateEventType()!=TupleCandidateEventTypes::EffCand)
+        {
+          NtupleEvent anNtupleEvent;
+          anNtupleEvent.fill(aPair);
 
 
 
 
-        /* add the trigger object match & filter info */
-  
-        NtupleTriggerObjectHelper trigObjHelper(triggerBits,triggerObjects,triggerPreScales,TRIGGERnames,
-                       electron_triggerMatchDRSrc_,electron_triggerMatchTypesSrc_,electron_triggerMatchPathsAndFiltersSrc_,
-                       muon_triggerMatchDRSrc_,muon_triggerMatchTypesSrc_,muon_triggerMatchPathsAndFiltersSrc_,
-                       tau_triggerMatchDRSrc_,tau_triggerMatchTypesSrc_,tau_triggerMatchPathsAndFiltersSrc_);
+          /* add the trigger object match & filter info */
+    
+          NtupleTriggerObjectHelper trigObjHelper(triggerBits,triggerObjects,triggerPreScales,TRIGGERnames,
+                         electron_triggerMatchDRSrc_,electron_triggerMatchTypesSrc_,electron_triggerMatchPathsAndFiltersSrc_,
+                         muon_triggerMatchDRSrc_,muon_triggerMatchTypesSrc_,muon_triggerMatchPathsAndFiltersSrc_,
+                         tau_triggerMatchDRSrc_,tau_triggerMatchTypesSrc_,tau_triggerMatchPathsAndFiltersSrc_);
 
-        anNtupleEvent.fillTriggerMatchesLeg1andLeg2(trigObjHelper.getMatchedNtupleTrigObjectVector(anNtupleEvent.leg1()),
-                                                    trigObjHelper.getMatchedNtupleTrigObjectVector(anNtupleEvent.leg2()));
+          anNtupleEvent.fillTriggerMatchesLeg1andLeg2(trigObjHelper.getMatchedNtupleTrigObjectVector(anNtupleEvent.leg1()),
+                                                      trigObjHelper.getMatchedNtupleTrigObjectVector(anNtupleEvent.leg2()));
 
-        anNtupleEvent.fillTriggerSummariesLeg1andLeg2(trigObjHelper.isNtupleLeptonGoodForHLTPath(anNtupleEvent.leg1()),
-                                                      trigObjHelper.isNtupleLeptonGoodForHLTPath(anNtupleEvent.leg2()));
-
-
+          anNtupleEvent.fillTriggerSummariesLeg1andLeg2(trigObjHelper.isNtupleLeptonGoodForHLTPath(anNtupleEvent.leg1()),
+                                                        trigObjHelper.isNtupleLeptonGoodForHLTPath(anNtupleEvent.leg2()));
 
 
 
+          anNtupleEvent.fillL1IsoTauMatchInfoLeg1andLeg2(L1IsoTaus);
 
-        /* push back the current pair */
-         NtupleEvents->push_back(anNtupleEvent);
- 
+
+          /* push back the current pair */
+           NtupleEvents->push_back(anNtupleEvent);
+        }
 
       }
 

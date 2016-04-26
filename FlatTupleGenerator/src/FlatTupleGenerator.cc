@@ -73,6 +73,17 @@ svMassAtFlatTupleConfig_(iConfig.getParameter<edm::ParameterSet>("SVMassConfig")
   jetLeptonDRmin = EventCutSrc_.getParameter<double>("jetLeptonDRmin");
 
  
+  /* create all pairs needed for EffLepton tauID and HLT info */
+
+
+  for(int q = 0; q < THE_MAX; ++q)
+  {
+    std::vector<float> ATEMP;
+    effLep_tauIDs.push_back(std::make_pair(q, ATEMP) );    
+    effLep_GoodForHLTPath.push_back(std::make_pair(q, ATEMP) );    
+  }
+
+
 
 
 
@@ -135,96 +146,111 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
   std::vector<NtupleEvent> retainedPairs_EleMuon;
   retainedPairs_EleMuon.clear();
 
-  /////////////////////////////
-  // 
-
-
-
   /////////////////////////////////////
   // now loop through the pairs in the current event
-  // and figure out which ones to retain 
-
-
-  std::cout<<pairs->size()<<" PAIR COUNT \n";
+  // and figure out which ones to retain (skip over EffCands here)
 
   for(std::size_t p = 0; p<pairs->size(); ++p )
   {
-    NtupleEvent currentPair =   ((*pairs)[p]);
+
+    NtupleEvent currentPairToCheck =   ((*pairs)[p]);
+
+    if(currentPairToCheck.CandidateEventType()==TupleCandidateEventTypes::EffCand) 
+    {
+      std::cout<<" have an EffLepton candidate \n";      
+
+      //////////////////////////////////////////////////////////////////////
+      // fill the TTree for a EffLepton list                              //
+      //////////////////////////////////////////////////////////////////////
+
+
+      //////////////////////////////////
+      // access pair indep info       //
+
+      NtuplePairIndependentInfo currentINDEP =   ((*pairIndepInfos)[0]);
+
+
+      /////////////////////////////////////////////////////////////////////
+      // init the JetHelper and GenHelper tools and fill pairIndep info  //
+      // once per pair note: GenHelper and JetHelper                     // 
+      // tools **must** be inititalized                                  //
+      // before calling handleXXXX type functions                        //  
+      /////////////////////////////////////////////////////////////////////
+
+      if(currentPairToCheck.CandidateEventType()==TupleCandidateEventTypes::EffCand) 
+      {
+
+        jethelper.init(currentINDEP.jets(),jetIDcut,BjetIDcut);
+
+        genhelper.init(currentINDEP.genParticles(),currentPairToCheck.EffLepton(),
+                     currentPairToCheck.CandidateEventType());
+
+      }
+
+        handlePairIndepInfo(iEvent,iSetup,currentINDEP);
+        handleCurrentEventInfo(iEvent,iSetup,currentPairToCheck);
+   
+   //   handleSVFitCall(iEvent,iSetup,currentPairToCheck); 
+        handleEffLeptonInfo(iEvent,iSetup,currentPairToCheck); 
 
 
 
-    bool keepSignPair = ((keepOS && currentPair.isOsPair()==1) || (keepSS && currentPair.isOsPair()!=1));
+      std::cout<<" FILL EffCandidate! \n";
+      FlatTuple->Fill();
+
+
+
+
+    }
+
+
+    else if(currentPairToCheck.CandidateEventType()!=TupleCandidateEventTypes::EffCand) 
+    {
+
+      std::cout<<" have a regular pair candidate \n";      
+
+      //////////////////////////////////////////////////////////////////////
+      // fill the TTree for a regular H->tau tau pair candidate           //
+      //////////////////////////////////////////////////////////////////////
+
+      bool keepSignPair = ((keepOS && currentPairToCheck.isOsPair()==1) || (keepSS && currentPairToCheck.isOsPair()!=1));
     
-    bool keepTauEsVariant = (
-      
-      (keepTauEsNominal && currentPair.TauEsNumberSigmasShifted()==0.0) ||
-      (keepTauEsNominal && isnan(currentPair.TauEsNumberSigmasShifted())) || /* for eMu, muMu, EleEle */
-      (keepTauEsUp && currentPair.TauEsNumberSigmasShifted()==1.0) ||
-      (keepTauEsDown && currentPair.TauEsNumberSigmasShifted()==-1.0) 
-
+      bool keepTauEsVariant = (
+             (keepTauEsNominal && currentPairToCheck.TauEsNumberSigmasShifted()==0.0) ||
+             (keepTauEsNominal && isnan(currentPairToCheck.TauEsNumberSigmasShifted())) || /* for eMu, muMu, EleEle */
+             (keepTauEsUp && currentPairToCheck.TauEsNumberSigmasShifted()==1.0) ||
+             (keepTauEsDown && currentPairToCheck.TauEsNumberSigmasShifted()==-1.0) 
       );
 
+      /* check if the cuts pass */
 
+      bool leptonCutsPass = LeptonCutHelper.cutEvaluator(currentPairToCheck, LeptonCutVecSrc_);
 
-    /* check if the cuts pass */
+      ///////////////////
+       if(keepSignPair && keepTauEsVariant && leptonCutsPass) 
+       {
+        if(currentPairToCheck.CandidateEventType() == TupleCandidateEventTypes::EleTau) 
+        { 
+          retainedPairs_EleTau.push_back(currentPairToCheck);
+        }
 
-    bool leptonCutsPass = LeptonCutHelper.cutEvaluator(currentPair, LeptonCutVecSrc_);
+        else if(currentPairToCheck.CandidateEventType() == TupleCandidateEventTypes::MuonTau) 
+        { 
+         retainedPairs_MuonTau.push_back(currentPairToCheck);
+        }
+       
+        else if(currentPairToCheck.CandidateEventType() == TupleCandidateEventTypes::TauTau) 
+        { 
+          retainedPairs_TauTau.push_back(currentPairToCheck);
+        }
 
-    std::cout<<" have a pair of type "<<currentPair.CandidateEventType()<<" at index "<<p<<" ";
-    std::cout<<" with leg1 pt = "<<currentPair.leg1().p4().pt()<<" ";
-    std::cout<<" & with leg2 pt = "<<currentPair.leg2().p4().pt()<<" **** ";
-
-    TLorentzVector a1, a2;
-
-    a1.SetPtEtaPhiM(currentPair.leg1().p4().pt(), currentPair.leg1().p4().eta(),
-      currentPair.leg1().p4().phi(),currentPair.leg1().p4().mass());
-
-    a2.SetPtEtaPhiM(currentPair.leg2().p4().pt(), currentPair.leg2().p4().eta(),
-      currentPair.leg2().p4().phi(),currentPair.leg2().p4().mass());
-
-    std::cout<<" DR is "<<a1.DeltaR(a2)<<"\n";
-
-
-    std::size_t MAX_ONEKIND = 1000;
-
-   if(keepSignPair && keepTauEsVariant && leptonCutsPass) 
-   {
-
-    if(currentPair.CandidateEventType() == TupleCandidateEventTypes::EleTau) 
-    { 
-      if(retainedPairs_EleTau.size()<=MAX_ONEKIND)
-      {
-        retainedPairs_EleTau.push_back(currentPair);
-      }
+        else if(currentPairToCheck.CandidateEventType() == TupleCandidateEventTypes::EleMuon) 
+        { 
+          retainedPairs_EleMuon.push_back(currentPairToCheck);      
+        }
+       }
+      ///////////////////
     }
-
-    else if(currentPair.CandidateEventType() == TupleCandidateEventTypes::MuonTau) 
-    { 
-      if(retainedPairs_MuonTau.size()<=MAX_ONEKIND)
-      {
-        retainedPairs_MuonTau.push_back(currentPair);
-      }
-    }
-   
-    else if(currentPair.CandidateEventType() == TupleCandidateEventTypes::TauTau) 
-    { 
-      if(retainedPairs_TauTau.size()<=MAX_ONEKIND)
-      {      
-        retainedPairs_TauTau.push_back(currentPair);
-      }
-    }
-
-    else if(currentPair.CandidateEventType() == TupleCandidateEventTypes::EleMuon) 
-    { 
-      if(retainedPairs_EleMuon.size()<=MAX_ONEKIND)
-      {         
-        retainedPairs_EleMuon.push_back(currentPair);
-      }
-    }
-   }
-
-
-
   }
 
   /////////////////////////
@@ -235,12 +261,6 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
   PairRankHelper rankHelper_EleTau;
   PairRankHelper rankHelper_MuonTau;
   PairRankHelper rankHelper_TauTau;
-
-  std::cout<<"et size "<<retainedPairs_EleTau.size()<<" ";
-  std::cout<<"mt size "<<retainedPairs_MuonTau.size()<<" ";
-  std::cout<<"em size "<<retainedPairs_EleMuon.size()<<" ";
-  std::cout<<"tt size "<<retainedPairs_TauTau.size()<<"\n";
-
 
   if(rankByPtSum) 
   {
@@ -275,30 +295,21 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
 
   for(std::size_t v = 0; v<retainedPairsWithRank_EleTau.size(); ++v )
   {
-    if(retainedPairsWithRank_EleTau[v].first==0) /* only keep best EleTau */
-      {
         retainedPairsWithRank.push_back(retainedPairsWithRank_EleTau[v]);
-      }
   }
 
   retainedPairsWithRank_EleTau.clear();
 
   for(std::size_t v = 0; v<retainedPairsWithRank_MuonTau.size(); ++v )
   {
-    if(retainedPairsWithRank_MuonTau[v].first==0) /* only keep best MuonTau */
-      {    
-        retainedPairsWithRank.push_back(retainedPairsWithRank_MuonTau[v]);
-      }
+    retainedPairsWithRank.push_back(retainedPairsWithRank_MuonTau[v]);    
   }
 
     retainedPairsWithRank_MuonTau.clear();
 
   for(std::size_t v = 0; v<retainedPairsWithRank_TauTau.size(); ++v )
   {
-    if(retainedPairsWithRank_TauTau[v].first==0) /* only keep best TauTau */
-      {    
-        retainedPairsWithRank.push_back(retainedPairsWithRank_TauTau[v]);
-      }
+    retainedPairsWithRank.push_back(retainedPairsWithRank_TauTau[v]);    
   }
 
     retainedPairsWithRank_TauTau.clear();
@@ -306,945 +317,1165 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
 
   for(std::size_t v = 0; v<retainedPairsWithRank_EleMuon.size(); ++v )
   {
-    if(retainedPairsWithRank_EleMuon[v].first==0) /* only keep best EleMuon */
-      {
-        retainedPairsWithRank.push_back(retainedPairsWithRank_EleMuon[v]);
-      }  
+    retainedPairsWithRank.push_back(retainedPairsWithRank_EleMuon[v]);
   }
-
 
     retainedPairsWithRank_EleMuon.clear();
 
-
-
-  // check if any pairs from any channels are kept
-
-  if(retainedPairsWithRank.size()==0) return;
-
-std::cout<<retainedPairsWithRank.size()<<" retainedPairsWithRank.size() \n";
+  /////////////////////////////////////////////////////////
+  /* now loop over retained & ranked pairs to fill TTree */
+  /////////////////////////////////////////////////////////
 
   for(std::size_t p = 0; p<retainedPairsWithRank.size(); ++p )
   {
-
+      /* reset vals for the current pair */
       reInit();
 
       pairRank = retainedPairsWithRank[p].first;
       if(pairRank!=0) continue; /* no reason to keep more than the best pair/event */
 
 
+      ////////////////////////////////
+      // access the current pair    //
 
-      ////////////////
-      // fill some easy stuff first :
+      NtupleEvent currentPair =   retainedPairsWithRank[p].second;
 
-      run = iEvent.id().run();
-      luminosityBlock = iEvent.id().luminosityBlock();
-      event = iEvent.id().event();
-      isRealData = iEvent.isRealData();
-      treeInfoString = NAME_;
 
-      AppliedLepCuts = LeptonCutHelper.getCutSummary(LeptonCutVecSrc_);
-
-      ///////
-      // now stuff depending on the current pair
-
-
-  		NtupleEvent currentPair =   retainedPairsWithRank[p].second;
-
-
-      VISMass = currentPair.VISMass()[0];
-   
-      
-      ////////////////
-      // fill the tauIDs for tau legs
-
-
-        for(std::size_t x = 0; x<tauIDsToKeep.size();++x ) 
-        {
-          
-          if(currentPair.leg1().leptonType() == TupleLeptonTypes::aTau)
-          {
-              leg1_tauIDs[x]  =  currentPair.leg1().tauID(tauIDsToKeep[x]);
-          }
-
-          if(currentPair.leg2().leptonType() == TupleLeptonTypes::aTau)
-          {
-              leg2_tauIDs[x]  =  currentPair.leg2().tauID(tauIDsToKeep[x]);
-          }
-
-        }
-
-
-      ////////////////
-      // fill the triggerSummaryChecks for both legs
-
-
-
-
-      for(std::size_t x = 0; x<triggerSummaryChecks.size();++x ) 
-      {
-
-        // check the OR of a specific version or a wildcard v* 
-        std::string label_ = triggerSummaryChecks[x]; 
-        std::string versionStrippedLabel_ = label_;
-        versionStrippedLabel_.erase(label_.find("_v"),label_.length());
-
-        float l1trig = 0.0;
-        float l2trig = 0.0;
-
-        if(currentPair.isLeg1GoodForHLTPath(label_)) l1trig = 1.0;
-        else if(currentPair.isLeg1GoodForHLTPath(versionStrippedLabel_)) l1trig = 1.0;
-
-        if(currentPair.isLeg2GoodForHLTPath(label_)) l2trig = 1.0;
-        else if(currentPair.isLeg2GoodForHLTPath(versionStrippedLabel_)) l2trig = 1.0;
-
-        leg1_GoodForHLTPath[x]  =  l1trig;
-        leg2_GoodForHLTPath[x]  =  l2trig;
-      }
-
-
-
-
-      CandidateEventType = currentPair.CandidateEventType();
-
-
-
-      TauEsNumberSigmasShifted = currentPair.TauEsNumberSigmasShifted();
-      isOsPair = currentPair.isOsPair();
-      SVMass = currentPair.SVMass()[0];
-      SVTransverseMass = currentPair.SVTransverseMass()[0];
-
-
-      //MTmvaMET_leg1 = currentPair.MTmvaMET_leg1()[0];
-      MTpfMET_leg1 = currentPair.MTpfMET_leg1()[0];
-      //MTmvaMET_leg2 = currentPair.MTmvaMET_leg2()[0];
-      MTpfMET_leg2 = currentPair.MTpfMET_leg2()[0];
- 
-
-      mvaMET = currentPair.mvaMET()[0].pt();
-      std::cout<<" MVA MET is "<<mvaMET<<"\n";
-      mvaMETphi = currentPair.mvaMET()[0].phi();
-      mvaMET_cov00 = currentPair.mvaMET()[0].getSignificanceMatrix()[0][0];
-      mvaMET_cov01 = currentPair.mvaMET()[0].getSignificanceMatrix()[0][1];
-      mvaMET_cov10 = currentPair.mvaMET()[0].getSignificanceMatrix()[1][0];
-      mvaMET_cov11 = currentPair.mvaMET()[0].getSignificanceMatrix()[1][1];
-  
-
-      pfMET = currentPair.pfMET()[0].pt();
-      pfMETphi = currentPair.pfMET()[0].phi();
-
-
-
-     // std::cout<<" about to access genMET without safety check with isRealData = "<<isRealData<<"\n";
-
-      if(!currentPair.pfMET()[0].genMET())
-      {
-        genMET = 0;
-        genMETphi = 0;
-      } 
-      else 
-      {
-       
-        genMET = currentPair.pfMET()[0].genMET()->pt();
-        genMETphi = currentPair.pfMET()[0].genMET()->phi();
-      }
-   
-
-
-  //  std::cout<<genMET<<" = genMET \n";
-
-    //  RAWpfMET = currentPair.pfMET()[0].uncorPt();
-    //  RAWpfMETphi = currentPair.pfMET()[0].uncorPhi();
-
-
-
-      puppiMET  = currentPair.puppiMET()[0].pt();
-      puppiMETphi = currentPair.puppiMET()[0].phi();
-      RAWpuppiMET = currentPair.puppiMET()[0].uncorPt();
-      RAWpuppiMETphi = currentPair.puppiMET()[0].uncorPhi();
-
-      MTpuppiMET_leg1  = currentPair.MTpuppiMET_leg1()[0];
-      MTpuppiMET_leg2  = currentPair.MTpuppiMET_leg2()[0];
-
-
-      pfMET_cov00 = currentPair.pfMET_cov00()[0];
-      pfMET_cov01 = currentPair.pfMET_cov01()[0];
-      pfMET_cov10 = currentPair.pfMET_cov10()[0];
-      pfMET_cov11 = currentPair.pfMET_cov11()[0];  
-
-
-
-
-      leg1_leptonType = currentPair.leg1().leptonType();
-      leg1_dz = currentPair.leg1().dz();
-      leg1_dxy = currentPair.leg1().dxy();
-      leg1_EffectiveArea = currentPair.leg1().EffectiveArea();
-      leg1_charge = currentPair.leg1().charge();
-      leg1_PFpdgId = currentPair.leg1().PFpdgId();
-      leg1_GENpdgId = currentPair.leg1().GENpdgId();
-      leg1_GENMOTHERpdgId = currentPair.leg1().GENMOTHERpdgId();
-      leg1_IP = currentPair.leg1().IP();
-      leg1_IPerror = currentPair.leg1().IPerror();
-      leg1_PUchargedHadronIso = currentPair.leg1().PUchargedHadronIso();
-      leg1_chargedHadronIso = currentPair.leg1().chargedHadronIso();
-      leg1_neutralHadronIso = currentPair.leg1().neutralHadronIso();
-      leg1_photonIso = currentPair.leg1().photonIso();
-      leg1_DepositR03ECal = currentPair.leg1().DepositR03ECal();
-      leg1_DepositR03Hcal = currentPair.leg1().DepositR03Hcal();
-      leg1_DepositR03TrackerOfficial = currentPair.leg1().DepositR03TrackerOfficial();
-      leg1_isGlobalMuon = currentPair.leg1().isGlobalMuon();
-      leg1_isGoodGlobalMuon = currentPair.leg1().isGoodGlobalMuon();
-      leg1_passesMediumMuonId = currentPair.leg1().passesMediumMuonId();
-      leg1_isLooseMuon = currentPair.leg1().isLooseMuon();
-      leg1_isPFMuon = currentPair.leg1().isPFMuon();
-      leg1_isSoftMuon = currentPair.leg1().isSoftMuon();
-      leg1_isTightMuon = currentPair.leg1().isTightMuon();
-      leg1_isTrackerMuon = currentPair.leg1().isTrackerMuon();
-      leg1_muonCombQualChi2LocalPosition = currentPair.leg1().muonCombQualChi2LocalPosition();
-      leg1_muonCombQualTrkKink = currentPair.leg1().muonCombQualTrkKink();
-      leg1_muonGlobalTrackNormChi2 = currentPair.leg1().muonGlobalTrackNormChi2();
-      leg1_muonInnerTrkValidFraction = currentPair.leg1().muonInnerTrkValidFraction();
-      leg1_muonSegmentCompatibility = currentPair.leg1().muonSegmentCompatibility();
-      leg1_raw_electronMVA = currentPair.leg1().raw_electronMVA();
-      leg1_category_electronMVA = currentPair.leg1().category_electronMVA();
-      leg1_passFail_electronMVA80 = currentPair.leg1().passFail_electronMVA80();
-      leg1_passFail_electronMVA90 = currentPair.leg1().passFail_electronMVA90();
-      leg1_passFail_electronCutBasedID = currentPair.leg1().passFail_electronCutBasedID();
-      leg1_ooEmooP = currentPair.leg1().ooEmooP();
-      leg1_full5x5_sigmaIetaIeta = currentPair.leg1().full5x5_sigmaIetaIeta();
-      leg1_SuperClusterEta = currentPair.leg1().SuperClusterEta();
-      leg1_hadronicOverEm = currentPair.leg1().hadronicOverEm();
-      leg1_isEB = currentPair.leg1().isEB();
-      leg1_isEBEEGap = currentPair.leg1().isEBEEGap();
-      leg1_isEBEtaGap = currentPair.leg1().isEBEtaGap();
-      leg1_isEBPhiGap = currentPair.leg1().isEBPhiGap();
-      leg1_isEE = currentPair.leg1().isEE();
-      leg1_isEEDeeGap = currentPair.leg1().isEEDeeGap();
-      leg1_isEERingGap = currentPair.leg1().isEERingGap();
-      leg1_deltaEtaSuperClusterTrackAtVtx = currentPair.leg1().deltaEtaSuperClusterTrackAtVtx();
-      leg1_deltaPhiSuperClusterTrackAtVtx = currentPair.leg1().deltaPhiSuperClusterTrackAtVtx();
-      leg1_sigmaEtaEta = currentPair.leg1().sigmaEtaEta();
-      leg1_sigmaIetaIeta = currentPair.leg1().sigmaIetaIeta();
-      leg1_sigmaIphiIphi = currentPair.leg1().sigmaIphiIphi();
-      leg1_numberOfMissingInnerHits = currentPair.leg1().numberOfMissingInnerHits();
-      leg1_numberOfMissingOuterHits = currentPair.leg1().numberOfMissingOuterHits();
-      leg1_numberOfTrackHits = currentPair.leg1().numberOfTrackHits();
-      leg1_passConversionVeto = currentPair.leg1().passConversionVeto();
-      leg1_ZimpactTau = currentPair.leg1().ZimpactTau();
-      leg1_dzTauVertex = currentPair.leg1().dzTauVertex();
-      leg1_numStrips = currentPair.leg1().numStrips();
-      leg1_numHadrons = currentPair.leg1().numHadrons();
-      leg1_decayMode = currentPair.leg1().decayMode();
-      leg2_leptonType = currentPair.leg2().leptonType();
-
-
-      leg2_dz = currentPair.leg2().dz();
-      leg2_dxy = currentPair.leg2().dxy();
-      leg2_EffectiveArea = currentPair.leg2().EffectiveArea();
-      leg2_charge = currentPair.leg2().charge();
-      leg2_PFpdgId = currentPair.leg2().PFpdgId();
-      leg2_GENpdgId = currentPair.leg2().GENpdgId();
-      leg2_GENMOTHERpdgId = currentPair.leg2().GENMOTHERpdgId();
-      leg2_IP = currentPair.leg2().IP();
-      leg2_IPerror = currentPair.leg2().IPerror();
-      leg2_PUchargedHadronIso = currentPair.leg2().PUchargedHadronIso();
-      leg2_chargedHadronIso = currentPair.leg2().chargedHadronIso();
-      leg2_neutralHadronIso = currentPair.leg2().neutralHadronIso();
-      leg2_photonIso = currentPair.leg2().photonIso();
-      leg2_DepositR03ECal = currentPair.leg2().DepositR03ECal();
-      leg2_DepositR03Hcal = currentPair.leg2().DepositR03Hcal();
-      leg2_DepositR03TrackerOfficial = currentPair.leg2().DepositR03TrackerOfficial();
-      leg2_isGlobalMuon = currentPair.leg2().isGlobalMuon();
-      leg2_isGoodGlobalMuon = currentPair.leg2().isGoodGlobalMuon();
-      leg2_passesMediumMuonId = currentPair.leg2().passesMediumMuonId();
-      leg2_isLooseMuon = currentPair.leg2().isLooseMuon();
-      leg2_isPFMuon = currentPair.leg2().isPFMuon();
-      leg2_isSoftMuon = currentPair.leg2().isSoftMuon();
-      leg2_isTightMuon = currentPair.leg2().isTightMuon();
-      leg2_isTrackerMuon = currentPair.leg2().isTrackerMuon();
-      leg2_muonCombQualChi2LocalPosition = currentPair.leg2().muonCombQualChi2LocalPosition();
-      leg2_muonCombQualTrkKink = currentPair.leg2().muonCombQualTrkKink();
-      leg2_muonGlobalTrackNormChi2 = currentPair.leg2().muonGlobalTrackNormChi2();
-      leg2_muonInnerTrkValidFraction = currentPair.leg2().muonInnerTrkValidFraction();
-      leg2_muonSegmentCompatibility = currentPair.leg2().muonSegmentCompatibility();
-      leg2_raw_electronMVA = currentPair.leg2().raw_electronMVA();
-      leg2_category_electronMVA = currentPair.leg2().category_electronMVA();
-      leg2_passFail_electronMVA80 = currentPair.leg2().passFail_electronMVA80();
-      leg2_passFail_electronMVA90 = currentPair.leg2().passFail_electronMVA90();
-      leg2_passFail_electronCutBasedID = currentPair.leg2().passFail_electronCutBasedID();
-      leg2_ooEmooP = currentPair.leg2().ooEmooP();
-      leg2_full5x5_sigmaIetaIeta = currentPair.leg2().full5x5_sigmaIetaIeta();
-      leg2_SuperClusterEta = currentPair.leg2().SuperClusterEta();
-      leg2_hadronicOverEm = currentPair.leg2().hadronicOverEm();
-      leg2_isEB = currentPair.leg2().isEB();
-      leg2_isEBEEGap = currentPair.leg2().isEBEEGap();
-      leg2_isEBEtaGap = currentPair.leg2().isEBEtaGap();
-      leg2_isEBPhiGap = currentPair.leg2().isEBPhiGap();
-      leg2_isEE = currentPair.leg2().isEE();
-      leg2_isEEDeeGap = currentPair.leg2().isEEDeeGap();
-      leg2_isEERingGap = currentPair.leg2().isEERingGap();
-      leg2_deltaEtaSuperClusterTrackAtVtx = currentPair.leg2().deltaEtaSuperClusterTrackAtVtx();
-      leg2_deltaPhiSuperClusterTrackAtVtx = currentPair.leg2().deltaPhiSuperClusterTrackAtVtx();
-      leg2_sigmaEtaEta = currentPair.leg2().sigmaEtaEta();
-      leg2_sigmaIetaIeta = currentPair.leg2().sigmaIetaIeta();
-      leg2_sigmaIphiIphi = currentPair.leg2().sigmaIphiIphi();
-      leg2_numberOfMissingInnerHits = currentPair.leg2().numberOfMissingInnerHits();
-      leg2_numberOfMissingOuterHits = currentPair.leg2().numberOfMissingOuterHits();
-      leg2_numberOfTrackHits = currentPair.leg2().numberOfTrackHits();
-      leg2_passConversionVeto = currentPair.leg2().passConversionVeto();
-      leg2_ZimpactTau = currentPair.leg2().ZimpactTau();
-      leg2_numStrips = currentPair.leg2().numStrips();
-      leg2_numHadrons = currentPair.leg2().numHadrons();
-      leg2_decayMode = currentPair.leg2().decayMode();
-      leg2_dzTauVertex = currentPair.leg2().dzTauVertex();
-
-
-      leg2_pt = currentPair.leg2().p4().pt();
-      leg2_gen_pt = currentPair.leg2().gen_p4().pt();
-      leg2_genMother_pt = currentPair.leg2().genMother_p4().pt();
-      leg2_genJet_pt = currentPair.leg2().genJet_p4().pt();
-      leg1_pt = currentPair.leg1().p4().pt();
-      leg1_gen_pt = currentPair.leg1().gen_p4().pt();
-      leg1_genMother_pt = currentPair.leg1().genMother_p4().pt();
-      leg1_genJet_pt = currentPair.leg1().genJet_p4().pt();
-      leg2_eta = currentPair.leg2().p4().eta();
-      leg2_gen_eta = currentPair.leg2().gen_p4().eta();
-      leg2_genMother_eta = currentPair.leg2().genMother_p4().eta();
-      leg2_genJet_eta = currentPair.leg2().genJet_p4().eta();
-      leg1_eta = currentPair.leg1().p4().eta();
-      leg1_gen_eta = currentPair.leg1().gen_p4().eta();
-      leg1_genMother_eta = currentPair.leg1().genMother_p4().eta();
-      leg1_genJet_eta = currentPair.leg1().genJet_p4().eta();
-      leg2_phi = currentPair.leg2().p4().phi();
-      leg2_gen_phi = currentPair.leg2().gen_p4().phi();
-      leg2_genMother_phi = currentPair.leg2().genMother_p4().phi();
-      
-      leg2_genJet_phi = currentPair.leg2().genJet_p4().phi();
-      leg1_phi = currentPair.leg1().p4().phi();
-      leg1_gen_phi = currentPair.leg1().gen_p4().phi();
-      leg1_genMother_phi = currentPair.leg1().genMother_p4().phi();
-      leg1_genJet_phi = currentPair.leg1().genJet_p4().phi();
-      leg2_M = currentPair.leg2().p4().M();
-      leg2_gen_M = currentPair.leg2().gen_p4().M();
-      leg2_genMother_M = currentPair.leg2().genMother_p4().M();
-      leg2_genJet_M = currentPair.leg2().genJet_p4().M();
-      leg1_M = currentPair.leg1().p4().M();
-      leg1_gen_M = currentPair.leg1().gen_p4().M();
-      leg1_genMother_M = currentPair.leg1().genMother_p4().M();
-      leg1_genJet_M = currentPair.leg1().genJet_p4().M();
-
-
-
-      /* set the relative isolation value dep. on the lepton type */
-
-      if(currentPair.leg1().leptonType() == TupleLeptonTypes::anElectron)
-      {
-        leg1_RelIso = currentPair.leg1().relativeIsol(electronIsolationForRelIsoBranch);
-      }
-
-      else if(currentPair.leg1().leptonType() == TupleLeptonTypes::aMuon)
-      {
-        leg1_RelIso = currentPair.leg1().relativeIsol(muonIsolationForRelIsoBranch);
-      }
-
-      else if(currentPair.leg1().leptonType() == TupleLeptonTypes::aTau)
-      {
-        leg1_RelIso = currentPair.leg1().tauID(tauIsolationForRelIsoBranch);
-      }
-
-
-      if(currentPair.leg2().leptonType() == TupleLeptonTypes::anElectron)
-      {
-        leg2_RelIso = currentPair.leg2().relativeIsol(electronIsolationForRelIsoBranch);
-      }
-
-      else if(currentPair.leg2().leptonType() == TupleLeptonTypes::aMuon)
-      {
-        leg2_RelIso = currentPair.leg2().relativeIsol(muonIsolationForRelIsoBranch);
-      }
-
-      else if(currentPair.leg2().leptonType() == TupleLeptonTypes::aTau)
-      {
-        leg2_RelIso = currentPair.leg2().tauID(tauIsolationForRelIsoBranch);
-      }
-
-      /* fill veto lepton parameters, MUST FILL IN SAME ORDER FOR ELECTRONS & MUONS */
-
-
-
-      for(std::size_t v = 0; v<currentPair.vetoElectron().size(); ++v)
-      {
-          veto_leptonType.push_back(currentPair.vetoElectron()[v].leptonType());
-          veto_pt.push_back(currentPair.vetoElectron()[v].p4().pt());
-          veto_eta.push_back(currentPair.vetoElectron()[v].p4().eta());
-          veto_phi.push_back(currentPair.vetoElectron()[v].p4().phi());
-          veto_M.push_back(currentPair.vetoElectron()[v].p4().M());
-          veto_dxy.push_back(currentPair.vetoElectron()[v].dxy());
-          veto_dz.push_back(currentPair.vetoElectron()[v].dz());
-          veto_passesMediumMuonId.push_back(currentPair.vetoElectron()[v].passesMediumMuonId());
-          veto_rawElectronMVA.push_back(currentPair.vetoElectron()[v].raw_electronMVA());
-          veto_categoryElectronMVA.push_back(currentPair.vetoElectron()[v].category_electronMVA());
-          veto_passElectronMVA80.push_back(currentPair.vetoElectron()[v].passFail_electronMVA80());
-          veto_passElectronMVA90.push_back(currentPair.vetoElectron()[v].passFail_electronMVA90());
-          veto_passElectronCutBased.push_back(currentPair.vetoElectron()[v].passFail_electronCutBasedID());
-          veto_isTrackerGlobalPFMuon.push_back(0.0);         
-          veto_RelIso.push_back(currentPair.vetoElectron()[v].relativeIsol(electronIsolationForRelIsoBranch));
-          veto_charge.push_back(currentPair.vetoElectron()[v].charge());
-      }
-
-      for(std::size_t v = 0; v<currentPair.vetoMuon().size(); ++v)
-      {
-          veto_leptonType.push_back(currentPair.vetoMuon()[v].leptonType());
-          veto_pt.push_back(currentPair.vetoMuon()[v].p4().pt());
-          veto_eta.push_back(currentPair.vetoMuon()[v].p4().eta());
-          veto_phi.push_back(currentPair.vetoMuon()[v].p4().phi());
-          veto_M.push_back(currentPair.vetoMuon()[v].p4().M());
-          veto_dxy.push_back(currentPair.vetoMuon()[v].dxy());
-          veto_dz.push_back(currentPair.vetoMuon()[v].dz());
-          veto_passesMediumMuonId.push_back(currentPair.vetoMuon()[v].passesMediumMuonId());
-          veto_rawElectronMVA.push_back(currentPair.vetoMuon()[v].raw_electronMVA());
-          veto_categoryElectronMVA.push_back(currentPair.vetoMuon()[v].category_electronMVA());
-          veto_passElectronMVA80.push_back(currentPair.vetoMuon()[v].passFail_electronMVA80());
-          veto_passElectronMVA90.push_back(currentPair.vetoMuon()[v].passFail_electronMVA90());
-          veto_passElectronCutBased.push_back(currentPair.vetoMuon()[v].passFail_electronCutBasedID());
-         
-          float isTrackerGlobalPFMuon = (currentPair.vetoMuon()[v].isTrackerMuon() && \
-                                         currentPair.vetoMuon()[v].isGlobalMuon() && \
-                                         currentPair.vetoMuon()[v].isPFMuon());
-          
-
-          veto_isTrackerGlobalPFMuon.push_back(isTrackerGlobalPFMuon);         
-          veto_RelIso.push_back(currentPair.vetoMuon()[v].relativeIsol(muonIsolationForRelIsoBranch));
-          veto_charge.push_back(currentPair.vetoMuon()[v].charge());
-
-      }
-
-
-      /* access the pair independent info, making any needed adjustments for the current pair */
-
+      //////////////////////////////////
+      // access pair indep info       //
 
       NtuplePairIndependentInfo currentINDEP =   ((*pairIndepInfos)[0]);
 
 
+      /////////////////////////////////////////////////////////////////////
+      // init the JetHelper and GenHelper tools and fill pairIndep info  //
+      // once per pair note: GenHelper and JetHelper                     // 
+      // tools **must** be inititalized                                  //
+      // before calling handleXXXX type functions                        //  
+      /////////////////////////////////////////////////////////////////////
 
-      /* info about the data sample */
+      if(currentPair.CandidateEventType()!=TupleCandidateEventTypes::EffCand) 
+      {
 
+        jethelper.init(currentINDEP.jets(),jetIDcut,BjetIDcut,
+                  jetLeptonDRmin,currentPair.leg1(),currentPair.leg2());
 
-      DataSet = currentINDEP.DataSet();
-      EventTotal = currentINDEP.EventTotal();
-      EventType = currentINDEP.EventType();
-      KeyName = currentINDEP.KeyName();
-      CrossSection = currentINDEP.CrossSection();
-      FilterEff = currentINDEP.FilterEff();
-      CodeVersion = currentINDEP.CodeVersion();
-
-
-
-      /* info about the primary vertex */
-      NumberOfGoodVertices = currentINDEP.numberOfGoodVertices();
-      vertex_NDOF = currentINDEP.primaryVertex().ndof();
-      vertex_CHI2 = currentINDEP.primaryVertex().chi2();
-      vertex_positionRho = currentINDEP.primaryVertex().position().Rho();
-      vertex_positionX = currentINDEP.primaryVertex().position().x();
-      vertex_positionY  = currentINDEP.primaryVertex().position().y();
-      vertex_positionZ = currentINDEP.primaryVertex().position().z();
-      vertex_positionTheta = currentINDEP.primaryVertex().position().theta();
-      vertex_positionEta = currentINDEP.primaryVertex().position().eta();
-      vertex_positionPhi = currentINDEP.primaryVertex().position().phi();
-
-      /* MET filters */
-
-      HBHEIsoNoiseFilter = currentINDEP.HBHEIsoNoiseFilter();
-
-      HBHENoiseFilter = currentINDEP.HBHENoiseFilter();
-      CSCTightHaloFilter = currentINDEP.CSCTightHaloFilter();
-      goodVerticesFilter = currentINDEP.goodVerticesFilter();
-      eeBadScFilter = currentINDEP.eeBadScFilter();
-      EcalDeadCellTriggerPrimitiveFilter = currentINDEP.EcalDeadCellTriggerPrimitiveFilter();
-
-
-
-      /* pileup & other weights */
-  
-      puWeight = currentINDEP.puWeight();
-      NumPileupInt = currentINDEP.NumPileupInt();
-      NumTruePileUpInt = currentINDEP.NumTruePileUpInt();
-      generatorEventWeight = currentINDEP.generatorEventWeight();
-      hepNUP = currentINDEP.hepNUP();
-
-      /* process the jets */
-      jethelper.init(currentINDEP.jets(),jetIDcut,BjetIDcut,
-                jetLeptonDRmin,currentPair.leg1(),currentPair.leg2());
-
-      /* get the jets and bjets passing the cuts provided in init */
-      std::vector<NtupleJet> goodJets = jethelper.PtOrderedPassingJets();
-      std::vector<NtupleJet> goodBJets = jethelper.PtOrderedPassingBJets();
-
-      numberOfJets =   goodJets.size();
-      numberOfBJets =  goodBJets.size();
-      numberOfJets30 = 0;
-
-
-
-
-      /* now fill the FlatTuple jet vector */
-      for(std::size_t j=0; j<goodJets.size(); ++j)
-      {      
-        if(goodJets[j].jet_p4().pt()>30) numberOfJets30++;  
-        jets_pt.push_back(goodJets[j].jet_p4().pt());
-        jets_eta.push_back(goodJets[j].jet_p4().eta());
-        jets_phi.push_back(goodJets[j].jet_p4().phi());
-        jets_M.push_back(goodJets[j].jet_p4().M());
-
-        jets_PU_jetIdRaw.push_back(goodJets[j].PU_jetIdRaw());
-        jets_PU_jetIdPassed.push_back(goodJets[j].PU_jetIdPassed());
-        jets_PF_jetIdPassed.push_back(goodJets[j].PF_jetIdPassed());
-        jets_defaultBtagAlgorithm_RawScore.push_back(goodJets[j].defaultBtagAlgorithm_RawScore());
-        jets_defaultBtagAlgorithm_isPassed.push_back(goodJets[j].defaultBtagAlgorithm_isPassed());
-        jets_PARTON_flavour.push_back(goodJets[j].PARTON_flavour());
-        jets_HADRON_flavour.push_back(goodJets[j].HADRON_flavour());
-
-      }
-
-      /* now fill the FlatTuple bjet vector */
-      for(std::size_t j=0; j<goodBJets.size(); ++j)
-      {        
-        bjets_pt.push_back(goodBJets[j].jet_p4().pt());
-        bjets_eta.push_back(goodBJets[j].jet_p4().eta());
-        bjets_phi.push_back(goodBJets[j].jet_p4().phi());
-        bjets_M.push_back(goodBJets[j].jet_p4().M());
-
-        bjets_PU_jetIdRaw.push_back(goodBJets[j].PU_jetIdRaw());
-        bjets_PU_jetIdPassed.push_back(goodBJets[j].PU_jetIdPassed());
-        bjets_PF_jetIdPassed.push_back(goodBJets[j].PF_jetIdPassed());
-        bjets_defaultBtagAlgorithm_RawScore.push_back(goodBJets[j].defaultBtagAlgorithm_RawScore());
-        bjets_defaultBtagAlgorithm_isPassed.push_back(goodBJets[j].defaultBtagAlgorithm_isPassed());
-        bjets_PARTON_flavour.push_back(goodBJets[j].PARTON_flavour());
-        bjets_HADRON_flavour.push_back(goodBJets[j].HADRON_flavour());
-
-      }
- 
-
-
-
-      /* fill the gen level info, for now ~ exaclty as in Ntuple */
-
-      genhelper.init(currentINDEP.genParticles(),currentPair.leg1(),currentPair.leg2(),
+        genhelper.init(currentINDEP.genParticles(),currentPair.leg1(),currentPair.leg2(),
                      currentPair.CandidateEventType());
 
-      
-      genParticle_pdgId = genhelper.genParticle_pdgId();
-      genParticle_status = genhelper.genParticle_status();
-      genParticle_isPrompt = genhelper.genParticle_isPrompt();
-      genParticle_isPromptFinalState = genhelper.genParticle_isPromptFinalState();
-      genParticle_isDirectPromptTauDecayProduct = genhelper.genParticle_isDirectPromptTauDecayProduct();
-      genParticle_isDirectPromptTauDecayProductFinalState = genhelper.genParticle_isDirectPromptTauDecayProductFinalState();
-      genParticle_pt = genhelper.genParticle_pt();
-      genParticle_eta = genhelper.genParticle_eta();
-      genParticle_phi = genhelper.genParticle_phi();
-      genParticle_M = genhelper.genParticle_M();
-      genDaughter_pdgId = genhelper.genDaughter_pdgId();
-      genDaughter_status = genhelper.genDaughter_status();
-      genDaughter_pt = genhelper.genDaughter_pt();
-      genDaughter_eta = genhelper.genDaughter_eta();
-      genDaughter_phi = genhelper.genDaughter_phi();
-      genDaughter_M = genhelper.genDaughter_M();
-      genMother_pdgId = genhelper.genMother_pdgId();
-      genMother_status = genhelper.genMother_status();
-      genMother_pt = genhelper.genMother_pt();
-      genMother_eta = genhelper.genMother_eta();
-      genMother_phi = genhelper.genMother_phi();
-      genMother_M = genhelper.genMother_M();
+      }
 
-     
-      /*  MC match type vals - new for 76X */
+      handlePairIndepInfo(iEvent,iSetup,currentINDEP);
+      handleCurrentEventInfo(iEvent,iSetup,currentPair);
+      handleSVFitCall(iEvent,iSetup,currentPair); 
+      handleLeg1AndLeg2Info(iEvent,iSetup,currentPair); 
 
 
-      leg1_MCMatchType = genhelper.leg1_MCMatchType();
-      leg1_genMCmatch_pt = genhelper.leg1_genMCmatch_pt();
-      leg1_genMCmatch_eta = genhelper.leg1_genMCmatch_eta();
-      leg1_genMCmatch_phi = genhelper.leg1_genMCmatch_phi();
-      leg1_genMCmatch_M = genhelper.leg1_genMCmatch_M();
-      leg1_MCMatchPdgId = genhelper.leg1_MCMatchPdgId();
 
-      leg2_MCMatchType = genhelper.leg2_MCMatchType();
-      leg2_genMCmatch_pt = genhelper.leg2_genMCmatch_pt();
-      leg2_genMCmatch_eta = genhelper.leg2_genMCmatch_eta();
-      leg2_genMCmatch_phi = genhelper.leg2_genMCmatch_phi();
-      leg2_genMCmatch_M = genhelper.leg2_genMCmatch_M();
-      leg2_MCMatchPdgId = genhelper.leg2_MCMatchPdgId();
+      std::cout<<" FILL H2TauTau! \n";
+      FlatTuple->Fill();
+
+  }
+
+
+
+}
+
+///////////////////////////////////////////////
+// ----- set TTree values for parameters that are pair indep.
+////////////////////////////////////////////////
+
+void FlatTupleGenerator::handleEffLeptonInfo(const edm::Event& iEvent, const edm::EventSetup& iSetup,
+ NtupleEvent currentPair)
+{
+
+
+
+
+  ////////////////
+  // fill the triggerSummaryChecks for effLeptons
+
+  for(std::size_t x = 0; x<triggerSummaryChecks.size();++x ) 
+  {
+
+    // check the OR of a specific version or a wildcard v* 
+    std::string label_ = triggerSummaryChecks[x]; 
+    std::string versionStrippedLabel_ = label_;
+    versionStrippedLabel_.erase(label_.find("_v"),label_.length());
+
+    for(std::size_t l = 0; l<currentPair.EffLepton().size(); ++l)
+    {
+
+      float trig = 0.0;
+      if(currentPair.isEffLeptonGoodForHLTPath(label_,l)) trig = 1.0;
+      else if(currentPair.isEffLeptonGoodForHLTPath(versionStrippedLabel_,l)) trig = 1.0;
+
+      effLep_GoodForHLTPath.at(x).second.push_back( trig );  
+
+    }
+
+  }
+
+
+  ////////////////////////////////
+  // fill the tauIDs for effLeptons
+
+  for(std::size_t x = 0; x<tauIDsToKeep.size();++x ) 
+  {
    
+    for(std::size_t l = 0; l<currentPair.EffLepton().size(); ++l)
+    {
 
-       IsZTT = genhelper.IsZTT();
-       IsZL = genhelper.IsZL();
-       IsZJ = genhelper.IsZJ();
-       IsZLL = genhelper.IsZLL();
+      if(currentPair.EffLepton().at(l).leptonType() == TupleLeptonTypes::aTau)
+      {
 
+        effLep_tauIDs.at(x).second.push_back( currentPair.EffLepton().at(l).tauID(tauIDsToKeep[x]) );  
 
-      /* stored rho's are the same for both legs */
-      rho = currentPair.leg1().rho("fixedGridRhoFastjetAll"); 
+      }
+      else
+      {
+        effLep_tauIDs.at(x).second.push_back( -999. );        
+      }  
 
-      /* 4-vectors of gen level boson */
-      genBosonTotal_pt = currentINDEP.GenBosonTotalMomentum().pt();
-      genBosonTotal_eta = currentINDEP.GenBosonTotalMomentum().eta();
-      genBosonTotal_phi = currentINDEP.GenBosonTotalMomentum().phi();
-      genBosonTotal_M = currentINDEP.GenBosonTotalMomentum().M();
+    }
 
-      genBosonVisible_pt = currentINDEP.GenBosonVisibleMomentum().pt();
-      genBosonVisible_eta = currentINDEP.GenBosonVisibleMomentum().eta();
-      genBosonVisible_phi = currentINDEP.GenBosonVisibleMomentum().phi();
-      genBosonVisible_M = currentINDEP.GenBosonVisibleMomentum().M();
+  }
 
 
 
 
 
+  for(std::size_t i = 0; i<currentPair.EffLepton().size(); ++i)
+  {
+    effLep_leptonType.push_back(currentPair.EffLepton().at(i).leptonType());
+    effLep_dz.push_back(currentPair.EffLepton().at(i).dz());
+    effLep_dxy.push_back(currentPair.EffLepton().at(i).dxy());
+    effLep_EffectiveArea.push_back(currentPair.EffLepton().at(i).EffectiveArea());
+    effLep_charge.push_back(currentPair.EffLepton().at(i).charge());
+    effLep_PFpdgId.push_back(currentPair.EffLepton().at(i).PFpdgId());
+    effLep_GENpdgId.push_back(currentPair.EffLepton().at(i).GENpdgId());
+    effLep_GENMOTHERpdgId.push_back(currentPair.EffLepton().at(i).GENMOTHERpdgId());
+    effLep_IP.push_back(currentPair.EffLepton().at(i).IP());
+    effLep_IPerror.push_back(currentPair.EffLepton().at(i).IPerror());
+    effLep_PUchargedHadronIso.push_back(currentPair.EffLepton().at(i).PUchargedHadronIso());
+    effLep_chargedHadronIso.push_back(currentPair.EffLepton().at(i).chargedHadronIso());
+    effLep_neutralHadronIso.push_back(currentPair.EffLepton().at(i).neutralHadronIso());
+    effLep_photonIso.push_back(currentPair.EffLepton().at(i).photonIso());
+    effLep_DepositR03ECal.push_back(currentPair.EffLepton().at(i).DepositR03ECal());
+    effLep_DepositR03Hcal.push_back(currentPair.EffLepton().at(i).DepositR03Hcal());
+    effLep_DepositR03TrackerOfficial.push_back(currentPair.EffLepton().at(i).DepositR03TrackerOfficial());
+    effLep_isGlobalMuon.push_back(currentPair.EffLepton().at(i).isGlobalMuon());
+    effLep_isGoodGlobalMuon.push_back(currentPair.EffLepton().at(i).isGoodGlobalMuon());
+    effLep_passesMediumMuonId.push_back(currentPair.EffLepton().at(i).passesMediumMuonId());
+    effLep_isLooseMuon.push_back(currentPair.EffLepton().at(i).isLooseMuon());
+    effLep_isPFMuon.push_back(currentPair.EffLepton().at(i).isPFMuon());
+    effLep_isSoftMuon.push_back(currentPair.EffLepton().at(i).isSoftMuon());
+    effLep_isTightMuon.push_back(currentPair.EffLepton().at(i).isTightMuon());
+    effLep_isTrackerMuon.push_back(currentPair.EffLepton().at(i).isTrackerMuon());
+    effLep_muonCombQualChi2LocalPosition.push_back(currentPair.EffLepton().at(i).muonCombQualChi2LocalPosition());
+    effLep_muonCombQualTrkKink.push_back(currentPair.EffLepton().at(i).muonCombQualTrkKink());
+    effLep_muonGlobalTrackNormChi2.push_back(currentPair.EffLepton().at(i).muonGlobalTrackNormChi2());
+    effLep_muonInnerTrkValidFraction.push_back(currentPair.EffLepton().at(i).muonInnerTrkValidFraction());
+    effLep_muonSegmentCompatibility.push_back(currentPair.EffLepton().at(i).muonSegmentCompatibility());
+    effLep_raw_electronMVA.push_back(currentPair.EffLepton().at(i).raw_electronMVA());
+    effLep_category_electronMVA.push_back(currentPair.EffLepton().at(i).category_electronMVA());
+    effLep_passFail_electronMVA80.push_back(currentPair.EffLepton().at(i).passFail_electronMVA80());
+    effLep_passFail_electronMVA90.push_back(currentPair.EffLepton().at(i).passFail_electronMVA90());
+    effLep_passFail_electronCutBasedID.push_back(currentPair.EffLepton().at(i).passFail_electronCutBasedID());
+    effLep_ooEmooP.push_back(currentPair.EffLepton().at(i).ooEmooP());
+    effLep_full5x5_sigmaIetaIeta.push_back(currentPair.EffLepton().at(i).full5x5_sigmaIetaIeta());
+    effLep_SuperClusterEta.push_back(currentPair.EffLepton().at(i).SuperClusterEta());
+    effLep_hadronicOverEm.push_back(currentPair.EffLepton().at(i).hadronicOverEm());
+    effLep_isEB.push_back(currentPair.EffLepton().at(i).isEB());
+    effLep_isEBEEGap.push_back(currentPair.EffLepton().at(i).isEBEEGap());
+    effLep_isEBEtaGap.push_back(currentPair.EffLepton().at(i).isEBEtaGap());
+    effLep_isEBPhiGap.push_back(currentPair.EffLepton().at(i).isEBPhiGap());
+    effLep_isEE.push_back(currentPair.EffLepton().at(i).isEE());
+    effLep_isEEDeeGap.push_back(currentPair.EffLepton().at(i).isEEDeeGap());
+    effLep_isEERingGap.push_back(currentPair.EffLepton().at(i).isEERingGap());
+    effLep_deltaEtaSuperClusterTrackAtVtx.push_back(currentPair.EffLepton().at(i).deltaEtaSuperClusterTrackAtVtx());
+    effLep_deltaPhiSuperClusterTrackAtVtx.push_back(currentPair.EffLepton().at(i).deltaPhiSuperClusterTrackAtVtx());
+    effLep_sigmaEtaEta.push_back(currentPair.EffLepton().at(i).sigmaEtaEta());
+    effLep_sigmaIetaIeta.push_back(currentPair.EffLepton().at(i).sigmaIetaIeta());
+    effLep_sigmaIphiIphi.push_back(currentPair.EffLepton().at(i).sigmaIphiIphi());
+    effLep_numberOfMissingInnerHits.push_back(currentPair.EffLepton().at(i).numberOfMissingInnerHits());
+    effLep_numberOfMissingOuterHits.push_back(currentPair.EffLepton().at(i).numberOfMissingOuterHits());
+    effLep_numberOfTrackHits.push_back(currentPair.EffLepton().at(i).numberOfTrackHits());
+    effLep_passConversionVeto.push_back(currentPair.EffLepton().at(i).passConversionVeto());
+    effLep_ZimpactTau.push_back(currentPair.EffLepton().at(i).ZimpactTau());
+    effLep_dzTauVertex.push_back(currentPair.EffLepton().at(i).dzTauVertex());
+    effLep_numStrips.push_back(currentPair.EffLepton().at(i).numStrips());
+    effLep_numHadrons.push_back(currentPair.EffLepton().at(i).numHadrons());
+    effLep_decayMode.push_back(currentPair.EffLepton().at(i).decayMode());
+    effLep_pt.push_back(currentPair.EffLepton().at(i).p4().pt());
+    effLep_gen_pt.push_back(currentPair.EffLepton().at(i).gen_p4().pt());
+    effLep_genMother_pt.push_back(currentPair.EffLepton().at(i).genMother_p4().pt());
+    effLep_genJet_pt.push_back(currentPair.EffLepton().at(i).genJet_p4().pt());
+    effLep_eta.push_back(currentPair.EffLepton().at(i).p4().eta());
+    effLep_gen_eta.push_back(currentPair.EffLepton().at(i).gen_p4().eta());
+    effLep_genMother_eta.push_back(currentPair.EffLepton().at(i).genMother_p4().eta());
+    effLep_genJet_eta.push_back(currentPair.EffLepton().at(i).genJet_p4().eta());
+    effLep_phi.push_back(currentPair.EffLepton().at(i).p4().phi());
+    effLep_gen_phi.push_back(currentPair.EffLepton().at(i).gen_p4().phi());
+    effLep_genMother_phi.push_back(currentPair.EffLepton().at(i).genMother_p4().phi());
+    effLep_genJet_phi.push_back(currentPair.EffLepton().at(i).genJet_p4().phi());
+    effLep_M.push_back(currentPair.EffLepton().at(i).p4().M());
+    effLep_gen_M.push_back(currentPair.EffLepton().at(i).gen_p4().M());
+    effLep_genMother_M.push_back(currentPair.EffLepton().at(i).genMother_p4().M());
+    effLep_genJet_M.push_back(currentPair.EffLepton().at(i).genJet_p4().M());
 
+
+
+    /* set the relative isolation value dep. on the lepton type */
+
+    if(currentPair.EffLepton().at(i).leptonType() == TupleLeptonTypes::anElectron)
+    {
+      effLep_RelIso.push_back(currentPair.EffLepton().at(i).relativeIsol(electronIsolationForRelIsoBranch));
+    }
+
+    else if(currentPair.EffLepton().at(i).leptonType() == TupleLeptonTypes::aMuon)
+    {
+      effLep_RelIso.push_back(currentPair.EffLepton().at(i).relativeIsol(muonIsolationForRelIsoBranch));
+    }
+
+    else if(currentPair.EffLepton().at(i).leptonType() == TupleLeptonTypes::aTau)
+    {
+      effLep_RelIso.push_back(currentPair.EffLepton().at(i).tauID(tauIsolationForRelIsoBranch));
+    }
+
+  
+
+    /* stored rho's are the same for all effLeptons since it is an event quantity */
+    rho = currentPair.EffLepton().at(i).rho("fixedGridRhoFastjetAll"); 
+
+
+  }
+
+
+
+
+  /* mc matches */
+
+  effLep_MCMatchType = genhelper.effLep_MCMatchType();
+  effLep_genMCmatch_pt = genhelper.effLep_genMCmatch_pt();
+  effLep_genMCmatch_eta = genhelper.effLep_genMCmatch_eta();
+  effLep_genMCmatch_phi = genhelper.effLep_genMCmatch_phi();
+  effLep_genMCmatch_M = genhelper.effLep_genMCmatch_M();
+  effLep_MCMatchPdgId = genhelper.effLep_MCMatchPdgId();
+
+
+}
+
+void FlatTupleGenerator::handleLeg1AndLeg2Info(const edm::Event& iEvent, const edm::EventSetup& iSetup,
+ NtupleEvent currentPair)
+{
+
+  /* fill info accessed through leg1 and leg2 */
+
+  ////////////////////////////////
+  // fill the tauIDs for tau legs
+
+  for(std::size_t x = 0; x<tauIDsToKeep.size();++x ) 
+  {
+    
+    if(currentPair.leg1().leptonType() == TupleLeptonTypes::aTau)
+    {
+        leg1_tauIDs[x]  =  currentPair.leg1().tauID(tauIDsToKeep[x]);
+    }
+
+    if(currentPair.leg2().leptonType() == TupleLeptonTypes::aTau)
+    {
+        leg2_tauIDs[x]  =  currentPair.leg2().tauID(tauIDsToKeep[x]);
+    }
+
+  }
+
+
+  ////////////////
+  // fill the triggerSummaryChecks for both legs
+
+  for(std::size_t x = 0; x<triggerSummaryChecks.size();++x ) 
+  {
+
+    // check the OR of a specific version or a wildcard v* 
+    std::string label_ = triggerSummaryChecks[x]; 
+    std::string versionStrippedLabel_ = label_;
+    versionStrippedLabel_.erase(label_.find("_v"),label_.length());
+
+    float l1trig = 0.0;
+    float l2trig = 0.0;
+
+    if(currentPair.isLeg1GoodForHLTPath(label_)) l1trig = 1.0;
+    else if(currentPair.isLeg1GoodForHLTPath(versionStrippedLabel_)) l1trig = 1.0;
+
+    if(currentPair.isLeg2GoodForHLTPath(label_)) l2trig = 1.0;
+    else if(currentPair.isLeg2GoodForHLTPath(versionStrippedLabel_)) l2trig = 1.0;
+
+    leg1_GoodForHLTPath[x]  =  l1trig;
+    leg2_GoodForHLTPath[x]  =  l2trig;
+  }
+
+  /* general leg info */
+
+  leg1_leptonType = currentPair.leg1().leptonType();
+  leg1_dz = currentPair.leg1().dz();
+  leg1_dxy = currentPair.leg1().dxy();
+  leg1_EffectiveArea = currentPair.leg1().EffectiveArea();
+  leg1_charge = currentPair.leg1().charge();
+  leg1_PFpdgId = currentPair.leg1().PFpdgId();
+  leg1_GENpdgId = currentPair.leg1().GENpdgId();
+  leg1_GENMOTHERpdgId = currentPair.leg1().GENMOTHERpdgId();
+  leg1_IP = currentPair.leg1().IP();
+  leg1_IPerror = currentPair.leg1().IPerror();
+  leg1_PUchargedHadronIso = currentPair.leg1().PUchargedHadronIso();
+  leg1_chargedHadronIso = currentPair.leg1().chargedHadronIso();
+  leg1_neutralHadronIso = currentPair.leg1().neutralHadronIso();
+  leg1_photonIso = currentPair.leg1().photonIso();
+  leg1_DepositR03ECal = currentPair.leg1().DepositR03ECal();
+  leg1_DepositR03Hcal = currentPair.leg1().DepositR03Hcal();
+  leg1_DepositR03TrackerOfficial = currentPair.leg1().DepositR03TrackerOfficial();
+  leg1_isGlobalMuon = currentPair.leg1().isGlobalMuon();
+  leg1_isGoodGlobalMuon = currentPair.leg1().isGoodGlobalMuon();
+  leg1_passesMediumMuonId = currentPair.leg1().passesMediumMuonId();
+  leg1_isLooseMuon = currentPair.leg1().isLooseMuon();
+  leg1_isPFMuon = currentPair.leg1().isPFMuon();
+  leg1_isSoftMuon = currentPair.leg1().isSoftMuon();
+  leg1_isTightMuon = currentPair.leg1().isTightMuon();
+  leg1_isTrackerMuon = currentPair.leg1().isTrackerMuon();
+  leg1_muonCombQualChi2LocalPosition = currentPair.leg1().muonCombQualChi2LocalPosition();
+  leg1_muonCombQualTrkKink = currentPair.leg1().muonCombQualTrkKink();
+  leg1_muonGlobalTrackNormChi2 = currentPair.leg1().muonGlobalTrackNormChi2();
+  leg1_muonInnerTrkValidFraction = currentPair.leg1().muonInnerTrkValidFraction();
+  leg1_muonSegmentCompatibility = currentPair.leg1().muonSegmentCompatibility();
+  leg1_raw_electronMVA = currentPair.leg1().raw_electronMVA();
+  leg1_category_electronMVA = currentPair.leg1().category_electronMVA();
+  leg1_passFail_electronMVA80 = currentPair.leg1().passFail_electronMVA80();
+  leg1_passFail_electronMVA90 = currentPair.leg1().passFail_electronMVA90();
+  leg1_passFail_electronCutBasedID = currentPair.leg1().passFail_electronCutBasedID();
+  leg1_ooEmooP = currentPair.leg1().ooEmooP();
+  leg1_full5x5_sigmaIetaIeta = currentPair.leg1().full5x5_sigmaIetaIeta();
+  leg1_SuperClusterEta = currentPair.leg1().SuperClusterEta();
+  leg1_hadronicOverEm = currentPair.leg1().hadronicOverEm();
+  leg1_isEB = currentPair.leg1().isEB();
+  leg1_isEBEEGap = currentPair.leg1().isEBEEGap();
+  leg1_isEBEtaGap = currentPair.leg1().isEBEtaGap();
+  leg1_isEBPhiGap = currentPair.leg1().isEBPhiGap();
+  leg1_isEE = currentPair.leg1().isEE();
+  leg1_isEEDeeGap = currentPair.leg1().isEEDeeGap();
+  leg1_isEERingGap = currentPair.leg1().isEERingGap();
+  leg1_deltaEtaSuperClusterTrackAtVtx = currentPair.leg1().deltaEtaSuperClusterTrackAtVtx();
+  leg1_deltaPhiSuperClusterTrackAtVtx = currentPair.leg1().deltaPhiSuperClusterTrackAtVtx();
+  leg1_sigmaEtaEta = currentPair.leg1().sigmaEtaEta();
+  leg1_sigmaIetaIeta = currentPair.leg1().sigmaIetaIeta();
+  leg1_sigmaIphiIphi = currentPair.leg1().sigmaIphiIphi();
+  leg1_numberOfMissingInnerHits = currentPair.leg1().numberOfMissingInnerHits();
+  leg1_numberOfMissingOuterHits = currentPair.leg1().numberOfMissingOuterHits();
+  leg1_numberOfTrackHits = currentPair.leg1().numberOfTrackHits();
+  leg1_passConversionVeto = currentPair.leg1().passConversionVeto();
+  leg1_ZimpactTau = currentPair.leg1().ZimpactTau();
+  leg1_dzTauVertex = currentPair.leg1().dzTauVertex();
+  leg1_numStrips = currentPair.leg1().numStrips();
+  leg1_numHadrons = currentPair.leg1().numHadrons();
+  leg1_decayMode = currentPair.leg1().decayMode();
+  leg2_leptonType = currentPair.leg2().leptonType();
+
+
+  leg2_dz = currentPair.leg2().dz();
+  leg2_dxy = currentPair.leg2().dxy();
+  leg2_EffectiveArea = currentPair.leg2().EffectiveArea();
+  leg2_charge = currentPair.leg2().charge();
+  leg2_PFpdgId = currentPair.leg2().PFpdgId();
+  leg2_GENpdgId = currentPair.leg2().GENpdgId();
+  leg2_GENMOTHERpdgId = currentPair.leg2().GENMOTHERpdgId();
+  leg2_IP = currentPair.leg2().IP();
+  leg2_IPerror = currentPair.leg2().IPerror();
+  leg2_PUchargedHadronIso = currentPair.leg2().PUchargedHadronIso();
+  leg2_chargedHadronIso = currentPair.leg2().chargedHadronIso();
+  leg2_neutralHadronIso = currentPair.leg2().neutralHadronIso();
+  leg2_photonIso = currentPair.leg2().photonIso();
+  leg2_DepositR03ECal = currentPair.leg2().DepositR03ECal();
+  leg2_DepositR03Hcal = currentPair.leg2().DepositR03Hcal();
+  leg2_DepositR03TrackerOfficial = currentPair.leg2().DepositR03TrackerOfficial();
+  leg2_isGlobalMuon = currentPair.leg2().isGlobalMuon();
+  leg2_isGoodGlobalMuon = currentPair.leg2().isGoodGlobalMuon();
+  leg2_passesMediumMuonId = currentPair.leg2().passesMediumMuonId();
+  leg2_isLooseMuon = currentPair.leg2().isLooseMuon();
+  leg2_isPFMuon = currentPair.leg2().isPFMuon();
+  leg2_isSoftMuon = currentPair.leg2().isSoftMuon();
+  leg2_isTightMuon = currentPair.leg2().isTightMuon();
+  leg2_isTrackerMuon = currentPair.leg2().isTrackerMuon();
+  leg2_muonCombQualChi2LocalPosition = currentPair.leg2().muonCombQualChi2LocalPosition();
+  leg2_muonCombQualTrkKink = currentPair.leg2().muonCombQualTrkKink();
+  leg2_muonGlobalTrackNormChi2 = currentPair.leg2().muonGlobalTrackNormChi2();
+  leg2_muonInnerTrkValidFraction = currentPair.leg2().muonInnerTrkValidFraction();
+  leg2_muonSegmentCompatibility = currentPair.leg2().muonSegmentCompatibility();
+  leg2_raw_electronMVA = currentPair.leg2().raw_electronMVA();
+  leg2_category_electronMVA = currentPair.leg2().category_electronMVA();
+  leg2_passFail_electronMVA80 = currentPair.leg2().passFail_electronMVA80();
+  leg2_passFail_electronMVA90 = currentPair.leg2().passFail_electronMVA90();
+  leg2_passFail_electronCutBasedID = currentPair.leg2().passFail_electronCutBasedID();
+  leg2_ooEmooP = currentPair.leg2().ooEmooP();
+  leg2_full5x5_sigmaIetaIeta = currentPair.leg2().full5x5_sigmaIetaIeta();
+  leg2_SuperClusterEta = currentPair.leg2().SuperClusterEta();
+  leg2_hadronicOverEm = currentPair.leg2().hadronicOverEm();
+  leg2_isEB = currentPair.leg2().isEB();
+  leg2_isEBEEGap = currentPair.leg2().isEBEEGap();
+  leg2_isEBEtaGap = currentPair.leg2().isEBEtaGap();
+  leg2_isEBPhiGap = currentPair.leg2().isEBPhiGap();
+  leg2_isEE = currentPair.leg2().isEE();
+  leg2_isEEDeeGap = currentPair.leg2().isEEDeeGap();
+  leg2_isEERingGap = currentPair.leg2().isEERingGap();
+  leg2_deltaEtaSuperClusterTrackAtVtx = currentPair.leg2().deltaEtaSuperClusterTrackAtVtx();
+  leg2_deltaPhiSuperClusterTrackAtVtx = currentPair.leg2().deltaPhiSuperClusterTrackAtVtx();
+  leg2_sigmaEtaEta = currentPair.leg2().sigmaEtaEta();
+  leg2_sigmaIetaIeta = currentPair.leg2().sigmaIetaIeta();
+  leg2_sigmaIphiIphi = currentPair.leg2().sigmaIphiIphi();
+  leg2_numberOfMissingInnerHits = currentPair.leg2().numberOfMissingInnerHits();
+  leg2_numberOfMissingOuterHits = currentPair.leg2().numberOfMissingOuterHits();
+  leg2_numberOfTrackHits = currentPair.leg2().numberOfTrackHits();
+  leg2_passConversionVeto = currentPair.leg2().passConversionVeto();
+  leg2_ZimpactTau = currentPair.leg2().ZimpactTau();
+  leg2_numStrips = currentPair.leg2().numStrips();
+  leg2_numHadrons = currentPair.leg2().numHadrons();
+  leg2_decayMode = currentPair.leg2().decayMode();
+  leg2_dzTauVertex = currentPair.leg2().dzTauVertex();
+
+
+  leg2_pt = currentPair.leg2().p4().pt();
+  leg2_gen_pt = currentPair.leg2().gen_p4().pt();
+  leg2_genMother_pt = currentPair.leg2().genMother_p4().pt();
+  leg2_genJet_pt = currentPair.leg2().genJet_p4().pt();
+  leg1_pt = currentPair.leg1().p4().pt();
+  leg1_gen_pt = currentPair.leg1().gen_p4().pt();
+  leg1_genMother_pt = currentPair.leg1().genMother_p4().pt();
+  leg1_genJet_pt = currentPair.leg1().genJet_p4().pt();
+  leg2_eta = currentPair.leg2().p4().eta();
+  leg2_gen_eta = currentPair.leg2().gen_p4().eta();
+  leg2_genMother_eta = currentPair.leg2().genMother_p4().eta();
+  leg2_genJet_eta = currentPair.leg2().genJet_p4().eta();
+  leg1_eta = currentPair.leg1().p4().eta();
+  leg1_gen_eta = currentPair.leg1().gen_p4().eta();
+  leg1_genMother_eta = currentPair.leg1().genMother_p4().eta();
+  leg1_genJet_eta = currentPair.leg1().genJet_p4().eta();
+  leg2_phi = currentPair.leg2().p4().phi();
+  leg2_gen_phi = currentPair.leg2().gen_p4().phi();
+  leg2_genMother_phi = currentPair.leg2().genMother_p4().phi();
+  
+  leg2_genJet_phi = currentPair.leg2().genJet_p4().phi();
+  leg1_phi = currentPair.leg1().p4().phi();
+  leg1_gen_phi = currentPair.leg1().gen_p4().phi();
+  leg1_genMother_phi = currentPair.leg1().genMother_p4().phi();
+  leg1_genJet_phi = currentPair.leg1().genJet_p4().phi();
+  leg2_M = currentPair.leg2().p4().M();
+  leg2_gen_M = currentPair.leg2().gen_p4().M();
+  leg2_genMother_M = currentPair.leg2().genMother_p4().M();
+  leg2_genJet_M = currentPair.leg2().genJet_p4().M();
+  leg1_M = currentPair.leg1().p4().M();
+  leg1_gen_M = currentPair.leg1().gen_p4().M();
+  leg1_genMother_M = currentPair.leg1().genMother_p4().M();
+  leg1_genJet_M = currentPair.leg1().genJet_p4().M();
+
+
+
+  /* set the relative isolation value dep. on the lepton type */
+
+  if(currentPair.leg1().leptonType() == TupleLeptonTypes::anElectron)
+  {
+    leg1_RelIso = currentPair.leg1().relativeIsol(electronIsolationForRelIsoBranch);
+  }
+
+  else if(currentPair.leg1().leptonType() == TupleLeptonTypes::aMuon)
+  {
+    leg1_RelIso = currentPair.leg1().relativeIsol(muonIsolationForRelIsoBranch);
+  }
+
+  else if(currentPair.leg1().leptonType() == TupleLeptonTypes::aTau)
+  {
+    leg1_RelIso = currentPair.leg1().tauID(tauIsolationForRelIsoBranch);
+  }
+
+
+  if(currentPair.leg2().leptonType() == TupleLeptonTypes::anElectron)
+  {
+    leg2_RelIso = currentPair.leg2().relativeIsol(electronIsolationForRelIsoBranch);
+  }
+
+  else if(currentPair.leg2().leptonType() == TupleLeptonTypes::aMuon)
+  {
+    leg2_RelIso = currentPair.leg2().relativeIsol(muonIsolationForRelIsoBranch);
+  }
+
+  else if(currentPair.leg2().leptonType() == TupleLeptonTypes::aTau)
+  {
+    leg2_RelIso = currentPair.leg2().tauID(tauIsolationForRelIsoBranch);
+  }
+
+  
+
+  /* stored rho's are the same for both legs */
+  rho = currentPair.leg1().rho("fixedGridRhoFastjetAll"); 
+
+ 
+  /*  MC match type vals - new for 76X */
+
+
+  leg1_MCMatchType = genhelper.leg1_MCMatchType();
+  leg1_genMCmatch_pt = genhelper.leg1_genMCmatch_pt();
+  leg1_genMCmatch_eta = genhelper.leg1_genMCmatch_eta();
+  leg1_genMCmatch_phi = genhelper.leg1_genMCmatch_phi();
+  leg1_genMCmatch_M = genhelper.leg1_genMCmatch_M();
+  leg1_MCMatchPdgId = genhelper.leg1_MCMatchPdgId();
+
+  leg2_MCMatchType = genhelper.leg2_MCMatchType();
+  leg2_genMCmatch_pt = genhelper.leg2_genMCmatch_pt();
+  leg2_genMCmatch_eta = genhelper.leg2_genMCmatch_eta();
+  leg2_genMCmatch_phi = genhelper.leg2_genMCmatch_phi();
+  leg2_genMCmatch_M = genhelper.leg2_genMCmatch_M();
+  leg2_MCMatchPdgId = genhelper.leg2_MCMatchPdgId();
+
+
+  IsZTT = genhelper.IsZTT();
+  IsZL = genhelper.IsZL();
+  IsZJ = genhelper.IsZJ();
+  IsZLL = genhelper.IsZLL();
+
+
+  
+
+}
+
+
+
+void FlatTupleGenerator::handleSVFitCall(const edm::Event& iEvent, const edm::EventSetup& iSetup,
+ NtupleEvent currentPair)
+{
+
+  
 
 //////////////////////////////////////////////////////
 //////// begin an SVMass computation 
 
-      if (flatTuple_recomputeSVmass)
-      {     
-     
-        // if any hadronically decaying taus did not pass decayModeFindingNewDMs,
-        // do not run SVFit 
+  if (flatTuple_recomputeSVmass)
+  {     
+ 
+    // if any hadronically decaying taus did not pass decayModeFindingNewDMs,
+    // do not run SVFit 
 
-        bool goodTauDecays = 1;
+    bool goodTauDecays = 1;
 
-        if(currentPair.leg1().leptonType() == TupleLeptonTypes::aTau)
+    if(currentPair.leg1().leptonType() == TupleLeptonTypes::aTau)
+    {
+      if(currentPair.leg1().tauID("decayModeFindingNewDMs") < 0.5 ) goodTauDecays = 0;
+    }
+
+    if(currentPair.leg2().leptonType() == TupleLeptonTypes::aTau)
+    {
+      if(currentPair.leg2().tauID("decayModeFindingNewDMs") < 0.5 ) goodTauDecays = 0;
+    }
+
+
+    if(goodTauDecays)
+    {
+
+      std::vector<svFitStandalone::MeasuredTauLepton> measuredTauLeptons;
+      measuredTauLeptons.clear();
+
+      // new way to order legs for SV mass in 76X analysis 
+
+
+      ////////////////////////////////////////////////////////
+      // ele + ele choose higher pt leg to push back 1st    //
+      ////////////////////////////////////////////////////////
+
+
+      if(CandidateEventType == TupleCandidateEventTypes::EleEle)
+      {
+        if(currentPair.leg1().p4().pt() >= currentPair.leg2().p4().pt())
         {
-          if(currentPair.leg1().tauID("decayModeFindingNewDMs") < 0.5 ) goodTauDecays = 0;
+
+          measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
+          svFitStandalone::kTauToElecDecay, 
+          currentPair.leg1().p4().pt(),currentPair.leg1().p4().eta(),currentPair.leg1().p4().phi(),
+          svFitStandalone::electronMass));
+
+          measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
+          svFitStandalone::kTauToElecDecay, 
+          currentPair.leg2().p4().pt(),currentPair.leg2().p4().eta(),currentPair.leg2().p4().phi(),
+          svFitStandalone::electronMass));
+
+        }
+        else
+        {
+          
+          measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
+          svFitStandalone::kTauToElecDecay, 
+          currentPair.leg2().p4().pt(),currentPair.leg2().p4().eta(),currentPair.leg2().p4().phi(),
+          svFitStandalone::electronMass));
+
+          measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
+          svFitStandalone::kTauToElecDecay, 
+          currentPair.leg1().p4().pt(),currentPair.leg1().p4().eta(),currentPair.leg1().p4().phi(),
+          svFitStandalone::electronMass));
+
+        }
+      }
+
+      ////////////////////////////////////////////////////////
+      // mu + mu choose higher pt leg to push back 1st    //
+      ////////////////////////////////////////////////////////
+
+
+      if(CandidateEventType == TupleCandidateEventTypes::MuonMuon)
+      {
+        if(currentPair.leg1().p4().pt() >= currentPair.leg2().p4().pt())
+        {
+
+          measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
+          svFitStandalone::kTauToMuDecay, 
+          currentPair.leg1().p4().pt(),currentPair.leg1().p4().eta(),currentPair.leg1().p4().phi(),
+          svFitStandalone::muonMass));
+
+
+          measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
+          svFitStandalone::kTauToMuDecay, 
+          currentPair.leg2().p4().pt(),currentPair.leg2().p4().eta(),currentPair.leg2().p4().phi(),
+          svFitStandalone::muonMass));
+
+          
+        }
+        else
+        {
+
+
+          measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
+          svFitStandalone::kTauToMuDecay, 
+          currentPair.leg2().p4().pt(),currentPair.leg2().p4().eta(),currentPair.leg2().p4().phi(),
+          svFitStandalone::muonMass));
+
+          measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
+          svFitStandalone::kTauToMuDecay, 
+          currentPair.leg1().p4().pt(),currentPair.leg1().p4().eta(),currentPair.leg1().p4().phi(),
+          svFitStandalone::muonMass));
+
+          
+        }
+      }
+
+      ////////////////////////////////////////////////////////
+      // tau + tau choose higher pt leg to push back 1st    //
+      ////////////////////////////////////////////////////////
+
+
+      if(CandidateEventType == TupleCandidateEventTypes::TauTau)
+      {
+        std::cout<<" Flat Decay Mode **** 1, 2 = "<<currentPair.leg1().decayMode()<<" "<<currentPair.leg2().decayMode()<<"\n";
+
+
+        if(currentPair.leg1().p4().pt() >= currentPair.leg2().p4().pt())
+        {
+
+          measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
+          svFitStandalone::kTauToHadDecay,
+          currentPair.leg1().p4().pt(),currentPair.leg1().p4().eta(),currentPair.leg1().p4().phi(),
+          currentPair.leg1().p4().mass(), leg1_decayMode));
+
+          measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
+          svFitStandalone::kTauToHadDecay,
+          currentPair.leg2().p4().pt(),currentPair.leg2().p4().eta(),currentPair.leg2().p4().phi(),
+          currentPair.leg2().p4().mass(), leg2_decayMode));
+
+          
+        }
+        else
+        {
+          measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
+          svFitStandalone::kTauToHadDecay,
+          currentPair.leg2().p4().pt(),currentPair.leg2().p4().eta(),currentPair.leg2().p4().phi(),
+          currentPair.leg2().p4().mass(), leg2_decayMode));
+
+          measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
+          svFitStandalone::kTauToHadDecay,
+          currentPair.leg1().p4().pt(),currentPair.leg1().p4().eta(),currentPair.leg1().p4().phi(),
+          currentPair.leg1().p4().mass(), leg1_decayMode));
+
+        }
+      }
+
+
+      ////////////////////////////////////////////////////////
+      // ele + mu choose ele leg to push back 1st    //
+      ////////////////////////////////////////////////////////
+
+
+      if(CandidateEventType == TupleCandidateEventTypes::EleMuon)
+      {
+
+        if(currentPair.leg1().leptonType() == TupleLeptonTypes::anElectron)
+        {
+
+          measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
+          svFitStandalone::kTauToElecDecay, 
+          currentPair.leg1().p4().pt(),currentPair.leg1().p4().eta(),currentPair.leg1().p4().phi(),
+          svFitStandalone::electronMass));
+
+          measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
+          svFitStandalone::kTauToMuDecay, 
+          currentPair.leg2().p4().pt(),currentPair.leg2().p4().eta(),currentPair.leg2().p4().phi(),
+          svFitStandalone::muonMass));
+
         }
 
-        if(currentPair.leg2().leptonType() == TupleLeptonTypes::aTau)
+        else 
         {
-          if(currentPair.leg2().tauID("decayModeFindingNewDMs") < 0.5 ) goodTauDecays = 0;
+
+          measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
+          svFitStandalone::kTauToElecDecay, 
+          currentPair.leg2().p4().pt(),currentPair.leg2().p4().eta(),currentPair.leg2().p4().phi(),
+          svFitStandalone::electronMass));
+
+          measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
+          svFitStandalone::kTauToMuDecay, 
+          currentPair.leg1().p4().pt(),currentPair.leg1().p4().eta(),currentPair.leg1().p4().phi(),
+          svFitStandalone::muonMass));
+
         }
 
+      }
 
-        if(goodTauDecays)
+
+      ////////////////////////////////////////////////////////
+      // ele + tau choose ele leg to push back 1st    //
+      ////////////////////////////////////////////////////////
+
+
+      if(CandidateEventType == TupleCandidateEventTypes::EleTau)
+      {
+
+        if(currentPair.leg1().leptonType() == TupleLeptonTypes::anElectron)
         {
 
-          std::vector<svFitStandalone::MeasuredTauLepton> measuredTauLeptons;
-          measuredTauLeptons.clear();
+          measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
+          svFitStandalone::kTauToElecDecay, 
+          currentPair.leg1().p4().pt(),currentPair.leg1().p4().eta(),currentPair.leg1().p4().phi(),
+          svFitStandalone::electronMass));
 
-          // new way to order legs for SV mass in 76X analysis 
+          measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
+          svFitStandalone::kTauToHadDecay,
+          currentPair.leg2().p4().pt(),currentPair.leg2().p4().eta(),currentPair.leg2().p4().phi(),
+          currentPair.leg2().p4().mass(), leg2_decayMode));
 
+        }
 
-          ////////////////////////////////////////////////////////
-          // ele + ele choose higher pt leg to push back 1st    //
-          ////////////////////////////////////////////////////////
+        else 
+        {
 
+          measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
+          svFitStandalone::kTauToElecDecay, 
+          currentPair.leg2().p4().pt(),currentPair.leg2().p4().eta(),currentPair.leg2().p4().phi(),
+          svFitStandalone::electronMass));
 
-          if(CandidateEventType == TupleCandidateEventTypes::EleEle)
-          {
-            if(currentPair.leg1().p4().pt() >= currentPair.leg2().p4().pt())
-            {
 
-              measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
-              svFitStandalone::kTauToElecDecay, 
-              currentPair.leg1().p4().pt(),currentPair.leg1().p4().eta(),currentPair.leg1().p4().phi(),
-              svFitStandalone::electronMass));
+          measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
+          svFitStandalone::kTauToHadDecay,
+          currentPair.leg1().p4().pt(),currentPair.leg1().p4().eta(),currentPair.leg1().p4().phi(),
+          currentPair.leg1().p4().mass(), leg1_decayMode));
 
-              measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
-              svFitStandalone::kTauToElecDecay, 
-              currentPair.leg2().p4().pt(),currentPair.leg2().p4().eta(),currentPair.leg2().p4().phi(),
-              svFitStandalone::electronMass));
+        }
 
-            }
-            else
-            {
-              
-              measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
-              svFitStandalone::kTauToElecDecay, 
-              currentPair.leg2().p4().pt(),currentPair.leg2().p4().eta(),currentPair.leg2().p4().phi(),
-              svFitStandalone::electronMass));
+      }
 
-              measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
-              svFitStandalone::kTauToElecDecay, 
-              currentPair.leg1().p4().pt(),currentPair.leg1().p4().eta(),currentPair.leg1().p4().phi(),
-              svFitStandalone::electronMass));
 
-            }
-          }
+      ////////////////////////////////////////////////////////
+      // mu + tau choose mu leg to push back 1st    //
+      ////////////////////////////////////////////////////////
 
-          ////////////////////////////////////////////////////////
-          // mu + mu choose higher pt leg to push back 1st    //
-          ////////////////////////////////////////////////////////
+     if(CandidateEventType == TupleCandidateEventTypes::MuonTau)
+      {
 
+        if(currentPair.leg1().leptonType() == TupleLeptonTypes::aMuon)
+        {
 
-          if(CandidateEventType == TupleCandidateEventTypes::MuonMuon)
-          {
-            if(currentPair.leg1().p4().pt() >= currentPair.leg2().p4().pt())
-            {
+          measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
+          svFitStandalone::kTauToMuDecay, 
+          currentPair.leg1().p4().pt(),currentPair.leg1().p4().eta(),currentPair.leg1().p4().phi(),
+          svFitStandalone::muonMass));
 
-              measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
-              svFitStandalone::kTauToMuDecay, 
-              currentPair.leg1().p4().pt(),currentPair.leg1().p4().eta(),currentPair.leg1().p4().phi(),
-              svFitStandalone::muonMass));
+          measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
+          svFitStandalone::kTauToHadDecay,
+          currentPair.leg2().p4().pt(),currentPair.leg2().p4().eta(),currentPair.leg2().p4().phi(),
+          currentPair.leg2().p4().mass(), leg2_decayMode));
 
+        }
 
-              measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
-              svFitStandalone::kTauToMuDecay, 
-              currentPair.leg2().p4().pt(),currentPair.leg2().p4().eta(),currentPair.leg2().p4().phi(),
-              svFitStandalone::muonMass));
+        else 
+        {
 
-              
-            }
-            else
-            {
+          measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
+          svFitStandalone::kTauToMuDecay, 
+          currentPair.leg2().p4().pt(),currentPair.leg2().p4().eta(),currentPair.leg2().p4().phi(),
+          svFitStandalone::muonMass));
 
 
-              measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
-              svFitStandalone::kTauToMuDecay, 
-              currentPair.leg2().p4().pt(),currentPair.leg2().p4().eta(),currentPair.leg2().p4().phi(),
-              svFitStandalone::muonMass));
+          measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
+          svFitStandalone::kTauToHadDecay,
+          currentPair.leg1().p4().pt(),currentPair.leg1().p4().eta(),currentPair.leg1().p4().phi(),
+          currentPair.leg1().p4().mass(), leg1_decayMode));
 
-              measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
-              svFitStandalone::kTauToMuDecay, 
-              currentPair.leg1().p4().pt(),currentPair.leg1().p4().eta(),currentPair.leg1().p4().phi(),
-              svFitStandalone::muonMass));
+        }
 
-              
-            }
-          }
+      }
 
-          ////////////////////////////////////////////////////////
-          // tau + tau choose higher pt leg to push back 1st    //
-          ////////////////////////////////////////////////////////
+      ///////////////////////////////////////
+      // next set the met and cov matrix   //
+      ///////////////////////////////////////
 
 
-          if(CandidateEventType == TupleCandidateEventTypes::TauTau)
-          {
-            std::cout<<" Flat Decay Mode **** 1, 2 = "<<currentPair.leg1().decayMode()<<" "<<currentPair.leg2().decayMode()<<"\n";
 
+      TMatrixD covMET(2, 2); 
+      TLorentzVector svMassMET(0,0,0,0);
 
-            if(currentPair.leg1().p4().pt() >= currentPair.leg2().p4().pt())
-            {
+      if(flatTuple_useMVAmet)
+      { 
+        svMassMET.SetPtEtaPhiM( mvaMET, 0.0, mvaMETphi, 0.0 );
+        covMET[0][0] = mvaMET_cov00;
+        covMET[1][0] = mvaMET_cov10;
+        covMET[0][1] = mvaMET_cov01;
+        covMET[1][1] = mvaMET_cov11;
 
-              measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
-              svFitStandalone::kTauToHadDecay,
-              currentPair.leg1().p4().pt(),currentPair.leg1().p4().eta(),currentPair.leg1().p4().phi(),
-              currentPair.leg1().p4().mass(), leg1_decayMode));
+      }
+      else 
+      {
+        svMassMET.SetPtEtaPhiM( pfMET, 0.0, pfMETphi, 0.0 );
+        covMET[0][0] = pfMET_cov00;
+        covMET[1][0] = pfMET_cov10;
+        covMET[0][1] = pfMET_cov01;
+        covMET[1][1] = pfMET_cov11;
 
-              measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
-              svFitStandalone::kTauToHadDecay,
-              currentPair.leg2().p4().pt(),currentPair.leg2().p4().eta(),currentPair.leg2().p4().phi(),
-              currentPair.leg2().p4().mass(), leg2_decayMode));
+      }
 
-              
-            }
-            else
-            {
-              measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
-              svFitStandalone::kTauToHadDecay,
-              currentPair.leg2().p4().pt(),currentPair.leg2().p4().eta(),currentPair.leg2().p4().phi(),
-              currentPair.leg2().p4().mass(), leg2_decayMode));
 
-              measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
-              svFitStandalone::kTauToHadDecay,
-              currentPair.leg1().p4().pt(),currentPair.leg1().p4().eta(),currentPair.leg1().p4().phi(),
-              currentPair.leg1().p4().mass(), leg1_decayMode));
-
-            }
-          }
-
-
-          ////////////////////////////////////////////////////////
-          // ele + mu choose ele leg to push back 1st    //
-          ////////////////////////////////////////////////////////
-
-
-          if(CandidateEventType == TupleCandidateEventTypes::EleMuon)
-          {
-
-            if(currentPair.leg1().leptonType() == TupleLeptonTypes::anElectron)
-            {
-
-              measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
-              svFitStandalone::kTauToElecDecay, 
-              currentPair.leg1().p4().pt(),currentPair.leg1().p4().eta(),currentPair.leg1().p4().phi(),
-              svFitStandalone::electronMass));
-
-              measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
-              svFitStandalone::kTauToMuDecay, 
-              currentPair.leg2().p4().pt(),currentPair.leg2().p4().eta(),currentPair.leg2().p4().phi(),
-              svFitStandalone::muonMass));
-
-            }
-
-            else 
-            {
-
-              measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
-              svFitStandalone::kTauToElecDecay, 
-              currentPair.leg2().p4().pt(),currentPair.leg2().p4().eta(),currentPair.leg2().p4().phi(),
-              svFitStandalone::electronMass));
-
-              measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
-              svFitStandalone::kTauToMuDecay, 
-              currentPair.leg1().p4().pt(),currentPair.leg1().p4().eta(),currentPair.leg1().p4().phi(),
-              svFitStandalone::muonMass));
-
-            }
-
-          }
-
-
-          ////////////////////////////////////////////////////////
-          // ele + tau choose ele leg to push back 1st    //
-          ////////////////////////////////////////////////////////
-
-
-          if(CandidateEventType == TupleCandidateEventTypes::EleTau)
-          {
-
-            if(currentPair.leg1().leptonType() == TupleLeptonTypes::anElectron)
-            {
-
-              measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
-              svFitStandalone::kTauToElecDecay, 
-              currentPair.leg1().p4().pt(),currentPair.leg1().p4().eta(),currentPair.leg1().p4().phi(),
-              svFitStandalone::electronMass));
-
-              measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
-              svFitStandalone::kTauToHadDecay,
-              currentPair.leg2().p4().pt(),currentPair.leg2().p4().eta(),currentPair.leg2().p4().phi(),
-              currentPair.leg2().p4().mass(), leg2_decayMode));
-
-            }
-
-            else 
-            {
-
-              measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
-              svFitStandalone::kTauToElecDecay, 
-              currentPair.leg2().p4().pt(),currentPair.leg2().p4().eta(),currentPair.leg2().p4().phi(),
-              svFitStandalone::electronMass));
-
-
-              measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
-              svFitStandalone::kTauToHadDecay,
-              currentPair.leg1().p4().pt(),currentPair.leg1().p4().eta(),currentPair.leg1().p4().phi(),
-              currentPair.leg1().p4().mass(), leg1_decayMode));
-
-            }
-
-          }
-
-
-          ////////////////////////////////////////////////////////
-          // mu + tau choose mu leg to push back 1st    //
-          ////////////////////////////////////////////////////////
-
-         if(CandidateEventType == TupleCandidateEventTypes::MuonTau)
-          {
-
-            if(currentPair.leg1().leptonType() == TupleLeptonTypes::aMuon)
-            {
-
-              measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
-              svFitStandalone::kTauToMuDecay, 
-              currentPair.leg1().p4().pt(),currentPair.leg1().p4().eta(),currentPair.leg1().p4().phi(),
-              svFitStandalone::muonMass));
-
-              measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
-              svFitStandalone::kTauToHadDecay,
-              currentPair.leg2().p4().pt(),currentPair.leg2().p4().eta(),currentPair.leg2().p4().phi(),
-              currentPair.leg2().p4().mass(), leg2_decayMode));
-
-            }
-
-            else 
-            {
-
-              measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
-              svFitStandalone::kTauToMuDecay, 
-              currentPair.leg2().p4().pt(),currentPair.leg2().p4().eta(),currentPair.leg2().p4().phi(),
-              svFitStandalone::muonMass));
-
-
-              measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
-              svFitStandalone::kTauToHadDecay,
-              currentPair.leg1().p4().pt(),currentPair.leg1().p4().eta(),currentPair.leg1().p4().phi(),
-              currentPair.leg1().p4().mass(), leg1_decayMode));
-
-            }
-
-          }
-
-          ///////////////////////////////////////
-          // next set the met and cov matrix   //
-          ///////////////////////////////////////
-
-
-
-          TMatrixD covMET(2, 2); 
-          TLorentzVector svMassMET(0,0,0,0);
-
-          if(flatTuple_useMVAmet)
-          { 
-            svMassMET.SetPtEtaPhiM( mvaMET, 0.0, mvaMETphi, 0.0 );
-            covMET[0][0] = mvaMET_cov00;
-            covMET[1][0] = mvaMET_cov10;
-            covMET[0][1] = mvaMET_cov01;
-            covMET[1][1] = mvaMET_cov11;
-
-          }
-          else 
-          {
-            svMassMET.SetPtEtaPhiM( pfMET, 0.0, pfMETphi, 0.0 );
-            covMET[0][0] = pfMET_cov00;
-            covMET[1][0] = pfMET_cov10;
-            covMET[0][1] = pfMET_cov01;
-            covMET[1][1] = pfMET_cov11;
-
-          }
-
-
-        if (flatTuple_svMassVerbose)  covMET.Print();
-
-        SVfitStandaloneAlgorithm svFitAlgorithm(measuredTauLeptons, svMassMET.Px(),svMassMET.Py(), covMET, flatTuple_svMassVerbose);
-
-        if(flatTuple_logMterm>0)  svFitAlgorithm.addLogM(true, flatTuple_logMterm);
-        else svFitAlgorithm.addLogM(false, 0.);
-
-
-        //svFitAlgorithm.integrateVEGAS();
-        //std::cout<<" shiftVisPt turned off \n";
-        edm::FileInPath inputFileName_visPtResolution("TauAnalysis/SVfitStandalone/data/svFitVisMassAndPtResolutionPDF.root");
-        TH1::AddDirectory(false);  
-        TFile* inputFile_visPtResolution = new TFile(inputFileName_visPtResolution.fullPath().data());
-        svFitAlgorithm.shiftVisPt(true, inputFile_visPtResolution);
-
-        svFitAlgorithm.integrateMarkovChain();
-
-        if( flatTuple_svMassVerbose ) std::cout<<" **** FOR PAIR OF TYPE  "<<CandidateEventType<<" ... ";
-
-        if( flatTuple_svMassVerbose ) std::cout<<" SVMass from ntuple "<<SVMass<<" ";
-        SVMass = svFitAlgorithm.getMass();
-        
-
-        if( flatTuple_svMassVerbose ) std::cout<<" is replaced with flatTuple recalc of SVMass = "<<SVMass<<"\n";
-
-        std::cout<<" TESTINGXX in FTuple (mass, metx, mety) "<<SVMass<<" "<<svMassMET.Px()<<" "<<svMassMET.Py()<<" ";
-        std::cout<<" decay modes = "<<leg1_decayMode<<" "<<leg2_decayMode<<"\n";
-
-
-        if( flatTuple_svMassVerbose ) std::cout<<" SVTransverseMass from ntuple "<<SVTransverseMass<<" ";
-        SVTransverseMass = svFitAlgorithm.transverseMass();
-        if( flatTuple_svMassVerbose ) std::cout<<" is replaced with flatTuple recalc of SVTransverseMass = "<<SVTransverseMass<<"\n";
-      
-        delete inputFile_visPtResolution;
-        //std::cout<<" **** TURN ON delete inputFile_visPtResolution \n";
-      } // good tau decays
-    } 
-////////////// END SV MASS COMP ///////////////////////////////
-
-      std::cout<<" FILL YAH! \n";
-      FlatTuple->Fill();
+    if (flatTuple_svMassVerbose)  covMET.Print();
+
+    SVfitStandaloneAlgorithm svFitAlgorithm(measuredTauLeptons, svMassMET.Px(),svMassMET.Py(), covMET, flatTuple_svMassVerbose);
+
+    if(flatTuple_logMterm>0)  svFitAlgorithm.addLogM(true, flatTuple_logMterm);
+    else svFitAlgorithm.addLogM(false, 0.);
+
+
+    //svFitAlgorithm.integrateVEGAS();
+    //std::cout<<" shiftVisPt turned off \n";
+    edm::FileInPath inputFileName_visPtResolution("TauAnalysis/SVfitStandalone/data/svFitVisMassAndPtResolutionPDF.root");
+    TH1::AddDirectory(false);  
+    TFile* inputFile_visPtResolution = new TFile(inputFileName_visPtResolution.fullPath().data());
+    svFitAlgorithm.shiftVisPt(true, inputFile_visPtResolution);
+
+    svFitAlgorithm.integrateMarkovChain();
+
+    if( flatTuple_svMassVerbose ) std::cout<<" **** FOR PAIR OF TYPE  "<<CandidateEventType<<" ... ";
+
+    if( flatTuple_svMassVerbose ) std::cout<<" SVMass from ntuple "<<SVMass<<" ";
+    SVMass = svFitAlgorithm.getMass();
+    
+
+    if( flatTuple_svMassVerbose ) std::cout<<" is replaced with flatTuple recalc of SVMass = "<<SVMass<<"\n";
+
+    std::cout<<" TESTINGXX in FTuple (mass, metx, mety) "<<SVMass<<" "<<svMassMET.Px()<<" "<<svMassMET.Py()<<" ";
+    std::cout<<" decay modes = "<<leg1_decayMode<<" "<<leg2_decayMode<<"\n";
+
+
+    if( flatTuple_svMassVerbose ) std::cout<<" SVTransverseMass from ntuple "<<SVTransverseMass<<" ";
+    SVTransverseMass = svFitAlgorithm.transverseMass();
+    if( flatTuple_svMassVerbose ) std::cout<<" is replaced with flatTuple recalc of SVTransverseMass = "<<SVTransverseMass<<"\n";
+  
+    delete inputFile_visPtResolution;
+    //std::cout<<" **** TURN ON delete inputFile_visPtResolution \n";
+  } // good tau decays
+} 
+////////////// END SV MASS COMP ///////////////////////////////  
+
+}
+
+
+void FlatTupleGenerator::handleCurrentEventInfo(const edm::Event& iEvent, const edm::EventSetup& iSetup,
+NtupleEvent currentPair)
+{
+
+  
+
+  //////////////////////////////
+  // fill info that is accessed directly from the
+  // current pair (i.e. not legs or EffLeptons)
+
+  CandidateEventType = currentPair.CandidateEventType();
+    
+  pfMET = currentPair.pfMET()[0].pt();
+  pfMETphi = currentPair.pfMET()[0].phi();      
+  pfMET_cov00 = currentPair.pfMET_cov00()[0];
+  pfMET_cov01 = currentPair.pfMET_cov01()[0];
+  pfMET_cov10 = currentPair.pfMET_cov10()[0];
+  pfMET_cov11 = currentPair.pfMET_cov11()[0];  
+  
+  
+  puppiMET  = currentPair.puppiMET()[0].pt();
+  puppiMETphi = currentPair.puppiMET()[0].phi();
+  RAWpuppiMET = currentPair.puppiMET()[0].uncorPt();
+  RAWpuppiMETphi = currentPair.puppiMET()[0].uncorPhi();
+
+  /* items with no meaning for EffLepton candidates */
+  if(CandidateEventType!=TupleCandidateEventTypes::EffCand) 
+  {
+  
+    TauEsNumberSigmasShifted = currentPair.TauEsNumberSigmasShifted(); 
+    isOsPair = currentPair.isOsPair();
+    SVMass = currentPair.SVMass()[0];
+    VISMass = currentPair.VISMass()[0];   
+    SVTransverseMass = currentPair.SVTransverseMass()[0];
+
+    mvaMET = currentPair.mvaMET()[0].pt();
+    mvaMETphi = currentPair.mvaMET()[0].phi();
+    mvaMET_cov00 = currentPair.mvaMET()[0].getSignificanceMatrix()[0][0];
+    mvaMET_cov01 = currentPair.mvaMET()[0].getSignificanceMatrix()[0][1];
+    mvaMET_cov10 = currentPair.mvaMET()[0].getSignificanceMatrix()[1][0];
+    mvaMET_cov11 = currentPair.mvaMET()[0].getSignificanceMatrix()[1][1];
+
+
+    MTpfMET_leg1 = currentPair.MTpfMET_leg1()[0]; /* will be NAN for effCand case */
+    MTpfMET_leg2 = currentPair.MTpfMET_leg2()[0];
+
+    MTpuppiMET_leg1  = currentPair.MTpuppiMET_leg1()[0];
+    MTpuppiMET_leg2  = currentPair.MTpuppiMET_leg2()[0];
+
+    MTmvaMET_leg1 = currentPair.MTmvaMET_leg1()[0];
+    MTmvaMET_leg2 = currentPair.MTmvaMET_leg2()[0]; 
 
   }
+
+
+
+
+
+
+  //RAWpfMET = currentPair.pfMET()[0].uncorPt();
+  //RAWpfMETphi = currentPair.pfMET()[0].uncorPhi();
+
+  if(!currentPair.pfMET()[0].genMET())
+  {
+    genMET = 0;
+    genMETphi = 0;
+  } 
+  else 
+  {
+   
+    genMET = currentPair.pfMET()[0].genMET()->pt();
+    genMETphi = currentPair.pfMET()[0].genMET()->phi();
+  }
+
+  /* fill veto lepton parameters, MUST FILL IN SAME ORDER FOR ELECTRONS & MUONS */
+
+  for(std::size_t v = 0; v<currentPair.vetoElectron().size(); ++v)
+  {
+      veto_leptonType.push_back(currentPair.vetoElectron()[v].leptonType());
+      veto_pt.push_back(currentPair.vetoElectron()[v].p4().pt());
+      veto_eta.push_back(currentPair.vetoElectron()[v].p4().eta());
+      veto_phi.push_back(currentPair.vetoElectron()[v].p4().phi());
+      veto_M.push_back(currentPair.vetoElectron()[v].p4().M());
+      veto_dxy.push_back(currentPair.vetoElectron()[v].dxy());
+      veto_dz.push_back(currentPair.vetoElectron()[v].dz());
+      veto_passesMediumMuonId.push_back(currentPair.vetoElectron()[v].passesMediumMuonId());
+      veto_rawElectronMVA.push_back(currentPair.vetoElectron()[v].raw_electronMVA());
+      veto_categoryElectronMVA.push_back(currentPair.vetoElectron()[v].category_electronMVA());
+      veto_passElectronMVA80.push_back(currentPair.vetoElectron()[v].passFail_electronMVA80());
+      veto_passElectronMVA90.push_back(currentPair.vetoElectron()[v].passFail_electronMVA90());
+      veto_passElectronCutBased.push_back(currentPair.vetoElectron()[v].passFail_electronCutBasedID());
+      veto_isTrackerGlobalPFMuon.push_back(0.0);         
+      veto_RelIso.push_back(currentPair.vetoElectron()[v].relativeIsol(electronIsolationForRelIsoBranch));
+      veto_charge.push_back(currentPair.vetoElectron()[v].charge());
+  }
+
+  for(std::size_t v = 0; v<currentPair.vetoMuon().size(); ++v)
+  {
+      veto_leptonType.push_back(currentPair.vetoMuon()[v].leptonType());
+      veto_pt.push_back(currentPair.vetoMuon()[v].p4().pt());
+      veto_eta.push_back(currentPair.vetoMuon()[v].p4().eta());
+      veto_phi.push_back(currentPair.vetoMuon()[v].p4().phi());
+      veto_M.push_back(currentPair.vetoMuon()[v].p4().M());
+      veto_dxy.push_back(currentPair.vetoMuon()[v].dxy());
+      veto_dz.push_back(currentPair.vetoMuon()[v].dz());
+      veto_passesMediumMuonId.push_back(currentPair.vetoMuon()[v].passesMediumMuonId());
+      veto_rawElectronMVA.push_back(currentPair.vetoMuon()[v].raw_electronMVA());
+      veto_categoryElectronMVA.push_back(currentPair.vetoMuon()[v].category_electronMVA());
+      veto_passElectronMVA80.push_back(currentPair.vetoMuon()[v].passFail_electronMVA80());
+      veto_passElectronMVA90.push_back(currentPair.vetoMuon()[v].passFail_electronMVA90());
+      veto_passElectronCutBased.push_back(currentPair.vetoMuon()[v].passFail_electronCutBasedID());
+     
+      float isTrackerGlobalPFMuon = (currentPair.vetoMuon()[v].isTrackerMuon() && \
+                                     currentPair.vetoMuon()[v].isGlobalMuon() && \
+                                     currentPair.vetoMuon()[v].isPFMuon());
+      
+
+      veto_isTrackerGlobalPFMuon.push_back(isTrackerGlobalPFMuon);         
+      veto_RelIso.push_back(currentPair.vetoMuon()[v].relativeIsol(muonIsolationForRelIsoBranch));
+      veto_charge.push_back(currentPair.vetoMuon()[v].charge());
+
+  }
+
+
+
+}
+
+
+
+void FlatTupleGenerator::handlePairIndepInfo(const edm::Event& iEvent, const edm::EventSetup& iSetup,
+  NtuplePairIndependentInfo currentINDEP)
+{
+
+  
+
+  /* info about the event */
+
+  run = iEvent.id().run();
+  luminosityBlock = iEvent.id().luminosityBlock();
+  event = iEvent.id().event();
+  isRealData = iEvent.isRealData();
+  treeInfoString = NAME_;
+
+  AppliedLepCuts = LeptonCutHelper.getCutSummary(LeptonCutVecSrc_);
+
+
+  /* info about the data sample */
+
+
+  DataSet = currentINDEP.DataSet();
+  EventTotal = currentINDEP.EventTotal();
+  EventType = currentINDEP.EventType();
+  KeyName = currentINDEP.KeyName();
+  CrossSection = currentINDEP.CrossSection();
+  FilterEff = currentINDEP.FilterEff();
+  CodeVersion = currentINDEP.CodeVersion();
+
+
+
+  /* info about the primary vertex */
+  NumberOfGoodVertices = currentINDEP.numberOfGoodVertices();
+  vertex_NDOF = currentINDEP.primaryVertex().ndof();
+  vertex_CHI2 = currentINDEP.primaryVertex().chi2();
+  vertex_positionRho = currentINDEP.primaryVertex().position().Rho();
+  vertex_positionX = currentINDEP.primaryVertex().position().x();
+  vertex_positionY  = currentINDEP.primaryVertex().position().y();
+  vertex_positionZ = currentINDEP.primaryVertex().position().z();
+  vertex_positionTheta = currentINDEP.primaryVertex().position().theta();
+  vertex_positionEta = currentINDEP.primaryVertex().position().eta();
+  vertex_positionPhi = currentINDEP.primaryVertex().position().phi();
+
+  /* MET filters */
+
+  HBHEIsoNoiseFilter = currentINDEP.HBHEIsoNoiseFilter();
+
+  HBHENoiseFilter = currentINDEP.HBHENoiseFilter();
+  CSCTightHaloFilter = currentINDEP.CSCTightHaloFilter();
+  goodVerticesFilter = currentINDEP.goodVerticesFilter();
+  eeBadScFilter = currentINDEP.eeBadScFilter();
+  EcalDeadCellTriggerPrimitiveFilter = currentINDEP.EcalDeadCellTriggerPrimitiveFilter();
+
+
+
+  /* pileup & other weights */
+
+  puWeight = currentINDEP.puWeight();
+  NumPileupInt = currentINDEP.NumPileupInt();
+  NumTruePileUpInt = currentINDEP.NumTruePileUpInt();
+  generatorEventWeight = currentINDEP.generatorEventWeight();
+  hepNUP = currentINDEP.hepNUP();
+
+
+
+  /* 4-vectors of gen level boson */
+  genBosonTotal_pt = currentINDEP.GenBosonTotalMomentum().pt();
+  genBosonTotal_eta = currentINDEP.GenBosonTotalMomentum().eta();
+  genBosonTotal_phi = currentINDEP.GenBosonTotalMomentum().phi();
+  genBosonTotal_M = currentINDEP.GenBosonTotalMomentum().M();
+
+  genBosonVisible_pt = currentINDEP.GenBosonVisibleMomentum().pt();
+  genBosonVisible_eta = currentINDEP.GenBosonVisibleMomentum().eta();
+  genBosonVisible_phi = currentINDEP.GenBosonVisibleMomentum().phi();
+  genBosonVisible_M = currentINDEP.GenBosonVisibleMomentum().M();
+
+  /* handle the jets - there is a slight dep. on leptons here due to DR cuts */
+
+
+
+  /* get the jets and bjets passing the cuts provided in JetHelper init */
+  std::vector<NtupleJet> goodJets = jethelper.PtOrderedPassingJets();
+  std::vector<NtupleJet> goodBJets = jethelper.PtOrderedPassingBJets();
+
+  numberOfJets =   goodJets.size();
+  numberOfBJets =  goodBJets.size();
+  numberOfJets30 = 0;
+
+
+
+
+  /* now fill the FlatTuple jet vector */
+  for(std::size_t j=0; j<goodJets.size(); ++j)
+  {      
+    if(goodJets[j].jet_p4().pt()>30) numberOfJets30++;  
+    jets_pt.push_back(goodJets[j].jet_p4().pt());
+    jets_eta.push_back(goodJets[j].jet_p4().eta());
+    jets_phi.push_back(goodJets[j].jet_p4().phi());
+    jets_M.push_back(goodJets[j].jet_p4().M());
+
+    jets_PU_jetIdRaw.push_back(goodJets[j].PU_jetIdRaw());
+    jets_PU_jetIdPassed.push_back(goodJets[j].PU_jetIdPassed());
+    jets_PF_jetIdPassed.push_back(goodJets[j].PF_jetIdPassed());
+    jets_defaultBtagAlgorithm_RawScore.push_back(goodJets[j].defaultBtagAlgorithm_RawScore());
+    jets_defaultBtagAlgorithm_isPassed.push_back(goodJets[j].defaultBtagAlgorithm_isPassed());
+    jets_PARTON_flavour.push_back(goodJets[j].PARTON_flavour());
+    jets_HADRON_flavour.push_back(goodJets[j].HADRON_flavour());
+
+  }
+
+  /* now fill the FlatTuple bjet vector */
+  for(std::size_t j=0; j<goodBJets.size(); ++j)
+  {        
+    bjets_pt.push_back(goodBJets[j].jet_p4().pt());
+    bjets_eta.push_back(goodBJets[j].jet_p4().eta());
+    bjets_phi.push_back(goodBJets[j].jet_p4().phi());
+    bjets_M.push_back(goodBJets[j].jet_p4().M());
+
+    bjets_PU_jetIdRaw.push_back(goodBJets[j].PU_jetIdRaw());
+    bjets_PU_jetIdPassed.push_back(goodBJets[j].PU_jetIdPassed());
+    bjets_PF_jetIdPassed.push_back(goodBJets[j].PF_jetIdPassed());
+    bjets_defaultBtagAlgorithm_RawScore.push_back(goodBJets[j].defaultBtagAlgorithm_RawScore());
+    bjets_defaultBtagAlgorithm_isPassed.push_back(goodBJets[j].defaultBtagAlgorithm_isPassed());
+    bjets_PARTON_flavour.push_back(goodBJets[j].PARTON_flavour());
+    bjets_HADRON_flavour.push_back(goodBJets[j].HADRON_flavour());
+
+  }
+
+  /* gen info not related to the reco legs/eff leptons */
+
+  genParticle_pdgId = genhelper.genParticle_pdgId();
+  genParticle_status = genhelper.genParticle_status();
+  genParticle_isPrompt = genhelper.genParticle_isPrompt();
+  genParticle_isPromptFinalState = genhelper.genParticle_isPromptFinalState();
+  genParticle_isDirectPromptTauDecayProduct = genhelper.genParticle_isDirectPromptTauDecayProduct();
+  genParticle_isDirectPromptTauDecayProductFinalState = genhelper.genParticle_isDirectPromptTauDecayProductFinalState();
+  genParticle_pt = genhelper.genParticle_pt();
+  genParticle_eta = genhelper.genParticle_eta();
+  genParticle_phi = genhelper.genParticle_phi();
+  genParticle_M = genhelper.genParticle_M();
+  genDaughter_pdgId = genhelper.genDaughter_pdgId();
+  genDaughter_status = genhelper.genDaughter_status();
+  genDaughter_pt = genhelper.genDaughter_pt();
+  genDaughter_eta = genhelper.genDaughter_eta();
+  genDaughter_phi = genhelper.genDaughter_phi();
+  genDaughter_M = genhelper.genDaughter_M();
+  genMother_pdgId = genhelper.genMother_pdgId();
+  genMother_status = genhelper.genMother_status();
+  genMother_pt = genhelper.genMother_pt();
+  genMother_eta = genhelper.genMother_eta();
+  genMother_phi = genhelper.genMother_phi();
+  genMother_M = genhelper.genMother_M();
 
 
 
@@ -1278,6 +1509,16 @@ std::cout<<retainedPairsWithRank.size()<<" retainedPairsWithRank.size() \n";
   {  leg1_GoodForHLTPath[r] = NAN;
      leg2_GoodForHLTPath[r] = NAN;
   }
+
+
+  for(int q = 0; q < THE_MAX; ++q)
+  {    
+    effLep_tauIDs.at(q).second.clear();
+    effLep_GoodForHLTPath.at(q).second.clear();
+  }
+
+
+
 
 
   CandidateEventType = -999; 
@@ -1472,6 +1713,89 @@ std::cout<<retainedPairsWithRank.size()<<" retainedPairsWithRank.size() \n";
   leg1_RelIso = NAN;
   leg2_RelIso = NAN;
 
+
+
+  effLep_leptonType.clear();    
+  effLep_pt.clear();
+  effLep_eta.clear();
+  effLep_phi.clear();
+  effLep_M.clear(); 
+  effLep_gen_pt.clear();
+  effLep_gen_eta.clear();
+  effLep_gen_phi.clear();
+  effLep_gen_M.clear();     
+  effLep_genMother_pt.clear();
+  effLep_genMother_eta.clear();
+  effLep_genMother_phi.clear();
+  effLep_genMother_M.clear(); 
+  effLep_genJet_pt.clear();
+  effLep_genJet_eta.clear();
+  effLep_genJet_phi.clear();
+  effLep_genJet_M.clear(); 
+  effLep_dz.clear();          
+  effLep_dxy.clear();       
+  effLep_EffectiveArea.clear(); 
+  effLep_charge.clear();      
+  effLep_PFpdgId.clear();     
+  effLep_GENpdgId.clear();    
+  effLep_GENMOTHERpdgId.clear(); 
+  effLep_IP.clear();      
+  effLep_IPerror.clear(); 
+  effLep_PUchargedHadronIso.clear(); 
+  effLep_chargedHadronIso.clear();   
+  effLep_neutralHadronIso.clear();   
+  effLep_photonIso.clear();          
+  effLep_DepositR03ECal.clear();  
+  effLep_DepositR03Hcal.clear();  
+  effLep_DepositR03TrackerOfficial.clear(); 
+  effLep_isGlobalMuon.clear();
+  effLep_isGoodGlobalMuon.clear();
+  effLep_passesMediumMuonId.clear();
+  effLep_isLooseMuon.clear();
+  effLep_isPFMuon.clear();
+  effLep_isSoftMuon.clear();
+  effLep_isTightMuon.clear();
+  effLep_isTrackerMuon.clear();
+  effLep_muonCombQualChi2LocalPosition.clear();
+  effLep_muonCombQualTrkKink.clear();
+  effLep_muonGlobalTrackNormChi2.clear();
+  effLep_muonInnerTrkValidFraction.clear();
+  effLep_muonSegmentCompatibility.clear();
+  effLep_raw_electronMVA.clear();
+  effLep_category_electronMVA.clear();
+  effLep_passFail_electronMVA80.clear();
+  effLep_passFail_electronMVA90.clear();
+  effLep_passFail_electronCutBasedID.clear();
+  effLep_ooEmooP.clear();
+  effLep_full5x5_sigmaIetaIeta.clear();
+  effLep_SuperClusterEta.clear();
+  effLep_hadronicOverEm.clear();
+  effLep_isEB.clear();
+  effLep_isEBEEGap.clear();
+  effLep_isEBEtaGap.clear();
+  effLep_isEBPhiGap.clear();
+  effLep_isEE.clear();
+  effLep_isEEDeeGap.clear();
+  effLep_isEERingGap.clear();
+  effLep_deltaEtaSuperClusterTrackAtVtx.clear();
+  effLep_deltaPhiSuperClusterTrackAtVtx.clear();
+  effLep_sigmaEtaEta.clear();
+  effLep_sigmaIetaIeta.clear();
+  effLep_sigmaIphiIphi.clear();
+  effLep_numberOfMissingInnerHits.clear();
+  effLep_numberOfMissingOuterHits.clear();
+  effLep_numberOfTrackHits.clear();
+  effLep_passConversionVeto.clear();
+  effLep_ZimpactTau.clear();
+  effLep_numStrips.clear();
+  effLep_dzTauVertex.clear();
+  effLep_numHadrons.clear();
+  effLep_decayMode.clear();
+  effLep_RelIso.clear();
+
+
+
+
   veto_leptonType.clear(); 
   veto_pt.clear(); 
   veto_eta.clear(); 
@@ -1581,6 +1905,14 @@ std::cout<<retainedPairsWithRank.size()<<" retainedPairsWithRank.size() \n";
   leg2_genMCmatch_M = NAN;
   leg2_MCMatchPdgId = -999;
 
+  effLep_MCMatchType.clear();
+  effLep_genMCmatch_pt.clear();
+  effLep_genMCmatch_eta.clear();
+  effLep_genMCmatch_phi.clear();
+  effLep_genMCmatch_M.clear();
+  effLep_MCMatchPdgId.clear();
+
+
 
   IsZTT = -999;
   IsZL = -999;
@@ -1609,6 +1941,9 @@ std::cout<<retainedPairsWithRank.size()<<" retainedPairsWithRank.size() \n";
   genBosonVisible_eta = NAN;
   genBosonVisible_phi = NAN;
   genBosonVisible_M = NAN;
+
+
+
 
 
 
@@ -1652,9 +1987,13 @@ void FlatTupleGenerator::beginJob()
   for(std::size_t x = 0; x<tauIDsToKeep.size();++x ) 
   {
 
-  FlatTuple->Branch(("leg1_"+tauIDsToKeep.at(x)).c_str(), &leg1_tauIDs[x]);
-  FlatTuple->Branch(("leg2_"+tauIDsToKeep.at(x)).c_str(), &leg2_tauIDs[x]);
+    FlatTuple->Branch(("leg1_"+tauIDsToKeep.at(x)).c_str(), &leg1_tauIDs[x]);
+    FlatTuple->Branch(("leg2_"+tauIDsToKeep.at(x)).c_str(), &leg2_tauIDs[x]);
+    FlatTuple->Branch(("effLep_"+tauIDsToKeep.at(x)).c_str(), &effLep_tauIDs.at(x).second);
+
+
   }
+
 
 
   for(std::size_t x = 0; x<triggerSummaryChecks.size();++x ) 
@@ -1667,6 +2006,10 @@ void FlatTupleGenerator::beginJob()
 
     FlatTuple->Branch(("leg1_"+versionStrippedName).c_str(), &leg1_GoodForHLTPath[x]);
     FlatTuple->Branch(("leg2_"+versionStrippedName).c_str(), &leg2_GoodForHLTPath[x]);
+    FlatTuple->Branch(("effLep_"+versionStrippedName).c_str(), &effLep_GoodForHLTPath.at(x).second);
+
+
+    
   }
 
   FlatTuple->Branch("CandidateEventType", &CandidateEventType);
@@ -1859,6 +2202,86 @@ void FlatTupleGenerator::beginJob()
   FlatTuple->Branch("leg1_RelIso",&leg1_RelIso);
   FlatTuple->Branch("leg2_RelIso",&leg2_RelIso);
 
+  FlatTuple->Branch("effLep_leptonType", &effLep_leptonType);
+  FlatTuple->Branch("effLep_pt", &effLep_pt);
+  FlatTuple->Branch("effLep_eta", &effLep_eta);
+  FlatTuple->Branch("effLep_phi", &effLep_phi);
+  FlatTuple->Branch("effLep_M", &effLep_M);
+  FlatTuple->Branch("effLep_gen_pt", &effLep_gen_pt);
+  FlatTuple->Branch("effLep_gen_eta", &effLep_gen_eta);
+  FlatTuple->Branch("effLep_gen_phi", &effLep_gen_phi);
+  FlatTuple->Branch("effLep_gen_M", &effLep_gen_M);
+  FlatTuple->Branch("effLep_genMother_pt", &effLep_genMother_pt);
+  FlatTuple->Branch("effLep_genMother_eta", &effLep_genMother_eta);
+  FlatTuple->Branch("effLep_genMother_phi", &effLep_genMother_phi);
+  FlatTuple->Branch("effLep_genMother_M", &effLep_genMother_M);
+  FlatTuple->Branch("effLep_genJet_pt", &effLep_genJet_pt);
+  FlatTuple->Branch("effLep_genJet_eta", &effLep_genJet_eta);
+  FlatTuple->Branch("effLep_genJet_phi", &effLep_genJet_phi);
+  FlatTuple->Branch("effLep_genJet_M", &effLep_genJet_M);
+  FlatTuple->Branch("effLep_dz", &effLep_dz);
+  FlatTuple->Branch("effLep_dxy", &effLep_dxy);
+  FlatTuple->Branch("effLep_EffectiveArea", &effLep_EffectiveArea);
+  FlatTuple->Branch("effLep_charge", &effLep_charge);
+  FlatTuple->Branch("effLep_PFpdgId", &effLep_PFpdgId);
+  FlatTuple->Branch("effLep_GENpdgId", &effLep_GENpdgId);
+  FlatTuple->Branch("effLep_GENMOTHERpdgId", &effLep_GENMOTHERpdgId);
+  FlatTuple->Branch("effLep_IP", &effLep_IP);
+  FlatTuple->Branch("effLep_IPerror", &effLep_IPerror);
+  FlatTuple->Branch("effLep_PUchargedHadronIso", &effLep_PUchargedHadronIso);
+  FlatTuple->Branch("effLep_chargedHadronIso", &effLep_chargedHadronIso);
+  FlatTuple->Branch("effLep_neutralHadronIso", &effLep_neutralHadronIso);
+  FlatTuple->Branch("effLep_photonIso", &effLep_photonIso);
+  FlatTuple->Branch("effLep_DepositR03ECal", &effLep_DepositR03ECal);
+  FlatTuple->Branch("effLep_DepositR03Hcal", &effLep_DepositR03Hcal);
+  FlatTuple->Branch("effLep_DepositR03TrackerOfficial", &effLep_DepositR03TrackerOfficial);
+  FlatTuple->Branch("effLep_isGlobalMuon", &effLep_isGlobalMuon);
+  FlatTuple->Branch("effLep_isGoodGlobalMuon", &effLep_isGoodGlobalMuon);
+  FlatTuple->Branch("effLep_passesMediumMuonId", &effLep_passesMediumMuonId);
+  FlatTuple->Branch("effLep_isLooseMuon", &effLep_isLooseMuon);
+  FlatTuple->Branch("effLep_isPFMuon", &effLep_isPFMuon);
+  FlatTuple->Branch("effLep_isSoftMuon", &effLep_isSoftMuon);
+  FlatTuple->Branch("effLep_isTightMuon", &effLep_isTightMuon);
+  FlatTuple->Branch("effLep_isTrackerMuon", &effLep_isTrackerMuon);
+  FlatTuple->Branch("effLep_muonCombQualChi2LocalPosition", &effLep_muonCombQualChi2LocalPosition);
+  FlatTuple->Branch("effLep_muonCombQualTrkKink", &effLep_muonCombQualTrkKink);
+  FlatTuple->Branch("effLep_muonGlobalTrackNormChi2", &effLep_muonGlobalTrackNormChi2);
+  FlatTuple->Branch("effLep_muonInnerTrkValidFraction", &effLep_muonInnerTrkValidFraction);
+  FlatTuple->Branch("effLep_muonSegmentCompatibility", &effLep_muonSegmentCompatibility);
+  FlatTuple->Branch("effLep_raw_electronMVA", &effLep_raw_electronMVA);
+  FlatTuple->Branch("effLep_category_electronMVA", &effLep_category_electronMVA);
+  FlatTuple->Branch("effLep_passFail_electronMVA80", &effLep_passFail_electronMVA80);
+  FlatTuple->Branch("effLep_passFail_electronMVA90", &effLep_passFail_electronMVA90);
+  FlatTuple->Branch("effLep_passFail_electronCutBasedID", &effLep_passFail_electronCutBasedID);
+  FlatTuple->Branch("effLep_ooEmooP", &effLep_ooEmooP);
+  FlatTuple->Branch("effLep_full5x5_sigmaIetaIeta", &effLep_full5x5_sigmaIetaIeta);
+  FlatTuple->Branch("effLep_SuperClusterEta", &effLep_SuperClusterEta);
+  FlatTuple->Branch("effLep_hadronicOverEm", &effLep_hadronicOverEm);
+  FlatTuple->Branch("effLep_isEB", &effLep_isEB);
+  FlatTuple->Branch("effLep_isEBEEGap", &effLep_isEBEEGap);
+  FlatTuple->Branch("effLep_isEBEtaGap", &effLep_isEBEtaGap);
+  FlatTuple->Branch("effLep_isEBPhiGap", &effLep_isEBPhiGap);
+  FlatTuple->Branch("effLep_isEE", &effLep_isEE);
+  FlatTuple->Branch("effLep_isEEDeeGap", &effLep_isEEDeeGap);
+  FlatTuple->Branch("effLep_isEERingGap", &effLep_isEERingGap);
+  FlatTuple->Branch("effLep_deltaEtaSuperClusterTrackAtVtx", &effLep_deltaEtaSuperClusterTrackAtVtx);
+  FlatTuple->Branch("effLep_deltaPhiSuperClusterTrackAtVtx", &effLep_deltaPhiSuperClusterTrackAtVtx);
+  FlatTuple->Branch("effLep_sigmaEtaEta", &effLep_sigmaEtaEta);
+  FlatTuple->Branch("effLep_sigmaIetaIeta", &effLep_sigmaIetaIeta);
+  FlatTuple->Branch("effLep_sigmaIphiIphi", &effLep_sigmaIphiIphi);
+  FlatTuple->Branch("effLep_numberOfMissingInnerHits", &effLep_numberOfMissingInnerHits);
+  FlatTuple->Branch("effLep_numberOfMissingOuterHits", &effLep_numberOfMissingOuterHits);
+  FlatTuple->Branch("effLep_numberOfTrackHits", &effLep_numberOfTrackHits);
+  FlatTuple->Branch("effLep_passConversionVeto", &effLep_passConversionVeto);
+  FlatTuple->Branch("effLep_ZimpactTau", &effLep_ZimpactTau);
+  FlatTuple->Branch("effLep_numStrips", &effLep_numStrips);
+  FlatTuple->Branch("effLep_dzTauVertex", &effLep_dzTauVertex);
+  FlatTuple->Branch("effLep_numHadrons", &effLep_numHadrons);
+  FlatTuple->Branch("effLep_decayMode", &effLep_decayMode);
+  FlatTuple->Branch("effLep_RelIso", &effLep_RelIso);
+
+
+
 
   FlatTuple->Branch("veto_leptonType", &veto_leptonType);
   FlatTuple->Branch("veto_pt", &veto_pt);
@@ -1970,6 +2393,13 @@ void FlatTupleGenerator::beginJob()
   FlatTuple->Branch("leg2_genMCmatch_M", &leg2_genMCmatch_M);
   FlatTuple->Branch("leg2_MCMatchPdgId", &leg2_MCMatchPdgId);
 
+  FlatTuple->Branch("effLep_MCMatchType", &effLep_MCMatchType);
+  FlatTuple->Branch("effLep_genMCmatch_pt", &effLep_genMCmatch_pt);
+  FlatTuple->Branch("effLep_genMCmatch_eta", &effLep_genMCmatch_eta);
+  FlatTuple->Branch("effLep_genMCmatch_phi", &effLep_genMCmatch_phi);
+  FlatTuple->Branch("effLep_genMCmatch_M", &effLep_genMCmatch_M);
+  FlatTuple->Branch("effLep_MCMatchPdgId", &effLep_MCMatchPdgId);
+ 
 
   FlatTuple->Branch("IsZTT", &IsZTT);
   FlatTuple->Branch("IsZL", &IsZL);

@@ -46,7 +46,12 @@ public:
   void set_leg1(const pat::Tau);
   void set_leg2(const pat::Tau);
   void set_CandidateEventType(); // dont forget to call this!
+  void set_CandidateEventType(int); // set it manually to the arg - only call for EffCand
 
+// push back e, mu, or tau for efficiency measurement 
+  void add_EfficiencyLepton(const pat::Electron); 
+  void add_EfficiencyLepton(const pat::Muon); 
+  void add_EfficiencyLepton(const pat::Tau); 
 
   void set_pair(pat::Electron, pat::Electron);
   void set_pair(pat::Electron, pat::Muon);
@@ -68,6 +73,7 @@ public:
   int CandidateEventType() const;
   TupleLepton leg1() const;
   TupleLepton leg2() const;
+  std::vector <TupleLepton> EfficiencyLepton() const;
   std::vector<pat::MET>  mvaMET() const;
   std::vector<pat::MET>  pfMET() const;
   std::vector<pat::MET>  puppiMET() const;
@@ -86,6 +92,7 @@ private:
   int m_CandidateEventType; 
   TupleLepton m_leg1;
   TupleLepton m_leg2;
+  std::vector <TupleLepton> m_EfficiencyLepton;
   std::vector<pat::MET>  m_mvaMET; // note : keep as a vector in case systematic variants are needed 
   std::vector<pat::MET>  m_pfMET; 
   std::vector<pat::MET>  m_puppiMET; 

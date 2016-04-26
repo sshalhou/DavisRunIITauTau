@@ -15,9 +15,8 @@ BUILD_MUON_MUON = False
 BUILD_MUON_TAU = True
 BUILD_TAU_TAU = True
 # new options (any one of these will run eff. flatTuple options)
-BUILD_ELECTRON_X = False
-BUILD_MUON_X = False
-BUILD_TAU_X = False
+BUILD_EFFICIENCY_TREE  = True
+
 
 ####################################################################################################
 # MAX SIZE OF LEPTON LISTS-only keep 1st MAX_X_COUNT leptons passing all selections for pair formation)

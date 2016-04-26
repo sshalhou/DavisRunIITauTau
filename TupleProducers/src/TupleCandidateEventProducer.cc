@@ -96,16 +96,30 @@ private:
   edm::InputTag muonVetoSrc_;
   edm::EDGetTokenT<edm::View< pat::Muon > > muonVetoToken_;
 
-
-
   double pairDeltaRmin_;
   double vetoDeltaRmin_;
+
   string NAME_;
   bool doSVMass_;
   bool useMVAMET_;
   double logMterm_;
   int svMassVerbose_;
+
+
+  edm::InputTag EffElectronSrc_;
+  edm::EDGetTokenT<edm::View< pat::Electron > > EffElectronToken_;
+
+  edm::InputTag EffMuonSrc_;
+  edm::EDGetTokenT<edm::View< pat::Muon > > EffMuonToken_;
+
+  edm::InputTag EffTauSrc_;
+  edm::EDGetTokenT<edm::View< pat::Tau > > EffTauToken_;
+
+
+
+
   string tauIsolForOrderingPair_;
+  bool BuildEfficiencyTree_;
 
 };
 
@@ -134,7 +148,11 @@ doSVMass_(iConfig.getParameter<bool>("doSVMass" )),
 useMVAMET_(iConfig.getParameter<bool>("useMVAMET" )),
 logMterm_(iConfig.getParameter<double>("logMterm" )),
 svMassVerbose_(iConfig.getParameter<int>("svMassVerbose" )),
-tauIsolForOrderingPair_(iConfig.getParameter<string>("tauIsolForOrderingPair" ))
+EffElectronSrc_(iConfig.getParameter<edm::InputTag>("EffElectronSrc" )),
+EffMuonSrc_(iConfig.getParameter<edm::InputTag>("EffMuonSrc" )),
+EffTauSrc_(iConfig.getParameter<edm::InputTag>("EffTauSrc" )),
+tauIsolForOrderingPair_(iConfig.getParameter<string>("tauIsolForOrderingPair" )),
+BuildEfficiencyTree_(iConfig.getParameter<bool>("BuildEfficiencyTree" ))
 {
 
 
@@ -147,6 +165,12 @@ tauIsolForOrderingPair_(iConfig.getParameter<string>("tauIsolForOrderingPair" ))
 
   electronVetoToken_ = consumes< edm::View<pat::Electron> >(electronVetoSrc_);
   muonVetoToken_ = consumes< edm::View<pat::Muon> >(muonVetoSrc_);
+
+
+  EffElectronToken_ = consumes< edm::View<pat::Electron> >(EffElectronSrc_);
+  EffMuonToken_ = consumes< edm::View<pat::Muon> >(EffMuonSrc_);
+  EffTauToken_ = consumes< edm::View<pat::Tau> >(EffTauSrc_);
+
 
 
   //register your products
@@ -205,6 +229,68 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
   // get VETO Muon collection
   edm::Handle<edm::View<pat::Muon> > veto_muons;
   iEvent.getByToken(muonVetoToken_,veto_muons);
+
+  // get EFF Electron collection
+  edm::Handle<edm::View<pat::Electron> > eff_electrons;
+  iEvent.getByToken(EffElectronToken_,eff_electrons);
+
+  // get EFF Muon collection
+  edm::Handle<edm::View<pat::Muon> > eff_muons;
+  iEvent.getByToken(EffMuonToken_,eff_muons);
+
+  // get EFF Tau collection
+  edm::Handle<edm::View<pat::Tau> > eff_taus;
+  iEvent.getByToken(EffTauToken_,eff_taus);
+
+  //////////////////////////////////////////////////
+  /* fill eff lepton vector */
+  //////////////////////////////////////////////////      
+
+  TupleCandidateEvent EffCandidateEvent;
+
+  // EFF ELECTRONS
+  for (std::size_t e=0; e<eff_electrons->size(); ++e)
+  {          
+      EffCandidateEvent.add_EfficiencyLepton(eff_electrons->at(e));
+  }
+  // EFF MUONS
+  for (std::size_t m=0; m<eff_muons->size(); ++m)
+  {          
+      EffCandidateEvent.add_EfficiencyLepton(eff_muons->at(m));
+  }
+  // EFF TAUS
+  for (std::size_t t=0; t<eff_taus->size(); ++t)
+  {          
+      EffCandidateEvent.add_EfficiencyLepton(eff_taus->at(t));
+  }
+
+  /* MET info */
+  /*
+  std::cout<<" WARNING FOR EFF TTREE USING pair corrected MET - will often be invalid I think \n";
+  if(mvamets.isValid()) EffCandidateEvent.set_mvaMET(mvamets->at(0));
+  */
+  EffCandidateEvent.set_puppiMET(puppimets->at(0));
+  EffCandidateEvent.set_pfMET(pfmets->at(0));
+  
+  /* left over from when PF MET did not have sig matrix */
+  EffCandidateEvent.set_pfMET_covMatrix(pfmets->at(0).getSignificanceMatrix()[0][0], 
+    pfmets->at(0).getSignificanceMatrix()[1][0], pfmets->at(0).getSignificanceMatrix()[0][1], 
+    pfmets->at(0).getSignificanceMatrix()[1][1]);
+
+
+  /* finally set the type to EffCand */
+
+  EffCandidateEvent.set_CandidateEventType(TupleCandidateEventTypes::EffCand);
+
+
+  TupleCandidateEvents->push_back(EffCandidateEvent);
+
+  //////////////////////////////////////////////////
+
+
+  //////////////////////////////////////////////////
+  /* fill met-pair based vector */
+  //////////////////////////////////////////////////     
 
   std::cout<<" met valid ? "<<mvamets.isValid()<<NAME_<<"\n";
   if(mvamets.isValid())
@@ -622,7 +708,7 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
 
 
 
-std::cout<<" EVENT PAIR COUNT "<<TupleCandidateEvents->size()<<"\n";
+std::cout<<" EVENT PAIR COUNT "<<TupleCandidateEvents->size()-1<<"\n";
 
 iEvent.put( TupleCandidateEvents, NAME_ );
 

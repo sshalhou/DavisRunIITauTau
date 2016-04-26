@@ -213,7 +213,7 @@ mtauTriggerCutRun2015C = "(isLeg1GoodForHLTPath('HLT_IsoMu17_eta2p1_LooseIsoPFTa
 
 #################################################################
 # trigger cuts for Run2015D Data  - HLT (_v) VERSION MATTERS!!! #
-# special note :  this is the same for Run2015B Data sine
+# special note :  this is the same for Run2015B Data since
 # it has identical path names to D (some filters differ though!)
 #################################################################
 
@@ -235,16 +235,42 @@ mtauTriggerCutRun2015D = "(isLeg1GoodForHLTPath('HLT_IsoMu18_v*'))"
 
 
 
+#################################################################
+# trigger cuts for Fall 15 MC  - HLT !!!  #
+#################################################################
+
+emuTriggerCutFall15MCminiAOD = "((isLeg1GoodForHLTPath('HLT_Mu17_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v*') &&\
+	isLeg2GoodForHLTPath('HLT_Mu17_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v*') && leg2.pt>18) ||\
+    (isLeg1GoodForHLTPath('HLT_Mu8_TrkIsoVVL_Ele17_CaloIdL_TrackIdL_IsoVL_v*') &&\
+	isLeg2GoodForHLTPath('HLT_Mu8_TrkIsoVVL_Ele17_CaloIdL_TrackIdL_IsoVL_v*') && leg1.pt>18))"
+
+
+tautauTriggerCutFall15MCminiAOD = "(isLeg1GoodForHLTPath('HLT_DoubleMediumIsoPFTau35_Trk1_eta2p1_Reg_v*') \
+	&& isLeg2GoodForHLTPath('HLT_DoubleMediumIsoPFTau35_Trk1_eta2p1_Reg_v*'))"
+
+etauTriggerCutFall15MCminiAOD = "(isLeg1GoodForHLTPath('HLT_Ele23_WPLoose_Gsf_v*'))"
+
+mtauTriggerCutFall15MCminiAOD = "(isLeg1GoodForHLTPath('HLT_IsoMu18_v*'))"
+
+
+
+
 ################################
 # concatenate trigger cuts     #
 ################################
 
 
+emuTriggerCut = cms.string(emuTriggerCutFall15MCminiAOD+" || "+emuTriggerCutRun2015D)
+tautauTriggerCut = cms.string(tautauTriggerCutFall15MCminiAOD+" || "+tautauTriggerCutRun2015D)
+etauTriggerCut = cms.string(etauTriggerCutFall15MCminiAOD+" || "+etauTriggerCutRun2015D)
+mtauTriggerCut  = cms.string(mtauTriggerCutFall15MCminiAOD+" || "+mtauTriggerCutRun2015D)
 
-emuTriggerCut = cms.string(emuTriggerCutSpring15MCminiAODv2+" || "+emuTriggerCutRun2015D)
-tautauTriggerCut = cms.string(tautauTriggerCutSpring15MCminiAODv2+" || "+tautauTriggerCutRun2015D)
-etauTriggerCut = cms.string(etauTriggerCutSpring15MCminiAODv2+" || "+etauTriggerCutRun2015D)
-mtauTriggerCut  = cms.string(mtauTriggerCutSpring15MCminiAODv2+" || "+mtauTriggerCutRun2015D)
+
+
+# emuTriggerCut = cms.string(emuTriggerCutSpring15MCminiAODv2+" || "+emuTriggerCutRun2015D)
+# tautauTriggerCut = cms.string(tautauTriggerCutSpring15MCminiAODv2+" || "+tautauTriggerCutRun2015D)
+# etauTriggerCut = cms.string(etauTriggerCutSpring15MCminiAODv2+" || "+etauTriggerCutRun2015D)
+# mtauTriggerCut  = cms.string(mtauTriggerCutSpring15MCminiAODv2+" || "+mtauTriggerCutRun2015D)
 
 
 
@@ -304,28 +330,26 @@ theCuts = cms.VPSet(
 minimalCuts = cms.VPSet(
 
 		cms.PSet(   candidatePairType = cms.string("EleTau"),
-					electronID = cut_ele_EleTau,
-					tauID = cut_tau_EleTau,
 					minDR = cms.double(0.5),
+					trigger = etauTriggerCut
 				),
 		cms.PSet(   candidatePairType = cms.string("EleMuon"),
-					electronID = cut_ele_EleMuon,
-					muonID = cut_muon_EleMuon,
 					minDR = cms.double(0.3),
+					trigger = emuTriggerCut
 
 				),
 		cms.PSet(   candidatePairType = cms.string("MuonTau"),
-					muonID = cut_muon_MuonTau,
-					tauID = cut_tau_MuonTau,
 					minDR = cms.double(0.5),
+					trigger = mtauTriggerCut
 
 				),
 		cms.PSet(   candidatePairType = cms.string("TauTau"),
-					tauID = cut_tau_TauTau,
 					minDR = cms.double(0.5),
+					trigger = tautauTriggerCut
 
 				)
 	)
+
 		
 
 # config for basic settings 
@@ -364,21 +388,11 @@ generalConfig = cms.PSet(
 
 
 			triggerSummaryChecks = cms.vstring(
-				"HLT_DoubleMediumIsoPFTau40_Trk1_eta2p1_Reg_v*",
-				"HLT_Ele22_eta2p1_WP75_Gsf_LooseIsoPFTau20_v*",
-				"HLT_Ele32_eta2p1_WP75_Gsf_v*",
-				"HLT_IsoMu17_eta2p1_LooseIsoPFTau20_v*",
-				"HLT_IsoMu24_eta2p1_v*",
-				"HLT_IsoMu27_v*",
-				"HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v*",
-				"HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v*",
-				"HLT_Ele22_eta2p1_WPLoose_Gsf_LooseIsoPFTau20_v*",
-				"HLT_Ele32_eta2p1_WPTight_Gsf_v*",
-				"HLT_Ele22_eta2p1_WP75_Gsf_v*",
-				"HLT_IsoMu17_eta2p1_v*",
-				"HLT_DoubleMediumIsoPFTau35_Trk1_eta2p1_Reg_v*",
+				"HLT_Mu17_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v*",
+				"HLT_Mu8_TrkIsoVVL_Ele17_CaloIdL_TrackIdL_IsoVL_v*",
+				"HLT_IsoMu18_v*",
 				"HLT_Ele23_WPLoose_Gsf_v*",
-				"HLT_IsoMu18_v*"
+				"HLT_DoubleMediumIsoPFTau35_Trk1_eta2p1_Reg_v*"				
 				),
 
 

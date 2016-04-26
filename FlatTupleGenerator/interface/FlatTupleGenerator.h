@@ -88,6 +88,12 @@ public:
       virtual void analyze(const edm::Event&, const edm::EventSetup&) override;
       virtual void endJob() override;
       virtual void reInit(); 
+      virtual void handlePairIndepInfo(const edm::Event&, const edm::EventSetup&, NtuplePairIndependentInfo); 
+      virtual void handleCurrentEventInfo(const edm::Event&, const edm::EventSetup&, NtupleEvent); 
+      virtual void handleSVFitCall(const edm::Event&, const edm::EventSetup&, NtupleEvent); 
+      virtual void handleLeg1AndLeg2Info(const edm::Event&, const edm::EventSetup&, NtupleEvent); 
+      virtual void handleEffLeptonInfo(const edm::Event&, const edm::EventSetup&, NtupleEvent); 
+
 
 // private:
 // 	virtual void beginJob() ;
@@ -316,6 +322,83 @@ public:
 
 	float leg1_RelIso, leg2_RelIso; /* relative isolation - value depends on the FlatTupleConfig_cfi */
 
+
+
+	/* parameters for EffLeptons */
+
+	std::vector<int> effLep_leptonType; 			/* the lepton flavor see TupleObjects/std::vector<int>erface/TupleLeptonTypes.h */
+	std::vector<double> effLep_pt, effLep_eta, effLep_phi, effLep_M; 	/* the reco 4-vector components of effLeptons */
+	std::vector<double> effLep_gen_pt, effLep_gen_eta, effLep_gen_phi, effLep_gen_M; 			/* the PAT gen-match object 4-vector components for effLeptons */
+	std::vector<double> effLep_genMother_pt, effLep_genMother_eta, effLep_genMother_phi, effLep_genMother_M; 	/* the PAT embedded gen-match object's mother's 4-vector components for effLeptons */
+	std::vector<double> effLep_genJet_pt, effLep_genJet_eta, effLep_genJet_phi, effLep_genJet_M; 	/* the PAT embedded gen-Jet object's 4-vector components for effLep */
+	std::vector<float> effLep_dz;				  	/* lepton dz see CustomPatCollectionProducers/src/{Electron,Muon,Tau}Clones.cc */	
+	std::vector<float> effLep_dxy;			  	/* lepton dxy see CustomPatCollectionProducers/src/{Electron,Muon,Tau}Clones.cc */	
+	std::vector<float> effLep_EffectiveArea; /* the effective area, see CustomPatCollectionProducers/src/{Electron,Muon}Clones.cc */
+	std::vector<int> effLep_charge;			/* sign of the lepton */
+	std::vector<int> effLep_PFpdgId;			/* the PDG ID code assigned by the PF reconstruction */
+	std::vector<int> effLep_GENpdgId;		/* the PDG ID code of the PAT-embedded generator particle match */
+	std::vector<int> effLep_GENMOTHERpdgId; /* the PDG ID code of the PAT-embedded generator particle match's mother */
+	std::vector<float> effLep_IP; 			/* IP CustomPatCollectionProducers/src/{Electron,Muon}Clones.cc */
+	std::vector<float> effLep_IPerror;	/* error on IP CustomPatCollectionProducers/src/{Electron,Muon}Clones.cc */
+	std::vector<float> effLep_PUchargedHadronIso; /* isolation related quantity see CustomPatCollectionProducers/src/LeptonRelativeIsolationTool.cc */
+	std::vector<float> effLep_chargedHadronIso;     /* isolation related quantity see CustomPatCollectionProducers/src/LeptonRelativeIsolationTool.cc */
+	std::vector<float> effLep_neutralHadronIso;     /* isolation related quantity see CustomPatCollectionProducers/src/LeptonRelativeIsolationTool.cc */
+	std::vector<float> effLep_photonIso;                   /* isolation related quantity see CustomPatCollectionProducers/src/LeptonRelativeIsolationTool.cc */
+	std::vector<float> effLep_DepositR03ECal;  /* muon isolationR03 quantity, see /CustomPatCollectionProducers/src/MuonClones.cc */
+	std::vector<float> effLep_DepositR03Hcal;  /* muon isolationR03 quantity, see /CustomPatCollectionProducers/src/MuonClones.cc */
+	std::vector<float> effLep_DepositR03TrackerOfficial; /* muon isolationR03 quantity, see /CustomPatCollectionProducers/src/MuonClones.cc */
+	std::vector<float> effLep_isGlobalMuon;
+	std::vector<float> effLep_isGoodGlobalMuon;
+	std::vector<float> effLep_passesMediumMuonId;
+	std::vector<float> effLep_isLooseMuon;
+	std::vector<float> effLep_isPFMuon;
+	std::vector<float> effLep_isSoftMuon;
+	std::vector<float> effLep_isTightMuon;
+	std::vector<float> effLep_isTrackerMuon;
+	std::vector<float> effLep_muonCombQualChi2LocalPosition;
+	std::vector<float> effLep_muonCombQualTrkKink;
+	std::vector<float> effLep_muonGlobalTrackNormChi2;
+	std::vector<float> effLep_muonInnerTrkValidFraction;
+	std::vector<float> effLep_muonSegmentCompatibility;
+	std::vector<float> effLep_raw_electronMVA;
+	std::vector<float> effLep_category_electronMVA;
+	std::vector<float> effLep_passFail_electronMVA80;
+	std::vector<float> effLep_passFail_electronMVA90;
+	std::vector<float> effLep_passFail_electronCutBasedID;
+    std::vector<float> effLep_ooEmooP;
+    std::vector<float> effLep_full5x5_sigmaIetaIeta;
+	std::vector<float> effLep_SuperClusterEta;
+	std::vector<float> effLep_hadronicOverEm;
+	std::vector<float> effLep_isEB;
+	std::vector<float> effLep_isEBEEGap;
+	std::vector<float> effLep_isEBEtaGap;
+	std::vector<float> effLep_isEBPhiGap;
+	std::vector<float> effLep_isEE;
+	std::vector<float> effLep_isEEDeeGap;
+	std::vector<float> effLep_isEERingGap;
+	std::vector<float> effLep_deltaEtaSuperClusterTrackAtVtx;
+	std::vector<float> effLep_deltaPhiSuperClusterTrackAtVtx;
+	std::vector<float> effLep_sigmaEtaEta;
+	std::vector<float> effLep_sigmaIetaIeta;
+	std::vector<float> effLep_sigmaIphiIphi;
+	std::vector<float> effLep_numberOfMissingInnerHits;
+	std::vector<float> effLep_numberOfMissingOuterHits;
+	std::vector<float> effLep_numberOfTrackHits;
+	std::vector<float> effLep_passConversionVeto;
+	std::vector<float> effLep_ZimpactTau;
+	std::vector<float> effLep_numStrips;
+	std::vector<float> effLep_dzTauVertex;
+	std::vector<float> effLep_numHadrons;
+	std::vector<int> effLep_decayMode;
+	std::vector<float> effLep_RelIso; /* relative isolation - value depends on the FlatTupleConfig_cfi */
+
+
+	std::vector< std::pair<int, std::vector<float> > > effLep_tauIDs;
+	std::vector< std::pair<int, std::vector<float> > > effLep_GoodForHLTPath;
+
+
+
+
 	/* extra electron and muon parameters (these are for the vetoes) */
 	std::vector<int> veto_leptonType; 			/* vector containing flavor code */
 	std::vector<double> veto_pt; 				/* vectors of 4-vector components */
@@ -428,7 +511,7 @@ public:
   	std::vector <std::pair< int, double>> genMother_phi;
   	std::vector <std::pair< int, double>> genMother_M;
 
-  	// new gen level classification for leg 1 and 2
+  	// new gen level classification for leg 1 and 2 and effLeptons
   	// note this (along with Recoil corrections and MET Systematics are ONLY available
   	// at the FlatTuple level)
   	// note the gen matches are not the same as the pat embedded 4-vectors above
@@ -440,6 +523,17 @@ public:
   	int leg2_MCMatchType; /* match codes defined in GenMcMatchTypes.h */
   	double leg2_genMCmatch_pt, leg2_genMCmatch_eta, leg2_genMCmatch_phi, leg2_genMCmatch_M; /* see https://twiki.cern.ch/twiki/bin/viewauth/CMS/HiggsToTauTauWorking2015#MC_Matching */ 
     int leg2_MCMatchPdgId;
+
+
+	std::vector<int> effLep_MCMatchType; /* match codes defined in GenMcMatchTypes.h */
+	std::vector<double> effLep_genMCmatch_pt;
+	std::vector<double> effLep_genMCmatch_eta; 
+	std::vector<double> effLep_genMCmatch_phi; 
+	std::vector<double> effLep_genMCmatch_M;
+	std::vector<int> effLep_MCMatchPdgId;
+
+
+	/* event summary flags for DY + jets */
 
     int IsZTT;
     int IsZL;

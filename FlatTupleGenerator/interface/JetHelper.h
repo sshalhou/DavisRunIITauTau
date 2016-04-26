@@ -71,6 +71,8 @@ public:
 /* init function --> arguments are the initial unordered NtupleJet vector, 
 	the jet cut string, and the b-jet cut string, min DR jet-lepton, leg1, leg2  */
   void init(std::vector<NtupleJet>, std::string, std::string, double, NtupleLepton, NtupleLepton); 
+  void init(std::vector<NtupleJet>, std::string, std::string); 
+
 
 // getters 
   																 
