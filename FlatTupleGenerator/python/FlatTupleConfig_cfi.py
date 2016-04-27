@@ -245,8 +245,9 @@ emuTriggerCutFall15MCminiAOD = "((isLeg1GoodForHLTPath('HLT_Mu17_TrkIsoVVL_Ele12
 	isLeg2GoodForHLTPath('HLT_Mu8_TrkIsoVVL_Ele17_CaloIdL_TrackIdL_IsoVL_v*') && leg1.pt>18))"
 
 
-tautauTriggerCutFall15MCminiAOD = "(isLeg1GoodForHLTPath('HLT_DoubleMediumIsoPFTau35_Trk1_eta2p1_Reg_v*') \
-	&& isLeg2GoodForHLTPath('HLT_DoubleMediumIsoPFTau35_Trk1_eta2p1_Reg_v*'))"
+tautauTriggerCutFall15MCminiAOD = "(isLeg1GoodForHLTPath('HLT_DoubleMediumIsoPFTau35_Trk1_eta2p1_Reg_v*')\
+	&& isLeg2GoodForHLTPath('HLT_DoubleMediumIsoPFTau35_Trk1_eta2p1_Reg_v*')\
+	&& PairPassesDoubleTauIsoTau28MatchCut)"
 
 etauTriggerCutFall15MCminiAOD = "(isLeg1GoodForHLTPath('HLT_Ele23_WPLoose_Gsf_v*'))"
 
@@ -258,12 +259,23 @@ mtauTriggerCutFall15MCminiAOD = "(isLeg1GoodForHLTPath('HLT_IsoMu18_v*'))"
 ################################
 # concatenate trigger cuts     #
 ################################
+# always include isRealData checks to 
+# avoid the data condition 
+# triggering the mc condition
+# in cases where DATA & MC HLT conditions
+# are the same, but MC has extra pt or isoTau match cuts
+################################
+
+emuTriggerCut = cms.string(" ( !isRealData && "+emuTriggerCutFall15MCminiAOD+" ) || ( "+emuTriggerCutRun2015D + " && isRealData )" )
+tautauTriggerCut = cms.string(" ( !isRealData && "+tautauTriggerCutFall15MCminiAOD+" ) || ( "+tautauTriggerCutRun2015D+ " && isRealData )")
+etauTriggerCut = cms.string(" ( !isRealData && "+etauTriggerCutFall15MCminiAOD+" ) || ( "+etauTriggerCutRun2015D+ " && isRealData )")
+mtauTriggerCut  = cms.string(" ( !isRealData && "+mtauTriggerCutFall15MCminiAOD+" ) || ( "+mtauTriggerCutRun2015D+ " && isRealData )")
 
 
-emuTriggerCut = cms.string(emuTriggerCutFall15MCminiAOD+" || "+emuTriggerCutRun2015D)
-tautauTriggerCut = cms.string(tautauTriggerCutFall15MCminiAOD+" || "+tautauTriggerCutRun2015D)
-etauTriggerCut = cms.string(etauTriggerCutFall15MCminiAOD+" || "+etauTriggerCutRun2015D)
-mtauTriggerCut  = cms.string(mtauTriggerCutFall15MCminiAOD+" || "+mtauTriggerCutRun2015D)
+# emuTriggerCut = cms.string(emuTriggerCutFall15MCminiAOD+" || "+emuTriggerCutRun2015D)
+# tautauTriggerCut = cms.string(tautauTriggerCutFall15MCminiAOD+" || "+tautauTriggerCutRun2015D)
+# etauTriggerCut = cms.string(etauTriggerCutFall15MCminiAOD+" || "+etauTriggerCutRun2015D)
+# mtauTriggerCut  = cms.string(mtauTriggerCutFall15MCminiAOD+" || "+mtauTriggerCutRun2015D)
 
 
 

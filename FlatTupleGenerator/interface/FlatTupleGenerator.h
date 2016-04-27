@@ -323,6 +323,14 @@ public:
 	float leg1_RelIso, leg2_RelIso; /* relative isolation - value depends on the FlatTupleConfig_cfi */
 
 
+	/* all L1 isoTau matches for leg1, leg2, and (the max pt) L1 isoTau match for each of the effLeptons 
+	-- these are useful for various trigger studies and cuts note: M is 0 at L1 trigger level */
+
+	std::vector <double> leg1_L1IsoTauMatch_pt, leg1_L1IsoTauMatch_eta, leg1_L1IsoTauMatch_phi;
+	std::vector <double> leg2_L1IsoTauMatch_pt, leg2_L1IsoTauMatch_eta, leg2_L1IsoTauMatch_phi;
+	std::vector <double> effLep_MaxL1IsoTauMatch_pt, effLep_MaxL1IsoTauMatch_eta, effLep_MaxL1IsoTauMatch_phi;
+	bool PairPassesDoubleTauIsoTau28MatchCut;
+	
 
 	/* parameters for EffLeptons */
 

@@ -243,8 +243,14 @@ NtupleEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
 
             }
 
-          /* push back the current pair */
-          NtupleEvents->push_back(anNtupleEffEvent);
+            anNtupleEffEvent.fillL1IsoTauMatchInfoForEffLepton(L1IsoTaus);
+
+            /* needed for triggers */
+
+            anNtupleEffEvent.set_isRealData(iEvent.isRealData());
+          
+            /* push back the current pair */
+            NtupleEvents->push_back(anNtupleEffEvent);
 
 
         }
@@ -275,6 +281,13 @@ NtupleEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
 
           anNtupleEvent.fillL1IsoTauMatchInfoLeg1andLeg2(L1IsoTaus);
 
+          std::cout<<" checking IsoTau Cut "<<anNtupleEvent.PairPassesDoubleTauIsoTau28MatchCut()<<"\n";
+
+
+            /* needed for triggers */
+
+            anNtupleEvent.set_isRealData(iEvent.isRealData());
+          
 
           /* push back the current pair */
            NtupleEvents->push_back(anNtupleEvent);

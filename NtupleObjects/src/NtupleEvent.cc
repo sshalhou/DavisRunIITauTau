@@ -13,6 +13,7 @@ NtupleEvent::NtupleEvent()
 	m_CandidateEventType = -999;
 	m_TauEsNumberSigmasShifted = NAN;
 	m_isOsPair = -999;
+	m_isRealData = 0;
 
 
 }
@@ -208,7 +209,7 @@ void NtupleEvent::fillL1IsoTauMatchInfoLeg1andLeg2(edm::Handle<l1extra::L1JetPar
 		for(l1extra::L1JetParticleCollection::const_iterator i = L1IsoTaus->begin(); i != L1IsoTaus->end(); ++i) 
 		{
 			if(deltaR(m_leg1.p4(),i->p4()) < 0.5) m_leg1_L1IsoTauDR05Matches.push_back(i->p4());
-			if(deltaR(m_leg1.p4(),i->p4()) < 0.5) m_leg2_L1IsoTauDR05Matches.push_back(i->p4());
+			if(deltaR(m_leg2.p4(),i->p4()) < 0.5) m_leg2_L1IsoTauDR05Matches.push_back(i->p4());
 
 		}
 	}
@@ -224,7 +225,33 @@ void NtupleEvent::fillL1IsoTauMatchInfoLeg1andLeg2(edm::Handle<l1extra::L1JetPar
 void NtupleEvent::fillL1IsoTauMatchInfoForEffLepton(edm::Handle<l1extra::L1JetParticleCollection> L1IsoTaus)
 {
 
-	//std::cout<<L1IsoTaus->size()<<"\n";
+
+
+ 	if(L1IsoTaus.isValid()) 
+ 	{
+
+ 		for(std::size_t e = 0; e<m_EffLepton.size(); ++e)
+		{ 			
+			std::vector <LorentzVector> tempVec;
+
+			for(l1extra::L1JetParticleCollection::const_iterator i = L1IsoTaus->begin(); i != L1IsoTaus->end(); ++i) 
+			{
+				if(deltaR(m_EffLepton.at(e).p4(),i->p4()) < 0.5) tempVec.push_back(i->p4());
+			}
+
+			std::cout<<L1IsoTaus->size()<<" = total isoTaus ";
+			std::cout<<" eff lepton at index "<<e<<" matches to "<<tempVec.size()<<" of them \n";
+
+			m_EffLepton_L1IsoTauDR05Matches.push_back(tempVec);
+			tempVec.clear();
+
+		}
+	}
+
+
+
+//  std::vector < std::vector <LorentzVector> > m_EffLepton_L1IsoTauDR05Matches; 
+
 
 
 }
@@ -327,6 +354,63 @@ void NtupleEvent::fill(TupleCandidateEvent TCE)
 
 }
 
+/* set real data or MC */
+
+void NtupleEvent::set_isRealData(bool dummy_)
+{
+	m_isRealData = dummy_;
+}
+
+
+
+/* the next function helps to easily apply the cut 
+
+DeltaR(isotau1,offlinetau1) < 0.5
+DeltaR(isotau2,offlinetau2) < 0.5
+Where isotau1.pt()>28 GeV and isotau2.pt()>28 GeV, and isotau1 != isotau2
+which is needed for the 2015 tau_h tau_h trigger
+*/
+
+bool NtupleEvent::PairPassesDoubleTauIsoTau28MatchCut() const
+{
+
+	for(std::size_t a = 0; a<m_leg1_L1IsoTauDR05Matches.size(); ++a)
+	{
+		if( m_leg1_L1IsoTauDR05Matches.at(a).pt() > 28 )
+		{
+
+			for(std::size_t b = 0; b<m_leg2_L1IsoTauDR05Matches.size(); ++b)				
+			{
+				if( m_leg2_L1IsoTauDR05Matches.at(b).pt() > 28 )
+				{				
+
+					if( deltaR(m_leg1_L1IsoTauDR05Matches.at(a),m_leg2_L1IsoTauDR05Matches.at(b))>0.001 ) 
+					{
+						std::cout<<" NOT THE SAME ISOTAU ";
+						std::cout<<" pt "<<m_leg1_L1IsoTauDR05Matches.at(a).pt()<<" vs "<<m_leg2_L1IsoTauDR05Matches.at(b).pt()<<" ";
+						std::cout<<" eta "<<m_leg1_L1IsoTauDR05Matches.at(a).eta()<<" vs "<<m_leg2_L1IsoTauDR05Matches.at(b).eta()<<" ";
+						std::cout<<" phi "<<m_leg1_L1IsoTauDR05Matches.at(a).phi()<<" vs "<<m_leg2_L1IsoTauDR05Matches.at(b).phi()<<" ";
+
+						return 1;
+					}
+					else /* just for print out */
+					{	
+						std::cout<<" IDENTICAL ISOTAU ";
+						std::cout<<" pt "<<m_leg1_L1IsoTauDR05Matches.at(a).pt()<<" vs "<<m_leg2_L1IsoTauDR05Matches.at(b).pt()<<" ";
+						std::cout<<" eta "<<m_leg1_L1IsoTauDR05Matches.at(a).eta()<<" vs "<<m_leg2_L1IsoTauDR05Matches.at(b).eta()<<" ";
+						std::cout<<" phi "<<m_leg1_L1IsoTauDR05Matches.at(a).phi()<<" vs "<<m_leg2_L1IsoTauDR05Matches.at(b).phi()<<" ";
+					}
+				}
+
+			}
+
+		}  
+	}
+
+	return 0;
+}
+
+
 
 
 int NtupleEvent::CandidateEventType() const { return m_CandidateEventType; }
@@ -334,11 +418,16 @@ float NtupleEvent::TauEsNumberSigmasShifted() const {return m_TauEsNumberSigmasS
 NtupleLepton NtupleEvent::leg1() const { return m_leg1; }
 NtupleLepton NtupleEvent::leg2() const { return m_leg2; }
 std::vector<NtupleLepton> NtupleEvent::EffLepton() const {return m_EffLepton;}
+
+bool NtupleEvent::isRealData() const {return m_isRealData; }
+
 std::vector<NtupleTrigObject> NtupleEvent::leg1_trigMatches() const { return m_leg1_trigMatches; }
 std::vector<NtupleTrigObject> NtupleEvent::leg2_trigMatches() const { return m_leg2_trigMatches; }
-
 std::vector < std::vector<NtupleTrigObject> > NtupleEvent::EffLepton_trigMatches() const { return m_EffLepton_trigMatches; }
 
+std::vector <LorentzVector>  NtupleEvent::leg1_L1IsoTauDR05Matches() const { return m_leg1_L1IsoTauDR05Matches; }
+std::vector <LorentzVector>  NtupleEvent::leg2_L1IsoTauDR05Matches() const { return m_leg2_L1IsoTauDR05Matches; }
+std::vector < std::vector <LorentzVector> >  NtupleEvent::EffLepton_L1IsoTauDR05Matches()  const { return m_EffLepton_L1IsoTauDR05Matches; }
 
 std::vector<NtupleLepton> NtupleEvent::vetoElectron() const {return m_vetoElectron;}
 std::vector<NtupleLepton> NtupleEvent::vetoMuon() const {return  m_vetoMuon;}

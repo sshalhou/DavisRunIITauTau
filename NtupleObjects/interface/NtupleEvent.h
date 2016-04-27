@@ -46,7 +46,7 @@ public:
   void fillTriggerMatchesForEffLepton(  std::vector<NtupleTrigObject> );
   void fillL1IsoTauMatchInfoLeg1andLeg2(edm::Handle<l1extra::L1JetParticleCollection>);
   void fillL1IsoTauMatchInfoForEffLepton(edm::Handle<l1extra::L1JetParticleCollection>);
-
+  void set_isRealData(bool);
 
   // helpers 
 
@@ -83,6 +83,9 @@ public:
   float leg2MaxPtTriggerObjMatch() const;  
   float EffLeptonMaxPtTriggerObjMatch(std::size_t) const;  /* arg is the index of the EffLepton */
    
+  bool isRealData() const; /* needed to apply trigger cuts on data/mc*/ 
+
+
 
 
   float isLeg1GoodForHLTPath(std::string) const;   /* for an HLT path, return 1 if the leg is good for that path */
@@ -102,6 +105,17 @@ public:
 
   void fillTriggerSummariesEffLepton(stringFloatPairVec); /* fill the member data */
 
+
+  /* the next function helps to easily apply the cut 
+
+   DeltaR(isotau1,offlinetau1) < 0.5
+   DeltaR(isotau2,offlinetau2) < 0.5
+   Where isotau1.pt()>28 GeV and isotau2.pt()>28 GeV, and isotau1 != isotau2
+   
+   which is needed for the 2015 tau_h tau_h trigger
+  */
+
+   bool PairPassesDoubleTauIsoTau28MatchCut() const; /* returns 1 if cut passed, 0 if not */
 
 
   // getters
@@ -192,6 +206,8 @@ private:
   stringFloatPairVec m_isLeg1GoodForHLTPath; /* pair of HLT path : 1.0 meeting reco leg1 accept+match+filter */
   stringFloatPairVec m_isLeg2GoodForHLTPath; /* pair of HLT path : 1.0 meeting reco leg2 accept+match+filter */
   std::vector < stringFloatPairVec > m_isEffLeptonGoodForHLTPath;
+
+  bool m_isRealData; 
 
 };
 

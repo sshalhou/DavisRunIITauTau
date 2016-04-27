@@ -370,6 +370,7 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
       handleSVFitCall(iEvent,iSetup,currentPair); 
       handleLeg1AndLeg2Info(iEvent,iSetup,currentPair); 
 
+      std::cout<<" ievent isReal data "<<isRealData<<" vs new function "<<currentPair.isRealData();
 
 
       std::cout<<" FILL H2TauTau! \n";
@@ -447,6 +448,36 @@ void FlatTupleGenerator::handleEffLeptonInfo(const edm::Event& iEvent, const edm
 
   for(std::size_t i = 0; i<currentPair.EffLepton().size(); ++i)
   {
+
+    /* find and store the L1isoTau match (of max pt) for the EffLepton */
+
+    double maxIsoTauPt = -999.;
+    double maxPt_pt = -999.;
+    double maxPt_eta = -999.;
+    double maxPt_phi = -999.;
+
+
+
+    for(std::size_t ii = 0; ii<currentPair.EffLepton_L1IsoTauDR05Matches().at(i).size(); ++ii)
+    {
+
+      if( currentPair.EffLepton_L1IsoTauDR05Matches()[i][ii].pt() > maxIsoTauPt )
+      {
+          maxIsoTauPt = currentPair.EffLepton_L1IsoTauDR05Matches()[i][ii].pt();
+          maxPt_pt = currentPair.EffLepton_L1IsoTauDR05Matches()[i][ii].pt();
+          maxPt_eta = currentPair.EffLepton_L1IsoTauDR05Matches()[i][ii].eta();
+          maxPt_phi = currentPair.EffLepton_L1IsoTauDR05Matches()[i][ii].phi();
+
+      }
+
+    }
+
+    effLep_MaxL1IsoTauMatch_pt.push_back(maxPt_pt);
+    effLep_MaxL1IsoTauMatch_eta.push_back(maxPt_eta);
+    effLep_MaxL1IsoTauMatch_phi.push_back(maxPt_phi);
+
+
+
     effLep_leptonType.push_back(currentPair.EffLepton().at(i).leptonType());
     effLep_dz.push_back(currentPair.EffLepton().at(i).dz());
     effLep_dxy.push_back(currentPair.EffLepton().at(i).dxy());
@@ -616,6 +647,27 @@ void FlatTupleGenerator::handleLeg1AndLeg2Info(const edm::Event& iEvent, const e
   }
 
   /* general leg info */
+
+
+  PairPassesDoubleTauIsoTau28MatchCut = currentPair.PairPassesDoubleTauIsoTau28MatchCut();
+
+
+  for(std::size_t ii = 0; ii<currentPair.leg1_L1IsoTauDR05Matches().size(); ++ii)
+  {
+    leg1_L1IsoTauMatch_pt.push_back(currentPair.leg1_L1IsoTauDR05Matches().at(ii).pt());
+    leg1_L1IsoTauMatch_eta.push_back(currentPair.leg1_L1IsoTauDR05Matches().at(ii).eta());
+    leg1_L1IsoTauMatch_phi.push_back(currentPair.leg1_L1IsoTauDR05Matches().at(ii).phi());
+  }
+
+  for(std::size_t ii = 0; ii<currentPair.leg2_L1IsoTauDR05Matches().size(); ++ii)
+  {
+    leg2_L1IsoTauMatch_pt.push_back(currentPair.leg2_L1IsoTauDR05Matches().at(ii).pt());
+    leg2_L1IsoTauMatch_eta.push_back(currentPair.leg2_L1IsoTauDR05Matches().at(ii).eta());
+    leg2_L1IsoTauMatch_phi.push_back(currentPair.leg2_L1IsoTauDR05Matches().at(ii).phi());
+  }
+
+
+
 
   leg1_leptonType = currentPair.leg1().leptonType();
   leg1_dz = currentPair.leg1().dz();
@@ -1339,6 +1391,8 @@ void FlatTupleGenerator::handlePairIndepInfo(const edm::Event& iEvent, const edm
   isRealData = iEvent.isRealData();
   treeInfoString = NAME_;
 
+
+
   AppliedLepCuts = LeptonCutHelper.getCutSummary(LeptonCutVecSrc_);
 
 
@@ -1795,6 +1849,19 @@ void FlatTupleGenerator::handlePairIndepInfo(const edm::Event& iEvent, const edm
 
 
 
+  leg1_L1IsoTauMatch_pt.clear();
+  leg1_L1IsoTauMatch_eta.clear();
+  leg1_L1IsoTauMatch_phi.clear();
+
+  leg2_L1IsoTauMatch_pt.clear();
+  leg2_L1IsoTauMatch_eta.clear();
+  leg2_L1IsoTauMatch_phi.clear();
+
+  PairPassesDoubleTauIsoTau28MatchCut = -999;
+
+  effLep_MaxL1IsoTauMatch_pt.clear();
+  effLep_MaxL1IsoTauMatch_eta.clear();
+  effLep_MaxL1IsoTauMatch_phi.clear();
 
   veto_leptonType.clear(); 
   veto_pt.clear(); 
@@ -2045,6 +2112,23 @@ void FlatTupleGenerator::beginJob()
   FlatTuple->Branch("pfMET_cov01", &pfMET_cov01);
   FlatTuple->Branch("pfMET_cov10", &pfMET_cov10);
   FlatTuple->Branch("pfMET_cov11", &pfMET_cov11);
+
+
+  FlatTuple->Branch("leg1_L1IsoTauMatch_pt", &leg1_L1IsoTauMatch_pt);
+  FlatTuple->Branch("leg1_L1IsoTauMatch_eta", &leg1_L1IsoTauMatch_eta);
+  FlatTuple->Branch("leg1_L1IsoTauMatch_phi", &leg1_L1IsoTauMatch_phi);
+
+  FlatTuple->Branch("leg2_L1IsoTauMatch_pt", &leg2_L1IsoTauMatch_pt);
+  FlatTuple->Branch("leg2_L1IsoTauMatch_eta", &leg2_L1IsoTauMatch_eta);
+  FlatTuple->Branch("leg2_L1IsoTauMatch_phi", &leg2_L1IsoTauMatch_phi);
+
+  FlatTuple->Branch("effLep_MaxL1IsoTauMatch_pt", &effLep_MaxL1IsoTauMatch_pt);
+  FlatTuple->Branch("effLep_MaxL1IsoTauMatch_eta", &effLep_MaxL1IsoTauMatch_eta);
+  FlatTuple->Branch("effLep_MaxL1IsoTauMatch_phi", &effLep_MaxL1IsoTauMatch_phi);
+
+
+
+  FlatTuple->Branch("PairPassesDoubleTauIsoTau28MatchCut", &PairPassesDoubleTauIsoTau28MatchCut);
 
   FlatTuple->Branch("leg1_leptonType", &leg1_leptonType);
   FlatTuple->Branch("leg1_dz", &leg1_dz);
