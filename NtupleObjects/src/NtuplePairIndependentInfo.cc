@@ -30,11 +30,15 @@ NtuplePairIndependentInfo::NtuplePairIndependentInfo()
   m_CodeVersion = NAN;
 
   m_HBHENoiseFilter = 1;
-  m_HBHEIsoNoiseFilter = 1;
-  m_CSCTightHaloFilter = 1;
-  m_goodVerticesFilter = 1;
-  m_eeBadScFilter = 1;
+  m_HBHENoiseIsoFilter = 1;
+  m_CSCTightHalo2015Filter = 1;
   m_EcalDeadCellTriggerPrimitiveFilter = 1;
+  m_goodVertices = 1;
+  m_eeBadScFilter = 1;
+  m_chargedHadronTrackResolutionFilter = 1;
+  m_muonBadTrackFilter = 1;
+
+
 
   m_GenBosonVisibleMomentum.SetXYZT(NAN,NAN,NAN,NAN);
   m_GenBosonTotalMomentum.SetXYZT(NAN,NAN,NAN,NAN);
@@ -52,37 +56,42 @@ void  NtuplePairIndependentInfo::fill_GenBosonTotalMomentum(LorentzVector X)
 }
 
 
-void  NtuplePairIndependentInfo::fill_HBHEIsoNoiseFilter(bool arg)
-  {
-    m_HBHEIsoNoiseFilter = arg;
-  }
-
- 
 
 void  NtuplePairIndependentInfo::fill_HBHENoiseFilter(bool arg)
-  {
-    m_HBHENoiseFilter = arg;
-  }
-
-void  NtuplePairIndependentInfo::fill_CSCTightHaloFilter(bool arg)
-  {
-    m_CSCTightHaloFilter = arg;
-  }
-
-void  NtuplePairIndependentInfo::fill_goodVerticesFilter(bool arg)
-  {
-    m_goodVerticesFilter = arg;
-  }
-
-void  NtuplePairIndependentInfo::fill_eeBadScFilter(bool arg)
-  {
-    m_eeBadScFilter = arg;
-  }
-
+{ 
+    m_HBHENoiseFilter = arg; 
+}
+void  NtuplePairIndependentInfo::fill_HBHENoiseIsoFilter(bool arg)
+{ 
+    m_HBHENoiseIsoFilter = arg; 
+}
+void  NtuplePairIndependentInfo::fill_CSCTightHalo2015Filter(bool arg)
+{ 
+    m_CSCTightHalo2015Filter = arg; 
+}
 void  NtuplePairIndependentInfo::fill_EcalDeadCellTriggerPrimitiveFilter(bool arg)
-  {
-    m_EcalDeadCellTriggerPrimitiveFilter = arg;
-  }
+{ 
+    m_EcalDeadCellTriggerPrimitiveFilter = arg; 
+}
+void  NtuplePairIndependentInfo::fill_goodVertices(bool arg)
+{ 
+    m_goodVertices = arg; 
+}
+void  NtuplePairIndependentInfo::fill_eeBadScFilter(bool arg)
+{ 
+    m_eeBadScFilter = arg; 
+}
+void  NtuplePairIndependentInfo::fill_chargedHadronTrackResolutionFilter(bool arg)
+{ 
+    m_chargedHadronTrackResolutionFilter = arg; 
+}
+void  NtuplePairIndependentInfo::fill_muonBadTrackFilter(bool arg)
+{ 
+    m_muonBadTrackFilter = arg; 
+}
+ 
+
+
 
 
 void  NtuplePairIndependentInfo::fill_sampleInfo(edm::ParameterSet argSet)
@@ -246,13 +255,16 @@ double NtuplePairIndependentInfo::CrossSection() const { return m_CrossSection; 
 double NtuplePairIndependentInfo::FilterEff() const { return m_FilterEff; };
 double NtuplePairIndependentInfo::CodeVersion() const { return m_CodeVersion; };
 
-bool NtuplePairIndependentInfo::HBHEIsoNoiseFilter() const { return m_HBHEIsoNoiseFilter; };
 
 bool NtuplePairIndependentInfo::HBHENoiseFilter() const { return m_HBHENoiseFilter; };
-bool NtuplePairIndependentInfo::CSCTightHaloFilter() const { return m_CSCTightHaloFilter; };
-bool NtuplePairIndependentInfo::goodVerticesFilter() const { return m_goodVerticesFilter; };
-bool NtuplePairIndependentInfo::eeBadScFilter() const { return m_eeBadScFilter; };
+bool NtuplePairIndependentInfo::HBHENoiseIsoFilter() const { return m_HBHENoiseIsoFilter; };
+bool NtuplePairIndependentInfo::CSCTightHalo2015Filter() const { return m_CSCTightHalo2015Filter; };
 bool NtuplePairIndependentInfo::EcalDeadCellTriggerPrimitiveFilter() const { return m_EcalDeadCellTriggerPrimitiveFilter; };
+bool NtuplePairIndependentInfo::goodVertices() const { return m_goodVertices; };
+bool NtuplePairIndependentInfo::eeBadScFilter() const { return m_eeBadScFilter; };
+bool NtuplePairIndependentInfo::chargedHadronTrackResolutionFilter() const { return m_chargedHadronTrackResolutionFilter; };
+bool NtuplePairIndependentInfo::muonBadTrackFilter() const { return m_muonBadTrackFilter; };
+
 
 LorentzVector  NtuplePairIndependentInfo::GenBosonVisibleMomentum() const { return m_GenBosonVisibleMomentum; };
 LorentzVector  NtuplePairIndependentInfo::GenBosonTotalMomentum() const { return m_GenBosonTotalMomentum; };

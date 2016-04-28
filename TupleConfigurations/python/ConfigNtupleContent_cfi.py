@@ -80,6 +80,15 @@ GEN_PARTICLES_TO_KEEP.append(37) # keep non-SM Higgs
 GEN_PARTICLES_TO_KEEP.append(211) # keep pi+, pi-
 GEN_PARTICLES_TO_KEEP.append(111) # keep pi0
 
+# need to check this, as it seems the models vary in pdgID scheme 
+# GEN_PARTICLES_TO_KEEP.append(32) # a Z' variant ?
+# GEN_PARTICLES_TO_KEEP.append(28) # listed as P28 ?
+# GEN_PARTICLES_TO_KEEP.append(18) # nu'_tau (the DM partilce in some of the models)
+# GEN_PARTICLES_TO_KEEP.append(9000001) # Z' variant - from private prod.
+# GEN_PARTICLES_TO_KEEP.append(9000007) # chi (the dm particle) - from private prod.
+
+# p p > Zp > h A0, A0 > n1 n1
+
 
 ####################################################################################################
 # edit the choice of the default b-tag algorithm

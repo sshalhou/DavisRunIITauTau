@@ -593,24 +593,6 @@ process.NtupleEventsTauEsDown = cms.EDProducer('NtupleEventProducer' ,
 
 
 
-#################################
-# one of the MET Filters needs to be re-run
-# from Mini-AOD
-# see https://twiki.cern.ch/twiki/bin/viewauth/CMS/
-# MissingETOptionalFiltersRun2#snippet_on_how_to_re_run_HBHE_fr
-
-
-
-##___________________________HCAL_Noise_Filter________________________________||
-process.load('CommonTools.RecoAlgos.HBHENoiseFilterResultProducer_cfi')
-process.HBHENoiseFilterResultProducer.minZeros = cms.int32(99999)
-
-# process.ApplyBaselineHBHENoiseFilter = cms.EDFilter('BooleanFlagFilter',
-#    inputLabel = cms.InputTag('HBHENoiseFilterResultProducer','HBHENoiseFilterResult'),
-#    reverseDecision = cms.bool(False)
-# )
-
-
 
 
 
@@ -661,9 +643,7 @@ process.pairIndep = cms.EDProducer('NtuplePairIndependentInfoProducer',
 							PUweightSettingsSrc = PUntupleWeightSettings,
 							mcGenWeightSrc = mcGenWeightSrcInputTag,
 				  			LHEEventProductSrc = LHEEventProductSrcInputTag,
-				  			sampleInfoSrc = sampleData,
-							HBHENoiseFilterResultSrc = cms.InputTag('HBHENoiseFilterResultProducer:HBHENoiseFilterResult:DavisNtuple'),
-							HBHEIsoNoiseFilterResultSrc = cms.InputTag('HBHENoiseFilterResultProducer:HBHEIsoNoiseFilterResult:DavisNtuple'),
+				  			sampleInfoSrc = sampleData,							
 							triggerResultsPatSrc = cms.InputTag("TriggerResults","","PAT"),
 							triggerResultsRecoSrc = cms.InputTag("TriggerResults","","RECO")
 							                 )
@@ -781,8 +761,6 @@ process.p *= process.patJetsReapplyJEC
 
 process.p *= process.filteredSlimmedJets
 
-process.p *= process.HBHENoiseFilterResultProducer
-# #process.p *= process.ApplyBaselineHBHENoiseFilter
 
 process.p *= process.egmGsfElectronIDSequence
 process.p *= process.customSlimmedElectrons

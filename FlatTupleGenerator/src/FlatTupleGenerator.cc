@@ -478,6 +478,12 @@ void FlatTupleGenerator::handleEffLeptonInfo(const edm::Event& iEvent, const edm
 
 
 
+    ///////////////////////////////
+    // trigger matches (max pt only)
+    ////////////////////////////////
+
+    effLep_maxPtTrigObjMatch.push_back(currentPair.EffLeptonMaxPtTriggerObjMatch(i));
+
     effLep_leptonType.push_back(currentPair.EffLepton().at(i).leptonType());
     effLep_dz.push_back(currentPair.EffLepton().at(i).dz());
     effLep_dxy.push_back(currentPair.EffLepton().at(i).dxy());
@@ -602,6 +608,18 @@ void FlatTupleGenerator::handleLeg1AndLeg2Info(const edm::Event& iEvent, const e
 {
 
   /* fill info accessed through leg1 and leg2 */
+
+
+  ///////////////////////////////
+  // trigger matches (max pt only)
+  ////////////////////////////////
+
+
+  leg1_maxPtTrigObjMatch = currentPair.leg1MaxPtTriggerObjMatch();
+  leg2_maxPtTrigObjMatch = currentPair.leg2MaxPtTriggerObjMatch();
+
+
+
 
   ////////////////////////////////
   // fill the tauIDs for tau legs
@@ -1423,15 +1441,14 @@ void FlatTupleGenerator::handlePairIndepInfo(const edm::Event& iEvent, const edm
 
   /* MET filters */
 
-  HBHEIsoNoiseFilter = currentINDEP.HBHEIsoNoiseFilter();
-
   HBHENoiseFilter = currentINDEP.HBHENoiseFilter();
-  CSCTightHaloFilter = currentINDEP.CSCTightHaloFilter();
-  goodVerticesFilter = currentINDEP.goodVerticesFilter();
-  eeBadScFilter = currentINDEP.eeBadScFilter();
+  HBHENoiseIsoFilter = currentINDEP.HBHENoiseIsoFilter();
+  CSCTightHalo2015Filter = currentINDEP.CSCTightHalo2015Filter();
   EcalDeadCellTriggerPrimitiveFilter = currentINDEP.EcalDeadCellTriggerPrimitiveFilter();
-
-
+  goodVerticesFilter = currentINDEP.goodVertices();
+  eeBadScFilter = currentINDEP.eeBadScFilter();
+  chargedHadronTrackResolutionFilter = currentINDEP.chargedHadronTrackResolutionFilter();
+  muonBadTrackFilter = currentINDEP.muonBadTrackFilter();
 
   /* pileup & other weights */
 
@@ -1897,13 +1914,16 @@ void FlatTupleGenerator::handlePairIndepInfo(const edm::Event& iEvent, const edm
   generatorEventWeight = NAN;
   hepNUP = -999;
 
-  HBHEIsoNoiseFilter = 1;
-
   HBHENoiseFilter = 1;
-  CSCTightHaloFilter = 1;
+  HBHENoiseIsoFilter = 1;
+  CSCTightHalo2015Filter = 1;
+  EcalDeadCellTriggerPrimitiveFilter = 1;
   goodVerticesFilter = 1;
   eeBadScFilter = 1;
-  EcalDeadCellTriggerPrimitiveFilter = 1;
+  chargedHadronTrackResolutionFilter = 1;
+  muonBadTrackFilter = 1;
+
+
 
   numberOfJets30 = -999;
   numberOfJets = -999;
@@ -2010,7 +2030,9 @@ void FlatTupleGenerator::handlePairIndepInfo(const edm::Event& iEvent, const edm
   genBosonVisible_M = NAN;
 
 
-
+  leg1_maxPtTrigObjMatch = NAN;
+  leg2_maxPtTrigObjMatch = NAN;
+  effLep_maxPtTrigObjMatch.clear();
 
 
 
@@ -2396,14 +2418,14 @@ void FlatTupleGenerator::beginJob()
   FlatTuple->Branch("vertex_positionEta",&vertex_positionEta);
   FlatTuple->Branch("vertex_positionPhi",&vertex_positionPhi);
 
-
-  FlatTuple->Branch("HBHEIsoNoiseFilter", &HBHEIsoNoiseFilter);
-
   FlatTuple->Branch("HBHENoiseFilter", &HBHENoiseFilter);
-  FlatTuple->Branch("CSCTightHaloFilter", &CSCTightHaloFilter);
+  FlatTuple->Branch("HBHENoiseIsoFilter", &HBHENoiseIsoFilter);
+  FlatTuple->Branch("CSCTightHalo2015Filter", &CSCTightHalo2015Filter);
+  FlatTuple->Branch("EcalDeadCellTriggerPrimitiveFilter", &EcalDeadCellTriggerPrimitiveFilter);
   FlatTuple->Branch("goodVerticesFilter", &goodVerticesFilter);
   FlatTuple->Branch("eeBadScFilter", &eeBadScFilter);
-  FlatTuple->Branch("EcalDeadCellTriggerPrimitiveFilter", &EcalDeadCellTriggerPrimitiveFilter);
+  FlatTuple->Branch("chargedHadronTrackResolutionFilter", &chargedHadronTrackResolutionFilter);
+  FlatTuple->Branch("muonBadTrackFilter", &muonBadTrackFilter);
 
   FlatTuple->Branch("puWeight",&puWeight);
   FlatTuple->Branch("NumPileupInt",&NumPileupInt);
@@ -2511,6 +2533,11 @@ void FlatTupleGenerator::beginJob()
   FlatTuple->Branch("genBosonVisible_eta", &genBosonVisible_eta); 
   FlatTuple->Branch("genBosonVisible_phi", &genBosonVisible_phi); 
   FlatTuple->Branch("genBosonVisible_M", &genBosonVisible_M); 
+
+  FlatTuple->Branch("leg1_maxPtTrigObjMatch", &leg1_maxPtTrigObjMatch);
+  FlatTuple->Branch("leg2_maxPtTrigObjMatch", &leg2_maxPtTrigObjMatch);
+  FlatTuple->Branch("effLep_maxPtTrigObjMatch", &effLep_maxPtTrigObjMatch);
+
 
 
 }

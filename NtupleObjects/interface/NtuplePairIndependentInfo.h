@@ -63,11 +63,13 @@ public:
   /* fill various MET filters */
 
   void fill_HBHENoiseFilter(bool);
-  void fill_HBHEIsoNoiseFilter(bool);
-  void fill_CSCTightHaloFilter(bool);
-  void fill_goodVerticesFilter(bool);
-  void fill_eeBadScFilter(bool);
+  void fill_HBHENoiseIsoFilter(bool);
+  void fill_CSCTightHalo2015Filter(bool);
   void fill_EcalDeadCellTriggerPrimitiveFilter(bool);
+  void fill_goodVertices(bool);
+  void fill_eeBadScFilter(bool);
+  void fill_chargedHadronTrackResolutionFilter(bool);
+  void fill_muonBadTrackFilter(bool);
 
 
   /* fill the boson 4-vectors at gen level */
@@ -103,12 +105,16 @@ public:
   double FilterEff() const;
   double CodeVersion() const;
 
+
+
   bool HBHENoiseFilter() const;
-  bool HBHEIsoNoiseFilter() const;
-  bool CSCTightHaloFilter() const;
-  bool goodVerticesFilter() const;
-  bool eeBadScFilter() const;
+  bool HBHENoiseIsoFilter() const;
+  bool CSCTightHalo2015Filter() const;
   bool EcalDeadCellTriggerPrimitiveFilter() const;
+  bool goodVertices() const;
+  bool eeBadScFilter() const;
+  bool chargedHadronTrackResolutionFilter() const;
+  bool muonBadTrackFilter() const;
 
 
   /* gen boson 4-vectors */
@@ -157,11 +163,13 @@ private:
   /* MET filters */
 
   bool m_HBHENoiseFilter;
-  bool m_HBHEIsoNoiseFilter;
-  bool m_CSCTightHaloFilter;
-  bool m_goodVerticesFilter;
-  bool m_eeBadScFilter;
+  bool m_HBHENoiseIsoFilter;
+  bool m_CSCTightHalo2015Filter;
   bool m_EcalDeadCellTriggerPrimitiveFilter;
+  bool m_goodVertices;
+  bool m_eeBadScFilter;
+  bool m_chargedHadronTrackResolutionFilter;
+  bool m_muonBadTrackFilter;
 
   /* gen boson 4-vectors */
 

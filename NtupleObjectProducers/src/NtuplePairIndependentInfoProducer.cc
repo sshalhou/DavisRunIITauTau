@@ -124,16 +124,20 @@ private:
 
   edm::ParameterSet sampleInfoSrc_;
 
+
+/* in 74X these needed to be rerun on miniAOD,
+in 76X we can access directly from miniAOD */
+
+  // edm::InputTag HBHENoiseFilterResultSrc_;  
+  // edm::EDGetTokenT<bool> HBHENoiseFilterResultToken_;
+
+  // edm::InputTag HBHEIsoNoiseFilterResultSrc_;  
+  // edm::EDGetTokenT<bool> HBHEIsoNoiseFilterResultToken_;
+
+
+
   /* parameters for MET Filters; we code 2 versions of TriggerResults 
      to support both PAT and RECO processes (only used if isValid checks out) */  
-
-  edm::InputTag HBHENoiseFilterResultSrc_;  
-  edm::EDGetTokenT<bool> HBHENoiseFilterResultToken_;
-
-
-  edm::InputTag HBHEIsoNoiseFilterResultSrc_;  
-  edm::EDGetTokenT<bool> HBHEIsoNoiseFilterResultToken_;
-
 
   edm::EDGetTokenT<edm::TriggerResults> triggerResultsPatSrc_;
   edm::EDGetTokenT<edm::TriggerResults> triggerResultsRecoSrc_;
@@ -172,16 +176,17 @@ PUweightSettingsSrc_(iConfig.getParameter<edm::ParameterSet>("PUweightSettingsSr
 mcGenWeightSrc_(iConfig.getParameter<edm::InputTag>("mcGenWeightSrc")),
 LHEEventProductSrc_(iConfig.getParameter<edm::InputTag>("LHEEventProductSrc")),
 sampleInfoSrc_(iConfig.getParameter<edm::ParameterSet>("sampleInfoSrc")),
-HBHENoiseFilterResultSrc_(iConfig.getParameter<edm::InputTag>("HBHENoiseFilterResultSrc")),
-HBHEIsoNoiseFilterResultSrc_(iConfig.getParameter<edm::InputTag>("HBHEIsoNoiseFilterResultSrc")),
+// not needed for >= 76X
+// HBHENoiseFilterResultSrc_(iConfig.getParameter<edm::InputTag>("HBHENoiseFilterResultSrc")),
+// HBHEIsoNoiseFilterResultSrc_(iConfig.getParameter<edm::InputTag>("HBHEIsoNoiseFilterResultSrc")),
 triggerResultsPatSrc_(consumes<edm::TriggerResults>(iConfig.getParameter<edm::InputTag>("triggerResultsPatSrc"))),
 triggerResultsRecoSrc_(consumes<edm::TriggerResults>(iConfig.getParameter<edm::InputTag>("triggerResultsRecoSrc")))
 {
 
   produces<vector<NtuplePairIndependentInfo>>(NAME_).setBranchAlias(NAME_);
 
-  HBHENoiseFilterResultToken_ = consumes< bool > (HBHENoiseFilterResultSrc_);
-  HBHEIsoNoiseFilterResultToken_ = consumes< bool > (HBHEIsoNoiseFilterResultSrc_);
+  //HBHENoiseFilterResultToken_ = consumes< bool > (HBHENoiseFilterResultSrc_);
+  //HBHEIsoNoiseFilterResultToken_ = consumes< bool > (HBHEIsoNoiseFilterResultSrc_);
   LHEEventProductToken_ = consumes<LHEEventProduct> (LHEEventProductSrc_);
   mcGenWeightToken_ = consumes< GenEventInfoProduct > (mcGenWeightSrc_);
   pileupToken_ = consumes< std::vector<PileupSummaryInfo> >  (pileupSrc_);
@@ -475,27 +480,33 @@ NtuplePairIndependentInfoProducer::produce(edm::Event& iEvent, const edm::EventS
   ///////////////////////////////////
   // filters re-run on MINI-AOD    //
   ///////////////////////////////////
+  // not needed for >= 76X
 
-  bool Flag_HBHENoiseFilter = 0;
-  bool Flag_HBHEIsoNoiseFilter = 0;
+  // bool Flag_HBHENoiseFilter = 0;
+  // bool Flag_HBHEIsoNoiseFilter = 0;
 
-  edm::Handle<bool> HBHENoiseFilterResult;
-  iEvent.getByToken(HBHENoiseFilterResultToken_,HBHENoiseFilterResult);
-  Flag_HBHENoiseFilter = *HBHENoiseFilterResult;
+  // edm::Handle<bool> HBHENoiseFilterResult;
+  // iEvent.getByToken(HBHENoiseFilterResultToken_,HBHENoiseFilterResult);
+  // Flag_HBHENoiseFilter = *HBHENoiseFilterResult;
 
-  edm::Handle<bool> HBHEIsoNoiseFilterResult;
-  iEvent.getByToken(HBHEIsoNoiseFilterResultToken_,HBHEIsoNoiseFilterResult);
-  Flag_HBHEIsoNoiseFilter = *HBHEIsoNoiseFilterResult;
+  // edm::Handle<bool> HBHEIsoNoiseFilterResult;
+  // iEvent.getByToken(HBHEIsoNoiseFilterResultToken_,HBHEIsoNoiseFilterResult);
+  // Flag_HBHEIsoNoiseFilter = *HBHEIsoNoiseFilterResult;
 
   ///////////////////////////////////
   // filters read from MINI-AOD    //
   ///////////////////////////////////
 
-  bool Flag_CSCTightHaloFilter = 0;
-  bool Flag_goodVertices = 0;
-  bool Flag_eeBadScFilter = 0;
-  bool Flag_EcalDeadCellTriggerPrimitiveFilter = 0;
-  //bool Flag_HBHENoiseFilterEX = 0;
+  bool Flag_HBHENoiseFilter = 0;                    // TO BE USED
+  bool Flag_HBHENoiseIsoFilter = 0;                 //  TO BE USED
+  bool Flag_CSCTightHalo2015Filter = 0;             //  TO BE USED
+  bool Flag_EcalDeadCellTriggerPrimitiveFilter = 0; //  TO BE USED
+  bool Flag_goodVertices = 0;                       //  TO BE USED
+  bool Flag_eeBadScFilter = 0;                      //  TO BE USED
+  bool Flag_chargedHadronTrackResolutionFilter = 0; //  do not use - those are under study 76X
+  bool Flag_muonBadTrackFilter = 0;                 //  do not use - those are under study for 76X
+
+
 
   /* mini-AOD existing met filters; for some samples the process is PAT
   for others it is RECO */
@@ -512,12 +523,14 @@ NtuplePairIndependentInfoProducer::produce(edm::Event& iEvent, const edm::EventS
     /////////////
     for (unsigned int i = 0, n = triggerBitsPat->size(); i < n; ++i) 
     {
-      if( namesPat.triggerName(i) == "Flag_CSCTightHaloFilter") Flag_CSCTightHaloFilter = triggerBitsPat->accept(i);
+      if( namesPat.triggerName(i) == "Flag_HBHENoiseFilter") Flag_HBHENoiseFilter = triggerBitsPat->accept(i);
+      else if( namesPat.triggerName(i) == "Flag_HBHENoiseIsoFilter") Flag_HBHENoiseIsoFilter = triggerBitsPat->accept(i);
+      else if( namesPat.triggerName(i) == "Flag_CSCTightHalo2015Filter") Flag_CSCTightHalo2015Filter = triggerBitsPat->accept(i);
+      else if( namesPat.triggerName(i) == "Flag_EcalDeadCellTriggerPrimitiveFilter") Flag_EcalDeadCellTriggerPrimitiveFilter = triggerBitsPat->accept(i);
       else if( namesPat.triggerName(i) == "Flag_goodVertices") Flag_goodVertices = triggerBitsPat->accept(i);
       else if( namesPat.triggerName(i) == "Flag_eeBadScFilter") Flag_eeBadScFilter = triggerBitsPat->accept(i);
-      else if( namesPat.triggerName(i) == "Flag_EcalDeadCellTriggerPrimitiveFilter") Flag_EcalDeadCellTriggerPrimitiveFilter = triggerBitsPat->accept(i);
-      //else if( namesPat.triggerName(i) == "Flag_HBHENoiseFilter") Flag_HBHENoiseFilterEX = triggerBitsPat->accept(i);
-
+      else if( namesPat.triggerName(i) == "Flag_chargedHadronTrackResolutionFilter") Flag_chargedHadronTrackResolutionFilter = triggerBitsPat->accept(i);
+      else if( namesPat.triggerName(i) == "Flag_muonBadTrackFilter") Flag_muonBadTrackFilter = triggerBitsPat->accept(i);
     } 
     /////////////
   } 
@@ -528,44 +541,34 @@ NtuplePairIndependentInfoProducer::produce(edm::Event& iEvent, const edm::EventS
     /////////////
     for (unsigned int i = 0, n = triggerBitsReco->size(); i < n; ++i) 
     {
-      if( namesReco.triggerName(i) == "Flag_CSCTightHaloFilter") Flag_CSCTightHaloFilter = triggerBitsReco->accept(i);
+      
+      if( namesReco.triggerName(i) == "Flag_HBHENoiseFilter") Flag_HBHENoiseFilter = triggerBitsReco->accept(i);
+      else if( namesReco.triggerName(i) == "Flag_HBHENoiseIsoFilter") Flag_HBHENoiseIsoFilter = triggerBitsReco->accept(i);
+      else if( namesReco.triggerName(i) == "Flag_CSCTightHalo2015Filter") Flag_CSCTightHalo2015Filter = triggerBitsReco->accept(i);
+      else if( namesReco.triggerName(i) == "Flag_EcalDeadCellTriggerPrimitiveFilter") Flag_EcalDeadCellTriggerPrimitiveFilter = triggerBitsReco->accept(i);
       else if( namesReco.triggerName(i) == "Flag_goodVertices") Flag_goodVertices = triggerBitsReco->accept(i);
       else if( namesReco.triggerName(i) == "Flag_eeBadScFilter") Flag_eeBadScFilter = triggerBitsReco->accept(i);
-      else if( namesReco.triggerName(i) == "Flag_EcalDeadCellTriggerPrimitiveFilter") Flag_EcalDeadCellTriggerPrimitiveFilter = triggerBitsReco->accept(i);
-      //else if( namesReco.triggerName(i) == "Flag_HBHENoiseFilter") Flag_HBHENoiseFilterEX = triggerBitsReco->accept(i);
+      else if( namesReco.triggerName(i) == "Flag_chargedHadronTrackResolutionFilter") Flag_chargedHadronTrackResolutionFilter = triggerBitsReco->accept(i);
+      else if( namesReco.triggerName(i) == "Flag_muonBadTrackFilter") Flag_muonBadTrackFilter = triggerBitsReco->accept(i);
 
     } 
     /////////////
   } 
 
 
-  /////////////////////////////////////
-  // print the filters we care about //
-  /////////////////////////////////////
-
-  // std::cout<<" (re-run) HBHENoiseFilter pass/fail = "<<Flag_HBHENoiseFilter<<"\n";
-  // std::cout<<" (re-run) Flag_HBHEIsoNoiseFilter pass/fail = "<<Flag_HBHEIsoNoiseFilter<<"\n";
-  // std::cout<<" (existing) Flag_HBHENoiseFilterEX pass/fail = "<<Flag_HBHENoiseFilterEX<<"\n";
-  // std::cout<<" (existing) CSCTightHaloFilter pass/fail = "<<Flag_CSCTightHaloFilter<<"\n";
-  // std::cout<<" (existing) goodVertices pass/fail = "<<Flag_goodVertices<<"\n";
-  // std::cout<<" (existing) eeBadScFilter pass/fail = "<<Flag_eeBadScFilter<<"\n";
-  // std::cout<<" (existing) EcalDeadCellTriggerPrimitiveFilter pass/fail = "<<Flag_EcalDeadCellTriggerPrimitiveFilter<<"\n";
-
 
   //////////////////////////////////////////////////
   // set the flag values into the InfoToWrite     //
   //////////////////////////////////////////////////
 
-  InfoToWrite.fill_HBHENoiseFilter(Flag_HBHENoiseFilter); /* careful to take the re-run version */
-  InfoToWrite.fill_HBHEIsoNoiseFilter(Flag_HBHEIsoNoiseFilter); /* careful to take the re-run version */
-
-  InfoToWrite.fill_CSCTightHaloFilter(Flag_CSCTightHaloFilter);
-  InfoToWrite.fill_goodVerticesFilter(Flag_goodVertices);
-  InfoToWrite.fill_eeBadScFilter(Flag_eeBadScFilter);
+  InfoToWrite.fill_HBHENoiseFilter(Flag_HBHENoiseFilter);
+  InfoToWrite.fill_HBHENoiseIsoFilter(Flag_HBHENoiseIsoFilter);
+  InfoToWrite.fill_CSCTightHalo2015Filter(Flag_CSCTightHalo2015Filter);
   InfoToWrite.fill_EcalDeadCellTriggerPrimitiveFilter(Flag_EcalDeadCellTriggerPrimitiveFilter);
-
-
-  
+  InfoToWrite.fill_goodVertices(Flag_goodVertices);
+  InfoToWrite.fill_eeBadScFilter(Flag_eeBadScFilter);
+  InfoToWrite.fill_chargedHadronTrackResolutionFilter(Flag_chargedHadronTrackResolutionFilter);
+  InfoToWrite.fill_muonBadTrackFilter(Flag_muonBadTrackFilter);
 
 
 

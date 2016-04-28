@@ -332,6 +332,15 @@ public:
 	bool PairPassesDoubleTauIsoTau28MatchCut;
 	
 
+	/* the pT of the highest pT trigger object matched to a reco lepton */
+
+	float leg1_maxPtTrigObjMatch;
+	float leg2_maxPtTrigObjMatch;
+	std::vector<float> effLep_maxPtTrigObjMatch;
+
+
+
+
 	/* parameters for EffLeptons */
 
 	std::vector<int> effLep_leptonType; 			/* the lepton flavor see TupleObjects/std::vector<int>erface/TupleLeptonTypes.h */
@@ -439,12 +448,15 @@ public:
 
 	/* MET filters */
 
-	bool HBHEIsoNoiseFilter;
 	bool HBHENoiseFilter;
-	bool CSCTightHaloFilter;
+	bool HBHENoiseIsoFilter;
+	bool CSCTightHalo2015Filter;
+	bool EcalDeadCellTriggerPrimitiveFilter;
 	bool goodVerticesFilter;
 	bool eeBadScFilter;
-	bool EcalDeadCellTriggerPrimitiveFilter;
+	bool chargedHadronTrackResolutionFilter;
+	bool muonBadTrackFilter;
+
 
 
 	/* pileUp & other weight info */
