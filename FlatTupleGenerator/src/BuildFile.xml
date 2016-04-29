@@ -6,9 +6,9 @@
 <use name="DavisRunIITauTau/TupleObjects"/>
 <use name="DavisRunIITauTau/NtupleObjects"/>
 <use name="TauAnalysis/SVfitStandalone"/>
-
 <use name="PhysicsTools/UtilAlgos"/>
 <use name="FWCore/ServiceRegistry"/>
+<use name="HTT-utilities/RecoilCorrections"/>
 <use   name="clhep"/>
 <use   name="root"/>
 <use   name="roottmva"/>

@@ -712,10 +712,21 @@ from DavisRunIITauTau.FlatTupleGenerator.FlatTupleConfig_cfi import minimalCuts
 # 	SVMassConfig = svMassAtFlatTupleConfig
 # 	)
 
+
+print '*** AT FLatTuple level, the MVA MET will be corrected using ',
+print  sampleData.RecoilCorrection, ' recoil corrections'
+
+print '*** AT FLatTuple level, the MVA MET systematics will be added using ',
+print  sampleData.MetSystematicType, ' settings '
+
+
+
 process.NOCUTS = cms.EDAnalyzer('FlatTupleGenerator',
 	pairSrc = cms.InputTag('NtupleEvents','NtupleEvents','DavisNtuple'),
 	indepSrc = cms.InputTag('pairIndep','NtupleEventPairIndep','DavisNtuple'),
 	NAME = cms.string("NOCUTS"),
+	RecoilCorrection = sampleData.RecoilCorrection,
+	MetSystematicType = sampleData.MetSystematicType,
 	EventCutSrc = generalConfig,
 	TauEsVariantToKeep = cms.string("NOMINAL"), # only NOMINAL, UP or DOWN are valid
 	LeptonCutVecSrc = minimalCuts,
@@ -728,6 +739,8 @@ process.NOCUTSupTau = cms.EDAnalyzer('FlatTupleGenerator',
 	pairSrc = cms.InputTag('NtupleEventsTauEsUp','NtupleEventsTauEsUp','DavisNtuple'),
 	indepSrc = cms.InputTag('pairIndep','NtupleEventPairIndep','DavisNtuple'),
 	NAME = cms.string("NOCUTSupTau"),
+	RecoilCorrection = sampleData.RecoilCorrection,
+	MetSystematicType = sampleData.MetSystematicType,
 	EventCutSrc = generalConfig,
 	TauEsVariantToKeep = cms.string("UP"), # only NOMINAL, UP or DOWN are valid
 	LeptonCutVecSrc = minimalCuts,
@@ -739,6 +752,8 @@ process.NOCUTSdownTau = cms.EDAnalyzer('FlatTupleGenerator',
 	pairSrc = cms.InputTag('NtupleEventsTauEsDown','NtupleEventsTauEsDown','DavisNtuple'),
 	indepSrc = cms.InputTag('pairIndep','NtupleEventPairIndep','DavisNtuple'),
 	NAME = cms.string("NOCUTSdownTau"),
+	RecoilCorrection = sampleData.RecoilCorrection,
+	MetSystematicType = sampleData.MetSystematicType,
 	EventCutSrc = generalConfig,
 	TauEsVariantToKeep = cms.string("DOWN"), # only NOMINAL, UP or DOWN are valid
 	LeptonCutVecSrc = minimalCuts,

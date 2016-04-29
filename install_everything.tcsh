@@ -72,6 +72,10 @@ cd HiggsAnalysis/CombinedLimit
 git checkout 74x-root6 # is there a newer branch?
 cd -
 
+# get the recoil CORRECTIONS for MVA MET
+git clone https://github.com/CMS-HTT/RecoilCorrections.git  HTT-utilities/RecoilCorrections 
+
+
 # relocate the davis code
 mv ../../DavisRunIITauTau .
 
@@ -79,44 +83,6 @@ mv ../../DavisRunIITauTau .
 
 cp /afs/cern.ch/work/a/adewit/public/pileup-hists/*root DavisRunIITauTau/RunTimeDataInput/data/PileUpReWeightFiles/.
 
-# # temp fix for PU jet ID and MVA MET incompatibility 
-
-# #git cms-merge-topic ahinzmann:fixMVAmetPUid
-
-# # mva met installation
-
-# git cms-addpkg RecoMET/METPUSubtraction/
-# cd RecoMET/METPUSubtraction/
-# git clone https://github.com/rfriese/RecoMET-METPUSubtraction data -b 74X-13TeV-Summer15-July2015
-# cd -
-# echo "please ignore stuff about detached head..."
-# echo "copying files, this can take a while ..."
-# cp /afs/cern.ch/user/s/sshalhou/public/INSTALL_PUBLIC_FILES/74X/mvaPFMET_db_cfi.py RecoMET/METPUSubtraction/python/.
-# sed -i 's/puJetIdForPFMVAMEt = pileupJetIdEvaluator.clone/from RecoMET.METPUSubtraction.mvaPFMET_db_cfi import mvaPFMEtGBRForestsFromDB\npuJetIdForPFMVAMEt = pileupJetIdEvaluator.clone/g' RecoMET/METPUSubtraction/python/mvaPFMET_cff.py
-# cp /afs/cern.ch/user/s/sshalhou/public/INSTALL_PUBLIC_FILES/74X/mvaPFMEt_747_25ns_Mar2015.db RecoMET/METPUSubtraction/data/.
-# rm -rf RecoMET/METPUSubtraction/data/.git
-# sed -i 's/tmvaSpectators/\n        etaBinnedWeights=cms.bool(False),\n        tmvaSpectators/g' RecoMET/METPUSubtraction/python/mvaPFMET_cff.py
-
-
-
-# # temp fix for PU jet ID and MVA MET incompatibility 
-
-# #git cms-merge-topic ahinzmann:fixMVAmetPUid
-
-# # add a local copy of PU jet ID
-# git cms-addpkg RecoJets/JetProducers
-
-# # add CL software
-
-# git clone https://github.com/cms-analysis/HiggsAnalysis-CombinedLimit.git HiggsAnalysis/CombinedLimit
-# cd HiggsAnalysis/CombinedLimit
-# git checkout 74x-root6
-
-# cd -
-
-# # move the Davis code into the reight area
-
-# mv ../../DavisRunIITauTau .
 
 # compile
 

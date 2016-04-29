@@ -45,6 +45,10 @@
 #include "FWCore/Framework/interface/ESHandle.h"
 #include "CommonTools/UtilAlgos/interface/TFileService.h"
 
+// recoil corrector and systematics for 76X MC
+
+#include "HTT-utilities/RecoilCorrections/interface/RecoilCorrector.h"
+#include "HTT-utilities/RecoilCorrections/interface/MEtSys.h"
 
 // Custom object include files
 
@@ -90,10 +94,11 @@ public:
       virtual void reInit(); 
       virtual void handlePairIndepInfo(const edm::Event&, const edm::EventSetup&, NtuplePairIndependentInfo); 
       virtual void handleCurrentEventInfo(const edm::Event&, const edm::EventSetup&, NtupleEvent); 
+      virtual void handleMvaMetAndRecoil(const edm::Event&, const edm::EventSetup&, NtupleEvent);
       virtual void handleSVFitCall(const edm::Event&, const edm::EventSetup&, NtupleEvent); 
       virtual void handleLeg1AndLeg2Info(const edm::Event&, const edm::EventSetup&, NtupleEvent); 
       virtual void handleEffLeptonInfo(const edm::Event&, const edm::EventSetup&, NtupleEvent); 
-
+      virtual double GetTransverseMass(LorentzVector, TLorentzVector);
 
 // private:
 // 	virtual void beginJob() ;
@@ -130,6 +135,8 @@ public:
 	edm::EDGetTokenT<edm::View< NtuplePairIndependentInfo > > indepToken_;
 	
 	std::string NAME_;  // use a descriptive name for your FlatTuple
+	std::string RECOILCORRECTION_; // type of recoil correction, pulled from sample meta data config file
+	std::string MetSystematicType_; // the type of mva met sys. pulled from sample meta data 
 	edm::ParameterSet EventCutSrc_;
 	std::string TauEsVariantToKeep_;  // should be NOMINAL, UP or DOWN
 	std::vector<edm::ParameterSet> LeptonCutVecSrc_;
@@ -189,6 +196,8 @@ public:
 	/* the leaves : Idea here is to be as flat as possible - stick to simple objects */
 
 	std::string treeInfoString;              /* this will be filled as NAME_, should be something like TauEsNominal etc. */
+	std::string RecoilCorrectionType;        /* this will be filled as RECOILCORRECTION_ */
+	std::string MetSystematicType;           /* this will be filled as MetSystematicType_ */
 	std::vector<std::string> AppliedLepCuts; /* the cuts applied to the current tree */
 	unsigned int  run ;				/* from mini-AOD, the run number */
 	unsigned int  luminosityBlock ; /* from mini-AOD, the luminosityBlock */
@@ -198,21 +207,35 @@ public:
 	int isOsPair;		  			/* 1 if sign(leg1)!=sign(leg2), 0 otherwise */
 	int CandidateEventType;  		/* see TupleObjects/interface/TupleCandidateEventTypes.h */
 	float TauEsNumberSigmasShifted; /* number of sigmas the tau ES was shifted in this event */
+	
+
+	/* new for 76X need recoil variants : uncorr_, corr_, responseUP_, responseDOWN_, resolutionUP_, 
+		resolutionDOWN_ versions of MVAMET and the MT variables related to MVA MET 	
+		(note: the cov matrix does not change)
+	*/
+
+	double uncorr_mvaMET, uncorr_mvaMETphi, uncorr_MTmvaMET_leg1, uncorr_MTmvaMET_leg2; 			
+	double corr_mvaMET, corr_mvaMETphi, corr_MTmvaMET_leg1, corr_MTmvaMET_leg2; 			
+	double responseUP_mvaMET, responseUP_mvaMETphi, responseUP_MTmvaMET_leg1, responseUP_MTmvaMET_leg2; 			
+	double responseDOWN_mvaMET, responseDOWN_mvaMETphi, responseDOWN_MTmvaMET_leg1, responseDOWN_MTmvaMET_leg2; 			
+	double resolutionUP_mvaMET, resolutionUP_mvaMETphi, resolutionUP_MTmvaMET_leg1, resolutionUP_MTmvaMET_leg2; 			
+	double resolutionDOWN_mvaMET, resolutionDOWN_mvaMETphi, resolutionDOWN_MTmvaMET_leg1, resolutionDOWN_MTmvaMET_leg2; 			
+
+	double mvaMET_cov00;  			/* MVA MET significnace matrix element 00 */
+	double mvaMET_cov01;  			/* MVA MET significnace matrix element 01 */	
+	double mvaMET_cov10;  			/* MVA MET significnace matrix element 10 */	
+	double mvaMET_cov11;  			/* MVA MET significnace matrix element 11 */	
+
+
+
 	double SVMass; 		  			/* SVFit Mass could have used pfMET or mvaMET, see TupleConfigurations/python/ConfigNtupleContent_cfi.py */
 	double SVTransverseMass; 		/* SVFit Transverse Mass could have used pfMET or mvaMET, see TupleConfigurations/python/ConfigNtupleContent_cfi.py */
 	double VISMass; 	  			/* the visible mass  */
-	double MTmvaMET_leg1; 			/* MT using mva MET & leg1 */
-	double MTmvaMET_leg2; 			/* MT using mva MET & leg2 */
 	double MTpfMET_leg1;  			/* MT using pf MET & leg1 */ 	
 	double MTpfMET_leg2;  			/* MT using pf MET & leg2 */
 	double MTpuppiMET_leg1;  		/* MT using puppi MET & leg1 */ 	
 	double MTpuppiMET_leg2;  		/* MT using puppi MET & leg2 */
-	double mvaMET;		  			/* the MVA MET   - computed pairwise for leg1 and leg2 */
-	double mvaMETphi;	  			/* the MVA MET phi - computed pairwise for leg1 and leg2 */	
-	double mvaMET_cov00;  			/* MVA MET significnace matrix element 00 */
-	double mvaMET_cov01;  			/* MVA MET significnace matrix element 01 */	
-	double mvaMET_cov10;  			/* MVA MET significnace matrix element 10 */	
-	double mvaMET_cov11;  			/* MVA MET significnace matrix element 11 */	  
+  
 	double pfMET;					/* the PF MET   - type 1 corr */
 	double pfMETphi;				/* the PF MET phi  - type 1 corr */
 	double puppiMET;				/* the puppi MET   - type 1 corr(?) */

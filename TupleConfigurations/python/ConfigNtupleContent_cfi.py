@@ -62,32 +62,38 @@ RUN_MEM_CHECK = True
 
 GEN_PARTICLES_TO_KEEP = cms.vint32()
 
+
+GEN_PARTICLES_TO_KEEP.append(1) # keep d-quarks
+GEN_PARTICLES_TO_KEEP.append(2) # keep u-quarks
+GEN_PARTICLES_TO_KEEP.append(3) # keep s-quarks
+GEN_PARTICLES_TO_KEEP.append(4) # keep c-quarks
 GEN_PARTICLES_TO_KEEP.append(5) # keep b-quarks
 GEN_PARTICLES_TO_KEEP.append(6) # keep top-quarks
+GEN_PARTICLES_TO_KEEP.append(9) # a gluon (also 21 in some schemes)
 GEN_PARTICLES_TO_KEEP.append(11) # keep electrons (Must Always Keep!)
-GEN_PARTICLES_TO_KEEP.append(13) # keep muons (Must Always Keep!)
-GEN_PARTICLES_TO_KEEP.append(15) # keep taus (Must Always Keep!)
 GEN_PARTICLES_TO_KEEP.append(12) # keep electron-neutrino
+GEN_PARTICLES_TO_KEEP.append(13) # keep muons (Must Always Keep!)
 GEN_PARTICLES_TO_KEEP.append(14) # keep muon-neutrino
+GEN_PARTICLES_TO_KEEP.append(15) # keep taus (Must Always Keep!)
 GEN_PARTICLES_TO_KEEP.append(16) # keep tau-neutrino
-GEN_PARTICLES_TO_KEEP.append(22) # keep photons
+GEN_PARTICLES_TO_KEEP.append(17) # a non-SM tau' 
+GEN_PARTICLES_TO_KEEP.append(18) # a nu'_tau (the dm particle) - from central prod.
+GEN_PARTICLES_TO_KEEP.append(21) # a gluon (also 9 in some schemes)
+GEN_PARTICLES_TO_KEEP.append(22) # a photon
 GEN_PARTICLES_TO_KEEP.append(23) # keep Z
 GEN_PARTICLES_TO_KEEP.append(24) # keep W
 GEN_PARTICLES_TO_KEEP.append(25) # keep SM Higgs
+GEN_PARTICLES_TO_KEEP.append(28) # the A0 - from central prod.
+GEN_PARTICLES_TO_KEEP.append(32) # a Z' variant - from central prod.
+GEN_PARTICLES_TO_KEEP.append(33) # a Z'' exo particle
+GEN_PARTICLES_TO_KEEP.append(34) # a W' exo particle
 GEN_PARTICLES_TO_KEEP.append(35) # keep non-SM Higgs
 GEN_PARTICLES_TO_KEEP.append(36) # keep non-SM Higgs
 GEN_PARTICLES_TO_KEEP.append(37) # keep non-SM Higgs
 GEN_PARTICLES_TO_KEEP.append(211) # keep pi+, pi-
 GEN_PARTICLES_TO_KEEP.append(111) # keep pi0
-
-# need to check this, as it seems the models vary in pdgID scheme 
-# GEN_PARTICLES_TO_KEEP.append(32) # a Z' variant ?
-# GEN_PARTICLES_TO_KEEP.append(28) # listed as P28 ?
-# GEN_PARTICLES_TO_KEEP.append(18) # nu'_tau (the DM partilce in some of the models)
-# GEN_PARTICLES_TO_KEEP.append(9000001) # Z' variant - from private prod.
-# GEN_PARTICLES_TO_KEEP.append(9000007) # chi (the dm particle) - from private prod.
-
-# p p > Zp > h A0, A0 > n1 n1
+GEN_PARTICLES_TO_KEEP.append(9000001) # Z' variant - from private prod.
+GEN_PARTICLES_TO_KEEP.append(9000007) # chi (the dm particle) - from private prod.
 
 
 ####################################################################################################
