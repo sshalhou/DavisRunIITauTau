@@ -216,14 +216,9 @@ void generateH2TauSyncTree::handleEvent()
 		 			if(jets20_pt[i]>20) njetingap20++;
 		 			if(jets20_pt[i]>30) njetingap++;
 		 		}
-
-
-
 		 	}
 
 		 }
-
-
 	}
 
 	/// some jet info 
@@ -380,8 +375,6 @@ void generateH2TauSyncTree::handleEvent()
 		pzetamiss = pzetaMissCalc(l1,l2,pfMetVec);
 	}
 
-
-
 	// the DY info
 
 	isZtt = R.getB("EventHasZtoTauTau");
@@ -409,9 +402,6 @@ void generateH2TauSyncTree::handleEvent()
     KeyName =  R.getS("KeyName");
     CrossSection =  R.getD("CrossSection");  
     FilterEff =  R.getD("FilterEff");
-
-
-
 
 if(R.getI("CandidateEventType")==2)
 {
@@ -533,6 +523,335 @@ if(R.getI("CandidateEventType")==6)
 			}
 	}
 
+    //Function Methods pt_L,P_chi,M_min//
+    /////////////////////////////////////
+    
+    TVector3 tauVisVec1;
+    TVector3 tauVisVec2;
+    TVector3 totalVisVec;
+    tauVisVec1.SetPtEtaPhi(R.getD("leg1_pt"),R.getD("leg1_eta"),R.getD("leg1_phi"));
+    tauVisVec2.SetPtEtaPhi(R.getD("leg2_pt"),R.getD("leg2_eta"),R.getD("leg2_phi"));
+    totalVisVec = tauVisVec1 + tauVisVec2;
+    double totalVisPt = totalVisVec.Pt();
+    //assign leg PDF histograms
+    for (int i = 0; i < eHistoFrac->GetNbinsX(); i++)
+    {
+        if(R.getI("leg1_leptonType") == 1)
+        {
+            visFrac1 = eHistoFrac->GetXaxis()->GetBinCenter(i);
+            visFrac1Prob = eHistoFrac->GetBinContent(i);
+        }
+        else if (R.getI("leg1_leptonType") == 2)
+        {
+            visFrac1 = muHistoFrac->GetXaxis()->GetBinCenter(i);
+            visFrac1Prob = muHistoFrac->GetBinContent(i);
+        }
+        else
+        {
+            if (R.getF("leg1_numHadrons")==1)
+            {
+                if (R.getF("leg1_numStrips")==0)
+                {
+                    visFrac1 = h1p0sHistoFrac->GetXaxis()->GetBinCenter(i);
+                    visFrac1Prob = h1p0sHistoFrac->GetBinContent(i);
+                }
+                else if (R.getF("leg1_numStrips")==1)
+                {
+                    visFrac1 = h1p1sHistoFrac->GetXaxis()->GetBinCenter(i);
+                    visFrac1Prob = h1p1sHistoFrac->GetBinContent(i);
+                }
+                else if (R.getF("leg1_numStrips")==2)
+                {
+                    visFrac1 = h1p2sHistoFrac->GetXaxis()->GetBinCenter(i);
+                    visFrac1Prob = h1p2sHistoFrac->GetBinContent(i);
+                }
+                else if (R.getF("leg1_numStrips") > 2)
+                {
+                    visFrac1 = h1p3sHistoFrac->GetXaxis()->GetBinCenter(i);
+                    visFrac1Prob = h1p3sHistoFrac->GetBinContent(i);
+                }
+            }
+            else if (R.getF("leg1_numHadrons") > 1)
+            {
+                if (R.getF("leg1_numStrips")==0)
+                {
+                    visFrac1 = h3p0sHistoFrac->GetXaxis()->GetBinCenter(i);
+                    visFrac1Prob = h3p0sHistoFrac->GetBinContent(i);
+                }
+                else if (R.getF("leg1_numStrips") > 0)
+                {
+                    visFrac1 = h3p1sHistoFrac->GetXaxis()->GetBinCenter(i);
+                    visFrac1Prob = h3p1sHistoFrac->GetBinContent(i);
+                }
+            }
+        }
+        
+        //find constrained fraction
+        visFrac2 = 2 * (1/visFrac1) * ((tauVisVec1.Mag()*tauVisVec2.Mag())-(tauVisVec1.Dot(tauVisVec2)))/(pow(125,2));
+        
+        //find PDF value from constrained fraction
+        if(R.getI("leg2_leptonType") == 1)
+        {
+            visFrac2Prob = eHistoFrac->GetBinContent(eHistoFrac->FindBin(visFrac2));
+        }
+        else if (R.getI("leg1_leptonType") == 2)
+        {
+            visFrac2Prob = muHistoFrac->GetBinContent(muHistoFrac->FindBin(visFrac2));
+        }
+        else
+        {
+            if (R.getF("leg2_numHadrons") == 1)
+            {
+                if (R.getF("leg2_numStrips")==0)
+                {
+                    visFrac2Prob = h1p0sHistoFrac->GetBinContent(h1p0sHistoFrac->FindBin(visFrac2));
+                }
+                else if (R.getF("leg2_numStrips")==1)
+                {
+                    visFrac2Prob = h1p1sHistoFrac->GetBinContent(h1p1sHistoFrac->FindBin(visFrac2));
+                }
+                else if (R.getF("leg2_numStrips")==2)
+                {
+                    visFrac2Prob = h1p2sHistoFrac->GetBinContent(h1p2sHistoFrac->FindBin(visFrac2));
+                }
+                else if (R.getF("leg2_numStrips") > 2)
+                {
+                    visFrac2Prob = h1p3sHistoFrac->GetBinContent(h1p3sHistoFrac->FindBin(visFrac2));
+                }
+            }
+            else if (R.getF("leg2_numHadrons") > 1)
+            {
+                if (R.getF("leg2_numStrips")==0)
+                {
+                    visFrac2Prob = h3p0sHistoFrac->GetBinContent(h3p0sHistoFrac->FindBin(visFrac2));
+                }
+                else if (R.getF("leg2_numStrips") > 0)
+                {
+                    visFrac2Prob = h3p1sHistoFrac->GetBinContent(h3p1sHistoFrac->FindBin(visFrac2));
+                }
+            }
+        }
+        if (visFrac2 > 1.03)
+        {
+            visFrac2Prob = 0;
+        }
+        TVector3 tauVec1;
+        TVector3 tauVec2;
+        TVector3 totalVec;
+        tauVec1.SetPtEtaPhi((R.getD("leg1_pt") * (1/visFrac1)),R.getD("leg1_eta"),R.getD("leg1_phi"));
+        tauVec2.SetPtEtaPhi((R.getD("leg2_pt") * (1/visFrac2)),R.getD("leg2_eta"),R.getD("leg2_phi"));
+        totalVec = tauVec1 + tauVec2;
+        double totalP = totalVec.Pt();
+        currentFracProb = visFrac1Prob * visFrac2Prob;
+        if (currentFracProb > bestFracProb)
+        {
+            bestFracProb = currentFracProb;
+            bestP = totalP;
+        }
+    }
+    for (int i = 0; i < eHistoFrac->GetNbinsX(); i++)
+    {
+        if(R.getI("leg2_leptonType") == 1)
+        {
+            visFrac2 = eHistoFrac->GetXaxis()->GetBinCenter(i);
+            visFrac2Prob = eHistoFrac->GetBinContent(i);
+        }
+        else if (R.getI("leg2_leptonType") == 2)
+        {
+            visFrac2 = muHistoFrac->GetXaxis()->GetBinCenter(i);
+            visFrac2Prob = muHistoFrac->GetBinContent(i);
+        }
+        else
+        {
+            if (R.getF("leg2_numHadrons")==1)
+            {
+                if (R.getF("leg2_numStrips")==0)
+                {
+                    visFrac2 = h1p0sHistoFrac->GetXaxis()->GetBinCenter(i);
+                    visFrac2Prob = h1p0sHistoFrac->GetBinContent(i);
+                }
+                else if (R.getF("leg2_numStrips")==1)
+                {
+                    visFrac2 = h1p1sHistoFrac->GetXaxis()->GetBinCenter(i);
+                    visFrac2Prob = h1p1sHistoFrac->GetBinContent(i);
+                }
+                else if (R.getF("leg2_numStrips")==2)
+                {
+                    visFrac2 = h1p2sHistoFrac->GetXaxis()->GetBinCenter(i);
+                    visFrac2Prob = h1p2sHistoFrac->GetBinContent(i);
+                }
+                else if (R.getF("leg2_numStrips") > 2)
+                {
+                    visFrac2 = h1p3sHistoFrac->GetXaxis()->GetBinCenter(i);
+                    visFrac2Prob = h1p3sHistoFrac->GetBinContent(i);
+                }
+            }
+            else if (R.getF("leg2_numHadrons") > 1)
+            {
+                if (R.getF("leg2_numStrips")==0)
+                {
+                    visFrac2 = h3p0sHistoFrac->GetXaxis()->GetBinCenter(i);
+                    visFrac2Prob = h3p0sHistoFrac->GetBinContent(i);
+                }
+                else if (R.getF("leg2_numStrips") > 0)
+                {
+                    visFrac2 = h3p1sHistoFrac->GetXaxis()->GetBinCenter(i);
+                    visFrac2Prob = h3p1sHistoFrac->GetBinContent(i);
+                }
+            }
+        }
+        
+        //find constrained fraction
+        visFrac1 = 2 * (1/visFrac2) * ((tauVisVec1.Mag()*tauVisVec2.Mag())-(tauVisVec1.Dot(tauVisVec2)))/(pow(125,2));
+        
+        //find PDF value from constrained fraction
+        if(R.getI("leg1_leptonType") == 1)
+        {
+            visFrac1Prob = eHistoFrac->GetBinContent(eHistoFrac->FindBin(visFrac1));
+        }
+        else if (R.getI("leg1_leptonType") == 2)
+        {
+            visFrac1Prob = muHistoFrac->GetBinContent(muHistoFrac->FindBin(visFrac1));
+        }
+        else
+        {
+            if (R.getF("leg1_numHadrons") == 1)
+            {
+                if (R.getF("leg1_numStrips")==0)
+                {
+                    visFrac1Prob = h1p0sHistoFrac->GetBinContent(h1p0sHistoFrac->FindBin(visFrac1));
+                }
+                else if (R.getF("leg1_numStrips")==1)
+                {
+                    visFrac1Prob = h1p1sHistoFrac->GetBinContent(h1p1sHistoFrac->FindBin(visFrac1));
+                }
+                else if (R.getF("leg1_numStrips")==2)
+                {
+                    visFrac1Prob = h1p2sHistoFrac->GetBinContent(h1p2sHistoFrac->FindBin(visFrac1));
+                }
+                else if (R.getF("leg1_numStrips") > 2)
+                {
+                    visFrac1Prob = h1p3sHistoFrac->GetBinContent(h1p3sHistoFrac->FindBin(visFrac1));
+                }
+            }
+            else if (R.getF("leg1_numHadrons") > 1)
+            {
+                if (R.getF("leg1_numStrips")==0)
+                {
+                    visFrac1Prob = h3p0sHistoFrac->GetBinContent(h3p0sHistoFrac->FindBin(visFrac1));
+                }
+                else if (R.getF("leg1_numStrips") > 0)
+                {
+                    visFrac1Prob = h3p1sHistoFrac->GetBinContent(h3p1sHistoFrac->FindBin(visFrac1));
+                }
+            }
+        }
+        if (visFrac1 > 1.03)
+        {
+            visFrac1Prob = 0;
+        }
+        TVector3 tauVec1;
+        TVector3 tauVec2;
+        TVector3 totalVec;
+        tauVec1.SetPtEtaPhi((R.getD("leg1_pt") * (1/visFrac1)),R.getD("leg1_eta"),R.getD("leg1_phi"));
+        tauVec2.SetPtEtaPhi((R.getD("leg2_pt") * (1/visFrac2)),R.getD("leg2_eta"),R.getD("leg2_phi"));
+        totalVec = tauVec1 + tauVec2;
+        double totalP = totalVec.Pt();
+        currentFracProb = visFrac1Prob * visFrac2Prob;
+        if (currentFracProb > bestFracProb)
+        {
+            bestFracProb = currentFracProb;
+            bestP = totalP;
+        }
+    }
+
+    std::vector <std::pair< int, int>> genIds = R.getVPII("genParticle_pdgId");
+    std::vector <std::pair< int, int>> genIdTauDec = R.getVPII("genParticle_isDirectPromptTauDecayProduct");
+    std::vector <std::pair< int, double>> genPts = R.getVPID("genParticle_pt");
+    std::vector <std::pair< int, double>> genEtas = R.getVPID("genParticle_eta");
+    std::vector <std::pair< int, double>> genPhis = R.getVPID("genParticle_phi");
+    TVector3 genHiggsPVec;
+    TVector3 TauGenVec;
+    int matchedOne = 0;
+    int matchedTwo = 0;
+    for (unsigned int i = 0; i < genIds.size(); i++)
+    {
+        if (genIds[i].second == 25)
+        {
+            genHiggsPVec.SetPtEtaPhi(genPts[genIds[i].first].second, genEtas[genIds[i].first].second, genPhis[genIds[i].first].second);
+            totalGenP = genHiggsPVec.Pt();
+        }
+        if (abs(genIds[i].second) == 15)
+        {
+            TauGenVec.SetPtEtaPhi(genPts[genIds[i].first].second, genEtas[genIds[i].first].second, genPhis[genIds[i].first].second);
+            if (TauGenVec.DeltaR(tauVisVec1)<0.3)
+            {
+                matchedOne = 1;
+            }
+            if (TauGenVec.DeltaR(tauVisVec2)<0.3)
+            {
+                matchedTwo = 1;
+            }
+        }
+    }
+    genPt = totalGenP;
+    visPt = totalVisPt;
+    
+    if ((matchedOne + matchedTwo  == 2))
+    {
+        matchedLikelihoodPt = bestP;
+        unmatchedLikelihoodPt = NAN;
+    }
+    
+    if ((matchedOne + matchedTwo != 2))
+    {
+         matchedLikelihoodPt = NAN;
+         unmatchedLikelihoodPt = bestP;
+    }
+    
+    //_______________________________Pchi and Mmin Calculations_______________________________
+    
+    if ((R.getI("leg1_leptonType") == 1 && R.getI("leg2_leptonType") == 3) || (R.getI("leg1_leptonType") == 2 && R.getI("leg2_leptonType") == 3))
+    {
+    
+            p_lt = R.getD("leg1_pt");
+            eta_l = R.getD("leg1_eta");
+            phi_l = R.getD("leg1_phi");
+            M_l = R.getD("leg1_M");
+
+            p_Taut = R.getD("leg2_pt");//Added 03/16/2016
+            eta_Tau = R.getD("leg2_eta");//Added 03/16/2016
+            phi_Tau = R.getD("leg2_phi");//Added 03/16/2016
+        
+            ME_T = R.getD("pfMET");
+            ME_T_phi = R.getD("pfMETphi");
+
+           //Calculate p_lx and p_ly   
+            p_lx = p_lt*cos(phi_l);
+            p_ly = p_lt*sin(phi_l);
+           
+           //Calculate p_lz
+            p_lz = p_lt*TMath::SinH(eta_l);
+
+           //Calculate E_l
+            E_l = TMath::Sqrt(M_l*M_l + p_lt*p_lt*TMath::CosH(eta_l)*TMath::CosH(eta_l));
+           
+           //Calculate p_vx and p_vy 
+            p_vx = ME_T*TMath::Cos(ME_T_phi);
+            p_vy = ME_T*TMath::Sin(ME_T_phi);
+           
+           //Calculate E_v
+            E_v = (ME_T*E_l)/(TMath::Sqrt(E_l*E_l - p_lz*p_lz));
+           
+           //Calculate M_min
+            M_min = TMath::Sqrt(((E_l + E_v)*(E_l + E_v)) - ((p_lx + p_vx)*(p_lx + p_vx)) - ((p_ly + p_vy)*(p_ly + p_vy)) - ((1 + (E_v/E_l))*(1 + (E_v/E_l))*p_lz*p_lz));
+
+           //Calculate P_chi
+            P_chi = ME_T*(TMath::Cos(phi_l)*TMath::Cos(ME_T_phi) + TMath::Sin(phi_l)*TMath::Sin(ME_T_phi));
+    
+    }
+
+
 	/////////// DON'T CHANGE VALUES AFTER THIS :)
 	/* see TupleCandidateEventTypes */
 
@@ -547,7 +866,6 @@ if(R.getI("CandidateEventType")==6)
 	 std::cout<<" tt = "<<num_tt<<"\n";
 	 std::cout<<" em = "<<num_em<<"\n";
 	}
-
 
 }
 
@@ -701,7 +1019,18 @@ void generateH2TauSyncTree::setupBranches(TTree * T)
 	T->Branch("KeyName", &KeyName);
 	T->Branch("CrossSection", &CrossSection);
 	T->Branch("FilterEff", &FilterEff);
+    
+    //functionMethods
+    
+    //Store likelihood variables
+    T->Branch("genPt",&genPt);
+    T->Branch("matchedLikelihoodPt",&matchedLikelihoodPt);
+    T->Branch("unmatchedLikelihoodPt",&unmatchedLikelihoodPt);
+    T->Branch("visPt",&visPt);
 
+    //Store Pchi and Mmin variables
+    T->Branch("M_min",&M_min);
+    T->Branch("P_chi",&P_chi);
 
 }
 
@@ -1036,5 +1365,51 @@ void generateH2TauSyncTree::reset()
     EventType = "NULL";
     KeyName = "NULL"; 
     CrossSection = 1.0;    
-    FilterEff = 1.0; 
+    FilterEff = 1.0;
+    
+    //functionMethods variables
+    
+    //Likelhood variables
+      //stored in Tree
+      genPt = 0;
+      matchedLikelihoodPt = -999;
+      unmatchedLikelihoodPt = -999;
+      visPt = 0;
+    
+      //Used in Calculation
+      visFrac1 = 0;
+      visFrac1Prob = 0;
+      visFrac2 = 0;
+      visFrac2Prob = 0;
+      currentFracProb = 0;
+      bestFracProb = 0;
+      bestP = 0;
+      totalGenP = 0;
+      ratioGL = 0;
+
+    // Pchi and Mmin variables
+    
+      //from flattuple
+      ME_T = -999.;
+      ME_T_phi = -999.; //phi_T in Pchi code
+      p_lt = -999.0;
+      eta_l = -999.0;
+      phi_l = -999.0;
+      p_Taut = -999.0;//Added 03/16/2016
+      eta_Tau = -999.0;//Added 03/16/2016
+      phi_Tau = -999.0;//Added 03/16/2016
+      M_l = -999.0;
+
+      //calculated in code
+      p_lx = -999.0;
+      p_ly = -999.0;
+      p_lz = -999.0;
+      E_l = -999.0;
+
+      p_vx = -999.0;
+      p_vy = -999.0;
+      E_v = -999.0;
+
+      M_min = -999.0;
+      P_chi = -999.0;
 }
