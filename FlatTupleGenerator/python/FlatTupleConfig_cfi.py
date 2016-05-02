@@ -8,41 +8,97 @@ from DavisRunIITauTau.TupleConfigurations.and_string_concatonator import and_str
 ##########################################
 # set up SVMass  @ FlatTuple level	     #
 ##########################################
-# NOTE : turning this on will *strore* an SVMass 
-#        computed at FlatTuple stage instead of 
-#        using value contained in Ntuple 
+# The computation at FlatTuple level contains 
+# options for recoil corrections and systematics
+# when using MVA MET. In addition you can run SVFit using
+# PFMET and/or puppiMET
+# warning : each additional true slows down the code!
+# warning : any SVFit computed at Ntuple level will be replaced
+#     by the flatTuple value (if recomputed)
 ##########################################
 
-
-USE_MVAMET_FOR_SVMASS_FlatTuple = True #  True = MVA MET, False = PFMET
-COMPUTE_SVMASS_FlatTuple = False
 SVMASS_LOG_M_FlatTuple = 0.0
 SVMASS_VERBOSE_FlatTuple = True
 
+############################################
+# SVFit + different METs				   #	
+############################################
+
+
+USE_MVAMET_FOR_SVFit_AT_FlatTuple = True  				# this is the default choice (recoil corrected MVA MET)
+USE_MVAMET_uncorrected_FOR_SVFit_AT_FlatTuple = True
+USE_MVAMET_responseUP_FOR_SVFit_AT_FlatTuple = True
+USE_MVAMET_responseDOWN_FOR_SVFit_AT_FlatTuple = True
+USE_MVAMET_resolutionUP_FOR_SVFit_AT_FlatTuple = True
+USE_MVAMET_resolutionDOWN_FOR_SVFit_AT_FlatTuple = True
+USE_PFMET_FOR_SVFit_AT_FlatTuple = True  			
+USE_PUPPIMET_FOR_SVFit_AT_FlatTuple = True  			
+
 print '******************************************'
+print '********* SV FIT SETTINGS @ FLATTUPLE ****'
 print '******************************************'
 
-if COMPUTE_SVMASS_FlatTuple :
+count_SVFit = 0
+
+if USE_MVAMET_FOR_SVFit_AT_FlatTuple is True:
+	count_SVFit += 1
+if USE_MVAMET_uncorrected_FOR_SVFit_AT_FlatTuple is True:
+	count_SVFit += 1
+if USE_MVAMET_responseUP_FOR_SVFit_AT_FlatTuple is True:
+	count_SVFit += 1
+if USE_MVAMET_responseDOWN_FOR_SVFit_AT_FlatTuple is True:
+	count_SVFit += 1
+if USE_MVAMET_resolutionUP_FOR_SVFit_AT_FlatTuple is True:
+	count_SVFit += 1
+if USE_MVAMET_resolutionDOWN_FOR_SVFit_AT_FlatTuple is True:
+	count_SVFit += 1
+if USE_PFMET_FOR_SVFit_AT_FlatTuple is True:
+	count_SVFit += 1
+if USE_PUPPIMET_FOR_SVFit_AT_FlatTuple is True:
+	count_SVFit += 1
+
+
+print '**************************************************'
+if count_SVFit == 0:
+	print 'WARNING : SVFit calls are off at FlatTuple level, will take any values from Ntuple as they are'
+	print '**************************************************'
+
+if count_SVFit > 0:
 	print 'will (re-)compute SVmass (@ FLATTUPLE level) with log_m term = ', SVMASS_LOG_M_FlatTuple
-	print '*** this will cause FLATUPLE to ignore (& replace) any SVmass values read from NTUPLE level ***'
-	if USE_MVAMET_FOR_SVMASS_FlatTuple :
-		print ' will use mva met in SVmass computation @ FLATTUPLE LEVEL (no recoil corr yet)'
-	else :
-		print 'will use pfMET in SVmass computation @ FLATTUPLE LEVEL (no recoil corr yet)'
+	print '*** this will cause FLATUPLE to ignore (& replace) any SVmass values read from NTUPLE level ***'	
+	print '**************************************************'
+	print "Run SVFit with MVAMET ........ ", USE_MVAMET_FOR_SVFit_AT_FlatTuple
+	print "Run SVFit with MVAMET_uncorrected ........ ", USE_MVAMET_uncorrected_FOR_SVFit_AT_FlatTuple
+	print "Run SVFit with MVAMET_responseUP ........ ", USE_MVAMET_responseUP_FOR_SVFit_AT_FlatTuple
+	print "Run SVFit with MVAMET_responseDOWN ........ ", USE_MVAMET_responseDOWN_FOR_SVFit_AT_FlatTuple
+	print "Run SVFit with MVAMET_resolutionUP ........ ", USE_MVAMET_resolutionUP_FOR_SVFit_AT_FlatTuple
+	print "Run SVFit with MVAMET_resolutionDOWN ........ ", USE_MVAMET_resolutionDOWN_FOR_SVFit_AT_FlatTuple
+	print "Run SVFit with PFMET ........ ", USE_PFMET_FOR_SVFit_AT_FlatTuple
+	print "Run SVFit with PUPPIMET ........ ", USE_PUPPIMET_FOR_SVFit_AT_FlatTuple
+	print '**************************************************'
 
-else :
+if count_SVFit > 1:
+	print 'WARNING : YOU HAVE ASKED FOR ', count_SVFit, ' DIFFERENT SVFit Calls at FlatTuple level, this will slow down the code'
 	print '**************************************************'
-	print '***** WARNING SV MASS COMPUTE IS OFF (@ FLATTUPLE level) *****'
-	print '***** WILL DEFAULT TO USING VALUES FROM NTUPLE '
-	print '**************************************************'
+
+
+
+
+
 print '******************************************'
 print '******************************************'
 
 
 
 svMassAtFlatTupleConfig = cms.PSet(
-	flatTuple_useMVAmet = cms.bool(USE_MVAMET_FOR_SVMASS_FlatTuple),
-	flatTuple_recomputeSVmass = cms.bool(COMPUTE_SVMASS_FlatTuple),
+	USE_MVAMET_FOR_SVFit_AT_FlatTuple_ = cms.bool(USE_MVAMET_FOR_SVFit_AT_FlatTuple),
+	USE_MVAMET_uncorrected_FOR_SVFit_AT_FlatTuple_ = cms.bool(USE_MVAMET_uncorrected_FOR_SVFit_AT_FlatTuple),
+	USE_MVAMET_responseUP_FOR_SVFit_AT_FlatTuple_ = cms.bool(USE_MVAMET_responseUP_FOR_SVFit_AT_FlatTuple),
+	USE_MVAMET_responseDOWN_FOR_SVFit_AT_FlatTuple_ = cms.bool(USE_MVAMET_responseDOWN_FOR_SVFit_AT_FlatTuple),
+	USE_MVAMET_resolutionUP_FOR_SVFit_AT_FlatTuple_ = cms.bool(USE_MVAMET_resolutionUP_FOR_SVFit_AT_FlatTuple),
+	USE_MVAMET_resolutionDOWN_FOR_SVFit_AT_FlatTuple_ = cms.bool(USE_MVAMET_resolutionDOWN_FOR_SVFit_AT_FlatTuple),
+	USE_PFMET_FOR_SVFit_AT_FlatTuple_ = cms.bool(USE_PFMET_FOR_SVFit_AT_FlatTuple),
+	USE_PUPPIMET_FOR_SVFit_AT_FlatTuple_ = cms.bool(USE_PUPPIMET_FOR_SVFit_AT_FlatTuple),
 	flatTuple_svMassVerbose = cms.bool(SVMASS_VERBOSE_FlatTuple),
 	flatTuple_logMterm = cms.double(SVMASS_LOG_M_FlatTuple)
 	)
@@ -296,8 +352,11 @@ print "*********************************************************"
 print "FlatTuple trigger cuts set to : "
 print "*********************************************************"
 print " emuTriggerCut = ", emuTriggerCut
+print "-----------------------------------------------------------"
 print " tautauTriggerCut = ", tautauTriggerCut
+print "-----------------------------------------------------------"
 print " etauTriggerCut = ", etauTriggerCut
+print "-----------------------------------------------------------"
 print " mtauTriggerCut = ", mtauTriggerCut
 print "*********************************************************"
 print " should make code so that you don't need to manually adjust this "

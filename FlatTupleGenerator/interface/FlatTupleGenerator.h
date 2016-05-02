@@ -95,7 +95,7 @@ public:
       virtual void handlePairIndepInfo(const edm::Event&, const edm::EventSetup&, NtuplePairIndependentInfo); 
       virtual void handleCurrentEventInfo(const edm::Event&, const edm::EventSetup&, NtupleEvent); 
       virtual void handleMvaMetAndRecoil(const edm::Event&, const edm::EventSetup&, NtupleEvent);
-      virtual void handleSVFitCall(const edm::Event&, const edm::EventSetup&, NtupleEvent); 
+      virtual void handleSVFitCall(const edm::Event&, const edm::EventSetup&, NtupleEvent, std::string); 
       virtual void handleLeg1AndLeg2Info(const edm::Event&, const edm::EventSetup&, NtupleEvent); 
       virtual void handleEffLeptonInfo(const edm::Event&, const edm::EventSetup&, NtupleEvent); 
       virtual double GetTransverseMass(LorentzVector, TLorentzVector);
@@ -144,9 +144,14 @@ public:
 
 	/* the parameters to be read from SVMassConfig in FlatTupleConfig_cfi.py */
 
-
-	bool flatTuple_useMVAmet;
-	bool flatTuple_recomputeSVmass;
+	bool USE_MVAMET_FOR_SVFit_AT_FlatTuple;
+	bool USE_MVAMET_uncorrected_FOR_SVFit_AT_FlatTuple;
+	bool USE_MVAMET_responseUP_FOR_SVFit_AT_FlatTuple;
+	bool USE_MVAMET_responseDOWN_FOR_SVFit_AT_FlatTuple;
+	bool USE_MVAMET_resolutionUP_FOR_SVFit_AT_FlatTuple;
+	bool USE_MVAMET_resolutionDOWN_FOR_SVFit_AT_FlatTuple;
+	bool USE_PFMET_FOR_SVFit_AT_FlatTuple;  			
+	bool USE_PUPPIMET_FOR_SVFit_AT_FlatTuple;  	
 	bool flatTuple_svMassVerbose;
 	double flatTuple_logMterm;
 
@@ -227,9 +232,43 @@ public:
 	double mvaMET_cov11;  			/* MVA MET significnace matrix element 11 */	
 
 
+	/* in Run II we have multiple SVMass calls to account for the different shifts to mvaMET, puppi MET or pfMET */
+	/* see TupleConfigurations/python/ConfigNtupleContent_cfi.py
+	for most runs only the corrected mvaMET version should be computed  */
 
-	double SVMass; 		  			/* SVFit Mass could have used pfMET or mvaMET, see TupleConfigurations/python/ConfigNtupleContent_cfi.py */
-	double SVTransverseMass; 		/* SVFit Transverse Mass could have used pfMET or mvaMET, see TupleConfigurations/python/ConfigNtupleContent_cfi.py */
+	/* with recoil corrected mvaMET - this is our default */
+	double SVMass; 		  			
+	double SVTransverseMass; 		
+
+	/* with non-corrected mvaMET */
+	double SVMass_uncorr_mvaMET; 		  		
+	double SVTransverseMass_uncorr_mvaMET; 		
+
+	/* with recoil response shifted UP mvaMET */
+	double SVMass_responseUP_mvaMET;
+	double SVTransverseMass_responseUP_mvaMET;
+
+	/* with recoil response shifted Down mvaMET */
+	double SVMass_responseDN_mvaMET;
+	double SVTransverseMass_responseDN_mvaMET;
+
+	/* with recoil resolution shifted UP mvaMET */
+	double SVMass_resolutionUP_mvaMET;
+	double SVTransverseMass_resolutionUP_mvaMET;
+
+	/* with recoil resolution shifted Down mvaMET */
+	double SVMass_resolutionDN_mvaMET;
+	double SVTransverseMass_resolutionDN_mvaMET;
+	
+
+	/* with pfMET */
+	double SVMass_pfMET; 		  			
+	double SVTransverseMass_pfMET; 	
+
+	/* with puppiMET */
+	double SVMass_puppiMET; 		  			
+	double SVTransverseMass_puppiMET; 	
+
 	double VISMass; 	  			/* the visible mass  */
 	double MTpfMET_leg1;  			/* MT using pf MET & leg1 */ 	
 	double MTpfMET_leg2;  			/* MT using pf MET & leg2 */

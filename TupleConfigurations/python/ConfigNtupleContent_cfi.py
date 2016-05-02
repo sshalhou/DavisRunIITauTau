@@ -15,7 +15,7 @@ BUILD_MUON_MUON = False
 BUILD_MUON_TAU = True
 BUILD_TAU_TAU = True
 # new options (any one of these will run eff. flatTuple options)
-BUILD_EFFICIENCY_TREE  = True
+BUILD_EFFICIENCY_TREE  = False
 
 
 ####################################################################################################
@@ -31,22 +31,20 @@ MAX_TAU_COUNT = 7
 # edit the following to turn on/off Tau ES variants
 ####################################################################################################
 
-BUILD_TAU_ES_VARIANTS = True # not needed in early sync
-
-
-####################################################################################################
-# edit the following MET settings 
-####################################################################################################
-
-USE_MVAMET = True #  True = MVA MET, False = PFMET
+BUILD_TAU_ES_VARIANTS = False # not needed in early sync
 
 ####################################################################################################
-# edit the following SVMass settings 
+# some options to run SVFit at Ntuple level 
+# in general you do not want to run SVFit at Ntuple level
+# due to the lack of recoil corrections 
+# setting COMPUTE_SVMASS to True is only useful for testing 
+# actual SVFit should be configured in FlatTupleConfig_cfi.py
 ####################################################################################################
 
-COMPUTE_SVMASS = False 
+COMPUTE_SVMASS_AT_NTUPLE = False 
 SVMASS_LOG_M = 0.0
 SVMASS_VERBOSE = 2
+USE_MVAMET = True #  True = use MVA MET for SVFit calc, False = use PFMET
 
 ####################################################################################################
 # Set RUN_MEM_CHECK to True to run SimpleMemoryCheck

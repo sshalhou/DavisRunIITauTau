@@ -30,7 +30,7 @@ print '******************************************'
 
 
 
-if COMPUTE_SVMASS :
+if COMPUTE_SVMASS_AT_NTUPLE :
 	print 'will compute SVmass (@ NTUPLE level) with log_m term = ', SVMASS_LOG_M
 	if USE_MVAMET :
 		print ' will use mva met in SVmass computation (no recoil corr yet)'
@@ -254,10 +254,7 @@ process.customSlimmedTaus = cms.EDProducer('CustomPatTauProducer' ,
 							tauSrc =cms.InputTag('slimmedTaus'),
 							vertexSrc =cms.InputTag('filteredVertices::DavisNtuple'),
 							NAME=cms.string("customSlimmedTaus"),
-							# TauEsCorrection=cms.double(1.0),
-							# TauEsUpSystematic=cms.double(1.0),
-							# TauEsDownSystematic=cms.double(1.0),
-							TauEsCorrection=cms.double(1.01),
+							TauEsCorrection=cms.double(0.99),
 							TauEsUpSystematic=cms.double(1.03),
 							TauEsDownSystematic=cms.double(0.97),
 							triggerBitSrc = cms.InputTag("TriggerResults","","HLT"),
@@ -445,7 +442,7 @@ process.TupleCandidateEvents = cms.EDProducer('TupleCandidateEventProducer' ,
     # veto e and mu lists
     vetoDeltaRmin = cms.double(0.15), 
 	NAME=cms.string("TupleCandidateEvents"),
-    doSVMass = cms.bool(COMPUTE_SVMASS),
+    doSVMass = cms.bool(COMPUTE_SVMASS_AT_NTUPLE),
     useMVAMET = cms.bool(USE_MVAMET),
     logMterm = cms.double(SVMASS_LOG_M),
     svMassVerbose = cms.int32(SVMASS_VERBOSE),
@@ -470,7 +467,7 @@ process.TupleCandidateEventsTauEsUp = cms.EDProducer('TupleCandidateEventProduce
     # veto e and mu lists
     vetoDeltaRmin = cms.double(0.15), 
 	NAME=cms.string("TupleCandidateEventsTauEsUp"),
-    doSVMass = cms.bool(COMPUTE_SVMASS),
+    doSVMass = cms.bool(COMPUTE_SVMASS_AT_NTUPLE),
     useMVAMET = cms.bool(USE_MVAMET),
     logMterm = cms.double(SVMASS_LOG_M),
     svMassVerbose = cms.int32(SVMASS_VERBOSE),
@@ -494,7 +491,7 @@ process.TupleCandidateEventsTauEsDown = cms.EDProducer('TupleCandidateEventProdu
     # veto e and mu lists
     vetoDeltaRmin = cms.double(0.15), 
 	NAME=cms.string("TupleCandidateEventsTauEsDown"),
-    doSVMass = cms.bool(COMPUTE_SVMASS),
+    doSVMass = cms.bool(COMPUTE_SVMASS_AT_NTUPLE),
     useMVAMET = cms.bool(USE_MVAMET),
     logMterm = cms.double(SVMASS_LOG_M),
     svMassVerbose = cms.int32(SVMASS_VERBOSE),

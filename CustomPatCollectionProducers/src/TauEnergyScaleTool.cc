@@ -44,14 +44,14 @@ void TauEnergyScaleTool::changeES(pat::Tau& TauToChange)
 {
   
     // logic to determine if correction should be applied
-
- 	  size_t hadrons = 0;
-    size_t strips = 0;
+    // old for run I/run II < 76X 
+ 	  // size_t hadrons = 0;
+    // size_t strips = 0;
 
     // note the the runI version of these had signalPF  
     // instead of signal in the variable name
-    hadrons = TauToChange.signalChargedHadrCands().size();
-    strips =  TauToChange.signalGammaCands().size();
+    // hadrons = TauToChange.signalChargedHadrCands().size();
+    // strips =  TauToChange.signalGammaCands().size();
 
 
     double v4_sf = 1.0;
@@ -65,23 +65,34 @@ void TauEnergyScaleTool::changeES(pat::Tau& TauToChange)
     if ( TauToChange.genJet() && deltaR(TauToChange.p4(), TauToChange.genJet()->p4()) < 0.5 && TauToChange.genJet()->pt() > 8. )
     {
 
-      if((hadrons==1 && strips>0) || (hadrons==3))
+      if(TauToChange.decayMode()>=1 && TauToChange.decayMode()<10) /* 1-prong + pi0 */
       {
-
-
         v4_sf = EsCorrectionFactor*EsShiftScaleFactor;
         v4_sf_MASS = EsCorrectionFactor*EsShiftScaleFactor;
-
       }
-
-      else if (hadrons==1 && strips==0) 
-       {
-
-
+      else if(TauToChange.decayMode()==0) /* 1-prong */
+      {
         v4_sf = EsCorrectionFactor*EsShiftScaleFactor;
         v4_sf_MASS = 1.00000;
+      }
+      else if(TauToChange.decayMode()==10) /* 3-prong */
+      {
+        v4_sf = EsCorrectionFactor*EsShiftScaleFactor;
+        v4_sf_MASS = EsCorrectionFactor*EsShiftScaleFactor;
+      }
 
-       } 
+
+      // run I
+      // if((hadrons==1 && strips>0) || (hadrons==3))
+      // {
+      //   v4_sf = EsCorrectionFactor*EsShiftScaleFactor;
+      //   v4_sf_MASS = EsCorrectionFactor*EsShiftScaleFactor;
+      // }
+      // else if (hadrons==1 && strips==0) 
+      //  {
+      //   v4_sf = EsCorrectionFactor*EsShiftScaleFactor;
+      //   v4_sf_MASS = 1.00000;
+      //  } 
 
 
 
