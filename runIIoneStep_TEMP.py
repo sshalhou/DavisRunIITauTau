@@ -95,7 +95,7 @@ print '*******************************************************'
 print '********** Running in unscheduled mode **********'
 process.options = cms.untracked.PSet(wantSummary = cms.untracked.bool(True))
 process.options.allowUnscheduled = cms.untracked.bool(True)
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(150) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(10) )
 
 ###################################
 # input - remove for crab running
@@ -642,7 +642,8 @@ process.pairIndep = cms.EDProducer('NtuplePairIndependentInfoProducer',
 				  			LHEEventProductSrc = LHEEventProductSrcInputTag,
 				  			sampleInfoSrc = sampleData,							
 							triggerResultsPatSrc = cms.InputTag("TriggerResults","","PAT"),
-							triggerResultsRecoSrc = cms.InputTag("TriggerResults","","RECO")
+							triggerResultsRecoSrc = cms.InputTag("TriggerResults","","RECO"),
+							rhoSource = cms.InputTag('fixedGridRhoFastjetAll')
 							                 )
 
 
@@ -760,13 +761,10 @@ process.NOCUTSdownTau = cms.EDAnalyzer('FlatTupleGenerator',
 
 
 process.p = cms.Path()
-# #process.p *= process.UserSpecifiedData
 
 process.p *= process.Cumulative
 process.p *= process.filteredVertices
 
-# next two lines probably not needed
-# once full mva met is on
 process.p *= process.patJetCorrFactorsReapplyJEC 
 process.p *= process.patJetsReapplyJEC
 

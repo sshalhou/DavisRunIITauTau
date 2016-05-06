@@ -27,6 +27,7 @@ Implementation:
 #include "FWCore/Framework/interface/Event.h"
 #include "FWCore/Framework/interface/MakerMacros.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
+#include "FWCore/Framework/interface/ESHandle.h"
 
 // needed by ntuple Tau producer
 #include <vector>
@@ -51,6 +52,22 @@ Implementation:
 #include "SimDataFormats/GeneratorProducts/interface/GenEventInfoProduct.h"
 #include "SimDataFormats/GeneratorProducts/interface/LHEEventProduct.h"
 
+/* for JEC Uncertainty */
+
+#include "CondFormats/JetMETObjects/interface/JetCorrectionUncertainty.h"
+#include "CondFormats/JetMETObjects/interface/FactorizedJetCorrector.h"
+#include "CondFormats/JetMETObjects/interface/JetCorrectorParameters.h"
+#include "JetMETCorrections/Objects/interface/JetCorrectionsRecord.h"
+#include "FWCore/ServiceRegistry/interface/Service.h"
+#include "JetMETCorrections/Objects/interface/JetCorrector.h"
+#include "FWCore/Framework/interface/ESHandle.h"
+#include "PhysicsTools/PatAlgos/plugins/JetCorrFactorsProducer.h"
+#include "CondFormats/JetMETObjects/interface/JetCorrectorParameters.h"
+#include <FWCore/Framework/interface/EventSetup.h>
+#include <DataFormats/PatCandidates/interface/Jet.h>
+#include "JetMETCorrections/Modules/interface/JetResolution.h"
+#include <CondFormats/DataRecord/interface/JetResolutionRcd.h>
+#include <CondFormats/DataRecord/interface/JetResolutionScaleFactorRcd.h>
 
 typedef math::XYZTLorentzVector LorentzVector;
 using namespace std;
@@ -142,6 +159,8 @@ in 76X we can access directly from miniAOD */
   edm::EDGetTokenT<edm::TriggerResults> triggerResultsPatSrc_;
   edm::EDGetTokenT<edm::TriggerResults> triggerResultsRecoSrc_;
 
+  edm::InputTag rhoSource_;
+  edm::EDGetTokenT<double> rhoToken_;
 
 
 
@@ -180,7 +199,8 @@ sampleInfoSrc_(iConfig.getParameter<edm::ParameterSet>("sampleInfoSrc")),
 // HBHENoiseFilterResultSrc_(iConfig.getParameter<edm::InputTag>("HBHENoiseFilterResultSrc")),
 // HBHEIsoNoiseFilterResultSrc_(iConfig.getParameter<edm::InputTag>("HBHEIsoNoiseFilterResultSrc")),
 triggerResultsPatSrc_(consumes<edm::TriggerResults>(iConfig.getParameter<edm::InputTag>("triggerResultsPatSrc"))),
-triggerResultsRecoSrc_(consumes<edm::TriggerResults>(iConfig.getParameter<edm::InputTag>("triggerResultsRecoSrc")))
+triggerResultsRecoSrc_(consumes<edm::TriggerResults>(iConfig.getParameter<edm::InputTag>("triggerResultsRecoSrc"))),
+rhoSource_(iConfig.getParameter<edm::InputTag>("rhoSource" ))
 {
 
   produces<vector<NtuplePairIndependentInfo>>(NAME_).setBranchAlias(NAME_);
@@ -194,7 +214,7 @@ triggerResultsRecoSrc_(consumes<edm::TriggerResults>(iConfig.getParameter<edm::I
   vertexToken_ = consumes<edm::View< reco::Vertex > > (vertexSrc_);
   packedGenToken_ = consumes<edm::View< pat::PackedGenParticle > > (packedGenSrc_);
   prunedGenToken_ = consumes<edm::View< reco::GenParticle > > (prunedGenSrc_);
-
+  rhoToken_ = consumes< double > (rhoSource_);
 
 
   //register your products
@@ -240,6 +260,14 @@ NtuplePairIndependentInfoProducer::produce(edm::Event& iEvent, const edm::EventS
   // get prunedGen collection
   edm::Handle<edm::View<reco::GenParticle> > prunedGens;
   iEvent.getByToken(prunedGenToken_,prunedGens);
+
+  // get rho 
+
+  edm::Handle<double> arho;
+  iEvent.getByToken(rhoToken_,arho);
+
+  double rho_forJER = *arho;
+  std::cout<<" RHO to be used for JER SF tool is "<<rho_forJER<<"\n";
 
 
   std::size_t reserveSize = 0;
@@ -293,8 +321,8 @@ NtuplePairIndependentInfoProducer::produce(edm::Event& iEvent, const edm::EventS
         GenBosonVisibleMomentum += prunedGens->at(i).p4();
       }
 
-      std::cout<<" TOT MOM "<<GenBosonTotalMomentum.Pt()<<" ";
-      std::cout<<" VIS MOM "<<GenBosonVisibleMomentum.Pt()<<"\n";
+      // std::cout<<" TOT MOM "<<GenBosonTotalMomentum.Pt()<<" ";
+      // std::cout<<" VIS MOM "<<GenBosonVisibleMomentum.Pt()<<"\n";
 
       InfoToWrite.fill_GenBosonTotalMomentum(GenBosonTotalMomentum); 
       InfoToWrite.fill_GenBosonVisibleMomentum(GenBosonVisibleMomentum);
@@ -372,6 +400,39 @@ NtuplePairIndependentInfoProducer::produce(edm::Event& iEvent, const edm::EventS
 
 
 
+  ///////////////////////////////
+  // JEC and JER systematics   // - SETUP
+  ///////////////////////////////
+
+//////////
+// JEC  // -- need the total uncertainty 
+//////////
+  
+  /* "Uncertainty" gives the total sum of all JEC unc. sources 
+   if individual JEC sources are needed see 
+   https://twiki.cern.ch/twiki/bin/view/CMS/JECUncertaintySources#Code_example */
+
+
+  edm::ESHandle<JetCorrectorParametersCollection> JetCorParColl;
+  iSetup.get<JetCorrectionsRecord>().get("AK4PFchs",JetCorParColl); 
+  JetCorrectorParameters const & JetCorPar = (*JetCorParColl)["Uncertainty"]; 
+  JetCorrectionUncertainty *jecUnc = new JetCorrectionUncertainty(JetCorPar);
+
+
+//////////
+// JER  // -- for 2015 data, recommended not to apply any additional smearing on MC
+//////////     on top of miniAOD, however we want the sf, sf+ and sf- for systematics
+
+
+  // setup the resolution sf tool
+  // JME::JetResolutionScaleFactor resolution_pt = JME::JetResolution::get(iSetup, "AK4PFchs_pt");
+  // JME::JetResolutionScaleFactor resolution_phi = JME::JetResolution::get(iSetup, "AK4PFchs_phi");
+
+  edm::FileInPath sfFile("DavisRunIITauTau/RunTimeDataInput/data/JER_FILES/Fall15_25nsV2_MC_SF_AK4PFchs.txt");
+  std::string sfFile_string = sfFile.fullPath();
+  JME::JetResolutionScaleFactor resolution = JME::JetResolutionScaleFactor(sfFile_string);
+
+  ///////////////////////////////
 
 
 
@@ -383,6 +444,36 @@ NtuplePairIndependentInfoProducer::produce(edm::Event& iEvent, const edm::EventS
 
       NtupleJet currentNtupleJet;
       
+      /* start test */
+
+      /* for MC, get the total JEC uncertainty */
+      double JECuncertainty_UP = 0.0;
+
+      if(!iEvent.isRealData())
+      {
+
+        /* JEC */
+        jecUnc->setJetEta(slimmedJets->at(i).eta());
+        jecUnc->setJetPt(slimmedJets->at(i).pt());
+        std::cout<<" jet at index "<<i<<" has pt & eta = "<<slimmedJets->at(i).pt()<<" , "<<slimmedJets->at(i).eta()<<" ";
+        JECuncertainty_UP = jecUnc->getUncertainty(true);
+        std::cout<<" and has unc  = "<<JECuncertainty_UP<<"\n";
+
+
+        /* JER */
+        JME::JetParameters parameters = {{JME::Binning::JetEta, slimmedJets->at(i).eta()}, 
+                                         {JME::Binning::Rho, rho_forJER}};
+        float sf = resolution.getScaleFactor(parameters); 
+        float sf_up = resolution.getScaleFactor(parameters, Variation::UP);
+        float sf_down = resolution.getScaleFactor(parameters, Variation::DOWN);
+
+
+        std::cout<<" JER sf, sf+, sf- "<<sf<<" "<<sf_up<<" "<<sf_down<<"\n";
+      }
+
+      /* end test */  
+
+
       /* init the jet */
       currentNtupleJet.fill((slimmedJets->at(i)));
       

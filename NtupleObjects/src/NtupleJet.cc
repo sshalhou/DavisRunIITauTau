@@ -108,6 +108,7 @@ NtupleJet::NtupleJet()
       float current_float = aPatJet.jecFactor(current_string);
       std::pair<std::string, float> aJEC(current_string,current_float);
       m_JetEnergyCorrection.push_back(aJEC);
+
     }
 
   /* store the BTAG label-rawOutput pairs */

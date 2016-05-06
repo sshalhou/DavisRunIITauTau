@@ -83,6 +83,12 @@ mv ../../DavisRunIITauTau .
 
 cp /afs/cern.ch/work/a/adewit/public/pileup-hists/*root DavisRunIITauTau/RunTimeDataInput/data/PileUpReWeightFiles/.
 
+# get the right JER SF file for this release
+# if new file, need to hardcode the change in NtuplePairIndependentInfoProducer.cc
+
+mkdir DavisRunIITauTau/RunTimeDataInput/data/JER_FILES
+wget https://raw.githubusercontent.com/cms-jet/JRDatabase/master/textFiles/Fall15_25nsV2_MC/Fall15_25nsV2_MC_SF_AK4PFchs.txt .
+mv Fall15_25nsV2_MC_SF_AK4PFchs.txt DavisRunIITauTau/RunTimeDataInput/data/JER_FILES/.
 
 # compile
 

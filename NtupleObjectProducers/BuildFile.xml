@@ -24,6 +24,13 @@
 <use   name="TauAnalysis/SVfitStandalone"/>
 <use   name="HLTrigger/HLTcore"/>
 <use   name="DataFormats/HLTReco"/>
+<use   name="CommonTools/UtilAlgos"/>
+<use   name="CondFormats/JetMETObjects"/>
+<use name="JetMETCorrections/Modules"/>
+<use   name="JetMETCorrections/Objects"/>
+<use   name="JetMETCorrections/Algorithms"/>
+<use   name="JetMETCorrections/JetCorrector"/>
+<use name="CondFormats/DataRecord"/>
 <use   name="clhep"/>
 <use   name="root"/>
 <use   name="roottmva"/>

@@ -644,7 +644,8 @@ process.pairIndep = cms.EDProducer('NtuplePairIndependentInfoProducer',
 				  			LHEEventProductSrc = LHEEventProductSrcInputTag,
 				  			sampleInfoSrc = sampleData,
 							triggerResultsPatSrc = cms.InputTag("TriggerResults","","PAT"),
-							triggerResultsRecoSrc = cms.InputTag("TriggerResults","","RECO")
+							triggerResultsRecoSrc = cms.InputTag("TriggerResults","","RECO"),
+							rhoSource = cms.InputTag('fixedGridRhoFastjetAll')
 							                 )
 
 

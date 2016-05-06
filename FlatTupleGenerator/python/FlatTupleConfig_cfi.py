@@ -25,14 +25,14 @@ SVMASS_VERBOSE_FlatTuple = True
 ############################################
 
 
-USE_MVAMET_FOR_SVFit_AT_FlatTuple = True  				# this is the default choice (recoil corrected MVA MET)
-USE_MVAMET_uncorrected_FOR_SVFit_AT_FlatTuple = True
-USE_MVAMET_responseUP_FOR_SVFit_AT_FlatTuple = True
-USE_MVAMET_responseDOWN_FOR_SVFit_AT_FlatTuple = True
-USE_MVAMET_resolutionUP_FOR_SVFit_AT_FlatTuple = True
-USE_MVAMET_resolutionDOWN_FOR_SVFit_AT_FlatTuple = True
-USE_PFMET_FOR_SVFit_AT_FlatTuple = True  			
-USE_PUPPIMET_FOR_SVFit_AT_FlatTuple = True  			
+USE_MVAMET_FOR_SVFit_AT_FlatTuple = False  				# this is the default choice (recoil corrected MVA MET)
+USE_MVAMET_uncorrected_FOR_SVFit_AT_FlatTuple = False
+USE_MVAMET_responseUP_FOR_SVFit_AT_FlatTuple = False
+USE_MVAMET_responseDOWN_FOR_SVFit_AT_FlatTuple = False
+USE_MVAMET_resolutionUP_FOR_SVFit_AT_FlatTuple = False
+USE_MVAMET_resolutionDOWN_FOR_SVFit_AT_FlatTuple = False
+USE_PFMET_FOR_SVFit_AT_FlatTuple = False  			
+USE_PUPPIMET_FOR_SVFit_AT_FlatTuple = False  			
 
 print '******************************************'
 print '********* SV FIT SETTINGS @ FLATTUPLE ****'
