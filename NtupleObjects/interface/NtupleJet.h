@@ -39,6 +39,10 @@ public:
   void fill_defaultBtagInfo(pat::Jet, std::string, bool, unsigned int, bool); /* theJet, bTagAlgoName, applySF, SFseed, isRealData */
   void fill_PUjetID(pat::Jet, std::string, double); /* theJet, DiscName, double CutMinimum */
   void fill_PFjetID(bool);
+  void fill_JEC_uncertaintySFs(double, double); /* set the up, down JEC uncertainty scale factors, call after NtupleJet::fill is called */
+  void fill_JER_SFs(double, double, double, LorentzVector); /* set the nominal, up, down JER  scale factors, and genJet match for JER call after NtupleJet::fill is called */
+
+
 
   // helpers
 
@@ -55,8 +59,24 @@ public:
 
 
   LorentzVector jet_p4() const; /* should have all corrections applied */
+  
+  LorentzVector jet_p4_JECshiftedUp() const;   /* jet 4-vector with the JEC shifted up one sigma for MC */
+  LorentzVector jet_p4_JECshiftedDown() const; /* jet 4-vector with the JEC shifted down one sigma for MC */
+  
+  LorentzVector jet_p4_JERnomianl() const;   /* jet 4-vector with the JER smeared (or shifted) for MC */
+  LorentzVector jet_p4_JERup() const;        /* jet 4-vector with the JER smeared (or shifted) with +one sigma uncertainty for MC*/
+  LorentzVector jet_p4_JERdown() const;      /* jet 4-vector with the JER smeared (or shifted) with -one sigma uncertainty for MC*/
+
+
+
   LorentzVector GENjet_p4() const; /* as embedded in slimmedJets */
   int GENjet_pdgId() const; /* as embedded in slimmedJets */
+
+  double JEC_uncertaintySF_down() const; /* return sf to shift JEC 1 sigma down */
+  double JEC_uncertaintySF_up() const;   /* return sf to shift JEC 1 sigma up */
+  double JER_SF_nominal() const;         /* return sf to correct MC JER to DATA */
+  double JER_SF_up() const;              /* return sf to correct MC JER to DATA with 1 sigma systematic shift up */ 
+  double JER_SF_down() const;            /* return sf to correct MC JER to DATA with 1 sigma systematic shift down */ 
 
   double PU_jetIdRaw() const;   /* raw value of PU jet ID discriminant */
   bool PU_jetIdPassed() const;   /* pass/fail  of PU jet ID discriminant */
@@ -98,6 +118,15 @@ public:
 private:
 
   LorentzVector m_jet_p4;
+
+
+  LorentzVector m_jet_p4_JECshiftedUp;
+  LorentzVector m_jet_p4_JECshiftedDown;
+  
+  LorentzVector m_jet_p4_JERnomianl;
+  LorentzVector m_jet_p4_JERup;
+  LorentzVector m_jet_p4_JERdown;
+
   LorentzVector m_GENjet_p4;
   int m_GENjet_pdgId;
   int m_PARTON_flavour;
@@ -122,6 +151,19 @@ private:
   double m_PU_jetIdRaw;                                 /* raw PU jet ID score */
   bool m_PU_jetIdPassed;                                /* pass/fail PU jet ID  */
   bool m_PF_jetIdPassed;                                /* pass/fail PF jet ID */
+
+
+  /* JEC and JER scale factors 
+     the jets we use at miniAOD have JEC corrections applied
+     but not JER smearing/scaling (this is valid for 76X in which JER mods. onto mini-AOD are not recommended)
+  */
+
+  double m_JEC_uncertaintySF_up;
+  double m_JEC_uncertaintySF_down;
+  double m_JER_SF_nominal;
+  double m_JER_SF_up;
+  double m_JER_SF_down;
+
 
 
 

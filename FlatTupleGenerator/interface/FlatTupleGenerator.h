@@ -303,6 +303,8 @@ public:
 	double leg2_genMother_pt, leg2_genMother_eta, leg2_genMother_phi, leg2_genMother_M; 	/* the PAT embedded gen-match object's mother's 4-vector components for leg2 */
 	double leg1_genJet_pt, leg1_genJet_eta, leg1_genJet_phi, leg1_genJet_M; 	/* the PAT embedded gen-Jet object's 4-vector components for leg1 */
 	double leg2_genJet_pt, leg2_genJet_eta, leg2_genJet_phi, leg2_genJet_M; 	/* the PAT embedded gen-Jet object's 4-vector components for leg2 */
+	int leg1_genJet_pdgId; /* seems to be always 0 from miniAOD */
+	int leg2_genJet_pdgId; /* seems to be always 0 from miniAOD */
 	float leg1_dz, leg2_dz;				  	/* lepton dz see CustomPatCollectionProducers/src/{Electron,Muon,Tau}Clones.cc */	
 	float leg1_dxy, leg2_dxy;			  	/* lepton dxy see CustomPatCollectionProducers/src/{Electron,Muon,Tau}Clones.cc */	
 	float leg1_EffectiveArea, leg2_EffectiveArea; /* the effective area, see CustomPatCollectionProducers/src/{Electron,Muon}Clones.cc */
@@ -410,6 +412,7 @@ public:
 	std::vector<double> effLep_gen_pt, effLep_gen_eta, effLep_gen_phi, effLep_gen_M; 			/* the PAT gen-match object 4-vector components for effLeptons */
 	std::vector<double> effLep_genMother_pt, effLep_genMother_eta, effLep_genMother_phi, effLep_genMother_M; 	/* the PAT embedded gen-match object's mother's 4-vector components for effLeptons */
 	std::vector<double> effLep_genJet_pt, effLep_genJet_eta, effLep_genJet_phi, effLep_genJet_M; 	/* the PAT embedded gen-Jet object's 4-vector components for effLep */
+	std::vector<int>    effLep_genJet_pdgId; /* seems to be always 0 from miniAOD */
 	std::vector<float> effLep_dz;				  	/* lepton dz see CustomPatCollectionProducers/src/{Electron,Muon,Tau}Clones.cc */	
 	std::vector<float> effLep_dxy;			  	/* lepton dxy see CustomPatCollectionProducers/src/{Electron,Muon,Tau}Clones.cc */	
 	std::vector<float> effLep_EffectiveArea; /* the effective area, see CustomPatCollectionProducers/src/{Electron,Muon}Clones.cc */

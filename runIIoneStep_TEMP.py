@@ -33,13 +33,13 @@ print '******************************************'
 if COMPUTE_SVMASS_AT_NTUPLE :
 	print 'will compute SVmass (@ NTUPLE level) with log_m term = ', SVMASS_LOG_M
 	if USE_MVAMET :
-		print ' will use mva met in SVmass computation (no recoil corr yet)'
+		print ' will use mva met in SVmass computation (WARNING --- no recoil corr @ Ntuple level)'
 	else :
-		print 'will use pfMET in SVmass computation (no recoil corr yet)'
+		print 'will use pfMET in SVmass computation'
 
 else :
 	print '**************************************************'
-	print '***** WARNING SV MASS COMPUTE IS OFF (@ NTUPLE level) *****'
+	print '***** NOTE: SV MASS COMPUTE IS OFF (@ NTUPLE level) *****'
 	print '**************************************************'
 
 
@@ -95,7 +95,7 @@ print '*******************************************************'
 print '********** Running in unscheduled mode **********'
 process.options = cms.untracked.PSet(wantSummary = cms.untracked.bool(True))
 process.options.allowUnscheduled = cms.untracked.bool(True)
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(10) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(1000) )
 
 ###################################
 # input - remove for crab running
@@ -103,8 +103,7 @@ process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(10) )
 
 myfilelist = cms.untracked.vstring()
 myfilelist.extend(['file:/uscms_data/d3/shalhout/miniAODv2_SyncSample.root'])
-process.source = cms.Source("PoolSource",fileNames=myfilelist,
-	 eventsToSkip = cms.untracked.VEventRange('1:4433-1:53687'))
+process.source = cms.Source("PoolSource",fileNames=myfilelist)
 
 
 
@@ -387,6 +386,7 @@ process.requireCandidateHiggsPair = cms.EDFilter("HiggsCandidateCountFilter",
 
 #########################################
 # new MVA MET (pairwise) interface
+# along with setup for tau ES var
 ##########################################
 
 
@@ -428,7 +428,7 @@ if RUN_MEM_CHECK is True:
 from DavisRunIITauTau.FlatTupleGenerator.FlatTupleConfig_cfi import generalConfig as TauIsoConfigRank
 tauIsolForOrderingPair_ = TauIsoConfigRank.getParameter("tauIDisolationForRank")
 
-
+print "Tau_h + Tau_h pairs will be ordered by", tauIsolForOrderingPair_
 
 process.TupleCandidateEvents = cms.EDProducer('TupleCandidateEventProducer' ,
 	puppiMETSrc = cms.InputTag("slimmedMETsPuppi"),
@@ -630,6 +630,7 @@ process.pairIndep = cms.EDProducer('NtuplePairIndependentInfoProducer',
 							NAME=cms.string("NtupleEventPairIndep"),
 							genParticlesToKeep = GEN_PARTICLES_TO_KEEP,
 							slimmedJetSrc = cms.InputTag('filteredSlimmedJets::DavisNtuple'),
+							slimmedGenJetsSrc = cms.InputTag('slimmedGenJets'),
 							defaultBtagAlgorithmNameSrc = cms.string(DEFAULT_BTAG_ALGORITHM),
 							useBtagSFSrc = cms.bool(APPLY_BTAG_SF),
 							useBtagSFSeedSrc = cms.uint32(BTAG_SF_SEED),
@@ -640,7 +641,7 @@ process.pairIndep = cms.EDProducer('NtuplePairIndependentInfoProducer',
 							PUweightSettingsSrc = PUntupleWeightSettings,
 							mcGenWeightSrc = mcGenWeightSrcInputTag,
 				  			LHEEventProductSrc = LHEEventProductSrcInputTag,
-				  			sampleInfoSrc = sampleData,							
+				  			sampleInfoSrc = sampleData,						
 							triggerResultsPatSrc = cms.InputTag("TriggerResults","","PAT"),
 							triggerResultsRecoSrc = cms.InputTag("TriggerResults","","RECO"),
 							rhoSource = cms.InputTag('fixedGridRhoFastjetAll')

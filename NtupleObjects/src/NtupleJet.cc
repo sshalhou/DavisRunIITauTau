@@ -2,12 +2,20 @@
 #include "DavisRunIITauTau/External/interface/BtagSF.hh" /* causes problems if included in a .h file */
 
 #include "TLorentzVector.h"
+#include "TF1.h"
 #include <math.h> 
 
 NtupleJet::NtupleJet()
 {
 
   m_jet_p4.SetXYZT(NAN,NAN,NAN,NAN);
+
+  m_jet_p4_JECshiftedUp.SetXYZT(NAN,NAN,NAN,NAN);
+  m_jet_p4_JECshiftedDown.SetXYZT(NAN,NAN,NAN,NAN);
+  m_jet_p4_JERnomianl.SetXYZT(NAN,NAN,NAN,NAN);
+  m_jet_p4_JERup.SetXYZT(NAN,NAN,NAN,NAN);
+  m_jet_p4_JERdown.SetXYZT(NAN,NAN,NAN,NAN);
+
   m_GENjet_p4.SetXYZT(NAN,NAN,NAN,NAN);
   m_GENjet_pdgId = -999;
   m_PARTON_flavour = -999;
@@ -31,7 +39,12 @@ NtupleJet::NtupleJet()
   m_PU_jetIdPassed = 0;
   m_PF_jetIdPassed = 0;
 
-
+  /* init these to 1.0 */
+  m_JEC_uncertaintySF_up = 1.;
+  m_JEC_uncertaintySF_down = 1.;
+  m_JER_SF_nominal = 1.;
+  m_JER_SF_up = 1.;
+  m_JER_SF_down = 1.;
 
 }
 
@@ -128,7 +141,96 @@ NtupleJet::NtupleJet()
   }
 
 
+/* set the up, down JEC uncertainty scale factors */
+  void NtupleJet::fill_JEC_uncertaintySFs(double up_, double down_)
+  {
+    m_JEC_uncertaintySF_up = up_;
+    m_JEC_uncertaintySF_down = down_;
 
+    /* if this ever asserts it means you did not call NtupleJet::fill in order to init the 4-vector */
+    assert(!isnan(m_jet_p4.pt()));
+
+    m_jet_p4_JECshiftedUp = m_jet_p4;
+    m_jet_p4_JECshiftedUp *= up_;
+
+    m_jet_p4_JECshiftedDown = m_jet_p4;
+    m_jet_p4_JECshiftedDown *= down_;    
+
+
+    std::cout<<" jet with pT = "<<m_jet_p4.pt()<<" + JEC shift gives pT =  "<<m_jet_p4_JECshiftedUp.pt();
+    std::cout<<" while - shift gives "<<m_jet_p4_JECshiftedDown.pt()<<"\n";
+
+
+  }
+
+
+
+/* set the nominal, up, down JER  scale factors */
+  void NtupleJet::fill_JER_SFs(double nominal_, double up_, double down_, LorentzVector genJet_)
+  {
+    m_JER_SF_nominal = nominal_;
+    m_JER_SF_up = up_;
+    m_JER_SF_down = down_;
+
+    /* if this ever asserts it means you did not call NtupleJet::fill in order to init the 4-vector */
+    assert(!isnan(m_jet_p4.pt()) && m_jet_p4.pt()>0.0);
+
+
+    ///////////////////////////////////////////////
+    // using hybrid method to scale/smear jets 
+    ///////////////////////////////////////////////
+
+    double pt_new_nominal = m_jet_p4.pt();
+    double pt_new_up = m_jet_p4.pt();
+    double pt_new_down = m_jet_p4.pt();
+
+    ////////////////////////////////////////////////////////////////////////////
+    ///// if have a genJet match use Scaling pT->max[0.,pTgen+SF*(pT–pTgen)]
+
+    if( !isnan(genJet_.pt()) && genJet_.pt() > 0.0 )
+    {
+
+      pt_new_nominal = std::max(0., genJet_.pt() + m_JER_SF_nominal * (m_jet_p4.pt() - genJet_.pt()));
+      pt_new_up = std::max(0., genJet_.pt() + m_JER_SF_up * (m_jet_p4.pt() - genJet_.pt()));
+      pt_new_down = std::max(0., genJet_.pt() + m_JER_SF_down * (m_jet_p4.pt() - genJet_.pt()));
+
+      std::cout<<" For a well-gen matched jet with pt = "<<m_jet_p4.pt()<<" ";
+      std::cout<<" the new JER scaled pT is "<<pt_new_nominal<<" under a +1 sigma shift it is "<<pt_new_up;
+      std::cout<<" and under a -1 sigma shift it is "<<pt_new_down<<"\n";
+
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+    ///// if don't have a genJet match randomly smear corrected reco jet pT using 
+    ///// a Gaussian of the width √(SF^2-1) * sigma_MC_PT. 
+    ///// This method only allows one to worsen the resolution (SF>1). 
+
+    else
+    {
+
+        //TF1 gaus1("gaus1","gaus",m_jet_p4.pt());
+
+
+
+
+    }
+
+
+
+
+    /* see https://twiki.cern.ch/twiki/bin/view/CMS/JetResolution#Smearing_procedures */
+
+
+
+  // double NtupleJet::jet_p4_JECshiftedUp() const { return m_jet_p4_JECshiftedUp; }
+  // double NtupleJet::jet_p4_JECshiftedDown() const { return m_jet_p4_JECshiftedDown; }
+  // double NtupleJet::jet_p4_JERnomianl() const { return m_jet_p4_JERnomianl; }
+  // double NtupleJet::jet_p4_JERup() const { return m_jet_p4_JERup; }
+  // double NtupleJet::jet_p4_JERdown() const { return m_jet_p4_JERdown; }
+
+
+
+  }
 
 
 // helpers
@@ -286,4 +388,14 @@ NtupleJet::NtupleJet()
   bool NtupleJet::PF_jetIdPassed() const { return m_PF_jetIdPassed; }
 
 
+  double NtupleJet::JEC_uncertaintySF_up() const { return m_JEC_uncertaintySF_up; }
+  double NtupleJet::JEC_uncertaintySF_down() const { return m_JEC_uncertaintySF_down; }
+  double NtupleJet::JER_SF_nominal() const { return m_JER_SF_nominal; }
+  double NtupleJet::JER_SF_up() const { return m_JER_SF_up; }
+  double NtupleJet::JER_SF_down() const { return m_JER_SF_down; }
 
+  LorentzVector NtupleJet::jet_p4_JECshiftedUp() const { return m_jet_p4_JECshiftedUp; }
+  LorentzVector NtupleJet::jet_p4_JECshiftedDown() const { return m_jet_p4_JECshiftedDown; }
+  LorentzVector NtupleJet::jet_p4_JERnomianl() const { return m_jet_p4_JERnomianl; }
+  LorentzVector NtupleJet::jet_p4_JERup() const { return m_jet_p4_JERup; }
+  LorentzVector NtupleJet::jet_p4_JERdown() const { return m_jet_p4_JERdown; }

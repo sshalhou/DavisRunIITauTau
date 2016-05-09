@@ -863,6 +863,7 @@ void FlatTupleGenerator::handleEffLeptonInfo(const edm::Event& iEvent, const edm
     effLep_gen_M.push_back(currentPair.EffLepton().at(i).gen_p4().M());
     effLep_genMother_M.push_back(currentPair.EffLepton().at(i).genMother_p4().M());
     effLep_genJet_M.push_back(currentPair.EffLepton().at(i).genJet_p4().M());
+    effLep_genJet_pdgId.push_back(currentPair.EffLepton().at(i).genJet_pdgId());
 
 
 
@@ -1148,6 +1149,9 @@ void FlatTupleGenerator::handleLeg1AndLeg2Info(const edm::Event& iEvent, const e
   leg1_genMother_M = currentPair.leg1().genMother_p4().M();
   leg1_genJet_M = currentPair.leg1().genJet_p4().M();
 
+
+  leg1_genJet_pdgId = currentPair.leg1().genJet_pdgId();
+  leg2_genJet_pdgId = currentPair.leg2().genJet_pdgId();
 
 
   /* set the relative isolation value dep. on the lepton type */
@@ -2250,6 +2254,10 @@ void FlatTupleGenerator::handlePairIndepInfo(const edm::Event& iEvent, const edm
   leg1_RelIso = NAN;
   leg2_RelIso = NAN;
 
+  leg1_genJet_pdgId = -999;
+  leg2_genJet_pdgId = -999;
+  effLep_genJet_pdgId.clear();    
+
 
 
   effLep_leptonType.clear();    
@@ -2893,6 +2901,9 @@ void FlatTupleGenerator::beginJob()
   FlatTuple->Branch("effLep_RelIso", &effLep_RelIso);
 
 
+  FlatTuple->Branch("leg1_genJet_pdgId", &leg1_genJet_pdgId);
+  FlatTuple->Branch("leg2_genJet_pdgId", &leg2_genJet_pdgId);
+  FlatTuple->Branch("effLep_genJet_pdgId", &effLep_genJet_pdgId);
 
 
   FlatTuple->Branch("veto_leptonType", &veto_leptonType);

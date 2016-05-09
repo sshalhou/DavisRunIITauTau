@@ -84,6 +84,8 @@ public:
 	int GENpdgId() const; 
 	int GENMOTHERpdgId() const; 
 	LorentzVector 	genJet_p4() const;
+	int genJet_pdgId() const;
+
 	float ZimpactTau() const;
 	float numStrips() const;
 	float numHadrons() const;
@@ -226,6 +228,7 @@ private:
 	//////////////////////////////////////////////////
     float m_TauEsVariant;							//  -1 if TauEs DOWN, +1 if UP, 0 if Nominal
 	LorentzVector 	m_genJet_p4;					//  the pat-matched genJet p4
+	int m_genJet_pdgId;								//  the pat-matched genJet pdgId
 	float m_ZimpactTau; 							// tau-event vertex match quality parameter
 	float m_numStrips;								//  number strips
 	float m_numHadrons;								//	number hadrons

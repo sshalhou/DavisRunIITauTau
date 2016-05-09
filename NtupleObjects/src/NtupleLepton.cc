@@ -65,6 +65,7 @@ NtupleLepton::NtupleLepton()
   m_passConversionVeto = NAN;
 
   m_genJet_p4.SetXYZT(NAN,NAN,NAN,NAN);
+  m_genJet_pdgId = -999;
   m_numStrips = NAN;
   m_numHadrons  = NAN;
   m_decayMode = -999;
@@ -417,6 +418,10 @@ std::cout<<"<LEPPRINT "<<type_print<<"> num strips : " << m_numStrips << std::en
 std::cout<<"<LEPPRINT "<<type_print<<"> num hadrons : " << m_numHadrons << std::endl;
 std::cout<<"<LEPPRINT "<<type_print<<"> tau decay mode : " << m_decayMode << std::endl;
 std::cout<<"<LEPPRINT "<<type_print<<"> genJet p4 pt :  " << m_genJet_p4.pt() << std::endl;
+std::cout<<"<LEPPRINT "<<type_print<<"> genJet pdgId :  " << m_genJet_pdgId << std::endl;
+
+
+
 
   std::cout<<" END: printing lepton <------------------\n";
 
@@ -658,6 +663,7 @@ void NtupleLepton::fill(pat::Tau dummy_)
 
   
   if(dummy_.genJet()) { m_genJet_p4 = dummy_.genJet()->p4(); }
+  if(dummy_.genJet()) { m_genJet_pdgId = dummy_.genJet()->pdgId(); }
 
   if(dummy_.genLepton()) fillGenLeptonInfo(*(dummy_.genLepton()));
 
@@ -751,6 +757,7 @@ float NtupleLepton::passConversionVeto() const {return m_passConversionVeto;}
 
 
 LorentzVector NtupleLepton::genJet_p4() const {return m_genJet_p4;}
+int NtupleLepton::genJet_pdgId() const {return m_genJet_pdgId;}
 float NtupleLepton::dzTauVertex() const {return m_dzTauVertex;}
 float NtupleLepton::numStrips() const {return m_numStrips;}
 float NtupleLepton::numHadrons() const {return m_numHadrons;}

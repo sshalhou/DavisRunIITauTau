@@ -68,6 +68,7 @@ Implementation:
 #include "JetMETCorrections/Modules/interface/JetResolution.h"
 #include <CondFormats/DataRecord/interface/JetResolutionRcd.h>
 #include <CondFormats/DataRecord/interface/JetResolutionScaleFactorRcd.h>
+#include "DataFormats/Math/interface/deltaR.h"
 
 typedef math::XYZTLorentzVector LorentzVector;
 using namespace std;
@@ -111,6 +112,10 @@ private:
   
   edm::InputTag slimmedJetSrc_;
   edm::EDGetTokenT<edm::View< pat::Jet > > slimmedJetToken_;
+
+  edm::InputTag slimmedGenJetsSrc_;
+  edm::EDGetTokenT<edm::View< reco::GenJet > > slimmedGenJetsToken_;
+
 
 
   string defaultBtagAlgorithmNameSrc_;
@@ -184,6 +189,7 @@ prunedGenSrc_(iConfig.getParameter<edm::InputTag>("prundedGenSrc" )),
 NAME_(iConfig.getParameter<string>("NAME" )),
 genParticlesToKeep_(iConfig.getParameter<std::vector<int>>("genParticlesToKeep" )),
 slimmedJetSrc_(iConfig.getParameter<edm::InputTag>("slimmedJetSrc" )),
+slimmedGenJetsSrc_(iConfig.getParameter<edm::InputTag>("slimmedGenJetsSrc" )),
 defaultBtagAlgorithmNameSrc_(iConfig.getParameter<string>("defaultBtagAlgorithmNameSrc" )),
 useBtagSFSrc_(iConfig.getParameter<bool>("useBtagSFSrc" )),
 useBtagSFSeedSrc_(iConfig.getParameter<unsigned int>("useBtagSFSeedSrc" )),
@@ -211,6 +217,7 @@ rhoSource_(iConfig.getParameter<edm::InputTag>("rhoSource" ))
   mcGenWeightToken_ = consumes< GenEventInfoProduct > (mcGenWeightSrc_);
   pileupToken_ = consumes< std::vector<PileupSummaryInfo> >  (pileupSrc_);
   slimmedJetToken_ = consumes<edm::View< pat::Jet > > (slimmedJetSrc_);
+  slimmedGenJetsToken_ = consumes<edm::View< reco::GenJet > > (slimmedGenJetsSrc_);
   vertexToken_ = consumes<edm::View< reco::Vertex > > (vertexSrc_);
   packedGenToken_ = consumes<edm::View< pat::PackedGenParticle > > (packedGenSrc_);
   prunedGenToken_ = consumes<edm::View< reco::GenParticle > > (prunedGenSrc_);
@@ -387,6 +394,14 @@ NtuplePairIndependentInfoProducer::produce(edm::Event& iEvent, const edm::EventS
   edm::Handle<edm::View<pat::Jet> > slimmedJets;
   iEvent.getByToken(slimmedJetToken_,slimmedJets);
 
+
+  // get the slimmedGenJets collection 
+
+  
+  edm::Handle<edm::View<reco::GenJet> > slimmedGenJets;
+  iEvent.getByToken(slimmedGenJetsToken_,slimmedGenJets);
+
+
   // instance of our PUPFjetIdHelper 
 
   PUPFjetIdHelper puANDpf_IdHelper;
@@ -444,10 +459,17 @@ NtuplePairIndependentInfoProducer::produce(edm::Event& iEvent, const edm::EventS
 
       NtupleJet currentNtupleJet;
       
-      /* start test */
+ 
+      /* init the jet */
+      currentNtupleJet.fill((slimmedJets->at(i)));
+ 
+
+     /* start JEC and JER sf. computation */
 
       /* for MC, get the total JEC uncertainty */
-      double JECuncertainty_UP = 0.0;
+      double JECuncertainty = 0.0;
+      double JEC_SF_up = 1.0;
+      double JEC_SF_down = 1.0;
 
       if(!iEvent.isRealData())
       {
@@ -455,9 +477,17 @@ NtuplePairIndependentInfoProducer::produce(edm::Event& iEvent, const edm::EventS
         /* JEC */
         jecUnc->setJetEta(slimmedJets->at(i).eta());
         jecUnc->setJetPt(slimmedJets->at(i).pt());
+
+        JECuncertainty = jecUnc->getUncertainty(true);
+        JEC_SF_up   = 1 + (1.0 * JECuncertainty);
+        JEC_SF_down = 1 + (-1.0 * JECuncertainty);
+        currentNtupleJet.fill_JEC_uncertaintySFs(JEC_SF_up, JEC_SF_down);
+
+
         std::cout<<" jet at index "<<i<<" has pt & eta = "<<slimmedJets->at(i).pt()<<" , "<<slimmedJets->at(i).eta()<<" ";
-        JECuncertainty_UP = jecUnc->getUncertainty(true);
-        std::cout<<" and has unc  = "<<JECuncertainty_UP<<"\n";
+        std::cout<<" and has total uncertainty  = "<<JECuncertainty<<" giving an up. shift scale factor = ";
+        std::cout<<currentNtupleJet.JEC_uncertaintySF_up()<<" and a down JEC shift scale factor = "<<currentNtupleJet.JEC_uncertaintySF_down()<<"\n";
+
 
 
         /* JER */
@@ -466,17 +496,62 @@ NtuplePairIndependentInfoProducer::produce(edm::Event& iEvent, const edm::EventS
         float sf = resolution.getScaleFactor(parameters); 
         float sf_up = resolution.getScaleFactor(parameters, Variation::UP);
         float sf_down = resolution.getScaleFactor(parameters, Variation::DOWN);
+        LorentzVector genJetMatchForJER;
+        genJetMatchForJER.SetXYZT(0,0,0,0);
+
+        /* look for a GenJet match - this is used for the JER smearing */
+        if(slimmedGenJets.isValid()) 
+        {
+          std::cout<<" VALID slimmedGenJets \n";
 
 
-        std::cout<<" JER sf, sf+, sf- "<<sf<<" "<<sf_up<<" "<<sf_down<<"\n";
+
+          for(std::size_t g = 0; g<slimmedGenJets->size(); ++g)
+          {
+
+
+
+            /* The matching should require dR(reco jet, gen jet)<Rcone/2 and dpt=abs(pT-pTgen)<3*sigma_MC, 
+            where Rcone is the AK cone parameter, and sigma_MC_pT is jet pT absolute resolution. */
+
+              double dPt = fabs( slimmedJets->at(i).pt() -  slimmedGenJets->at(g).pt() );
+              double maxDiff = 3.0 * fabs(sf_up - sf) * slimmedJets->at(i).pt();
+              double dR = deltaR(slimmedJets->at(i).p4(), slimmedGenJets->at(g).p4());
+  
+            if( dR < 0.4/2 && dPt < maxDiff)
+            {
+              std::cout<<" have a DR match to the jet @ index "<<i<<" and ";
+              std::cout<<" dPt = "<<dPt<<" and maxDiff = "<<maxDiff<<"\n";
+              genJetMatchForJER = slimmedGenJets->at(g).p4();
+              break;
+            }
+
+
+          }
+        
+
+        }
+
+        std::cout<<" for jet at index i with pt = "<<slimmedJets->at(i).pt()<<" found a genJet match with pT of ";
+        std::cout<<genJetMatchForJER.pt()<<" which compares to the embedded genJet pt as ";
+        std::cout<<currentNtupleJet.GENjet_p4().pt()<<"\n";
+
+
+
+        currentNtupleJet.fill_JER_SFs(sf, sf_up, sf_down, genJetMatchForJER);
+
+
+        std::cout<<" JER sf, sf+, sf- "<<currentNtupleJet.JER_SF_nominal()<<" "<<currentNtupleJet.JER_SF_up()<<" "<<currentNtupleJet.JER_SF_down()<<"\n";
+
+
+
+
       }
 
-      /* end test */  
 
 
-      /* init the jet */
-      currentNtupleJet.fill((slimmedJets->at(i)));
-      
+
+
       /* fill b-tag info for default btagger */
       currentNtupleJet.fill_defaultBtagInfo(slimmedJets->at(i), 
                             defaultBtagAlgorithmNameSrc_, 

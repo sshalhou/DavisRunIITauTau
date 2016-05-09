@@ -73,7 +73,7 @@ if APPLY_BTAG_SF :
 
 # import of standard configurations
 process.load("FWCore.MessageService.MessageLogger_cfi")
-process.MessageLogger.cerr.FwkReport.reportEvery = 500
+process.MessageLogger.cerr.FwkReport.reportEvery = 1
 
 process.load('Configuration.StandardSequences.Services_cff')
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
@@ -95,7 +95,7 @@ print '*******************************************************'
 print '********** Running in unscheduled mode **********'
 process.options = cms.untracked.PSet(wantSummary = cms.untracked.bool(True))
 process.options.allowUnscheduled = cms.untracked.bool(True)
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(1000) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(10) )
 
 ###################################
 # input - remove for crab running
@@ -396,8 +396,8 @@ from RecoMET.METPUSubtraction.MVAMETConfiguration_cff import runMVAMET
 runMVAMET( process, jetCollectionPF = "patJetsReapplyJEC"  )
 
 process.MVAMET.srcLeptons  = cms.VInputTag("TrimmedFilteredCustomMuons:TrimmedFilteredCustomMuons:DavisNtuple", 
-											   "TrimmedFilteredCustomElectrons:TrimmedFilteredCustomElectrons:DavisNtuple", 
-											   "TrimmedFilteredCustomTausEsNominal:TrimmedFilteredCustomTausEsNominal:DavisNtuple")
+										   "TrimmedFilteredCustomElectrons:TrimmedFilteredCustomElectrons:DavisNtuple", 
+										   "TrimmedFilteredCustomTausEsNominal:TrimmedFilteredCustomTausEsNominal:DavisNtuple")
 
 process.MVAMET.requireOS = cms.bool(False)
 
@@ -439,7 +439,7 @@ process.TupleCandidateEvents = cms.EDProducer('TupleCandidateEventProducer' ,
 	mvaMETSrc = cms.InputTag("MVAMET:MVAMET:DavisNtuple"),
 	electronVetoSrc =cms.InputTag("filteredVetoElectrons","","DavisNtuple"),
 	muonVetoSrc = cms.InputTag("filteredVetoMuons","","DavisNtuple"),				
-	pairDeltaRmin = cms.double(0.3), 
+	pairDeltaRmin = cms.double(0.3),
     # should be small since don't want one of the pair in the veto list
     # note : this is used for DR(leg1, leg2) >, and for overlap removal from the
     # veto e and mu lists
@@ -461,7 +461,7 @@ process.TupleCandidateEvents = cms.EDProducer('TupleCandidateEventProducer' ,
 process.TupleCandidateEventsTauEsUp = cms.EDProducer('TupleCandidateEventProducer' ,
 	puppiMETSrc = cms.InputTag("slimmedMETsPuppi"),
 	pfMETSrc = cms.InputTag("patpfMETT1"), # this has the updated JECs
-	mvaMETSrc = cms.InputTag("MVAMETtauEsUp:MVAMETtauEsUp:DavisNtuple"),
+	mvaMETSrc = cms.InputTag("MVAMETtauEsUp:MVAMET:DavisNtuple"),
 	electronVetoSrc =cms.InputTag("filteredVetoElectrons","","DavisNtuple"),
 	muonVetoSrc = cms.InputTag("filteredVetoMuons","","DavisNtuple"),				
 	pairDeltaRmin = cms.double(0.3), 
@@ -485,7 +485,7 @@ process.TupleCandidateEventsTauEsUp = cms.EDProducer('TupleCandidateEventProduce
 process.TupleCandidateEventsTauEsDown = cms.EDProducer('TupleCandidateEventProducer' ,
 	puppiMETSrc = cms.InputTag("slimmedMETsPuppi"),
 	pfMETSrc = cms.InputTag("patpfMETT1"), # this has the updated JECs
-	mvaMETSrc = cms.InputTag("MVAMETtauEsDown:MVAMETtauEsDown:DavisNtuple"),
+	mvaMETSrc = cms.InputTag("MVAMETtauEsDown:MVAMET:DavisNtuple"),
 	electronVetoSrc =cms.InputTag("filteredVetoElectrons","","DavisNtuple"),
 	muonVetoSrc = cms.InputTag("filteredVetoMuons","","DavisNtuple"),				
 	pairDeltaRmin = cms.double(0.3), 
@@ -632,6 +632,7 @@ process.pairIndep = cms.EDProducer('NtuplePairIndependentInfoProducer',
 							NAME=cms.string("NtupleEventPairIndep"),
 							genParticlesToKeep = GEN_PARTICLES_TO_KEEP,
 							slimmedJetSrc = cms.InputTag('filteredSlimmedJets::DavisNtuple'),
+							slimmedGenJetsSrc = cms.InputTag('slimmedGenJets'),
 							defaultBtagAlgorithmNameSrc = cms.string(DEFAULT_BTAG_ALGORITHM),
 							useBtagSFSrc = cms.bool(APPLY_BTAG_SF),
 							useBtagSFSeedSrc = cms.uint32(BTAG_SF_SEED),
