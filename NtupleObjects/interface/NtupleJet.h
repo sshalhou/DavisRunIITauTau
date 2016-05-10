@@ -8,7 +8,7 @@
 
 
 
-// needed by ntuple Muons producer
+// needed by ntuple Jets producer
 #include <vector>
 #include <string>
 #include <iostream>
@@ -40,7 +40,11 @@ public:
   void fill_PUjetID(pat::Jet, std::string, double); /* theJet, DiscName, double CutMinimum */
   void fill_PFjetID(bool);
   void fill_JEC_uncertaintySFs(double, double); /* set the up, down JEC uncertainty scale factors, call after NtupleJet::fill is called */
-  void fill_JER_SFs(double, double, double, LorentzVector); /* set the nominal, up, down JER  scale factors, and genJet match for JER call after NtupleJet::fill is called */
+
+  /* set the nominal, up, down JER  scale factors, genJet match, and the absolute resolution
+   for JER call only after NtupleJet::fill is called */
+
+  void fill_JER_SFs(double, double, double, LorentzVector, double); 
 
 
 
@@ -54,6 +58,14 @@ public:
   floatVec BTAGraw_scores() ;    /* the raw b-tag algorithm outputs - no SFs are applied here */
   float BTAGraw(std::string);    /* return the raw b-tag score for available string assert if not available */
 
+
+
+  /* switch m_jet_p4 member between different jet scale/resolution variants */
+  /* string can be fullyCorrected,  JECshiftedUp, JECshiftedDown, JERnomianl, JERup, JERdown */
+
+  void Use4VectorVariant(std::string); 
+
+
   // getters
  
 
@@ -63,9 +75,13 @@ public:
   LorentzVector jet_p4_JECshiftedUp() const;   /* jet 4-vector with the JEC shifted up one sigma for MC */
   LorentzVector jet_p4_JECshiftedDown() const; /* jet 4-vector with the JEC shifted down one sigma for MC */
   
+  /* note these include a random gaus smear for non-gen matched jets, and so will not always give the same
+  result */
+
   LorentzVector jet_p4_JERnomianl() const;   /* jet 4-vector with the JER smeared (or shifted) for MC */
   LorentzVector jet_p4_JERup() const;        /* jet 4-vector with the JER smeared (or shifted) with +one sigma uncertainty for MC*/
   LorentzVector jet_p4_JERdown() const;      /* jet 4-vector with the JER smeared (or shifted) with -one sigma uncertainty for MC*/
+
 
 
 
@@ -77,6 +93,7 @@ public:
   double JER_SF_nominal() const;         /* return sf to correct MC JER to DATA */
   double JER_SF_up() const;              /* return sf to correct MC JER to DATA with 1 sigma systematic shift up */ 
   double JER_SF_down() const;            /* return sf to correct MC JER to DATA with 1 sigma systematic shift down */ 
+  double JER_resolution() const;         /* return the absolute resolution for a MC jet */  
 
   double PU_jetIdRaw() const;   /* raw value of PU jet ID discriminant */
   bool PU_jetIdPassed() const;   /* pass/fail  of PU jet ID discriminant */
@@ -117,12 +134,10 @@ public:
 
 private:
 
-  LorentzVector m_jet_p4;
-
-
+  LorentzVector m_jet_p4; /* this will hold any of the variants based on call Use4VectorVariant calls */
+  LorentzVector m_jet_p4_fullyCorrected; /* full JEC corrected p4 -- our nominal jet 4-vector */
   LorentzVector m_jet_p4_JECshiftedUp;
   LorentzVector m_jet_p4_JECshiftedDown;
-  
   LorentzVector m_jet_p4_JERnomianl;
   LorentzVector m_jet_p4_JERup;
   LorentzVector m_jet_p4_JERdown;
@@ -163,6 +178,7 @@ private:
   double m_JER_SF_nominal;
   double m_JER_SF_up;
   double m_JER_SF_down;
+  double m_JER_resolution;
 
 
 

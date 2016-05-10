@@ -18,8 +18,25 @@ JetHelper::JetHelper(){}
 void JetHelper::init(std::vector<NtupleJet> jetVec, std::string jetCut, std::string bjetCut)
 {
 
-	m_PtJetPairs.clear();
-	m_PtBJetPairs.clear();
+
+	m_PtJetPairs_fullyCorrected.clear();
+	m_PtBJetPairs_fullyCorrected.clear();
+
+	m_PtJetPairs_JECshiftedUp.clear();
+	m_PtBJetPairs_JECshiftedUp.clear();
+
+	m_PtJetPairs_JECshiftedDown.clear();
+	m_PtBJetPairs_JECshiftedDown.clear();
+
+	m_PtJetPairs_JERnomianl.clear();
+	m_PtBJetPairs_JERnomianl.clear();
+
+	m_PtJetPairs_JERup.clear();
+	m_PtBJetPairs_JERup.clear();
+
+	m_PtJetPairs_JERdown.clear();
+	m_PtBJetPairs_JERdown.clear();
+
 
 	/* create the cut selectors */
 
@@ -35,11 +52,64 @@ void JetHelper::init(std::vector<NtupleJet> jetVec, std::string jetCut, std::str
 		/* next check the jet ID & B jet ID, & if passes add to the pair vectors,
 		allowing jets to enter both vectors - cause that is what H2Tau Does */
 
-		if(	jetSelector(jetVec[j]) ) m_PtJetPairs.push_back( std::make_pair(jetVec[j].pt(), jetVec[j]) );
-
-		if(	BjetSelector(jetVec[j]) ) m_PtBJetPairs.push_back( std::make_pair(jetVec[j].pt(), jetVec[j]) );
+		jetVec[j].Use4VectorVariant("fullyCorrected");
+		if(	jetSelector(jetVec[j]) ) m_PtJetPairs_fullyCorrected.push_back( std::make_pair(jetVec[j].pt(), jetVec[j]) );
+		if(	BjetSelector(jetVec[j]) ) m_PtBJetPairs_fullyCorrected.push_back( std::make_pair(jetVec[j].pt(), jetVec[j]) );
 	
+		jetVec[j].Use4VectorVariant("JECshiftedUp");
+		if(	jetSelector(jetVec[j]) ) m_PtJetPairs_JECshiftedUp.push_back( std::make_pair(jetVec[j].pt(), jetVec[j]) );
+		if(	BjetSelector(jetVec[j]) ) m_PtBJetPairs_JECshiftedUp.push_back( std::make_pair(jetVec[j].pt(), jetVec[j]) );
+	
+		jetVec[j].Use4VectorVariant("JECshiftedDown");
+		if(	jetSelector(jetVec[j]) ) m_PtJetPairs_JECshiftedDown.push_back( std::make_pair(jetVec[j].pt(), jetVec[j]) );
+		if(	BjetSelector(jetVec[j]) ) m_PtBJetPairs_JECshiftedDown.push_back( std::make_pair(jetVec[j].pt(), jetVec[j]) );
+	
+		jetVec[j].Use4VectorVariant("JERnomianl");
+		if(	jetSelector(jetVec[j]) ) m_PtJetPairs_JERnomianl.push_back( std::make_pair(jetVec[j].pt(), jetVec[j]) );
+		if(	BjetSelector(jetVec[j]) ) m_PtBJetPairs_JERnomianl.push_back( std::make_pair(jetVec[j].pt(), jetVec[j]) );
+	
+		jetVec[j].Use4VectorVariant("JERup");
+		if(	jetSelector(jetVec[j]) ) m_PtJetPairs_JERup.push_back( std::make_pair(jetVec[j].pt(), jetVec[j]) );
+		if(	BjetSelector(jetVec[j]) ) m_PtBJetPairs_JERup.push_back( std::make_pair(jetVec[j].pt(), jetVec[j]) );
+	
+		jetVec[j].Use4VectorVariant("JERdown");
+		if(	jetSelector(jetVec[j]) ) m_PtJetPairs_JERdown.push_back( std::make_pair(jetVec[j].pt(), jetVec[j]) );
+		if(	BjetSelector(jetVec[j]) ) m_PtBJetPairs_JERdown.push_back( std::make_pair(jetVec[j].pt(), jetVec[j]) );
+
+		// reset back to fullyCorrected just in case
+		jetVec[j].Use4VectorVariant("fullyCorrected");
+
+
+
+		std::cout<<" ----> in FlatTuple jethelper jet @ index "<<j;
+		std::cout<<" fullyCorrected pT= "<<jetVec[j].pt()<<" with variants ... ";
+		std::cout<<" RES_smeared= "<<jetVec[j].jet_p4_JERnomianl().pt();
+		std::cout<<" RES_smearedUP= "<<jetVec[j].jet_p4_JERup().pt();
+		std::cout<<" RES_smearedDN= "<<jetVec[j].jet_p4_JERdown().pt();
+		std::cout<<" JECunc_UP= "<<jetVec[j].jet_p4_JECshiftedUp().pt();
+		std::cout<<" JECunc_DN= "<<jetVec[j].jet_p4_JECshiftedDown().pt();
+		std::cout<<" cycling through the variants now using  Use4VectorVariant ... ";
+
+		jetVec[j].Use4VectorVariant("JERnomianl");  std::cout<<" "<<jetVec[j].pt();
+		jetVec[j].Use4VectorVariant("JERup");  std::cout<<" "<<jetVec[j].pt();
+		jetVec[j].Use4VectorVariant("JERdown");  std::cout<<" "<<jetVec[j].pt();
+		jetVec[j].Use4VectorVariant("JECshiftedUp");  std::cout<<" "<<jetVec[j].pt();
+		jetVec[j].Use4VectorVariant("JECshiftedDown");  std::cout<<" "<<jetVec[j].pt();
+
+		std::cout<<" back to nominal ...";
+
+		jetVec[j].Use4VectorVariant("fullyCorrected");  std::cout<<" "<<jetVec[j].pt()<<"\n";
+
 	}
+
+	std::cout<<" check size of different jet variant collections ";
+	std::cout<<" fullyCorrected pT= "<<m_PtJetPairs_fullyCorrected.size();
+	std::cout<<" RES_smeared= "<<m_PtJetPairs_JECshiftedUp.size();
+	std::cout<<" RES_smearedUP= "<<m_PtJetPairs_JECshiftedDown.size();
+	std::cout<<" RES_smearedDN= "<<m_PtJetPairs_JERnomianl.size();
+	std::cout<<" JECunc_UP= "<<m_PtJetPairs_JERup.size();
+	std::cout<<" JECunc_DN= "<<m_PtJetPairs_JERdown.size()<<"\n";
+
 
 } 
 
@@ -51,8 +121,25 @@ void JetHelper::init(std::vector<NtupleJet> jetVec, std::string jetCut, std::str
 					double minDR, NtupleLepton leg1, NtupleLepton leg2)
 {
 
-	m_PtJetPairs.clear();
-	m_PtBJetPairs.clear();
+	m_PtJetPairs_fullyCorrected.clear();
+	m_PtBJetPairs_fullyCorrected.clear();
+
+	m_PtJetPairs_JECshiftedUp.clear();
+	m_PtBJetPairs_JECshiftedUp.clear();
+
+	m_PtJetPairs_JECshiftedDown.clear();
+	m_PtBJetPairs_JECshiftedDown.clear();
+
+	m_PtJetPairs_JERnomianl.clear();
+	m_PtBJetPairs_JERnomianl.clear();
+
+	m_PtJetPairs_JERup.clear();
+	m_PtBJetPairs_JERup.clear();
+
+	m_PtJetPairs_JERdown.clear();
+	m_PtBJetPairs_JERdown.clear();
+
+
 
 	/* create the cut selectors */
 
@@ -64,17 +151,55 @@ void JetHelper::init(std::vector<NtupleJet> jetVec, std::string jetCut, std::str
 	for(std::size_t j = 0; j < jetVec.size(); ++j) 
 	{
 
-		/* first check the DR between the jet and each leg */
 
-		if(deltaR(leg1.p4(), jetVec[j].jet_p4()) < minDR) continue;
-		if(deltaR(leg2.p4(), jetVec[j].jet_p4()) < minDR) continue;
-
-		/* next check the jet ID & B jet ID, & if passes add to the pair vectors,
+		/*  check the DR, jet ID & B jet ID, & if passes add to the pair vectors,
 		allowing jets to enter both vectors - cause that is what H2Tau Does */
 
-		if(	jetSelector(jetVec[j]) ) m_PtJetPairs.push_back( std::make_pair(jetVec[j].pt(), jetVec[j]) );
+		jetVec[j].Use4VectorVariant("fullyCorrected");
+		if(deltaR(leg1.p4(), jetVec[j].jet_p4()) >= minDR && deltaR(leg2.p4(), jetVec[j].jet_p4()) >= minDR)
+		{
+			if(	jetSelector(jetVec[j]) ) m_PtJetPairs_fullyCorrected.push_back( std::make_pair(jetVec[j].pt(), jetVec[j]) );
+			if(	BjetSelector(jetVec[j]) ) m_PtBJetPairs_fullyCorrected.push_back( std::make_pair(jetVec[j].pt(), jetVec[j]) );
+		}	
 
-		if(	BjetSelector(jetVec[j]) ) m_PtBJetPairs.push_back( std::make_pair(jetVec[j].pt(), jetVec[j]) );
+		jetVec[j].Use4VectorVariant("JECshiftedUp");
+		if(deltaR(leg1.p4(), jetVec[j].jet_p4()) >= minDR && deltaR(leg2.p4(), jetVec[j].jet_p4()) >= minDR)
+		{
+			if(	jetSelector(jetVec[j]) ) m_PtJetPairs_JECshiftedUp.push_back( std::make_pair(jetVec[j].pt(), jetVec[j]) );
+			if(	BjetSelector(jetVec[j]) ) m_PtBJetPairs_JECshiftedUp.push_back( std::make_pair(jetVec[j].pt(), jetVec[j]) );
+		}	
+
+		jetVec[j].Use4VectorVariant("JECshiftedDown");
+		if(deltaR(leg1.p4(), jetVec[j].jet_p4()) >= minDR && deltaR(leg2.p4(), jetVec[j].jet_p4()) >= minDR)
+		{
+			if(	jetSelector(jetVec[j]) ) m_PtJetPairs_JECshiftedDown.push_back( std::make_pair(jetVec[j].pt(), jetVec[j]) );
+			if(	BjetSelector(jetVec[j]) ) m_PtBJetPairs_JECshiftedDown.push_back( std::make_pair(jetVec[j].pt(), jetVec[j]) );
+		}			
+
+		jetVec[j].Use4VectorVariant("JERnomianl");
+		if(deltaR(leg1.p4(), jetVec[j].jet_p4()) >= minDR && deltaR(leg2.p4(), jetVec[j].jet_p4()) >= minDR)
+		{
+			if(	jetSelector(jetVec[j]) ) m_PtJetPairs_JERnomianl.push_back( std::make_pair(jetVec[j].pt(), jetVec[j]) );
+			if(	BjetSelector(jetVec[j]) ) m_PtBJetPairs_JERnomianl.push_back( std::make_pair(jetVec[j].pt(), jetVec[j]) );
+		}	
+
+		jetVec[j].Use4VectorVariant("JERup");
+		if(deltaR(leg1.p4(), jetVec[j].jet_p4()) >= minDR && deltaR(leg2.p4(), jetVec[j].jet_p4()) >= minDR)
+		{
+			if(	jetSelector(jetVec[j]) ) m_PtJetPairs_JERup.push_back( std::make_pair(jetVec[j].pt(), jetVec[j]) );
+			if(	BjetSelector(jetVec[j]) ) m_PtBJetPairs_JERup.push_back( std::make_pair(jetVec[j].pt(), jetVec[j]) );
+		}	
+
+		jetVec[j].Use4VectorVariant("JERdown");
+		if(deltaR(leg1.p4(), jetVec[j].jet_p4()) >= minDR && deltaR(leg2.p4(), jetVec[j].jet_p4()) >= minDR)
+		{
+			if(	jetSelector(jetVec[j]) ) m_PtJetPairs_JERdown.push_back( std::make_pair(jetVec[j].pt(), jetVec[j]) );
+			if(	BjetSelector(jetVec[j]) ) m_PtBJetPairs_JERdown.push_back( std::make_pair(jetVec[j].pt(), jetVec[j]) );
+		}					
+
+		// reset back to fullyCorrected just in case
+		jetVec[j].Use4VectorVariant("fullyCorrected");
+
 
 	}
 
@@ -82,17 +207,56 @@ void JetHelper::init(std::vector<NtupleJet> jetVec, std::string jetCut, std::str
 
 // getters
 
-	std::vector<NtupleJet> JetHelper::PtOrderedPassingJets()
+	std::vector<NtupleJet> JetHelper::PtOrderedPassingJets(std::string variant_)
  	{
 
+	    assert(variant_ == "fullyCorrected" ||\
+	           variant_ == "JECshiftedUp" ||\
+	           variant_ == "JECshiftedDown" ||\
+	           variant_ == "JERnomianl" ||\
+	           variant_ == "JERup" ||\
+	           variant_ == "JERdown");
+
+
  		std::vector <NtupleJet> returnVec;
+ 		std::vector<std::pair<double, NtupleJet>> temp_pair;
 
  		/* seems jets are already ranked in mini-AOD, but just to be safe under future JEC variants */
-		std::sort(m_PtJetPairs.begin(), m_PtJetPairs.end(), NtupleJetOrderCompare);
+    	if(variant_ == "fullyCorrected")
+    	{
+	      std::sort(m_PtJetPairs_fullyCorrected.begin(), m_PtJetPairs_fullyCorrected.end(), NtupleJetOrderCompare);
+     	  temp_pair = m_PtJetPairs_fullyCorrected;
+        }
+    	else if(variant_ == "JECshiftedUp")
+    	{
+	      std::sort(m_PtJetPairs_JECshiftedUp.begin(), m_PtJetPairs_JECshiftedUp.end(), NtupleJetOrderCompare);
+     	  temp_pair = m_PtJetPairs_JECshiftedUp;
+        }
+    	else if(variant_ == "JECshiftedDown")
+    	{
+	      std::sort(m_PtJetPairs_JECshiftedDown.begin(), m_PtJetPairs_JECshiftedDown.end(), NtupleJetOrderCompare);
+     	  temp_pair = m_PtJetPairs_JECshiftedDown;
+        }
+    	else if(variant_ == "JERnomianl")
+    	{
+	      std::sort(m_PtJetPairs_JERnomianl.begin(), m_PtJetPairs_JERnomianl.end(), NtupleJetOrderCompare);
+     	  temp_pair = m_PtJetPairs_JERnomianl;
+        }
+    	else if(variant_ == "JERup")
+    	{
+	      std::sort(m_PtJetPairs_JERup.begin(), m_PtJetPairs_JERup.end(), NtupleJetOrderCompare);
+     	  temp_pair = m_PtJetPairs_JERup;
+        }                
+    	else if(variant_ == "JERdown")
+    	{
+	      std::sort(m_PtJetPairs_JERdown.begin(), m_PtJetPairs_JERdown.end(), NtupleJetOrderCompare);
+     	  temp_pair = m_PtJetPairs_JERdown;
+        }
 
-		for(std::size_t k = 0; k<m_PtJetPairs.size(); ++k)
+
+		for(std::size_t k = 0; k<temp_pair.size(); ++k)
 		{
-			returnVec.push_back(m_PtJetPairs[k].second);	
+			returnVec.push_back(temp_pair[k].second);	
 		}
 
 		return returnVec;
@@ -100,17 +264,56 @@ void JetHelper::init(std::vector<NtupleJet> jetVec, std::string jetCut, std::str
   	}
 
 
-	std::vector<NtupleJet> JetHelper::PtOrderedPassingBJets()
+	std::vector<NtupleJet> JetHelper::PtOrderedPassingBJets(std::string variant_)
  	{
 
+	    assert(variant_ == "fullyCorrected" ||\
+	           variant_ == "JECshiftedUp" ||\
+	           variant_ == "JECshiftedDown" ||\
+	           variant_ == "JERnomianl" ||\
+	           variant_ == "JERup" ||\
+	           variant_ == "JERdown");
+
+
  		std::vector <NtupleJet> returnVec;
+ 		std::vector<std::pair<double, NtupleJet>> temp_pair;
 
  		/* seems jets are already ranked in mini-AOD, but just to be safe under future JEC variants */
-		std::sort(m_PtBJetPairs.begin(), m_PtBJetPairs.end(), NtupleJetOrderCompare);
+    	if(variant_ == "fullyCorrected")
+    	{
+	      std::sort(m_PtBJetPairs_fullyCorrected.begin(), m_PtBJetPairs_fullyCorrected.end(), NtupleJetOrderCompare);
+     	  temp_pair = m_PtBJetPairs_fullyCorrected;
+        }
+    	else if(variant_ == "JECshiftedUp")
+    	{
+	      std::sort(m_PtBJetPairs_JECshiftedUp.begin(), m_PtBJetPairs_JECshiftedUp.end(), NtupleJetOrderCompare);
+     	  temp_pair = m_PtBJetPairs_JECshiftedUp;
+        }
+    	else if(variant_ == "JECshiftedDown")
+    	{
+	      std::sort(m_PtBJetPairs_JECshiftedDown.begin(), m_PtBJetPairs_JECshiftedDown.end(), NtupleJetOrderCompare);
+     	  temp_pair = m_PtBJetPairs_JECshiftedDown;
+        }
+    	else if(variant_ == "JERnomianl")
+    	{
+	      std::sort(m_PtBJetPairs_JERnomianl.begin(), m_PtBJetPairs_JERnomianl.end(), NtupleJetOrderCompare);
+     	  temp_pair = m_PtBJetPairs_JERnomianl;
+        }
+    	else if(variant_ == "JERup")
+    	{
+	      std::sort(m_PtBJetPairs_JERup.begin(), m_PtBJetPairs_JERup.end(), NtupleJetOrderCompare);
+     	  temp_pair = m_PtBJetPairs_JERup;
+        }                
+    	else if(variant_ == "JERdown")
+    	{
+	      std::sort(m_PtBJetPairs_JERdown.begin(), m_PtBJetPairs_JERdown.end(), NtupleJetOrderCompare);
+     	  temp_pair = m_PtBJetPairs_JERdown;
+        }
 
-		for(std::size_t k = 0; k<m_PtBJetPairs.size(); ++k)
+
+		for(std::size_t k = 0; k<temp_pair.size(); ++k)
 		{
-			returnVec.push_back(m_PtBJetPairs[k].second);	
+			returnVec.push_back(temp_pair[k].second);	
 		}
 
 		return returnVec;

@@ -443,9 +443,18 @@ NtuplePairIndependentInfoProducer::produce(edm::Event& iEvent, const edm::EventS
   // JME::JetResolutionScaleFactor resolution_pt = JME::JetResolution::get(iSetup, "AK4PFchs_pt");
   // JME::JetResolutionScaleFactor resolution_phi = JME::JetResolution::get(iSetup, "AK4PFchs_phi");
 
+
+  /* access the MC pT resolution */
+
+  edm::FileInPath rFile("DavisRunIITauTau/RunTimeDataInput/data/JER_FILES/Fall15_25nsV2_MC_PtResolution_AK4PFchs.txt");
+  std::string rFile_string = rFile.fullPath();
+  JME::JetResolution resolution_r = JME::JetResolution(rFile_string);
+
+  /* access the resolution SFs */
   edm::FileInPath sfFile("DavisRunIITauTau/RunTimeDataInput/data/JER_FILES/Fall15_25nsV2_MC_SF_AK4PFchs.txt");
   std::string sfFile_string = sfFile.fullPath();
-  JME::JetResolutionScaleFactor resolution = JME::JetResolutionScaleFactor(sfFile_string);
+  JME::JetResolutionScaleFactor resolution_sf = JME::JetResolutionScaleFactor(sfFile_string);
+
 
   ///////////////////////////////
 
@@ -491,11 +500,27 @@ NtuplePairIndependentInfoProducer::produce(edm::Event& iEvent, const edm::EventS
 
 
         /* JER */
-        JME::JetParameters parameters = {{JME::Binning::JetEta, slimmedJets->at(i).eta()}, 
-                                         {JME::Binning::Rho, rho_forJER}};
-        float sf = resolution.getScaleFactor(parameters); 
-        float sf_up = resolution.getScaleFactor(parameters, Variation::UP);
-        float sf_down = resolution.getScaleFactor(parameters, Variation::DOWN);
+
+
+        // the pT resolution
+
+        JME::JetParameters parameters_res;
+        parameters_res.set(JME::Binning::JetPt, slimmedJets->at(i).pt());
+        parameters_res.set({JME::Binning::JetEta, slimmedJets->at(i).eta()});
+        parameters_res.set({JME::Binning::Rho, rho_forJER});
+
+        float sigma_MC_PT = resolution_r.getResolution(parameters_res);
+    
+
+        // the SFs
+        // JME::JetParameters parameters_sf = {{JME::Binning::JetEta, slimmedJets->at(i).eta()}, 
+        //                                  {JME::Binning::Rho, rho_forJER}};
+        // the example code https://github.com/blinkseb/cmssw/blob/jer_fix_76x/JetMETCorrections/Modules/plugins/JetResolutionDemo.cc#L74
+        // does not use rho
+
+        float sf = resolution_sf.getScaleFactor({{JME::Binning::JetEta, slimmedJets->at(i).eta()}}); 
+        float sf_up = resolution_sf.getScaleFactor({{JME::Binning::JetEta, slimmedJets->at(i).eta()}}, Variation::UP);
+        float sf_down = resolution_sf.getScaleFactor({{JME::Binning::JetEta, slimmedJets->at(i).eta()}}, Variation::DOWN);
         LorentzVector genJetMatchForJER;
         genJetMatchForJER.SetXYZT(0,0,0,0);
 
@@ -515,9 +540,10 @@ NtuplePairIndependentInfoProducer::produce(edm::Event& iEvent, const edm::EventS
             where Rcone is the AK cone parameter, and sigma_MC_pT is jet pT absolute resolution. */
 
               double dPt = fabs( slimmedJets->at(i).pt() -  slimmedGenJets->at(g).pt() );
-              double maxDiff = 3.0 * fabs(sf_up - sf) * slimmedJets->at(i).pt();
+              double maxDiff = 3.0 * sigma_MC_PT;
               double dR = deltaR(slimmedJets->at(i).p4(), slimmedGenJets->at(g).p4());
   
+
             if( dR < 0.4/2 && dPt < maxDiff)
             {
               std::cout<<" have a DR match to the jet @ index "<<i<<" and ";
@@ -538,10 +564,11 @@ NtuplePairIndependentInfoProducer::produce(edm::Event& iEvent, const edm::EventS
 
 
 
-        currentNtupleJet.fill_JER_SFs(sf, sf_up, sf_down, genJetMatchForJER);
+        currentNtupleJet.fill_JER_SFs(sf, sf_up, sf_down, genJetMatchForJER, sigma_MC_PT);
 
 
-        std::cout<<" JER sf, sf+, sf- "<<currentNtupleJet.JER_SF_nominal()<<" "<<currentNtupleJet.JER_SF_up()<<" "<<currentNtupleJet.JER_SF_down()<<"\n";
+        std::cout<<" JER sf, sf+, sf-, resolution "<<currentNtupleJet.JER_SF_nominal()<<" "<<currentNtupleJet.JER_SF_up();
+        std::cout<<" "<<currentNtupleJet.JER_SF_down()<<" "<<currentNtupleJet.JER_resolution()<<"\n";
 
 
 

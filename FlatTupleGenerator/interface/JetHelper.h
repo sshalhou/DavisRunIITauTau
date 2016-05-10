@@ -75,14 +75,35 @@ public:
 
 
 // getters 
-  																 
-  std::vector<NtupleJet> PtOrderedPassingJets();  /* returns pt ordered jets passing the cut string set in init*/
-  std::vector<NtupleJet> PtOrderedPassingBJets(); /* returns pt ordered jets passing the B cut string set in init*/
+	
+  /* returns pt ordered jets passing the cut string set in init
+  string can be fullyCorrected,  JECshiftedUp, JECshiftedDown, JERnomianl, JERup, JERdown */									 
+  std::vector<NtupleJet> PtOrderedPassingJets(std::string);  
+  
+  /* returns pt ordered jets passing the B cut string set in init
+  string can be fullyCorrected,  JECshiftedUp, JECshiftedDown, JERnomianl, JERup, JERdown */                   
+  std::vector<NtupleJet> PtOrderedPassingBJets(std::string); 
 
 private:
 
-	std::vector<std::pair<double, NtupleJet>> m_PtJetPairs;     /* holder for Pt-NtupleJet pairs */
-	std::vector<std::pair<double, NtupleJet>> m_PtBJetPairs;     /* holder for Pt-NtupleJet (Bjet) pairs */
+	std::vector<std::pair<double, NtupleJet>> m_PtJetPairs_fullyCorrected;     /* holder for Pt-NtupleJet pairs */
+	std::vector<std::pair<double, NtupleJet>> m_PtBJetPairs_fullyCorrected;    /* holder for Pt-NtupleJet (Bjet) pairs */
+
+  std::vector<std::pair<double, NtupleJet>> m_PtJetPairs_JECshiftedUp;     /* holder for Pt-NtupleJet pairs */
+  std::vector<std::pair<double, NtupleJet>> m_PtBJetPairs_JECshiftedUp;     /* holder for Pt-NtupleJet (Bjet) pairs */
+
+  std::vector<std::pair<double, NtupleJet>> m_PtJetPairs_JECshiftedDown;     /* holder for Pt-NtupleJet pairs */
+  std::vector<std::pair<double, NtupleJet>> m_PtBJetPairs_JECshiftedDown;     /* holder for Pt-NtupleJet (Bjet) pairs */
+
+  std::vector<std::pair<double, NtupleJet>> m_PtJetPairs_JERnomianl;     /* holder for Pt-NtupleJet pairs */
+  std::vector<std::pair<double, NtupleJet>> m_PtBJetPairs_JERnomianl;     /* holder for Pt-NtupleJet (Bjet) pairs */
+
+  std::vector<std::pair<double, NtupleJet>> m_PtJetPairs_JERup;     /* holder for Pt-NtupleJet pairs */
+  std::vector<std::pair<double, NtupleJet>> m_PtBJetPairs_JERup;     /* holder for Pt-NtupleJet (Bjet) pairs */
+
+  std::vector<std::pair<double, NtupleJet>> m_PtJetPairs_JERdown;     /* holder for Pt-NtupleJet pairs */
+  std::vector<std::pair<double, NtupleJet>> m_PtBJetPairs_JERdown;     /* holder for Pt-NtupleJet (Bjet) pairs */
+
 
 };
 
