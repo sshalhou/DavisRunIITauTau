@@ -41,6 +41,8 @@
 #include "DavisRunIITauTau/NtupleObjects/interface/NtupleEvent.h"
 #include "CommonTools/Utils/interface/StringCutObjectSelector.h"
 #include "DataFormats/Math/interface/deltaR.h"
+#include "DavisRunIITauTau/FlatTupleGenerator/interface/bTagSFhelper.h"
+#include "FWCore/ParameterSet/interface/FileInPath.h"
 
 typedef math::XYZTLorentzVector LorentzVector;
 using namespace std;
@@ -64,7 +66,7 @@ class JetHelper {
 public:
 
   JetHelper();
-  virtual ~JetHelper(){}
+  virtual ~JetHelper(){ delete m_BtagSFTool;}
 
 // helpers
 
@@ -103,6 +105,8 @@ private:
 
   std::vector<std::pair<double, NtupleJet>> m_PtJetPairs_JERdown;     /* holder for Pt-NtupleJet pairs */
   std::vector<std::pair<double, NtupleJet>> m_PtBJetPairs_JERdown;     /* holder for Pt-NtupleJet (Bjet) pairs */
+
+  bTagSFhelper * m_BtagSFTool;
 
 
 };

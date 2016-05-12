@@ -1950,7 +1950,7 @@ void FlatTupleGenerator::handlePairIndepInfo(const edm::Event& iEvent, const edm
     jets_PU_jetIdPassed.push_back(goodJets[j].PU_jetIdPassed());
     jets_PF_jetIdPassed.push_back(goodJets[j].PF_jetIdPassed());
     jets_defaultBtagAlgorithm_RawScore.push_back(goodJets[j].defaultBtagAlgorithm_RawScore());
-    jets_defaultBtagAlgorithm_isPassed.push_back(goodJets[j].defaultBtagAlgorithm_isPassed());
+    jets_defaultBtagAlgorithm_isPassed.push_back(goodJets[j].defaultBtagAlgorithmMediumWP_isPassed());
     jets_PARTON_flavour.push_back(goodJets[j].PARTON_flavour());
     jets_HADRON_flavour.push_back(goodJets[j].HADRON_flavour());
 
@@ -1969,7 +1969,7 @@ void FlatTupleGenerator::handlePairIndepInfo(const edm::Event& iEvent, const edm
     bjets_PU_jetIdPassed.push_back(goodBJets[j].PU_jetIdPassed());
     bjets_PF_jetIdPassed.push_back(goodBJets[j].PF_jetIdPassed());
     bjets_defaultBtagAlgorithm_RawScore.push_back(goodBJets[j].defaultBtagAlgorithm_RawScore());
-    bjets_defaultBtagAlgorithm_isPassed.push_back(goodBJets[j].defaultBtagAlgorithm_isPassed());
+    bjets_defaultBtagAlgorithm_isPassed.push_back(goodBJets[j].defaultBtagAlgorithmMediumWP_isPassed());
     bjets_PARTON_flavour.push_back(goodBJets[j].PARTON_flavour());
     bjets_HADRON_flavour.push_back(goodBJets[j].HADRON_flavour());
 
@@ -1989,7 +1989,7 @@ void FlatTupleGenerator::handlePairIndepInfo(const edm::Event& iEvent, const edm
     jets_PU_jetIdPassed_JECshiftedUp.push_back(goodJets_JECshiftedUp[j].PU_jetIdPassed());
     jets_PF_jetIdPassed_JECshiftedUp.push_back(goodJets_JECshiftedUp[j].PF_jetIdPassed());
     jets_defaultBtagAlgorithm_RawScore_JECshiftedUp.push_back(goodJets_JECshiftedUp[j].defaultBtagAlgorithm_RawScore());
-    jets_defaultBtagAlgorithm_isPassed_JECshiftedUp.push_back(goodJets_JECshiftedUp[j].defaultBtagAlgorithm_isPassed());
+    jets_defaultBtagAlgorithm_isPassed_JECshiftedUp.push_back(goodJets_JECshiftedUp[j].defaultBtagAlgorithmMediumWP_isPassed());
     jets_PARTON_flavour_JECshiftedUp.push_back(goodJets_JECshiftedUp[j].PARTON_flavour());
     jets_HADRON_flavour_JECshiftedUp.push_back(goodJets_JECshiftedUp[j].HADRON_flavour());
 
@@ -2009,7 +2009,7 @@ void FlatTupleGenerator::handlePairIndepInfo(const edm::Event& iEvent, const edm
     bjets_PU_jetIdPassed_JECshiftedUp.push_back(goodBJets_JECshiftedUp[j].PU_jetIdPassed());
     bjets_PF_jetIdPassed_JECshiftedUp.push_back(goodBJets_JECshiftedUp[j].PF_jetIdPassed());
     bjets_defaultBtagAlgorithm_RawScore_JECshiftedUp.push_back(goodBJets_JECshiftedUp[j].defaultBtagAlgorithm_RawScore());
-    bjets_defaultBtagAlgorithm_isPassed_JECshiftedUp.push_back(goodBJets_JECshiftedUp[j].defaultBtagAlgorithm_isPassed());
+    bjets_defaultBtagAlgorithm_isPassed_JECshiftedUp.push_back(goodBJets_JECshiftedUp[j].defaultBtagAlgorithmMediumWP_isPassed());
     bjets_PARTON_flavour_JECshiftedUp.push_back(goodBJets_JECshiftedUp[j].PARTON_flavour());
     bjets_HADRON_flavour_JECshiftedUp.push_back(goodBJets_JECshiftedUp[j].HADRON_flavour());
 
@@ -2028,7 +2028,7 @@ void FlatTupleGenerator::handlePairIndepInfo(const edm::Event& iEvent, const edm
     jets_PU_jetIdPassed_JECshiftedDown.push_back(goodJets_JECshiftedDown[j].PU_jetIdPassed());
     jets_PF_jetIdPassed_JECshiftedDown.push_back(goodJets_JECshiftedDown[j].PF_jetIdPassed());
     jets_defaultBtagAlgorithm_RawScore_JECshiftedDown.push_back(goodJets_JECshiftedDown[j].defaultBtagAlgorithm_RawScore());
-    jets_defaultBtagAlgorithm_isPassed_JECshiftedDown.push_back(goodJets_JECshiftedDown[j].defaultBtagAlgorithm_isPassed());
+    jets_defaultBtagAlgorithm_isPassed_JECshiftedDown.push_back(goodJets_JECshiftedDown[j].defaultBtagAlgorithmMediumWP_isPassed());
     jets_PARTON_flavour_JECshiftedDown.push_back(goodJets_JECshiftedDown[j].PARTON_flavour());
     jets_HADRON_flavour_JECshiftedDown.push_back(goodJets_JECshiftedDown[j].HADRON_flavour());
 
@@ -2048,7 +2048,7 @@ void FlatTupleGenerator::handlePairIndepInfo(const edm::Event& iEvent, const edm
     bjets_PU_jetIdPassed_JECshiftedDown.push_back(goodBJets_JECshiftedDown[j].PU_jetIdPassed());
     bjets_PF_jetIdPassed_JECshiftedDown.push_back(goodBJets_JECshiftedDown[j].PF_jetIdPassed());
     bjets_defaultBtagAlgorithm_RawScore_JECshiftedDown.push_back(goodBJets_JECshiftedDown[j].defaultBtagAlgorithm_RawScore());
-    bjets_defaultBtagAlgorithm_isPassed_JECshiftedDown.push_back(goodBJets_JECshiftedDown[j].defaultBtagAlgorithm_isPassed());
+    bjets_defaultBtagAlgorithm_isPassed_JECshiftedDown.push_back(goodBJets_JECshiftedDown[j].defaultBtagAlgorithmMediumWP_isPassed());
     bjets_PARTON_flavour_JECshiftedDown.push_back(goodBJets_JECshiftedDown[j].PARTON_flavour());
     bjets_HADRON_flavour_JECshiftedDown.push_back(goodBJets_JECshiftedDown[j].HADRON_flavour());
 
@@ -2067,7 +2067,7 @@ void FlatTupleGenerator::handlePairIndepInfo(const edm::Event& iEvent, const edm
     jets_PU_jetIdPassed_JERup.push_back(goodJets_JERup[j].PU_jetIdPassed());
     jets_PF_jetIdPassed_JERup.push_back(goodJets_JERup[j].PF_jetIdPassed());
     jets_defaultBtagAlgorithm_RawScore_JERup.push_back(goodJets_JERup[j].defaultBtagAlgorithm_RawScore());
-    jets_defaultBtagAlgorithm_isPassed_JERup.push_back(goodJets_JERup[j].defaultBtagAlgorithm_isPassed());
+    jets_defaultBtagAlgorithm_isPassed_JERup.push_back(goodJets_JERup[j].defaultBtagAlgorithmMediumWP_isPassed());
     jets_PARTON_flavour_JERup.push_back(goodJets_JERup[j].PARTON_flavour());
     jets_HADRON_flavour_JERup.push_back(goodJets_JERup[j].HADRON_flavour());
 
@@ -2087,7 +2087,7 @@ void FlatTupleGenerator::handlePairIndepInfo(const edm::Event& iEvent, const edm
     bjets_PU_jetIdPassed_JERup.push_back(goodBJets_JERup[j].PU_jetIdPassed());
     bjets_PF_jetIdPassed_JERup.push_back(goodBJets_JERup[j].PF_jetIdPassed());
     bjets_defaultBtagAlgorithm_RawScore_JERup.push_back(goodBJets_JERup[j].defaultBtagAlgorithm_RawScore());
-    bjets_defaultBtagAlgorithm_isPassed_JERup.push_back(goodBJets_JERup[j].defaultBtagAlgorithm_isPassed());
+    bjets_defaultBtagAlgorithm_isPassed_JERup.push_back(goodBJets_JERup[j].defaultBtagAlgorithmMediumWP_isPassed());
     bjets_PARTON_flavour_JERup.push_back(goodBJets_JERup[j].PARTON_flavour());
     bjets_HADRON_flavour_JERup.push_back(goodBJets_JERup[j].HADRON_flavour());
 
@@ -2106,7 +2106,7 @@ void FlatTupleGenerator::handlePairIndepInfo(const edm::Event& iEvent, const edm
     jets_PU_jetIdPassed_JERdown.push_back(goodJets_JERdown[j].PU_jetIdPassed());
     jets_PF_jetIdPassed_JERdown.push_back(goodJets_JERdown[j].PF_jetIdPassed());
     jets_defaultBtagAlgorithm_RawScore_JERdown.push_back(goodJets_JERdown[j].defaultBtagAlgorithm_RawScore());
-    jets_defaultBtagAlgorithm_isPassed_JERdown.push_back(goodJets_JERdown[j].defaultBtagAlgorithm_isPassed());
+    jets_defaultBtagAlgorithm_isPassed_JERdown.push_back(goodJets_JERdown[j].defaultBtagAlgorithmMediumWP_isPassed());
     jets_PARTON_flavour_JERdown.push_back(goodJets_JERdown[j].PARTON_flavour());
     jets_HADRON_flavour_JERdown.push_back(goodJets_JERdown[j].HADRON_flavour());
 
@@ -2126,7 +2126,7 @@ void FlatTupleGenerator::handlePairIndepInfo(const edm::Event& iEvent, const edm
     bjets_PU_jetIdPassed_JERdown.push_back(goodBJets_JERdown[j].PU_jetIdPassed());
     bjets_PF_jetIdPassed_JERdown.push_back(goodBJets_JERdown[j].PF_jetIdPassed());
     bjets_defaultBtagAlgorithm_RawScore_JERdown.push_back(goodBJets_JERdown[j].defaultBtagAlgorithm_RawScore());
-    bjets_defaultBtagAlgorithm_isPassed_JERdown.push_back(goodBJets_JERdown[j].defaultBtagAlgorithm_isPassed());
+    bjets_defaultBtagAlgorithm_isPassed_JERdown.push_back(goodBJets_JERdown[j].defaultBtagAlgorithmMediumWP_isPassed());
     bjets_PARTON_flavour_JERdown.push_back(goodBJets_JERdown[j].PARTON_flavour());
     bjets_HADRON_flavour_JERdown.push_back(goodBJets_JERdown[j].HADRON_flavour());
 

@@ -36,7 +36,7 @@ public:
   // fillers 
 
   void fill(pat::Jet);
-  void fill_defaultBtagInfo(pat::Jet, std::string, bool, unsigned int, bool); /* theJet, bTagAlgoName, applySF, SFseed, isRealData */
+  void fill_defaultBtagInfo(pat::Jet, std::string); /* theJet, bTagAlgoName */
   void fill_PUjetID(pat::Jet, std::string, double); /* theJet, DiscName, double CutMinimum */
   void fill_PFjetID(bool);
   void fill_JEC_uncertaintySFs(double, double); /* set the up, down JEC uncertainty scale factors, call after NtupleJet::fill is called */
@@ -46,6 +46,15 @@ public:
 
   void fill_JER_SFs(double, double, double, LorentzVector, double); 
 
+
+  /* adjust the pass/fail of the m_defaultBtagAlgorithm_isPassed variable based on bTag SFs used with the 
+   promote-demote method,
+   1st argument=1 means keep as (or promote to) btagged, argument = 0 means keep as (or demote to) untagged 
+   2nd argument is 0 for nominal, +1 for btag systematic up, -1 for btag systematic down */
+
+   void promoteDemoteBtagTightWP(int, int); 
+   void promoteDemoteBtagMediumWP(int, int); 
+   void promoteDemoteBtagLooseWP(int, int); 
 
 
   // helpers
@@ -125,7 +134,20 @@ public:
 
   std::string defaultBtagAlgorithm_Name() const;
   double defaultBtagAlgorithm_RawScore() const;
-  bool defaultBtagAlgorithm_isPassed() const;
+
+
+  bool defaultBtagAlgorithmLooseWP_isPassed() const;
+  bool defaultBtagAlgorithmLooseWPShiftUp_isPassed() const;
+  bool defaultBtagAlgorithmLooseWPShiftDown_isPassed() const;
+
+
+  bool defaultBtagAlgorithmMediumWP_isPassed() const;
+  bool defaultBtagAlgorithmMediumWPShiftUp_isPassed() const;
+  bool defaultBtagAlgorithmMediumWPShiftDown_isPassed() const;
+
+  bool defaultBtagAlgorithmTightWP_isPassed() const;
+  bool defaultBtagAlgorithmTightWPShiftUp_isPassed() const;
+  bool defaultBtagAlgorithmTightWPShiftDown_isPassed() const;
 
   /* for easy use with cut strings */
   double pt() const; /* should have all corrections applied */
@@ -162,7 +184,23 @@ private:
   double m_neutralMultiplicity;                         /* NumNeutralParticle for PF jet ID */
   std::string m_defaultBtagAlgorithm_Name;              /* name of the default b-tag algorithm from ConfigNtupleContent_cfi.py */
   float m_defaultBtagAlgorithm_RawScore;                /* raw output of default b-tag algo */
-  bool m_defaultBtagAlgorithm_isPassed;                 /* pass-fail of default b-tag algo after btagSF applied */
+
+ 
+  bool m_defaultBtagAlgorithmLooseWP_isPassed;          /* pass-fail of default b-tag algo after btagSF applied */
+  bool m_defaultBtagAlgorithmLooseWPShiftUp_isPassed;   /* pass-fail of default b-tag algo after btagSF applied, with btag sys. 1 sigma up shift   */
+  bool m_defaultBtagAlgorithmLooseWPShiftDown_isPassed; /* pass-fail of default b-tag algo after btagSF applied, with btag sys. 1 sigma down shift */
+
+  bool m_defaultBtagAlgorithmMediumWP_isPassed;          /* pass-fail of default b-tag algo after btagSF applied */
+  bool m_defaultBtagAlgorithmMediumWPShiftUp_isPassed;   /* pass-fail of default b-tag algo after btagSF applied, with btag sys. 1 sigma up shift   */
+  bool m_defaultBtagAlgorithmMediumWPShiftDown_isPassed; /* pass-fail of default b-tag algo after btagSF applied, with btag sys. 1 sigma down shift */
+
+  bool m_defaultBtagAlgorithmTightWP_isPassed;          /* pass-fail of default b-tag algo after btagSF applied */
+  bool m_defaultBtagAlgorithmTightWPShiftUp_isPassed;   /* pass-fail of default b-tag algo after btagSF applied, with btag sys. 1 sigma up shift   */
+  bool m_defaultBtagAlgorithmTightWPShiftDown_isPassed; /* pass-fail of default b-tag algo after btagSF applied, with btag sys. 1 sigma down shift */
+
+
+
+
   double m_PU_jetIdRaw;                                 /* raw PU jet ID score */
   bool m_PU_jetIdPassed;                                /* pass/fail PU jet ID  */
   bool m_PF_jetIdPassed;                                /* pass/fail PF jet ID */

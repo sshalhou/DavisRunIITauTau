@@ -1,5 +1,5 @@
 #include "DavisRunIITauTau/NtupleObjects/interface/NtupleJet.h"
-#include "DavisRunIITauTau/External/interface/BtagSF.hh" /* causes problems if included in a .h file */
+//#include "DavisRunIITauTau/External/interface/BtagSF.hh" /* causes problems if included in a .h file */
 
 #include "TLorentzVector.h"
 #include "TF1.h"
@@ -34,7 +34,21 @@ NtupleJet::NtupleJet()
   m_neutralMultiplicity = NAN;
   m_defaultBtagAlgorithm_Name = "NULL";
   m_defaultBtagAlgorithm_RawScore = NAN;
-  m_defaultBtagAlgorithm_isPassed = 0;
+
+  m_defaultBtagAlgorithmLooseWP_isPassed = 0;
+  m_defaultBtagAlgorithmLooseWPShiftUp_isPassed = 0;
+  m_defaultBtagAlgorithmLooseWPShiftDown_isPassed = 0;
+
+
+  m_defaultBtagAlgorithmMediumWP_isPassed = 0;
+  m_defaultBtagAlgorithmMediumWPShiftUp_isPassed = 0;
+  m_defaultBtagAlgorithmMediumWPShiftDown_isPassed = 0;
+
+  m_defaultBtagAlgorithmTightWP_isPassed = 0;
+  m_defaultBtagAlgorithmTightWPShiftUp_isPassed = 0;
+  m_defaultBtagAlgorithmTightWPShiftDown_isPassed = 0;
+
+
   m_PU_jetIdRaw = NAN;
   m_PU_jetIdPassed = 0;
   m_PF_jetIdPassed = 0;
@@ -68,25 +82,106 @@ NtupleJet::NtupleJet()
 
   }
 
-  void NtupleJet::fill_defaultBtagInfo(pat::Jet theJet, std::string bTagAlgoName, 
-                            bool applySF, unsigned int SFseed, bool isRealData)
+  void NtupleJet::fill_defaultBtagInfo(pat::Jet theJet, std::string bTagAlgoName)
   {
 
     m_defaultBtagAlgorithm_Name = bTagAlgoName;
     m_defaultBtagAlgorithm_RawScore = theJet.bDiscriminator(bTagAlgoName);
 
-    BtagSF btagSFtool(SFseed);
 
-    m_defaultBtagAlgorithm_isPassed = btagSFtool.isbtagged(
-    theJet.pt(), theJet.eta(),
-    m_defaultBtagAlgorithm_RawScore,
-    theJet.partonFlavour(),
-    isRealData,
-    0,0,1);
+
+    // BtagSF btagSFtool(SFseed);
+
+    // m_defaultBtagAlgorithm_isPassed = btagSFtool.isbtagged(
+    // theJet.pt(), theJet.eta(),
+    // m_defaultBtagAlgorithm_RawScore,
+    // theJet.partonFlavour(),
+    // isRealData,
+    // 0,0,1);
 
 
 
   }
+
+  void NtupleJet::promoteDemoteBtagMediumWP(int passFail_, int sys_)
+  {
+    assert(passFail_==1 || passFail_==0);
+    assert(sys_==0 || sys_==1 || sys_==-1);
+
+    if(sys_==0)
+    {
+      if(passFail_==1) m_defaultBtagAlgorithmMediumWP_isPassed = 1;
+      else if(passFail_==0) m_defaultBtagAlgorithmMediumWP_isPassed = 0;
+    } 
+
+    if(sys_==1)
+    {
+      if(passFail_==1) m_defaultBtagAlgorithmMediumWPShiftUp_isPassed = 1;
+      else if(passFail_==0) m_defaultBtagAlgorithmMediumWPShiftUp_isPassed = 0;
+    } 
+    
+    if(sys_==-1)
+    {
+      if(passFail_==1) m_defaultBtagAlgorithmMediumWPShiftDown_isPassed = 1;
+      else if(passFail_==0) m_defaultBtagAlgorithmMediumWPShiftDown_isPassed = 0;
+    } 
+
+
+  }
+
+  void NtupleJet::promoteDemoteBtagLooseWP(int passFail_, int sys_)
+  {
+    assert(passFail_==1 || passFail_==0);
+    assert(sys_==0 || sys_==1 || sys_==-1);
+
+    if(sys_==0)
+    {
+      if(passFail_==1) m_defaultBtagAlgorithmLooseWP_isPassed = 1;
+      else if(passFail_==0) m_defaultBtagAlgorithmLooseWP_isPassed = 0;
+    } 
+
+    if(sys_==1)
+    {
+      if(passFail_==1) m_defaultBtagAlgorithmLooseWPShiftUp_isPassed = 1;
+      else if(passFail_==0) m_defaultBtagAlgorithmLooseWPShiftUp_isPassed = 0;
+    } 
+    
+    if(sys_==-1)
+    {
+      if(passFail_==1) m_defaultBtagAlgorithmLooseWPShiftDown_isPassed = 1;
+      else if(passFail_==0) m_defaultBtagAlgorithmLooseWPShiftDown_isPassed = 0;
+    } 
+
+
+  }
+
+
+    void NtupleJet::promoteDemoteBtagTightWP(int passFail_, int sys_)
+  {
+    assert(passFail_==1 || passFail_==0);
+    assert(sys_==0 || sys_==1 || sys_==-1);
+
+    if(sys_==0)
+    {
+      if(passFail_==1) m_defaultBtagAlgorithmTightWP_isPassed = 1;
+      else if(passFail_==0) m_defaultBtagAlgorithmTightWP_isPassed = 0;
+    } 
+
+    if(sys_==1)
+    {
+      if(passFail_==1) m_defaultBtagAlgorithmTightWPShiftUp_isPassed = 1;
+      else if(passFail_==0) m_defaultBtagAlgorithmTightWPShiftUp_isPassed = 0;
+    } 
+    
+    if(sys_==-1)
+    {
+      if(passFail_==1) m_defaultBtagAlgorithmTightWPShiftDown_isPassed = 1;
+      else if(passFail_==0) m_defaultBtagAlgorithmTightWPShiftDown_isPassed = 0;
+    } 
+
+
+  }
+
 
 
   void NtupleJet::fill(pat::Jet aPatJet)
@@ -435,7 +530,23 @@ NtupleJet::NtupleJet()
 
   std::string NtupleJet::defaultBtagAlgorithm_Name() const { return m_defaultBtagAlgorithm_Name; }
   double NtupleJet::defaultBtagAlgorithm_RawScore() const { return m_defaultBtagAlgorithm_RawScore; }
-  bool NtupleJet::defaultBtagAlgorithm_isPassed() const { return m_defaultBtagAlgorithm_isPassed; }
+
+ 
+  bool NtupleJet::defaultBtagAlgorithmLooseWP_isPassed() const { return m_defaultBtagAlgorithmLooseWP_isPassed; }
+  bool NtupleJet::defaultBtagAlgorithmLooseWPShiftUp_isPassed() const { return m_defaultBtagAlgorithmLooseWPShiftUp_isPassed; }
+  bool NtupleJet::defaultBtagAlgorithmLooseWPShiftDown_isPassed() const { return m_defaultBtagAlgorithmLooseWPShiftDown_isPassed; }
+
+  bool NtupleJet::defaultBtagAlgorithmMediumWP_isPassed() const { return m_defaultBtagAlgorithmMediumWP_isPassed; }
+  bool NtupleJet::defaultBtagAlgorithmMediumWPShiftUp_isPassed() const { return m_defaultBtagAlgorithmMediumWPShiftUp_isPassed; }
+  bool NtupleJet::defaultBtagAlgorithmMediumWPShiftDown_isPassed() const { return m_defaultBtagAlgorithmMediumWPShiftDown_isPassed; }
+
+  bool NtupleJet::defaultBtagAlgorithmTightWP_isPassed() const { return m_defaultBtagAlgorithmTightWP_isPassed; }
+  bool NtupleJet::defaultBtagAlgorithmTightWPShiftUp_isPassed() const { return m_defaultBtagAlgorithmTightWPShiftUp_isPassed; }
+  bool NtupleJet::defaultBtagAlgorithmTightWPShiftDown_isPassed() const { return m_defaultBtagAlgorithmTightWPShiftDown_isPassed; }
+
+
+
+
   double NtupleJet::PU_jetIdRaw() const { return m_PU_jetIdRaw; }
   bool NtupleJet::PU_jetIdPassed() const { return m_PU_jetIdPassed; }
   bool NtupleJet::PF_jetIdPassed() const { return m_PF_jetIdPassed; }

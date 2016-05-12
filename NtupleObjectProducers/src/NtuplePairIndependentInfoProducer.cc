@@ -581,8 +581,7 @@ NtuplePairIndependentInfoProducer::produce(edm::Event& iEvent, const edm::EventS
 
       /* fill b-tag info for default btagger */
       currentNtupleJet.fill_defaultBtagInfo(slimmedJets->at(i), 
-                            defaultBtagAlgorithmNameSrc_, 
-                            useBtagSFSrc_, useBtagSFSeedSrc_, iEvent.isRealData());
+                            defaultBtagAlgorithmNameSrc_);
   
 
       /* fill the PU jet ID */

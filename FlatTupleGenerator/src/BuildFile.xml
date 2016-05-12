@@ -9,6 +9,7 @@
 <use name="PhysicsTools/UtilAlgos"/>
 <use name="FWCore/ServiceRegistry"/>
 <use name="HTT-utilities/RecoilCorrections"/>
+<use name="CondFormats/BTauObjects"/>
 <use   name="clhep"/>
 <use   name="root"/>
 <use   name="roottmva"/>

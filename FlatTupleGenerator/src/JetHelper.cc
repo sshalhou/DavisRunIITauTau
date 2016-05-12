@@ -18,6 +18,11 @@ JetHelper::JetHelper(){}
 void JetHelper::init(std::vector<NtupleJet> jetVec, std::string jetCut, std::string bjetCut)
 {
 
+	/* setup the btag sf helper tool */
+
+	edm::FileInPath sf_file = edm::FileInPath("DavisRunIITauTau/RunTimeDataInput/data/BTAGSF/CSVv2.csv");
+	m_BtagSFTool = new bTagSFhelper(sf_file);
+
 
 	m_PtJetPairs_fullyCorrected.clear();
 	m_PtBJetPairs_fullyCorrected.clear();
@@ -48,6 +53,46 @@ void JetHelper::init(std::vector<NtupleJet> jetVec, std::string jetCut, std::str
 	for(std::size_t j = 0; j < jetVec.size(); ++j) 
 	{
 
+
+		/* test eval and print the various b-tag SFs for this jet */
+		/* see https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation76X */
+		/* these all need to become python args (also the CSV file, isRealData too!)*/
+
+		std::cout<<" ***** JetHelper.cc (m_BtagSFTool)  ... \n";
+		std::cout<<"	these all need to become python args: \n";
+		std::cout<<"	[b-tag Loose working point cut]  \n";
+		std::cout<<"	[b-tag Medium working point cut] \n";
+		std::cout<<"	[b-tag Tight working point cut]	\n";
+		std::cout<<"	[isRealData] \n";
+		std::cout<<"	(also the CSV file) ****** \n";
+
+		jetVec[j].Use4VectorVariant("fullyCorrected");		
+		if(jetVec[j].pt() >= 20.0 && fabs(jetVec[j].eta()) <= 2.4) /* btagging does not apply out of this range */
+		{
+			m_BtagSFTool->InitForJet(0.460, 0.800, 0.935, 
+			 					jetVec[j].pt(), 
+			 					jetVec[j].eta(), 
+								jetVec[j].defaultBtagAlgorithm_RawScore(),
+								jetVec[j].HADRON_flavour(),
+								0);
+
+
+			std::cout<<" Jet B-tag SFs [loose, looseUp, looseDn, med, medUp, medDn, tight, tightUp, tightDn] =  [ ";
+
+			std::cout<<m_BtagSFTool->SF_LooseWpCentral()<<" , ";
+			std::cout<<m_BtagSFTool->SF_LooseWpUp()<<" , ";
+			std::cout<<m_BtagSFTool->SF_LooseWpDown()<<" , ";
+			std::cout<<m_BtagSFTool->SF_MediumWpCentral()<<" , ";
+			std::cout<<m_BtagSFTool->SF_MediumWpUp()<<" , ";
+			std::cout<<m_BtagSFTool->SF_MediumWpDown()<<" , ";
+			std::cout<<m_BtagSFTool->SF_TightWpCentral()<<" , ";
+			std::cout<<m_BtagSFTool->SF_TightWpUp()<<" , ";
+			std::cout<<m_BtagSFTool->SF_TightWpDown()<<" ] ";
+
+			std::cout<<" init args were [pt, eta, rawScore, hadronFlav, isData ] = [ ";
+			std::cout<<jetVec[j].pt()<<" , "<<jetVec[j].eta()<<" , "<<jetVec[j].defaultBtagAlgorithm_RawScore()<<" , "<<jetVec[j].HADRON_flavour()<<" , "<<0<<"] \n";
+
+		}
 		
 		/* next check the jet ID & B jet ID, & if passes add to the pair vectors,
 		allowing jets to enter both vectors - cause that is what H2Tau Does */
