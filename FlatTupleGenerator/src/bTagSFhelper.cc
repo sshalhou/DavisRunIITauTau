@@ -3,13 +3,47 @@
 
 /* constructor */
 
-bTagSFhelper::bTagSFhelper(edm::FileInPath csvFileName)
+bTagSFhelper::bTagSFhelper(edm::FileInPath csvFileName, edm::FileInPath looseEffRootFile, 
+						   edm::FileInPath mediumEffRootFile, edm::FileInPath tightEffRootFile)
 {
-	/* hard-coded jet pT maxima */
+
+	/* random3 */
+	
+	m_rand = new TRandom3(); /* seed must be set in setSeed function as it is jet-dependent */
+
+
+	/* hard-coded jet pT maxima & minima */
 
 	m_MaxBJetPt = 670.0; /* see https://twiki.cern.ch/twiki/bin/view/CMS/BTagCalibration#Code_example_in_C */
 	m_MaxCJetPt = 670.0;
 	m_MaxLJetPt = 1000.0; 
+
+	m_MinBJetPt = 30.0;
+	m_MinCJetPt = 30.0;
+	m_MinLJetPt = 20.0;
+
+
+	/* init the b-tag eff root files */
+
+
+	m_LooseBtagEff = new TFile(looseEffRootFile.fullPath().data(),"READ");
+	m_MediumBtagEff = new TFile(mediumEffRootFile.fullPath().data(),"READ");
+	m_TightBtagEff = new TFile(tightEffRootFile.fullPath().data(),"READ");
+
+
+	/* init the b-tag eff histograms */
+
+	m_LooseEff_b = (TH2F*) m_LooseBtagEff->Get("btag_eff_b");
+	m_LooseEff_c = (TH2F*) m_LooseBtagEff->Get("btag_eff_c");
+	m_LooseEff_usdg = (TH2F*) m_LooseBtagEff->Get("btag_eff_oth");
+
+	m_MediumEff_b = (TH2F*) m_MediumBtagEff->Get("btag_eff_b");
+	m_MediumEff_c = (TH2F*) m_MediumBtagEff->Get("btag_eff_c");
+	m_MediumEff_usdg = (TH2F*) m_MediumBtagEff->Get("btag_eff_oth");
+
+	m_TightEff_b = (TH2F*) m_TightBtagEff->Get("btag_eff_b");
+	m_TightEff_c = (TH2F*) m_TightBtagEff->Get("btag_eff_c");
+	m_TightEff_usdg = (TH2F*) m_TightBtagEff->Get("btag_eff_oth");
 
 	/* init the BTagCalibration with the csv file */
 
@@ -49,19 +83,15 @@ bTagSFhelper::bTagSFhelper(edm::FileInPath csvFileName)
 
 
 /* InitForJet called once per jet. Args are :
+[jet Pt], [jet Eta], [raw b-tag score], [hadronFlavour] */
 
-[b-tag loose working point cut],  [b-tag medium working point cut], [b-tag tight working point cut],
-[jet Pt], [jet Eta], [raw b-tag score], [hadronFlavour], and [isRealData] */
-
-void bTagSFhelper::InitForJet(double LOOSEcut_, double MEDIUMcut_, double TIGHTcut_,
-								   double pt_, double eta_, double rawScore_, 
-								   int flavour_, bool isData_)
+void bTagSFhelper::InitForJet(double pt_, double eta_, double rawScore_, 
+								   int flavour_, bool isRealData_)
 {
 
-	/* crash all this if sf tool is invoked for data (should only every apply to MC) */
-	assert(!isData_);
 
-	/* reset the scale factors */
+
+	/* reset the scale factors and eff. */
 	m_SF_LooseWpCentral = 1.0;
 	m_SF_LooseWpUp = 1.0;
 	m_SF_LooseWpDown = 1.0;
@@ -72,6 +102,24 @@ void bTagSFhelper::InitForJet(double LOOSEcut_, double MEDIUMcut_, double TIGHTc
 	m_SF_TightWpUp = 1.0;
 	m_SF_TightWpDown = 1.0;
 
+	m_EFF_LooseWp = 1.0;
+	m_EFF_MediumWp = 1.0;
+	m_EFF_TightWp = 1.0;
+
+	/* reset the btags */
+
+	m_isTagged_LooseWpCentral= 0;
+	m_isTagged_LooseWpUp= 0;
+	m_isTagged_LooseWpDown= 0;
+	m_isTagged_MediumWpCentral= 0;
+	m_isTagged_MediumWpUp= 0;
+	m_isTagged_MediumWpDown= 0;
+	m_isTagged_TightWpCentral= 0;
+	m_isTagged_TightWpUp= 0;
+	m_isTagged_TightWpDown= 0;
+
+
+
 	/* set the double uncertainty option to False by default, 
 	only set to true if jet pt is out of range */
 	m_DoubleUncertainty = 0; 
@@ -79,19 +127,16 @@ void bTagSFhelper::InitForJet(double LOOSEcut_, double MEDIUMcut_, double TIGHTc
 
 	/* init some member data */
 
-	m_btag_workingPointLooseCut = LOOSEcut_;
- 	m_btag_workingPointMediumCut = MEDIUMcut_; 
-	m_btag_workingPointTightCut  = TIGHTcut_;
+
 	m_jetEta = eta_;
     m_jetRawScore = rawScore_;
-    m_isRealData = isData_;
 
 
     /* set the flavour, adjusting to codes needed for the SF reader */
 
     if(flavour_==5)  m_jetHadronFlavour = BTagEntry::FLAV_B;
     else if(flavour_==4)  m_jetHadronFlavour = BTagEntry::FLAV_C;
-    else  flavour_ = BTagEntry::FLAV_UDSG;
+    else  m_jetHadronFlavour = BTagEntry::FLAV_UDSG;
 
     /* set the jetPt, use max values if exceeded and double the uncertainty */
 
@@ -103,6 +148,7 @@ void bTagSFhelper::InitForJet(double LOOSEcut_, double MEDIUMcut_, double TIGHTc
 	m_DoubleUncertainty = 0; 
 
 
+	// pt over limit 
     if(m_jetHadronFlavour == BTagEntry::FLAV_B && m_jetPt>m_MaxBJetPt) 
 	{
 		m_jetPt = m_MaxBJetPt * 0.99999;
@@ -119,45 +165,113 @@ void bTagSFhelper::InitForJet(double LOOSEcut_, double MEDIUMcut_, double TIGHTc
 		m_DoubleUncertainty = 1;
 	}	
 
-    /* init the random gen. seed - done once per jet, seed is chosen by H2Tau group convention */
+	// pt too small 
 
-    m_Rand3.SetSeed((int)((m_jetEta+5)*100000));
+
+    if(m_jetHadronFlavour == BTagEntry::FLAV_B && m_jetPt<=m_MinBJetPt) 
+	{
+		m_jetPt = m_MinBJetPt * 1.00001;
+		m_DoubleUncertainty = 1;
+	}	
+    else if(m_jetHadronFlavour == BTagEntry::FLAV_C && m_jetPt<=m_MinCJetPt) 
+    { 
+    	m_jetPt = m_MinCJetPt * 1.00001;
+		m_DoubleUncertainty = 1;
+	}	    
+    else if(m_jetHadronFlavour == BTagEntry::FLAV_UDSG && m_jetPt<=m_MinLJetPt)
+    { 
+    	m_jetPt = m_MinLJetPt * 1.00001;
+		m_DoubleUncertainty = 1;
+	}	
 
     /* read the scale factors from the CSV file */
 
     // for B 
     if(m_jetHadronFlavour == BTagEntry::FLAV_B)
     {
-
-		m_SF_LooseWpCentral = m_LooseWpReaderCentral_forBorC->eval(BTagEntry::FLAV_B, m_jetEta, m_jetPt);
-		m_SF_LooseWpUp = m_LooseWpReaderUp_forBorC->eval(BTagEntry::FLAV_B, m_jetEta, m_jetPt);
-		m_SF_LooseWpDown = m_LooseWpReaderDown_forBorC->eval(BTagEntry::FLAV_B, m_jetEta, m_jetPt);
-
+    	std::cout<<" have *** a B with m_jetHadronFlavour = "<<m_jetHadronFlavour<<"\n";
+    	/* read medium central 1st to get a random sequence synced with other H2Tau groups */
 		m_SF_MediumWpCentral = m_MediumWpReaderCentral_forBorC->eval(BTagEntry::FLAV_B, m_jetEta, m_jetPt);
 		m_SF_MediumWpUp = m_MediumWpReaderUp_forBorC->eval(BTagEntry::FLAV_B, m_jetEta, m_jetPt);
 		m_SF_MediumWpDown = m_MediumWpReaderDown_forBorC->eval(BTagEntry::FLAV_B, m_jetEta, m_jetPt);
 	
+		m_SF_LooseWpCentral = m_LooseWpReaderCentral_forBorC->eval(BTagEntry::FLAV_B, m_jetEta, m_jetPt);
+		m_SF_LooseWpUp = m_LooseWpReaderUp_forBorC->eval(BTagEntry::FLAV_B, m_jetEta, m_jetPt);
+		m_SF_LooseWpDown = m_LooseWpReaderDown_forBorC->eval(BTagEntry::FLAV_B, m_jetEta, m_jetPt);
+
 		m_SF_TightWpCentral = m_TightWpReaderCentral_forBorC->eval(BTagEntry::FLAV_B, m_jetEta, m_jetPt);
 		m_SF_TightWpUp = m_TightWpReaderUp_forBorC->eval(BTagEntry::FLAV_B, m_jetEta, m_jetPt);
 		m_SF_TightWpDown = m_TightWpReaderDown_forBorC->eval(BTagEntry::FLAV_B, m_jetEta, m_jetPt);
     
+		/* extract the b-tag eff. from TFiles and TH2D histograms */
+
+		int BINx_ = 0;
+		int BINy_ = 0;
+
+
+		/* Loose eff. */
+	    BINx_ = m_LooseEff_b->GetXaxis()->FindBin(m_jetPt);
+    	BINy_ = m_LooseEff_b->GetYaxis()->FindBin(m_jetEta);
+    	m_EFF_LooseWp = m_LooseEff_b->GetBinContent(BINx_,BINy_);
+
+		/* Medium eff. */
+	    BINx_ = m_MediumEff_b->GetXaxis()->FindBin(m_jetPt);
+    	BINy_ = m_MediumEff_b->GetYaxis()->FindBin(m_jetEta);
+    	m_EFF_MediumWp = m_MediumEff_b->GetBinContent(BINx_,BINy_);
+	
+		/* Tight eff. */
+	    BINx_ = m_TightEff_b->GetXaxis()->FindBin(m_jetPt);
+    	BINy_ = m_TightEff_b->GetYaxis()->FindBin(m_jetEta);
+    	m_EFF_TightWp = m_TightEff_b->GetBinContent(BINx_,BINy_);
+
+    	std::cout<<" _b jet eff are "<<m_EFF_LooseWp<<" , "<<m_EFF_MediumWp<<" , "<<m_EFF_TightWp<<"\n";
+
+
     }
 
     // for C
     else if(m_jetHadronFlavour == BTagEntry::FLAV_C)
     {
 
-		m_SF_LooseWpCentral = m_LooseWpReaderCentral_forBorC->eval(BTagEntry::FLAV_C, m_jetEta, m_jetPt);
-		m_SF_LooseWpUp = m_LooseWpReaderUp_forBorC->eval(BTagEntry::FLAV_C, m_jetEta, m_jetPt);
-		m_SF_LooseWpDown = m_LooseWpReaderDown_forBorC->eval(BTagEntry::FLAV_C, m_jetEta, m_jetPt);
+    	std::cout<<" have *** a C with m_jetHadronFlavour = "<<m_jetHadronFlavour<<"\n";
 
+    	/* read medium central 1st to get a random sequence synced with other H2Tau groups */
 		m_SF_MediumWpCentral = m_MediumWpReaderCentral_forBorC->eval(BTagEntry::FLAV_C, m_jetEta, m_jetPt);
 		m_SF_MediumWpUp = m_MediumWpReaderUp_forBorC->eval(BTagEntry::FLAV_C, m_jetEta, m_jetPt);
 		m_SF_MediumWpDown = m_MediumWpReaderDown_forBorC->eval(BTagEntry::FLAV_C, m_jetEta, m_jetPt);
 	
+		m_SF_LooseWpCentral = m_LooseWpReaderCentral_forBorC->eval(BTagEntry::FLAV_C, m_jetEta, m_jetPt);
+		m_SF_LooseWpUp = m_LooseWpReaderUp_forBorC->eval(BTagEntry::FLAV_C, m_jetEta, m_jetPt);
+		m_SF_LooseWpDown = m_LooseWpReaderDown_forBorC->eval(BTagEntry::FLAV_C, m_jetEta, m_jetPt);
+
+
 		m_SF_TightWpCentral = m_TightWpReaderCentral_forBorC->eval(BTagEntry::FLAV_C, m_jetEta, m_jetPt);
 		m_SF_TightWpUp = m_TightWpReaderUp_forBorC->eval(BTagEntry::FLAV_C, m_jetEta, m_jetPt);
 		m_SF_TightWpDown = m_TightWpReaderDown_forBorC->eval(BTagEntry::FLAV_C, m_jetEta, m_jetPt);
+
+		/* extract the b-tag eff. from TFiles and TH2D histograms */
+
+		int BINx_ = 0;
+		int BINy_ = 0;
+
+		/* Loose eff. */
+	    BINx_ = m_LooseEff_c->GetXaxis()->FindBin(m_jetPt);
+    	BINy_ = m_LooseEff_c->GetYaxis()->FindBin(m_jetEta);
+    	m_EFF_LooseWp = m_LooseEff_c->GetBinContent(BINx_,BINy_);
+
+		/* Medium eff. */
+	    BINx_ = m_MediumEff_c->GetXaxis()->FindBin(m_jetPt);
+    	BINy_ = m_MediumEff_c->GetYaxis()->FindBin(m_jetEta);
+    	m_EFF_MediumWp = m_MediumEff_c->GetBinContent(BINx_,BINy_);
+	
+		/* Tight eff. */
+	    BINx_ = m_TightEff_c->GetXaxis()->FindBin(m_jetPt);
+    	BINy_ = m_TightEff_c->GetYaxis()->FindBin(m_jetEta);
+    	m_EFF_TightWp = m_TightEff_c->GetBinContent(BINx_,BINy_);
+
+    	std::cout<<" _c jet eff are "<<m_EFF_LooseWp<<" , "<<m_EFF_MediumWp<<" , "<<m_EFF_TightWp<<"\n";
+
+
 
     }
 
@@ -166,21 +280,50 @@ void bTagSFhelper::InitForJet(double LOOSEcut_, double MEDIUMcut_, double TIGHTc
     else if(m_jetHadronFlavour == BTagEntry::FLAV_UDSG)
     {
 
+    	 std::cout<<" have *** a UDSG with m_jetHadronFlavour = "<<m_jetHadronFlavour<<"\n";
 
-
-		m_SF_LooseWpCentral = m_LooseWpReaderCentral_forUDSG->eval(BTagEntry::FLAV_UDSG, m_jetEta, m_jetPt);
-		m_SF_LooseWpUp = m_LooseWpReaderUp_forUDSG->eval(BTagEntry::FLAV_UDSG, m_jetEta, m_jetPt);
-		m_SF_LooseWpDown = m_LooseWpReaderDown_forUDSG->eval(BTagEntry::FLAV_UDSG, m_jetEta, m_jetPt);
-
+    	/* read medium central 1st to get a random sequence synced with other H2Tau groups */
 		m_SF_MediumWpCentral = m_MediumWpReaderCentral_forUDSG->eval(BTagEntry::FLAV_UDSG, m_jetEta, m_jetPt);
 		m_SF_MediumWpUp = m_MediumWpReaderUp_forUDSG->eval(BTagEntry::FLAV_UDSG, m_jetEta, m_jetPt);
 		m_SF_MediumWpDown = m_MediumWpReaderDown_forUDSG->eval(BTagEntry::FLAV_UDSG, m_jetEta, m_jetPt);
 	
+		m_SF_LooseWpCentral = m_LooseWpReaderCentral_forUDSG->eval(BTagEntry::FLAV_UDSG, m_jetEta, m_jetPt);
+		m_SF_LooseWpUp = m_LooseWpReaderUp_forUDSG->eval(BTagEntry::FLAV_UDSG, m_jetEta, m_jetPt);
+		m_SF_LooseWpDown = m_LooseWpReaderDown_forUDSG->eval(BTagEntry::FLAV_UDSG, m_jetEta, m_jetPt);
+
 		m_SF_TightWpCentral = m_TightWpReaderCentral_forUDSG->eval(BTagEntry::FLAV_UDSG, m_jetEta, m_jetPt);
 		m_SF_TightWpUp = m_TightWpReaderUp_forUDSG->eval(BTagEntry::FLAV_UDSG, m_jetEta, m_jetPt);
 		m_SF_TightWpDown = m_TightWpReaderDown_forUDSG->eval(BTagEntry::FLAV_UDSG, m_jetEta, m_jetPt);
 
+
+		/* extract the b-tag eff. from TFiles and TH2D histograms */
+
+		int BINx_ = 0;
+		int BINy_ = 0;
+
+		/* Loose eff. */
+	    BINx_ = m_LooseEff_usdg->GetXaxis()->FindBin(m_jetPt);
+    	BINy_ = m_LooseEff_usdg->GetYaxis()->FindBin(m_jetEta);
+    	m_EFF_LooseWp = m_LooseEff_usdg->GetBinContent(BINx_,BINy_);
+
+		/* Medium eff. */
+	    BINx_ = m_MediumEff_usdg->GetXaxis()->FindBin(m_jetPt);
+    	BINy_ = m_MediumEff_usdg->GetYaxis()->FindBin(m_jetEta);
+    	m_EFF_MediumWp = m_MediumEff_usdg->GetBinContent(BINx_,BINy_);
+	
+		/* Tight eff. */
+	    BINx_ = m_TightEff_usdg->GetXaxis()->FindBin(m_jetPt);
+    	BINy_ = m_TightEff_usdg->GetYaxis()->FindBin(m_jetEta);
+    	m_EFF_TightWp = m_TightEff_usdg->GetBinContent(BINx_,BINy_);
+
+    	std::cout<<" _usdg jet eff are "<<m_EFF_LooseWp<<" , "<<m_EFF_MediumWp<<" , "<<m_EFF_TightWp<<"\n";
+
+
+
+
     }
+
+    else  { std::cout<<" have *** a NOTHING with m_jetHadronFlavour = "<<m_jetHadronFlavour<<"\n"; }
 
 
     if(m_DoubleUncertainty)
@@ -198,11 +341,60 @@ void bTagSFhelper::InitForJet(double LOOSEcut_, double MEDIUMcut_, double TIGHTc
 
     }
 
+    PromoteDemoteBtags(rawScore_, 0.460, 0.800, 0.935, !isRealData_);
+
+
+
+
+
+}
+
+// function to apply promote-demote method of b-tag SFs
+
+
+void bTagSFhelper::PromoteDemoteBtags(double raw_, double cutL_, double cutM_, double cutT_, bool isRealData_)
+{
+
+	std::cout<<" Raw b-tags are L, M, T : "<<(raw_>cutL_)<<" , "<<(raw_>cutM_)<<" , "<<(raw_>cutT_)<<"\n";
+
+	if(isRealData_)
+	{
+		/* for data evaluate the cuts, no systematics are applied */
+
+		m_isTagged_LooseWpCentral	= (raw_>cutL_);
+		m_isTagged_LooseWpUp	= m_isTagged_LooseWpCentral;
+		m_isTagged_LooseWpDown	= m_isTagged_LooseWpCentral;
+
+		m_isTagged_MediumWpCentral	= (raw_>cutM_);
+		m_isTagged_MediumWpUp	= m_isTagged_MediumWpCentral;
+		m_isTagged_MediumWpDown	= m_isTagged_MediumWpCentral;
+
+		m_isTagged_TightWpCentral	= (raw_>cutT_);
+		m_isTagged_TightWpUp	= m_isTagged_TightWpCentral;
+		m_isTagged_TightWpDown	= m_isTagged_TightWpCentral;
+
+	}
+
+	else
+	{
+
+
+		
+	}
+
+
+
+
+	m_rand->SetSeed((int)((m_jetEta+5)*100000)); 
+
+
 
 }
 
 
-// functions to return scale factors 
+
+
+// functions to return scale factors and eff. 
 
 double bTagSFhelper::SF_LooseWpCentral() const { return m_SF_LooseWpCentral; }
 double bTagSFhelper::SF_LooseWpUp() const { return m_SF_LooseWpUp; }
@@ -213,4 +405,24 @@ double bTagSFhelper::SF_MediumWpDown() const { return m_SF_MediumWpDown; }
 double bTagSFhelper::SF_TightWpCentral() const { return m_SF_TightWpCentral; }
 double bTagSFhelper::SF_TightWpUp() const { return m_SF_TightWpUp; }
 double bTagSFhelper::SF_TightWpDown() const { return m_SF_TightWpDown; }
+
+
+double bTagSFhelper::EFF_LooseWp() const { return m_EFF_LooseWp; }
+double bTagSFhelper::EFF_MediumWp() const { return m_EFF_MediumWp; }
+double bTagSFhelper::EFF_TightWp() const { return m_EFF_TightWp; }
+
+// return final tags after PromoteDemoteBtags is called
+
+
+bool bTagSFhelper::isTagged_LooseWpCentral() const { return m_isTagged_LooseWpCentral; }
+bool bTagSFhelper::isTagged_LooseWpUp() const { return m_isTagged_LooseWpUp; }
+bool bTagSFhelper::isTagged_LooseWpDown() const { return m_isTagged_LooseWpDown; }
+bool bTagSFhelper::isTagged_MediumWpCentral() const { return m_isTagged_MediumWpCentral; }
+bool bTagSFhelper::isTagged_MediumWpUp() const { return m_isTagged_MediumWpUp; }
+bool bTagSFhelper::isTagged_MediumWpDown() const { return m_isTagged_MediumWpDown; }
+bool bTagSFhelper::isTagged_TightWpCentral() const { return m_isTagged_TightWpCentral; }
+bool bTagSFhelper::isTagged_TightWpUp() const { return m_isTagged_TightWpUp; }
+bool bTagSFhelper::isTagged_TightWpDown() const { return m_isTagged_TightWpDown; }
+
+
 

@@ -502,14 +502,12 @@ generalConfig = cms.PSet(
 				"puCorrPtSum"),
 
 			###################
-			# jet & bjet ID cut strings
+			# jet cut strings
 			jetLeptonDRmin = cms.double(0.5),
 			# note PU jet ID is not to be applied yet
-			#jetIDcut = cms.string("pt>20 && abs(eta) < 4.7 && PU_jetIdPassed && PF_jetIdPassed"),
-			#BjetIDcut = cms.string("pt>20 && abs(eta) < 2.4 && PU_jetIdPassed && PF_jetIdPassed && defaultBtagAlgorithm_isPassed")
+			# also *MUST* make sure this jetIDcut is inclusive of any b-tag selection you
+			# wish to apply later 
 			jetIDcut = cms.string("pt>20 && abs(eta) < 4.7  && PF_jetIdPassed"),
-			BjetIDcut = cms.string("pt>20 && abs(eta) < 2.4 && PF_jetIdPassed && defaultBtagAlgorithm_RawScore > 0.89") # medium w.p.
-
 					)
 
 

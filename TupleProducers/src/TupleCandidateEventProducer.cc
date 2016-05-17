@@ -827,6 +827,7 @@ std::vector<double> TupleCandidateEventProducer::computeSVMassAndSVTransverseMas
 
   std::cout<<" mass, transverseMass "<<retSVmass[0]<<" "<<retSVmass[1]<<"\n";
 
+  inputFile_visPtResolution->Close();
   delete inputFile_visPtResolution;
   //        std::cout<<" **** TURN ON delete inputFile_visPtResolution \n";
 
@@ -897,6 +898,7 @@ std::vector<double> TupleCandidateEventProducer::computeSVMassAndSVTransverseMas
 
   std::cout<<" mass, transverseMass "<<retSVmass[0]<<" "<<retSVmass[1]<<"\n";
 
+  inputFile_visPtResolution->Close();
   delete inputFile_visPtResolution;
   return retSVmass;
 

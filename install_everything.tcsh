@@ -92,11 +92,13 @@ wget https://raw.githubusercontent.com/cms-jet/JRDatabase/master/textFiles/Fall1
 mv Fall15_25nsV2_MC_SF_AK4PFchs.txt DavisRunIITauTau/RunTimeDataInput/data/JER_FILES/.
 mv Fall15_25nsV2_MC_PtResolution_AK4PFchs.txt DavisRunIITauTau/RunTimeDataInput/data/JER_FILES/.
 
-# get the BTAG SF CSV File 
-# if the file is new, need to change the name used in JetHelper.cc
+# get the BTAG SF CSV File  and EFF root files 
+# if the file is new, need to change the name used in FlatTupleGenerator.cc
 mkdir DavisRunIITauTau/RunTimeDataInput/data/BTAGSF
 cp /afs/cern.ch/user/s/sshalhou/public/INSTALL_PUBLIC_FILES/76X/BTAGSF/CSVv2.csv DavisRunIITauTau/RunTimeDataInput/data/BTAGSF/.
-
+mkdir DavisRunIITauTau/RunTimeDataInput/data/BTAGEFF
+cp /afs/cern.ch/user/s/sshalhou/public/INSTALL_PUBLIC_FILES/76X/BTAGEFF/tagging_efficiencies.root DavisRunIITauTau/RunTimeDataInput/data/BTAGEFF/.
+cp /afs/cern.ch/user/s/sshalhou/public/INSTALL_PUBLIC_FILES/76X/BTAGEFF/tagging_efficiencies_loosewp.root DavisRunIITauTau/RunTimeDataInput/data/BTAGEFF/.
 
 # compile
 

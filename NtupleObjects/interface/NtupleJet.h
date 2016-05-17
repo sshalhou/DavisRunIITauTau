@@ -47,14 +47,23 @@ public:
   void fill_JER_SFs(double, double, double, LorentzVector, double); 
 
 
-  /* adjust the pass/fail of the m_defaultBtagAlgorithm_isPassed variable based on bTag SFs used with the 
-   promote-demote method,
-   1st argument=1 means keep as (or promote to) btagged, argument = 0 means keep as (or demote to) untagged 
-   2nd argument is 0 for nominal, +1 for btag systematic up, -1 for btag systematic down */
 
-   void promoteDemoteBtagTightWP(int, int); 
-   void promoteDemoteBtagMediumWP(int, int); 
-   void promoteDemoteBtagLooseWP(int, int); 
+  /* set the b-tag scale factors and eff., these are called in JetHelper.cc in the FlatTupleGenerator code */
+
+  void set_defaultBtagAlgorithmSF_LooseWpCentral(double);
+  void set_defaultBtagAlgorithmSF_LooseWpUp(double);
+  void set_defaultBtagAlgorithmSF_LooseWpDown(double);
+  void set_defaultBtagAlgorithmSF_MediumWpCentral(double);
+  void set_defaultBtagAlgorithmSF_MediumWpUp(double);
+  void set_defaultBtagAlgorithmSF_MediumWpDown(double);
+  void set_defaultBtagAlgorithmSF_TightWpCentral(double);
+  void set_defaultBtagAlgorithmSF_TightWpUp(double);
+  void set_defaultBtagAlgorithmSF_TightWpDown(double);
+
+
+  void set_defaultBtagAlgorithmEff_LooseWp(double);
+  void set_defaultBtagAlgorithmEff_MediumWp(double);
+  void set_defaultBtagAlgorithmEff_TightWp(double);
 
 
   // helpers
@@ -122,6 +131,22 @@ public:
   double chargedMultiplicity() const; 
   double neutralMultiplicity() const;
 
+
+  double defaultBtagAlgorithmSF_LooseWpCentral() const;
+  double defaultBtagAlgorithmSF_LooseWpUp() const;
+  double defaultBtagAlgorithmSF_LooseWpDown() const;
+  double defaultBtagAlgorithmSF_MediumWpCentral() const;
+  double defaultBtagAlgorithmSF_MediumWpUp() const;
+  double defaultBtagAlgorithmSF_MediumWpDown() const;
+  double defaultBtagAlgorithmSF_TightWpCentral() const;
+  double defaultBtagAlgorithmSF_TightWpUp() const;
+  double defaultBtagAlgorithmSF_TightWpDown() const;
+
+  double defaultBtagAlgorithmEff_LooseWp() const;
+  double defaultBtagAlgorithmEff_MediumWp() const;
+  double defaultBtagAlgorithmEff_TightWp() const;
+
+
   /* we will also access the PF jet ID relevant info using standard names */
   double NHF() const; 
   double NEMF() const; 
@@ -136,18 +161,8 @@ public:
   double defaultBtagAlgorithm_RawScore() const;
 
 
-  bool defaultBtagAlgorithmLooseWP_isPassed() const;
-  bool defaultBtagAlgorithmLooseWPShiftUp_isPassed() const;
-  bool defaultBtagAlgorithmLooseWPShiftDown_isPassed() const;
 
 
-  bool defaultBtagAlgorithmMediumWP_isPassed() const;
-  bool defaultBtagAlgorithmMediumWPShiftUp_isPassed() const;
-  bool defaultBtagAlgorithmMediumWPShiftDown_isPassed() const;
-
-  bool defaultBtagAlgorithmTightWP_isPassed() const;
-  bool defaultBtagAlgorithmTightWPShiftUp_isPassed() const;
-  bool defaultBtagAlgorithmTightWPShiftDown_isPassed() const;
 
   /* for easy use with cut strings */
   double pt() const; /* should have all corrections applied */
@@ -182,22 +197,31 @@ private:
   double m_chargedMultiplicityPlusNeutralMultiplicity;  /* NumConst for PF jet ID */
   double m_chargedMultiplicity;                         /* CHM for PF jet ID */
   double m_neutralMultiplicity;                         /* NumNeutralParticle for PF jet ID */
+  
   std::string m_defaultBtagAlgorithm_Name;              /* name of the default b-tag algorithm from ConfigNtupleContent_cfi.py */
   float m_defaultBtagAlgorithm_RawScore;                /* raw output of default b-tag algo */
 
+  /* place holders for the b-tag scale factors and efficiencies */
+  /* these are actually filled and computed at the FlatTuple
+  stage in JetHelper.cc */
+
+  double m_defaultBtagAlgorithmSF_LooseWpCentral;
+  double m_defaultBtagAlgorithmSF_LooseWpUp;
+  double m_defaultBtagAlgorithmSF_LooseWpDown;
+  double m_defaultBtagAlgorithmSF_MediumWpCentral;
+  double m_defaultBtagAlgorithmSF_MediumWpUp;
+  double m_defaultBtagAlgorithmSF_MediumWpDown;
+  double m_defaultBtagAlgorithmSF_TightWpCentral;
+  double m_defaultBtagAlgorithmSF_TightWpUp;
+  double m_defaultBtagAlgorithmSF_TightWpDown;
  
-  bool m_defaultBtagAlgorithmLooseWP_isPassed;          /* pass-fail of default b-tag algo after btagSF applied */
-  bool m_defaultBtagAlgorithmLooseWPShiftUp_isPassed;   /* pass-fail of default b-tag algo after btagSF applied, with btag sys. 1 sigma up shift   */
-  bool m_defaultBtagAlgorithmLooseWPShiftDown_isPassed; /* pass-fail of default b-tag algo after btagSF applied, with btag sys. 1 sigma down shift */
+  /* btag efficiecncies */
+  // for 76X tight eff = medium eff (we don't use tight anyways)
+  // these are only used if SF > 1.0
 
-  bool m_defaultBtagAlgorithmMediumWP_isPassed;          /* pass-fail of default b-tag algo after btagSF applied */
-  bool m_defaultBtagAlgorithmMediumWPShiftUp_isPassed;   /* pass-fail of default b-tag algo after btagSF applied, with btag sys. 1 sigma up shift   */
-  bool m_defaultBtagAlgorithmMediumWPShiftDown_isPassed; /* pass-fail of default b-tag algo after btagSF applied, with btag sys. 1 sigma down shift */
-
-  bool m_defaultBtagAlgorithmTightWP_isPassed;          /* pass-fail of default b-tag algo after btagSF applied */
-  bool m_defaultBtagAlgorithmTightWPShiftUp_isPassed;   /* pass-fail of default b-tag algo after btagSF applied, with btag sys. 1 sigma up shift   */
-  bool m_defaultBtagAlgorithmTightWPShiftDown_isPassed; /* pass-fail of default b-tag algo after btagSF applied, with btag sys. 1 sigma down shift */
-
+  double m_defaultBtagAlgorithmEff_LooseWp;
+  double m_defaultBtagAlgorithmEff_MediumWp;
+  double m_defaultBtagAlgorithmEff_TightWp;
 
 
 

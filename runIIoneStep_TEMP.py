@@ -103,7 +103,8 @@ process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(1000) )
 
 myfilelist = cms.untracked.vstring()
 myfilelist.extend(['file:/uscms_data/d3/shalhout/miniAODv2_SyncSample.root'])
-process.source = cms.Source("PoolSource",fileNames=myfilelist)
+process.source = cms.Source("PoolSource",fileNames=myfilelist,
+	eventsToSkip = cms.untracked.VEventRange('1:1-1:4941')	)
 
 
 

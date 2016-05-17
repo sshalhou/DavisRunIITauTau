@@ -6,7 +6,7 @@
 //
 // Description: [EDAnalyzer that creates FlatTuples for DavisRunIITauTau analysis using Ntuple as input]
 //
-//
+//     note: in >=76X b-jet tagging is handled at the analysis level
 // Original Author:  shalhout shalhout
 //         Created:  Tue Jun  4 04:25:53 CDT 2015
 // 
@@ -69,6 +69,7 @@
 #include "DataFormats/PatCandidates/interface/MET.h"
 #include "DataFormats/METReco/interface/PFMET.h"
 #include "DataFormats/METReco/interface/PFMETCollection.h"
+#include "DavisRunIITauTau/FlatTupleGenerator/interface/bTagSFhelper.h"
 
 
 using namespace edm;
@@ -114,6 +115,9 @@ public:
 	JetHelper jethelper;
 	GenHelper genhelper;
 	
+	/* needed to extract the scale factors, passed to jethelper */
+  	bTagSFhelper * m_BtagSFTool;
+
 	// ----------member data ---------------------------
 
 
@@ -188,9 +192,8 @@ public:
     double CodeVersion;     /* Davis code tracking version number */
 
 
-	/* jet and b-jet cut strings */
+	/* jet cut strings */
 	std::string jetIDcut;
-	std::string BjetIDcut;
 	double jetLeptonDRmin;
 
 	/* the lepton cut helper object */
@@ -532,11 +535,10 @@ public:
 	double generatorEventWeight;
 	int hepNUP;
 
-	/* jet/b-jet summary info */
+	/* jet summary info */
 
 	int numberOfJets;  /* overall number of jets passing jet selection */
 	int numberOfJets30;  /* overall number of jets passing jet selection + pT > 30 cut */
-	int numberOfBJets;  /* overall number of btagged jets passing b-jet selection, can overlap with numberOfJets */
 
 	/* Good Jets (passing JetCuts, ranked in Pt) info, note JEC info is to be added */
 	std::vector<double> jets_pt; 				/* vectors of 4-vector components */
@@ -547,23 +549,21 @@ public:
 	std::vector<bool>   jets_PU_jetIdPassed; 
 	std::vector<bool>   jets_PF_jetIdPassed;
 	std::vector<float>  jets_defaultBtagAlgorithm_RawScore;                 /*  raw output of default (see ConfigNtupleContent_cfi.py) b-tag algo */
-  	std::vector<bool>   jets_defaultBtagAlgorithm_isPassed;                 /*  pass-fail of default (see ConfigNtupleContent_cfi.py) b-tag algo after btagSF applied */
   	std::vector<int>    jets_PARTON_flavour;
   	std::vector<int>    jets_HADRON_flavour;
+	std::vector<double> jets_BtagSF_LooseWpCentral;
+	std::vector<double> jets_BtagSF_LooseWpUp;
+	std::vector<double> jets_BtagSF_LooseWpDown;
+	std::vector<double> jets_BtagSF_MediumWpCentral;
+	std::vector<double> jets_BtagSF_MediumWpUp;
+	std::vector<double> jets_BtagSF_MediumWpDown;
+	std::vector<double> jets_BtagSF_TightWpCentral;
+	std::vector<double> jets_BtagSF_TightWpUp;
+	std::vector<double> jets_BtagSF_TightWpDown;
+	std::vector<double> jets_BtagEff_LooseWp;
+	std::vector<double> jets_BtagEff_MediumWp;
+	std::vector<double> jets_BtagEff_TightWp;
 
-	/* Good B-tag Jets, [by design, will overlap with Good Jets!] 
-	(passing bJetCuts, ranked in Pt) info, note JEC info is to be added */
-	std::vector<double> bjets_pt; 											/* vectors of 4-vector components */
-	std::vector<double> bjets_eta; 
-	std::vector<double> bjets_phi;
-	std::vector<double> bjets_M; 
-	std::vector<double> bjets_PU_jetIdRaw; 
-	std::vector<bool>   bjets_PU_jetIdPassed; 
-	std::vector<bool>   bjets_PF_jetIdPassed;
-	std::vector<float>  bjets_defaultBtagAlgorithm_RawScore;                 /*  raw output of default (see ConfigNtupleContent_cfi.py) b-tag algo */
-  	std::vector<bool>   bjets_defaultBtagAlgorithm_isPassed;                 /*  pass-fail of default (see ConfigNtupleContent_cfi.py) b-tag algo after btagSF applied */
-  	std::vector<int>    bjets_PARTON_flavour;
-  	std::vector<int>    bjets_HADRON_flavour;
 
 
 
@@ -572,7 +572,6 @@ public:
  
   	int numberOfJets_JECshiftedUp;
 	int numberOfJets30_JECshiftedUp;
-	int numberOfBJets_JECshiftedUp;
 	std::vector<double> jets_pt_JECshiftedUp;
 	std::vector<double> jets_eta_JECshiftedUp;
 	std::vector<double> jets_phi_JECshiftedUp;
@@ -581,24 +580,25 @@ public:
 	std::vector<bool> jets_PU_jetIdPassed_JECshiftedUp;
 	std::vector<bool> jets_PF_jetIdPassed_JECshiftedUp;
 	std::vector<float> jets_defaultBtagAlgorithm_RawScore_JECshiftedUp;
-	std::vector<bool> jets_defaultBtagAlgorithm_isPassed_JECshiftedUp;
 	std::vector<int> jets_PARTON_flavour_JECshiftedUp;
 	std::vector<int> jets_HADRON_flavour_JECshiftedUp;
-	std::vector<double> bjets_pt_JECshiftedUp;
-	std::vector<double> bjets_eta_JECshiftedUp;
-	std::vector<double> bjets_phi_JECshiftedUp;
-	std::vector<double> bjets_M_JECshiftedUp;
-	std::vector<double> bjets_PU_jetIdRaw_JECshiftedUp;
-	std::vector<bool> bjets_PU_jetIdPassed_JECshiftedUp;
-	std::vector<bool> bjets_PF_jetIdPassed_JECshiftedUp;
-	std::vector<float> bjets_defaultBtagAlgorithm_RawScore_JECshiftedUp;
-	std::vector<bool> bjets_defaultBtagAlgorithm_isPassed_JECshiftedUp;
-	std::vector<int> bjets_PARTON_flavour_JECshiftedUp;
-	std::vector<int> bjets_HADRON_flavour_JECshiftedUp;
+	std::vector<double> jets_BtagSF_LooseWpCentral_JECshiftedUp;
+	std::vector<double> jets_BtagSF_LooseWpUp_JECshiftedUp;
+	std::vector<double> jets_BtagSF_LooseWpDown_JECshiftedUp;
+	std::vector<double> jets_BtagSF_MediumWpCentral_JECshiftedUp;
+	std::vector<double> jets_BtagSF_MediumWpUp_JECshiftedUp;
+	std::vector<double> jets_BtagSF_MediumWpDown_JECshiftedUp;
+	std::vector<double> jets_BtagSF_TightWpCentral_JECshiftedUp;
+	std::vector<double> jets_BtagSF_TightWpUp_JECshiftedUp;
+	std::vector<double> jets_BtagSF_TightWpDown_JECshiftedUp;
+	std::vector<double> jets_BtagEff_LooseWp_JECshiftedUp;
+	std::vector<double> jets_BtagEff_MediumWp_JECshiftedUp;
+	std::vector<double> jets_BtagEff_TightWp_JECshiftedUp;	
+
+
 
 	int numberOfJets_JECshiftedDown;
 	int numberOfJets30_JECshiftedDown;
-	int numberOfBJets_JECshiftedDown;
 	std::vector<double> jets_pt_JECshiftedDown;
 	std::vector<double> jets_eta_JECshiftedDown;
 	std::vector<double> jets_phi_JECshiftedDown;
@@ -607,24 +607,23 @@ public:
 	std::vector<bool> jets_PU_jetIdPassed_JECshiftedDown;
 	std::vector<bool> jets_PF_jetIdPassed_JECshiftedDown;
 	std::vector<float> jets_defaultBtagAlgorithm_RawScore_JECshiftedDown;
-	std::vector<bool> jets_defaultBtagAlgorithm_isPassed_JECshiftedDown;
 	std::vector<int> jets_PARTON_flavour_JECshiftedDown;
 	std::vector<int> jets_HADRON_flavour_JECshiftedDown;
-	std::vector<double> bjets_pt_JECshiftedDown;
-	std::vector<double> bjets_eta_JECshiftedDown;
-	std::vector<double> bjets_phi_JECshiftedDown;
-	std::vector<double> bjets_M_JECshiftedDown;
-	std::vector<double> bjets_PU_jetIdRaw_JECshiftedDown;
-	std::vector<bool> bjets_PU_jetIdPassed_JECshiftedDown;
-	std::vector<bool> bjets_PF_jetIdPassed_JECshiftedDown;
-	std::vector<float> bjets_defaultBtagAlgorithm_RawScore_JECshiftedDown;
-	std::vector<bool> bjets_defaultBtagAlgorithm_isPassed_JECshiftedDown;
-	std::vector<int> bjets_PARTON_flavour_JECshiftedDown;
-	std::vector<int> bjets_HADRON_flavour_JECshiftedDown;
-
+	std::vector<double> jets_BtagSF_LooseWpCentral_JECshiftedDown;
+	std::vector<double> jets_BtagSF_LooseWpUp_JECshiftedDown;
+	std::vector<double> jets_BtagSF_LooseWpDown_JECshiftedDown;
+	std::vector<double> jets_BtagSF_MediumWpCentral_JECshiftedDown;
+	std::vector<double> jets_BtagSF_MediumWpUp_JECshiftedDown;
+	std::vector<double> jets_BtagSF_MediumWpDown_JECshiftedDown;
+	std::vector<double> jets_BtagSF_TightWpCentral_JECshiftedDown;
+	std::vector<double> jets_BtagSF_TightWpUp_JECshiftedDown;
+	std::vector<double> jets_BtagSF_TightWpDown_JECshiftedDown;
+	std::vector<double> jets_BtagEff_LooseWp_JECshiftedDown;
+	std::vector<double> jets_BtagEff_MediumWp_JECshiftedDown;
+	std::vector<double> jets_BtagEff_TightWp_JECshiftedDown;
+			
 	int numberOfJets_JERup;
 	int numberOfJets30_JERup;
-	int numberOfBJets_JERup;
 	std::vector<double> jets_pt_JERup;
 	std::vector<double> jets_eta_JERup;
 	std::vector<double> jets_phi_JERup;
@@ -633,24 +632,23 @@ public:
 	std::vector<bool> jets_PU_jetIdPassed_JERup;
 	std::vector<bool> jets_PF_jetIdPassed_JERup;
 	std::vector<float> jets_defaultBtagAlgorithm_RawScore_JERup;
-	std::vector<bool> jets_defaultBtagAlgorithm_isPassed_JERup;
 	std::vector<int> jets_PARTON_flavour_JERup;
 	std::vector<int> jets_HADRON_flavour_JERup;
-	std::vector<double> bjets_pt_JERup;
-	std::vector<double> bjets_eta_JERup;
-	std::vector<double> bjets_phi_JERup;
-	std::vector<double> bjets_M_JERup;
-	std::vector<double> bjets_PU_jetIdRaw_JERup;
-	std::vector<bool> bjets_PU_jetIdPassed_JERup;
-	std::vector<bool> bjets_PF_jetIdPassed_JERup;
-	std::vector<float> bjets_defaultBtagAlgorithm_RawScore_JERup;
-	std::vector<bool> bjets_defaultBtagAlgorithm_isPassed_JERup;
-	std::vector<int> bjets_PARTON_flavour_JERup;
-	std::vector<int> bjets_HADRON_flavour_JERup;
+	std::vector<double> jets_BtagSF_LooseWpCentral_JERup;
+	std::vector<double> jets_BtagSF_LooseWpUp_JERup;
+	std::vector<double> jets_BtagSF_LooseWpDown_JERup;
+	std::vector<double> jets_BtagSF_MediumWpCentral_JERup;
+	std::vector<double> jets_BtagSF_MediumWpUp_JERup;
+	std::vector<double> jets_BtagSF_MediumWpDown_JERup;
+	std::vector<double> jets_BtagSF_TightWpCentral_JERup;
+	std::vector<double> jets_BtagSF_TightWpUp_JERup;
+	std::vector<double> jets_BtagSF_TightWpDown_JERup;
+	std::vector<double> jets_BtagEff_LooseWp_JERup;
+	std::vector<double> jets_BtagEff_MediumWp_JERup;
+	std::vector<double> jets_BtagEff_TightWp_JERup;
 
 	int numberOfJets_JERdown;
 	int numberOfJets30_JERdown;
-	int numberOfBJets_JERdown;
 	std::vector<double> jets_pt_JERdown;
 	std::vector<double> jets_eta_JERdown;
 	std::vector<double> jets_phi_JERdown;
@@ -659,20 +657,20 @@ public:
 	std::vector<bool> jets_PU_jetIdPassed_JERdown;
 	std::vector<bool> jets_PF_jetIdPassed_JERdown;
 	std::vector<float> jets_defaultBtagAlgorithm_RawScore_JERdown;
-	std::vector<bool> jets_defaultBtagAlgorithm_isPassed_JERdown;
 	std::vector<int> jets_PARTON_flavour_JERdown;
 	std::vector<int> jets_HADRON_flavour_JERdown;
-	std::vector<double> bjets_pt_JERdown;
-	std::vector<double> bjets_eta_JERdown;
-	std::vector<double> bjets_phi_JERdown;
-	std::vector<double> bjets_M_JERdown;
-	std::vector<double> bjets_PU_jetIdRaw_JERdown;
-	std::vector<bool> bjets_PU_jetIdPassed_JERdown;
-	std::vector<bool> bjets_PF_jetIdPassed_JERdown;
-	std::vector<float> bjets_defaultBtagAlgorithm_RawScore_JERdown;
-	std::vector<bool> bjets_defaultBtagAlgorithm_isPassed_JERdown;
-	std::vector<int> bjets_PARTON_flavour_JERdown;
-	std::vector<int> bjets_HADRON_flavour_JERdown;
+	std::vector<double> jets_BtagSF_LooseWpCentral_JERdown;
+	std::vector<double> jets_BtagSF_LooseWpUp_JERdown;
+	std::vector<double> jets_BtagSF_LooseWpDown_JERdown;
+	std::vector<double> jets_BtagSF_MediumWpCentral_JERdown;
+	std::vector<double> jets_BtagSF_MediumWpUp_JERdown;
+	std::vector<double> jets_BtagSF_MediumWpDown_JERdown;
+	std::vector<double> jets_BtagSF_TightWpCentral_JERdown;
+	std::vector<double> jets_BtagSF_TightWpUp_JERdown;
+	std::vector<double> jets_BtagSF_TightWpDown_JERdown;
+	std::vector<double> jets_BtagEff_LooseWp_JERdown;
+	std::vector<double> jets_BtagEff_MediumWp_JERdown;
+	std::vector<double> jets_BtagEff_TightWp_JERdown;
 
 
   	/* gen particles - kind of complicated, but we don't want custom objects in this code */

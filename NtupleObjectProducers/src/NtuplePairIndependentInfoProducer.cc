@@ -167,7 +167,10 @@ in 76X we can access directly from miniAOD */
   edm::InputTag rhoSource_;
   edm::EDGetTokenT<double> rhoToken_;
 
+  /* resolution tools */
 
+  JME::JetResolution resolution_r;
+  JME::JetResolutionScaleFactor resolution_sf;
 
 };
 
@@ -222,6 +225,19 @@ rhoSource_(iConfig.getParameter<edm::InputTag>("rhoSource" ))
   packedGenToken_ = consumes<edm::View< pat::PackedGenParticle > > (packedGenSrc_);
   prunedGenToken_ = consumes<edm::View< reco::GenParticle > > (prunedGenSrc_);
   rhoToken_ = consumes< double > (rhoSource_);
+
+
+  /* access the MC pT resolution */
+
+  edm::FileInPath rFile("DavisRunIITauTau/RunTimeDataInput/data/JER_FILES/Fall15_25nsV2_MC_PtResolution_AK4PFchs.txt");
+  std::string rFile_string = rFile.fullPath();
+  resolution_r = JME::JetResolution(rFile_string);
+
+  /* access the resolution SFs */
+  edm::FileInPath sfFile("DavisRunIITauTau/RunTimeDataInput/data/JER_FILES/Fall15_25nsV2_MC_SF_AK4PFchs.txt");
+  std::string sfFile_string = sfFile.fullPath();
+  resolution_sf = JME::JetResolutionScaleFactor(sfFile_string);
+
 
 
   //register your products
@@ -444,16 +460,6 @@ NtuplePairIndependentInfoProducer::produce(edm::Event& iEvent, const edm::EventS
   // JME::JetResolutionScaleFactor resolution_phi = JME::JetResolution::get(iSetup, "AK4PFchs_phi");
 
 
-  /* access the MC pT resolution */
-
-  edm::FileInPath rFile("DavisRunIITauTau/RunTimeDataInput/data/JER_FILES/Fall15_25nsV2_MC_PtResolution_AK4PFchs.txt");
-  std::string rFile_string = rFile.fullPath();
-  JME::JetResolution resolution_r = JME::JetResolution(rFile_string);
-
-  /* access the resolution SFs */
-  edm::FileInPath sfFile("DavisRunIITauTau/RunTimeDataInput/data/JER_FILES/Fall15_25nsV2_MC_SF_AK4PFchs.txt");
-  std::string sfFile_string = sfFile.fullPath();
-  JME::JetResolutionScaleFactor resolution_sf = JME::JetResolutionScaleFactor(sfFile_string);
 
 
   ///////////////////////////////
@@ -559,7 +565,7 @@ NtuplePairIndependentInfoProducer::produce(edm::Event& iEvent, const edm::EventS
         }
 
         std::cout<<" for jet at index i with pt = "<<slimmedJets->at(i).pt()<<" found a genJet match with pT of ";
-        std::cout<<genJetMatchForJER.pt()<<" which compares to the embedded genJet pt as ";
+        std::cout<<genJetMatchForJER.pt()<<" (0 means no match) which compares to the embedded genJet pt as ";
         std::cout<<currentNtupleJet.GENjet_p4().pt()<<"\n";
 
 

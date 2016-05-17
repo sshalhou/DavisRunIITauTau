@@ -4,8 +4,11 @@
 
 /* class JetHelper :
 
-	class & functions for ranking NtupleJets by Pt, counting jets passing ID, and number of
-	b-tagged jets
+	class & functions for ranking NtupleJets by Pt, counting jets passing ID, and finding 
+  b-tag scale factors
+
+  - note b-jet counting and application of the scale factors 
+  has been moved to AnalysisRunII, due to the need for MC_eff
 
 - Shalhout
 */
@@ -66,14 +69,16 @@ class JetHelper {
 public:
 
   JetHelper();
-  virtual ~JetHelper(){ delete m_BtagSFTool;}
+  virtual ~JetHelper(){}
 
 // helpers
 
-/* init function --> arguments are the initial unordered NtupleJet vector, 
-	the jet cut string, and the b-jet cut string, min DR jet-lepton, leg1, leg2  */
-  void init(std::vector<NtupleJet>, std::string, std::string, double, NtupleLepton, NtupleLepton); 
-  void init(std::vector<NtupleJet>, std::string, std::string); 
+
+
+/* new >= 76X functions   */
+  void init(std::vector<NtupleJet>, std::string, double, NtupleLepton, NtupleLepton, bTagSFhelper *, bool); 
+  void init(std::vector<NtupleJet>, std::string, bTagSFhelper *, bool); 
+
 
 
 // getters 
@@ -82,31 +87,22 @@ public:
   string can be fullyCorrected,  JECshiftedUp, JECshiftedDown, JERnomianl, JERup, JERdown */									 
   std::vector<NtupleJet> PtOrderedPassingJets(std::string);  
   
-  /* returns pt ordered jets passing the B cut string set in init
-  string can be fullyCorrected,  JECshiftedUp, JECshiftedDown, JERnomianl, JERup, JERdown */                   
-  std::vector<NtupleJet> PtOrderedPassingBJets(std::string); 
 
 private:
 
 	std::vector<std::pair<double, NtupleJet>> m_PtJetPairs_fullyCorrected;     /* holder for Pt-NtupleJet pairs */
-	std::vector<std::pair<double, NtupleJet>> m_PtBJetPairs_fullyCorrected;    /* holder for Pt-NtupleJet (Bjet) pairs */
 
   std::vector<std::pair<double, NtupleJet>> m_PtJetPairs_JECshiftedUp;     /* holder for Pt-NtupleJet pairs */
-  std::vector<std::pair<double, NtupleJet>> m_PtBJetPairs_JECshiftedUp;     /* holder for Pt-NtupleJet (Bjet) pairs */
 
   std::vector<std::pair<double, NtupleJet>> m_PtJetPairs_JECshiftedDown;     /* holder for Pt-NtupleJet pairs */
-  std::vector<std::pair<double, NtupleJet>> m_PtBJetPairs_JECshiftedDown;     /* holder for Pt-NtupleJet (Bjet) pairs */
 
   std::vector<std::pair<double, NtupleJet>> m_PtJetPairs_JERnomianl;     /* holder for Pt-NtupleJet pairs */
-  std::vector<std::pair<double, NtupleJet>> m_PtBJetPairs_JERnomianl;     /* holder for Pt-NtupleJet (Bjet) pairs */
 
   std::vector<std::pair<double, NtupleJet>> m_PtJetPairs_JERup;     /* holder for Pt-NtupleJet pairs */
-  std::vector<std::pair<double, NtupleJet>> m_PtBJetPairs_JERup;     /* holder for Pt-NtupleJet (Bjet) pairs */
 
   std::vector<std::pair<double, NtupleJet>> m_PtJetPairs_JERdown;     /* holder for Pt-NtupleJet pairs */
-  std::vector<std::pair<double, NtupleJet>> m_PtBJetPairs_JERdown;     /* holder for Pt-NtupleJet (Bjet) pairs */
 
-  bTagSFhelper * m_BtagSFTool;
+
 
 
 };

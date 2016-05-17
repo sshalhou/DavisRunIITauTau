@@ -15,38 +15,27 @@ JetHelper::JetHelper(){}
 /* initialization function for eff lepton vector */
 /* no DR lep-jet cuts are applied here */
 
-void JetHelper::init(std::vector<NtupleJet> jetVec, std::string jetCut, std::string bjetCut)
+void JetHelper::init(std::vector<NtupleJet> jetVec, std::string jetCut, bTagSFhelper * m_BtagSFTool, bool isRealData)
 {
 
-	/* setup the btag sf helper tool */
-
-	edm::FileInPath sf_file = edm::FileInPath("DavisRunIITauTau/RunTimeDataInput/data/BTAGSF/CSVv2.csv");
-	m_BtagSFTool = new bTagSFhelper(sf_file);
 
 
 	m_PtJetPairs_fullyCorrected.clear();
-	m_PtBJetPairs_fullyCorrected.clear();
 
 	m_PtJetPairs_JECshiftedUp.clear();
-	m_PtBJetPairs_JECshiftedUp.clear();
 
 	m_PtJetPairs_JECshiftedDown.clear();
-	m_PtBJetPairs_JECshiftedDown.clear();
 
 	m_PtJetPairs_JERnomianl.clear();
-	m_PtBJetPairs_JERnomianl.clear();
 
 	m_PtJetPairs_JERup.clear();
-	m_PtBJetPairs_JERup.clear();
 
 	m_PtJetPairs_JERdown.clear();
-	m_PtBJetPairs_JERdown.clear();
 
 
 	/* create the cut selectors */
 
 	StringCutObjectSelector<NtupleJet> jetSelector(jetCut);
-	StringCutObjectSelector<NtupleJet> BjetSelector(bjetCut);
 
 	/* begin loop over jets, and fill the unordered pt:jet vector of pair*/
 
@@ -56,25 +45,49 @@ void JetHelper::init(std::vector<NtupleJet> jetVec, std::string jetCut, std::str
 
 		/* test eval and print the various b-tag SFs for this jet */
 		/* see https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation76X */
-		/* these all need to become python args (also the CSV file, isRealData too!)*/
+		/* these all need to become python args (also the CSV file!)
+		   sf will be stored for data, mc, and embedded samples
+		   but should only be used in mc and embedded samples where the b-jets are MC (like top)	
+		*/
 
 		std::cout<<" ***** JetHelper.cc (m_BtagSFTool)  ... \n";
 		std::cout<<"	these all need to become python args: \n";
-		std::cout<<"	[b-tag Loose working point cut]  \n";
-		std::cout<<"	[b-tag Medium working point cut] \n";
-		std::cout<<"	[b-tag Tight working point cut]	\n";
-		std::cout<<"	[isRealData] \n";
 		std::cout<<"	(also the CSV file) ****** \n";
 
 		jetVec[j].Use4VectorVariant("fullyCorrected");		
 		if(jetVec[j].pt() >= 20.0 && fabs(jetVec[j].eta()) <= 2.4) /* btagging does not apply out of this range */
 		{
-			m_BtagSFTool->InitForJet(0.460, 0.800, 0.935, 
-			 					jetVec[j].pt(), 
+			m_BtagSFTool->InitForJet(jetVec[j].pt(), 
 			 					jetVec[j].eta(), 
 								jetVec[j].defaultBtagAlgorithm_RawScore(),
-								jetVec[j].HADRON_flavour(),
-								0);
+								jetVec[j].HADRON_flavour(), isRealData);
+
+
+			/* set the Btag SFs for the current jet */
+				
+			jetVec[j].set_defaultBtagAlgorithmSF_LooseWpCentral(m_BtagSFTool->SF_LooseWpCentral());
+			jetVec[j].set_defaultBtagAlgorithmSF_LooseWpUp(m_BtagSFTool->SF_LooseWpUp());
+			jetVec[j].set_defaultBtagAlgorithmSF_LooseWpDown(m_BtagSFTool->SF_LooseWpDown());
+
+			jetVec[j].set_defaultBtagAlgorithmSF_MediumWpCentral(m_BtagSFTool->SF_MediumWpCentral());
+			jetVec[j].set_defaultBtagAlgorithmSF_MediumWpUp(m_BtagSFTool->SF_MediumWpUp());
+			jetVec[j].set_defaultBtagAlgorithmSF_MediumWpDown(m_BtagSFTool->SF_MediumWpDown());
+
+			jetVec[j].set_defaultBtagAlgorithmSF_TightWpCentral(m_BtagSFTool->SF_TightWpCentral());
+			jetVec[j].set_defaultBtagAlgorithmSF_TightWpUp(m_BtagSFTool->SF_TightWpUp());
+			jetVec[j].set_defaultBtagAlgorithmSF_TightWpDown(m_BtagSFTool->SF_TightWpDown());
+
+
+			/* set the b-tag eff. for the current jet */
+
+			jetVec[j].set_defaultBtagAlgorithmEff_LooseWp(m_BtagSFTool->EFF_LooseWp());
+			jetVec[j].set_defaultBtagAlgorithmEff_MediumWp(m_BtagSFTool->EFF_MediumWp());
+			jetVec[j].set_defaultBtagAlgorithmEff_TightWp(m_BtagSFTool->EFF_TightWp());
+
+			std::cout<<" Jet b-tag Eff [l, m, t] = [ ";
+			std::cout<<jetVec[j].defaultBtagAlgorithmEff_LooseWp()<<" , ";
+			std::cout<<jetVec[j].defaultBtagAlgorithmEff_MediumWp()<<" , ";
+			std::cout<<jetVec[j].defaultBtagAlgorithmEff_TightWp()<<" ] \n ";
 
 
 			std::cout<<" Jet B-tag SFs [loose, looseUp, looseDn, med, medUp, medDn, tight, tightUp, tightDn] =  [ ";
@@ -89,8 +102,8 @@ void JetHelper::init(std::vector<NtupleJet> jetVec, std::string jetCut, std::str
 			std::cout<<m_BtagSFTool->SF_TightWpUp()<<" , ";
 			std::cout<<m_BtagSFTool->SF_TightWpDown()<<" ] ";
 
-			std::cout<<" init args were [pt, eta, rawScore, hadronFlav, isData ] = [ ";
-			std::cout<<jetVec[j].pt()<<" , "<<jetVec[j].eta()<<" , "<<jetVec[j].defaultBtagAlgorithm_RawScore()<<" , "<<jetVec[j].HADRON_flavour()<<" , "<<0<<"] \n";
+			std::cout<<" init args were [pt, eta, rawScore, hadronFlav  ] = [ ";
+			std::cout<<jetVec[j].pt()<<" , "<<jetVec[j].eta()<<" , "<<jetVec[j].defaultBtagAlgorithm_RawScore()<<" , "<<jetVec[j].HADRON_flavour()<<" ] \n";
 
 		}
 		
@@ -99,27 +112,21 @@ void JetHelper::init(std::vector<NtupleJet> jetVec, std::string jetCut, std::str
 
 		jetVec[j].Use4VectorVariant("fullyCorrected");
 		if(	jetSelector(jetVec[j]) ) m_PtJetPairs_fullyCorrected.push_back( std::make_pair(jetVec[j].pt(), jetVec[j]) );
-		if(	BjetSelector(jetVec[j]) ) m_PtBJetPairs_fullyCorrected.push_back( std::make_pair(jetVec[j].pt(), jetVec[j]) );
 	
 		jetVec[j].Use4VectorVariant("JECshiftedUp");
 		if(	jetSelector(jetVec[j]) ) m_PtJetPairs_JECshiftedUp.push_back( std::make_pair(jetVec[j].pt(), jetVec[j]) );
-		if(	BjetSelector(jetVec[j]) ) m_PtBJetPairs_JECshiftedUp.push_back( std::make_pair(jetVec[j].pt(), jetVec[j]) );
 	
 		jetVec[j].Use4VectorVariant("JECshiftedDown");
 		if(	jetSelector(jetVec[j]) ) m_PtJetPairs_JECshiftedDown.push_back( std::make_pair(jetVec[j].pt(), jetVec[j]) );
-		if(	BjetSelector(jetVec[j]) ) m_PtBJetPairs_JECshiftedDown.push_back( std::make_pair(jetVec[j].pt(), jetVec[j]) );
 	
 		jetVec[j].Use4VectorVariant("JERnomianl");
 		if(	jetSelector(jetVec[j]) ) m_PtJetPairs_JERnomianl.push_back( std::make_pair(jetVec[j].pt(), jetVec[j]) );
-		if(	BjetSelector(jetVec[j]) ) m_PtBJetPairs_JERnomianl.push_back( std::make_pair(jetVec[j].pt(), jetVec[j]) );
 	
 		jetVec[j].Use4VectorVariant("JERup");
 		if(	jetSelector(jetVec[j]) ) m_PtJetPairs_JERup.push_back( std::make_pair(jetVec[j].pt(), jetVec[j]) );
-		if(	BjetSelector(jetVec[j]) ) m_PtBJetPairs_JERup.push_back( std::make_pair(jetVec[j].pt(), jetVec[j]) );
 	
 		jetVec[j].Use4VectorVariant("JERdown");
 		if(	jetSelector(jetVec[j]) ) m_PtJetPairs_JERdown.push_back( std::make_pair(jetVec[j].pt(), jetVec[j]) );
-		if(	BjetSelector(jetVec[j]) ) m_PtBJetPairs_JERdown.push_back( std::make_pair(jetVec[j].pt(), jetVec[j]) );
 
 		// reset back to fullyCorrected just in case
 		jetVec[j].Use4VectorVariant("fullyCorrected");
@@ -162,34 +169,28 @@ void JetHelper::init(std::vector<NtupleJet> jetVec, std::string jetCut, std::str
 
 /* initialization function for regular leg1 + leg2 candidate pair */
 
-void JetHelper::init(std::vector<NtupleJet> jetVec, std::string jetCut, std::string bjetCut,
-					double minDR, NtupleLepton leg1, NtupleLepton leg2)
+
+void JetHelper::init(std::vector<NtupleJet> jetVec, std::string jetCut,
+					double minDR, NtupleLepton leg1, NtupleLepton leg2, bTagSFhelper * m_BtagSFTool, bool isRealData)
 {
 
 	m_PtJetPairs_fullyCorrected.clear();
-	m_PtBJetPairs_fullyCorrected.clear();
 
 	m_PtJetPairs_JECshiftedUp.clear();
-	m_PtBJetPairs_JECshiftedUp.clear();
 
 	m_PtJetPairs_JECshiftedDown.clear();
-	m_PtBJetPairs_JECshiftedDown.clear();
 
 	m_PtJetPairs_JERnomianl.clear();
-	m_PtBJetPairs_JERnomianl.clear();
 
 	m_PtJetPairs_JERup.clear();
-	m_PtBJetPairs_JERup.clear();
 
 	m_PtJetPairs_JERdown.clear();
-	m_PtBJetPairs_JERdown.clear();
 
 
 
 	/* create the cut selectors */
 
 	StringCutObjectSelector<NtupleJet> jetSelector(jetCut);
-	StringCutObjectSelector<NtupleJet> BjetSelector(bjetCut);
 
 	/* begin loop over jets, and fill the unordered pt:jet vector of pair*/
 
@@ -204,42 +205,36 @@ void JetHelper::init(std::vector<NtupleJet> jetVec, std::string jetCut, std::str
 		if(deltaR(leg1.p4(), jetVec[j].jet_p4()) >= minDR && deltaR(leg2.p4(), jetVec[j].jet_p4()) >= minDR)
 		{
 			if(	jetSelector(jetVec[j]) ) m_PtJetPairs_fullyCorrected.push_back( std::make_pair(jetVec[j].pt(), jetVec[j]) );
-			if(	BjetSelector(jetVec[j]) ) m_PtBJetPairs_fullyCorrected.push_back( std::make_pair(jetVec[j].pt(), jetVec[j]) );
 		}	
 
 		jetVec[j].Use4VectorVariant("JECshiftedUp");
 		if(deltaR(leg1.p4(), jetVec[j].jet_p4()) >= minDR && deltaR(leg2.p4(), jetVec[j].jet_p4()) >= minDR)
 		{
 			if(	jetSelector(jetVec[j]) ) m_PtJetPairs_JECshiftedUp.push_back( std::make_pair(jetVec[j].pt(), jetVec[j]) );
-			if(	BjetSelector(jetVec[j]) ) m_PtBJetPairs_JECshiftedUp.push_back( std::make_pair(jetVec[j].pt(), jetVec[j]) );
 		}	
 
 		jetVec[j].Use4VectorVariant("JECshiftedDown");
 		if(deltaR(leg1.p4(), jetVec[j].jet_p4()) >= minDR && deltaR(leg2.p4(), jetVec[j].jet_p4()) >= minDR)
 		{
 			if(	jetSelector(jetVec[j]) ) m_PtJetPairs_JECshiftedDown.push_back( std::make_pair(jetVec[j].pt(), jetVec[j]) );
-			if(	BjetSelector(jetVec[j]) ) m_PtBJetPairs_JECshiftedDown.push_back( std::make_pair(jetVec[j].pt(), jetVec[j]) );
 		}			
 
 		jetVec[j].Use4VectorVariant("JERnomianl");
 		if(deltaR(leg1.p4(), jetVec[j].jet_p4()) >= minDR && deltaR(leg2.p4(), jetVec[j].jet_p4()) >= minDR)
 		{
 			if(	jetSelector(jetVec[j]) ) m_PtJetPairs_JERnomianl.push_back( std::make_pair(jetVec[j].pt(), jetVec[j]) );
-			if(	BjetSelector(jetVec[j]) ) m_PtBJetPairs_JERnomianl.push_back( std::make_pair(jetVec[j].pt(), jetVec[j]) );
 		}	
 
 		jetVec[j].Use4VectorVariant("JERup");
 		if(deltaR(leg1.p4(), jetVec[j].jet_p4()) >= minDR && deltaR(leg2.p4(), jetVec[j].jet_p4()) >= minDR)
 		{
 			if(	jetSelector(jetVec[j]) ) m_PtJetPairs_JERup.push_back( std::make_pair(jetVec[j].pt(), jetVec[j]) );
-			if(	BjetSelector(jetVec[j]) ) m_PtBJetPairs_JERup.push_back( std::make_pair(jetVec[j].pt(), jetVec[j]) );
 		}	
 
 		jetVec[j].Use4VectorVariant("JERdown");
 		if(deltaR(leg1.p4(), jetVec[j].jet_p4()) >= minDR && deltaR(leg2.p4(), jetVec[j].jet_p4()) >= minDR)
 		{
 			if(	jetSelector(jetVec[j]) ) m_PtJetPairs_JERdown.push_back( std::make_pair(jetVec[j].pt(), jetVec[j]) );
-			if(	BjetSelector(jetVec[j]) ) m_PtBJetPairs_JERdown.push_back( std::make_pair(jetVec[j].pt(), jetVec[j]) );
 		}					
 
 		// reset back to fullyCorrected just in case
@@ -309,58 +304,3 @@ void JetHelper::init(std::vector<NtupleJet> jetVec, std::string jetCut, std::str
   	}
 
 
-	std::vector<NtupleJet> JetHelper::PtOrderedPassingBJets(std::string variant_)
- 	{
-
-	    assert(variant_ == "fullyCorrected" ||\
-	           variant_ == "JECshiftedUp" ||\
-	           variant_ == "JECshiftedDown" ||\
-	           variant_ == "JERnomianl" ||\
-	           variant_ == "JERup" ||\
-	           variant_ == "JERdown");
-
-
- 		std::vector <NtupleJet> returnVec;
- 		std::vector<std::pair<double, NtupleJet>> temp_pair;
-
- 		/* seems jets are already ranked in mini-AOD, but just to be safe under future JEC variants */
-    	if(variant_ == "fullyCorrected")
-    	{
-	      std::sort(m_PtBJetPairs_fullyCorrected.begin(), m_PtBJetPairs_fullyCorrected.end(), NtupleJetOrderCompare);
-     	  temp_pair = m_PtBJetPairs_fullyCorrected;
-        }
-    	else if(variant_ == "JECshiftedUp")
-    	{
-	      std::sort(m_PtBJetPairs_JECshiftedUp.begin(), m_PtBJetPairs_JECshiftedUp.end(), NtupleJetOrderCompare);
-     	  temp_pair = m_PtBJetPairs_JECshiftedUp;
-        }
-    	else if(variant_ == "JECshiftedDown")
-    	{
-	      std::sort(m_PtBJetPairs_JECshiftedDown.begin(), m_PtBJetPairs_JECshiftedDown.end(), NtupleJetOrderCompare);
-     	  temp_pair = m_PtBJetPairs_JECshiftedDown;
-        }
-    	else if(variant_ == "JERnomianl")
-    	{
-	      std::sort(m_PtBJetPairs_JERnomianl.begin(), m_PtBJetPairs_JERnomianl.end(), NtupleJetOrderCompare);
-     	  temp_pair = m_PtBJetPairs_JERnomianl;
-        }
-    	else if(variant_ == "JERup")
-    	{
-	      std::sort(m_PtBJetPairs_JERup.begin(), m_PtBJetPairs_JERup.end(), NtupleJetOrderCompare);
-     	  temp_pair = m_PtBJetPairs_JERup;
-        }                
-    	else if(variant_ == "JERdown")
-    	{
-	      std::sort(m_PtBJetPairs_JERdown.begin(), m_PtBJetPairs_JERdown.end(), NtupleJetOrderCompare);
-     	  temp_pair = m_PtBJetPairs_JERdown;
-        }
-
-
-		for(std::size_t k = 0; k<temp_pair.size(); ++k)
-		{
-			returnVec.push_back(temp_pair[k].second);	
-		}
-
-		return returnVec;
-
-  	}
