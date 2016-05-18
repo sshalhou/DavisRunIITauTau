@@ -281,7 +281,7 @@ NtupleEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
 
           anNtupleEvent.fillL1IsoTauMatchInfoLeg1andLeg2(L1IsoTaus);
 
-          std::cout<<" checking IsoTau Cut "<<anNtupleEvent.PairPassesDoubleTauIsoTau28MatchCut()<<"\n";
+         // std::cout<<" checking IsoTau Cut "<<anNtupleEvent.PairPassesDoubleTauIsoTau28MatchCut()<<"\n";
 
 
             /* needed for triggers */

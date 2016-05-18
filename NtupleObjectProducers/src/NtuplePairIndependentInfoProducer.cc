@@ -124,8 +124,7 @@ private:
 
 
   string defaultBtagAlgorithmNameSrc_;
-  bool useBtagSFSrc_;
-  unsigned int useBtagSFSeedSrc_;
+
   edm::ParameterSet PUjetIDworkingPointSrc_;
   edm::ParameterSet PFjetIDworkingPointSrc_;
   
@@ -201,8 +200,6 @@ genParticlesToKeep_(iConfig.getParameter<std::vector<int>>("genParticlesToKeep" 
 slimmedJetSrc_(iConfig.getParameter<edm::InputTag>("slimmedJetSrc" )),
 slimmedGenJetsSrc_(iConfig.getParameter<edm::InputTag>("slimmedGenJetsSrc" )),
 defaultBtagAlgorithmNameSrc_(iConfig.getParameter<string>("defaultBtagAlgorithmNameSrc" )),
-useBtagSFSrc_(iConfig.getParameter<bool>("useBtagSFSrc" )),
-useBtagSFSeedSrc_(iConfig.getParameter<unsigned int>("useBtagSFSeedSrc" )),
 PUjetIDworkingPointSrc_(iConfig.getParameter<edm::ParameterSet>("PUjetIDworkingPointSrc")),
 PFjetIDworkingPointSrc_(iConfig.getParameter<edm::ParameterSet>("PFjetIDworkingPointSrc")),
 vertexSrc_(iConfig.getParameter<edm::InputTag>("vertexSrc" )),
@@ -297,7 +294,7 @@ NtuplePairIndependentInfoProducer::produce(edm::Event& iEvent, const edm::EventS
   iEvent.getByToken(rhoToken_,arho);
 
   double rho_forJER = *arho;
-  std::cout<<" RHO to be used for JER SF tool is "<<rho_forJER<<"\n";
+//  std::cout<<" RHO to be used for JER SF tool is "<<rho_forJER<<"\n";
 
 
   std::size_t reserveSize = 0;
@@ -506,9 +503,9 @@ NtuplePairIndependentInfoProducer::produce(edm::Event& iEvent, const edm::EventS
         currentNtupleJet.fill_JEC_uncertaintySFs(JEC_SF_up, JEC_SF_down);
 
 
-        std::cout<<" jet at index "<<i<<" has pt & eta = "<<slimmedJets->at(i).pt()<<" , "<<slimmedJets->at(i).eta()<<" ";
-        std::cout<<" and has total uncertainty  = "<<JECuncertainty<<" giving an up. shift scale factor = ";
-        std::cout<<currentNtupleJet.JEC_uncertaintySF_up()<<" and a down JEC shift scale factor = "<<currentNtupleJet.JEC_uncertaintySF_down()<<"\n";
+        // std::cout<<" jet at index "<<i<<" has pt & eta = "<<slimmedJets->at(i).pt()<<" , "<<slimmedJets->at(i).eta()<<" ";
+        // std::cout<<" and has total uncertainty  = "<<JECuncertainty<<" giving an up. shift scale factor = ";
+        // std::cout<<currentNtupleJet.JEC_uncertaintySF_up()<<" and a down JEC shift scale factor = "<<currentNtupleJet.JEC_uncertaintySF_down()<<"\n";
 
 
 
@@ -540,7 +537,7 @@ NtuplePairIndependentInfoProducer::produce(edm::Event& iEvent, const edm::EventS
         /* look for a GenJet match - this is used for the JER smearing */
         if(slimmedGenJets.isValid()) 
         {
-          std::cout<<" VALID slimmedGenJets \n";
+        //  std::cout<<" VALID slimmedGenJets \n";
 
 
 
@@ -559,8 +556,8 @@ NtuplePairIndependentInfoProducer::produce(edm::Event& iEvent, const edm::EventS
 
             if( dR < 0.4/2 && dPt < maxDiff)
             {
-              std::cout<<" have a DR match to the jet @ index "<<i<<" and ";
-              std::cout<<" dPt = "<<dPt<<" and maxDiff = "<<maxDiff<<"\n";
+              // std::cout<<" have a DR match to the jet @ index "<<i<<" and ";
+              // std::cout<<" dPt = "<<dPt<<" and maxDiff = "<<maxDiff<<"\n";
               genJetMatchForJER = slimmedGenJets->at(g).p4();
               break;
             }
@@ -571,17 +568,17 @@ NtuplePairIndependentInfoProducer::produce(edm::Event& iEvent, const edm::EventS
 
         }
 
-        std::cout<<" for jet at index i with pt = "<<slimmedJets->at(i).pt()<<" found a genJet match with pT of ";
-        std::cout<<genJetMatchForJER.pt()<<" (0 means no match) which compares to the embedded genJet pt as ";
-        std::cout<<currentNtupleJet.GENjet_p4().pt()<<"\n";
+        // std::cout<<" for jet at index i with pt = "<<slimmedJets->at(i).pt()<<" found a genJet match with pT of ";
+        // std::cout<<genJetMatchForJER.pt()<<" (0 means no match) which compares to the embedded genJet pt as ";
+        // std::cout<<currentNtupleJet.GENjet_p4().pt()<<"\n";
 
 
 
         currentNtupleJet.fill_JER_SFs(sf, sf_up, sf_down, genJetMatchForJER, sigma_MC_PT);
 
 
-        std::cout<<" JER sf, sf+, sf-, resolution "<<currentNtupleJet.JER_SF_nominal()<<" "<<currentNtupleJet.JER_SF_up();
-        std::cout<<" "<<currentNtupleJet.JER_SF_down()<<" "<<currentNtupleJet.JER_resolution()<<"\n";
+        // std::cout<<" JER sf, sf+, sf-, resolution "<<currentNtupleJet.JER_SF_nominal()<<" "<<currentNtupleJet.JER_SF_up();
+        // std::cout<<" "<<currentNtupleJet.JER_SF_down()<<" "<<currentNtupleJet.JER_resolution()<<"\n";
 
 
 

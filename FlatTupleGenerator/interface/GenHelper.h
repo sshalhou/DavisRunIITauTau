@@ -91,6 +91,9 @@ public:
     std::vector<std::pair< int, int>> genParticle_isPromptFinalState();
     std::vector<std::pair< int, int>> genParticle_isDirectPromptTauDecayProduct();
     std::vector<std::pair< int, int>> genParticle_isDirectPromptTauDecayProductFinalState();
+    std::vector<std::pair< int, int>> genParticle_fromHardProcess();
+    std::vector<std::pair< int, int>> genParticle_isLastCopy();
+
 
 
   	std::vector <std::pair< int, double>> genParticle_pt();
@@ -249,6 +252,8 @@ private:
   std::vector<std::pair< int, int>> m_genParticle_isPromptFinalState;
   std::vector<std::pair< int, int>> m_genParticle_isDirectPromptTauDecayProduct;
   std::vector<std::pair< int, int>> m_genParticle_isDirectPromptTauDecayProductFinalState;
+  std::vector<std::pair< int, int>> m_genParticle_fromHardProcess;
+  std::vector<std::pair< int, int>> m_genParticle_isLastCopy;
 
 
   std::vector <std::pair< int, double>> m_genParticle_pt;

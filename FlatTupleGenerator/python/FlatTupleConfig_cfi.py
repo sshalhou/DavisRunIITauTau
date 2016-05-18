@@ -109,18 +109,6 @@ svMassAtFlatTupleConfig = cms.PSet(
 # individual object cuts used to build the PSets 
 # each line appended will be concatenated (using &&) into a single cut string
 
-# electron in EleTau final state :
-ele_EleTau = []
-ele_EleTau.append("pt>23")
-ele_EleTau.append("abs(eta)<2.1")
-ele_EleTau.append("abs(dxy)<0.045")
-ele_EleTau.append("abs(dz)<0.2")
-ele_EleTau.append("passFail_electronMVA80==1.0")
-ele_EleTau.append("passConversionVeto==1.0")
-ele_EleTau.append("numberOfMissingInnerHits<=1")
-#ele_EleTau.append("relativeIsol('DeltaBetaCorrectedRelIso')<0.1")
-
-
 # electron in EleMuon final state :
 ele_EleMuon = []
 ele_EleMuon.append("pt>13")
@@ -128,21 +116,8 @@ ele_EleMuon.append("abs(eta)<2.5")
 ele_EleMuon.append("abs(dxy)<0.045")
 ele_EleMuon.append("abs(dz)<0.2")
 ele_EleMuon.append("passFail_electronMVA80==1.0")
-ele_EleMuon.append("passConversionVeto==1.0")
 ele_EleMuon.append("numberOfMissingInnerHits<=1")
-
-#ele_EleMuon.append("relativeIsol('DeltaBetaCorrectedRelIso')<0.15")
-
-
-# muon in MuonTau final state :
-muon_MuonTau = []
-muon_MuonTau.append("pt>18")
-muon_MuonTau.append("abs(eta)<2.1")
-muon_MuonTau.append("abs(dxy)<0.045")
-muon_MuonTau.append("abs(dz)<0.2")
-muon_MuonTau.append("passesMediumMuonId==1.0")
-#muon_MuonTau.append("relativeIsol('DeltaBetaCorrectedRelIso')<0.1")
-
+ele_EleMuon.append("passConversionVeto==1.0")
 
 # muon in EleMuon final state :
 muon_EleMuon = []
@@ -151,41 +126,49 @@ muon_EleMuon.append("abs(eta)<2.4")
 muon_EleMuon.append("abs(dxy)<0.045")
 muon_EleMuon.append("abs(dz)<0.2")
 muon_EleMuon.append("passesMediumMuonId==1.0")
-#muon_EleMuon.append("relativeIsol('DeltaBetaCorrectedRelIso')<0.15")
 
-
+# muon in MuonTau final state :
+muon_MuonTau = []
+muon_MuonTau.append("pt>19")
+muon_MuonTau.append("abs(eta)<2.1")
+muon_MuonTau.append("abs(dxy)<0.045")
+muon_MuonTau.append("abs(dz)<0.2")
+muon_MuonTau.append("passesMediumMuonId==1.0")
 
 
 # tau in MuonTau final state :
 tau_MuonTau = []
 tau_MuonTau.append("pt>20")
 tau_MuonTau.append("abs(eta)<2.3")
-tau_MuonTau.append("tauID('decayModeFindingNewDMs') > 0.5")                                        
+tau_MuonTau.append("tauID('decayModeFinding') > 0.5")                                        
 tau_MuonTau.append("abs(dz)<0.2")
-#tau_MuonTau.append("abs(dzTauVertex)==0.0")
 tau_MuonTau.append("abs(charge)==1.0")
 
-
-# tau in TauTau final state :
-tau_TauTau = []
-tau_TauTau.append("pt>45")
-tau_TauTau.append("abs(eta)<2.1")
-tau_TauTau.append("tauID('decayModeFindingNewDMs') > 0.5")                                        
-tau_TauTau.append("abs(dz)<0.2")
-#tau_TauTau.append("abs(dzTauVertex)==0.0")
-tau_TauTau.append("abs(charge)==1.0")
-
+# electron in EleTau final state :
+ele_EleTau = []
+ele_EleTau.append("pt>24")
+ele_EleTau.append("abs(eta)<2.1")
+ele_EleTau.append("abs(dxy)<0.045")
+ele_EleTau.append("abs(dz)<0.2")
+ele_EleTau.append("passFail_electronMVA80==1.0")
+ele_EleTau.append("passConversionVeto==1.0")
+ele_EleTau.append("numberOfMissingInnerHits<=1")
 
 # tau in EleTau final state :
 tau_EleTau = []
 tau_EleTau.append("pt>20")
 tau_EleTau.append("abs(eta)<2.3")
-tau_EleTau.append("tauID('decayModeFindingNewDMs') > 0.5")                                        
+tau_EleTau.append("tauID('decayModeFinding') > 0.5")                                        
 tau_EleTau.append("abs(dz)<0.2")
-#tau_EleTau.append("abs(dzTauVertex)==0.0")
 tau_EleTau.append("abs(charge)==1.0")
 
-
+# tau in TauTau final state :
+tau_TauTau = []
+tau_TauTau.append("pt>40")
+tau_TauTau.append("abs(eta)<2.1")
+tau_TauTau.append("tauID('decayModeFinding') > 0.5")                                        
+tau_TauTau.append("abs(dz)<0.2")
+tau_TauTau.append("abs(charge)==1.0")
 
 
 cut_ele_EleTau = cms.string(and_string_concatonator(ele_EleTau))
@@ -369,12 +352,6 @@ print " should make code so that you don't need to manually adjust this "
 # main cut vector PSet :
 theCuts = cms.VPSet(
 
-		cms.PSet(   candidatePairType = cms.string("EleTau"),
-					electronID = cut_ele_EleTau,
-					tauID = cut_tau_EleTau,
-					minDR = cms.double(0.5),
-					trigger = etauTriggerCut
-				),
 		cms.PSet(   candidatePairType = cms.string("EleMuon"),
 					electronID = cut_ele_EleMuon,
 					muonID = cut_muon_EleMuon,
@@ -382,6 +359,7 @@ theCuts = cms.VPSet(
 					trigger = emuTriggerCut
 
 				),
+
 		cms.PSet(   candidatePairType = cms.string("MuonTau"),
 					muonID = cut_muon_MuonTau,
 					tauID = cut_tau_MuonTau,
@@ -389,6 +367,16 @@ theCuts = cms.VPSet(
 					trigger = mtauTriggerCut
 
 				),
+
+
+		cms.PSet(   candidatePairType = cms.string("EleTau"),
+					electronID = cut_ele_EleTau,
+					tauID = cut_tau_EleTau,
+					minDR = cms.double(0.5),
+					trigger = etauTriggerCut
+				),
+
+
 		cms.PSet(   candidatePairType = cms.string("TauTau"),
 					tauID = cut_tau_TauTau,
 					minDR = cms.double(0.5),
@@ -398,28 +386,7 @@ theCuts = cms.VPSet(
 	)
 
 
-minimalCuts = cms.VPSet(
 
-		cms.PSet(   candidatePairType = cms.string("EleTau"),
-					minDR = cms.double(0.5),
-					trigger = etauTriggerCut
-				),
-		cms.PSet(   candidatePairType = cms.string("EleMuon"),
-					minDR = cms.double(0.3),
-					trigger = emuTriggerCut
-
-				),
-		cms.PSet(   candidatePairType = cms.string("MuonTau"),
-					minDR = cms.double(0.5),
-					trigger = mtauTriggerCut
-
-				),
-		cms.PSet(   candidatePairType = cms.string("TauTau"),
-					minDR = cms.double(0.5),
-					trigger = tautauTriggerCut
-
-				)
-	)
 
 		
 
@@ -434,14 +401,21 @@ generalConfig = cms.PSet(
 			rankByIsolation = cms.bool(True), # checks leg1 isolation, then pt in case of tie
 			electronIsolationForRank = cms.string("DeltaBetaCorrectedRelIso"),
 			muonIsolationForRank = cms.string("DeltaBetaCorrectedRelIso"),
-			tauIDisolationForRank = cms.string("byCombinedIsolationDeltaBetaCorrRaw3Hits"),
+			# (74X and below) tauIDisolationForRank = cms.string("byCombinedIsolationDeltaBetaCorrRaw3Hits"),
+			tauIDisolationForRank = cms.string("byIsolationMVArun2v1DBoldDMwLTraw"),
 
 			# isolations to keep as the leg1_relativeIsolation and 
 			# leg2_relativeIsolation branches 
 
 			electronIsolationForRelIsoBranch = cms.string("DeltaBetaCorrectedRelIso"),
 			muonIsolationForRelIsoBranch= cms.string("DeltaBetaCorrectedRelIso"),
-			tauIsolationForRelIsoBranch = cms.string("byCombinedIsolationDeltaBetaCorrRaw3Hits"),
+
+			# in 76X and up these differ by channel
+			tauIsolationForRelIsoBranch = cms.string("byTightIsolationMVArun2v1DBoldDMwLT"), # default for effLeptons
+			tauIsolationForRelIsoBranch_forEleTau = cms.string("byTightIsolationMVArun2v1DBoldDMwLT"),
+			tauIsolationForRelIsoBranch_forMuTau = cms.string("byTightIsolationMVArun2v1DBoldDMwLT"),
+			tauIsolationForRelIsoBranch_forTauTau = cms.string("byVTightIsolationMVArun2v1DBoldDMwLT"),
+
 
 			# isolations to keep as the veto_relativeIsolation  
 			# branches 
@@ -472,34 +446,28 @@ generalConfig = cms.PSet(
 			# note : the hardcoded THE_MAX variable in FlatTupleGenerator.cc limits the 
 			# number of these that we can keep 
 
-			tauIDsToKeep = cms.vstring(
-				"againstElectronLooseMVA5",
-				"againstElectronMediumMVA5",
+			tauIDsToKeep = cms.vstring(				
 				"againstElectronTightMVA5",
+				"againstElectronTightMVA6",
 				"againstElectronVLooseMVA5",
-				"againstElectronVTightMVA5",
+				"againstElectronVLooseMVA6",
 				"againstMuonLoose3",
 				"againstMuonTight3",
+				"byIsolationMVArun2v1DBoldDMwLTraw",
+				"byTightIsolationMVArun2v1DBoldDMwLT",
+				"byVTightIsolationMVArun2v1DBoldDMwLT",
+				"byLooseIsolationMVArun2v1DBoldDMwLT",
+				"byMediumIsolationMVArun2v1DBoldDMwLT",
+				"byVLooseIsolationMVArun2v1DBoldDMwLT",
+				"byVVTightIsolationMVArun2v1DBoldDMwLT",
 				"byCombinedIsolationDeltaBetaCorrRaw3Hits",
 				"byIsolationMVA3newDMwLTraw",
-				#"byIsolationMVA3newDMwoLTraw",
-				"byIsolationMVA3oldDMwLTraw",
-				#"byIsolationMVA3oldDMwoLTraw",
-				"byLooseCombinedIsolationDeltaBetaCorr3Hits",
-				"byLoosePileupWeightedIsolation3Hits",
-				"byMediumCombinedIsolationDeltaBetaCorr3Hits",
-				"byMediumPileupWeightedIsolation3Hits",
-				"byPileupWeightedIsolationRaw3Hits",
-				"byTightCombinedIsolationDeltaBetaCorr3Hits",
-				"byTightPileupWeightedIsolation3Hits",
-				"chargedIsoPtSum",
-				"decayModeFindingNewDMs",
-				#"decayModeFindingOldDMs",
-				"footprintCorrection",
-				"neutralIsoPtSum",
-				"neutralIsoPtSumWeight",
-				"photonPtSumOutsideSignalCone",
-				"puCorrPtSum"),
+				"decayModeFinding",
+				"decayModeFindingNewDMs"
+# bad				"decayModeFindingOldDMs"
+					),
+
+
 			
 			#####################
 			# b-tag configuration 

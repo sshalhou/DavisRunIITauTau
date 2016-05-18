@@ -24,6 +24,8 @@ void GenHelper::fillRecoIndependentInfo()
 	m_genParticle_isPromptFinalState.push_back(std::make_pair(g, GEN.gen_isPromptFinalState())); 
 	m_genParticle_isDirectPromptTauDecayProduct.push_back(std::make_pair(g, GEN.gen_isDirectPromptTauDecayProduct())); 
 	m_genParticle_isDirectPromptTauDecayProductFinalState.push_back(std::make_pair(g, GEN.gen_isDirectPromptTauDecayProductFinalState())); 
+    m_genParticle_fromHardProcess.push_back(std::make_pair(g, GEN.gen_FromHardProcess())); 
+    m_genParticle_isLastCopy.push_back(std::make_pair(g, GEN.gen_IsLastCopy())); 
 
 
 
@@ -134,7 +136,8 @@ void GenHelper::resetVars()
 	m_genParticle_isPromptFinalState.clear();
 	m_genParticle_isDirectPromptTauDecayProduct.clear();
 	m_genParticle_isDirectPromptTauDecayProductFinalState.clear();
-
+    m_genParticle_fromHardProcess.clear();
+    m_genParticle_isLastCopy.clear();
 
 	m_genParticle_pt.clear();
 	m_genParticle_eta.clear();
@@ -184,8 +187,8 @@ void GenHelper::init(std::vector<NtupleGenParticle> genVec, std::vector<NtupleLe
 	for(std::size_t e = 0; e<m_effLep.size(); ++e)
 	{
 		temp_effLep = effLep.at(e);
-		std::cout<<" checking MC matches for an EffLep at index "<<e<<" with ";
-		std::cout<<"pt = "<<temp_effLep.p4().pt()<<" and type "<<temp_effLep.leptonType()<<"\n";
+		// std::cout<<" checking MC matches for an EffLep at index "<<e<<" with ";
+		// std::cout<<"pt = "<<temp_effLep.p4().pt()<<" and type "<<temp_effLep.leptonType()<<"\n";
 		checkLegsForEorMuorGenJetMatches(3);
 	}
 
@@ -224,8 +227,8 @@ void GenHelper::init(std::vector<NtupleGenParticle> genVec, NtupleLepton leg1, N
 	checkLegsForEorMuorGenJetMatches(1);
 	checkLegsForEorMuorGenJetMatches(2);
 
-	std::cout<<" leg 1 mc match is type "<<m_leg1_MCMatchType<<" pdgId "<<m_leg1_MCMatchPdgId<<" pt "<<m_leg1_genMCmatch_pt<<"\n";
-	std::cout<<" leg 2 mc match is type "<<m_leg2_MCMatchType<<" pdgId "<<m_leg2_MCMatchPdgId<<" pt "<<m_leg2_genMCmatch_pt<<"\n";
+	// std::cout<<" leg 1 mc match is type "<<m_leg1_MCMatchType<<" pdgId "<<m_leg1_MCMatchPdgId<<" pt "<<m_leg1_genMCmatch_pt<<"\n";
+	// std::cout<<" leg 2 mc match is type "<<m_leg2_MCMatchType<<" pdgId "<<m_leg2_MCMatchPdgId<<" pt "<<m_leg2_genMCmatch_pt<<"\n";
 
 	/* now classify the event, only valid for DY MC */
 	classifyTheEventForRun2_DY();	
@@ -262,8 +265,8 @@ void GenHelper::checkLegsForEorMuorGenJetMatches(int legIndex)
 	else if(legIndex==2) leg.SetPtEtaPhiM(m_leg2.p4().pt(), m_leg2.p4().eta(), m_leg2.p4().phi(), m_leg2.p4().M());
 	else if(legIndex==3) leg.SetPtEtaPhiM(temp_effLep.p4().pt(), temp_effLep.p4().eta(), temp_effLep.p4().phi(), temp_effLep.p4().M());
 
-		std::cout<<" check--> lepton pt "<<leg.Pt()<<"\n";
-		std::cout<<"check--> gen particle size "<<m_genParticle_pdgId.size()<<"\n";
+		// std::cout<<" check--> lepton pt "<<leg.Pt()<<"\n";
+		// std::cout<<"check--> gen particle size "<<m_genParticle_pdgId.size()<<"\n";
 
 	for(std::size_t g = 0; g < m_genParticle_pdgId.size(); ++g)
 	{
@@ -271,7 +274,7 @@ void GenHelper::checkLegsForEorMuorGenJetMatches(int legIndex)
 		/* zero 4-vector */
 		genTemp.SetPtEtaPhiM(0,0,0,0);
 
-		std::cout<<" check-->  genTemp pt "<<genTemp.Pt()<<"\n";
+		// std::cout<<" check-->  genTemp pt "<<genTemp.Pt()<<"\n";
 
 
 		/* check for promptElectron/promptMuon/tauToElectronDecay/tauToMuonDecay */
@@ -421,7 +424,7 @@ void GenHelper::checkLegsForEorMuorGenJetMatches(int legIndex)
 
 		    }
 
-		   std::cout<<" check-->  genTauJet pt "<<genTauJet.Pt()<<"\n";
+		   // std::cout<<" check-->  genTauJet pt "<<genTauJet.Pt()<<"\n";
 
 
 			if(leg.DeltaR(genTauJet) < MCdrMatchRun2 && genTauJet.Pt()>15)
@@ -507,7 +510,7 @@ void GenHelper::checkLegsForEorMuorGenJetMatches(int legIndex)
 		m_effLep_genMCmatch_M.push_back(temp_effLep_genMCmatch_M);
 		m_effLep_MCMatchPdgId.push_back(temp_effLep_MCMatchPdgId);
 
-		std::cout<<" have effLepton MC matches with type, genPt, recoPt, pdgID = "<<temp_effLep_MCMatchType<<" , "<<temp_effLep_genMCmatch_pt<<" , "<<temp_effLep.p4().pt()<<"  , "<<temp_effLep_MCMatchPdgId<<"\n";
+		// std::cout<<" have effLepton MC matches with type, genPt, recoPt, pdgID = "<<temp_effLep_MCMatchType<<" , "<<temp_effLep_genMCmatch_pt<<" , "<<temp_effLep.p4().pt()<<"  , "<<temp_effLep_MCMatchPdgId<<"\n";
 
 	}
 
@@ -588,12 +591,12 @@ void GenHelper::classifyTheEventForRun2_DY()
 	}
 
 
-	std::cout<<" PAIR IS ";
-	if(m_IsZTT) std::cout<<" ZTT ";
-	if(m_IsZL) std::cout<<" ZL ";
-	if(m_IsZJ) std::cout<<" ZJ ";
-	if(m_IsZLL) std::cout<<" ZLL ";
-	std::cout<<"\n";
+	// std::cout<<" PAIR IS ";
+	// if(m_IsZTT) std::cout<<" ZTT ";
+	// if(m_IsZL) std::cout<<" ZL ";
+	// if(m_IsZJ) std::cout<<" ZJ ";
+	// if(m_IsZLL) std::cout<<" ZLL ";
+	// std::cout<<"\n";
 }
 
 
@@ -829,8 +832,8 @@ bool GenHelper::isRecoTauGenEorMu_FROMZ_Matched(NtupleLepton legX,std::vector<Nt
   	std::vector <std::pair< int, int>> GenHelper::genParticle_isPromptFinalState() {return m_genParticle_isPromptFinalState; };
   	std::vector <std::pair< int, int>> GenHelper::genParticle_isDirectPromptTauDecayProduct() {return m_genParticle_isDirectPromptTauDecayProduct; };
   	std::vector <std::pair< int, int>> GenHelper::genParticle_isDirectPromptTauDecayProductFinalState() {return m_genParticle_isDirectPromptTauDecayProductFinalState; };
-
-
+    std::vector<std::pair< int, int>> GenHelper::genParticle_fromHardProcess() {return m_genParticle_fromHardProcess;};
+    std::vector<std::pair< int, int>> GenHelper::genParticle_isLastCopy() {return m_genParticle_isLastCopy;};
 
 
   	std::vector <std::pair< int, double>> GenHelper::genParticle_pt()  {return m_genParticle_pt; };

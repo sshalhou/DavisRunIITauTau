@@ -197,7 +197,7 @@ void bTagSFhelper::InitForJet(double pt_, double eta_, double rawScore_,
     // for B 
     if(m_jetHadronFlavour == BTagEntry::FLAV_B)
     {
-    	std::cout<<" have *** a B with m_jetHadronFlavour = "<<m_jetHadronFlavour<<"\n";
+    	//std::cout<<" have *** a B with m_jetHadronFlavour = "<<m_jetHadronFlavour<<"\n";
     	/* read medium central 1st to get a random sequence synced with other H2Tau groups */
 		m_SF_MediumWpCentral = m_MediumWpReaderCentral_forBorC->eval(BTagEntry::FLAV_B, m_jetEta, m_jetPt);
 		m_SF_MediumWpUp = m_MediumWpReaderUp_forBorC->eval(BTagEntry::FLAV_B, m_jetEta, m_jetPt);
@@ -232,7 +232,7 @@ void bTagSFhelper::InitForJet(double pt_, double eta_, double rawScore_,
     	BINy_ = m_TightEff_b->GetYaxis()->FindBin(m_jetEta);
     	m_EFF_TightWp = m_TightEff_b->GetBinContent(BINx_,BINy_);
 
-    	std::cout<<" _b jet eff are "<<m_EFF_LooseWp<<" , "<<m_EFF_MediumWp<<" , "<<m_EFF_TightWp<<"\n";
+    	//std::cout<<" _b jet eff are "<<m_EFF_LooseWp<<" , "<<m_EFF_MediumWp<<" , "<<m_EFF_TightWp<<"\n";
 
 
     }
@@ -241,7 +241,7 @@ void bTagSFhelper::InitForJet(double pt_, double eta_, double rawScore_,
     else if(m_jetHadronFlavour == BTagEntry::FLAV_C)
     {
 
-    	std::cout<<" have *** a C with m_jetHadronFlavour = "<<m_jetHadronFlavour<<"\n";
+    	//std::cout<<" have *** a C with m_jetHadronFlavour = "<<m_jetHadronFlavour<<"\n";
 
     	/* read medium central 1st to get a random sequence synced with other H2Tau groups */
 		m_SF_MediumWpCentral = m_MediumWpReaderCentral_forBorC->eval(BTagEntry::FLAV_C, m_jetEta, m_jetPt);
@@ -277,7 +277,7 @@ void bTagSFhelper::InitForJet(double pt_, double eta_, double rawScore_,
     	BINy_ = m_TightEff_c->GetYaxis()->FindBin(m_jetEta);
     	m_EFF_TightWp = m_TightEff_c->GetBinContent(BINx_,BINy_);
 
-    	std::cout<<" _c jet eff are "<<m_EFF_LooseWp<<" , "<<m_EFF_MediumWp<<" , "<<m_EFF_TightWp<<"\n";
+    	// std::cout<<" _c jet eff are "<<m_EFF_LooseWp<<" , "<<m_EFF_MediumWp<<" , "<<m_EFF_TightWp<<"\n";
 
 
 
@@ -288,7 +288,7 @@ void bTagSFhelper::InitForJet(double pt_, double eta_, double rawScore_,
     else if(m_jetHadronFlavour == BTagEntry::FLAV_UDSG)
     {
 
-    	 std::cout<<" have *** a UDSG with m_jetHadronFlavour = "<<m_jetHadronFlavour<<"\n";
+    	 // std::cout<<" have *** a UDSG with m_jetHadronFlavour = "<<m_jetHadronFlavour<<"\n";
 
     	/* read medium central 1st to get a random sequence synced with other H2Tau groups */
 		m_SF_MediumWpCentral = m_MediumWpReaderCentral_forUDSG->eval(BTagEntry::FLAV_UDSG, m_jetEta, m_jetPt);
@@ -324,7 +324,7 @@ void bTagSFhelper::InitForJet(double pt_, double eta_, double rawScore_,
     	BINy_ = m_TightEff_usdg->GetYaxis()->FindBin(m_jetEta);
     	m_EFF_TightWp = m_TightEff_usdg->GetBinContent(BINx_,BINy_);
 
-    	std::cout<<" _usdg jet eff are "<<m_EFF_LooseWp<<" , "<<m_EFF_MediumWp<<" , "<<m_EFF_TightWp<<"\n";
+    	// std::cout<<" _usdg jet eff are "<<m_EFF_LooseWp<<" , "<<m_EFF_MediumWp<<" , "<<m_EFF_TightWp<<"\n";
 
 
 
@@ -363,7 +363,7 @@ void bTagSFhelper::InitForJet(double pt_, double eta_, double rawScore_,
 void bTagSFhelper::PromoteDemoteBtags(double raw_, double cutL_, double cutM_, double cutT_, bool isRealData_)
 {
 
-	std::cout<<" Raw b-tags are L, M, T : "<<(raw_>cutL_)<<" , "<<(raw_>cutM_)<<" , "<<(raw_>cutT_)<<"\n";
+	// std::cout<<" Raw b-tags are L, M, T : "<<(raw_>cutL_)<<" , "<<(raw_>cutM_)<<" , "<<(raw_>cutT_)<<"\n";
 
 	if(isRealData_)
 	{

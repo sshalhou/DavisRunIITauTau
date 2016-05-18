@@ -72,7 +72,18 @@ svMassAtFlatTupleConfig_(iConfig.getParameter<edm::ParameterSet>("SVMassConfig")
 
   electronIsolationForRelIsoBranch = EventCutSrc_.getParameter<std::string>("electronIsolationForRelIsoBranch");
   muonIsolationForRelIsoBranch = EventCutSrc_.getParameter<std::string>("muonIsolationForRelIsoBranch");
+
   tauIsolationForRelIsoBranch = EventCutSrc_.getParameter<std::string>("tauIsolationForRelIsoBranch");
+  tauIsolationForRelIsoBranch_forEleTau = EventCutSrc_.getParameter<std::string>("tauIsolationForRelIsoBranch_forEleTau");
+  tauIsolationForRelIsoBranch_forMuTau = EventCutSrc_.getParameter<std::string>("tauIsolationForRelIsoBranch_forMuTau");
+  tauIsolationForRelIsoBranch_forTauTau = EventCutSrc_.getParameter<std::string>("tauIsolationForRelIsoBranch_forTauTau");
+
+
+
+
+
+
+
   vetoElectronIsolationForRelIsoBranch = EventCutSrc_.getParameter<std::string>("vetoElectronIsolationForRelIsoBranch");
   vetoMuonIsolationForRelIsoBranch = EventCutSrc_.getParameter<std::string>("vetoMuonIsolationForRelIsoBranch");
 
@@ -192,7 +203,7 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
 
     if(currentPairToCheck.CandidateEventType()==TupleCandidateEventTypes::EffCand) 
     {
-      std::cout<<" have an EffLepton candidate \n";      
+//      std::cout<<" have an EffLepton candidate \n";      
 
       //////////////////////////////////////////////////////////////////////
       // fill the TTree for a EffLepton list                              //
@@ -231,7 +242,7 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
 
 
 
-      std::cout<<" FILL EffCandidate! \n";
+  //    std::cout<<" FILL EffCandidate! \n";
       FlatTuple->Fill();
 
 
@@ -243,7 +254,7 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
     else if(currentPairToCheck.CandidateEventType()!=TupleCandidateEventTypes::EffCand) 
     {
 
-      std::cout<<" have a regular pair candidate \n";      
+ //     std::cout<<" have a regular pair candidate \n";      
 
       //////////////////////////////////////////////////////////////////////
       // fill the TTree for a regular H->tau tau pair candidate           //
@@ -423,10 +434,10 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
 
       handleLeg1AndLeg2Info(iEvent,iSetup,currentPair); 
 
-      std::cout<<" ievent isReal data "<<isRealData<<" vs new function "<<currentPair.isRealData();
+   //   std::cout<<" ievent isReal data "<<isRealData<<" vs new function "<<currentPair.isRealData();
 
 
-      std::cout<<" FILL H2TauTau! \n";
+   //   std::cout<<" FILL H2TauTau! \n";
       FlatTuple->Fill();
 
   }
@@ -491,16 +502,36 @@ void FlatTupleGenerator::handleMvaMetAndRecoil(const edm::Event& iEvent, const e
 
 
     /* the number of jets */
-    /* For W+Jets increase the number of jets, 
-     passed to the recoil corrector, by one. (due to fakes) */
+    /* in W+jets njets should be increased by 1 (due to jet-faking-lepton) */
+    /* for  diboson, single top, and ttbar : 
+           in eTau/muTau if leg2_MCMatchType == GenMcMatchTypes::jetOrPuFake increase jet count by 1 
+           in tt channel, increase njets by one for each leg with GenMcMatchTypes::jetOrPuFake */
+
+    ////////////////////////////
 
     int njets = numberOfJets30; /* always use default not any of the variants */
 
-    if(RECOILCORRECTION_=="MG5_W" || RECOILCORRECTION_=="aMCatNLO_W")
+ //   std::cout<<" In njet adjustment code, leg1 and leg2 mc match types are "<<genhelper.leg1_MCMatchType()<<" "<<genhelper.leg2_MCMatchType()<<"\n";
+
+    if(RECOILCORRECTION_=="MG5_W" || RECOILCORRECTION_=="aMCatNLO_W") /* w+jets */
     {
       njets = numberOfJets30+1;
     }
-
+    
+    else if(MetSystematicType_=="MEtSys::ProcessType::EWK" || MetSystematicType_=="MEtSys::ProcessType::TOP") /* t, tt, or vv */
+    {
+      if(currentPair.CandidateEventType()==TupleCandidateEventTypes::EleTau || currentPair.CandidateEventType()==TupleCandidateEventTypes::MuonTau)
+      {
+        if(genhelper.leg2_MCMatchType() == GenMcMatchTypes::jetOrPuFake) njets = numberOfJets30+1;
+      }
+      else if(currentPair.CandidateEventType()==TupleCandidateEventTypes::TauTau)
+      {
+        njets = numberOfJets30;
+        if(genhelper.leg1_MCMatchType() == GenMcMatchTypes::jetOrPuFake) njets++;
+        if(genhelper.leg2_MCMatchType() == GenMcMatchTypes::jetOrPuFake) njets++;
+      }
+    }
+    ////////////////////////////
 
 
     if(RECOILCORRECTION_=="NONE")
@@ -690,17 +721,17 @@ void FlatTupleGenerator::handleMvaMetAndRecoil(const edm::Event& iEvent, const e
 
 
 
-    std::cout<<"MET Pt "<<uncorr_mvaMET<<" ---> corrected to "<<corr.Pt()<<"\n";
-    std::cout<<"MET Pt ResponseUP "<<corr_mvaMET<<" ---> shifted to "<<responseUP.Pt()<<"\n";
-    std::cout<<"MET Pt ResponseDOWN "<<corr_mvaMET<<" ---> shifted to "<<responseDOWN.Pt()<<"\n";
-    std::cout<<"MET Pt ResolutionUP "<<corr_mvaMET<<" ---> shifted to "<<resolutionUP.Pt()<<"\n";
-    std::cout<<"MET Pt ResolutionDOWN "<<corr_mvaMET<<" ---> shifted to "<<resolutionDOWN.Pt()<<"\n";
+    // std::cout<<"MET Pt "<<uncorr_mvaMET<<" ---> corrected to "<<corr.Pt()<<"\n";
+    // std::cout<<"MET Pt ResponseUP "<<corr_mvaMET<<" ---> shifted to "<<responseUP.Pt()<<"\n";
+    // std::cout<<"MET Pt ResponseDOWN "<<corr_mvaMET<<" ---> shifted to "<<responseDOWN.Pt()<<"\n";
+    // std::cout<<"MET Pt ResolutionUP "<<corr_mvaMET<<" ---> shifted to "<<resolutionUP.Pt()<<"\n";
+    // std::cout<<"MET Pt ResolutionDOWN "<<corr_mvaMET<<" ---> shifted to "<<resolutionDOWN.Pt()<<"\n";
     
-    std::cout<<"MET Phi "<<uncorr_mvaMET<<" ---> corrected to "<<corr.Phi()<<"\n";
-    std::cout<<"MET Phi ResponseUP "<<corr_mvaMET<<" ---> shifted to "<<responseUP.Phi()<<"\n";
-    std::cout<<"MET Phi ResponseDOWN "<<corr_mvaMET<<" ---> shifted to "<<responseDOWN.Phi()<<"\n";
-    std::cout<<"MET Phi ResolutionUP "<<corr_mvaMET<<" ---> shifted to "<<resolutionUP.Phi()<<"\n";
-    std::cout<<"MET Phi ResolutionDOWN "<<corr_mvaMET<<" ---> shifted to "<<resolutionDOWN.Phi()<<"\n";
+    // std::cout<<"MET Phi "<<uncorr_mvaMET<<" ---> corrected to "<<corr.Phi()<<"\n";
+    // std::cout<<"MET Phi ResponseUP "<<corr_mvaMET<<" ---> shifted to "<<responseUP.Phi()<<"\n";
+    // std::cout<<"MET Phi ResponseDOWN "<<corr_mvaMET<<" ---> shifted to "<<responseDOWN.Phi()<<"\n";
+    // std::cout<<"MET Phi ResolutionUP "<<corr_mvaMET<<" ---> shifted to "<<resolutionUP.Phi()<<"\n";
+    // std::cout<<"MET Phi ResolutionDOWN "<<corr_mvaMET<<" ---> shifted to "<<resolutionDOWN.Phi()<<"\n";
     
 
 
@@ -908,7 +939,7 @@ void FlatTupleGenerator::handleEffLeptonInfo(const edm::Event& iEvent, const edm
 
     else if(currentPair.EffLepton().at(i).leptonType() == TupleLeptonTypes::aTau)
     {
-      effLep_RelIso.push_back(currentPair.EffLepton().at(i).tauID(tauIsolationForRelIsoBranch));
+      effLep_RelIso.push_back(currentPair.EffLepton().at(i).tauID(tauIsolationForRelIsoBranch)); // the default
     }
 
   
@@ -1016,6 +1047,7 @@ void FlatTupleGenerator::handleLeg1AndLeg2Info(const edm::Event& iEvent, const e
   }
 
 
+  DeltaR_leg1_leg2 = deltaR(currentPair.leg1().p4(), currentPair.leg2().p4());
 
 
   leg1_leptonType = currentPair.leg1().leptonType();
@@ -1194,8 +1226,21 @@ void FlatTupleGenerator::handleLeg1AndLeg2Info(const edm::Event& iEvent, const e
   }
 
   else if(currentPair.leg1().leptonType() == TupleLeptonTypes::aTau)
-  {
-    leg1_RelIso = currentPair.leg1().tauID(tauIsolationForRelIsoBranch);
+  {                                       
+    if(currentPair.CandidateEventType()==TupleCandidateEventTypes::EleTau)
+    {
+          leg1_RelIso = currentPair.leg1().tauID(tauIsolationForRelIsoBranch_forEleTau);
+    }
+    else if(currentPair.CandidateEventType()==TupleCandidateEventTypes::MuonTau)
+    {
+          leg1_RelIso = currentPair.leg1().tauID(tauIsolationForRelIsoBranch_forMuTau);
+    }
+    else if(currentPair.CandidateEventType()==TupleCandidateEventTypes::TauTau)
+    {
+          leg1_RelIso = currentPair.leg1().tauID(tauIsolationForRelIsoBranch_forTauTau);
+    }
+    else leg1_RelIso = currentPair.leg1().tauID(tauIsolationForRelIsoBranch);
+
   }
 
 
@@ -1211,7 +1256,21 @@ void FlatTupleGenerator::handleLeg1AndLeg2Info(const edm::Event& iEvent, const e
 
   else if(currentPair.leg2().leptonType() == TupleLeptonTypes::aTau)
   {
-    leg2_RelIso = currentPair.leg2().tauID(tauIsolationForRelIsoBranch);
+
+    if(currentPair.CandidateEventType()==TupleCandidateEventTypes::EleTau)
+    {
+          leg2_RelIso = currentPair.leg2().tauID(tauIsolationForRelIsoBranch_forEleTau);
+    }
+    else if(currentPair.CandidateEventType()==TupleCandidateEventTypes::MuonTau)
+    {
+          leg2_RelIso = currentPair.leg2().tauID(tauIsolationForRelIsoBranch_forMuTau);
+    }
+    else if(currentPair.CandidateEventType()==TupleCandidateEventTypes::TauTau)
+    {
+          leg2_RelIso = currentPair.leg2().tauID(tauIsolationForRelIsoBranch_forTauTau);
+    }
+    else leg2_RelIso = currentPair.leg2().tauID(tauIsolationForRelIsoBranch);
+
   }
 
   
@@ -1254,7 +1313,7 @@ void FlatTupleGenerator::handleSVFitCall(const edm::Event& iEvent, const edm::Ev
  NtupleEvent currentPair, std::string METtoUSE)
 {
 
-  std::cout<<" CALLING SVFIT WITH "<<METtoUSE<<" MET \n";
+  //std::cout<<" CALLING SVFIT WITH "<<METtoUSE<<" MET \n";
 
   /* only valid string args */
   assert(METtoUSE == "MVAMET_CORR" ||\
@@ -1478,7 +1537,7 @@ void FlatTupleGenerator::handleSVFitCall(const edm::Event& iEvent, const edm::Ev
 
     if(CandidateEventType == TupleCandidateEventTypes::TauTau)
     {
-      std::cout<<" Flat Decay Mode **** 1, 2 = "<<currentPair.leg1().decayMode()<<" "<<currentPair.leg2().decayMode()<<"\n";
+    //  std::cout<<" Flat Decay Mode **** 1, 2 = "<<currentPair.leg1().decayMode()<<" "<<currentPair.leg2().decayMode()<<"\n";
 
 
       if(currentPair.leg1().p4().pt() >= currentPair.leg2().p4().pt())
@@ -2191,6 +2250,12 @@ void FlatTupleGenerator::handlePairIndepInfo(const edm::Event& iEvent, const edm
   genParticle_isPromptFinalState = genhelper.genParticle_isPromptFinalState();
   genParticle_isDirectPromptTauDecayProduct = genhelper.genParticle_isDirectPromptTauDecayProduct();
   genParticle_isDirectPromptTauDecayProductFinalState = genhelper.genParticle_isDirectPromptTauDecayProductFinalState();
+  genParticle_fromHardProcess = genhelper.genParticle_fromHardProcess();
+  genParticle_isLastCopy = genhelper.genParticle_isLastCopy();
+
+
+
+
   genParticle_pt = genhelper.genParticle_pt();
   genParticle_eta = genhelper.genParticle_eta();
   genParticle_phi = genhelper.genParticle_phi();
@@ -2444,6 +2509,7 @@ void FlatTupleGenerator::handlePairIndepInfo(const edm::Event& iEvent, const edm
   leg2_dzTauVertex = NAN;
 
 
+  DeltaR_leg1_leg2  = NAN;
   leg1_leptonType = -999;
   leg1_charge = -999;
   leg1_PFpdgId = -999;
@@ -2824,8 +2890,8 @@ void FlatTupleGenerator::handlePairIndepInfo(const edm::Event& iEvent, const edm
   genParticle_isPromptFinalState.clear();
   genParticle_isDirectPromptTauDecayProduct.clear();
   genParticle_isDirectPromptTauDecayProductFinalState.clear();
-
-
+  genParticle_fromHardProcess.clear();
+  genParticle_isLastCopy.clear();
 
   genParticle_pt.clear();
   genParticle_eta.clear();
@@ -3058,6 +3124,7 @@ void FlatTupleGenerator::beginJob()
 
   FlatTuple->Branch("PairPassesDoubleTauIsoTau28MatchCut", &PairPassesDoubleTauIsoTau28MatchCut);
 
+  FlatTuple->Branch("DeltaR_leg1_leg2", &DeltaR_leg1_leg2);
   FlatTuple->Branch("leg1_leptonType", &leg1_leptonType);
   FlatTuple->Branch("leg1_dz", &leg1_dz);
   FlatTuple->Branch("leg1_dxy", &leg1_dxy);
@@ -3532,7 +3599,8 @@ void FlatTupleGenerator::beginJob()
   FlatTuple->Branch("genParticle_isPromptFinalState", &genParticle_isPromptFinalState);
   FlatTuple->Branch("genParticle_isDirectPromptTauDecayProduct", &genParticle_isDirectPromptTauDecayProduct);
   FlatTuple->Branch("genParticle_isDirectPromptTauDecayProductFinalState", &genParticle_isDirectPromptTauDecayProductFinalState);
-
+  FlatTuple->Branch("genParticle_fromHardProcess", &genParticle_fromHardProcess);
+  FlatTuple->Branch("genParticle_isLastCopy", &genParticle_isLastCopy);
 
   FlatTuple->Branch("genParticle_pt", &genParticle_pt);
   FlatTuple->Branch("genParticle_eta", &genParticle_eta);

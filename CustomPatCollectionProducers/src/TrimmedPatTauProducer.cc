@@ -162,8 +162,8 @@ TrimmedPatTauProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup
   }
 
 
-  std::cout<<"MAX_TO_KEEP = "<<MAX_TO_KEEP_<<"\n";
-  std::cout<<"KEEPING ONLY "<<storedTaus->size()<<" of "<<taus->size()<<" TOTAL TAUS \n";
+//  std::cout<<"MAX_TO_KEEP = "<<MAX_TO_KEEP_<<"\n";
+//  std::cout<<"KEEPING ONLY "<<storedTaus->size()<<" of "<<taus->size()<<" TOTAL TAUS \n";
   // add the taus to the event output
   std::auto_ptr<std::vector<pat::Tau> > eptr(storedTaus);
   iEvent.put(eptr,NAME_);

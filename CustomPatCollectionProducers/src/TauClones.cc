@@ -173,8 +173,10 @@ void TauClones::ChangeEnergyAndFillUserFloats(std::vector <pat::Tau> & clones,
 
 		// tau IDs and MVA isolations
 
+		//std::cout<<"... checking tau ID list .... \n";
 		for (std::size_t p=0; p<t.tauIDs().size(); ++p)
 		{
+		//	std::cout<<" known tau ID "<<t.tauIDs()[p].first<<"\n";
 
 			t.addUserFloat("tauID_"+t.tauIDs()[p].first,t.tauIDs()[p].second);
 

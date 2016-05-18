@@ -212,8 +212,8 @@ NtupleJet::NtupleJet()
     m_jet_p4_JECshiftedDown *= down_;    
 
 
-    std::cout<<" jet with pT = "<<m_jet_p4.pt()<<" + JEC shift gives pT =  "<<m_jet_p4_JECshiftedUp.pt();
-    std::cout<<" while - shift gives "<<m_jet_p4_JECshiftedDown.pt()<<"\n";
+    // std::cout<<" jet with pT = "<<m_jet_p4.pt()<<" + JEC shift gives pT =  "<<m_jet_p4_JECshiftedUp.pt();
+    // std::cout<<" while - shift gives "<<m_jet_p4_JECshiftedDown.pt()<<"\n";
 
 
   }
@@ -252,9 +252,9 @@ NtupleJet::NtupleJet()
       pt_new_up = std::max(0., genJet_.pt() + m_JER_SF_up * (m_jet_p4.pt() - genJet_.pt()));
       pt_new_down = std::max(0., genJet_.pt() + m_JER_SF_down * (m_jet_p4.pt() - genJet_.pt()));
 
-      std::cout<<" For a well-gen matched jet with pt = "<<m_jet_p4.pt()<<" ";
-      std::cout<<" the new JER scaled pT is "<<pt_new_nominal<<" under a +1 sigma shift it is "<<pt_new_up;
-      std::cout<<" and under a -1 sigma shift it is "<<pt_new_down<<" ";
+      // std::cout<<" For a well-gen matched jet with pt = "<<m_jet_p4.pt()<<" ";
+      // std::cout<<" the new JER scaled pT is "<<pt_new_nominal<<" under a +1 sigma shift it is "<<pt_new_up;
+      // std::cout<<" and under a -1 sigma shift it is "<<pt_new_down<<" ";
 
     }
 
@@ -289,9 +289,9 @@ NtupleJet::NtupleJet()
       pt_new_down = std::max(0., gausDN.GetRandom());
 
 
-      std::cout<<" For a NON-gen matched jet with pt = "<<m_jet_p4.pt()<<" ";
-      std::cout<<" the new JER scaled pT is "<<pt_new_nominal<<" under a +1 sigma shift it is "<<pt_new_up;
-      std::cout<<" and under a -1 sigma shift it is "<<pt_new_down<<" ";
+      // std::cout<<" For a NON-gen matched jet with pt = "<<m_jet_p4.pt()<<" ";
+      // std::cout<<" the new JER scaled pT is "<<pt_new_nominal<<" under a +1 sigma shift it is "<<pt_new_up;
+      // std::cout<<" and under a -1 sigma shift it is "<<pt_new_down<<" ";
 
 
     }
@@ -310,7 +310,7 @@ NtupleJet::NtupleJet()
     m_jet_p4_JERup       *=  (pt_new_up/m_jet_p4.pt());
     m_jet_p4_JERdown     *=  (pt_new_down/m_jet_p4.pt());
 
-    std::cout<<" test nom, up, dn "<<m_jet_p4_JERnomianl.pt()<<" , "<<m_jet_p4_JERup.pt()<<" , "<<m_jet_p4_JERdown.pt()<<"\n";
+    // std::cout<<" test nom, up, dn "<<m_jet_p4_JERnomianl.pt()<<" , "<<m_jet_p4_JERup.pt()<<" , "<<m_jet_p4_JERdown.pt()<<"\n";
 
   }
 

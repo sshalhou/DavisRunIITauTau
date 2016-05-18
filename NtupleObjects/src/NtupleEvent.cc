@@ -172,7 +172,7 @@ float NtupleEvent::isLeg1GoodForHLTPath(std::string label_) const
 float NtupleEvent::isLeg2GoodForHLTPath(std::string label_) const
 {
 	float returnValue = 0.0;
-	std::cout<<" testing trig leg2  m_isLeg2GoodForHLTPath size "<<m_isLeg2GoodForHLTPath.size()<<"\n";
+	//std::cout<<" testing trig leg2  m_isLeg2GoodForHLTPath size "<<m_isLeg2GoodForHLTPath.size()<<"\n";
 
 	for(std::size_t x = 0; x < m_isLeg2GoodForHLTPath.size();++x) 
 	{ 
@@ -214,9 +214,9 @@ void NtupleEvent::fillL1IsoTauMatchInfoLeg1andLeg2(edm::Handle<l1extra::L1JetPar
 		}
 	}
 
-	std::cout<<L1IsoTaus->size()<<" = total isoTaus ";
-	std::cout<<" leg1 matches to "<<m_leg1_L1IsoTauDR05Matches.size();
-	std::cout<<" while leg2 matches "<<m_leg2_L1IsoTauDR05Matches.size()<<"\n";
+	// std::cout<<L1IsoTaus->size()<<" = total isoTaus ";
+	// std::cout<<" leg1 matches to "<<m_leg1_L1IsoTauDR05Matches.size();
+	// std::cout<<" while leg2 matches "<<m_leg2_L1IsoTauDR05Matches.size()<<"\n";
 
 
 }
@@ -239,8 +239,8 @@ void NtupleEvent::fillL1IsoTauMatchInfoForEffLepton(edm::Handle<l1extra::L1JetPa
 				if(deltaR(m_EffLepton.at(e).p4(),i->p4()) < 0.5) tempVec.push_back(i->p4());
 			}
 
-			std::cout<<L1IsoTaus->size()<<" = total isoTaus ";
-			std::cout<<" eff lepton at index "<<e<<" matches to "<<tempVec.size()<<" of them \n";
+			// std::cout<<L1IsoTaus->size()<<" = total isoTaus ";
+			// std::cout<<" eff lepton at index "<<e<<" matches to "<<tempVec.size()<<" of them \n";
 
 			m_EffLepton_L1IsoTauDR05Matches.push_back(tempVec);
 			tempVec.clear();
@@ -386,20 +386,21 @@ bool NtupleEvent::PairPassesDoubleTauIsoTau28MatchCut() const
 
 					if( deltaR(m_leg1_L1IsoTauDR05Matches.at(a),m_leg2_L1IsoTauDR05Matches.at(b))>0.001 ) 
 					{
-						std::cout<<" NOT THE SAME ISOTAU ";
-						std::cout<<" pt "<<m_leg1_L1IsoTauDR05Matches.at(a).pt()<<" vs "<<m_leg2_L1IsoTauDR05Matches.at(b).pt()<<" ";
-						std::cout<<" eta "<<m_leg1_L1IsoTauDR05Matches.at(a).eta()<<" vs "<<m_leg2_L1IsoTauDR05Matches.at(b).eta()<<" ";
-						std::cout<<" phi "<<m_leg1_L1IsoTauDR05Matches.at(a).phi()<<" vs "<<m_leg2_L1IsoTauDR05Matches.at(b).phi()<<" ";
+						// std::cout<<" NOT THE SAME ISOTAU ";
+						// std::cout<<" pt "<<m_leg1_L1IsoTauDR05Matches.at(a).pt()<<" vs "<<m_leg2_L1IsoTauDR05Matches.at(b).pt()<<" ";
+						// std::cout<<" eta "<<m_leg1_L1IsoTauDR05Matches.at(a).eta()<<" vs "<<m_leg2_L1IsoTauDR05Matches.at(b).eta()<<" ";
+						// std::cout<<" phi "<<m_leg1_L1IsoTauDR05Matches.at(a).phi()<<" vs "<<m_leg2_L1IsoTauDR05Matches.at(b).phi()<<" ";
 
 						return 1;
 					}
-					else /* just for print out */
-					{	
-						std::cout<<" IDENTICAL ISOTAU ";
-						std::cout<<" pt "<<m_leg1_L1IsoTauDR05Matches.at(a).pt()<<" vs "<<m_leg2_L1IsoTauDR05Matches.at(b).pt()<<" ";
-						std::cout<<" eta "<<m_leg1_L1IsoTauDR05Matches.at(a).eta()<<" vs "<<m_leg2_L1IsoTauDR05Matches.at(b).eta()<<" ";
-						std::cout<<" phi "<<m_leg1_L1IsoTauDR05Matches.at(a).phi()<<" vs "<<m_leg2_L1IsoTauDR05Matches.at(b).phi()<<" ";
-					}
+					/* just for print out */
+					//else 
+					//{	
+						// std::cout<<" IDENTICAL ISOTAU ";
+						// std::cout<<" pt "<<m_leg1_L1IsoTauDR05Matches.at(a).pt()<<" vs "<<m_leg2_L1IsoTauDR05Matches.at(b).pt()<<" ";
+						// std::cout<<" eta "<<m_leg1_L1IsoTauDR05Matches.at(a).eta()<<" vs "<<m_leg2_L1IsoTauDR05Matches.at(b).eta()<<" ";
+						// std::cout<<" phi "<<m_leg1_L1IsoTauDR05Matches.at(a).phi()<<" vs "<<m_leg2_L1IsoTauDR05Matches.at(b).phi()<<" ";
+					//}
 				}
 
 			}

@@ -102,12 +102,7 @@ GEN_PARTICLES_TO_KEEP.append(9000007) # chi (the dm particle) - from private pro
 ####################################################################################################
 
 DEFAULT_BTAG_ALGORITHM = "pfCombinedInclusiveSecondaryVertexV2BJetTags"
-APPLY_BTAG_SF = False 						
-BTAG_SF_SEED = 123456	#############################################################################
-						# note : if BTAG_SF_SEED is anything other than 0, the seed of the TRandom3 
-						#   	 used in the BtagSF tool will be set to that value
-						#        if however, BTAG_SF_SEED is 0, then the seed defaults to 	
-						#        (int)(eta+5)*100000) using a custom edit to the BtagSF.hh file 		
+
 
 ####################################################################################################
 ####################################################################################################

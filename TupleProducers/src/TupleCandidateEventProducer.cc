@@ -292,12 +292,12 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
   /* fill met-pair based vector */
   //////////////////////////////////////////////////     
 
-  std::cout<<" met valid ? "<<mvamets.isValid()<<NAME_<<"\n";
+//  std::cout<<" met valid ? "<<mvamets.isValid()<<NAME_<<"\n";
   if(mvamets.isValid())
   {
 
 
-    std::cout<<" have "<<mvamets->size()<<" mva met entries \n";
+//    std::cout<<" have "<<mvamets->size()<<" mva met entries \n";
 
     for(std::size_t m = 0; m < mvamets->size(); ++m)
     {
@@ -360,9 +360,9 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
             CurrentCandidateEvent.set_leg2(*legB);
             l2.SetPtEtaPhiM(legB->pt(), legB->eta(), legB->phi(),legB->mass());
 
-            std::cout<<"DEFAULT DOUBLE TAU PAIR @ mvaMET INDEX "<<m<<" pt1 = "<<l1.Pt()<<" pt2 = "<<l2.Pt()<<" ";
-            std::cout<<" isol 1 "<<legA->tauID(tauIsolForOrderingPair_)<<" ";
-            std::cout<<" isol 2 "<<legB->tauID(tauIsolForOrderingPair_)<<"\n";
+            // std::cout<<"DEFAULT DOUBLE TAU PAIR @ mvaMET INDEX "<<m<<" pt1 = "<<l1.Pt()<<" pt2 = "<<l2.Pt()<<" ";
+            // std::cout<<" isol 1 "<<legA->tauID(tauIsolForOrderingPair_)<<" ";
+            // std::cout<<" isol 2 "<<legB->tauID(tauIsolForOrderingPair_)<<"\n";
             
           }
 
@@ -376,15 +376,15 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
             CurrentCandidateEvent.set_leg2(*legA);
             l2.SetPtEtaPhiM(legA->pt(), legA->eta(), legA->phi(),legA->mass());
 
-            std::cout<<"INVERTED DOUBLE TAU PAIR @ mvaMET INDEX "<<m<<" pt1 = "<<l1.Pt()<<" pt2 = "<<l2.Pt()<<" ";
-            std::cout<<" isol 1 "<<legB->tauID(tauIsolForOrderingPair_)<<" ";
-            std::cout<<" isol 2 "<<legA->tauID(tauIsolForOrderingPair_)<<"\n";
+            // std::cout<<"INVERTED DOUBLE TAU PAIR @ mvaMET INDEX "<<m<<" pt1 = "<<l1.Pt()<<" pt2 = "<<l2.Pt()<<" ";
+            // std::cout<<" isol 1 "<<legB->tauID(tauIsolForOrderingPair_)<<" ";
+            // std::cout<<" isol 2 "<<legA->tauID(tauIsolForOrderingPair_)<<"\n";
 
           }
            
 
 
-          std::cout<<" JUST CREATED A TAU TAU DR = "<<l1.DeltaR(l2)<<"\n";
+       //   std::cout<<" JUST CREATED A TAU TAU DR = "<<l1.DeltaR(l2)<<"\n";
 
         }
 
@@ -450,12 +450,12 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
 
           CurrentCandidateEvent.set_CandidateEventType();
 
-          std::cout<<" PT CHECK "<<l1.Pt()<<" "<<l2.Pt()<<" candidate type "<<CurrentCandidateEvent.CandidateEventType()<<"\n";
+//          std::cout<<" PT CHECK "<<l1.Pt()<<" "<<l2.Pt()<<" candidate type "<<CurrentCandidateEvent.CandidateEventType()<<"\n";
           assert( CurrentCandidateEvent.CandidateEventType()>=1 && CurrentCandidateEvent.CandidateEventType()<=10 );
 
           if(l1.DeltaR(l2)<pairDeltaRmin_) continue;
 
-          std::cout<<" AFTER DR CUT  of "<<pairDeltaRmin_<<" get DR = "<<l1.DeltaR(l2)<<" pts are "<<l1.Pt()<<" "<<l2.Pt()<<"\n";
+          //std::cout<<" AFTER DR CUT  of "<<pairDeltaRmin_<<" get DR = "<<l1.DeltaR(l2)<<" pts are "<<l1.Pt()<<" "<<l2.Pt()<<"\n";
 
           ///////////////////
           /////// VETO ELECTRONS /////////////////////////////////////////////
@@ -479,10 +479,10 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
           }
           ///////////////////
 
-          std::cout<<" ---------->\n";
-          std::cout<<" ---------->\n";
-          std::cout<<" ---------->\n";
-          std::cout<<" ----------> pt1, pt2 "<<l1.Pt()<<" "<<l2.Pt()<<" candidate type = "<<CurrentCandidateEvent.CandidateEventType()<<"\n";
+          // std::cout<<" ---------->\n";
+          // std::cout<<" ---------->\n";
+          // std::cout<<" ---------->\n";
+          // std::cout<<" ----------> pt1, pt2 "<<l1.Pt()<<" "<<l2.Pt()<<" candidate type = "<<CurrentCandidateEvent.CandidateEventType()<<"\n";
 
           // SVMASS Convention *** 
           // In the etau and mutau channel, please add the electron or muon to the
@@ -553,8 +553,8 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
           if(CurrentCandidateEvent.CandidateEventType()==TupleCandidateEventTypes::TauTau)
           {
 
-            std::cout<<" TEST PRINT TAU 1 DECAY MODE : "<<CurrentCandidateEvent.leg1().Tau()[0].decayMode()<<"\n";
-            std::cout<<" TEST PRINT TAU 2 DECAY MODE : "<<CurrentCandidateEvent.leg2().Tau()[0].decayMode()<<"\n";
+            // std::cout<<" TEST PRINT TAU 1 DECAY MODE : "<<CurrentCandidateEvent.leg1().Tau()[0].decayMode()<<"\n";
+            // std::cout<<" TEST PRINT TAU 2 DECAY MODE : "<<CurrentCandidateEvent.leg2().Tau()[0].decayMode()<<"\n";
 
             if(l1.Pt() >= l2.Pt())
             {
@@ -674,7 +674,7 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
             if( CurrentCandidateEvent.leg2().Tau()[0].tauID("decayModeFindingNewDMs") < 0.5 )  goodTauDecays = 0;
           }            
 
-          std::cout<<" CHECKING GOOD TAU DECAYS AT NTUPLE LEVEL AND GET :  "<<goodTauDecays<<"\n";
+       //   std::cout<<" CHECKING GOOD TAU DECAYS AT NTUPLE LEVEL AND GET :  "<<goodTauDecays<<"\n";
 
           if(goodTauDecays) /* only call if no hadronic taus, or if hadronic taus have good decay */
           {  
@@ -690,9 +690,9 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
           CurrentCandidateEvent.set_SVMass(sv_mass[0]); // the sv mass
           CurrentCandidateEvent.set_SVTransverseMass(sv_mass[1]); // the sv transverse mass
 
-          std::cout<<" PUSHING BACK TYPE "<<CurrentCandidateEvent.CandidateEventType()<<"\n";
+      //    std::cout<<" PUSHING BACK TYPE "<<CurrentCandidateEvent.CandidateEventType()<<"\n";
           
-          std::cout<<" TLOR DR = "<<l1.DeltaR(l2)<<"\n";
+        //  std::cout<<" TLOR DR = "<<l1.DeltaR(l2)<<"\n";
           
           TupleCandidateEvents->push_back(CurrentCandidateEvent);
 
@@ -708,7 +708,7 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
 
 
 
-std::cout<<" EVENT PAIR COUNT "<<TupleCandidateEvents->size()-1<<"\n";
+//std::cout<<" EVENT PAIR COUNT "<<TupleCandidateEvents->size()-1<<"\n";
 
 iEvent.put( TupleCandidateEvents, NAME_ );
 
@@ -800,7 +800,7 @@ std::vector<double> TupleCandidateEventProducer::computeSVMassAndSVTransverseMas
   covMET[1][1] = MET.getSignificanceMatrix()[1][1];
   if (svMassVerbose_)  covMET.Print();
 
- std::cout<<MTL.size()<<" size *** \n";
+ //std::cout<<MTL.size()<<" size *** \n";
  SVfitStandaloneAlgorithm svFitAlgorithm(MTL, MET.px(),MET.py(), covMET, svMassVerbose_);
 
  if(logMterm_>0)  svFitAlgorithm.addLogM(true, logMterm_);
@@ -823,9 +823,9 @@ std::vector<double> TupleCandidateEventProducer::computeSVMassAndSVTransverseMas
   retSVmass.push_back(svFitAlgorithm.getMass());
   retSVmass.push_back(svFitAlgorithm.transverseMass());
 
-  std::cout<<" TESTINGXX in NTuple (mass, metx, mety) "<<retSVmass[0]<<" "<<MET.px()<<" "<<MET.py()<<"\n";
+ // std::cout<<" TESTINGXX in NTuple (mass, metx, mety) "<<retSVmass[0]<<" "<<MET.px()<<" "<<MET.py()<<"\n";
 
-  std::cout<<" mass, transverseMass "<<retSVmass[0]<<" "<<retSVmass[1]<<"\n";
+ // std::cout<<" mass, transverseMass "<<retSVmass[0]<<" "<<retSVmass[1]<<"\n";
 
   inputFile_visPtResolution->Close();
   delete inputFile_visPtResolution;
@@ -896,7 +896,7 @@ std::vector<double> TupleCandidateEventProducer::computeSVMassAndSVTransverseMas
   retSVmass.push_back(svFitAlgorithm.getMass());
   retSVmass.push_back(svFitAlgorithm.transverseMass());
 
-  std::cout<<" mass, transverseMass "<<retSVmass[0]<<" "<<retSVmass[1]<<"\n";
+  //std::cout<<" mass, transverseMass "<<retSVmass[0]<<" "<<retSVmass[1]<<"\n";
 
   inputFile_visPtResolution->Close();
   delete inputFile_visPtResolution;

@@ -50,9 +50,7 @@ void JetHelper::init(std::vector<NtupleJet> jetVec, std::string jetCut, bTagSFhe
 		   but should only be used in mc and embedded samples where the b-jets are MC (like top)	
 		*/
 
-		std::cout<<" ***** JetHelper.cc (m_BtagSFTool)  ... \n";
-		std::cout<<"	these all need to become python args: \n";
-		std::cout<<"	(also the CSV file) ****** \n";
+	
 
 		jetVec[j].Use4VectorVariant("fullyCorrected");		
 		if(jetVec[j].pt() >= 20.0 && fabs(jetVec[j].eta()) <= 2.4) /* btagging does not apply out of this range */
@@ -103,10 +101,10 @@ void JetHelper::init(std::vector<NtupleJet> jetVec, std::string jetCut, bTagSFhe
 
 
 
-			std::cout<<" Jet b-tag Eff [l, m, t] = [ ";
-			std::cout<<jetVec[j].defaultBtagAlgorithmEff_LooseWp()<<" , ";
-			std::cout<<jetVec[j].defaultBtagAlgorithmEff_MediumWp()<<" , ";
-			std::cout<<jetVec[j].defaultBtagAlgorithmEff_TightWp()<<" ] \n ";
+			// std::cout<<" Jet b-tag Eff [l, m, t] = [ ";
+			// std::cout<<jetVec[j].defaultBtagAlgorithmEff_LooseWp()<<" , ";
+			// std::cout<<jetVec[j].defaultBtagAlgorithmEff_MediumWp()<<" , ";
+			// std::cout<<jetVec[j].defaultBtagAlgorithmEff_TightWp()<<" ] \n ";
 
 
 
@@ -114,20 +112,20 @@ void JetHelper::init(std::vector<NtupleJet> jetVec, std::string jetCut, bTagSFhe
 
 
 
-			std::cout<<" Jet B-tag SFs [loose, looseUp, looseDn, med, medUp, medDn, tight, tightUp, tightDn] =  [ ";
+			// std::cout<<" Jet B-tag SFs [loose, looseUp, looseDn, med, medUp, medDn, tight, tightUp, tightDn] =  [ ";
 
-			std::cout<<m_BtagSFTool->SF_LooseWpCentral()<<" , ";
-			std::cout<<m_BtagSFTool->SF_LooseWpUp()<<" , ";
-			std::cout<<m_BtagSFTool->SF_LooseWpDown()<<" , ";
-			std::cout<<m_BtagSFTool->SF_MediumWpCentral()<<" , ";
-			std::cout<<m_BtagSFTool->SF_MediumWpUp()<<" , ";
-			std::cout<<m_BtagSFTool->SF_MediumWpDown()<<" , ";
-			std::cout<<m_BtagSFTool->SF_TightWpCentral()<<" , ";
-			std::cout<<m_BtagSFTool->SF_TightWpUp()<<" , ";
-			std::cout<<m_BtagSFTool->SF_TightWpDown()<<" ] ";
+			// std::cout<<m_BtagSFTool->SF_LooseWpCentral()<<" , ";
+			// std::cout<<m_BtagSFTool->SF_LooseWpUp()<<" , ";
+			// std::cout<<m_BtagSFTool->SF_LooseWpDown()<<" , ";
+			// std::cout<<m_BtagSFTool->SF_MediumWpCentral()<<" , ";
+			// std::cout<<m_BtagSFTool->SF_MediumWpUp()<<" , ";
+			// std::cout<<m_BtagSFTool->SF_MediumWpDown()<<" , ";
+			// std::cout<<m_BtagSFTool->SF_TightWpCentral()<<" , ";
+			// std::cout<<m_BtagSFTool->SF_TightWpUp()<<" , ";
+			// std::cout<<m_BtagSFTool->SF_TightWpDown()<<" ] ";
 
-			std::cout<<" init args were [pt, eta, rawScore, hadronFlav  ] = [ ";
-			std::cout<<jetVec[j].pt()<<" , "<<jetVec[j].eta()<<" , "<<jetVec[j].defaultBtagAlgorithm_RawScore()<<" , "<<jetVec[j].HADRON_flavour()<<" ] \n";
+			// std::cout<<" init args were [pt, eta, rawScore, hadronFlav  ] = [ ";
+			// std::cout<<jetVec[j].pt()<<" , "<<jetVec[j].eta()<<" , "<<jetVec[j].defaultBtagAlgorithm_RawScore()<<" , "<<jetVec[j].HADRON_flavour()<<" ] \n";
 
 		}
 		
@@ -157,34 +155,34 @@ void JetHelper::init(std::vector<NtupleJet> jetVec, std::string jetCut, bTagSFhe
 
 
 
-		std::cout<<" ----> in FlatTuple jethelper jet @ index "<<j;
-		std::cout<<" fullyCorrected pT= "<<jetVec[j].pt()<<" with variants ... ";
-		std::cout<<" RES_smeared= "<<jetVec[j].jet_p4_JERnomianl().pt();
-		std::cout<<" RES_smearedUP= "<<jetVec[j].jet_p4_JERup().pt();
-		std::cout<<" RES_smearedDN= "<<jetVec[j].jet_p4_JERdown().pt();
-		std::cout<<" JECunc_UP= "<<jetVec[j].jet_p4_JECshiftedUp().pt();
-		std::cout<<" JECunc_DN= "<<jetVec[j].jet_p4_JECshiftedDown().pt();
-		std::cout<<" cycling through the variants now using  Use4VectorVariant ... ";
+		// std::cout<<" ----> in FlatTuple jethelper jet @ index "<<j;
+		// std::cout<<" fullyCorrected pT= "<<jetVec[j].pt()<<" with variants ... ";
+		// std::cout<<" RES_smeared= "<<jetVec[j].jet_p4_JERnomianl().pt();
+		// std::cout<<" RES_smearedUP= "<<jetVec[j].jet_p4_JERup().pt();
+		// std::cout<<" RES_smearedDN= "<<jetVec[j].jet_p4_JERdown().pt();
+		// std::cout<<" JECunc_UP= "<<jetVec[j].jet_p4_JECshiftedUp().pt();
+		// std::cout<<" JECunc_DN= "<<jetVec[j].jet_p4_JECshiftedDown().pt();
+		// std::cout<<" cycling through the variants now using  Use4VectorVariant ... ";
 
-		jetVec[j].Use4VectorVariant("JERnomianl");  std::cout<<" "<<jetVec[j].pt();
-		jetVec[j].Use4VectorVariant("JERup");  std::cout<<" "<<jetVec[j].pt();
-		jetVec[j].Use4VectorVariant("JERdown");  std::cout<<" "<<jetVec[j].pt();
-		jetVec[j].Use4VectorVariant("JECshiftedUp");  std::cout<<" "<<jetVec[j].pt();
-		jetVec[j].Use4VectorVariant("JECshiftedDown");  std::cout<<" "<<jetVec[j].pt();
+		// jetVec[j].Use4VectorVariant("JERnomianl");  std::cout<<" "<<jetVec[j].pt();
+		// jetVec[j].Use4VectorVariant("JERup");  std::cout<<" "<<jetVec[j].pt();
+		// jetVec[j].Use4VectorVariant("JERdown");  std::cout<<" "<<jetVec[j].pt();
+		// jetVec[j].Use4VectorVariant("JECshiftedUp");  std::cout<<" "<<jetVec[j].pt();
+		// jetVec[j].Use4VectorVariant("JECshiftedDown");  std::cout<<" "<<jetVec[j].pt();
 
-		std::cout<<" back to nominal ...";
+		// std::cout<<" back to nominal ...";
 
-		jetVec[j].Use4VectorVariant("fullyCorrected");  std::cout<<" "<<jetVec[j].pt()<<"\n";
+		// jetVec[j].Use4VectorVariant("fullyCorrected");  std::cout<<" "<<jetVec[j].pt()<<"\n";
 
 	}
 
-	std::cout<<" check size of different jet variant collections ";
-	std::cout<<" fullyCorrected pT= "<<m_PtJetPairs_fullyCorrected.size();
-	std::cout<<" RES_smeared= "<<m_PtJetPairs_JECshiftedUp.size();
-	std::cout<<" RES_smearedUP= "<<m_PtJetPairs_JECshiftedDown.size();
-	std::cout<<" RES_smearedDN= "<<m_PtJetPairs_JERnomianl.size();
-	std::cout<<" JECunc_UP= "<<m_PtJetPairs_JERup.size();
-	std::cout<<" JECunc_DN= "<<m_PtJetPairs_JERdown.size()<<"\n";
+	// std::cout<<" check size of different jet variant collections ";
+	// std::cout<<" fullyCorrected pT= "<<m_PtJetPairs_fullyCorrected.size();
+	// std::cout<<" RES_smeared= "<<m_PtJetPairs_JECshiftedUp.size();
+	// std::cout<<" RES_smearedUP= "<<m_PtJetPairs_JECshiftedDown.size();
+	// std::cout<<" RES_smearedDN= "<<m_PtJetPairs_JERnomianl.size();
+	// std::cout<<" JECunc_UP= "<<m_PtJetPairs_JERup.size();
+	// std::cout<<" JECunc_DN= "<<m_PtJetPairs_JERdown.size()<<"\n";
 
 
 } 

@@ -66,8 +66,6 @@ else :
 	print 'gen info retained for all pdgIDs '
 
 print 'default btag algoritm = ', DEFAULT_BTAG_ALGORITHM
-if APPLY_BTAG_SF :
-	print ' btag SFs will be applied with random seed = ', BTAG_SF_SEED
 
 
 
@@ -638,8 +636,6 @@ process.pairIndep = cms.EDProducer('NtuplePairIndependentInfoProducer',
 							slimmedJetSrc = cms.InputTag('filteredSlimmedJets::DavisNtuple'),
 							slimmedGenJetsSrc = cms.InputTag('slimmedGenJets'),
 							defaultBtagAlgorithmNameSrc = cms.string(DEFAULT_BTAG_ALGORITHM),
-							useBtagSFSrc = cms.bool(APPLY_BTAG_SF),
-							useBtagSFSeedSrc = cms.uint32(BTAG_SF_SEED),
 							PUjetIDworkingPointSrc = PUjetIDworkingPoint,
 							PFjetIDworkingPointSrc = PFjetIDworkingPoint,
 							vertexSrc =cms.InputTag('filteredVertices::DavisNtuple'),

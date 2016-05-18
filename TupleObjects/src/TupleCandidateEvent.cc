@@ -94,7 +94,7 @@ void TupleCandidateEvent::set_CandidateEventType(int dummy_)
   		m_CandidateEventType = TupleCandidateEventTypes::TauTau;
   	}
 
-  	std::cout<<" ASSIGNED "<<m_CandidateEventType<<"\n";
+  	//std::cout<<" ASSIGNED "<<m_CandidateEventType<<"\n";
 
   }
 

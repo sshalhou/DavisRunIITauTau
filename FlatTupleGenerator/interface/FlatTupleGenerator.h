@@ -44,6 +44,7 @@
 #include "FWCore/ServiceRegistry/interface/Service.h"
 #include "FWCore/Framework/interface/ESHandle.h"
 #include "CommonTools/UtilAlgos/interface/TFileService.h"
+#include "DataFormats/Math/interface/deltaR.h"
 
 // recoil corrector and systematics for 76X MC
 
@@ -179,6 +180,10 @@ public:
 	std::string electronIsolationForRelIsoBranch; 
 	std::string muonIsolationForRelIsoBranch;
 	std::string tauIsolationForRelIsoBranch;
+	std::string tauIsolationForRelIsoBranch_forEleTau;
+	std::string tauIsolationForRelIsoBranch_forMuTau;
+	std::string tauIsolationForRelIsoBranch_forTauTau;
+
 	std::string vetoElectronIsolationForRelIsoBranch; 
 	std::string vetoMuonIsolationForRelIsoBranch;
 
@@ -324,6 +329,7 @@ public:
 	float leg1_DepositR03ECal, leg2_DepositR03ECal;  /* muon isolationR03 quantity, see /CustomPatCollectionProducers/src/MuonClones.cc */
 	float leg1_DepositR03Hcal, leg2_DepositR03Hcal;  /* muon isolationR03 quantity, see /CustomPatCollectionProducers/src/MuonClones.cc */
 	float leg1_DepositR03TrackerOfficial, leg2_DepositR03TrackerOfficial; /* muon isolationR03 quantity, see /CustomPatCollectionProducers/src/MuonClones.cc */
+	double DeltaR_leg1_leg2; /* deltaR between the two candidate Higgs daughters */
 
 	/* muon ID related quanties, see CustomPatCollectionProducers/src/MuonClones.cc */
 	float leg1_isGlobalMuon, leg2_isGlobalMuon;
@@ -731,6 +737,8 @@ public:
   	std::vector <std::pair< int, int>> genParticle_isPromptFinalState;
   	std::vector <std::pair< int, int>> genParticle_isDirectPromptTauDecayProduct;
   	std::vector <std::pair< int, int>> genParticle_isDirectPromptTauDecayProductFinalState;
+  	std::vector <std::pair< int, int>> genParticle_fromHardProcess;
+  	std::vector <std::pair< int, int>> genParticle_isLastCopy;
 
 
   	std::vector <std::pair< int, double>> genParticle_pt;

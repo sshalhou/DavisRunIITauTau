@@ -47,7 +47,8 @@ public:
   int gen_isPromptFinalState() const; 
   int gen_isDirectPromptTauDecayProduct() const; 
   int gen_isDirectPromptTauDecayProductFinalState() const; 
-
+  int gen_FromHardProcess() const;
+  int gen_IsLastCopy() const;
 
   LorentzVector gen_p4() const; 
   float gen_vertex_x() const; 
@@ -70,6 +71,8 @@ private:
   int m_gen_isPromptFinalState;
   int m_gen_isDirectPromptTauDecayProduct;
   int m_gen_isDirectPromptTauDecayProductFinalState;
+  int m_gen_FromHardProcess; /* needed for top pT reweight */
+  int m_gen_IsLastCopy; /* needed for top pT reweight */
   LorentzVector m_gen_p4;
   float m_gen_vertex_x;
   float m_gen_vertex_y;

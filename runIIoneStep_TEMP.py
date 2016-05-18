@@ -66,8 +66,6 @@ else :
 	print 'gen info retained for all pdgIDs '
 
 print 'default btag algoritm = ', DEFAULT_BTAG_ALGORITHM
-if APPLY_BTAG_SF :
-	print ' btag SFs will be applied with random seed = ', BTAG_SF_SEED
 
 
 
@@ -437,7 +435,7 @@ process.TupleCandidateEvents = cms.EDProducer('TupleCandidateEventProducer' ,
 	mvaMETSrc = cms.InputTag("MVAMET:MVAMET:DavisNtuple"),
 	electronVetoSrc =cms.InputTag("filteredVetoElectrons","","DavisNtuple"),
 	muonVetoSrc = cms.InputTag("filteredVetoMuons","","DavisNtuple"),				
-	pairDeltaRmin = cms.double(0.3),
+	pairDeltaRmin = cms.double(0.1),
     # should be small since don't want one of the pair in the veto list
     # note : this is used for DR(leg1, leg2) >, and for overlap removal from the
     # veto e and mu lists
@@ -462,7 +460,7 @@ process.TupleCandidateEventsTauEsUp = cms.EDProducer('TupleCandidateEventProduce
 	mvaMETSrc = cms.InputTag("MVAMETtauEsUp:MVAMET:DavisNtuple"),
 	electronVetoSrc =cms.InputTag("filteredVetoElectrons","","DavisNtuple"),
 	muonVetoSrc = cms.InputTag("filteredVetoMuons","","DavisNtuple"),				
-	pairDeltaRmin = cms.double(0.3), 
+	pairDeltaRmin = cms.double(0.1), 
     # should be small since don't want one of the pair in the veto list
     # note : this is used for DR(leg1, leg2) >, and for overlap removal from the
     # veto e and mu lists
@@ -486,7 +484,7 @@ process.TupleCandidateEventsTauEsDown = cms.EDProducer('TupleCandidateEventProdu
 	mvaMETSrc = cms.InputTag("MVAMETtauEsDown:MVAMET:DavisNtuple"),
 	electronVetoSrc =cms.InputTag("filteredVetoElectrons","","DavisNtuple"),
 	muonVetoSrc = cms.InputTag("filteredVetoMuons","","DavisNtuple"),				
-	pairDeltaRmin = cms.double(0.3), 
+	pairDeltaRmin = cms.double(0.1), 
     # should be small since don't want one of the pair in the veto list
     # note : this is used for DR(leg1, leg2) >, and for overlap removal from the
     # veto e and mu lists
@@ -634,9 +632,7 @@ process.pairIndep = cms.EDProducer('NtuplePairIndependentInfoProducer',
 							genParticlesToKeep = GEN_PARTICLES_TO_KEEP,
 							slimmedJetSrc = cms.InputTag('filteredSlimmedJets::DavisNtuple'),
 							slimmedGenJetsSrc = cms.InputTag('slimmedGenJets'),
-							defaultBtagAlgorithmNameSrc = cms.string(DEFAULT_BTAG_ALGORITHM),
-							useBtagSFSrc = cms.bool(APPLY_BTAG_SF),
-							useBtagSFSeedSrc = cms.uint32(BTAG_SF_SEED),
+							defaultBtagAlgorithmNameSrc = cms.string(DEFAULT_BTAG_ALGORITHM),							
 							PUjetIDworkingPointSrc = PUjetIDworkingPoint,
 							PFjetIDworkingPointSrc = PFjetIDworkingPoint,
 							vertexSrc =cms.InputTag('filteredVertices::DavisNtuple'),
@@ -701,7 +697,6 @@ process.pairIndep = cms.EDProducer('NtuplePairIndependentInfoProducer',
 from DavisRunIITauTau.FlatTupleGenerator.FlatTupleConfig_cfi import generalConfig
 from DavisRunIITauTau.FlatTupleGenerator.FlatTupleConfig_cfi import theCuts
 from DavisRunIITauTau.FlatTupleGenerator.FlatTupleConfig_cfi import svMassAtFlatTupleConfig
-from DavisRunIITauTau.FlatTupleGenerator.FlatTupleConfig_cfi import minimalCuts
 
 
 
@@ -731,8 +726,7 @@ process.NOCUTS = cms.EDAnalyzer('FlatTupleGenerator',
 	MetSystematicType = sampleData.MetSystematicType,
 	EventCutSrc = generalConfig,
 	TauEsVariantToKeep = cms.string("NOMINAL"), # only NOMINAL, UP or DOWN are valid
-	LeptonCutVecSrc = minimalCuts,
-	#LeptonCutVecSrc = cms.VPSet(),
+	LeptonCutVecSrc = theCuts,
 	SVMassConfig = svMassAtFlatTupleConfig
 	)
 
@@ -745,8 +739,7 @@ process.NOCUTSupTau = cms.EDAnalyzer('FlatTupleGenerator',
 	MetSystematicType = sampleData.MetSystematicType,
 	EventCutSrc = generalConfig,
 	TauEsVariantToKeep = cms.string("UP"), # only NOMINAL, UP or DOWN are valid
-	LeptonCutVecSrc = minimalCuts,
-	#LeptonCutVecSrc = cms.VPSet(),	
+	LeptonCutVecSrc = theCuts,
 	SVMassConfig = svMassAtFlatTupleConfig
 	)
 
@@ -758,8 +751,7 @@ process.NOCUTSdownTau = cms.EDAnalyzer('FlatTupleGenerator',
 	MetSystematicType = sampleData.MetSystematicType,
 	EventCutSrc = generalConfig,
 	TauEsVariantToKeep = cms.string("DOWN"), # only NOMINAL, UP or DOWN are valid
-	LeptonCutVecSrc = minimalCuts,
-	#LeptonCutVecSrc = cms.VPSet(),
+	LeptonCutVecSrc = theCuts,
 	SVMassConfig = svMassAtFlatTupleConfig
 	)
 
