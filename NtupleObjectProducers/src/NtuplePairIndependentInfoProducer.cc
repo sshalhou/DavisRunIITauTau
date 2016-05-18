@@ -108,6 +108,11 @@ private:
   edm::EDGetTokenT<edm::View< reco::GenParticle > > prunedGenToken_;
 
   string NAME_;
+
+  /* JER txt files */
+  std::string rFile_string_; 
+  std::string sfFile_string_;
+
   std::vector<int> genParticlesToKeep_;
   
   edm::InputTag slimmedJetSrc_;
@@ -190,6 +195,8 @@ NtuplePairIndependentInfoProducer::NtuplePairIndependentInfoProducer(const edm::
 packedGenSrc_(iConfig.getParameter<edm::InputTag>("packedGenSrc" )),
 prunedGenSrc_(iConfig.getParameter<edm::InputTag>("prundedGenSrc" )),
 NAME_(iConfig.getParameter<string>("NAME" )),
+rFile_string_(iConfig.getParameter<string>("JERresolutionFile" )), 
+sfFile_string_(iConfig.getParameter<string>("JERscalefactorFile" )),
 genParticlesToKeep_(iConfig.getParameter<std::vector<int>>("genParticlesToKeep" )),
 slimmedJetSrc_(iConfig.getParameter<edm::InputTag>("slimmedJetSrc" )),
 slimmedGenJetsSrc_(iConfig.getParameter<edm::InputTag>("slimmedGenJetsSrc" )),
@@ -229,12 +236,12 @@ rhoSource_(iConfig.getParameter<edm::InputTag>("rhoSource" ))
 
   /* access the MC pT resolution */
 
-  edm::FileInPath rFile("DavisRunIITauTau/RunTimeDataInput/data/JER_FILES/Fall15_25nsV2_MC_PtResolution_AK4PFchs.txt");
+  edm::FileInPath rFile(rFile_string_);
   std::string rFile_string = rFile.fullPath();
   resolution_r = JME::JetResolution(rFile_string);
 
   /* access the resolution SFs */
-  edm::FileInPath sfFile("DavisRunIITauTau/RunTimeDataInput/data/JER_FILES/Fall15_25nsV2_MC_SF_AK4PFchs.txt");
+  edm::FileInPath sfFile(sfFile_string_);
   std::string sfFile_string = sfFile.fullPath();
   resolution_sf = JME::JetResolutionScaleFactor(sfFile_string);
 

@@ -46,8 +46,9 @@ class bTagSFhelper {
 
 public:
 
-/* args are (the CSV SF file, the loose b-tag eff root file, the medium b-tag eff root file, the tight b-tag eff root file) */
-  bTagSFhelper(edm::FileInPath, edm::FileInPath, edm::FileInPath, edm::FileInPath); 
+/* args are (the CSV SF file, the loose b-tag eff root file, the medium b-tag eff root file, the tight b-tag eff root file, */
+/* the loose btag WP cut, the medium btag WP cut, the tight btag wp cut */
+  bTagSFhelper(edm::FileInPath, edm::FileInPath, edm::FileInPath, edm::FileInPath, double, double, double); 
    virtual ~bTagSFhelper()
   { 
   	delete m_calib; 
@@ -117,15 +118,15 @@ public:
   /* return the scale factors and btag eff, only valid after InitForJet is called for a jet */
 
 
-	bool isTagged_LooseWpCentral() const;
-	bool isTagged_LooseWpUp() const;
-	bool isTagged_LooseWpDown() const;
-	bool isTagged_MediumWpCentral() const;
-	bool isTagged_MediumWpUp() const;
-	bool isTagged_MediumWpDown() const;
-	bool isTagged_TightWpCentral() const;
-	bool isTagged_TightWpUp() const;
-	bool isTagged_TightWpDown() const;
+	bool IsTagged_LooseWpCentral() const;
+	bool IsTagged_LooseWpUp() const;
+	bool IsTagged_LooseWpDown() const;
+	bool IsTagged_MediumWpCentral() const;
+	bool IsTagged_MediumWpUp() const;
+	bool IsTagged_MediumWpDown() const;
+	bool IsTagged_TightWpCentral() const;
+	bool IsTagged_TightWpUp() const;
+	bool IsTagged_TightWpDown() const;
 
 	double EFF_LooseWp() const;
 	double EFF_MediumWp() const;
@@ -147,6 +148,10 @@ public:
 
 
 private:
+
+	double m_cutLoose;
+	double m_cutMedium;
+	double m_cutTight;
 
 
     double m_jetPt;
@@ -216,15 +221,15 @@ private:
 	/* the btag results - evalueded after scale factors are applied */
 
 
-	bool m_isTagged_LooseWpCentral;
-	bool m_isTagged_LooseWpUp;
-	bool m_isTagged_LooseWpDown;
-	bool m_isTagged_MediumWpCentral;
-	bool m_isTagged_MediumWpUp;
-	bool m_isTagged_MediumWpDown;
-	bool m_isTagged_TightWpCentral;
-	bool m_isTagged_TightWpUp;
-	bool m_isTagged_TightWpDown;
+	bool m_IsTagged_LooseWpCentral;
+	bool m_IsTagged_LooseWpUp;
+	bool m_IsTagged_LooseWpDown;
+	bool m_IsTagged_MediumWpCentral;
+	bool m_IsTagged_MediumWpUp;
+	bool m_IsTagged_MediumWpDown;
+	bool m_IsTagged_TightWpCentral;
+	bool m_IsTagged_TightWpUp;
+	bool m_IsTagged_TightWpDown;
 
 	/* eff root files */
 
@@ -255,6 +260,8 @@ private:
 
 	void PromoteDemoteBtags(double, double, double, double, bool);
 
+	bool applyBTagSF(bool, double, double, float); /* actually applies the SF using promite demote, 
+	based on https://github.com/rappoccio/usercode/blob/Dev_53x/EDSHyFT/plugins/BTagSFUtil_tprime.h */
 
 };
 

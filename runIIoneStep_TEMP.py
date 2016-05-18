@@ -103,8 +103,8 @@ process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(1000) )
 
 myfilelist = cms.untracked.vstring()
 myfilelist.extend(['file:/uscms_data/d3/shalhout/miniAODv2_SyncSample.root'])
-process.source = cms.Source("PoolSource",fileNames=myfilelist,
-	eventsToSkip = cms.untracked.VEventRange('1:1-1:4941')	)
+process.source = cms.Source("PoolSource",fileNames=myfilelist)
+#	eventsToSkip = cms.untracked.VEventRange('1:1-1:4941')	)
 
 
 
@@ -629,6 +629,8 @@ process.pairIndep = cms.EDProducer('NtuplePairIndependentInfoProducer',
 							packedGenSrc = cms.InputTag('packedGenParticles'),
 							prundedGenSrc =  cms.InputTag('prunedGenParticles'),
 							NAME=cms.string("NtupleEventPairIndep"),
+							JERresolutionFile = cms.string("DavisRunIITauTau/RunTimeDataInput/data/JER_FILES/Fall15_25nsV2_MC_PtResolution_AK4PFchs.txt"),
+							JERscalefactorFile = cms.string("DavisRunIITauTau/RunTimeDataInput/data/JER_FILES/Fall15_25nsV2_MC_SF_AK4PFchs.txt"),
 							genParticlesToKeep = GEN_PARTICLES_TO_KEEP,
 							slimmedJetSrc = cms.InputTag('filteredSlimmedJets::DavisNtuple'),
 							slimmedGenJetsSrc = cms.InputTag('slimmedGenJets'),

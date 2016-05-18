@@ -563,6 +563,15 @@ public:
 	std::vector<double> jets_BtagEff_LooseWp;
 	std::vector<double> jets_BtagEff_MediumWp;
 	std::vector<double> jets_BtagEff_TightWp;
+	std::vector<double> jets_IsBTagged_LooseWpCentral;
+	std::vector<double> jets_IsBTagged_LooseWpUp;
+	std::vector<double> jets_IsBTagged_LooseWpDown;
+	std::vector<double> jets_IsBTagged_MediumWpCentral;
+	std::vector<double> jets_IsBTagged_MediumWpUp;
+	std::vector<double> jets_IsBTagged_MediumWpDown;
+	std::vector<double> jets_IsBTagged_TightWpCentral;
+	std::vector<double> jets_IsBTagged_TightWpUp;
+	std::vector<double> jets_IsBTagged_TightWpDown;
 
 
 
@@ -594,6 +603,15 @@ public:
 	std::vector<double> jets_BtagEff_LooseWp_JECshiftedUp;
 	std::vector<double> jets_BtagEff_MediumWp_JECshiftedUp;
 	std::vector<double> jets_BtagEff_TightWp_JECshiftedUp;	
+	std::vector<double> jets_IsBTagged_LooseWpCentral_JECshiftedUp;
+	std::vector<double> jets_IsBTagged_LooseWpUp_JECshiftedUp;
+	std::vector<double> jets_IsBTagged_LooseWpDown_JECshiftedUp;
+	std::vector<double> jets_IsBTagged_MediumWpCentral_JECshiftedUp;
+	std::vector<double> jets_IsBTagged_MediumWpUp_JECshiftedUp;
+	std::vector<double> jets_IsBTagged_MediumWpDown_JECshiftedUp;
+	std::vector<double> jets_IsBTagged_TightWpCentral_JECshiftedUp;
+	std::vector<double> jets_IsBTagged_TightWpUp_JECshiftedUp;
+	std::vector<double> jets_IsBTagged_TightWpDown_JECshiftedUp;
 
 
 
@@ -621,7 +639,18 @@ public:
 	std::vector<double> jets_BtagEff_LooseWp_JECshiftedDown;
 	std::vector<double> jets_BtagEff_MediumWp_JECshiftedDown;
 	std::vector<double> jets_BtagEff_TightWp_JECshiftedDown;
+	std::vector<double> jets_IsBTagged_LooseWpCentral_JECshiftedDown;
+	std::vector<double> jets_IsBTagged_LooseWpUp_JECshiftedDown;
+	std::vector<double> jets_IsBTagged_LooseWpDown_JECshiftedDown;
+	std::vector<double> jets_IsBTagged_MediumWpCentral_JECshiftedDown;
+	std::vector<double> jets_IsBTagged_MediumWpUp_JECshiftedDown;
+	std::vector<double> jets_IsBTagged_MediumWpDown_JECshiftedDown;
+	std::vector<double> jets_IsBTagged_TightWpCentral_JECshiftedDown;
+	std::vector<double> jets_IsBTagged_TightWpUp_JECshiftedDown;
+	std::vector<double> jets_IsBTagged_TightWpDown_JECshiftedDown;
+
 			
+
 	int numberOfJets_JERup;
 	int numberOfJets30_JERup;
 	std::vector<double> jets_pt_JERup;
@@ -646,6 +675,17 @@ public:
 	std::vector<double> jets_BtagEff_LooseWp_JERup;
 	std::vector<double> jets_BtagEff_MediumWp_JERup;
 	std::vector<double> jets_BtagEff_TightWp_JERup;
+	std::vector<double> jets_IsBTagged_LooseWpCentral_JERup;
+	std::vector<double> jets_IsBTagged_LooseWpUp_JERup;
+	std::vector<double> jets_IsBTagged_LooseWpDown_JERup;
+	std::vector<double> jets_IsBTagged_MediumWpCentral_JERup;
+	std::vector<double> jets_IsBTagged_MediumWpUp_JERup;
+	std::vector<double> jets_IsBTagged_MediumWpDown_JERup;
+	std::vector<double> jets_IsBTagged_TightWpCentral_JERup;
+	std::vector<double> jets_IsBTagged_TightWpUp_JERup;
+	std::vector<double> jets_IsBTagged_TightWpDown_JERup;
+
+
 
 	int numberOfJets_JERdown;
 	int numberOfJets30_JERdown;
@@ -671,6 +711,15 @@ public:
 	std::vector<double> jets_BtagEff_LooseWp_JERdown;
 	std::vector<double> jets_BtagEff_MediumWp_JERdown;
 	std::vector<double> jets_BtagEff_TightWp_JERdown;
+	std::vector<double> jets_IsBTagged_LooseWpCentral_JERdown;
+	std::vector<double> jets_IsBTagged_LooseWpUp_JERdown;
+	std::vector<double> jets_IsBTagged_LooseWpDown_JERdown;
+	std::vector<double> jets_IsBTagged_MediumWpCentral_JERdown;
+	std::vector<double> jets_IsBTagged_MediumWpUp_JERdown;
+	std::vector<double> jets_IsBTagged_MediumWpDown_JERdown;
+	std::vector<double> jets_IsBTagged_TightWpCentral_JERdown;
+	std::vector<double> jets_IsBTagged_TightWpUp_JERdown;
+	std::vector<double> jets_IsBTagged_TightWpDown_JERdown;
 
 
   	/* gen particles - kind of complicated, but we don't want custom objects in this code */

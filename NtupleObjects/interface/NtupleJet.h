@@ -65,6 +65,20 @@ public:
   void set_defaultBtagAlgorithmEff_MediumWp(double);
   void set_defaultBtagAlgorithmEff_TightWp(double);
 
+  /* set the actual b-tag results after SFs are applied */
+
+  void set_defaultBtagAlgorithmIsTagged_LooseWpCentral(bool);
+  void set_defaultBtagAlgorithmIsTagged_LooseWpUp(bool);
+  void set_defaultBtagAlgorithmIsTagged_LooseWpDown(bool);
+  void set_defaultBtagAlgorithmIsTagged_MediumWpCentral(bool);
+  void set_defaultBtagAlgorithmIsTagged_MediumWpUp(bool);
+  void set_defaultBtagAlgorithmIsTagged_MediumWpDown(bool);
+  void set_defaultBtagAlgorithmIsTagged_TightWpCentral(bool);
+  void set_defaultBtagAlgorithmIsTagged_TightWpUp(bool);
+  void set_defaultBtagAlgorithmIsTagged_TightWpDown(bool);
+
+
+
 
   // helpers
 
@@ -141,6 +155,19 @@ public:
   double defaultBtagAlgorithmSF_TightWpCentral() const;
   double defaultBtagAlgorithmSF_TightWpUp() const;
   double defaultBtagAlgorithmSF_TightWpDown() const;
+
+
+
+  bool defaultBtagAlgorithmIsTagged_LooseWpCentral() const;
+  bool defaultBtagAlgorithmIsTagged_LooseWpUp() const;
+  bool defaultBtagAlgorithmIsTagged_LooseWpDown() const;
+  bool defaultBtagAlgorithmIsTagged_MediumWpCentral() const;
+  bool defaultBtagAlgorithmIsTagged_MediumWpUp() const;
+  bool defaultBtagAlgorithmIsTagged_MediumWpDown() const;
+  bool defaultBtagAlgorithmIsTagged_TightWpCentral() const;
+  bool defaultBtagAlgorithmIsTagged_TightWpUp() const;
+  bool defaultBtagAlgorithmIsTagged_TightWpDown() const;
+
 
   double defaultBtagAlgorithmEff_LooseWp() const;
   double defaultBtagAlgorithmEff_MediumWp() const;
@@ -222,6 +249,20 @@ private:
   double m_defaultBtagAlgorithmEff_LooseWp;
   double m_defaultBtagAlgorithmEff_MediumWp;
   double m_defaultBtagAlgorithmEff_TightWp;
+
+
+  /* the actual tags after sf are applied, filled in jetHelper.cc in FlatTuple code */
+
+
+  bool m_defaultBtagAlgorithmIsTagged_LooseWpCentral;
+  bool m_defaultBtagAlgorithmIsTagged_LooseWpUp;
+  bool m_defaultBtagAlgorithmIsTagged_LooseWpDown;
+  bool m_defaultBtagAlgorithmIsTagged_MediumWpCentral;
+  bool m_defaultBtagAlgorithmIsTagged_MediumWpUp;
+  bool m_defaultBtagAlgorithmIsTagged_MediumWpDown;
+  bool m_defaultBtagAlgorithmIsTagged_TightWpCentral;
+  bool m_defaultBtagAlgorithmIsTagged_TightWpUp;
+  bool m_defaultBtagAlgorithmIsTagged_TightWpDown;
 
 
 

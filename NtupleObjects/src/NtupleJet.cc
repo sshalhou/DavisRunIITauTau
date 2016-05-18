@@ -64,6 +64,21 @@ NtupleJet::NtupleJet()
   m_defaultBtagAlgorithmEff_TightWp = NAN;
 
 
+  /* init these to 0 */
+  m_defaultBtagAlgorithmIsTagged_LooseWpCentral  = 0;
+  m_defaultBtagAlgorithmIsTagged_LooseWpUp  = 0;
+  m_defaultBtagAlgorithmIsTagged_LooseWpDown  = 0;
+  m_defaultBtagAlgorithmIsTagged_MediumWpCentral  = 0;
+  m_defaultBtagAlgorithmIsTagged_MediumWpUp  = 0;
+  m_defaultBtagAlgorithmIsTagged_MediumWpDown  = 0;
+  m_defaultBtagAlgorithmIsTagged_TightWpCentral  = 0;
+  m_defaultBtagAlgorithmIsTagged_TightWpUp  = 0;
+  m_defaultBtagAlgorithmIsTagged_TightWpDown  = 0;
+ 
+
+
+
+
 
 }
 
@@ -95,12 +110,7 @@ NtupleJet::NtupleJet()
 
 
 
-  /* set the b-tag scale factors, these are called in JetHelper.cc in the FlatTupleGenerator code */
-
-
-
-
-
+  /* set the b-tag scale factors, eff, and tag results, these are called in JetHelper.cc in the FlatTupleGenerator code */
 
   void NtupleJet::set_defaultBtagAlgorithmSF_LooseWpCentral(double sf_){ m_defaultBtagAlgorithmSF_LooseWpCentral = sf_; }
   void NtupleJet::set_defaultBtagAlgorithmSF_LooseWpUp(double sf_){ m_defaultBtagAlgorithmSF_LooseWpUp = sf_; }
@@ -114,6 +124,20 @@ NtupleJet::NtupleJet()
   void NtupleJet::set_defaultBtagAlgorithmEff_LooseWp(double sf_){ m_defaultBtagAlgorithmEff_LooseWp = sf_; }
   void NtupleJet::set_defaultBtagAlgorithmEff_MediumWp(double sf_){ m_defaultBtagAlgorithmEff_MediumWp = sf_; }
   void NtupleJet::set_defaultBtagAlgorithmEff_TightWp(double sf_){ m_defaultBtagAlgorithmEff_TightWp = sf_; }
+
+
+
+  void NtupleJet::set_defaultBtagAlgorithmIsTagged_LooseWpCentral(bool sf_){ m_defaultBtagAlgorithmIsTagged_LooseWpCentral = sf_; }
+  void NtupleJet::set_defaultBtagAlgorithmIsTagged_LooseWpUp(bool sf_){ m_defaultBtagAlgorithmIsTagged_LooseWpUp = sf_; }
+  void NtupleJet::set_defaultBtagAlgorithmIsTagged_LooseWpDown(bool sf_){ m_defaultBtagAlgorithmIsTagged_LooseWpDown = sf_; }
+  void NtupleJet::set_defaultBtagAlgorithmIsTagged_MediumWpCentral(bool sf_){ m_defaultBtagAlgorithmIsTagged_MediumWpCentral = sf_; }
+  void NtupleJet::set_defaultBtagAlgorithmIsTagged_MediumWpUp(bool sf_){ m_defaultBtagAlgorithmIsTagged_MediumWpUp = sf_; }
+  void NtupleJet::set_defaultBtagAlgorithmIsTagged_MediumWpDown(bool sf_){ m_defaultBtagAlgorithmIsTagged_MediumWpDown = sf_; }
+  void NtupleJet::set_defaultBtagAlgorithmIsTagged_TightWpCentral(bool sf_){ m_defaultBtagAlgorithmIsTagged_TightWpCentral = sf_; }
+  void NtupleJet::set_defaultBtagAlgorithmIsTagged_TightWpUp(bool sf_){ m_defaultBtagAlgorithmIsTagged_TightWpUp = sf_; }
+  void NtupleJet::set_defaultBtagAlgorithmIsTagged_TightWpDown(bool sf_){ m_defaultBtagAlgorithmIsTagged_TightWpDown = sf_; }
+
+
 
 
   void NtupleJet::fill(pat::Jet aPatJet)
@@ -475,6 +499,18 @@ NtupleJet::NtupleJet()
   double NtupleJet::defaultBtagAlgorithmSF_TightWpCentral() const { return m_defaultBtagAlgorithmSF_TightWpCentral; }
   double NtupleJet::defaultBtagAlgorithmSF_TightWpUp() const { return m_defaultBtagAlgorithmSF_TightWpUp; }
   double NtupleJet::defaultBtagAlgorithmSF_TightWpDown() const { return m_defaultBtagAlgorithmSF_TightWpDown; }
+
+
+  bool NtupleJet::defaultBtagAlgorithmIsTagged_LooseWpCentral() const { return m_defaultBtagAlgorithmIsTagged_LooseWpCentral; }
+  bool NtupleJet::defaultBtagAlgorithmIsTagged_LooseWpUp() const { return m_defaultBtagAlgorithmIsTagged_LooseWpUp; }
+  bool NtupleJet::defaultBtagAlgorithmIsTagged_LooseWpDown() const { return m_defaultBtagAlgorithmIsTagged_LooseWpDown; }
+  bool NtupleJet::defaultBtagAlgorithmIsTagged_MediumWpCentral() const { return m_defaultBtagAlgorithmIsTagged_MediumWpCentral; }
+  bool NtupleJet::defaultBtagAlgorithmIsTagged_MediumWpUp() const { return m_defaultBtagAlgorithmIsTagged_MediumWpUp; }
+  bool NtupleJet::defaultBtagAlgorithmIsTagged_MediumWpDown() const { return m_defaultBtagAlgorithmIsTagged_MediumWpDown; }
+  bool NtupleJet::defaultBtagAlgorithmIsTagged_TightWpCentral() const { return m_defaultBtagAlgorithmIsTagged_TightWpCentral; }
+  bool NtupleJet::defaultBtagAlgorithmIsTagged_TightWpUp() const { return m_defaultBtagAlgorithmIsTagged_TightWpUp; }
+  bool NtupleJet::defaultBtagAlgorithmIsTagged_TightWpDown() const { return m_defaultBtagAlgorithmIsTagged_TightWpDown; }
+
 
 
 

@@ -4,8 +4,16 @@
 /* constructor */
 
 bTagSFhelper::bTagSFhelper(edm::FileInPath csvFileName, edm::FileInPath looseEffRootFile, 
-						   edm::FileInPath mediumEffRootFile, edm::FileInPath tightEffRootFile)
+						   edm::FileInPath mediumEffRootFile, edm::FileInPath tightEffRootFile,
+						   double cutL_, double cutM_, double cutT_)
 {
+
+	/* set the cuts */
+
+	m_cutLoose = cutL_;
+	m_cutMedium = cutM_;
+	m_cutTight = cutT_;
+
 
 	/* random3 */
 	
@@ -108,15 +116,15 @@ void bTagSFhelper::InitForJet(double pt_, double eta_, double rawScore_,
 
 	/* reset the btags */
 
-	m_isTagged_LooseWpCentral= 0;
-	m_isTagged_LooseWpUp= 0;
-	m_isTagged_LooseWpDown= 0;
-	m_isTagged_MediumWpCentral= 0;
-	m_isTagged_MediumWpUp= 0;
-	m_isTagged_MediumWpDown= 0;
-	m_isTagged_TightWpCentral= 0;
-	m_isTagged_TightWpUp= 0;
-	m_isTagged_TightWpDown= 0;
+	m_IsTagged_LooseWpCentral= 0;
+	m_IsTagged_LooseWpUp= 0;
+	m_IsTagged_LooseWpDown= 0;
+	m_IsTagged_MediumWpCentral= 0;
+	m_IsTagged_MediumWpUp= 0;
+	m_IsTagged_MediumWpDown= 0;
+	m_IsTagged_TightWpCentral= 0;
+	m_IsTagged_TightWpUp= 0;
+	m_IsTagged_TightWpDown= 0;
 
 
 
@@ -341,7 +349,7 @@ void bTagSFhelper::InitForJet(double pt_, double eta_, double rawScore_,
 
     }
 
-    PromoteDemoteBtags(rawScore_, 0.460, 0.800, 0.935, !isRealData_);
+    PromoteDemoteBtags(rawScore_, m_cutLoose, m_cutMedium, m_cutTight, isRealData_);
 
 
 
@@ -361,36 +369,86 @@ void bTagSFhelper::PromoteDemoteBtags(double raw_, double cutL_, double cutM_, d
 	{
 		/* for data evaluate the cuts, no systematics are applied */
 
-		m_isTagged_LooseWpCentral	= (raw_>cutL_);
-		m_isTagged_LooseWpUp	= m_isTagged_LooseWpCentral;
-		m_isTagged_LooseWpDown	= m_isTagged_LooseWpCentral;
+		m_IsTagged_LooseWpCentral	= (raw_>cutL_);
+		m_IsTagged_LooseWpUp	= m_IsTagged_LooseWpCentral;
+		m_IsTagged_LooseWpDown	= m_IsTagged_LooseWpCentral;
 
-		m_isTagged_MediumWpCentral	= (raw_>cutM_);
-		m_isTagged_MediumWpUp	= m_isTagged_MediumWpCentral;
-		m_isTagged_MediumWpDown	= m_isTagged_MediumWpCentral;
+		m_IsTagged_MediumWpCentral	= (raw_>cutM_);
+		m_IsTagged_MediumWpUp	= m_IsTagged_MediumWpCentral;
+		m_IsTagged_MediumWpDown	= m_IsTagged_MediumWpCentral;
 
-		m_isTagged_TightWpCentral	= (raw_>cutT_);
-		m_isTagged_TightWpUp	= m_isTagged_TightWpCentral;
-		m_isTagged_TightWpDown	= m_isTagged_TightWpCentral;
+		m_IsTagged_TightWpCentral	= (raw_>cutT_);
+		m_IsTagged_TightWpUp	= m_IsTagged_TightWpCentral;
+		m_IsTagged_TightWpDown	= m_IsTagged_TightWpCentral;
 
 	}
 
 	else
 	{
+		/* use unique random seed, and a single random draw for each jet */
+		m_rand->SetSeed((int)((m_jetEta+5)*100000)); 
+		float coin = m_rand->Uniform(1.);
+			
 
+		m_IsTagged_LooseWpCentral = applyBTagSF( (raw_>cutL_), m_SF_LooseWpCentral, m_EFF_LooseWp, coin);
+		m_IsTagged_LooseWpUp = applyBTagSF( (raw_>cutL_), m_SF_LooseWpUp, m_EFF_LooseWp, coin);
+		m_IsTagged_LooseWpDown = applyBTagSF( (raw_>cutL_), m_SF_LooseWpDown, m_EFF_LooseWp, coin);
 
-		
+		m_IsTagged_MediumWpCentral = applyBTagSF( (raw_>cutM_), m_SF_MediumWpCentral, m_EFF_MediumWp, coin);
+		m_IsTagged_MediumWpUp = applyBTagSF( (raw_>cutM_), m_SF_MediumWpUp, m_EFF_MediumWp, coin);
+		m_IsTagged_MediumWpDown = applyBTagSF( (raw_>cutM_), m_SF_MediumWpDown, m_EFF_MediumWp, coin);
+
+		m_IsTagged_TightWpCentral = applyBTagSF( (raw_>cutT_), m_SF_TightWpCentral, m_EFF_TightWp, coin);
+		m_IsTagged_TightWpUp = applyBTagSF( (raw_>cutT_), m_SF_TightWpUp, m_EFF_TightWp, coin);
+		m_IsTagged_TightWpDown = applyBTagSF( (raw_>cutT_), m_SF_TightWpDown, m_EFF_TightWp, coin);
 	}
 
 
 
 
-	m_rand->SetSeed((int)((m_jetEta+5)*100000)); 
+
 
 
 
 }
 
+
+// apply the b-tag SF 
+
+bool bTagSFhelper::applyBTagSF(bool isBTagged, double Btag_SF, double Btag_eff, float coin)
+{
+  bool newBTag = isBTagged;
+
+  if (Btag_SF == 1) 
+  {
+  	return newBTag; //no correction needed
+  }
+  	
+
+  if(Btag_SF > 1)
+  {  
+
+    if( !isBTagged ) 
+    {
+
+      //fraction of jets that need to be upgraded
+      float mistagPercent = (1.0 - Btag_SF) / (1.0 - (1.0/Btag_eff) );
+
+      //upgrade to tagged
+      if( coin < mistagPercent ) {newBTag = true;}
+    }
+
+  }
+  else
+  {  
+
+    //downgrade tagged to untagged
+    if( isBTagged && coin > Btag_SF ) {newBTag = false;}
+
+  }
+
+  return newBTag;
+}
 
 
 
@@ -414,15 +472,15 @@ double bTagSFhelper::EFF_TightWp() const { return m_EFF_TightWp; }
 // return final tags after PromoteDemoteBtags is called
 
 
-bool bTagSFhelper::isTagged_LooseWpCentral() const { return m_isTagged_LooseWpCentral; }
-bool bTagSFhelper::isTagged_LooseWpUp() const { return m_isTagged_LooseWpUp; }
-bool bTagSFhelper::isTagged_LooseWpDown() const { return m_isTagged_LooseWpDown; }
-bool bTagSFhelper::isTagged_MediumWpCentral() const { return m_isTagged_MediumWpCentral; }
-bool bTagSFhelper::isTagged_MediumWpUp() const { return m_isTagged_MediumWpUp; }
-bool bTagSFhelper::isTagged_MediumWpDown() const { return m_isTagged_MediumWpDown; }
-bool bTagSFhelper::isTagged_TightWpCentral() const { return m_isTagged_TightWpCentral; }
-bool bTagSFhelper::isTagged_TightWpUp() const { return m_isTagged_TightWpUp; }
-bool bTagSFhelper::isTagged_TightWpDown() const { return m_isTagged_TightWpDown; }
+bool bTagSFhelper::IsTagged_LooseWpCentral() const { return m_IsTagged_LooseWpCentral; }
+bool bTagSFhelper::IsTagged_LooseWpUp() const { return m_IsTagged_LooseWpUp; }
+bool bTagSFhelper::IsTagged_LooseWpDown() const { return m_IsTagged_LooseWpDown; }
+bool bTagSFhelper::IsTagged_MediumWpCentral() const { return m_IsTagged_MediumWpCentral; }
+bool bTagSFhelper::IsTagged_MediumWpUp() const { return m_IsTagged_MediumWpUp; }
+bool bTagSFhelper::IsTagged_MediumWpDown() const { return m_IsTagged_MediumWpDown; }
+bool bTagSFhelper::IsTagged_TightWpCentral() const { return m_IsTagged_TightWpCentral; }
+bool bTagSFhelper::IsTagged_TightWpUp() const { return m_IsTagged_TightWpUp; }
+bool bTagSFhelper::IsTagged_TightWpDown() const { return m_IsTagged_TightWpDown; }
 
 
 

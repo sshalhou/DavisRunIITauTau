@@ -93,12 +93,32 @@ svMassAtFlatTupleConfig_(iConfig.getParameter<edm::ParameterSet>("SVMassConfig")
 
   /* setup the btag sf helper tool */
 
-  edm::FileInPath sf_file = edm::FileInPath("DavisRunIITauTau/RunTimeDataInput/data/BTAGSF/CSVv2.csv");
-  edm::FileInPath looseEff_file = edm::FileInPath("DavisRunIITauTau/RunTimeDataInput/data/BTAGEFF/tagging_efficiencies_loosewp.root");
-  edm::FileInPath mediumEff_file = edm::FileInPath("DavisRunIITauTau/RunTimeDataInput/data/BTAGEFF/tagging_efficiencies.root");
-  edm::FileInPath tightEff_file = edm::FileInPath("DavisRunIITauTau/RunTimeDataInput/data/BTAGEFF/tagging_efficiencies.root"); /* for 76X same as med */
+  double LooseCut = EventCutSrc_.getParameter<double>("LooseBtagWPcut");
+  double MediumCut = EventCutSrc_.getParameter<double>("MediumBtagWPcut");
+  double TightCut = EventCutSrc_.getParameter<double>("TightBtagWPcut");
 
-  m_BtagSFTool = new bTagSFhelper(sf_file, looseEff_file, mediumEff_file, tightEff_file);
+  std::string sf_fileString = EventCutSrc_.getParameter<std::string>("BtagSF_File");
+  std::string looseEff_fileString = EventCutSrc_.getParameter<std::string>("looseBtagEff_file");
+  std::string mediumEff_fileString = EventCutSrc_.getParameter<std::string>("mediumBtagEff_file");
+  std::string tightEff_fileString = EventCutSrc_.getParameter<std::string>("tightBtagEff_file");
+
+  edm::FileInPath sf_file = edm::FileInPath(sf_fileString);
+  edm::FileInPath looseEff_file = edm::FileInPath(looseEff_fileString);
+  edm::FileInPath mediumEff_file = edm::FileInPath(mediumEff_fileString);
+  edm::FileInPath tightEff_file = edm::FileInPath(tightEff_fileString); /* for 76X same as med */
+
+  std::cout<<" **** Setting up Btag Tool with \n";
+  std::cout<<" [L, M, T] b-tag cut points set to [ "<<LooseCut<<" , "<<MediumCut<<" , "<<TightCut<<" ] \n";
+  std::cout<<" with SF CSV file : "<<sf_fileString<<"\n ";
+  std::cout<<" with loose EFF root file : "<<looseEff_fileString<<"\n ";
+  std::cout<<" with medium EFF root file : "<<mediumEff_fileString<<"\n ";
+  std::cout<<" with tight EFF root file : "<<tightEff_fileString<<" (same as medium for 76X ) \n";
+
+
+
+  m_BtagSFTool = new bTagSFhelper(sf_file, looseEff_file, mediumEff_file, tightEff_file, 
+                      LooseCut, MediumCut, TightCut );
+
 
 
 
@@ -1964,6 +1984,18 @@ void FlatTupleGenerator::handlePairIndepInfo(const edm::Event& iEvent, const edm
     jets_BtagEff_MediumWp.push_back(goodJets[j].defaultBtagAlgorithmEff_MediumWp());
     jets_BtagEff_TightWp.push_back(goodJets[j].defaultBtagAlgorithmEff_TightWp());
 
+    jets_IsBTagged_LooseWpCentral.push_back(goodJets[j].defaultBtagAlgorithmIsTagged_LooseWpCentral());
+    jets_IsBTagged_LooseWpUp.push_back(goodJets[j].defaultBtagAlgorithmIsTagged_LooseWpUp());
+    jets_IsBTagged_LooseWpDown.push_back(goodJets[j].defaultBtagAlgorithmIsTagged_LooseWpDown());
+    jets_IsBTagged_MediumWpCentral.push_back(goodJets[j].defaultBtagAlgorithmIsTagged_MediumWpCentral());
+    jets_IsBTagged_MediumWpUp.push_back(goodJets[j].defaultBtagAlgorithmIsTagged_MediumWpUp());
+    jets_IsBTagged_MediumWpDown.push_back(goodJets[j].defaultBtagAlgorithmIsTagged_MediumWpDown());
+    jets_IsBTagged_TightWpCentral.push_back(goodJets[j].defaultBtagAlgorithmIsTagged_TightWpCentral());
+    jets_IsBTagged_TightWpUp.push_back(goodJets[j].defaultBtagAlgorithmIsTagged_TightWpUp());
+    jets_IsBTagged_TightWpDown.push_back(goodJets[j].defaultBtagAlgorithmIsTagged_TightWpDown());
+
+
+
   }
 
  
@@ -1999,6 +2031,16 @@ void FlatTupleGenerator::handlePairIndepInfo(const edm::Event& iEvent, const edm
     jets_BtagEff_MediumWp_JECshiftedUp.push_back(goodJets_JECshiftedUp[j].defaultBtagAlgorithmEff_MediumWp());
     jets_BtagEff_TightWp_JECshiftedUp.push_back(goodJets_JECshiftedUp[j].defaultBtagAlgorithmEff_TightWp());
 
+    jets_IsBTagged_LooseWpCentral_JECshiftedUp.push_back(goodJets_JECshiftedUp[j].defaultBtagAlgorithmIsTagged_LooseWpCentral());
+    jets_IsBTagged_LooseWpUp_JECshiftedUp.push_back(goodJets_JECshiftedUp[j].defaultBtagAlgorithmIsTagged_LooseWpUp());
+    jets_IsBTagged_LooseWpDown_JECshiftedUp.push_back(goodJets_JECshiftedUp[j].defaultBtagAlgorithmIsTagged_LooseWpDown());
+    jets_IsBTagged_MediumWpCentral_JECshiftedUp.push_back(goodJets_JECshiftedUp[j].defaultBtagAlgorithmIsTagged_MediumWpCentral());
+    jets_IsBTagged_MediumWpUp_JECshiftedUp.push_back(goodJets_JECshiftedUp[j].defaultBtagAlgorithmIsTagged_MediumWpUp());
+    jets_IsBTagged_MediumWpDown_JECshiftedUp.push_back(goodJets_JECshiftedUp[j].defaultBtagAlgorithmIsTagged_MediumWpDown());
+    jets_IsBTagged_TightWpCentral_JECshiftedUp.push_back(goodJets_JECshiftedUp[j].defaultBtagAlgorithmIsTagged_TightWpCentral());
+    jets_IsBTagged_TightWpUp_JECshiftedUp.push_back(goodJets_JECshiftedUp[j].defaultBtagAlgorithmIsTagged_TightWpUp());
+    jets_IsBTagged_TightWpDown_JECshiftedUp.push_back(goodJets_JECshiftedUp[j].defaultBtagAlgorithmIsTagged_TightWpDown());
+
   }
 
 
@@ -2032,6 +2074,16 @@ void FlatTupleGenerator::handlePairIndepInfo(const edm::Event& iEvent, const edm
     jets_BtagEff_LooseWp_JECshiftedDown.push_back(goodJets_JECshiftedDown[j].defaultBtagAlgorithmEff_LooseWp());
     jets_BtagEff_MediumWp_JECshiftedDown.push_back(goodJets_JECshiftedDown[j].defaultBtagAlgorithmEff_MediumWp());
     jets_BtagEff_TightWp_JECshiftedDown.push_back(goodJets_JECshiftedDown[j].defaultBtagAlgorithmEff_TightWp());
+
+    jets_IsBTagged_LooseWpCentral_JECshiftedDown.push_back(goodJets_JECshiftedDown[j].defaultBtagAlgorithmIsTagged_LooseWpCentral());
+    jets_IsBTagged_LooseWpUp_JECshiftedDown.push_back(goodJets_JECshiftedDown[j].defaultBtagAlgorithmIsTagged_LooseWpUp());
+    jets_IsBTagged_LooseWpDown_JECshiftedDown.push_back(goodJets_JECshiftedDown[j].defaultBtagAlgorithmIsTagged_LooseWpDown());
+    jets_IsBTagged_MediumWpCentral_JECshiftedDown.push_back(goodJets_JECshiftedDown[j].defaultBtagAlgorithmIsTagged_MediumWpCentral());
+    jets_IsBTagged_MediumWpUp_JECshiftedDown.push_back(goodJets_JECshiftedDown[j].defaultBtagAlgorithmIsTagged_MediumWpUp());
+    jets_IsBTagged_MediumWpDown_JECshiftedDown.push_back(goodJets_JECshiftedDown[j].defaultBtagAlgorithmIsTagged_MediumWpDown());
+    jets_IsBTagged_TightWpCentral_JECshiftedDown.push_back(goodJets_JECshiftedDown[j].defaultBtagAlgorithmIsTagged_TightWpCentral());
+    jets_IsBTagged_TightWpUp_JECshiftedDown.push_back(goodJets_JECshiftedDown[j].defaultBtagAlgorithmIsTagged_TightWpUp());
+    jets_IsBTagged_TightWpDown_JECshiftedDown.push_back(goodJets_JECshiftedDown[j].defaultBtagAlgorithmIsTagged_TightWpDown());
 
 
   }
@@ -2069,6 +2121,15 @@ void FlatTupleGenerator::handlePairIndepInfo(const edm::Event& iEvent, const edm
     jets_BtagEff_MediumWp_JERup.push_back(goodJets_JERup[j].defaultBtagAlgorithmEff_MediumWp());
     jets_BtagEff_TightWp_JERup.push_back(goodJets_JERup[j].defaultBtagAlgorithmEff_TightWp());
 
+    jets_IsBTagged_LooseWpCentral_JERup.push_back(goodJets_JERup[j].defaultBtagAlgorithmIsTagged_LooseWpCentral());
+    jets_IsBTagged_LooseWpUp_JERup.push_back(goodJets_JERup[j].defaultBtagAlgorithmIsTagged_LooseWpUp());
+    jets_IsBTagged_LooseWpDown_JERup.push_back(goodJets_JERup[j].defaultBtagAlgorithmIsTagged_LooseWpDown());
+    jets_IsBTagged_MediumWpCentral_JERup.push_back(goodJets_JERup[j].defaultBtagAlgorithmIsTagged_MediumWpCentral());
+    jets_IsBTagged_MediumWpUp_JERup.push_back(goodJets_JERup[j].defaultBtagAlgorithmIsTagged_MediumWpUp());
+    jets_IsBTagged_MediumWpDown_JERup.push_back(goodJets_JERup[j].defaultBtagAlgorithmIsTagged_MediumWpDown());
+    jets_IsBTagged_TightWpCentral_JERup.push_back(goodJets_JERup[j].defaultBtagAlgorithmIsTagged_TightWpCentral());
+    jets_IsBTagged_TightWpUp_JERup.push_back(goodJets_JERup[j].defaultBtagAlgorithmIsTagged_TightWpUp());
+    jets_IsBTagged_TightWpDown_JERup.push_back(goodJets_JERup[j].defaultBtagAlgorithmIsTagged_TightWpDown());
 
 
   }
@@ -2104,6 +2165,15 @@ void FlatTupleGenerator::handlePairIndepInfo(const edm::Event& iEvent, const edm
     jets_BtagEff_MediumWp_JERdown.push_back(goodJets_JERdown[j].defaultBtagAlgorithmEff_MediumWp());
     jets_BtagEff_TightWp_JERdown.push_back(goodJets_JERdown[j].defaultBtagAlgorithmEff_TightWp());
 
+    jets_IsBTagged_LooseWpCentral_JERdown.push_back(goodJets_JERdown[j].defaultBtagAlgorithmIsTagged_LooseWpCentral());
+    jets_IsBTagged_LooseWpUp_JERdown.push_back(goodJets_JERdown[j].defaultBtagAlgorithmIsTagged_LooseWpUp());
+    jets_IsBTagged_LooseWpDown_JERdown.push_back(goodJets_JERdown[j].defaultBtagAlgorithmIsTagged_LooseWpDown());
+    jets_IsBTagged_MediumWpCentral_JERdown.push_back(goodJets_JERdown[j].defaultBtagAlgorithmIsTagged_MediumWpCentral());
+    jets_IsBTagged_MediumWpUp_JERdown.push_back(goodJets_JERdown[j].defaultBtagAlgorithmIsTagged_MediumWpUp());
+    jets_IsBTagged_MediumWpDown_JERdown.push_back(goodJets_JERdown[j].defaultBtagAlgorithmIsTagged_MediumWpDown());
+    jets_IsBTagged_TightWpCentral_JERdown.push_back(goodJets_JERdown[j].defaultBtagAlgorithmIsTagged_TightWpCentral());
+    jets_IsBTagged_TightWpUp_JERdown.push_back(goodJets_JERdown[j].defaultBtagAlgorithmIsTagged_TightWpUp());
+    jets_IsBTagged_TightWpDown_JERdown.push_back(goodJets_JERdown[j].defaultBtagAlgorithmIsTagged_TightWpDown());
 
 
   }
@@ -2590,6 +2660,15 @@ void FlatTupleGenerator::handlePairIndepInfo(const edm::Event& iEvent, const edm
   jets_BtagEff_LooseWp.clear();
   jets_BtagEff_MediumWp.clear();
   jets_BtagEff_TightWp.clear();
+  jets_IsBTagged_LooseWpCentral.clear();
+  jets_IsBTagged_LooseWpUp.clear();
+  jets_IsBTagged_LooseWpDown.clear();
+  jets_IsBTagged_MediumWpCentral.clear();
+  jets_IsBTagged_MediumWpUp.clear();
+  jets_IsBTagged_MediumWpDown.clear();
+  jets_IsBTagged_TightWpCentral.clear();
+  jets_IsBTagged_TightWpUp.clear();
+  jets_IsBTagged_TightWpDown.clear();
 
 
 
@@ -2617,6 +2696,15 @@ void FlatTupleGenerator::handlePairIndepInfo(const edm::Event& iEvent, const edm
   jets_BtagEff_LooseWp_JECshiftedUp.clear();
   jets_BtagEff_MediumWp_JECshiftedUp.clear();
   jets_BtagEff_TightWp_JECshiftedUp.clear();
+  jets_IsBTagged_LooseWpCentral_JECshiftedUp.clear();
+  jets_IsBTagged_LooseWpUp_JECshiftedUp.clear();
+  jets_IsBTagged_LooseWpDown_JECshiftedUp.clear();
+  jets_IsBTagged_MediumWpCentral_JECshiftedUp.clear();
+  jets_IsBTagged_MediumWpUp_JECshiftedUp.clear();
+  jets_IsBTagged_MediumWpDown_JECshiftedUp.clear();
+  jets_IsBTagged_TightWpCentral_JECshiftedUp.clear();
+  jets_IsBTagged_TightWpUp_JECshiftedUp.clear();
+  jets_IsBTagged_TightWpDown_JECshiftedUp.clear();
 
 
 
@@ -2644,7 +2732,15 @@ void FlatTupleGenerator::handlePairIndepInfo(const edm::Event& iEvent, const edm
   jets_BtagEff_LooseWp_JECshiftedDown.clear();
   jets_BtagEff_MediumWp_JECshiftedDown.clear();
   jets_BtagEff_TightWp_JECshiftedDown.clear();
-
+  jets_IsBTagged_LooseWpCentral_JECshiftedDown.clear();
+  jets_IsBTagged_LooseWpUp_JECshiftedDown.clear();
+  jets_IsBTagged_LooseWpDown_JECshiftedDown.clear();
+  jets_IsBTagged_MediumWpCentral_JECshiftedDown.clear();
+  jets_IsBTagged_MediumWpUp_JECshiftedDown.clear();
+  jets_IsBTagged_MediumWpDown_JECshiftedDown.clear();
+  jets_IsBTagged_TightWpCentral_JECshiftedDown.clear();
+  jets_IsBTagged_TightWpUp_JECshiftedDown.clear();
+  jets_IsBTagged_TightWpDown_JECshiftedDown.clear();
 
   numberOfJets_JERup = -999;
   numberOfJets30_JERup = -999;
@@ -2670,7 +2766,15 @@ void FlatTupleGenerator::handlePairIndepInfo(const edm::Event& iEvent, const edm
   jets_BtagEff_LooseWp_JERup.clear();
   jets_BtagEff_MediumWp_JERup.clear();
   jets_BtagEff_TightWp_JERup.clear();
-
+  jets_IsBTagged_LooseWpCentral_JERup.clear();
+  jets_IsBTagged_LooseWpUp_JERup.clear();
+  jets_IsBTagged_LooseWpDown_JERup.clear();
+  jets_IsBTagged_MediumWpCentral_JERup.clear();
+  jets_IsBTagged_MediumWpUp_JERup.clear();
+  jets_IsBTagged_MediumWpDown_JERup.clear();
+  jets_IsBTagged_TightWpCentral_JERup.clear();
+  jets_IsBTagged_TightWpUp_JERup.clear();
+  jets_IsBTagged_TightWpDown_JERup.clear();
 
 
 
@@ -2698,6 +2802,15 @@ void FlatTupleGenerator::handlePairIndepInfo(const edm::Event& iEvent, const edm
   jets_BtagEff_LooseWp_JERdown.clear();
   jets_BtagEff_MediumWp_JERdown.clear();
   jets_BtagEff_TightWp_JERdown.clear();
+  jets_IsBTagged_LooseWpCentral_JERdown.clear();
+  jets_IsBTagged_LooseWpUp_JERdown.clear();
+  jets_IsBTagged_LooseWpDown_JERdown.clear();
+  jets_IsBTagged_MediumWpCentral_JERdown.clear();
+  jets_IsBTagged_MediumWpUp_JERdown.clear();
+  jets_IsBTagged_MediumWpDown_JERdown.clear();
+  jets_IsBTagged_TightWpCentral_JERdown.clear();
+  jets_IsBTagged_TightWpUp_JERdown.clear();
+  jets_IsBTagged_TightWpDown_JERdown.clear();
 
 
 
@@ -3254,6 +3367,15 @@ void FlatTupleGenerator::beginJob()
   FlatTuple->Branch("jets_BtagEff_LooseWp", &jets_BtagEff_LooseWp);
   FlatTuple->Branch("jets_BtagEff_MediumWp", &jets_BtagEff_MediumWp);
   FlatTuple->Branch("jets_BtagEff_TightWp", &jets_BtagEff_TightWp);
+  FlatTuple->Branch("jets_IsBTagged_LooseWpCentral", &jets_IsBTagged_LooseWpCentral);
+  FlatTuple->Branch("jets_IsBTagged_LooseWpUp", &jets_IsBTagged_LooseWpUp);
+  FlatTuple->Branch("jets_IsBTagged_LooseWpDown", &jets_IsBTagged_LooseWpDown);
+  FlatTuple->Branch("jets_IsBTagged_MediumWpCentral", &jets_IsBTagged_MediumWpCentral);
+  FlatTuple->Branch("jets_IsBTagged_MediumWpUp", &jets_IsBTagged_MediumWpUp);
+  FlatTuple->Branch("jets_IsBTagged_MediumWpDown", &jets_IsBTagged_MediumWpDown);
+  FlatTuple->Branch("jets_IsBTagged_TightWpCentral", &jets_IsBTagged_TightWpCentral);
+  FlatTuple->Branch("jets_IsBTagged_TightWpUp", &jets_IsBTagged_TightWpUp);
+  FlatTuple->Branch("jets_IsBTagged_TightWpDown", &jets_IsBTagged_TightWpDown);
 
 
   /* scale (response) up jet info */
@@ -3281,6 +3403,17 @@ void FlatTupleGenerator::beginJob()
   FlatTuple->Branch("jets_BtagEff_LooseWp_JECshiftedUp", &jets_BtagEff_LooseWp_JECshiftedUp);
   FlatTuple->Branch("jets_BtagEff_MediumWp_JECshiftedUp", &jets_BtagEff_MediumWp_JECshiftedUp);
   FlatTuple->Branch("jets_BtagEff_TightWp_JECshiftedUp", &jets_BtagEff_TightWp_JECshiftedUp);
+  FlatTuple->Branch("jets_IsBTagged_LooseWpCentral_JECshiftedUp", &jets_IsBTagged_LooseWpCentral_JECshiftedUp);
+  FlatTuple->Branch("jets_IsBTagged_LooseWpUp_JECshiftedUp", &jets_IsBTagged_LooseWpUp_JECshiftedUp);
+  FlatTuple->Branch("jets_IsBTagged_LooseWpDown_JECshiftedUp", &jets_IsBTagged_LooseWpDown_JECshiftedUp);
+  FlatTuple->Branch("jets_IsBTagged_MediumWpCentral_JECshiftedUp", &jets_IsBTagged_MediumWpCentral_JECshiftedUp);
+  FlatTuple->Branch("jets_IsBTagged_MediumWpUp_JECshiftedUp", &jets_IsBTagged_MediumWpUp_JECshiftedUp);
+  FlatTuple->Branch("jets_IsBTagged_MediumWpDown_JECshiftedUp", &jets_IsBTagged_MediumWpDown_JECshiftedUp);
+  FlatTuple->Branch("jets_IsBTagged_TightWpCentral_JECshiftedUp", &jets_IsBTagged_TightWpCentral_JECshiftedUp);
+  FlatTuple->Branch("jets_IsBTagged_TightWpUp_JECshiftedUp", &jets_IsBTagged_TightWpUp_JECshiftedUp);
+  FlatTuple->Branch("jets_IsBTagged_TightWpDown_JECshiftedUp", &jets_IsBTagged_TightWpDown_JECshiftedUp);
+
+
 
   /* scale (response) down jet info */
   FlatTuple->Branch("numberOfJets_JECshiftedDown", &numberOfJets_JECshiftedDown);
@@ -3307,7 +3440,15 @@ void FlatTupleGenerator::beginJob()
   FlatTuple->Branch("jets_BtagEff_LooseWp_JECshiftedDown", &jets_BtagEff_LooseWp_JECshiftedDown);
   FlatTuple->Branch("jets_BtagEff_MediumWp_JECshiftedDown", &jets_BtagEff_MediumWp_JECshiftedDown);
   FlatTuple->Branch("jets_BtagEff_TightWp_JECshiftedDown", &jets_BtagEff_TightWp_JECshiftedDown);
-
+  FlatTuple->Branch("jets_IsBTagged_LooseWpCentral_JECshiftedDown", &jets_IsBTagged_LooseWpCentral_JECshiftedDown);
+  FlatTuple->Branch("jets_IsBTagged_LooseWpUp_JECshiftedDown", &jets_IsBTagged_LooseWpUp_JECshiftedDown);
+  FlatTuple->Branch("jets_IsBTagged_LooseWpDown_JECshiftedDown", &jets_IsBTagged_LooseWpDown_JECshiftedDown);
+  FlatTuple->Branch("jets_IsBTagged_MediumWpCentral_JECshiftedDown", &jets_IsBTagged_MediumWpCentral_JECshiftedDown);
+  FlatTuple->Branch("jets_IsBTagged_MediumWpUp_JECshiftedDown", &jets_IsBTagged_MediumWpUp_JECshiftedDown);
+  FlatTuple->Branch("jets_IsBTagged_MediumWpDown_JECshiftedDown", &jets_IsBTagged_MediumWpDown_JECshiftedDown);
+  FlatTuple->Branch("jets_IsBTagged_TightWpCentral_JECshiftedDown", &jets_IsBTagged_TightWpCentral_JECshiftedDown);
+  FlatTuple->Branch("jets_IsBTagged_TightWpUp_JECshiftedDown", &jets_IsBTagged_TightWpUp_JECshiftedDown);
+  FlatTuple->Branch("jets_IsBTagged_TightWpDown_JECshiftedDown", &jets_IsBTagged_TightWpDown_JECshiftedDown);
 
 
 
@@ -3336,6 +3477,15 @@ void FlatTupleGenerator::beginJob()
   FlatTuple->Branch("jets_BtagEff_LooseWp_JERup", &jets_BtagEff_LooseWp_JERup);
   FlatTuple->Branch("jets_BtagEff_MediumWp_JERup", &jets_BtagEff_MediumWp_JERup);
   FlatTuple->Branch("jets_BtagEff_TightWp_JERup", &jets_BtagEff_TightWp_JERup);
+  FlatTuple->Branch("jets_IsBTagged_LooseWpCentral_JERup", &jets_IsBTagged_LooseWpCentral_JERup);
+  FlatTuple->Branch("jets_IsBTagged_LooseWpUp_JERup", &jets_IsBTagged_LooseWpUp_JERup);
+  FlatTuple->Branch("jets_IsBTagged_LooseWpDown_JERup", &jets_IsBTagged_LooseWpDown_JERup);
+  FlatTuple->Branch("jets_IsBTagged_MediumWpCentral_JERup", &jets_IsBTagged_MediumWpCentral_JERup);
+  FlatTuple->Branch("jets_IsBTagged_MediumWpUp_JERup", &jets_IsBTagged_MediumWpUp_JERup);
+  FlatTuple->Branch("jets_IsBTagged_MediumWpDown_JERup", &jets_IsBTagged_MediumWpDown_JERup);
+  FlatTuple->Branch("jets_IsBTagged_TightWpCentral_JERup", &jets_IsBTagged_TightWpCentral_JERup);
+  FlatTuple->Branch("jets_IsBTagged_TightWpUp_JERup", &jets_IsBTagged_TightWpUp_JERup);
+  FlatTuple->Branch("jets_IsBTagged_TightWpDown_JERup", &jets_IsBTagged_TightWpDown_JERup);
 
 
 
@@ -3364,6 +3514,15 @@ void FlatTupleGenerator::beginJob()
   FlatTuple->Branch("jets_BtagEff_LooseWp_JERdown", &jets_BtagEff_LooseWp_JERdown);
   FlatTuple->Branch("jets_BtagEff_MediumWp_JERdown", &jets_BtagEff_MediumWp_JERdown);
   FlatTuple->Branch("jets_BtagEff_TightWp_JERdown", &jets_BtagEff_TightWp_JERdown);
+  FlatTuple->Branch("jets_IsBTagged_LooseWpCentral_JERdown", &jets_IsBTagged_LooseWpCentral_JERdown);
+  FlatTuple->Branch("jets_IsBTagged_LooseWpUp_JERdown", &jets_IsBTagged_LooseWpUp_JERdown);
+  FlatTuple->Branch("jets_IsBTagged_LooseWpDown_JERdown", &jets_IsBTagged_LooseWpDown_JERdown);
+  FlatTuple->Branch("jets_IsBTagged_MediumWpCentral_JERdown", &jets_IsBTagged_MediumWpCentral_JERdown);
+  FlatTuple->Branch("jets_IsBTagged_MediumWpUp_JERdown", &jets_IsBTagged_MediumWpUp_JERdown);
+  FlatTuple->Branch("jets_IsBTagged_MediumWpDown_JERdown", &jets_IsBTagged_MediumWpDown_JERdown);
+  FlatTuple->Branch("jets_IsBTagged_TightWpCentral_JERdown", &jets_IsBTagged_TightWpCentral_JERdown);
+  FlatTuple->Branch("jets_IsBTagged_TightWpUp_JERdown", &jets_IsBTagged_TightWpUp_JERdown);
+  FlatTuple->Branch("jets_IsBTagged_TightWpDown_JERdown", &jets_IsBTagged_TightWpDown_JERdown);
 
 
 

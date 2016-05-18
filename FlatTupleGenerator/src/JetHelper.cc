@@ -84,10 +84,34 @@ void JetHelper::init(std::vector<NtupleJet> jetVec, std::string jetCut, bTagSFhe
 			jetVec[j].set_defaultBtagAlgorithmEff_MediumWp(m_BtagSFTool->EFF_MediumWp());
 			jetVec[j].set_defaultBtagAlgorithmEff_TightWp(m_BtagSFTool->EFF_TightWp());
 
+
+			/* set the Btag Pass/Fail tags (after SFs) for the current jet */
+		
+
+			jetVec[j].set_defaultBtagAlgorithmIsTagged_LooseWpCentral(m_BtagSFTool->IsTagged_LooseWpCentral());
+			jetVec[j].set_defaultBtagAlgorithmIsTagged_LooseWpUp(m_BtagSFTool->IsTagged_LooseWpUp());
+			jetVec[j].set_defaultBtagAlgorithmIsTagged_LooseWpDown(m_BtagSFTool->IsTagged_LooseWpDown());
+
+			jetVec[j].set_defaultBtagAlgorithmIsTagged_MediumWpCentral(m_BtagSFTool->IsTagged_MediumWpCentral());
+			jetVec[j].set_defaultBtagAlgorithmIsTagged_MediumWpUp(m_BtagSFTool->IsTagged_MediumWpUp());
+			jetVec[j].set_defaultBtagAlgorithmIsTagged_MediumWpDown(m_BtagSFTool->IsTagged_MediumWpDown());
+
+			jetVec[j].set_defaultBtagAlgorithmIsTagged_TightWpCentral(m_BtagSFTool->IsTagged_TightWpCentral());
+			jetVec[j].set_defaultBtagAlgorithmIsTagged_TightWpUp(m_BtagSFTool->IsTagged_TightWpUp());
+			jetVec[j].set_defaultBtagAlgorithmIsTagged_TightWpDown(m_BtagSFTool->IsTagged_TightWpDown());
+
+
+
+
 			std::cout<<" Jet b-tag Eff [l, m, t] = [ ";
 			std::cout<<jetVec[j].defaultBtagAlgorithmEff_LooseWp()<<" , ";
 			std::cout<<jetVec[j].defaultBtagAlgorithmEff_MediumWp()<<" , ";
 			std::cout<<jetVec[j].defaultBtagAlgorithmEff_TightWp()<<" ] \n ";
+
+
+
+
+
 
 
 			std::cout<<" Jet B-tag SFs [loose, looseUp, looseDn, med, medUp, medDn, tight, tightUp, tightDn] =  [ ";

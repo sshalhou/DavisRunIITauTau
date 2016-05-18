@@ -84,7 +84,7 @@ mv ../../DavisRunIITauTau .
 cp /afs/cern.ch/work/a/adewit/public/pileup-hists/*root DavisRunIITauTau/RunTimeDataInput/data/PileUpReWeightFiles/.
 
 # get the right JER SF file for this release
-# if new file, need to hardcode the change in NtuplePairIndependentInfoProducer.cc
+# if new file, need to code the change in runIIoneStep_v0.py and runIIntuple_v0.py
 
 mkdir DavisRunIITauTau/RunTimeDataInput/data/JER_FILES
 wget https://raw.githubusercontent.com/cms-jet/JRDatabase/master/textFiles/Fall15_25nsV2_MC/Fall15_25nsV2_MC_SF_AK4PFchs.txt .
@@ -93,7 +93,8 @@ mv Fall15_25nsV2_MC_SF_AK4PFchs.txt DavisRunIITauTau/RunTimeDataInput/data/JER_F
 mv Fall15_25nsV2_MC_PtResolution_AK4PFchs.txt DavisRunIITauTau/RunTimeDataInput/data/JER_FILES/.
 
 # get the BTAG SF CSV File  and EFF root files 
-# if the file is new, need to change the name used in FlatTupleGenerator.cc
+# if the file is new, need to change the name used in FlatTupleConfig_cfi.py
+
 mkdir DavisRunIITauTau/RunTimeDataInput/data/BTAGSF
 cp /afs/cern.ch/user/s/sshalhou/public/INSTALL_PUBLIC_FILES/76X/BTAGSF/CSVv2.csv DavisRunIITauTau/RunTimeDataInput/data/BTAGSF/.
 mkdir DavisRunIITauTau/RunTimeDataInput/data/BTAGEFF

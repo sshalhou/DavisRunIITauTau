@@ -500,12 +500,24 @@ generalConfig = cms.PSet(
 				"neutralIsoPtSumWeight",
 				"photonPtSumOutsideSignalCone",
 				"puCorrPtSum"),
+			
+			#####################
+			# b-tag configuration 
+
+			BtagSF_File = cms.string("DavisRunIITauTau/RunTimeDataInput/data/BTAGSF/CSVv2.csv"),
+			looseBtagEff_file = cms.string("DavisRunIITauTau/RunTimeDataInput/data/BTAGEFF/tagging_efficiencies_loosewp.root"),
+			mediumBtagEff_file = cms.string("DavisRunIITauTau/RunTimeDataInput/data/BTAGEFF/tagging_efficiencies.root"),
+			tightBtagEff_file = cms.string("DavisRunIITauTau/RunTimeDataInput/data/BTAGEFF/tagging_efficiencies.root"), # for 76X same as medium
+			LooseBtagWPcut = cms.double(0.460),
+			MediumBtagWPcut = cms.double(0.800),
+			TightBtagWPcut = cms.double(0.935),
+
 
 			###################
 			# jet cut strings
 			jetLeptonDRmin = cms.double(0.5),
 			# note PU jet ID is not to be applied yet
-			# also *MUST* make sure this jetIDcut is inclusive of any b-tag selection you
+			# you *MUST* make sure this jetIDcut is inclusive of any b-tag selection you
 			# wish to apply later 
 			jetIDcut = cms.string("pt>20 && abs(eta) < 4.7  && PF_jetIdPassed"),
 					)
