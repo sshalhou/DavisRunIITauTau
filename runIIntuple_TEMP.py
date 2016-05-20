@@ -612,7 +612,11 @@ from DavisRunIITauTau.TupleConfigurations.ConfigNtupleWeights_cfi import pileupS
 from DavisRunIITauTau.TupleConfigurations.ConfigNtupleWeights_cfi import LHEEventProductSrcInputTag
 from DavisRunIITauTau.TupleConfigurations.SampleMetaData_cfi import sampleInfo
 
-
+print '****************************************************************************************************'
+print '****  JERresolutionFile is ', "DavisRunIITauTau/RunTimeDataInput/data/JER_FILES/Fall15_25nsV2_MC_PtResolution_AK4PFchs.txt"
+print '****  JERscalefactorFile is ', "DavisRunIITauTau/RunTimeDataInput/data/JER_FILES/Fall15_25nsV2_MC_SF_AK4PFchs.txt"
+print '****   If not current, change in main python config : runII*.py'
+print '****************************************************************************************************'
 
 process.pairIndep = cms.EDProducer('NtuplePairIndependentInfoProducer',
 							packedGenSrc = cms.InputTag('packedGenParticles'),

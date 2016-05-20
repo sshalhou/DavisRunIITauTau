@@ -7,7 +7,8 @@ process = cms.Process('DavisNtuple')
 
 #dataSetName_ = "/SUSYGluGluToHToTauTau_M-160_TuneCUETP8M1_13TeV-pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM"
 #dataSetName_= "/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM"
-dataSetName_="/ZZTo4L_13TeV-amcatnloFXFX-pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM"
+#dataSetName_="/ZZTo4L_13TeV-amcatnloFXFX-pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM"
+dataSetName_="/ZprimeToA0hToA0chichihtautau_2HDM_MZp-1200_MA0-400_13TeV-madgraph/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM"
 
 from DavisRunIITauTau.TupleConfigurations.ConfigNtupleContent_cfi import *
 
@@ -95,16 +96,24 @@ print '*******************************************************'
 print '********** Running in unscheduled mode **********'
 process.options = cms.untracked.PSet(wantSummary = cms.untracked.bool(True))
 process.options.allowUnscheduled = cms.untracked.bool(True)
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(5000) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(500) )
 
 ###################################
 # input - remove for crab running
 ###################################
 
 myfilelist = cms.untracked.vstring()
-#myfilelist.extend(['file:/uscms_data/d3/shalhout/miniAODv2_SyncSample.root'])
-#myfilelist.extend(['file:/uscms_data/d3/shalhout/miniAODv2_DYnlo.root'])
-myfilelist.extend(['file:/uscms_data/d3/shalhout/miniAODv2_ZZ4l.root'])
+
+
+if dataSetName_ == "/SUSYGluGluToHToTauTau_M-160_TuneCUETP8M1_13TeV-pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM":
+	myfilelist.extend(['file:/uscms_data/d3/shalhout/miniAODv2_SyncSample.root'])
+if dataSetName_ == "/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM":
+	myfilelist.extend(['file:/uscms_data/d3/shalhout/miniAODv2_DYnlo.root'])
+if dataSetName_ == "/ZZTo4L_13TeV-amcatnloFXFX-pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM":
+	myfilelist.extend(['file:/uscms_data/d3/shalhout/miniAODv2_ZZ4l.root'])
+if dataSetName_ == "/ZprimeToA0hToA0chichihtautau_2HDM_MZp-1200_MA0-400_13TeV-madgraph/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM":
+	myfilelist.extend(['file:/uscms_data/d3/shalhout/monoHiggsRunIIFall15MiniAODv2_2HDMzpToA0h_1200_400.root'])
+
 process.source = cms.Source("PoolSource",fileNames=myfilelist)
 #	eventsToSkip = cms.untracked.VEventRange('1:1-1:4941')	)
 
@@ -572,40 +581,8 @@ process.NtupleEventsTauEsDown = cms.EDProducer('NtupleEventProducer' ,
 			     NAME=cms.string("NtupleEventsTauEsDown"))
 
 
-
-
-
-# from JetMETCorrections.Configuration.JetCorrectionServicesAllAlgos_cff import *
-# from JetMETCorrections.Configuration.DefaultJEC_cff import *
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# ###############################
-# # test -- start
-# ################################
-
-# from DavisRunIITauTau.PythonHelperClasses.pairContainer_cff import PairWiseMetHelper
-
-
-# mvaMEThelper = PairWiseMetHelper(process,sampleData)
-
-
-
-
-
-# #################################
-# # pair independent content
+#################################
+# pair independent content
 
 from DavisRunIITauTau.TupleConfigurations.ConfigJets_cfi import PUjetIDworkingPoint
 from DavisRunIITauTau.TupleConfigurations.ConfigJets_cfi import PFjetIDworkingPoint
@@ -614,6 +591,13 @@ from DavisRunIITauTau.TupleConfigurations.ConfigNtupleWeights_cfi import pileupS
 #from DavisRunIITauTau.TupleConfigurations.ConfigNtupleWeights_cfi import mcGenWeightSrcInputTag
 from DavisRunIITauTau.TupleConfigurations.ConfigNtupleWeights_cfi import LHEEventProductSrcInputTag
 from DavisRunIITauTau.TupleConfigurations.SampleMetaData_cfi import sampleInfo
+
+
+print '****************************************************************************************************'
+print '****  JERresolutionFile is ', "DavisRunIITauTau/RunTimeDataInput/data/JER_FILES/Fall15_25nsV2_MC_PtResolution_AK4PFchs.txt"
+print '****  JERscalefactorFile is ', "DavisRunIITauTau/RunTimeDataInput/data/JER_FILES/Fall15_25nsV2_MC_SF_AK4PFchs.txt"
+print '****   If not current, change in main python config : runII*.py'
+print '****************************************************************************************************'
 
 process.pairIndep = cms.EDProducer('NtuplePairIndependentInfoProducer',
 							packedGenSrc = cms.InputTag('packedGenParticles'),
@@ -684,22 +668,17 @@ process.pairIndep = cms.EDProducer('NtuplePairIndependentInfoProducer',
 
 
 
-# -- start test
+# -- start FlatTuple production 
 
 from DavisRunIITauTau.FlatTupleGenerator.FlatTupleConfig_cfi import generalConfig
-from DavisRunIITauTau.FlatTupleGenerator.FlatTupleConfig_cfi import theCuts
+from DavisRunIITauTau.FlatTupleGenerator.FlatTupleConfig_cfi import defaultCuts
+from DavisRunIITauTau.FlatTupleGenerator.FlatTupleConfig_cfi import lowDeltaRCuts
 from DavisRunIITauTau.FlatTupleGenerator.FlatTupleConfig_cfi import svMassAtFlatTupleConfig
+from DavisRunIITauTau.FlatTupleGenerator.FlatTupleConfig_cfi import BUILD_LOWDR
 
 
 
-# process.PASSCUTS = cms.EDAnalyzer('FlatTupleGenerator',
-# 	pairSrc = cms.InputTag('NtupleEvents','NtupleEvents','DavisNtuple'),
-# 	indepSrc = cms.InputTag('pairIndep','NtupleEventPairIndep','DavisNtuple'),
-# 	NAME = cms.string("PASSCUTS"),
-# 	EventCutSrc = generalConfig,
-# 	LeptonCutVecSrc = theCuts,
-# 	SVMassConfig = svMassAtFlatTupleConfig
-# 	)
+
 
 
 print '*** AT FLatTuple level, the MVA MET will be corrected using ',
@@ -710,42 +689,86 @@ print  sampleData.MetSystematicType, ' settings '
 
 
 
-process.NOCUTS = cms.EDAnalyzer('FlatTupleGenerator',
+process.BASELINE = cms.EDAnalyzer('FlatTupleGenerator',
 	pairSrc = cms.InputTag('NtupleEvents','NtupleEvents','DavisNtuple'),
 	indepSrc = cms.InputTag('pairIndep','NtupleEventPairIndep','DavisNtuple'),
-	NAME = cms.string("NOCUTS"),
+	NAME = cms.string("BASELINE"),
+	FillEffLeptonBranches = cms.bool(BUILD_EFFICIENCY_TREE), # everywhere else it should be always False
 	RecoilCorrection = sampleData.RecoilCorrection,
 	MetSystematicType = sampleData.MetSystematicType,
 	EventCutSrc = generalConfig,
 	TauEsVariantToKeep = cms.string("NOMINAL"), # only NOMINAL, UP or DOWN are valid
-	LeptonCutVecSrc = theCuts,
+	LeptonCutVecSrc = defaultCuts,
 	SVMassConfig = svMassAtFlatTupleConfig
 	)
 
 
-process.NOCUTSupTau = cms.EDAnalyzer('FlatTupleGenerator',
+process.BASELINEupTau = cms.EDAnalyzer('FlatTupleGenerator',
 	pairSrc = cms.InputTag('NtupleEventsTauEsUp','NtupleEventsTauEsUp','DavisNtuple'),
 	indepSrc = cms.InputTag('pairIndep','NtupleEventPairIndep','DavisNtuple'),
-	NAME = cms.string("NOCUTSupTau"),
+	NAME = cms.string("BASELINEupTau"),
+	FillEffLeptonBranches = cms.bool(False), 
 	RecoilCorrection = sampleData.RecoilCorrection,
 	MetSystematicType = sampleData.MetSystematicType,
 	EventCutSrc = generalConfig,
 	TauEsVariantToKeep = cms.string("UP"), # only NOMINAL, UP or DOWN are valid
-	LeptonCutVecSrc = theCuts,
+	LeptonCutVecSrc = defaultCuts,
 	SVMassConfig = svMassAtFlatTupleConfig
 	)
 
-process.NOCUTSdownTau = cms.EDAnalyzer('FlatTupleGenerator',
+process.BASELINEdownTau = cms.EDAnalyzer('FlatTupleGenerator',
 	pairSrc = cms.InputTag('NtupleEventsTauEsDown','NtupleEventsTauEsDown','DavisNtuple'),
 	indepSrc = cms.InputTag('pairIndep','NtupleEventPairIndep','DavisNtuple'),
-	NAME = cms.string("NOCUTSdownTau"),
+	NAME = cms.string("BASELINEdownTau"),
+	FillEffLeptonBranches = cms.bool(False),	
 	RecoilCorrection = sampleData.RecoilCorrection,
 	MetSystematicType = sampleData.MetSystematicType,
 	EventCutSrc = generalConfig,
 	TauEsVariantToKeep = cms.string("DOWN"), # only NOMINAL, UP or DOWN are valid
-	LeptonCutVecSrc = theCuts,
+	LeptonCutVecSrc = defaultCuts,
 	SVMassConfig = svMassAtFlatTupleConfig
 	)
+
+process.LOWDELTAR = cms.EDAnalyzer('FlatTupleGenerator',
+	pairSrc = cms.InputTag('NtupleEvents','NtupleEvents','DavisNtuple'),
+	indepSrc = cms.InputTag('pairIndep','NtupleEventPairIndep','DavisNtuple'),
+	NAME = cms.string("LOWDELTAR"),
+	FillEffLeptonBranches = cms.bool(False),	
+	RecoilCorrection = sampleData.RecoilCorrection,
+	MetSystematicType = sampleData.MetSystematicType,
+	EventCutSrc = generalConfig,
+	TauEsVariantToKeep = cms.string("NOMINAL"), # only NOMINAL, UP or DOWN are valid
+	LeptonCutVecSrc = lowDeltaRCuts,
+	SVMassConfig = svMassAtFlatTupleConfig
+	)
+
+
+process.LOWDELTARupTau = cms.EDAnalyzer('FlatTupleGenerator',
+	pairSrc = cms.InputTag('NtupleEventsTauEsUp','NtupleEventsTauEsUp','DavisNtuple'),
+	indepSrc = cms.InputTag('pairIndep','NtupleEventPairIndep','DavisNtuple'),
+	NAME = cms.string("LOWDELTARupTau"),
+	FillEffLeptonBranches = cms.bool(False),	
+	RecoilCorrection = sampleData.RecoilCorrection,
+	MetSystematicType = sampleData.MetSystematicType,
+	EventCutSrc = generalConfig,
+	TauEsVariantToKeep = cms.string("UP"), # only NOMINAL, UP or DOWN are valid
+	LeptonCutVecSrc = lowDeltaRCuts,
+	SVMassConfig = svMassAtFlatTupleConfig
+	)
+
+process.LOWDELTARdownTau = cms.EDAnalyzer('FlatTupleGenerator',
+	pairSrc = cms.InputTag('NtupleEventsTauEsDown','NtupleEventsTauEsDown','DavisNtuple'),
+	indepSrc = cms.InputTag('pairIndep','NtupleEventPairIndep','DavisNtuple'),
+	NAME = cms.string("LOWDELTARdownTau"),
+	FillEffLeptonBranches = cms.bool(False),	
+	RecoilCorrection = sampleData.RecoilCorrection,
+	MetSystematicType = sampleData.MetSystematicType,
+	EventCutSrc = generalConfig,
+	TauEsVariantToKeep = cms.string("DOWN"), # only NOMINAL, UP or DOWN are valid
+	LeptonCutVecSrc = lowDeltaRCuts,
+	SVMassConfig = svMassAtFlatTupleConfig
+	)
+
 
 
 process.p = cms.Path()
@@ -806,11 +829,17 @@ if BUILD_TAU_ES_VARIANTS is True :
 
 process.p *= process.pairIndep
 
-process.p *= process.NOCUTS
+process.p *= process.BASELINE
 
 if BUILD_TAU_ES_VARIANTS is True :
-	process.p *= process.NOCUTSupTau 
-	process.p *= process.NOCUTSdownTau
+	process.p *= process.BASELINEupTau 
+	process.p *= process.BASELINEdownTau
+
+if BUILD_LOWDR is True :
+	process.p *= process.LOWDELTAR	
+	if BUILD_TAU_ES_VARIANTS is True :
+		process.p *= process.LOWDELTARupTau 
+		process.p *= process.LOWDELTARdownTau
 
 process.TFileService = cms.Service("TFileService", fileName = cms.string("FlatTuple.root"))
 process.e = cms.EndPath()

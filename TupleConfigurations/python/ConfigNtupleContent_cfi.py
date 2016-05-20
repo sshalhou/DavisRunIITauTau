@@ -15,7 +15,7 @@ BUILD_MUON_MUON = False
 BUILD_MUON_TAU = True
 BUILD_TAU_TAU = True
 # new options (any one of these will run eff. flatTuple options)
-BUILD_EFFICIENCY_TREE  = False
+BUILD_EFFICIENCY_TREE  = True
 
 
 ####################################################################################################
@@ -31,7 +31,7 @@ MAX_TAU_COUNT = 7
 # edit the following to turn on/off Tau ES variants
 ####################################################################################################
 
-BUILD_TAU_ES_VARIANTS = False # not needed in early sync
+BUILD_TAU_ES_VARIANTS = True # not needed in early sync
 
 ####################################################################################################
 # some options to run SVFit at Ntuple level 

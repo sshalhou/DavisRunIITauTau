@@ -34,6 +34,9 @@
 #include "DataFormats/Math/interface/Vector3D.h"
 #include "Math/GenVector/VectorUtil.h"
 #include <math.h>
+#include <TH2F.h>
+#include <TFile.h>
+
 
 // FWCore include files
 #include "FWCore/Framework/interface/Frameworkfwd.h"
@@ -45,6 +48,9 @@
 #include "FWCore/Framework/interface/ESHandle.h"
 #include "CommonTools/UtilAlgos/interface/TFileService.h"
 #include "DataFormats/Math/interface/deltaR.h"
+#include "CondFormats/BTauObjects/interface/BTagCalibration.h"
+#include "CondFormats/BTauObjects/interface/BTagCalibrationReader.h"
+#include "CondFormats/BTauObjects/interface/BTagEntry.h"
 
 // recoil corrector and systematics for 76X MC
 
@@ -88,6 +94,35 @@ public:
 
 	static void fillDescriptions(edm::ConfigurationDescriptions& descriptions);
 
+
+	/* met systematic tool */
+	
+	MEtSys * m_metSys;
+
+	/* met recoil corrector */
+
+	RecoilCorrector * m_recoilMvaMetCorrector;
+
+
+	/* the b-tag eff histograms */
+
+	TH2F m_LooseEff_b;	
+	TH2F m_LooseEff_c;	
+	TH2F m_LooseEff_usdg;	
+	TH2F m_MediumEff_b;
+	TH2F m_MediumEff_c;	
+	TH2F m_MediumEff_usdg;	
+	TH2F m_TightEff_b;	
+	TH2F m_TightEff_c;	
+	TH2F m_TightEff_usdg;
+
+	/* the btag sf helper tool */
+
+    bTagSFhelper * m_BtagSFTool;
+
+    /* root file needed for SVFit */
+
+    TFile* inputFile_visPtResolution;
 
    private:
       virtual void beginJob() override;
@@ -155,6 +190,7 @@ public:
 	edm::EDGetTokenT<edm::View< NtuplePairIndependentInfo > > indepToken_;
 	
 	std::string NAME_;  // use a descriptive name for your FlatTuple
+	bool FillEffLeptonBranches_; /* we only want eff leptons under regular tau ES, basic selection */
 	std::string RECOILCORRECTION_; // type of recoil correction, pulled from sample meta data config file
 	std::string MetSystematicType_; // the type of mva met sys. pulled from sample meta data 
 	edm::ParameterSet EventCutSrc_;
@@ -846,6 +882,8 @@ public:
     /* gen level boson 4-vectors Z/W/H */
     double genBosonTotal_pt, genBosonTotal_eta, genBosonTotal_phi, genBosonTotal_M; 	    /* the gen total 4-vector of W/Z/H */
 	double genBosonVisible_pt, genBosonVisible_eta, genBosonVisible_phi, genBosonVisible_M; /* the gen visible 4-vector of W/Z/H */
+
+
 
 };  
 

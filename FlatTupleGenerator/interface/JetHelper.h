@@ -24,6 +24,7 @@
 #include "FWCore/Framework/interface/Event.h"
 #include "FWCore/Framework/interface/MakerMacros.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
+#include "TH2F.h"
 
 // needed by ntuple Tau producer
 #include <vector>
@@ -76,8 +77,8 @@ public:
 
 
 /* new >= 76X functions   */
-  void init(std::vector<NtupleJet>, std::string, double, NtupleLepton, NtupleLepton, bTagSFhelper, bool); 
-  void init(std::vector<NtupleJet>, std::string, bTagSFhelper, bool); 
+  void init(std::vector<NtupleJet>, std::string, double, NtupleLepton, NtupleLepton, bTagSFhelper *, bool); 
+  void init(std::vector<NtupleJet>, std::string, bTagSFhelper *, bool); 
 
 
 

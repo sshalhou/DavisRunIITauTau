@@ -15,8 +15,8 @@
 
 	- note: this code draws heavily from Run I BtagSF.hh and 76X BTagCalibration examples
 
-
-			 
+	- note : the heavy arg list is intended to offload much of the initialization of TH2F, TFile, BTagCalib/Reader
+	objects to the FlatTupleGenerator class' declaration. This is done to minimize disk reads and memory usage.
 
 - Shalhout
 */
@@ -45,10 +45,16 @@
 class bTagSFhelper {
 
 public:
-
-/* args are (the CSV SF file, the loose b-tag eff root file, the medium b-tag eff root file, the tight b-tag eff root file, */
-/* the loose btag WP cut, the medium btag WP cut, the tight btag wp cut */
-  bTagSFhelper(edm::FileInPath, edm::FileInPath, edm::FileInPath, edm::FileInPath, double, double, double); 
+/* args are (the BTagCalibration tool, the loose b-tag eff root file, the medium b-tag eff root file, the tight b-tag eff root file, */
+/* the loose btag WP cut, the medium btag WP cut, the tight btag wp cut, and the 9 btag eff histograms, the 18 b-tag calib readers */
+  bTagSFhelper(BTagCalibration, edm::FileInPath, edm::FileInPath, edm::FileInPath, double, double, double,
+  	TH2F, TH2F, TH2F,TH2F, TH2F, TH2F,TH2F, TH2F, TH2F,
+	BTagCalibrationReader, BTagCalibrationReader, BTagCalibrationReader,
+	BTagCalibrationReader, BTagCalibrationReader, BTagCalibrationReader,
+	BTagCalibrationReader, BTagCalibrationReader, BTagCalibrationReader,
+	BTagCalibrationReader, BTagCalibrationReader, BTagCalibrationReader,
+	BTagCalibrationReader, BTagCalibrationReader, BTagCalibrationReader,
+	BTagCalibrationReader, BTagCalibrationReader, BTagCalibrationReader); 
   virtual ~bTagSFhelper(){}
 
   /* call the InitForJet function once per jet, per btag WP. args are :
@@ -91,9 +97,35 @@ public:
 
 private:
 
-	edm::FileInPath m_csvFileName;
-	edm::FileInPath m_looseEffRootFile;
+	/* calibration tool and readers */
+	BTagCalibration m_calib;
 
+	BTagCalibrationReader	m_LooseWpReaderCentral_forBorC;
+	BTagCalibrationReader	m_LooseWpReaderUp_forBorC;
+	BTagCalibrationReader	m_LooseWpReaderDown_forBorC;
+	
+	BTagCalibrationReader	m_MediumWpReaderCentral_forBorC;
+	BTagCalibrationReader	m_MediumWpReaderUp_forBorC;
+	BTagCalibrationReader	m_MediumWpReaderDown_forBorC;
+	
+	BTagCalibrationReader	m_TightWpReaderCentral_forBorC;
+	BTagCalibrationReader	m_TightWpReaderUp_forBorC;
+	BTagCalibrationReader	m_TightWpReaderDown_forBorC;
+	
+	BTagCalibrationReader	m_LooseWpReaderCentral_forUDSG;
+	BTagCalibrationReader	m_LooseWpReaderUp_forUDSG;
+	BTagCalibrationReader	m_LooseWpReaderDown_forUDSG;
+	
+	BTagCalibrationReader	m_MediumWpReaderCentral_forUDSG;
+	BTagCalibrationReader	m_MediumWpReaderUp_forUDSG;
+	BTagCalibrationReader	m_MediumWpReaderDown_forUDSG;
+	
+	BTagCalibrationReader	m_TightWpReaderCentral_forUDSG;
+	BTagCalibrationReader	m_TightWpReaderUp_forUDSG;
+	BTagCalibrationReader	m_TightWpReaderDown_forUDSG;
+
+
+	edm::FileInPath m_looseEffRootFile;
 	edm::FileInPath m_mediumEffRootFile;
 	edm::FileInPath m_tightEffRootFile;
 
@@ -163,6 +195,20 @@ private:
 
 	bool applyBTagSF(bool, double, double, float); /* actually applies the SF using promite demote, 
 	based on https://github.com/rappoccio/usercode/blob/Dev_53x/EDSHyFT/plugins/BTagSFUtil_tprime.h */
+
+
+	/* histograms for b-tag eff */
+
+	TH2F m_LooseEff_b;	
+	TH2F m_LooseEff_c;	
+	TH2F m_LooseEff_usdg;	
+	TH2F m_MediumEff_b;
+	TH2F m_MediumEff_c;	
+	TH2F m_MediumEff_usdg;	
+	TH2F m_TightEff_b;	
+	TH2F m_TightEff_c;	
+	TH2F m_TightEff_usdg;
+
 
 };
 

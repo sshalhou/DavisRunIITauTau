@@ -137,7 +137,7 @@ void PairRankHelper::init(std::vector<NtupleEvent> pairs,std::string eIsol, std:
     m_CriterionLepPair_Isol.push_back(apair);
   }
 
-   std::cout<<" TOTAL m_CriterionLepPair_Isol "<<m_CriterionLepPair_Isol.size()<<"\n";
+   //std::cout<<" TOTAL m_CriterionLepPair_Isol "<<m_CriterionLepPair_Isol.size()<<"\n";
 
 
 

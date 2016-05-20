@@ -5,6 +5,11 @@
 import FWCore.ParameterSet.Config as cms
 from DavisRunIITauTau.TupleConfigurations.and_string_concatonator import and_string_concatonator
 
+###################################################
+# do we want to build low DR FlatTuples as well?  #
+###################################################
+BUILD_LOWDR = True
+
 ##########################################
 # set up SVMass  @ FlatTuple level	     #
 ##########################################
@@ -406,12 +411,13 @@ print " should make code so that you don't need to manually adjust this "
 
 
 # main cut vector PSet :
-theCuts = cms.VPSet(
+defaultCuts = cms.VPSet(
 
 		cms.PSet(   candidatePairType = cms.string("EleMuon"),
 					electronID = cut_ele_EleMuon,
 					muonID = cut_muon_EleMuon,
 					minDR = cms.double(0.3),
+					maxDR = cms.double(999.0),
 					trigger = emuTriggerCut
 
 				),
@@ -420,6 +426,7 @@ theCuts = cms.VPSet(
 					muonID = cut_muon_MuonTau,
 					tauID = cut_tau_MuonTau,
 					minDR = cms.double(0.5),
+					maxDR = cms.double(999.0),
 					trigger = mtauTriggerCut
 
 				),
@@ -429,6 +436,7 @@ theCuts = cms.VPSet(
 					electronID = cut_ele_EleTau,
 					tauID = cut_tau_EleTau,
 					minDR = cms.double(0.5),
+					maxDR = cms.double(999.0),
 					trigger = etauTriggerCut
 				),
 
@@ -436,12 +444,50 @@ theCuts = cms.VPSet(
 		cms.PSet(   candidatePairType = cms.string("TauTau"),
 					tauID = cut_tau_TauTau,
 					minDR = cms.double(0.5),
+					maxDR = cms.double(999.0),
 					trigger = tautauTriggerCut
-
 				)
 	)
 
 
+
+lowDeltaRCuts = cms.VPSet(
+
+		cms.PSet(   candidatePairType = cms.string("EleMuon"),
+					electronID = cut_ele_EleMuon,
+					muonID = cut_muon_EleMuon,
+					minDR = cms.double(0.),
+					maxDR = cms.double(0.2999),
+					trigger = emuTriggerCut
+
+				),
+
+		cms.PSet(   candidatePairType = cms.string("MuonTau"),
+					muonID = cut_muon_MuonTau,
+					tauID = cut_tau_MuonTau,
+					minDR = cms.double(0.),
+					maxDR = cms.double(0.4999),
+					trigger = mtauTriggerCut
+
+				),
+
+
+		cms.PSet(   candidatePairType = cms.string("EleTau"),
+					electronID = cut_ele_EleTau,
+					tauID = cut_tau_EleTau,
+					minDR = cms.double(0.),
+					maxDR = cms.double(0.4999),
+					trigger = etauTriggerCut
+				),
+
+
+		cms.PSet(   candidatePairType = cms.string("TauTau"),
+					tauID = cut_tau_TauTau,
+					minDR = cms.double(0.),
+					maxDR = cms.double(0.4999),
+					trigger = tautauTriggerCut
+				)
+	)
 
 
 		

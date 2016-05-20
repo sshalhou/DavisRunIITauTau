@@ -14,6 +14,7 @@ FlatTupleGenerator::FlatTupleGenerator(const edm::ParameterSet& iConfig):
 pairSrc_(iConfig.getParameter<edm::InputTag>("pairSrc" )),
 indepSrc_(iConfig.getParameter<edm::InputTag>("indepSrc" )),
 NAME_(iConfig.getParameter<string>("NAME" )),
+FillEffLeptonBranches_(iConfig.getParameter<bool>("FillEffLeptonBranches")),
 RECOILCORRECTION_(iConfig.getParameter<string>("RecoilCorrection" )),
 MetSystematicType_(iConfig.getParameter<string>("MetSystematicType" )),
 EventCutSrc_(iConfig.getParameter<edm::ParameterSet>("EventCutSrc")),
@@ -128,6 +129,7 @@ svMassAtFlatTupleConfig_(iConfig.getParameter<edm::ParameterSet>("SVMassConfig")
   mediumEff_file = edm::FileInPath(mediumEff_fileString);
   tightEff_file = edm::FileInPath(tightEff_fileString); /* for 76X same as med */
 
+  std::cout<<" Instance of FlatTupleGenerator for "<<NAME_<<"\n";
   std::cout<<" **** Setting up Btag Tool with \n";
   std::cout<<" [L, M, T] b-tag cut points set to [ "<<LooseCut<<" , "<<MediumCut<<" , "<<TightCut<<" ] \n";
   std::cout<<" with SF CSV file : "<<sf_fileString<<"\n ";
@@ -136,6 +138,168 @@ svMassAtFlatTupleConfig_(iConfig.getParameter<edm::ParameterSet>("SVMassConfig")
   std::cout<<" with tight EFF root file : "<<tightEff_fileString<<" (same as medium for 76X ) \n";
 
 
+  /* ROOT data files for btag SF */
+  TFile m_LooseBtagEff(looseEff_file.fullPath().data(),"READ");
+  TFile m_MediumBtagEff(mediumEff_file.fullPath().data(),"READ");
+  TFile m_TightBtagEff(tightEff_file.fullPath().data(),"READ");
+
+  /* get, clone, and delete pointers to b-tag sf histograms */
+
+  TH2F * p_LooseEff_b = (TH2F*) m_LooseBtagEff.Get("btag_eff_b");
+  p_LooseEff_b->SetDirectory(0);
+  m_LooseEff_b = *p_LooseEff_b;
+  m_LooseEff_b.SetDirectory(0);
+  p_LooseEff_b->Delete();
+    
+
+  TH2F * p_LooseEff_c = (TH2F*) m_LooseBtagEff.Get("btag_eff_c");
+  p_LooseEff_c->SetDirectory(0);
+  m_LooseEff_c = *p_LooseEff_c;
+  m_LooseEff_c.SetDirectory(0);
+  p_LooseEff_c->Delete();
+
+
+  TH2F * p_LooseEff_usdg = (TH2F*) m_LooseBtagEff.Get("btag_eff_oth");
+  p_LooseEff_usdg->SetDirectory(0);
+  m_LooseEff_usdg = *p_LooseEff_usdg;
+  m_LooseEff_usdg.SetDirectory(0);
+  p_LooseEff_usdg->Delete();  
+
+  TH2F * p_MediumEff_b = (TH2F*) m_MediumBtagEff.Get("btag_eff_b");
+  p_MediumEff_b->SetDirectory(0);
+  m_MediumEff_b = *p_MediumEff_b;
+  m_MediumEff_b.SetDirectory(0);
+  p_MediumEff_b->Delete();
+    
+
+  TH2F * p_MediumEff_c = (TH2F*) m_MediumBtagEff.Get("btag_eff_c");
+  p_MediumEff_c->SetDirectory(0);
+  m_MediumEff_c = *p_MediumEff_c;
+  m_MediumEff_c.SetDirectory(0);
+  p_MediumEff_c->Delete();
+
+
+  TH2F * p_MediumEff_usdg = (TH2F*) m_MediumBtagEff.Get("btag_eff_oth");
+  p_MediumEff_usdg->SetDirectory(0);
+  m_MediumEff_usdg = *p_MediumEff_usdg;
+  m_MediumEff_usdg.SetDirectory(0);
+  p_MediumEff_usdg->Delete();  
+
+  TH2F * p_TightEff_b = (TH2F*) m_TightBtagEff.Get("btag_eff_b");
+  p_TightEff_b->SetDirectory(0);
+  m_TightEff_b = *p_TightEff_b;
+  m_TightEff_b.SetDirectory(0);
+  p_TightEff_b->Delete();
+    
+
+  TH2F * p_TightEff_c = (TH2F*) m_TightBtagEff.Get("btag_eff_c");
+  p_TightEff_c->SetDirectory(0);
+  m_TightEff_c = *p_TightEff_c;
+  m_TightEff_c.SetDirectory(0);
+  p_TightEff_c->Delete();
+
+  TH2F * p_TightEff_usdg = (TH2F*) m_TightBtagEff.Get("btag_eff_oth");
+  p_TightEff_usdg->SetDirectory(0);
+  m_TightEff_usdg = *p_TightEff_usdg;
+  m_TightEff_usdg.SetDirectory(0);
+  p_TightEff_usdg->Delete();  
+
+  m_LooseBtagEff.Close();
+  m_MediumBtagEff.Close();
+  m_TightBtagEff.Close();
+
+  /* setup the b-tag calibration tool & readers */
+
+  BTagCalibration m_calib("csvv2", sf_file.fullPath());
+  BTagCalibrationReader m_LooseWpReaderCentral_forBorC(&m_calib, BTagEntry::OP_LOOSE,"mujets","central");
+  BTagCalibrationReader m_LooseWpReaderUp_forBorC(&m_calib, BTagEntry::OP_LOOSE,"mujets","up");
+  BTagCalibrationReader m_LooseWpReaderDown_forBorC(&m_calib, BTagEntry::OP_LOOSE,"mujets","down");
+  
+  BTagCalibrationReader m_MediumWpReaderCentral_forBorC(&m_calib, BTagEntry::OP_MEDIUM,"mujets","central");
+  BTagCalibrationReader m_MediumWpReaderUp_forBorC(&m_calib, BTagEntry::OP_MEDIUM,"mujets","up");
+  BTagCalibrationReader m_MediumWpReaderDown_forBorC(&m_calib, BTagEntry::OP_MEDIUM,"mujets","down");
+  
+  BTagCalibrationReader m_TightWpReaderCentral_forBorC(&m_calib, BTagEntry::OP_TIGHT,"mujets","central");
+  BTagCalibrationReader m_TightWpReaderUp_forBorC(&m_calib, BTagEntry::OP_TIGHT,"mujets","up");
+  BTagCalibrationReader m_TightWpReaderDown_forBorC(&m_calib, BTagEntry::OP_TIGHT,"mujets","down");
+  
+  BTagCalibrationReader m_LooseWpReaderCentral_forUDSG(&m_calib, BTagEntry::OP_LOOSE,"incl","central");
+  BTagCalibrationReader m_LooseWpReaderUp_forUDSG(&m_calib, BTagEntry::OP_LOOSE,"incl","up");
+  BTagCalibrationReader m_LooseWpReaderDown_forUDSG(&m_calib, BTagEntry::OP_LOOSE,"incl","down");
+  
+  BTagCalibrationReader m_MediumWpReaderCentral_forUDSG(&m_calib, BTagEntry::OP_MEDIUM,"incl","central");
+  BTagCalibrationReader m_MediumWpReaderUp_forUDSG(&m_calib, BTagEntry::OP_MEDIUM,"incl","up");
+  BTagCalibrationReader m_MediumWpReaderDown_forUDSG(&m_calib, BTagEntry::OP_MEDIUM,"incl","down");
+  
+  BTagCalibrationReader m_TightWpReaderCentral_forUDSG(&m_calib, BTagEntry::OP_TIGHT,"incl","central");
+  BTagCalibrationReader m_TightWpReaderUp_forUDSG(&m_calib, BTagEntry::OP_TIGHT,"incl","up");
+  BTagCalibrationReader m_TightWpReaderDown_forUDSG(&m_calib, BTagEntry::OP_TIGHT,"incl","down");
+
+
+
+  /* setup btag SF tool */
+
+
+  m_BtagSFTool = new bTagSFhelper(m_calib, looseEff_file, mediumEff_file, tightEff_file, 
+                      LooseCut, MediumCut, TightCut,
+                      m_LooseEff_b, m_LooseEff_c, m_LooseEff_usdg, 
+                      m_MediumEff_b, m_MediumEff_c, m_MediumEff_usdg, 
+                      m_TightEff_b, m_TightEff_c, m_TightEff_usdg,
+                      m_LooseWpReaderCentral_forBorC, m_LooseWpReaderUp_forBorC, m_LooseWpReaderDown_forBorC, 
+                      m_MediumWpReaderCentral_forBorC, m_MediumWpReaderUp_forBorC, m_MediumWpReaderDown_forBorC, 
+                      m_TightWpReaderCentral_forBorC, m_TightWpReaderUp_forBorC, m_TightWpReaderDown_forBorC, 
+                      m_LooseWpReaderCentral_forUDSG, m_LooseWpReaderUp_forUDSG, m_LooseWpReaderDown_forUDSG, 
+                      m_MediumWpReaderCentral_forUDSG, m_MediumWpReaderUp_forUDSG, m_MediumWpReaderDown_forUDSG, 
+                      m_TightWpReaderCentral_forUDSG, m_TightWpReaderUp_forUDSG, m_TightWpReaderDown_forUDSG);
+
+
+  /* setup the SVFit ResolutionPDF file */
+
+  edm::FileInPath inputFileName_visPtResolution("TauAnalysis/SVfitStandalone/data/svFitVisMassAndPtResolutionPDF.root");
+  TH1::AddDirectory(false);  
+  inputFile_visPtResolution = new TFile(inputFileName_visPtResolution.fullPath().data());
+
+  std::cout<<"********************************************************************************\n";
+  std::cout<<" ******* svFitVisMassAndPtResolutionPDF mass and resolution file is \n";
+  std::cout<<inputFileName_visPtResolution.fullPath().data()<<"\n";
+  std::cout<<" Change in FlatTupleGenerator.cc if not current \n";
+  std::cout<<"********************************************************************************\n";
+
+  /* setup the met systematic tool */
+
+
+  m_metSys = new MEtSys("HTT-utilities/RecoilCorrections/data/MEtSys.root");
+
+  std::cout<<"********************************************************************************\n";
+  std::cout<<" ******* Met SYSTEMATIC TOOL ROOT FILE IS : HTT-utilities/RecoilCorrections/data/MEtSys.root \n";
+  std::cout<<" Change in FlatTupleGenerator.cc if not current \n";
+  std::cout<<"********************************************************************************\n";
+
+
+  /* setup the recoil correction tool :
+  valid correction options are aMCatNLO_DY, aMCatNLO_W, MG5_DY, MG5_W, HIGGS, NONE */
+    
+  assert(RECOILCORRECTION_=="aMCatNLO_DY" || RECOILCORRECTION_=="aMCatNLO_W" || RECOILCORRECTION_=="MG5_DY"||\
+         RECOILCORRECTION_=="MG5_W" || RECOILCORRECTION_=="HIGGS"|| RECOILCORRECTION_=="NONE");
+
+  std::string fname = "HTT-utilities/RecoilCorrections/data/recoilMvaMEt_76X_newTraining_MG5.root";
+
+  if(RECOILCORRECTION_=="HIGGS" || RECOILCORRECTION_=="MG5_DY" || RECOILCORRECTION_=="MG5_W")
+  {
+    fname = "HTT-utilities/RecoilCorrections/data/recoilMvaMEt_76X_newTraining_MG5.root";
+  }
+  else if(RECOILCORRECTION_=="aMCatNLO_DY" || RECOILCORRECTION_=="aMCatNLO_W")
+  {
+    fname = "HTT-utilities/RecoilCorrections/data/recoilMvaMEt_76X_newTraining.root";
+  }
+
+  /* not used if RECOILCORRECTION_==NONE, but need a valid file to initialize */
+  m_recoilMvaMetCorrector = new RecoilCorrector(fname); 
+
+  std::cout<<"********************************************************************************\n";
+  std::cout<<" ******* Met RECOIL Correction TOOL ROOT FILE IS : "<<fname<<"\n";
+  std::cout<<" Change in FlatTupleGenerator.cc if not current \n";
+  std::cout<<"********************************************************************************\n";
 
 
 }
@@ -145,7 +309,14 @@ svMassAtFlatTupleConfig_(iConfig.getParameter<edm::ParameterSet>("SVMassConfig")
 // class destructor 
 //////////////////////////////////////////////////
 
-FlatTupleGenerator::~FlatTupleGenerator(){}
+FlatTupleGenerator::~FlatTupleGenerator()
+{ 
+  delete m_BtagSFTool;
+  inputFile_visPtResolution->Close();
+  delete inputFile_visPtResolution;
+  delete m_metSys;
+  delete m_recoilMvaMetCorrector;
+}
 
 //////////////////////////////////////////////////
 // ------------ method called for each event  ------------
@@ -156,7 +327,6 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
 
 //raise(SIGSEGV);
    using namespace edm;
-
 
 
   //////////////
@@ -199,14 +369,14 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
 
   /////////////////////////////////////
   // now loop through the pairs in the current event
-  // and figure out which ones to retain (skip over EffCands here)
+  // and figure out which ones to retain 
 
   for(std::size_t p = 0; p<pairs->size(); ++p )
   {
 
     NtupleEvent currentPairToCheck =   ((*pairs)[p]);
 
-    if(currentPairToCheck.CandidateEventType()==TupleCandidateEventTypes::EffCand) 
+    if(currentPairToCheck.CandidateEventType()==TupleCandidateEventTypes::EffCand && FillEffLeptonBranches_) 
     {
 //      std::cout<<" have an EffLepton candidate \n";      
 
@@ -232,8 +402,8 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
       {
 
 
-        bTagSFhelper m_BtagSFTool(sf_file, looseEff_file, mediumEff_file, tightEff_file, 
-                      LooseCut, MediumCut, TightCut );
+        // bTagSFhelper m_BtagSFTool(sf_file, looseEff_file, mediumEff_file, tightEff_file, 
+        //               LooseCut, MediumCut, TightCut );
 
 
         jethelper.init(currentINDEP.jets(),jetIDcut, m_BtagSFTool, iEvent.isRealData());
@@ -415,8 +585,8 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
       {
 
 
-        bTagSFhelper m_BtagSFTool(sf_file, looseEff_file, mediumEff_file, tightEff_file, 
-                      LooseCut, MediumCut, TightCut );
+        // bTagSFhelper m_BtagSFTool(sf_file, looseEff_file, mediumEff_file, tightEff_file, 
+        //               LooseCut, MediumCut, TightCut );
 
         jethelper.init(currentINDEP.jets(),jetIDcut,
                   jetLeptonDRmin,currentPair.leg1(),currentPair.leg2(), m_BtagSFTool, iEvent.isRealData());
@@ -473,10 +643,6 @@ void FlatTupleGenerator::handleMvaMetAndRecoil(const edm::Event& iEvent, const e
   if(CandidateEventType!=TupleCandidateEventTypes::EffCand) 
   {
 
-    /* correction options are aMCatNLO_DY, aMCatNLO_W, MG5_DY, MG5_W, HIGGS, NONE */
-    
-    assert(RECOILCORRECTION_=="aMCatNLO_DY" || RECOILCORRECTION_=="aMCatNLO_W" || RECOILCORRECTION_=="MG5_DY"||\
-           RECOILCORRECTION_=="MG5_W" || RECOILCORRECTION_=="HIGGS"|| RECOILCORRECTION_=="NONE");
 
     /* systematic options are NONE, MEtSys::ProcessType::BOSON, MEtSys::ProcessType::EWK, MEtSys::ProcessType::TOP */
 
@@ -556,23 +722,10 @@ void FlatTupleGenerator::handleMvaMetAndRecoil(const edm::Event& iEvent, const e
     else 
     {
 
-      std::string fname;
-
-      if(RECOILCORRECTION_=="HIGGS" || RECOILCORRECTION_=="MG5_DY" || RECOILCORRECTION_=="MG5_W")
-      {
-        fname = "HTT-utilities/RecoilCorrections/data/recoilMvaMEt_76X_newTraining_MG5.root";
-      }
-      else if(RECOILCORRECTION_=="aMCatNLO_DY" || RECOILCORRECTION_=="aMCatNLO_W")
-      {
-        fname = "HTT-utilities/RecoilCorrections/data/recoilMvaMEt_76X_newTraining.root";
-      }
-
-      RecoilCorrector recoilMvaMetCorrector(fname);
-
       float temp_px = 0;
       float temp_py = 0;
 
-      recoilMvaMetCorrector.CorrectByMeanResolution(
+      m_recoilMvaMetCorrector->CorrectByMeanResolution(
         float(uncorr.Px()), 
         float(uncorr.Py()), 
         float(genTotal.Px()), 
@@ -610,16 +763,13 @@ void FlatTupleGenerator::handleMvaMetAndRecoil(const edm::Event& iEvent, const e
       else if(MetSystematicType_=="MEtSys::ProcessType::EWK") type_of_process = MEtSys::ProcessType::EWK;
       else if(MetSystematicType_=="MEtSys::ProcessType::TOP") type_of_process = MEtSys::ProcessType::TOP;
 
-      /* instance of the tool */
-
-      MEtSys metSys("HTT-utilities/RecoilCorrections/data/MEtSys.root");
 
       /* do the responseUP */
 
       float responseUP_px = 0;
       float responseUP_py = 0;
 
-      metSys.ApplyMEtSys(
+      m_metSys->ApplyMEtSys(
         float(corr.Px()), float(corr.Py()), 
         float(genTotal.Px()),float(genTotal.Py()), 
         float(genVisible.Px()),float(genVisible.Py()),
@@ -638,7 +788,7 @@ void FlatTupleGenerator::handleMvaMetAndRecoil(const edm::Event& iEvent, const e
       float responseDOWN_px = 0;
       float responseDOWN_py = 0;
 
-      metSys.ApplyMEtSys(
+      m_metSys->ApplyMEtSys(
         float(corr.Px()), float(corr.Py()), 
         float(genTotal.Px()),float(genTotal.Py()), 
         float(genVisible.Px()),float(genVisible.Py()),
@@ -658,7 +808,7 @@ void FlatTupleGenerator::handleMvaMetAndRecoil(const edm::Event& iEvent, const e
       float resolutionUP_px = 0;
       float resolutionUP_py = 0;
 
-      metSys.ApplyMEtSys(
+      m_metSys->ApplyMEtSys(
         float(corr.Px()), float(corr.Py()), 
         float(genTotal.Px()),float(genTotal.Py()), 
         float(genVisible.Px()),float(genVisible.Py()),
@@ -677,7 +827,7 @@ void FlatTupleGenerator::handleMvaMetAndRecoil(const edm::Event& iEvent, const e
       float resolutionDOWN_px = 0;
       float resolutionDOWN_py = 0;
 
-      metSys.ApplyMEtSys(
+      m_metSys->ApplyMEtSys(
         float(corr.Px()), float(corr.Py()), 
         float(genTotal.Px()),float(genTotal.Py()), 
         float(genVisible.Px()),float(genVisible.Py()),
@@ -1446,16 +1596,18 @@ void FlatTupleGenerator::handleSVFitCall(const edm::Event& iEvent, const edm::Ev
 
   bool goodTauDecays = 1;
 
-  if(currentPair.leg1().leptonType() == TupleLeptonTypes::aTau)
-  {
-    if(currentPair.leg1().tauID("decayModeFindingNewDMs") < 0.5 ) goodTauDecays = 0;
-  }
+  /* turning this off, since we already impose a decayMode finding in ConfigTupleTaus_cfi.py */
+  // if(currentPair.leg1().leptonType() == TupleLeptonTypes::aTau)
+  // {
+  //   if(currentPair.leg1().tauID("decayModeFindingNewDMs") < 0.5 ) goodTauDecays = 0;
+  // }
 
-  if(currentPair.leg2().leptonType() == TupleLeptonTypes::aTau)
-  {
-    if(currentPair.leg2().tauID("decayModeFindingNewDMs") < 0.5 ) goodTauDecays = 0;
-  }
+  // if(currentPair.leg2().leptonType() == TupleLeptonTypes::aTau)
+  // {
+  //   if(currentPair.leg2().tauID("decayModeFindingNewDMs") < 0.5 ) goodTauDecays = 0;
+  // }
 
+  // goodTauDecays = 1; 
 
   if(goodTauDecays)
   {
@@ -1721,9 +1873,7 @@ void FlatTupleGenerator::handleSVFitCall(const edm::Event& iEvent, const edm::Ev
 
   //svFitAlgorithm.integrateVEGAS();
   //std::cout<<" shiftVisPt turned off \n";
-  edm::FileInPath inputFileName_visPtResolution("TauAnalysis/SVfitStandalone/data/svFitVisMassAndPtResolutionPDF.root");
-  TH1::AddDirectory(false);  
-  TFile* inputFile_visPtResolution = new TFile(inputFileName_visPtResolution.fullPath().data());
+
   svFitAlgorithm.shiftVisPt(true, inputFile_visPtResolution);
 
   svFitAlgorithm.integrateMarkovChain();
@@ -1784,8 +1934,7 @@ void FlatTupleGenerator::handleSVFitCall(const edm::Event& iEvent, const edm::Ev
 
 
 
-  inputFile_visPtResolution->Close();
-  delete inputFile_visPtResolution;
+
 } // good tau decays
 
 ////////////// END SV MASS COMP ///////////////////////////////  
@@ -1882,8 +2031,8 @@ NtupleEvent currentPair)
   for(std::size_t v = 0; v<currentPair.vetoElectron().size(); ++v)
   {
 
-      std::cout<<" ele @ "<<v<<" has 3rd lep cuts (without DR leg1, and DR leg2) = "<<apply_thirdEleVeto(currentPair.vetoElectron()[v]);
-      std::cout<<" and diElectron cuts = "<<apply_diEleVeto(currentPair.vetoElectron()[v])<<"\n";
+     // std::cout<<" ele @ "<<v<<" has 3rd lep cuts (without DR leg1, and DR leg2) = "<<apply_thirdEleVeto(currentPair.vetoElectron()[v]);
+     // std::cout<<" and diElectron cuts = "<<apply_diEleVeto(currentPair.vetoElectron()[v])<<"\n";
 
 
       veto_leptonType.push_back(currentPair.vetoElectron()[v].leptonType());
@@ -1943,8 +2092,8 @@ NtupleEvent currentPair)
   for(std::size_t v = 0; v<currentPair.vetoMuon().size(); ++v)
   {
 
-      std::cout<<" muon @ "<<v<<" has 3rd lep cuts (without DR leg1, and DR leg2) = "<<apply_thirdMuonVeto(currentPair.vetoMuon()[v]);
-      std::cout<<" and diMuon cuts = "<<apply_diMuonVeto(currentPair.vetoMuon()[v])<<"\n";
+     // std::cout<<" muon @ "<<v<<" has 3rd lep cuts (without DR leg1, and DR leg2) = "<<apply_thirdMuonVeto(currentPair.vetoMuon()[v]);
+     // std::cout<<" and diMuon cuts = "<<apply_diMuonVeto(currentPair.vetoMuon()[v])<<"\n";
 
 
       veto_leptonType.push_back(currentPair.vetoMuon()[v].leptonType());
@@ -2053,7 +2202,7 @@ NtupleEvent currentPair)
     }
   }
 
-  std::cout<<" DiMuon Flag = "<<DiMuon_Flag<<" and DiElectron Flag = "<<DiElectron_Flag<<"\n";
+ // std::cout<<" DiMuon Flag = "<<DiMuon_Flag<<" and DiElectron Flag = "<<DiElectron_Flag<<"\n";
 
 
 
