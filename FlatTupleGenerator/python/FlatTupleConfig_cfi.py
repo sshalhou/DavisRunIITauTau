@@ -22,6 +22,8 @@ SVMASS_VERBOSE_FlatTuple = True
 
 ############################################
 # SVFit + different METs				   #	
+# each True invokes SVFit (Mass and MT)    #
+# using the correponding MET               #
 ############################################
 
 
@@ -171,6 +173,57 @@ tau_TauTau.append("abs(dz)<0.2")
 tau_TauTau.append("abs(charge)==1.0")
 
 
+#############################################
+# for veto cuts we include isolation here   #
+# since the code in flatTuple only uses these
+# to set veto flags (all veto leptons are retained even those that fail,
+# meaning the cuts and flags can always be re-evaluated when generating
+# the sync tree )
+
+
+# electron cuts for third lepton veto :
+ele_ThirdLeptonVeto = []
+ele_ThirdLeptonVeto.append("pt>10")
+ele_ThirdLeptonVeto.append("abs(eta)<2.5")
+ele_ThirdLeptonVeto.append("abs(dxy)<0.045")
+ele_ThirdLeptonVeto.append("abs(dz)<0.2")
+ele_ThirdLeptonVeto.append("passFail_electronMVA90==1.0")
+ele_ThirdLeptonVeto.append("passConversionVeto==1.0")
+ele_ThirdLeptonVeto.append("numberOfMissingInnerHits<=1")
+ele_ThirdLeptonVeto.append("relativeIsol('DeltaBetaCorrectedRelIso')<0.3")
+
+# electron cuts for DiElectron veto :
+ele_DiElectron = []
+ele_DiElectron.append("pt>15")
+ele_DiElectron.append("abs(eta)<2.5")
+ele_DiElectron.append("passFail_electronCutBasedID==1.0")
+ele_DiElectron.append("abs(dz)<0.2")
+ele_DiElectron.append("abs(dxy)<0.045")
+ele_DiElectron.append("relativeIsol('DeltaBetaCorrectedRelIso')<0.3")
+
+# muon cuts for third lepton veto :
+muon_ThirdLeptonVeto = []
+muon_ThirdLeptonVeto.append("pt>10")
+muon_ThirdLeptonVeto.append("abs(eta)<2.4")
+muon_ThirdLeptonVeto.append("abs(dxy)<0.045")
+muon_ThirdLeptonVeto.append("abs(dz)<0.2")
+muon_ThirdLeptonVeto.append("passesMediumMuonId==1.0")
+muon_ThirdLeptonVeto.append("relativeIsol('DeltaBetaCorrectedRelIso')<0.3")
+
+# muon cuts for DiMuon veto :
+muon_DiMuonVeto = []
+muon_DiMuonVeto.append("pt>15")
+muon_DiMuonVeto.append("abs(eta)<2.4")
+muon_DiMuonVeto.append("(isGlobalMuon==1.0 && isTightMuon==1.0 && isTrackerMuon==1.0)")
+muon_DiMuonVeto.append("abs(dxy)<0.045")
+muon_DiMuonVeto.append("abs(dz)<0.2")
+muon_DiMuonVeto.append("relativeIsol('DeltaBetaCorrectedRelIso')<0.3")
+
+
+
+##################################
+# concatenate the cut strings    #
+
 cut_ele_EleTau = cms.string(and_string_concatonator(ele_EleTau))
 cut_ele_EleMuon = cms.string(and_string_concatonator(ele_EleMuon))
 cut_muon_MuonTau = cms.string(and_string_concatonator(muon_MuonTau))
@@ -178,7 +231,10 @@ cut_muon_EleMuon = cms.string(and_string_concatonator(muon_EleMuon))
 cut_tau_TauTau = cms.string(and_string_concatonator(tau_TauTau))
 cut_tau_EleTau = cms.string(and_string_concatonator(tau_EleTau))
 cut_tau_MuonTau = cms.string(and_string_concatonator(tau_MuonTau))
-
+cut_ele_ThirdLeptonVeto = cms.string(and_string_concatonator(ele_ThirdLeptonVeto))
+cut_ele_DiElectron = cms.string(and_string_concatonator(ele_DiElectron))
+cut_muon_ThirdLeptonVeto = cms.string(and_string_concatonator(muon_ThirdLeptonVeto))
+cut_muon_DiMuonVeto =  cms.string(and_string_concatonator(muon_DiMuonVeto))
 
 
 
@@ -468,7 +524,18 @@ generalConfig = cms.PSet(
 					),
 
 
+			#############################################
+			# 3rd lepton veto and di-lepton rejection   #
 			
+			thirdEleVeto = cut_ele_ThirdLeptonVeto, 
+			thirdMuonVeto =	cut_muon_ThirdLeptonVeto,
+			legThirdLeptonMinDR = cms.double(0.01), # make sure leg1 or leg2 don't cause the veto 
+
+			diEleVeto =	cut_ele_DiElectron, 
+			diMuonVeto = cut_muon_DiMuonVeto,
+			diLeptonMinDR = cms.double(0.15), # make sure that a single veto lepton does not trigger the di-lepton flag 
+
+
 			#####################
 			# b-tag configuration 
 

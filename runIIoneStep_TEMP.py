@@ -5,7 +5,9 @@ process = cms.Process('DavisNtuple')
 # preliminaries 
 ###################################
 
-dataSetName_ = "/SUSYGluGluToHToTauTau_M-160_TuneCUETP8M1_13TeV-pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM"
+#dataSetName_ = "/SUSYGluGluToHToTauTau_M-160_TuneCUETP8M1_13TeV-pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM"
+#dataSetName_= "/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM"
+dataSetName_="/ZZTo4L_13TeV-amcatnloFXFX-pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM"
 
 from DavisRunIITauTau.TupleConfigurations.ConfigNtupleContent_cfi import *
 
@@ -93,14 +95,16 @@ print '*******************************************************'
 print '********** Running in unscheduled mode **********'
 process.options = cms.untracked.PSet(wantSummary = cms.untracked.bool(True))
 process.options.allowUnscheduled = cms.untracked.bool(True)
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(1000) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(5000) )
 
 ###################################
 # input - remove for crab running
 ###################################
 
 myfilelist = cms.untracked.vstring()
-myfilelist.extend(['file:/uscms_data/d3/shalhout/miniAODv2_SyncSample.root'])
+#myfilelist.extend(['file:/uscms_data/d3/shalhout/miniAODv2_SyncSample.root'])
+#myfilelist.extend(['file:/uscms_data/d3/shalhout/miniAODv2_DYnlo.root'])
+myfilelist.extend(['file:/uscms_data/d3/shalhout/miniAODv2_ZZ4l.root'])
 process.source = cms.Source("PoolSource",fileNames=myfilelist)
 #	eventsToSkip = cms.untracked.VEventRange('1:1-1:4941')	)
 
@@ -436,10 +440,6 @@ process.TupleCandidateEvents = cms.EDProducer('TupleCandidateEventProducer' ,
 	electronVetoSrc =cms.InputTag("filteredVetoElectrons","","DavisNtuple"),
 	muonVetoSrc = cms.InputTag("filteredVetoMuons","","DavisNtuple"),				
 	pairDeltaRmin = cms.double(0.1),
-    # should be small since don't want one of the pair in the veto list
-    # note : this is used for DR(leg1, leg2) >, and for overlap removal from the
-    # veto e and mu lists
-    vetoDeltaRmin = cms.double(0.15), 
 	NAME=cms.string("TupleCandidateEvents"),
     doSVMass = cms.bool(COMPUTE_SVMASS_AT_NTUPLE),
     useMVAMET = cms.bool(USE_MVAMET),
@@ -461,10 +461,6 @@ process.TupleCandidateEventsTauEsUp = cms.EDProducer('TupleCandidateEventProduce
 	electronVetoSrc =cms.InputTag("filteredVetoElectrons","","DavisNtuple"),
 	muonVetoSrc = cms.InputTag("filteredVetoMuons","","DavisNtuple"),				
 	pairDeltaRmin = cms.double(0.1), 
-    # should be small since don't want one of the pair in the veto list
-    # note : this is used for DR(leg1, leg2) >, and for overlap removal from the
-    # veto e and mu lists
-    vetoDeltaRmin = cms.double(0.15), 
 	NAME=cms.string("TupleCandidateEventsTauEsUp"),
     doSVMass = cms.bool(COMPUTE_SVMASS_AT_NTUPLE),
     useMVAMET = cms.bool(USE_MVAMET),
@@ -485,10 +481,6 @@ process.TupleCandidateEventsTauEsDown = cms.EDProducer('TupleCandidateEventProdu
 	electronVetoSrc =cms.InputTag("filteredVetoElectrons","","DavisNtuple"),
 	muonVetoSrc = cms.InputTag("filteredVetoMuons","","DavisNtuple"),				
 	pairDeltaRmin = cms.double(0.1), 
-    # should be small since don't want one of the pair in the veto list
-    # note : this is used for DR(leg1, leg2) >, and for overlap removal from the
-    # veto e and mu lists
-    vetoDeltaRmin = cms.double(0.15), 
 	NAME=cms.string("TupleCandidateEventsTauEsDown"),
     doSVMass = cms.bool(COMPUTE_SVMASS_AT_NTUPLE),
     useMVAMET = cms.bool(USE_MVAMET),

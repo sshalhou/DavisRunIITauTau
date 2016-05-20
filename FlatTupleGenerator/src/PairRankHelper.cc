@@ -17,7 +17,7 @@ best by rank == 1 etc.
 
 bool NtupleRankCompare_IsolLeg1( const std::pair<std::vector<double>, NtupleEvent>& p1, const std::pair<std::vector<double>, NtupleEvent>& p2) 
 {
-    std::cout<<" ASSERT COND "<<p1.second.CandidateEventType()<<" "<<p2.second.CandidateEventType()<<"\n";
+   // std::cout<<" ASSERT COND "<<p1.second.CandidateEventType()<<" "<<p2.second.CandidateEventType()<<"\n";
 
 //  never compare non-similar lepton flavor pairs (i.e. eTau vs muTau is invalid)
   assert ( p1.second.CandidateEventType() == p2.second.CandidateEventType() );
@@ -124,7 +124,7 @@ prefer pair with higher leg1 pt, then if tied, compare leg2 isolation, then if s
 void PairRankHelper::init(std::vector<NtupleEvent> pairs,std::string eIsol, std::string muIsol, std::string tauID)
 {
 
-  bool verbose = 1;
+  bool verbose = 0;
 
   eIsol_ = eIsol;
   muIsol_ = muIsol;
@@ -137,7 +137,7 @@ void PairRankHelper::init(std::vector<NtupleEvent> pairs,std::string eIsol, std:
     m_CriterionLepPair_Isol.push_back(apair);
   }
 
-  std::cout<<" TOTAL m_CriterionLepPair_Isol "<<m_CriterionLepPair_Isol.size()<<"\n";
+   std::cout<<" TOTAL m_CriterionLepPair_Isol "<<m_CriterionLepPair_Isol.size()<<"\n";
 
 
 

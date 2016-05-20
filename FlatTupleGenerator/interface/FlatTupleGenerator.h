@@ -117,7 +117,22 @@ public:
 	GenHelper genhelper;
 	
 	/* needed to extract the scale factors, passed to jethelper */
-  	bTagSFhelper * m_BtagSFTool;
+
+	double LooseCut;
+	double MediumCut;
+	double TightCut; 
+
+	std::string sf_fileString; 
+	std::string looseEff_fileString;
+	std::string mediumEff_fileString; 
+	std::string tightEff_fileString;
+
+	edm::FileInPath sf_file; 
+	edm::FileInPath looseEff_file; 
+	edm::FileInPath mediumEff_file; 
+	edm::FileInPath tightEff_file; 
+
+
 
 	// ----------member data ---------------------------
 
@@ -200,6 +215,19 @@ public:
 	/* jet cut strings */
 	std::string jetIDcut;
 	double jetLeptonDRmin;
+
+	/* the third lepton veto and di-Lepton cuts */
+
+	std::string thirdEleVeto;
+	std::string thirdMuonVeto;
+	double legThirdLeptonMinDR;
+
+	std::string diEleVeto;
+	std::string diMuonVeto;
+	double diLeptonMinDR;
+
+
+
 
 	/* the lepton cut helper object */
 	LeptonFlatTupleCutHelper LeptonCutHelper;
@@ -507,6 +535,27 @@ public:
 	std::vector<float> veto_passElectronMVA90;
 	std::vector<float> veto_passElectronCutBased;
 	std::vector<float> veto_isTrackerGlobalPFMuon;
+	std::vector<float> veto_numberOfMissingInnerHits;
+	std::vector<float> veto_numberOfMissingOuterHits;
+	std::vector<float> veto_passConversionVeto;
+
+	/* NOTE: these flags are 1 if the *lepton* passes the cuts associated with a veto
+	they do not indicate whether or not the event passes the veto itself */
+
+	std::vector<int> veto_LeptonPassesThirdElectronVetoCuts; 			
+	std::vector<int> veto_LeptonPassesThirdMuonVetoCuts; 			
+	std::vector<int> veto_LeptonPassesDiElectronVetoCuts; 	
+	std::vector<int> veto_LeptonPassesDiMuonVetoCuts; 			
+		
+
+	/* these are the actual event level Flags */
+
+	float DiMuon_Flag;
+	float DiElectron_Flag;
+	float ThirdMuon_Flag;
+	float ThirdElectron_Flag;
+
+
 
 	/* primary vertex info */
 	int NumberOfGoodVertices; /* total number of good PV, see ConfigTupleOfflineVertices_cfi */ 

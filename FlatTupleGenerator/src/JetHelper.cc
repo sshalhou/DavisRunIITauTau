@@ -15,7 +15,7 @@ JetHelper::JetHelper(){}
 /* initialization function for eff lepton vector */
 /* no DR lep-jet cuts are applied here */
 
-void JetHelper::init(std::vector<NtupleJet> jetVec, std::string jetCut, bTagSFhelper * m_BtagSFTool, bool isRealData)
+void JetHelper::init(std::vector<NtupleJet> jetVec, std::string jetCut, bTagSFhelper  m_BtagSFTool, bool isRealData)
 {
 
 
@@ -55,7 +55,7 @@ void JetHelper::init(std::vector<NtupleJet> jetVec, std::string jetCut, bTagSFhe
 		jetVec[j].Use4VectorVariant("fullyCorrected");		
 		if(jetVec[j].pt() >= 20.0 && fabs(jetVec[j].eta()) <= 2.4) /* btagging does not apply out of this range */
 		{
-			m_BtagSFTool->InitForJet(jetVec[j].pt(), 
+			m_BtagSFTool.InitForJet(jetVec[j].pt(), 
 			 					jetVec[j].eta(), 
 								jetVec[j].defaultBtagAlgorithm_RawScore(),
 								jetVec[j].HADRON_flavour(), isRealData);
@@ -63,40 +63,40 @@ void JetHelper::init(std::vector<NtupleJet> jetVec, std::string jetCut, bTagSFhe
 
 			/* set the Btag SFs for the current jet */
 				
-			jetVec[j].set_defaultBtagAlgorithmSF_LooseWpCentral(m_BtagSFTool->SF_LooseWpCentral());
-			jetVec[j].set_defaultBtagAlgorithmSF_LooseWpUp(m_BtagSFTool->SF_LooseWpUp());
-			jetVec[j].set_defaultBtagAlgorithmSF_LooseWpDown(m_BtagSFTool->SF_LooseWpDown());
+			jetVec[j].set_defaultBtagAlgorithmSF_LooseWpCentral(m_BtagSFTool.SF_LooseWpCentral());
+			jetVec[j].set_defaultBtagAlgorithmSF_LooseWpUp(m_BtagSFTool.SF_LooseWpUp());
+			jetVec[j].set_defaultBtagAlgorithmSF_LooseWpDown(m_BtagSFTool.SF_LooseWpDown());
 
-			jetVec[j].set_defaultBtagAlgorithmSF_MediumWpCentral(m_BtagSFTool->SF_MediumWpCentral());
-			jetVec[j].set_defaultBtagAlgorithmSF_MediumWpUp(m_BtagSFTool->SF_MediumWpUp());
-			jetVec[j].set_defaultBtagAlgorithmSF_MediumWpDown(m_BtagSFTool->SF_MediumWpDown());
+			jetVec[j].set_defaultBtagAlgorithmSF_MediumWpCentral(m_BtagSFTool.SF_MediumWpCentral());
+			jetVec[j].set_defaultBtagAlgorithmSF_MediumWpUp(m_BtagSFTool.SF_MediumWpUp());
+			jetVec[j].set_defaultBtagAlgorithmSF_MediumWpDown(m_BtagSFTool.SF_MediumWpDown());
 
-			jetVec[j].set_defaultBtagAlgorithmSF_TightWpCentral(m_BtagSFTool->SF_TightWpCentral());
-			jetVec[j].set_defaultBtagAlgorithmSF_TightWpUp(m_BtagSFTool->SF_TightWpUp());
-			jetVec[j].set_defaultBtagAlgorithmSF_TightWpDown(m_BtagSFTool->SF_TightWpDown());
+			jetVec[j].set_defaultBtagAlgorithmSF_TightWpCentral(m_BtagSFTool.SF_TightWpCentral());
+			jetVec[j].set_defaultBtagAlgorithmSF_TightWpUp(m_BtagSFTool.SF_TightWpUp());
+			jetVec[j].set_defaultBtagAlgorithmSF_TightWpDown(m_BtagSFTool.SF_TightWpDown());
 
 
 			/* set the b-tag eff. for the current jet */
 
-			jetVec[j].set_defaultBtagAlgorithmEff_LooseWp(m_BtagSFTool->EFF_LooseWp());
-			jetVec[j].set_defaultBtagAlgorithmEff_MediumWp(m_BtagSFTool->EFF_MediumWp());
-			jetVec[j].set_defaultBtagAlgorithmEff_TightWp(m_BtagSFTool->EFF_TightWp());
+			jetVec[j].set_defaultBtagAlgorithmEff_LooseWp(m_BtagSFTool.EFF_LooseWp());
+			jetVec[j].set_defaultBtagAlgorithmEff_MediumWp(m_BtagSFTool.EFF_MediumWp());
+			jetVec[j].set_defaultBtagAlgorithmEff_TightWp(m_BtagSFTool.EFF_TightWp());
 
 
 			/* set the Btag Pass/Fail tags (after SFs) for the current jet */
 		
 
-			jetVec[j].set_defaultBtagAlgorithmIsTagged_LooseWpCentral(m_BtagSFTool->IsTagged_LooseWpCentral());
-			jetVec[j].set_defaultBtagAlgorithmIsTagged_LooseWpUp(m_BtagSFTool->IsTagged_LooseWpUp());
-			jetVec[j].set_defaultBtagAlgorithmIsTagged_LooseWpDown(m_BtagSFTool->IsTagged_LooseWpDown());
+			jetVec[j].set_defaultBtagAlgorithmIsTagged_LooseWpCentral(m_BtagSFTool.IsTagged_LooseWpCentral());
+			jetVec[j].set_defaultBtagAlgorithmIsTagged_LooseWpUp(m_BtagSFTool.IsTagged_LooseWpUp());
+			jetVec[j].set_defaultBtagAlgorithmIsTagged_LooseWpDown(m_BtagSFTool.IsTagged_LooseWpDown());
 
-			jetVec[j].set_defaultBtagAlgorithmIsTagged_MediumWpCentral(m_BtagSFTool->IsTagged_MediumWpCentral());
-			jetVec[j].set_defaultBtagAlgorithmIsTagged_MediumWpUp(m_BtagSFTool->IsTagged_MediumWpUp());
-			jetVec[j].set_defaultBtagAlgorithmIsTagged_MediumWpDown(m_BtagSFTool->IsTagged_MediumWpDown());
+			jetVec[j].set_defaultBtagAlgorithmIsTagged_MediumWpCentral(m_BtagSFTool.IsTagged_MediumWpCentral());
+			jetVec[j].set_defaultBtagAlgorithmIsTagged_MediumWpUp(m_BtagSFTool.IsTagged_MediumWpUp());
+			jetVec[j].set_defaultBtagAlgorithmIsTagged_MediumWpDown(m_BtagSFTool.IsTagged_MediumWpDown());
 
-			jetVec[j].set_defaultBtagAlgorithmIsTagged_TightWpCentral(m_BtagSFTool->IsTagged_TightWpCentral());
-			jetVec[j].set_defaultBtagAlgorithmIsTagged_TightWpUp(m_BtagSFTool->IsTagged_TightWpUp());
-			jetVec[j].set_defaultBtagAlgorithmIsTagged_TightWpDown(m_BtagSFTool->IsTagged_TightWpDown());
+			jetVec[j].set_defaultBtagAlgorithmIsTagged_TightWpCentral(m_BtagSFTool.IsTagged_TightWpCentral());
+			jetVec[j].set_defaultBtagAlgorithmIsTagged_TightWpUp(m_BtagSFTool.IsTagged_TightWpUp());
+			jetVec[j].set_defaultBtagAlgorithmIsTagged_TightWpDown(m_BtagSFTool.IsTagged_TightWpDown());
 
 
 
@@ -112,20 +112,20 @@ void JetHelper::init(std::vector<NtupleJet> jetVec, std::string jetCut, bTagSFhe
 
 
 
-			// std::cout<<" Jet B-tag SFs [loose, looseUp, looseDn, med, medUp, medDn, tight, tightUp, tightDn] =  [ ";
+			std::cout<<" Jet B-tag SFs [loose, looseUp, looseDn, med, medUp, medDn, tight, tightUp, tightDn] =  [ ";
 
-			// std::cout<<m_BtagSFTool->SF_LooseWpCentral()<<" , ";
-			// std::cout<<m_BtagSFTool->SF_LooseWpUp()<<" , ";
-			// std::cout<<m_BtagSFTool->SF_LooseWpDown()<<" , ";
-			// std::cout<<m_BtagSFTool->SF_MediumWpCentral()<<" , ";
-			// std::cout<<m_BtagSFTool->SF_MediumWpUp()<<" , ";
-			// std::cout<<m_BtagSFTool->SF_MediumWpDown()<<" , ";
-			// std::cout<<m_BtagSFTool->SF_TightWpCentral()<<" , ";
-			// std::cout<<m_BtagSFTool->SF_TightWpUp()<<" , ";
-			// std::cout<<m_BtagSFTool->SF_TightWpDown()<<" ] ";
+			std::cout<<m_BtagSFTool.SF_LooseWpCentral()<<" , ";
+			std::cout<<m_BtagSFTool.SF_LooseWpUp()<<" , ";
+			std::cout<<m_BtagSFTool.SF_LooseWpDown()<<" , ";
+			std::cout<<m_BtagSFTool.SF_MediumWpCentral()<<" , ";
+			std::cout<<m_BtagSFTool.SF_MediumWpUp()<<" , ";
+			std::cout<<m_BtagSFTool.SF_MediumWpDown()<<" , ";
+			std::cout<<m_BtagSFTool.SF_TightWpCentral()<<" , ";
+			std::cout<<m_BtagSFTool.SF_TightWpUp()<<" , ";
+			std::cout<<m_BtagSFTool.SF_TightWpDown()<<" ] ";
 
-			// std::cout<<" init args were [pt, eta, rawScore, hadronFlav  ] = [ ";
-			// std::cout<<jetVec[j].pt()<<" , "<<jetVec[j].eta()<<" , "<<jetVec[j].defaultBtagAlgorithm_RawScore()<<" , "<<jetVec[j].HADRON_flavour()<<" ] \n";
+			std::cout<<" init args were [pt, eta, rawScore, hadronFlav  ] = [ ";
+			std::cout<<jetVec[j].pt()<<" , "<<jetVec[j].eta()<<" , "<<jetVec[j].defaultBtagAlgorithm_RawScore()<<" , "<<jetVec[j].HADRON_flavour()<<" ] \n";
 
 		}
 		
@@ -193,7 +193,7 @@ void JetHelper::init(std::vector<NtupleJet> jetVec, std::string jetCut, bTagSFhe
 
 
 void JetHelper::init(std::vector<NtupleJet> jetVec, std::string jetCut,
-					double minDR, NtupleLepton leg1, NtupleLepton leg2, bTagSFhelper * m_BtagSFTool, bool isRealData)
+					double minDR, NtupleLepton leg1, NtupleLepton leg2, bTagSFhelper  m_BtagSFTool, bool isRealData)
 {
 
 	m_PtJetPairs_fullyCorrected.clear();

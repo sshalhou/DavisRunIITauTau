@@ -76,8 +76,8 @@ public:
 
 
 /* new >= 76X functions   */
-  void init(std::vector<NtupleJet>, std::string, double, NtupleLepton, NtupleLepton, bTagSFhelper *, bool); 
-  void init(std::vector<NtupleJet>, std::string, bTagSFhelper *, bool); 
+  void init(std::vector<NtupleJet>, std::string, double, NtupleLepton, NtupleLepton, bTagSFhelper, bool); 
+  void init(std::vector<NtupleJet>, std::string, bTagSFhelper, bool); 
 
 
 

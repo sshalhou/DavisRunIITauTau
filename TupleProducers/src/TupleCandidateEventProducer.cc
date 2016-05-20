@@ -97,7 +97,6 @@ private:
   edm::EDGetTokenT<edm::View< pat::Muon > > muonVetoToken_;
 
   double pairDeltaRmin_;
-  double vetoDeltaRmin_;
 
   string NAME_;
   bool doSVMass_;
@@ -142,7 +141,6 @@ mvaMETSrc_(iConfig.getParameter<edm::InputTag>("mvaMETSrc" )),
 electronVetoSrc_(iConfig.getParameter<edm::InputTag>("electronVetoSrc" )),
 muonVetoSrc_(iConfig.getParameter<edm::InputTag>("muonVetoSrc" )),
 pairDeltaRmin_(iConfig.getParameter<double>("pairDeltaRmin" )),
-vetoDeltaRmin_(iConfig.getParameter<double>("vetoDeltaRmin" )),
 NAME_(iConfig.getParameter<string>("NAME" )),
 doSVMass_(iConfig.getParameter<bool>("doSVMass" )),
 useMVAMET_(iConfig.getParameter<bool>("useMVAMET" )),
@@ -321,7 +319,7 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
 
         // leg and veto lepton 4-vectors 
 
-        TLorentzVector l1,l2,vetoCand;
+        TLorentzVector l1,l2;
 
         //////////////////////////////////////////////////////////
 
@@ -455,27 +453,21 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
 
           if(l1.DeltaR(l2)<pairDeltaRmin_) continue;
 
+ 
+
           //std::cout<<" AFTER DR CUT  of "<<pairDeltaRmin_<<" get DR = "<<l1.DeltaR(l2)<<" pts are "<<l1.Pt()<<" "<<l2.Pt()<<"\n";
 
           ///////////////////
           /////// VETO ELECTRONS /////////////////////////////////////////////
           for (std::size_t ve=0; ve<veto_electrons->size(); ++ve)
-          {          
-            vetoCand.SetPtEtaPhiM(veto_electrons->at(ve).pt(), veto_electrons->at(ve).eta(), veto_electrons->at(ve).phi(),veto_electrons->at(ve).mass());
-            if(vetoCand.DeltaR(l1) > vetoDeltaRmin_ && vetoCand.DeltaR(l2) > vetoDeltaRmin_ )
-            {
-              CurrentCandidateEvent.set_vetoElectron(veto_electrons->at(ve));
-            }
+          {                  
+              CurrentCandidateEvent.set_vetoElectron(veto_electrons->at(ve));         
           }
           /////// VETO MUONS /////////////////////////////////////////////
 
           for (std::size_t vm=0; vm<veto_muons->size(); ++vm)
           {          
-             vetoCand.SetPtEtaPhiM(veto_muons->at(vm).pt(), veto_muons->at(vm).eta(), veto_muons->at(vm).phi(),veto_muons->at(vm).mass());
-            if(vetoCand.DeltaR(l1) > vetoDeltaRmin_ && vetoCand.DeltaR(l2) > vetoDeltaRmin_ )
-            {
               CurrentCandidateEvent.set_vetoMuon(veto_muons->at(vm));
-            }
           }
           ///////////////////
 

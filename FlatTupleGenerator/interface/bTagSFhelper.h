@@ -49,65 +49,7 @@ public:
 /* args are (the CSV SF file, the loose b-tag eff root file, the medium b-tag eff root file, the tight b-tag eff root file, */
 /* the loose btag WP cut, the medium btag WP cut, the tight btag wp cut */
   bTagSFhelper(edm::FileInPath, edm::FileInPath, edm::FileInPath, edm::FileInPath, double, double, double); 
-   virtual ~bTagSFhelper()
-  { 
-  	delete m_calib; 
-
-  	m_LooseBtagEff->Close();
-  	m_MediumBtagEff->Close();
-  	m_TightBtagEff->Close();
-	delete m_LooseBtagEff;
-	delete m_MediumBtagEff;
-	delete m_TightBtagEff;
-
-	delete m_LooseEff_b;
-	delete m_LooseEff_c;
-	delete m_LooseEff_usdg;
-
-	delete m_MediumEff_b;
-	delete m_MediumEff_c;
-	delete m_MediumEff_usdg;
-
-	delete m_TightEff_b;
-	delete m_TightEff_c;
-	delete m_TightEff_usdg;
-
-	delete m_LooseWpReaderCentral_forBorC;
-	delete m_LooseWpReaderUp_forBorC;
-	delete m_LooseWpReaderDown_forBorC;
-	delete m_MediumWpReaderCentral_forBorC;
-	delete m_MediumWpReaderUp_forBorC;
-	delete m_MediumWpReaderDown_forBorC;
-	delete m_TightWpReaderCentral_forBorC;
-	delete m_TightWpReaderUp_forBorC;
-	delete m_TightWpReaderDown_forBorC;
-
-
-	delete m_LooseWpReaderCentral_forUDSG;
-	delete m_LooseWpReaderUp_forUDSG;
-	delete m_LooseWpReaderDown_forUDSG;
-	delete m_MediumWpReaderCentral_forUDSG;
-	delete m_MediumWpReaderUp_forUDSG;
-	delete m_MediumWpReaderDown_forUDSG;
-	delete m_TightWpReaderCentral_forUDSG;
-	delete m_TightWpReaderUp_forUDSG;
-	delete m_TightWpReaderDown_forUDSG;
-
-
-	delete m_LooseEff_b;
-	delete m_LooseEff_c;
-	delete m_LooseEff_usdg;
-
-	delete m_MediumEff_b;
-	delete m_MediumEff_c;
-	delete m_MediumEff_usdg;
-
-	delete m_TightEff_b;
-	delete m_TightEff_c;
-	delete m_TightEff_usdg;
-
-	delete m_rand;
-  }
+  virtual ~bTagSFhelper(){}
 
   /* call the InitForJet function once per jet, per btag WP. args are :
   [jet Pt], [jet Eta], [raw b-tag score], [hadronFlavour], isRealData */
@@ -149,6 +91,12 @@ public:
 
 private:
 
+	edm::FileInPath m_csvFileName;
+	edm::FileInPath m_looseEffRootFile;
+
+	edm::FileInPath m_mediumEffRootFile;
+	edm::FileInPath m_tightEffRootFile;
+
 	double m_cutLoose;
 	double m_cutMedium;
 	double m_cutTight;
@@ -158,33 +106,7 @@ private:
     double m_jetEta;
     double m_jetRawScore;
     int m_jetHadronFlavour;
-    BTagCalibration * m_calib;
-
-	BTagCalibrationReader * m_LooseWpReaderCentral_forBorC;
-	BTagCalibrationReader * m_LooseWpReaderUp_forBorC;
-	BTagCalibrationReader * m_LooseWpReaderDown_forBorC;
-
-	BTagCalibrationReader * m_MediumWpReaderCentral_forBorC;
-	BTagCalibrationReader * m_MediumWpReaderUp_forBorC;
-	BTagCalibrationReader * m_MediumWpReaderDown_forBorC;
-
-	BTagCalibrationReader * m_TightWpReaderCentral_forBorC;
-	BTagCalibrationReader * m_TightWpReaderUp_forBorC;
-	BTagCalibrationReader * m_TightWpReaderDown_forBorC;
-
-
-	BTagCalibrationReader * m_LooseWpReaderCentral_forUDSG;
-	BTagCalibrationReader * m_LooseWpReaderUp_forUDSG;
-	BTagCalibrationReader * m_LooseWpReaderDown_forUDSG;
-
-	BTagCalibrationReader * m_MediumWpReaderCentral_forUDSG;
-	BTagCalibrationReader * m_MediumWpReaderUp_forUDSG;
-	BTagCalibrationReader * m_MediumWpReaderDown_forUDSG;
-
-	BTagCalibrationReader * m_TightWpReaderCentral_forUDSG;
-	BTagCalibrationReader * m_TightWpReaderUp_forUDSG;
-	BTagCalibrationReader * m_TightWpReaderDown_forUDSG;
-
+  
 	/* limits in which SFs are valid -- outside these the uncertainty is doubled */	
 
 	double m_MaxBJetPt; /* this defines the valid upper limit for a b-jet pT */
@@ -231,27 +153,6 @@ private:
 	bool m_IsTagged_TightWpUp;
 	bool m_IsTagged_TightWpDown;
 
-	/* eff root files */
-
-	TFile * m_LooseBtagEff;
-	TFile * m_MediumBtagEff;
-	TFile * m_TightBtagEff;
-
-	/* eff histograms */
-
-	TH2F * m_LooseEff_b;
-	TH2F * m_LooseEff_c;
-	TH2F * m_LooseEff_usdg;
-
-	TH2F * m_MediumEff_b;
-	TH2F * m_MediumEff_c;
-	TH2F * m_MediumEff_usdg;
-
-	TH2F * m_TightEff_b;
-	TH2F * m_TightEff_c;
-	TH2F * m_TightEff_usdg;
-
-	TRandom3 * m_rand;
 
 	/* PromoteDemoteBtags - function to apply promote demote method,
 	arg list is (raw btag mva output, cut for loose working point, cut for medium working point, 

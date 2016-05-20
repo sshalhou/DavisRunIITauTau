@@ -25,6 +25,8 @@ from and_string_concatonator import and_string_concatonator
 
 filter_ = []
 
+# must be inclusive of third muon and Di-Muon vetos in
+# FlatTupleConfig_cfi.py 
 # ----------------------------------------------------
 # ------------[user edit here]------------------------
 filter_.append('pt>10.0')

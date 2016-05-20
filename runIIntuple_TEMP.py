@@ -437,11 +437,7 @@ process.TupleCandidateEvents = cms.EDProducer('TupleCandidateEventProducer' ,
 	mvaMETSrc = cms.InputTag("MVAMET:MVAMET:DavisNtuple"),
 	electronVetoSrc =cms.InputTag("filteredVetoElectrons","","DavisNtuple"),
 	muonVetoSrc = cms.InputTag("filteredVetoMuons","","DavisNtuple"),				
-	pairDeltaRmin = cms.double(0.3),
-    # should be small since don't want one of the pair in the veto list
-    # note : this is used for DR(leg1, leg2) >, and for overlap removal from the
-    # veto e and mu lists
-    vetoDeltaRmin = cms.double(0.15), 
+	pairDeltaRmin = cms.double(0.1), 
 	NAME=cms.string("TupleCandidateEvents"),
     doSVMass = cms.bool(COMPUTE_SVMASS_AT_NTUPLE),
     useMVAMET = cms.bool(USE_MVAMET),
@@ -462,11 +458,7 @@ process.TupleCandidateEventsTauEsUp = cms.EDProducer('TupleCandidateEventProduce
 	mvaMETSrc = cms.InputTag("MVAMETtauEsUp:MVAMET:DavisNtuple"),
 	electronVetoSrc =cms.InputTag("filteredVetoElectrons","","DavisNtuple"),
 	muonVetoSrc = cms.InputTag("filteredVetoMuons","","DavisNtuple"),				
-	pairDeltaRmin = cms.double(0.3), 
-    # should be small since don't want one of the pair in the veto list
-    # note : this is used for DR(leg1, leg2) >, and for overlap removal from the
-    # veto e and mu lists
-    vetoDeltaRmin = cms.double(0.15), 
+	pairDeltaRmin = cms.double(0.1), 
 	NAME=cms.string("TupleCandidateEventsTauEsUp"),
     doSVMass = cms.bool(COMPUTE_SVMASS_AT_NTUPLE),
     useMVAMET = cms.bool(USE_MVAMET),
@@ -486,11 +478,7 @@ process.TupleCandidateEventsTauEsDown = cms.EDProducer('TupleCandidateEventProdu
 	mvaMETSrc = cms.InputTag("MVAMETtauEsDown:MVAMET:DavisNtuple"),
 	electronVetoSrc =cms.InputTag("filteredVetoElectrons","","DavisNtuple"),
 	muonVetoSrc = cms.InputTag("filteredVetoMuons","","DavisNtuple"),				
-	pairDeltaRmin = cms.double(0.3), 
-    # should be small since don't want one of the pair in the veto list
-    # note : this is used for DR(leg1, leg2) >, and for overlap removal from the
-    # veto e and mu lists
-    vetoDeltaRmin = cms.double(0.15), 
+	pairDeltaRmin = cms.double(0.1), 
 	NAME=cms.string("TupleCandidateEventsTauEsDown"),
     doSVMass = cms.bool(COMPUTE_SVMASS_AT_NTUPLE),
     useMVAMET = cms.bool(USE_MVAMET),

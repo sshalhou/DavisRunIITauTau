@@ -90,7 +90,17 @@ svMassAtFlatTupleConfig_(iConfig.getParameter<edm::ParameterSet>("SVMassConfig")
   jetIDcut  = EventCutSrc_.getParameter<std::string>("jetIDcut");
   jetLeptonDRmin = EventCutSrc_.getParameter<double>("jetLeptonDRmin");
 
- 
+  thirdEleVeto  = EventCutSrc_.getParameter<std::string>("thirdEleVeto");
+  thirdMuonVeto  = EventCutSrc_.getParameter<std::string>("thirdMuonVeto");
+  legThirdLeptonMinDR = EventCutSrc_.getParameter<double>("legThirdLeptonMinDR");
+
+  diEleVeto  = EventCutSrc_.getParameter<std::string>("diEleVeto");
+  diMuonVeto  = EventCutSrc_.getParameter<std::string>("diMuonVeto");
+  diLeptonMinDR = EventCutSrc_.getParameter<double>("diLeptonMinDR");
+
+
+
+
   /* create all pairs needed for EffLepton tauID and HLT info */
 
 
@@ -104,19 +114,19 @@ svMassAtFlatTupleConfig_(iConfig.getParameter<edm::ParameterSet>("SVMassConfig")
 
   /* setup the btag sf helper tool */
 
-  double LooseCut = EventCutSrc_.getParameter<double>("LooseBtagWPcut");
-  double MediumCut = EventCutSrc_.getParameter<double>("MediumBtagWPcut");
-  double TightCut = EventCutSrc_.getParameter<double>("TightBtagWPcut");
+  LooseCut = EventCutSrc_.getParameter<double>("LooseBtagWPcut");
+  MediumCut = EventCutSrc_.getParameter<double>("MediumBtagWPcut");
+  TightCut = EventCutSrc_.getParameter<double>("TightBtagWPcut");
 
-  std::string sf_fileString = EventCutSrc_.getParameter<std::string>("BtagSF_File");
-  std::string looseEff_fileString = EventCutSrc_.getParameter<std::string>("looseBtagEff_file");
-  std::string mediumEff_fileString = EventCutSrc_.getParameter<std::string>("mediumBtagEff_file");
-  std::string tightEff_fileString = EventCutSrc_.getParameter<std::string>("tightBtagEff_file");
+  sf_fileString = EventCutSrc_.getParameter<std::string>("BtagSF_File");
+  looseEff_fileString = EventCutSrc_.getParameter<std::string>("looseBtagEff_file");
+  mediumEff_fileString = EventCutSrc_.getParameter<std::string>("mediumBtagEff_file");
+  tightEff_fileString = EventCutSrc_.getParameter<std::string>("tightBtagEff_file");
 
-  edm::FileInPath sf_file = edm::FileInPath(sf_fileString);
-  edm::FileInPath looseEff_file = edm::FileInPath(looseEff_fileString);
-  edm::FileInPath mediumEff_file = edm::FileInPath(mediumEff_fileString);
-  edm::FileInPath tightEff_file = edm::FileInPath(tightEff_fileString); /* for 76X same as med */
+  sf_file = edm::FileInPath(sf_fileString);
+  looseEff_file = edm::FileInPath(looseEff_fileString);
+  mediumEff_file = edm::FileInPath(mediumEff_fileString);
+  tightEff_file = edm::FileInPath(tightEff_fileString); /* for 76X same as med */
 
   std::cout<<" **** Setting up Btag Tool with \n";
   std::cout<<" [L, M, T] b-tag cut points set to [ "<<LooseCut<<" , "<<MediumCut<<" , "<<TightCut<<" ] \n";
@@ -124,11 +134,6 @@ svMassAtFlatTupleConfig_(iConfig.getParameter<edm::ParameterSet>("SVMassConfig")
   std::cout<<" with loose EFF root file : "<<looseEff_fileString<<"\n ";
   std::cout<<" with medium EFF root file : "<<mediumEff_fileString<<"\n ";
   std::cout<<" with tight EFF root file : "<<tightEff_fileString<<" (same as medium for 76X ) \n";
-
-
-
-  m_BtagSFTool = new bTagSFhelper(sf_file, looseEff_file, mediumEff_file, tightEff_file, 
-                      LooseCut, MediumCut, TightCut );
 
 
 
@@ -140,7 +145,7 @@ svMassAtFlatTupleConfig_(iConfig.getParameter<edm::ParameterSet>("SVMassConfig")
 // class destructor 
 //////////////////////////////////////////////////
 
-FlatTupleGenerator::~FlatTupleGenerator(){ delete m_BtagSFTool;}
+FlatTupleGenerator::~FlatTupleGenerator(){}
 
 //////////////////////////////////////////////////
 // ------------ method called for each event  ------------
@@ -225,6 +230,11 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
 
       if(currentPairToCheck.CandidateEventType()==TupleCandidateEventTypes::EffCand) 
       {
+
+
+        bTagSFhelper m_BtagSFTool(sf_file, looseEff_file, mediumEff_file, tightEff_file, 
+                      LooseCut, MediumCut, TightCut );
+
 
         jethelper.init(currentINDEP.jets(),jetIDcut, m_BtagSFTool, iEvent.isRealData());
 
@@ -403,6 +413,10 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
 
       if(currentPair.CandidateEventType()!=TupleCandidateEventTypes::EffCand) 
       {
+
+
+        bTagSFhelper m_BtagSFTool(sf_file, looseEff_file, mediumEff_file, tightEff_file, 
+                      LooseCut, MediumCut, TightCut );
 
         jethelper.init(currentINDEP.jets(),jetIDcut,
                   jetLeptonDRmin,currentPair.leg1(),currentPair.leg2(), m_BtagSFTool, iEvent.isRealData());
@@ -1851,8 +1865,27 @@ NtupleEvent currentPair)
 
   /* fill veto lepton parameters, MUST FILL IN SAME ORDER FOR ELECTRONS & MUONS */
 
+
+  StringCutObjectSelector <NtupleLepton> apply_thirdEleVeto(thirdEleVeto);
+  StringCutObjectSelector <NtupleLepton> apply_thirdMuonVeto(thirdMuonVeto);
+  StringCutObjectSelector <NtupleLepton> apply_diEleVeto(diEleVeto);
+  StringCutObjectSelector <NtupleLepton> apply_diMuonVeto(diMuonVeto);
+
+  /* reset flags */
+
+  DiMuon_Flag = 0.;
+  DiElectron_Flag = 0.;
+  ThirdMuon_Flag  = 0.;
+  ThirdElectron_Flag  = 0.;
+
+
   for(std::size_t v = 0; v<currentPair.vetoElectron().size(); ++v)
   {
+
+      std::cout<<" ele @ "<<v<<" has 3rd lep cuts (without DR leg1, and DR leg2) = "<<apply_thirdEleVeto(currentPair.vetoElectron()[v]);
+      std::cout<<" and diElectron cuts = "<<apply_diEleVeto(currentPair.vetoElectron()[v])<<"\n";
+
+
       veto_leptonType.push_back(currentPair.vetoElectron()[v].leptonType());
       veto_pt.push_back(currentPair.vetoElectron()[v].p4().pt());
       veto_eta.push_back(currentPair.vetoElectron()[v].p4().eta());
@@ -1869,10 +1902,51 @@ NtupleEvent currentPair)
       veto_isTrackerGlobalPFMuon.push_back(0.0);         
       veto_RelIso.push_back(currentPair.vetoElectron()[v].relativeIsol(electronIsolationForRelIsoBranch));
       veto_charge.push_back(currentPair.vetoElectron()[v].charge());
+      veto_numberOfMissingInnerHits.push_back(currentPair.vetoElectron()[v].numberOfMissingInnerHits());
+      veto_numberOfMissingOuterHits.push_back(currentPair.vetoElectron()[v].numberOfMissingOuterHits());
+      veto_passConversionVeto.push_back(currentPair.vetoElectron()[v].passConversionVeto());
+
+      int passThirdVetoCuts_ = apply_thirdEleVeto(currentPair.vetoElectron()[v]);
+
+      /* check if overlaps any of the electron legs, if it does set the flag to 0 */
+
+      if(currentPair.leg1().leptonType()==TupleLeptonTypes::anElectron &&\
+        deltaR(currentPair.leg1().p4(),currentPair.vetoElectron()[v].p4())<=legThirdLeptonMinDR)
+        {
+          passThirdVetoCuts_ = 0;
+        }
+ 
+      if(currentPair.leg2().leptonType()==TupleLeptonTypes::anElectron &&\
+         deltaR(currentPair.leg2().p4(),currentPair.vetoElectron()[v].p4())<=legThirdLeptonMinDR)
+        {
+          passThirdVetoCuts_ = 0;
+        }
+
+      veto_LeptonPassesThirdElectronVetoCuts.push_back(passThirdVetoCuts_);
+
+      /* set event level flag to one if at least one e passes these cuts */
+      if(passThirdVetoCuts_ == 1) ThirdElectron_Flag = 1.0; 
+ 
+
+      /* apply the diElectron cuts */
+      veto_LeptonPassesDiElectronVetoCuts.push_back(apply_diEleVeto(currentPair.vetoElectron()[v]));
+
+      /* zeros for the muon cuts */
+      veto_LeptonPassesThirdMuonVetoCuts.push_back(0);
+      veto_LeptonPassesDiMuonVetoCuts.push_back(0);
+
+
   }
+
+
 
   for(std::size_t v = 0; v<currentPair.vetoMuon().size(); ++v)
   {
+
+      std::cout<<" muon @ "<<v<<" has 3rd lep cuts (without DR leg1, and DR leg2) = "<<apply_thirdMuonVeto(currentPair.vetoMuon()[v]);
+      std::cout<<" and diMuon cuts = "<<apply_diMuonVeto(currentPair.vetoMuon()[v])<<"\n";
+
+
       veto_leptonType.push_back(currentPair.vetoMuon()[v].leptonType());
       veto_pt.push_back(currentPair.vetoMuon()[v].p4().pt());
       veto_eta.push_back(currentPair.vetoMuon()[v].p4().eta());
@@ -1895,8 +1969,93 @@ NtupleEvent currentPair)
       veto_isTrackerGlobalPFMuon.push_back(isTrackerGlobalPFMuon);         
       veto_RelIso.push_back(currentPair.vetoMuon()[v].relativeIsol(muonIsolationForRelIsoBranch));
       veto_charge.push_back(currentPair.vetoMuon()[v].charge());
+      veto_numberOfMissingInnerHits.push_back(currentPair.vetoMuon()[v].numberOfMissingInnerHits());
+      veto_numberOfMissingOuterHits.push_back(currentPair.vetoMuon()[v].numberOfMissingOuterHits());      
+      veto_passConversionVeto.push_back(currentPair.vetoMuon()[v].passConversionVeto());
+
+      /* zeros for the ele cuts */
+      veto_LeptonPassesThirdElectronVetoCuts.push_back(0);
+      veto_LeptonPassesDiElectronVetoCuts.push_back(0);
+
+
+      int passThirdVetoCuts_ = apply_thirdMuonVeto(currentPair.vetoMuon()[v]);
+
+      /* check if overlaps any of the muon legs, if it does set the flag to 0 */
+
+      if(currentPair.leg1().leptonType()==TupleLeptonTypes::aMuon &&\
+        deltaR(currentPair.leg1().p4(),currentPair.vetoMuon()[v].p4())<=legThirdLeptonMinDR)
+        {
+          passThirdVetoCuts_ = 0;
+        }
+ 
+      if(currentPair.leg2().leptonType()==TupleLeptonTypes::aMuon &&\
+         deltaR(currentPair.leg2().p4(),currentPair.vetoMuon()[v].p4())<=legThirdLeptonMinDR)
+        {
+          passThirdVetoCuts_ = 0;
+        }
+
+      veto_LeptonPassesThirdMuonVetoCuts.push_back(passThirdVetoCuts_);   
+
+      /* set event level flag to one if at least one mu passes these cuts */
+      if(passThirdVetoCuts_ == 1) ThirdMuon_Flag = 1.0; 
+ 
+      /* apply the di-Muon cuts */
+      veto_LeptonPassesDiMuonVetoCuts.push_back(apply_diMuonVeto(currentPair.vetoMuon()[v]));
+
 
   }
+
+
+  /* now apply the event level vetos for di-Muon and di-Electrons */
+
+  for(std::size_t p1 = 0; p1<veto_LeptonPassesDiElectronVetoCuts.size(); ++p1)
+  {
+    for(std::size_t p2 = 0; p2<veto_LeptonPassesDiElectronVetoCuts.size(); ++p2)
+    {
+      if(p1 != p2 &&\
+        veto_LeptonPassesDiElectronVetoCuts[p1]==1.0 &&\
+        veto_LeptonPassesDiElectronVetoCuts[p2]==1.0 &&\
+        veto_charge[p1]+veto_charge[p2] == 0)
+      {
+
+        TLorentzVector v1, v2;
+        v1.SetPtEtaPhiM(veto_pt[p1],veto_eta[p1],veto_phi[p1],veto_M[p1]);
+        v2.SetPtEtaPhiM(veto_pt[p2],veto_eta[p2],veto_phi[p2],veto_M[p2]);
+        if(v1.DeltaR(v2) > diLeptonMinDR ) 
+        {
+          DiElectron_Flag = 1.0;
+          break;
+        }
+      }  
+    }
+  }
+
+
+  for(std::size_t p1 = 0; p1<veto_LeptonPassesDiMuonVetoCuts.size(); ++p1)
+  {
+    for(std::size_t p2 = 0; p2<veto_LeptonPassesDiMuonVetoCuts.size(); ++p2)
+    {
+      if(p1 != p2 &&\
+        veto_LeptonPassesDiMuonVetoCuts[p1]==1.0 &&\
+        veto_LeptonPassesDiMuonVetoCuts[p2]==1.0 &&\
+        veto_charge[p1]+veto_charge[p2] == 0)
+      {
+
+        TLorentzVector v1, v2;
+        v1.SetPtEtaPhiM(veto_pt[p1],veto_eta[p1],veto_phi[p1],veto_M[p1]);
+        v2.SetPtEtaPhiM(veto_pt[p2],veto_eta[p2],veto_phi[p2],veto_M[p2]);
+        if(v1.DeltaR(v2) > diLeptonMinDR ) 
+        {
+          DiMuon_Flag = 1.0;
+          break;
+        }
+      }  
+    }
+  }
+
+  std::cout<<" DiMuon Flag = "<<DiMuon_Flag<<" and DiElectron Flag = "<<DiElectron_Flag<<"\n";
+
+
 
 
 
@@ -2673,6 +2832,16 @@ void FlatTupleGenerator::handlePairIndepInfo(const edm::Event& iEvent, const edm
   veto_passElectronMVA90.clear(); 
   veto_passElectronCutBased.clear(); 
   veto_isTrackerGlobalPFMuon.clear(); 
+  veto_numberOfMissingInnerHits.clear();
+  veto_numberOfMissingOuterHits.clear();
+  veto_passConversionVeto.clear();
+  veto_LeptonPassesThirdElectronVetoCuts.clear();
+  veto_LeptonPassesThirdMuonVetoCuts.clear();
+  veto_LeptonPassesDiElectronVetoCuts.clear();
+  veto_LeptonPassesDiMuonVetoCuts.clear();
+
+
+
 
   NumberOfGoodVertices = -999;
   vertex_NDOF = NAN;
@@ -2960,6 +3129,14 @@ void FlatTupleGenerator::handlePairIndepInfo(const edm::Event& iEvent, const edm
   genBosonVisible_eta = NAN;
   genBosonVisible_phi = NAN;
   genBosonVisible_M = NAN;
+
+
+  DiMuon_Flag = 0;
+  DiElectron_Flag = 0;
+  ThirdMuon_Flag  = 0;
+  ThirdElectron_Flag  = 0;
+
+
 
 
   leg1_maxPtTrigObjMatch = NAN;
@@ -3382,6 +3559,17 @@ void FlatTupleGenerator::beginJob()
   FlatTuple->Branch("veto_passElectronMVA90", &veto_passElectronMVA90);
   FlatTuple->Branch("veto_passElectronCutBased", &veto_passElectronCutBased);
   FlatTuple->Branch("veto_isTrackerGlobalPFMuon", &veto_isTrackerGlobalPFMuon);
+  FlatTuple->Branch("veto_numberOfMissingInnerHits", &veto_numberOfMissingInnerHits);
+  FlatTuple->Branch("veto_numberOfMissingOuterHits", &veto_numberOfMissingOuterHits);
+  FlatTuple->Branch("veto_passConversionVeto", &veto_passConversionVeto);
+
+  FlatTuple->Branch("veto_LeptonPassesThirdElectronVetoCuts", &veto_LeptonPassesThirdElectronVetoCuts);
+  FlatTuple->Branch("veto_LeptonPassesThirdMuonVetoCuts", &veto_LeptonPassesThirdMuonVetoCuts);
+  FlatTuple->Branch("veto_LeptonPassesDiElectronVetoCuts", &veto_LeptonPassesDiElectronVetoCuts);
+  FlatTuple->Branch("veto_LeptonPassesDiMuonVetoCuts", &veto_LeptonPassesDiMuonVetoCuts);
+
+
+
 
   FlatTuple->Branch("NumberOfGoodVertices",&NumberOfGoodVertices);
   FlatTuple->Branch("vertex_NDOF",&vertex_NDOF);
@@ -3672,6 +3860,11 @@ void FlatTupleGenerator::beginJob()
   FlatTuple->Branch("leg2_maxPtTrigObjMatch", &leg2_maxPtTrigObjMatch);
   FlatTuple->Branch("effLep_maxPtTrigObjMatch", &effLep_maxPtTrigObjMatch);
 
+
+  FlatTuple->Branch("DiMuon_Flag", &DiMuon_Flag);
+  FlatTuple->Branch("DiElectron_Flag", &DiElectron_Flag);
+  FlatTuple->Branch("ThirdMuon_Flag", &ThirdMuon_Flag);
+  FlatTuple->Branch("ThirdElectron_Flag", &ThirdElectron_Flag);
 
 
 }
