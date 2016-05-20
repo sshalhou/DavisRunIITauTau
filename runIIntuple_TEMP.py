@@ -606,6 +606,7 @@ process.NtupleEventsTauEsDown = cms.EDProducer('NtupleEventProducer' ,
 
 from DavisRunIITauTau.TupleConfigurations.ConfigJets_cfi import PUjetIDworkingPoint
 from DavisRunIITauTau.TupleConfigurations.ConfigJets_cfi import PFjetIDworkingPoint
+from DavisRunIITauTau.TupleConfigurations.ConfigJets_cfi import TightPFjetIDworkingPoint
 from DavisRunIITauTau.TupleConfigurations.ConfigNtupleWeights_cfi import PUntupleWeightSettings
 from DavisRunIITauTau.TupleConfigurations.ConfigNtupleWeights_cfi import pileupSrcInputTag
 #from DavisRunIITauTau.TupleConfigurations.ConfigNtupleWeights_cfi import mcGenWeightSrcInputTag
@@ -630,6 +631,7 @@ process.pairIndep = cms.EDProducer('NtuplePairIndependentInfoProducer',
 							defaultBtagAlgorithmNameSrc = cms.string(DEFAULT_BTAG_ALGORITHM),
 							PUjetIDworkingPointSrc = PUjetIDworkingPoint,
 							PFjetIDworkingPointSrc = PFjetIDworkingPoint,
+							TightPFjetIDworkingPointSrc = TightPFjetIDworkingPoint,
 							vertexSrc =cms.InputTag('filteredVertices::DavisNtuple'),
 							pileupSrc = pileupSrcInputTag,
 							PUweightSettingsSrc = PUntupleWeightSettings,

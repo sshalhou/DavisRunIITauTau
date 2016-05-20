@@ -59,6 +59,13 @@ public:
   /* fill NUP */
   void fill_hepNUP(int);
 
+  /* fill the gen level HT and numberOutgoingPartons - used for stitching */
+  void fill_lheHT(double);
+  void fill_lheOutGoingPartons(int);
+
+
+
+
 
   /* fill various MET filters */
 
@@ -96,6 +103,9 @@ public:
   float NumTruePileUpIntP1() const;
   double generatorEventWeight() const;
   int hepNUP() const;
+  double lheHT() const;
+  int lheOutGoingPartons() const;
+
 
   std::string DataSet() const;
   int EventTotal() const;
@@ -149,6 +159,10 @@ private:
 
   /* n partons at gen level */
   int m_hepNUP;
+
+  /* for HT and njet binned sample weight */
+  double m_lheHT;
+  int m_lheOutGoingPartons;
 
   /* sample info */
 

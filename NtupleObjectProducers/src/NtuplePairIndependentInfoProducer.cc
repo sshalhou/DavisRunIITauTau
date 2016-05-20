@@ -127,7 +127,9 @@ private:
 
   edm::ParameterSet PUjetIDworkingPointSrc_;
   edm::ParameterSet PFjetIDworkingPointSrc_;
-  
+  edm::ParameterSet TightPFjetIDworkingPointSrc_;
+
+
   edm::InputTag vertexSrc_;
   edm::EDGetTokenT<edm::View< reco::Vertex > > vertexToken_;
   
@@ -202,6 +204,7 @@ slimmedGenJetsSrc_(iConfig.getParameter<edm::InputTag>("slimmedGenJetsSrc" )),
 defaultBtagAlgorithmNameSrc_(iConfig.getParameter<string>("defaultBtagAlgorithmNameSrc" )),
 PUjetIDworkingPointSrc_(iConfig.getParameter<edm::ParameterSet>("PUjetIDworkingPointSrc")),
 PFjetIDworkingPointSrc_(iConfig.getParameter<edm::ParameterSet>("PFjetIDworkingPointSrc")),
+TightPFjetIDworkingPointSrc_(iConfig.getParameter<edm::ParameterSet>("TightPFjetIDworkingPointSrc")),
 vertexSrc_(iConfig.getParameter<edm::InputTag>("vertexSrc" )),
 pileupSrc_(iConfig.getParameter<edm::InputTag>("pileupSrc" )),
 PUweightSettingsSrc_(iConfig.getParameter<edm::ParameterSet>("PUweightSettingsSrc")),
@@ -615,8 +618,15 @@ NtuplePairIndependentInfoProducer::produce(edm::Event& iEvent, const edm::EventS
                 currentNtupleJet.NumConst(), currentNtupleJet.MUF(), currentNtupleJet.CHF(),
                  currentNtupleJet.CHM(), currentNtupleJet.CEMF(), currentNtupleJet.NumNeutralParticle());
 
+       bool passPFtight = puANDpf_IdHelper.passPfId(TightPFjetIDworkingPointSrc_, slimmedJets->at(i).eta(),
+                currentNtupleJet.NHF(), currentNtupleJet.NEMF(), 
+                currentNtupleJet.NumConst(), currentNtupleJet.MUF(), currentNtupleJet.CHF(),
+                 currentNtupleJet.CHM(), currentNtupleJet.CEMF(), currentNtupleJet.NumNeutralParticle());
+
+
 
       currentNtupleJet.fill_PFjetID(passPF);   
+      currentNtupleJet.fill_PFjetIDTight(passPFtight);   
 
       InfoToWrite.fill_jet(currentNtupleJet);
 
@@ -673,6 +683,31 @@ NtuplePairIndependentInfoProducer::produce(edm::Event& iEvent, const edm::EventS
   {
     LHE = LHEHandle.product();
     InfoToWrite.fill_hepNUP((LHE->hepeup()).NUP);
+
+
+    const lhef::HEPEUP& lheEvent = LHE->hepeup();
+    std::vector<lhef::HEPEUP::FiveVector> lheParticles = lheEvent.PUP;
+  
+    double lheHt = 0.; /* this is the gen level HT */
+    size_t numParticles = lheParticles.size();
+    int nOutgoing = 0; /* gen level njets aka. Number of outgoing partons */
+
+    for ( size_t idxParticle = 0; idxParticle < numParticles; ++idxParticle ) 
+    {
+      int absPdgId = TMath::Abs(lheEvent.IDUP[idxParticle]);
+      int status = lheEvent.ISTUP[idxParticle];
+      if ( status == 1 && ((absPdgId >= 1 && absPdgId <= 6) || absPdgId == 21) ) 
+      { // quarks and gluons
+        lheHt += TMath::Sqrt(TMath::Power(lheParticles[idxParticle][0], 2.) + TMath::Power(lheParticles[idxParticle][1], 2.)); // first entry is px, second py
+        ++nOutgoing;
+      } 
+    }
+
+    //std::cout<<" gen level HT  = "<<lheHt<<" gen level outgoing partons = "<<nOutgoing<<"\n";
+
+    InfoToWrite.fill_lheHT(lheHt);
+    InfoToWrite.fill_lheOutGoingPartons(nOutgoing);
+
   }
 
   ////////////////////////////////////////////////////////////////////

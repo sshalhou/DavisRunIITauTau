@@ -20,6 +20,9 @@ NtuplePairIndependentInfo::NtuplePairIndependentInfo()
 	m_NumTruePileUpIntP1 = 1.0;
   m_generatorEventWeight = 1.0;
   m_hepNUP = -999;
+  m_lheHT = NAN;
+  m_lheOutGoingPartons = -999;
+
 
   m_DataSet = "NULL";
   m_EventTotal = -999;
@@ -111,6 +114,17 @@ void  NtuplePairIndependentInfo::fill_hepNUP(int arg)
   {
     m_hepNUP = arg;
   }
+
+void  NtuplePairIndependentInfo::fill_lheHT(double arg)
+  {
+    m_lheHT = arg;
+  }
+
+void  NtuplePairIndependentInfo::fill_lheOutGoingPartons(int arg)
+  {
+    m_lheOutGoingPartons = arg;
+  }
+
 
 void  NtuplePairIndependentInfo::fill_generatorEventWeight(double argWeight)
   {
@@ -246,6 +260,8 @@ float NtuplePairIndependentInfo::NumPileupIntP1() const { return m_NumPileupIntP
 float NtuplePairIndependentInfo::NumTruePileUpIntP1() const { return m_NumTruePileUpIntP1; };
 double NtuplePairIndependentInfo::generatorEventWeight() const {return m_generatorEventWeight; };
 int NtuplePairIndependentInfo::hepNUP() const {return m_hepNUP; };
+double NtuplePairIndependentInfo::lheHT() const {return m_lheHT; };
+int NtuplePairIndependentInfo::lheOutGoingPartons() const {return m_lheOutGoingPartons; };
 
 std::string NtuplePairIndependentInfo::DataSet() const { return m_DataSet; };
 int NtuplePairIndependentInfo::EventTotal() const { return m_EventTotal; };

@@ -11,7 +11,7 @@
 #			   							PUjetID_PtBoundries - definition of the pT range bounds
 #										DiscriminantName - string to access raw PU jet ID score in pat::Jet userFloats
 #
-#
+#			   (new in 76X we store both the Loose PF jet ID pass/fail as well as a Tight WP)
 #			   PFjetIDworkingPoint - cms.PSet
 #
 #
@@ -121,10 +121,36 @@ PFjetIDworkingPoint = cms.PSet(
 		NumNeutralParticle_LOW  = cms.vdouble(-1000.0,-3.0,10.0,0) 	# NumNeutralParticle > 10.0	
 
 
+									)
 
+TightPFjetIDworkingPoint = cms.PSet(
+
+		# for eta range: |eta| <= 3.0
+
+		NHF  				= cms.vdouble(-3.0,3.0,0.90,1.0), 	# NHF < 0.99
+		NEMF  				= cms.vdouble(-3.0,3.0,0.90,1.0), 	# NEMF < 0.99	
+		NumConst  			= cms.vdouble(-3.0,3.0,1.0,0.0),	# NumConst > 1
+
+		# for eta range: |eta| <= 2.4
+
+		CHF 				= cms.vdouble(-2.4,2.4,0.0,0.0),	    # CHF > 0
+		CHM  				= cms.vdouble(-2.4,2.4,0.0,0.0),	    # CHM > 0
+		CEMF  				= cms.vdouble(-2.4,2.4,0.99,1.0),  	    # CEMF < 0.99
+
+
+		# for eta range: eta > 3.0
+		# note par names can't be repeated 
+		NEMF_HIGH 			     = cms.vdouble(3.0,1000.0,0.90,1.0), 	    # NEMF < 0.99	
+		NumNeutralParticle_HIGH  = cms.vdouble(3.0,1000.0,10.0,0), 	    # NumNeutralParticle > 10.0	
+
+
+		# for eta range: eta < -3.0
+		NEMF_LOW  				= cms.vdouble(-1000.0,-3.0,0.90,1.0), 	# NEMF < 0.90	
+		NumNeutralParticle_LOW  = cms.vdouble(-1000.0,-3.0,10.0,0) 	# NumNeutralParticle > 10.0	
 
 
 									)
+
 	
 ####################################################################################################
 ####################################################################################################

@@ -40,6 +40,7 @@ NtupleJet::NtupleJet()
   m_PU_jetIdRaw = NAN;
   m_PU_jetIdPassed = 0;
   m_PF_jetIdPassed = 0;
+  m_PF_jetIdPassedTight = 0;
 
   /* init these to 1.0 */
   m_JEC_uncertaintySF_up = 1.;
@@ -89,6 +90,12 @@ NtupleJet::NtupleJet()
   {
     m_PF_jetIdPassed = passFail;
   }
+
+  void NtupleJet::fill_PFjetIDTight(bool passFail)
+  {
+    m_PF_jetIdPassedTight = passFail;
+  }
+
 
 
   void NtupleJet::fill_PUjetID(pat::Jet theJet, std::string DiscName, double CutMinimum)
@@ -523,6 +530,7 @@ NtupleJet::NtupleJet()
   double NtupleJet::PU_jetIdRaw() const { return m_PU_jetIdRaw; }
   bool NtupleJet::PU_jetIdPassed() const { return m_PU_jetIdPassed; }
   bool NtupleJet::PF_jetIdPassed() const { return m_PF_jetIdPassed; }
+  bool NtupleJet::PF_jetIdPassedTight() const { return m_PF_jetIdPassedTight; }
 
 
   double NtupleJet::JEC_uncertaintySF_up() const { return m_JEC_uncertaintySF_up; }

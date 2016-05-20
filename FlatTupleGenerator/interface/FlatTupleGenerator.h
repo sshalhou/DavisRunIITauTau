@@ -625,6 +625,11 @@ public:
 	float NumTruePileUpInt;
 	double generatorEventWeight;
 	int hepNUP;
+	double lheHT;
+	int lheOutGoingPartons;
+
+
+
 
 	/* jet summary info */
 
@@ -663,6 +668,7 @@ public:
 	std::vector<double> jets_IsBTagged_TightWpCentral;
 	std::vector<double> jets_IsBTagged_TightWpUp;
 	std::vector<double> jets_IsBTagged_TightWpDown;
+	std::vector<bool>   jets_PF_jetIdPassedTight;
 
 
 
@@ -703,8 +709,8 @@ public:
 	std::vector<double> jets_IsBTagged_TightWpCentral_JECshiftedUp;
 	std::vector<double> jets_IsBTagged_TightWpUp_JECshiftedUp;
 	std::vector<double> jets_IsBTagged_TightWpDown_JECshiftedUp;
-
-
+	std::vector<bool> jets_PF_jetIdPassedTight_JECshiftedUp;
+	
 
 	int numberOfJets_JECshiftedDown;
 	int numberOfJets30_JECshiftedDown;
@@ -739,6 +745,8 @@ public:
 	std::vector<double> jets_IsBTagged_TightWpCentral_JECshiftedDown;
 	std::vector<double> jets_IsBTagged_TightWpUp_JECshiftedDown;
 	std::vector<double> jets_IsBTagged_TightWpDown_JECshiftedDown;
+	std::vector<bool> jets_PF_jetIdPassedTight_JECshiftedDown;
+	
 
 			
 
@@ -775,8 +783,8 @@ public:
 	std::vector<double> jets_IsBTagged_TightWpCentral_JERup;
 	std::vector<double> jets_IsBTagged_TightWpUp_JERup;
 	std::vector<double> jets_IsBTagged_TightWpDown_JERup;
-
-
+	std::vector<bool> jets_PF_jetIdPassedTight_JERup;
+	
 
 	int numberOfJets_JERdown;
 	int numberOfJets30_JERdown;
@@ -811,6 +819,7 @@ public:
 	std::vector<double> jets_IsBTagged_TightWpCentral_JERdown;
 	std::vector<double> jets_IsBTagged_TightWpUp_JERdown;
 	std::vector<double> jets_IsBTagged_TightWpDown_JERdown;
+	std::vector<bool> jets_PF_jetIdPassedTight_JERdown;
 
 
   	/* gen particles - kind of complicated, but we don't want custom objects in this code */

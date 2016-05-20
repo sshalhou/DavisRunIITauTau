@@ -39,6 +39,7 @@ public:
   void fill_defaultBtagInfo(pat::Jet, std::string); /* theJet, bTagAlgoName */
   void fill_PUjetID(pat::Jet, std::string, double); /* theJet, DiscName, double CutMinimum */
   void fill_PFjetID(bool);
+  void fill_PFjetIDTight(bool);
   void fill_JEC_uncertaintySFs(double, double); /* set the up, down JEC uncertainty scale factors, call after NtupleJet::fill is called */
 
   /* set the nominal, up, down JER  scale factors, genJet match, and the absolute resolution
@@ -130,6 +131,7 @@ public:
   double PU_jetIdRaw() const;   /* raw value of PU jet ID discriminant */
   bool PU_jetIdPassed() const;   /* pass/fail  of PU jet ID discriminant */
   bool PF_jetIdPassed() const;      /* pass/fail of PF jet ID discriminant */
+  bool PF_jetIdPassedTight() const;      /* pass/fail of PF jet ID Tight discriminant */
   int PARTON_flavour() const; 
   int HADRON_flavour() const; 
   float jet_vertex_x() const; 
@@ -269,7 +271,7 @@ private:
   double m_PU_jetIdRaw;                                 /* raw PU jet ID score */
   bool m_PU_jetIdPassed;                                /* pass/fail PU jet ID  */
   bool m_PF_jetIdPassed;                                /* pass/fail PF jet ID */
-
+  bool m_PF_jetIdPassedTight;                           /* pass/fail PF jet ID tight WP */
 
   /* JEC and JER scale factors 
      the jets we use at miniAOD have JEC corrections applied

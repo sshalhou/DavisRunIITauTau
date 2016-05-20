@@ -2274,6 +2274,9 @@ void FlatTupleGenerator::handlePairIndepInfo(const edm::Event& iEvent, const edm
   NumTruePileUpInt = currentINDEP.NumTruePileUpInt();
   generatorEventWeight = currentINDEP.generatorEventWeight();
   hepNUP = currentINDEP.hepNUP();
+  lheHT = currentINDEP.lheHT();
+  lheOutGoingPartons = currentINDEP.lheOutGoingPartons();
+
 
 
 
@@ -2361,8 +2364,8 @@ void FlatTupleGenerator::handlePairIndepInfo(const edm::Event& iEvent, const edm
     jets_IsBTagged_TightWpUp.push_back(goodJets[j].defaultBtagAlgorithmIsTagged_TightWpUp());
     jets_IsBTagged_TightWpDown.push_back(goodJets[j].defaultBtagAlgorithmIsTagged_TightWpDown());
 
-
-
+    jets_PF_jetIdPassedTight.push_back(goodJets[j].PF_jetIdPassedTight());
+   
   }
 
  
@@ -2407,6 +2410,9 @@ void FlatTupleGenerator::handlePairIndepInfo(const edm::Event& iEvent, const edm
     jets_IsBTagged_TightWpCentral_JECshiftedUp.push_back(goodJets_JECshiftedUp[j].defaultBtagAlgorithmIsTagged_TightWpCentral());
     jets_IsBTagged_TightWpUp_JECshiftedUp.push_back(goodJets_JECshiftedUp[j].defaultBtagAlgorithmIsTagged_TightWpUp());
     jets_IsBTagged_TightWpDown_JECshiftedUp.push_back(goodJets_JECshiftedUp[j].defaultBtagAlgorithmIsTagged_TightWpDown());
+    jets_PF_jetIdPassedTight_JECshiftedUp.push_back(goodJets_JECshiftedUp[j].PF_jetIdPassedTight());
+   
+
 
   }
 
@@ -2451,7 +2457,8 @@ void FlatTupleGenerator::handlePairIndepInfo(const edm::Event& iEvent, const edm
     jets_IsBTagged_TightWpCentral_JECshiftedDown.push_back(goodJets_JECshiftedDown[j].defaultBtagAlgorithmIsTagged_TightWpCentral());
     jets_IsBTagged_TightWpUp_JECshiftedDown.push_back(goodJets_JECshiftedDown[j].defaultBtagAlgorithmIsTagged_TightWpUp());
     jets_IsBTagged_TightWpDown_JECshiftedDown.push_back(goodJets_JECshiftedDown[j].defaultBtagAlgorithmIsTagged_TightWpDown());
-
+    jets_PF_jetIdPassedTight_JECshiftedDown.push_back(goodJets_JECshiftedDown[j].PF_jetIdPassedTight());
+  
 
   }
 
@@ -2498,7 +2505,8 @@ void FlatTupleGenerator::handlePairIndepInfo(const edm::Event& iEvent, const edm
     jets_IsBTagged_TightWpUp_JERup.push_back(goodJets_JERup[j].defaultBtagAlgorithmIsTagged_TightWpUp());
     jets_IsBTagged_TightWpDown_JERup.push_back(goodJets_JERup[j].defaultBtagAlgorithmIsTagged_TightWpDown());
 
-
+    jets_PF_jetIdPassedTight_JERup.push_back(goodJets_JERup[j].PF_jetIdPassedTight());
+   
   }
 
   /* now fill the FlatTuple JERdown jet vector */
@@ -2541,6 +2549,8 @@ void FlatTupleGenerator::handlePairIndepInfo(const edm::Event& iEvent, const edm
     jets_IsBTagged_TightWpCentral_JERdown.push_back(goodJets_JERdown[j].defaultBtagAlgorithmIsTagged_TightWpCentral());
     jets_IsBTagged_TightWpUp_JERdown.push_back(goodJets_JERdown[j].defaultBtagAlgorithmIsTagged_TightWpUp());
     jets_IsBTagged_TightWpDown_JERdown.push_back(goodJets_JERdown[j].defaultBtagAlgorithmIsTagged_TightWpDown());
+
+    jets_PF_jetIdPassedTight_JERdown.push_back(goodJets_JERdown[j].PF_jetIdPassedTight());
 
 
   }
@@ -3008,6 +3018,8 @@ void FlatTupleGenerator::handlePairIndepInfo(const edm::Event& iEvent, const edm
   NumTruePileUpInt = NAN;
   generatorEventWeight = NAN;
   hepNUP = -999;
+  lheHT = NAN;
+  lheOutGoingPartons = -999;
 
   HBHENoiseFilter = 1;
   HBHENoiseIsoFilter = 1;
@@ -3053,6 +3065,7 @@ void FlatTupleGenerator::handlePairIndepInfo(const edm::Event& iEvent, const edm
   jets_IsBTagged_TightWpCentral.clear();
   jets_IsBTagged_TightWpUp.clear();
   jets_IsBTagged_TightWpDown.clear();
+  jets_PF_jetIdPassedTight.clear();
 
 
 
@@ -3089,6 +3102,7 @@ void FlatTupleGenerator::handlePairIndepInfo(const edm::Event& iEvent, const edm
   jets_IsBTagged_TightWpCentral_JECshiftedUp.clear();
   jets_IsBTagged_TightWpUp_JECshiftedUp.clear();
   jets_IsBTagged_TightWpDown_JECshiftedUp.clear();
+  jets_PF_jetIdPassedTight_JECshiftedUp.clear();
 
 
 
@@ -3125,6 +3139,8 @@ void FlatTupleGenerator::handlePairIndepInfo(const edm::Event& iEvent, const edm
   jets_IsBTagged_TightWpCentral_JECshiftedDown.clear();
   jets_IsBTagged_TightWpUp_JECshiftedDown.clear();
   jets_IsBTagged_TightWpDown_JECshiftedDown.clear();
+  jets_PF_jetIdPassedTight_JECshiftedDown.clear();
+
 
   numberOfJets_JERup = -999;
   numberOfJets30_JERup = -999;
@@ -3159,7 +3175,7 @@ void FlatTupleGenerator::handlePairIndepInfo(const edm::Event& iEvent, const edm
   jets_IsBTagged_TightWpCentral_JERup.clear();
   jets_IsBTagged_TightWpUp_JERup.clear();
   jets_IsBTagged_TightWpDown_JERup.clear();
-
+  jets_PF_jetIdPassedTight_JERup.clear();
 
 
   numberOfJets_JERdown = -999;
@@ -3195,6 +3211,7 @@ void FlatTupleGenerator::handlePairIndepInfo(const edm::Event& iEvent, const edm
   jets_IsBTagged_TightWpCentral_JERdown.clear();
   jets_IsBTagged_TightWpUp_JERdown.clear();
   jets_IsBTagged_TightWpDown_JERdown.clear();
+  jets_PF_jetIdPassedTight_JERdown.clear();
 
 
 
@@ -3745,6 +3762,11 @@ void FlatTupleGenerator::beginJob()
   FlatTuple->Branch("NumTruePileUpInt",&NumTruePileUpInt);
   FlatTuple->Branch("generatorEventWeight",&generatorEventWeight);
   FlatTuple->Branch("hepNUP",&hepNUP);
+  FlatTuple->Branch("lheHT",&lheHT);
+  FlatTuple->Branch("lheOutGoingPartons",&lheOutGoingPartons);
+
+
+
 
   /* fullyCorrected jet info */
   FlatTuple->Branch("numberOfJets", &numberOfJets);
@@ -3780,8 +3802,8 @@ void FlatTupleGenerator::beginJob()
   FlatTuple->Branch("jets_IsBTagged_TightWpCentral", &jets_IsBTagged_TightWpCentral);
   FlatTuple->Branch("jets_IsBTagged_TightWpUp", &jets_IsBTagged_TightWpUp);
   FlatTuple->Branch("jets_IsBTagged_TightWpDown", &jets_IsBTagged_TightWpDown);
-
-
+  FlatTuple->Branch("jets_PF_jetIdPassedTight", &jets_PF_jetIdPassedTight);
+ 
   /* scale (response) up jet info */
   FlatTuple->Branch("numberOfJets_JECshiftedUp", &numberOfJets_JECshiftedUp);
   FlatTuple->Branch("numberOfJets30_JECshiftedUp", &numberOfJets30_JECshiftedUp);
@@ -3816,8 +3838,8 @@ void FlatTupleGenerator::beginJob()
   FlatTuple->Branch("jets_IsBTagged_TightWpCentral_JECshiftedUp", &jets_IsBTagged_TightWpCentral_JECshiftedUp);
   FlatTuple->Branch("jets_IsBTagged_TightWpUp_JECshiftedUp", &jets_IsBTagged_TightWpUp_JECshiftedUp);
   FlatTuple->Branch("jets_IsBTagged_TightWpDown_JECshiftedUp", &jets_IsBTagged_TightWpDown_JECshiftedUp);
-
-
+  FlatTuple->Branch("jets_PF_jetIdPassedTight_JECshiftedUp", &jets_PF_jetIdPassedTight_JECshiftedUp);
+  
 
   /* scale (response) down jet info */
   FlatTuple->Branch("numberOfJets_JECshiftedDown", &numberOfJets_JECshiftedDown);
@@ -3853,6 +3875,9 @@ void FlatTupleGenerator::beginJob()
   FlatTuple->Branch("jets_IsBTagged_TightWpCentral_JECshiftedDown", &jets_IsBTagged_TightWpCentral_JECshiftedDown);
   FlatTuple->Branch("jets_IsBTagged_TightWpUp_JECshiftedDown", &jets_IsBTagged_TightWpUp_JECshiftedDown);
   FlatTuple->Branch("jets_IsBTagged_TightWpDown_JECshiftedDown", &jets_IsBTagged_TightWpDown_JECshiftedDown);
+  FlatTuple->Branch("jets_PF_jetIdPassedTight_JECshiftedDown", &jets_PF_jetIdPassedTight_JECshiftedDown);
+ 
+
 
 
 
@@ -3890,8 +3915,8 @@ void FlatTupleGenerator::beginJob()
   FlatTuple->Branch("jets_IsBTagged_TightWpCentral_JERup", &jets_IsBTagged_TightWpCentral_JERup);
   FlatTuple->Branch("jets_IsBTagged_TightWpUp_JERup", &jets_IsBTagged_TightWpUp_JERup);
   FlatTuple->Branch("jets_IsBTagged_TightWpDown_JERup", &jets_IsBTagged_TightWpDown_JERup);
-
-
+  FlatTuple->Branch("jets_PF_jetIdPassedTight_JERup", &jets_PF_jetIdPassedTight_JERup);
+  
 
   /* resolution down jet info */
   FlatTuple->Branch("numberOfJets_JERdown", &numberOfJets_JERdown);
@@ -3927,6 +3952,8 @@ void FlatTupleGenerator::beginJob()
   FlatTuple->Branch("jets_IsBTagged_TightWpCentral_JERdown", &jets_IsBTagged_TightWpCentral_JERdown);
   FlatTuple->Branch("jets_IsBTagged_TightWpUp_JERdown", &jets_IsBTagged_TightWpUp_JERdown);
   FlatTuple->Branch("jets_IsBTagged_TightWpDown_JERdown", &jets_IsBTagged_TightWpDown_JERdown);
+  FlatTuple->Branch("jets_PF_jetIdPassedTight_JERdown", &jets_PF_jetIdPassedTight_JERdown);
+
 
 
 
