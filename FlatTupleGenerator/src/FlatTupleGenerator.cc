@@ -367,6 +367,13 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
   std::vector<NtupleEvent> retainedPairs_EleMuon;
   retainedPairs_EleMuon.clear();
 
+  std::vector<NtupleEvent> retainedPairs_EleEle;
+  retainedPairs_EleEle.clear();
+
+  std::vector<NtupleEvent> retainedPairs_MuonMuon;
+  retainedPairs_MuonMuon.clear();
+
+
   /////////////////////////////////////
   // now loop through the pairs in the current event
   // and figure out which ones to retain 
@@ -378,7 +385,7 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
 
     if(currentPairToCheck.CandidateEventType()==TupleCandidateEventTypes::EffCand && FillEffLeptonBranches_) 
     {
-//      std::cout<<" have an EffLepton candidate \n";      
+        //      std::cout<<" have an EffLepton candidate \n";      
 
       //////////////////////////////////////////////////////////////////////
       // fill the TTree for a EffLepton list                              //
@@ -428,7 +435,7 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
 
 
 
-    }
+  } // eff lepton
 
 
     else if(currentPairToCheck.CandidateEventType()!=TupleCandidateEventTypes::EffCand) 
@@ -452,10 +459,10 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
       /* check if the cuts pass */
 
       bool leptonCutsPass = LeptonCutHelper.cutEvaluator(currentPairToCheck, LeptonCutVecSrc_);
-
+      
       ///////////////////
-       if(keepSignPair && keepTauEsVariant && leptonCutsPass) 
-       {
+      if(keepSignPair && keepTauEsVariant && leptonCutsPass) 
+      {
         if(currentPairToCheck.CandidateEventType() == TupleCandidateEventTypes::EleTau) 
         { 
           retainedPairs_EleTau.push_back(currentPairToCheck);
@@ -475,10 +482,23 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
         { 
           retainedPairs_EleMuon.push_back(currentPairToCheck);      
         }
-       }
+
+        else if(currentPairToCheck.CandidateEventType() == TupleCandidateEventTypes::EleEle) 
+        { 
+          retainedPairs_EleEle.push_back(currentPairToCheck);      
+        }
+
+        else if(currentPairToCheck.CandidateEventType() == TupleCandidateEventTypes::MuonMuon) 
+        { 
+          retainedPairs_MuonMuon.push_back(currentPairToCheck);      
+        }
+      }
       ///////////////////
     }
   }
+
+  /////////////////////////
+
 
   /////////////////////////
   // next figure out how to rank the pairs 
@@ -488,6 +508,9 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
   PairRankHelper rankHelper_EleTau;
   PairRankHelper rankHelper_MuonTau;
   PairRankHelper rankHelper_TauTau;
+  PairRankHelper rankHelper_EleEle;
+  PairRankHelper rankHelper_MuonMuon;
+
 
   if(rankByPtSum) 
   {
@@ -495,6 +518,8 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
     rankHelper_EleTau.init(retainedPairs_EleTau);
     rankHelper_MuonTau.init(retainedPairs_MuonTau);
     rankHelper_TauTau.init(retainedPairs_TauTau);
+    rankHelper_EleEle.init(retainedPairs_EleEle);
+    rankHelper_MuonMuon.init(retainedPairs_MuonMuon);
 
   }
 
@@ -504,6 +529,8 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
     rankHelper_EleTau.init(retainedPairs_EleTau,electronIsolationForRank,muonIsolationForRank,tauIDisolationForRank);
     rankHelper_MuonTau.init(retainedPairs_MuonTau,electronIsolationForRank,muonIsolationForRank,tauIDisolationForRank);
     rankHelper_TauTau.init(retainedPairs_TauTau,electronIsolationForRank,muonIsolationForRank,tauIDisolationForRank);
+    rankHelper_EleEle.init(retainedPairs_EleEle,electronIsolationForRank,muonIsolationForRank,tauIDisolationForRank);
+    rankHelper_MuonMuon.init(retainedPairs_MuonMuon,electronIsolationForRank,muonIsolationForRank,tauIDisolationForRank);
   }
 
   // get the individual rank-pair std::pairs
@@ -512,6 +539,9 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
   std::vector<std::pair<std::size_t,NtupleEvent>> retainedPairsWithRank_EleMuon = rankHelper_EleMuon.returnRankedPairVec();
   std::vector<std::pair<std::size_t,NtupleEvent>> retainedPairsWithRank_MuonTau = rankHelper_MuonTau.returnRankedPairVec();
   std::vector<std::pair<std::size_t,NtupleEvent>> retainedPairsWithRank_TauTau = rankHelper_TauTau.returnRankedPairVec();
+  std::vector<std::pair<std::size_t,NtupleEvent>> retainedPairsWithRank_EleEle = rankHelper_EleEle.returnRankedPairVec();
+  std::vector<std::pair<std::size_t,NtupleEvent>> retainedPairsWithRank_MuonMuon = rankHelper_MuonMuon.returnRankedPairVec();
+
 
 
   // combine the individual channel pairs into a single vector
@@ -548,6 +578,23 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
   }
 
     retainedPairsWithRank_EleMuon.clear();
+
+
+
+  for(std::size_t v = 0; v<retainedPairsWithRank_EleEle.size(); ++v )
+  {
+    retainedPairsWithRank.push_back(retainedPairsWithRank_EleEle[v]);
+  }
+
+    retainedPairsWithRank_EleEle.clear();
+
+  for(std::size_t v = 0; v<retainedPairsWithRank_MuonMuon.size(); ++v )
+  {
+    retainedPairsWithRank.push_back(retainedPairsWithRank_MuonMuon[v]);
+  }
+
+    retainedPairsWithRank_MuonMuon.clear();
+
 
   /////////////////////////////////////////////////////////
   /* now loop over retained & ranked pairs to fill TTree */
@@ -602,19 +649,28 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
       handlePairIndepInfo(iEvent,iSetup,currentINDEP);
       handleCurrentEventInfo(iEvent,iSetup, currentPair);
       handleMvaMetAndRecoil( iEvent, iSetup, currentPair);
-      if(USE_MVAMET_FOR_SVFit_AT_FlatTuple) handleSVFitCall(iEvent,iSetup,currentPair, "MVAMET_CORR");
-      if(USE_PFMET_FOR_SVFit_AT_FlatTuple) handleSVFitCall(iEvent,iSetup,currentPair, "PFMET");
-      if(USE_PUPPIMET_FOR_SVFit_AT_FlatTuple) handleSVFitCall(iEvent,iSetup,currentPair, "PUPPIMET");
+      
+      /* don't call SVFit for EleEle or MuonMuon */
+  
+      if(currentPair.CandidateEventType()!=TupleCandidateEventTypes::EleEle &&\
+         currentPair.CandidateEventType()!=TupleCandidateEventTypes::MuonMuon)
+      {  
+
+        if(USE_MVAMET_FOR_SVFit_AT_FlatTuple) handleSVFitCall(iEvent,iSetup,currentPair, "MVAMET_CORR");
+        if(USE_PFMET_FOR_SVFit_AT_FlatTuple) handleSVFitCall(iEvent,iSetup,currentPair, "PFMET");
+        if(USE_PUPPIMET_FOR_SVFit_AT_FlatTuple) handleSVFitCall(iEvent,iSetup,currentPair, "PUPPIMET");
      
-      /* we don't compute systematics on sytematics so only call these for Tau ES nominal*/
-      if(TauEsVariantToKeep_=="NOMINAL")
-      {
-        if(USE_MVAMET_uncorrected_FOR_SVFit_AT_FlatTuple) handleSVFitCall(iEvent,iSetup,currentPair, "MVAMET_UNCORR");
-        if(USE_MVAMET_responseUP_FOR_SVFit_AT_FlatTuple) handleSVFitCall(iEvent,iSetup,currentPair, "MVAMET_RESPONSEUP");
-        if(USE_MVAMET_responseDOWN_FOR_SVFit_AT_FlatTuple) handleSVFitCall(iEvent,iSetup,currentPair, "MVAMET_RESPONSEDOWN");
-        if(USE_MVAMET_resolutionUP_FOR_SVFit_AT_FlatTuple) handleSVFitCall(iEvent,iSetup,currentPair, "MVAMET_RESOLUTIONUP");
-        if(USE_MVAMET_resolutionDOWN_FOR_SVFit_AT_FlatTuple) handleSVFitCall(iEvent,iSetup,currentPair, "MVAMET_RESOLUTIONDOWN");
+        /* we don't compute systematics on sytematics so only call these for Tau ES nominal*/
+        if(TauEsVariantToKeep_=="NOMINAL")
+        {
+          if(USE_MVAMET_uncorrected_FOR_SVFit_AT_FlatTuple) handleSVFitCall(iEvent,iSetup,currentPair, "MVAMET_UNCORR");
+          if(USE_MVAMET_responseUP_FOR_SVFit_AT_FlatTuple) handleSVFitCall(iEvent,iSetup,currentPair, "MVAMET_RESPONSEUP");
+          if(USE_MVAMET_responseDOWN_FOR_SVFit_AT_FlatTuple) handleSVFitCall(iEvent,iSetup,currentPair, "MVAMET_RESPONSEDOWN");
+          if(USE_MVAMET_resolutionUP_FOR_SVFit_AT_FlatTuple) handleSVFitCall(iEvent,iSetup,currentPair, "MVAMET_RESOLUTIONUP");
+          if(USE_MVAMET_resolutionDOWN_FOR_SVFit_AT_FlatTuple) handleSVFitCall(iEvent,iSetup,currentPair, "MVAMET_RESOLUTIONDOWN");
+        }
       }
+
 
       handleLeg1AndLeg2Info(iEvent,iSetup,currentPair); 
 

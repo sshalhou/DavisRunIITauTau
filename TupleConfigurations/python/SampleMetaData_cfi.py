@@ -22,9 +22,9 @@ aPSet = cms.PSet(
     KeyName = cms.string("Fall15_SusyGG160"), # a unique descriptor for this sample to be used throught all parts of the code
     CrossSection = cms.double(1.0), # cross section in pb (include *BR if needed)
     FilterEff = cms.double(1.0), # generator level filter effi. 
-    CodeVersion = cms.double(0.0), # allow us to track differences as ntuples and flattuples evolve
+    CodeVersion = cms.double(1.0), # allow us to track differences as ntuples and flattuples evolve
     ProductionInfo = cms.string("Fall15MCminiAOD"), # needed for correct trigger settings
-    RecoilCorrection = cms.string("HIGGS"), # options are aMCatNLO_DY, aMCatNLO_W, MG5_DY, MG5_W, HIGGS, NONE (for data, ttbar, single-top and diboson)
+    RecoilCorrection = cms.string("HIGGS"), # options are aMCatNLO_DY, aMCatNLO_W, MG5_DY, MG5_W, HIGGS, NONE (for mono-H, data, ttbar, single-top and diboson)
     # for MetSystematicType use:
     #       "NONE" for data 
     #       "MEtSys::ProcessType::BOSON" for Z/W/Higgs
@@ -44,9 +44,9 @@ aPSet = cms.PSet(
     KeyName = cms.string("Fall15_DYJets_MG5_aMCNLO"), # a unique descriptor for this sample to be used throught all parts of the code
     CrossSection = cms.double(6025.2), # cross section in pb (include *BR if needed)
     FilterEff = cms.double(1.0), # generator level filter effi. 
-    CodeVersion = cms.double(0.0), # allow us to track differences as ntuples and flattuples evolve
+    CodeVersion = cms.double(1.0), # allow us to track differences as ntuples and flattuples evolve
     ProductionInfo = cms.string("Fall15MCminiAOD"), # needed for correct trigger settings
-    RecoilCorrection = cms.string("aMCatNLO_DY"), # options are aMCatNLO_DY, aMCatNLO_W, MG5_DY, MG5_W, HIGGS, NONE (for data, ttbar, single-top and diboson)
+    RecoilCorrection = cms.string("aMCatNLO_DY"), # options are aMCatNLO_DY, aMCatNLO_W, MG5_DY, MG5_W, HIGGS, NONE (for mono-H, data, ttbar, single-top and diboson)
     # for MetSystematicType use:
     #       "NONE" for data 
     #       "MEtSys::ProcessType::BOSON" for Z/W/Higgs
@@ -65,9 +65,9 @@ aPSet = cms.PSet(
     KeyName = cms.string("Fall15_ZZ4l_MG5_aMCNLO"), # a unique descriptor for this sample to be used throught all parts of the code
     CrossSection = cms.double(1.212), # cross section in pb (include *BR if needed)
     FilterEff = cms.double(1.0), # generator level filter effi. 
-    CodeVersion = cms.double(0.0), # allow us to track differences as ntuples and flattuples evolve
+    CodeVersion = cms.double(1.0), # allow us to track differences as ntuples and flattuples evolve
     ProductionInfo = cms.string("Fall15MCminiAOD"), # needed for correct trigger settings
-    RecoilCorrection = cms.string("NONE"), # options are aMCatNLO_DY, aMCatNLO_W, MG5_DY, MG5_W, HIGGS, NONE (for data, ttbar, single-top and diboson)
+    RecoilCorrection = cms.string("NONE"), # options are aMCatNLO_DY, aMCatNLO_W, MG5_DY, MG5_W, HIGGS, NONE (for mono-H, data, ttbar, single-top and diboson)
     # for MetSystematicType use:
     #       "NONE" for data 
     #       "MEtSys::ProcessType::BOSON" for Z/W/Higgs
@@ -87,9 +87,9 @@ aPSet = cms.PSet(
     KeyName = cms.string("Fall15_2HDM_Zp1200_A0400"), # a unique descriptor for this sample to be used throught all parts of the code
     CrossSection = cms.double(1.0), # cross section in pb (include *BR if needed)
     FilterEff = cms.double(1.0), # generator level filter effi. 
-    CodeVersion = cms.double(0.0), # allow us to track differences as ntuples and flattuples evolve
+    CodeVersion = cms.double(1.0), # allow us to track differences as ntuples and flattuples evolve
     ProductionInfo = cms.string("Fall15MCminiAOD"), # needed for correct trigger settings
-    RecoilCorrection = cms.string("HIGGS"), # options are aMCatNLO_DY, aMCatNLO_W, MG5_DY, MG5_W, HIGGS, NONE (for data, ttbar, single-top and diboson)
+    RecoilCorrection = cms.string("NONE"), # options are aMCatNLO_DY, aMCatNLO_W, MG5_DY, MG5_W, HIGGS, NONE (for mono-H, data, ttbar, single-top and diboson)
     # for MetSystematicType use:
     #       "NONE" for data 
     #       "MEtSys::ProcessType::BOSON" for Z/W/Higgs
@@ -108,9 +108,9 @@ aPSet = cms.PSet(
     KeyName = cms.string("Fall15_2HDM_WJetsToLNu_HT-100To200"), # a unique descriptor for this sample to be used throught all parts of the code
     CrossSection = cms.double(359.7), # cross section in pb (include *BR if needed)
     FilterEff = cms.double(1.0), # generator level filter effi. 
-    CodeVersion = cms.double(0.0), # allow us to track differences as ntuples and flattuples evolve
+    CodeVersion = cms.double(1.0), # allow us to track differences as ntuples and flattuples evolve
     ProductionInfo = cms.string("Fall15MCminiAOD"), # needed for correct trigger settings
-    RecoilCorrection = cms.string("MG5_W"), # options are aMCatNLO_DY, aMCatNLO_W, MG5_DY, MG5_W, HIGGS, NONE (for data, ttbar, single-top and diboson)
+    RecoilCorrection = cms.string("MG5_W"), # options are aMCatNLO_DY, aMCatNLO_W, MG5_DY, MG5_W, HIGGS, NONE (for mono-H, data, ttbar, single-top and diboson)
     # for MetSystematicType use:
     #       "NONE" for data 
     #       "MEtSys::ProcessType::BOSON" for Z/W/Higgs

@@ -32,7 +32,7 @@ SVMASS_VERBOSE_FlatTuple = True
 ############################################
 
 
-USE_MVAMET_FOR_SVFit_AT_FlatTuple = False  				# this is the default choice (recoil corrected MVA MET)
+USE_MVAMET_FOR_SVFit_AT_FlatTuple = True  				# this is the default choice (recoil corrected MVA MET)
 USE_MVAMET_uncorrected_FOR_SVFit_AT_FlatTuple = False
 USE_MVAMET_responseUP_FOR_SVFit_AT_FlatTuple = False
 USE_MVAMET_responseDOWN_FOR_SVFit_AT_FlatTuple = False
@@ -177,6 +177,31 @@ tau_TauTau.append("tauID('decayModeFinding') > 0.5")
 tau_TauTau.append("abs(dz)<0.2")
 tau_TauTau.append("abs(charge)==1.0")
 
+#######################################
+# --- cut sets for Z->ee and Z->mumu  #
+# these are approx. cuts since don't  #
+# have firm guide from H2TauTau       #
+#######################################
+
+# electron in EleEle final state :
+ele_EleEle = []
+ele_EleEle.append("pt>10")
+ele_EleEle.append("abs(eta)<2.5")
+ele_EleEle.append("abs(dxy)<0.045")
+ele_EleEle.append("abs(dz)<0.2")
+ele_EleEle.append("passFail_electronMVA80==1.0")
+ele_EleEle.append("numberOfMissingInnerHits<=1")
+ele_EleEle.append("passConversionVeto==1.0")
+
+# muon in MuonMuon final state :
+muon_MuonMuon = []
+muon_MuonMuon.append("pt>10")
+muon_MuonMuon.append("abs(eta)<2.1")
+muon_MuonMuon.append("abs(dxy)<0.045")
+muon_MuonMuon.append("abs(dz)<0.2")
+muon_MuonMuon.append("isGlobalMuon==1.0")
+muon_MuonMuon.append("passesMediumMuonId==1.0")
+
 
 #############################################
 # for veto cuts we include isolation here   #
@@ -240,6 +265,10 @@ cut_ele_ThirdLeptonVeto = cms.string(and_string_concatonator(ele_ThirdLeptonVeto
 cut_ele_DiElectron = cms.string(and_string_concatonator(ele_DiElectron))
 cut_muon_ThirdLeptonVeto = cms.string(and_string_concatonator(muon_ThirdLeptonVeto))
 cut_muon_DiMuonVeto =  cms.string(and_string_concatonator(muon_DiMuonVeto))
+cut_ele_EleEle = cms.string(and_string_concatonator(ele_EleEle))
+cut_muon_MuonMuon = cms.string(and_string_concatonator(muon_MuonMuon))
+
+
 
 
 
@@ -371,6 +400,11 @@ tautauTriggerCut = cms.string(" ( !isRealData && "+tautauTriggerCutFall15MCminiA
 etauTriggerCut = cms.string(" ( !isRealData && "+etauTriggerCutFall15MCminiAOD+" ) || ( "+etauTriggerCutRun2015D+ " && isRealData )")
 mtauTriggerCut  = cms.string(" ( !isRealData && "+mtauTriggerCutFall15MCminiAOD+" ) || ( "+mtauTriggerCutRun2015D+ " && isRealData )")
 
+# ok since 2015 we use single e and single mu triggers from muTau, eTau, ee and muMu
+eeTriggerCut = cms.string(" ( !isRealData && "+etauTriggerCutFall15MCminiAOD+" ) || ( "+etauTriggerCutRun2015D+ " && isRealData )")
+mmTriggerCut  = cms.string(" ( !isRealData && "+mtauTriggerCutFall15MCminiAOD+" ) || ( "+mtauTriggerCutRun2015D+ " && isRealData )")
+
+
 
 # emuTriggerCut = cms.string(emuTriggerCutFall15MCminiAOD+" || "+emuTriggerCutRun2015D)
 # tautauTriggerCut = cms.string(tautauTriggerCutFall15MCminiAOD+" || "+tautauTriggerCutRun2015D)
@@ -402,16 +436,40 @@ print "-----------------------------------------------------------"
 print " etauTriggerCut = ", etauTriggerCut
 print "-----------------------------------------------------------"
 print " mtauTriggerCut = ", mtauTriggerCut
+print "-----------------------------------------------------------"
+print " mmTriggerCut = ", mmTriggerCut
+print "-----------------------------------------------------------"
+print " eeTriggerCut = ", eeTriggerCut
 print "*********************************************************"
-print " should make code so that you don't need to manually adjust this "
+
+
 
 # VPSet containing selections for different final states, if PSet is not
 # provided for a given final state the 
 # the events will omitted
 
 
+
 # main cut vector PSet :
 defaultCuts = cms.VPSet(
+
+		cms.PSet(   candidatePairType = cms.string("MuonMuon"),
+					muonID = cut_muon_MuonMuon,
+					minDR = cms.double(0.5),
+					maxDR = cms.double(999.0),
+					trigger = mmTriggerCut
+
+				),
+
+
+		cms.PSet(   candidatePairType = cms.string("EleEle"),
+					electronID = cut_ele_EleEle,
+					minDR = cms.double(0.5),
+					maxDR = cms.double(999.0),
+					trigger = eeTriggerCut
+
+				),
+
 
 		cms.PSet(   candidatePairType = cms.string("EleMuon"),
 					electronID = cut_ele_EleMuon,
@@ -452,6 +510,25 @@ defaultCuts = cms.VPSet(
 
 
 lowDeltaRCuts = cms.VPSet(
+
+
+		cms.PSet(   candidatePairType = cms.string("MuonMuon"),
+					muonID = cut_muon_MuonMuon,
+					minDR = cms.double(0.),
+					maxDR = cms.double(0.4999),
+					trigger = mmTriggerCut
+
+				),
+
+
+		cms.PSet(   candidatePairType = cms.string("EleEle"),
+					electronID = cut_ele_EleEle,
+					minDR = cms.double(0.),
+					maxDR = cms.double(0.4999),
+					trigger = eeTriggerCut
+
+				),
+
 
 		cms.PSet(   candidatePairType = cms.string("EleMuon"),
 					electronID = cut_ele_EleMuon,
