@@ -6,7 +6,7 @@ process = cms.Process('DavisNtuple')
 ###################################
 
 # how many events to run, -1 means run all 
-MAX_EVENTS = 300
+MAX_EVENTS = 50
 
 # datasets for local running 
 

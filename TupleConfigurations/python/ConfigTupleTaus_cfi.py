@@ -30,6 +30,7 @@ filter_.append('pt>20.0') 	   # be careful here to allow for tau ES variation
 filter_.append('abs(eta)<2.3') 
 filter_.append('tauID("decayModeFinding")>0.5')
 filter_.append('abs(userFloat("dz"))<0.2')
+filter_.append('abs(charge)==1')
 # ----------------------------------------------------
 # ----------------------------------------------------
 

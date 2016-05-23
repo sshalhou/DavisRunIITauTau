@@ -32,7 +32,7 @@ SVMASS_VERBOSE_FlatTuple = True
 ############################################
 
 
-USE_MVAMET_FOR_SVFit_AT_FlatTuple = True  				# this is the default choice (recoil corrected MVA MET)
+USE_MVAMET_FOR_SVFit_AT_FlatTuple = False  				# this is the default choice (recoil corrected MVA MET)
 USE_MVAMET_uncorrected_FOR_SVFit_AT_FlatTuple = False
 USE_MVAMET_responseUP_FOR_SVFit_AT_FlatTuple = False
 USE_MVAMET_responseDOWN_FOR_SVFit_AT_FlatTuple = False
@@ -346,10 +346,10 @@ mtauTriggerCutRun2015C = "(isLeg1GoodForHLTPath('HLT_IsoMu17_eta2p1_LooseIsoPFTa
 # it has identical path names to D (some filters differ though!)
 #################################################################
 
-emuTriggerCutRun2015D = "((isLeg1GoodForHLTPath('HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v*') &&\
-	isLeg2GoodForHLTPath('HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v*') && leg2.pt>24) ||\
-   (isLeg1GoodForHLTPath('HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v*') &&\
-	isLeg2GoodForHLTPath('HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v*') && leg1.pt>24))"
+emuTriggerCutRun2015D = "((isLeg1GoodForHLTPath('HLT_Mu17_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v*') &&\
+	isLeg2GoodForHLTPath('HLT_Mu17_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v*') && leg2.pt>18) ||\
+    (isLeg1GoodForHLTPath('HLT_Mu8_TrkIsoVVL_Ele17_CaloIdL_TrackIdL_IsoVL_v*') &&\
+	isLeg2GoodForHLTPath('HLT_Mu8_TrkIsoVVL_Ele17_CaloIdL_TrackIdL_IsoVL_v*') && leg1.pt>18))"
 
 tautauTriggerCutRun2015D = "(isLeg1GoodForHLTPath('HLT_DoubleMediumIsoPFTau35_Trk1_eta2p1_Reg_v*') \
 	&& isLeg2GoodForHLTPath('HLT_DoubleMediumIsoPFTau35_Trk1_eta2p1_Reg_v*'))"
@@ -361,6 +361,11 @@ etauTriggerCutRun2015D = "(isLeg1GoodForHLTPath('HLT_Ele23_WPLoose_Gsf_v*'))"
 
 mtauTriggerCutRun2015D = "(isLeg1GoodForHLTPath('HLT_IsoMu18_v*'))"
 
+# for Z->ee and Z->mumu let either leg1 or leg2 pass the single e (or mu) trigger  
+
+ZEETriggerCutRun2015D = "((isLeg1GoodForHLTPath('HLT_Ele23_WPLoose_Gsf_v*')) || (isLeg2GoodForHLTPath('HLT_Ele23_WPLoose_Gsf_v*')))"
+
+ZMuMuTriggerCutRun2015D = "((isLeg1GoodForHLTPath('HLT_IsoMu18_v*')) || (isLeg1GoodForHLTPath('HLT_IsoMu18_v*')))"
 
 
 
@@ -382,6 +387,11 @@ etauTriggerCutFall15MCminiAOD = "(isLeg1GoodForHLTPath('HLT_Ele23_WPLoose_Gsf_v*
 
 mtauTriggerCutFall15MCminiAOD = "(isLeg1GoodForHLTPath('HLT_IsoMu18_v*'))"
 
+# for Z->ee and Z->mumu let either leg1 or leg2 pass the single e (or mu) trigger  
+
+ZEETriggerCutFall15MCminiAOD = "((isLeg1GoodForHLTPath('HLT_Ele23_WPLoose_Gsf_v*')) || (isLeg2GoodForHLTPath('HLT_Ele23_WPLoose_Gsf_v*')))"
+
+ZMuMuTriggerCutFall15MCminiAOD = "((isLeg1GoodForHLTPath('HLT_IsoMu18_v*')) || (isLeg1GoodForHLTPath('HLT_IsoMu18_v*')))"
 
 
 
@@ -401,8 +411,8 @@ etauTriggerCut = cms.string(" ( !isRealData && "+etauTriggerCutFall15MCminiAOD+"
 mtauTriggerCut  = cms.string(" ( !isRealData && "+mtauTriggerCutFall15MCminiAOD+" ) || ( "+mtauTriggerCutRun2015D+ " && isRealData )")
 
 # ok since 2015 we use single e and single mu triggers from muTau, eTau, ee and muMu
-eeTriggerCut = cms.string(" ( !isRealData && "+etauTriggerCutFall15MCminiAOD+" ) || ( "+etauTriggerCutRun2015D+ " && isRealData )")
-mmTriggerCut  = cms.string(" ( !isRealData && "+mtauTriggerCutFall15MCminiAOD+" ) || ( "+mtauTriggerCutRun2015D+ " && isRealData )")
+eeTriggerCut = cms.string(" ( !isRealData && "+ZEETriggerCutFall15MCminiAOD+" ) || ( "+ZEETriggerCutRun2015D+ " && isRealData )")
+mmTriggerCut  = cms.string(" ( !isRealData && "+ZMuMuTriggerCutFall15MCminiAOD+" ) || ( "+ZMuMuTriggerCutRun2015D+ " && isRealData )")
 
 
 
@@ -640,6 +650,13 @@ generalConfig = cms.PSet(
 				"byVLooseIsolationMVArun2v1DBoldDMwLT",
 				"byVVTightIsolationMVArun2v1DBoldDMwLT",
 				"byCombinedIsolationDeltaBetaCorrRaw3Hits",
+				"byIsolationMVArun2v1DBnewDMwLTraw",
+				"byTightIsolationMVArun2v1DBnewDMwLT",
+				"byVTightIsolationMVArun2v1DBnewDMwLT",
+				"byLooseIsolationMVArun2v1DBnewDMwLT",
+				"byMediumIsolationMVArun2v1DBnewDMwLT",
+				"byVLooseIsolationMVArun2v1DBnewDMwLT",
+				"byVVTightIsolationMVArun2v1DBnewDMwLT",
 				"byIsolationMVA3newDMwLTraw",
 				"decayModeFinding",
 				"decayModeFindingNewDMs"
