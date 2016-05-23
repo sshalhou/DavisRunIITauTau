@@ -109,7 +109,7 @@ for line in fileinput.input(str(args.dataSetList[0])):
     # some sed swaps in the job config file (really just putting the dataset name in)
     sedHappySampleName = str(line.strip()).replace("/","\/")
     sed_command = "cat "+os.environ['CMSSW_BASE']+"/src/DavisRunIITauTau/CrabJobSubmissionHelper"
-    sed_command = sed_command + "/Templates/V0/runIIoneStepFlatTuple_v0.py | "
+    sed_command = sed_command + "/Templates/V1/runIIoneStep_v1.py | "
     sed_command = sed_command + "sed \'s/DUMMY_DATASET_NAME/"+sedHappySampleName+"/g\'"+" >& "+tempConfigName
 
     os.system(sed_command)
@@ -146,7 +146,7 @@ config.Data.outLFNDirBase = '/store/user/%s/' % (getUsernameFromSiteDB())
 
 
 config.Data.publication = False
-config.Data.outputDatasetTag = 'ExoWkshopTry3NoMVAMET'
+config.Data.outputDatasetTag = 'Fall15syncTestTry1'
 config.Site.storageSite = 'T3_US_FNALLPC'
 config.Data.inputDBS = 'global'
 
@@ -185,7 +185,7 @@ if __name__ == '__main__':
 
         if int(args.isMC[0]) == 1:
             config.Data.splitting = 'EventAwareLumiBased'
-            config.Data.unitsPerJob = 25000
+            config.Data.unitsPerJob = 30000
 
         if int(args.isMC[0]) == 0:
             config.Data.splitting = 'LumiBased'
