@@ -1,0 +1,12 @@
+getenv = True
+Place Executable
+Place Input
+Error = runErrors.stderr
+universe = vanilla
+Log = runLog.log
+Should_Transfer_Files = YES
+WhenToTransferOutput = ON_EXIT
+
+Place Directory
+
+Queue 1

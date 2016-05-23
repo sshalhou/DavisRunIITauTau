@@ -58,6 +58,17 @@ private:
 	int num_tt;
 	int num_mt;
 
+    // read histograms for likelihood method
+      TFile* inFile = new TFile("pDistPlots.root","READ");
+      TH1F *eHistoFrac = (TH1F*)inFile->Get("/demo/eVisFrac");
+      TH1F *muHistoFrac = (TH1F*)inFile->Get("/demo/muVisFrac");
+      TH1F *h1p0sHistoFrac = (TH1F*)inFile->Get("/demo/h1p0sVisFrac");
+      TH1F *h1p1sHistoFrac = (TH1F*)inFile->Get("/demo/h1p1sVisFrac");
+      TH1F *h1p2sHistoFrac = (TH1F*)inFile->Get("/demo/h1p2sVisFrac");
+      TH1F *h1p3sHistoFrac = (TH1F*)inFile->Get("/demo/h1p3sVisFrac");
+      TH1F *h3p0sHistoFrac = (TH1F*)inFile->Get("/demo/h3p0sVisFrac");
+      TH1F *h3p1sHistoFrac = (TH1F*)inFile->Get("/demo/h3p1sVisFrac");
+
 
 	// elements of the TTree 
 
@@ -228,6 +239,58 @@ private:
     std::string KeyName;    /* description of the sample as given during crab job */
     double CrossSection;    /* MC process cross section */
     double FilterEff;       /* gen level filter eff. (needed if any is applied) */
+
+
+
+    ///function Methods variables
+    
+    //Likelihood Higgs Pt variables
+    
+    //save to Tree
+    double genPt;
+    double matchedLikelihoodPt;
+    double unmatchedLikelihoodPt;
+    double visPt;
+    
+    //used in Calculation
+    double visFrac1;
+    double visFrac1Prob;
+    double visFrac2;
+    double visFrac2Prob;
+    double currentFracProb;
+    double bestFracProb;
+    double bestP;
+    double totalGenP;
+    double ratioGL;
+
+
+    //Pchi & Mmin function variables
+
+    //Number of Events to be Put in the Tree
+
+    //Variables from Simulation File
+    double ME_T;//Originally set to a ridiculous value, for debugging
+    double ME_T_phi; //phi_T in Pchi code
+    double p_lt;
+    double eta_l;
+    double phi_l;
+    double p_Taut;//Added 03/16/2016
+    double eta_Tau;//Added 03/16/2016
+    double phi_Tau;//Added 03/16/2016
+    double M_l;
+
+    //Variables calculated in the code
+    double p_lx;//Originally set to a ridiculous value, for debugging
+    double p_ly;
+    double p_lz;
+    double E_l;
+
+    double p_vx;
+    double p_vy;
+    double E_v;
+
+    double M_min;
+    double P_chi;
 
 
 
