@@ -1,6 +1,6 @@
 #########################
 # sampleInfo list
-# each sample shoud have the fields name, type, nevents, and crossSection 
+# each sample shoud have all parameters filled 
 # - S. Shalhout
 #############################################################################
 
@@ -18,6 +18,7 @@ sampleInfo = []
 aPSet = cms.PSet(   
     DataSet = cms.string("/SUSYGluGluToHToTauTau_M-160_TuneCUETP8M1_13TeV-pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM"),
     EventTotal = cms.int32(469976),
+    NumberOfLumis = cms.int32(1), # obtain from DAS using summary dataset command
     EventType = cms.string("MC"), # valid EventTypes are :  MC, DATA, EMBEDDED (expand as needed)
     KeyName = cms.string("Fall15_SusyGG160"), # a unique descriptor for this sample to be used throught all parts of the code
     CrossSection = cms.double(1.0), # cross section in pb (include *BR if needed)
@@ -29,7 +30,7 @@ aPSet = cms.PSet(
     #       "NONE" for data 
     #       "MEtSys::ProcessType::BOSON" for Z/W/Higgs
     #       "MEtSys::ProcessType::EWK" for single top and Diboson
-    #       "MEtSys::ProcessType::TOP" for single t t-bar samples
+    #       "MEtSys::ProcessType::TOP" for t t-bar samples
     MetSystematicType = cms.string("MEtSys::ProcessType::BOSON")
                 )
 sampleInfo.append(aPSet)
@@ -51,7 +52,7 @@ aPSet = cms.PSet(
     #       "NONE" for data 
     #       "MEtSys::ProcessType::BOSON" for Z/W/Higgs
     #       "MEtSys::ProcessType::EWK" for single top and Diboson
-    #       "MEtSys::ProcessType::TOP" for single t t-bar samples
+    #       "MEtSys::ProcessType::TOP" for t t-bar samples
     MetSystematicType = cms.string("MEtSys::ProcessType::BOSON")
                 )
 sampleInfo.append(aPSet)
@@ -61,6 +62,7 @@ sampleInfo.append(aPSet)
 aPSet = cms.PSet(   
     DataSet = cms.string("/ZZTo4L_13TeV-amcatnloFXFX-pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM"),
     EventTotal = cms.int32(10746497),
+    NumberOfLumis = cms.int32(1), # obtain from DAS using summary dataset command
     EventType = cms.string("MC"), # valid EventTypes are :  MC, DATA, EMBEDDED (expand as needed)
     KeyName = cms.string("Fall15_ZZ4l_MG5_aMCNLO"), # a unique descriptor for this sample to be used throught all parts of the code
     CrossSection = cms.double(1.212), # cross section in pb (include *BR if needed)
@@ -72,7 +74,7 @@ aPSet = cms.PSet(
     #       "NONE" for data 
     #       "MEtSys::ProcessType::BOSON" for Z/W/Higgs
     #       "MEtSys::ProcessType::EWK" for single top and Diboson
-    #       "MEtSys::ProcessType::TOP" for single t t-bar samples
+    #       "MEtSys::ProcessType::TOP" for t t-bar samples
     MetSystematicType = cms.string("MEtSys::ProcessType::EWK")
                 )
 sampleInfo.append(aPSet)
@@ -83,6 +85,7 @@ sampleInfo.append(aPSet)
 aPSet = cms.PSet(   
     DataSet = cms.string("/ZprimeToA0hToA0chichihtautau_2HDM_MZp-1200_MA0-400_13TeV-madgraph/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM"),
     EventTotal = cms.int32(100000),
+    NumberOfLumis = cms.int32(1), # obtain from DAS using summary dataset command
     EventType = cms.string("MC"), # valid EventTypes are :  MC, DATA, EMBEDDED (expand as needed)
     KeyName = cms.string("Fall15_2HDM_Zp1200_A0400"), # a unique descriptor for this sample to be used throught all parts of the code
     CrossSection = cms.double(1.0), # cross section in pb (include *BR if needed)
@@ -94,7 +97,7 @@ aPSet = cms.PSet(
     #       "NONE" for data 
     #       "MEtSys::ProcessType::BOSON" for Z/W/Higgs
     #       "MEtSys::ProcessType::EWK" for single top and Diboson
-    #       "MEtSys::ProcessType::TOP" for single t t-bar samples
+    #       "MEtSys::ProcessType::TOP" for t t-bar samples
     MetSystematicType = cms.string("MEtSys::ProcessType::BOSON")
                 )
 sampleInfo.append(aPSet)
@@ -104,6 +107,7 @@ sampleInfo.append(aPSet)
 aPSet = cms.PSet(   
     DataSet = cms.string("/WJetsToLNu_HT-200To400_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM"),
     EventTotal = cms.int32(4949568),
+    NumberOfLumis = cms.int32(1), # obtain from DAS using summary dataset command
     EventType = cms.string("MC"), # valid EventTypes are :  MC, DATA, EMBEDDED (expand as needed)
     KeyName = cms.string("Fall15_2HDM_WJetsToLNu_HT-100To200"), # a unique descriptor for this sample to be used throught all parts of the code
     CrossSection = cms.double(359.7), # cross section in pb (include *BR if needed)
@@ -115,11 +119,35 @@ aPSet = cms.PSet(
     #       "NONE" for data 
     #       "MEtSys::ProcessType::BOSON" for Z/W/Higgs
     #       "MEtSys::ProcessType::EWK" for single top and Diboson
-    #       "MEtSys::ProcessType::TOP" for single t t-bar samples
+    #       "MEtSys::ProcessType::TOP" for t t-bar samples
     MetSystematicType = cms.string("MEtSys::ProcessType::BOSON")
                 )
 sampleInfo.append(aPSet)
 ############ 
+
+############
+aPSet = cms.PSet(   
+    DataSet = cms.string("/TT_TuneCUETP8M1_13TeV-powheg-pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12_ext4-v1/MINIAODSIM"),
+    EventTotal = cms.int32(187626200),
+    NumberOfLumis = cms.int32(938131), # obtain from DAS using summary dataset command
+    EventType = cms.string("MC"), # valid EventTypes are :  MC, DATA, EMBEDDED (expand as needed)
+    KeyName = cms.string("Fall15_TT_Powheg"), # a unique descriptor for this sample to be used throught all parts of the code
+    CrossSection = cms.double(831.76), # cross section in pb (include *BR if needed)
+    FilterEff = cms.double(1.0), # generator level filter effi. 
+    CodeVersion = cms.double(1.0), # allow us to track differences as ntuples and flattuples evolve
+    ProductionInfo = cms.string("Fall15MCminiAOD"), # needed for correct trigger settings
+    RecoilCorrection = cms.string("NONE"), # options are aMCatNLO_DY, aMCatNLO_W, MG5_DY, MG5_W, HIGGS, NONE (for mono-H, data, ttbar, single-top and diboson)
+    # for MetSystematicType use:
+    #       "NONE" for data 
+    #       "MEtSys::ProcessType::BOSON" for Z/W/Higgs
+    #       "MEtSys::ProcessType::EWK" for single top and Diboson
+    #       "MEtSys::ProcessType::TOP" for  t t-bar samples
+    MetSystematicType = cms.string("MEtSys::ProcessType::TOP")
+                )
+sampleInfo.append(aPSet)
+############ 
+
+
 
 
 

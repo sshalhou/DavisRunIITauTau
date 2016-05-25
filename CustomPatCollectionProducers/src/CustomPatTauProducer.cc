@@ -245,6 +245,14 @@ CustomPatTauProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
   auto_ptr<PatTauCollection> storedTausDown (new PatTauCollection);
 
 
+  // control memory usage by reserving max size 
+  std::size_t reserveSize =  taus->size();
+  storedTausNominal->reserve( reserveSize );
+  storedTausUp->reserve( reserveSize );
+  storedTausDown->reserve( reserveSize );
+
+
+
   for (std::size_t i = 0; i<taus->size(); i++)
   {
 

@@ -6,7 +6,8 @@ process = cms.Process('DavisNtuple')
 ###################################
 
 # how many events to run, -1 means run all 
-MAX_EVENTS = 50
+#MAX_EVENTS = 1000
+MAX_EVENTS = 9153
 
 # datasets for local running 
 
@@ -134,7 +135,11 @@ process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(MAX_EVENTS) 
 ###################################
 
 process.source = cms.Source("PoolSource",fileNames=myfilelist)
-#	eventsToSkip = cms.untracked.VEventRange('1:1-1:4941')	)
+
+#eventsToProcess = cms.untracked.VEventRange('1:67566889-1:67566889','1:73662929-1:73662929','1:71967435-1:71967435',
+#'1:32900395-1:32900395') )
+
+#eventsToSkip = cms.untracked.VEventRange('1:1-1:4941')	)
 
 
 

@@ -240,6 +240,21 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
   edm::Handle<edm::View<pat::Tau> > eff_taus;
   iEvent.getByToken(EffTauToken_,eff_taus);
 
+
+  // control memory usage by reserving max size 
+
+  std::size_t reserveSize =  0;
+  reserveSize += eff_electrons->size();
+  reserveSize += eff_muons->size();
+  reserveSize += eff_taus->size();
+  if(mvamets.isValid()) reserveSize += mvamets->size(); 
+
+
+  TupleCandidateEvents->reserve( reserveSize );
+
+
+
+
   //////////////////////////////////////////////////
   /* fill eff lepton vector */
   //////////////////////////////////////////////////      

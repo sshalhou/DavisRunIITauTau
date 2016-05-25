@@ -285,6 +285,10 @@ CustomPatElectronProducer::produce(edm::Event& iEvent, const edm::EventSetup& iS
 
   auto_ptr<PatElectronCollection> storedElectrons (new PatElectronCollection);
 
+  // control memory usage by reserving max size 
+  std::size_t reserveSize =  electrons->size();
+  storedElectrons->reserve( reserveSize );
+
 
   for (std::size_t i = 0; i<electrons->size(); i++)
   {

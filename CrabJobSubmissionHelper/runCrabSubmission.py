@@ -24,7 +24,7 @@ import math
 MC_EVENTS_PER_JOB = 5000 # used for MC only
 MAX_JOBS_PER_TASK = 8000 # true crab limit is 10,000 we should be below this
 DATA_UNITS_PER_JOB = 150
-DATA_LUMI_MASK = 'https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions15/13TeV/Cert_246908-259891_13TeV_PromptReco_Collisions15_25ns_JSON.txt'
+DATA_LUMI_MASK = 'https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions15/13TeV/Cert_246908-260627_13TeV_PromptReco_Collisions15_25ns_JSON.txt'
 
 
 ############################
@@ -126,6 +126,8 @@ sampleNames = [] # list of lists [dataset, requestName, tempJobConfigName, Event
 for line in fileinput.input(str(args.dataSetList[0])):
     if '#' in line:
         continue 
+    if line.strip() == '':
+        continue
     sampleData = getSampleInfoForDataSet(str(line.strip()))
 
     # seems kind of clumsy, but works for now
@@ -225,15 +227,14 @@ if __name__ == '__main__':
 
     for samp in sampleNames:
         resetConfig(config)
-        config.Data.inputDataset = samp[0]
-        config.General.requestName = samp[1]  
-        config.JobType.psetName = samp[2]
 
         if int(args.isMC[0]) == 0:
+            config.Data.inputDataset = samp[0]
+            config.General.requestName = samp[1]  
+            config.JobType.psetName = samp[2]
             config.Data.splitting = 'LumiBased'
             config.Data.unitsPerJob = DATA_UNITS_PER_JOB
             config.Data.lumiMask = DATA_LUMI_MASK
-
             print "################# -- setting up job as follows : -- ##################################"   
             print "################# ", samp[1], " #################"
 
@@ -254,8 +255,12 @@ if __name__ == '__main__':
              
 
         if int(args.isMC[0]) == 1:
+            config.Data.inputDataset = samp[0]
+            config.General.requestName = samp[1]  
+            config.JobType.psetName = samp[2]
             config.Data.splitting = 'EventAwareLumiBased'
             config.Data.unitsPerJob = MC_EVENTS_PER_JOB
+            config.Data.lumiMask = ''
           
             requestedJobs = (1.0*samp[3])/config.Data.unitsPerJob
             if requestedJobs < MAX_JOBS_PER_TASK :
@@ -284,8 +289,6 @@ if __name__ == '__main__':
                 print '------> task for ', samp[0]
                 print '------> would require > ', (requestedJobs), ' jobs which is too high, will split into '
                 print '------> ',(requestedTasks), ' tasks instead'
-                print config
-
                 print '------> sample has ', samp[4], 'LuminosityBlocks to be used for splitting ...'
 
                 print "################# -- setting (split) MC job as follows : -- ##################################"   
@@ -294,7 +297,7 @@ if __name__ == '__main__':
                 start_ = 1
                 end_ = 1
                 for s in range(1,int(requestedTasks)+1):
-                    
+
                     print "************** split ", s , " of ", int(requestedTasks), "************************"
 
                     if s != 1:
@@ -306,16 +309,21 @@ if __name__ == '__main__':
                     else :
                         end_ = start_ + math.ceil(samp[4]/requestedTasks)
 
+                    config.Data.inputDataset = samp[0]
+                    config.JobType.psetName = samp[2]
+                    config.Data.splitting = 'EventAwareLumiBased'
+                    config.Data.unitsPerJob = MC_EVENTS_PER_JOB
+
                     jsonLine_ = '{\"1\": [[' + str(int(start_))+', '+str(int(end_))+']]}'  
                     cragConfigPYfile = crabJobLocation + '/crabConfig_' + samp[1]+"_lumiSplit_"+str(int(start_))+"_"+str(int(end_))+".py"
                     lumiSplitJSON_   = crabJobLocation + '/JSON_' + samp[1]+"_lumiSplit_"+str(int(start_))+"_"+str(int(end_))+".txt"
                     config.General.requestName = samp[1] + "_lumiSplit_"+str(int(start_))+"_"+str(int(end_))
+                    config.Data.lumiMask = lumiSplitJSON_
 
                     li = open(lumiSplitJSON_,'w')
                     print >> li, jsonLine_
                     li.close()
-                    config.Data.lumiMask = lumiSplitJSON_
-
+                    
                     fi = open(cragConfigPYfile,'w')
                     print >> fi, config
                     fi.close()

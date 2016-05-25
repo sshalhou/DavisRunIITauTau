@@ -184,9 +184,7 @@ NtupleEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
 {
 
   auto_ptr<NtupleEventCollection> NtupleEvents (new NtupleEventCollection);
-  //std::size_t reserveSize =  tupleCandidateEventSrc_.size();
-  //NtupleEvents->reserve( reserveSize );
-
+ 
     // get trigger-related collections
 
     edm::Handle<edm::TriggerResults> triggerBits;
@@ -203,6 +201,12 @@ NtupleEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
 
     edm::Handle<edm::View<TupleCandidateEvent> > pairs;
     iEvent.getByToken(tupleCandidateEventToken_,pairs);
+
+    // control memory usage by reserving max size 
+    std::size_t reserveSize =  pairs->size();
+    NtupleEvents->reserve( reserveSize );
+
+
 
     // get the L1 isoTaus 
 
