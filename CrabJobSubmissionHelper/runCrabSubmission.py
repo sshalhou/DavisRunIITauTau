@@ -4,6 +4,10 @@
 # based heavily on CMSSW tutorials for CRAB3
 # issue ./runCrabSubmission.py -h for usage info
 # - Shalhout
+#
+# updated for large MC samples that exceed the crab3 10,000 jobs/task limit
+# and need to be split - S. Shalhout May24, 2016
+
 
 import os
 import sys
@@ -11,6 +15,16 @@ import argparse
 import fileinput
 import FWCore.ParameterSet.Config as cms
 from DavisRunIITauTau.TupleConfigurations.getSampleInfoForDataSet import getSampleInfoForDataSet
+import math
+
+###############################
+# define a few variables here
+###############################
+
+MC_EVENTS_PER_JOB = 5000 # used for MC only
+MAX_JOBS_PER_TASK = 8000 # true crab limit is 10,000 we should be below this
+DATA_UNITS_PER_JOB = 150
+DATA_LUMI_MASK = 'https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions15/13TeV/Cert_246908-259891_13TeV_PromptReco_Collisions15_25ns_JSON.txt'
 
 
 ############################
@@ -35,6 +49,12 @@ parser.add_argument('--dataSetList', nargs=1, required=True,
 parser.add_argument('--workAreaName', nargs=1, required=True,
                    help='ex: --workAreaName=\"~/A/B/C\"')
 
+parser.add_argument('--outputDatasetTag', nargs=1, required=True,
+                   help='ex: --outputDatasetTag=\"Sub-Directory Name on EOS\"')
+
+parser.add_argument('--dryRun', type=bool, nargs=1, required=True,
+                   help='ex: --dryRun=True (if true crab sets up the jobs but does not actually submit)')
+
 
 args = parser.parse_args(sys.argv[1:])
 
@@ -51,6 +71,15 @@ if os.path.isfile(str(args.dataSetList[0])) is False:
     print 'unable to find sample file list : ',str(args.dataSetList[0])
     parser.print_usage()
     sys.exit()
+
+###########################
+# is this a dry run ?
+
+DRY_RUN = bool(args.dryRun[0])
+
+if DRY_RUN is True :
+    print '************** DRY RUN MODE nothing will be submitted to CRAB **************'
+    print '************** DRY RUN MODE nothing will be submitted to CRAB **************'
 
 ############################
 # some info to the screen
@@ -91,7 +120,7 @@ if os.path.isdir(crabJobLocation) is False:
 #srcDir = os.environ['CMSSW_BASE']+"/src"
 #crabConfigDir = srcDir+"/DavisRunIITauTau/CrabJobSubmissionHelper/"
 
-sampleNames = [] # list of lists [dataset, requestName, tempJobConfigName]
+sampleNames = [] # list of lists [dataset, requestName, tempJobConfigName, EventTotal, NumberOfLumis]
 
 
 for line in fileinput.input(str(args.dataSetList[0])):
@@ -103,6 +132,8 @@ for line in fileinput.input(str(args.dataSetList[0])):
     version =  ((str(sampleData.getParameter("CodeVersion")).strip("cms.double('")).strip("')")).replace('.','_') 
     requestName = ((str(sampleData.getParameter("KeyName")).strip("cms.string('")).strip("')"))
     requestName = requestName+"_version_"+version
+    EventTotal =  int((str(sampleData.getParameter("EventTotal")).strip("cms.int32('")).strip("')"))
+    NumberOfLumis =  int((str(sampleData.getParameter("NumberOfLumis")).strip("cms.int32('")).strip("')"))
 
     tempConfigName = crabJobLocation+"/"+requestName+".py"
 
@@ -113,8 +144,8 @@ for line in fileinput.input(str(args.dataSetList[0])):
     sed_command = sed_command + "sed \'s/DUMMY_DATASET_NAME/"+sedHappySampleName+"/g\'"+" >& "+tempConfigName
 
     os.system(sed_command)
-    sampleNames.append([str(line.strip()), requestName, tempConfigName])
-    
+  
+    sampleNames.append([str(line.strip()), requestName, tempConfigName, EventTotal, NumberOfLumis])
 
 
 # ################################
@@ -146,7 +177,7 @@ config.Data.outLFNDirBase = '/store/user/%s/' % (getUsernameFromSiteDB())
 
 
 config.Data.publication = False
-config.Data.outputDatasetTag = 'Fall15syncTestTry1'
+config.Data.outputDatasetTag = str(args.outputDatasetTag[0])
 config.Site.storageSite = 'T3_US_FNALLPC'
 config.Data.inputDBS = 'global'
 
@@ -174,6 +205,17 @@ if __name__ == '__main__':
             print "Failed submitting task: %s" % (hte.headers)
         except ClientException as cle:
             print "Failed submitting task: %s" % (cle)
+    
+
+    # define a function to reset sample based parameters 
+    def resetConfig(config):
+        config.Data.inputDataset = ''
+        config.General.requestName = ''
+        config.JobType.psetName = ''
+        config.Data.splitting = ''
+        config.Data.unitsPerJob = 1
+        config.Data.lumiMask = ''
+
 
     ######################
     # OK now bring it all together
@@ -182,34 +224,112 @@ if __name__ == '__main__':
     submitCommandList = []
 
     for samp in sampleNames:
-
-        if int(args.isMC[0]) == 1:
-            config.Data.splitting = 'EventAwareLumiBased'
-            config.Data.unitsPerJob = 30000
-
-        if int(args.isMC[0]) == 0:
-            config.Data.splitting = 'LumiBased'
-            config.Data.unitsPerJob = 150 
-            config.Data.lumiMask = 'https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions15/13TeV/Cert_246908-259891_13TeV_PromptReco_Collisions15_25ns_JSON.txt'
-            #config.Data.lumiMask = 'https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions15/13TeV/Cert_246908-251883_13TeV_PromptReco_Collisions15_JSON_v2.txt'
-            #config.Data.lumiMask = 'https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions15/13TeV/Cert_246908-255031_13TeV_PromptReco_Collisions15_25ns_JSON_v2.txt'
-           
-
+        resetConfig(config)
         config.Data.inputDataset = samp[0]
         config.General.requestName = samp[1]  
         config.JobType.psetName = samp[2]
-        print "################# -- setting up job as follows : -- ##################################"   
-        print "################# ", samp[1], " #################"
-        cragConfigPYfile = crabJobLocation + '/crabConfig_' + samp[1]+".py"
-        print config 
-        print 'saved in crab config file ', cragConfigPYfile
-        # print this config to a py file 
-        fi = open(cragConfigPYfile,'w')
-        print >> fi, config
-        fi.close()
-        submitCommandList.append("crab submit --config="+cragConfigPYfile)
-        #print config
-        print "#######################################################################################"
+
+        if int(args.isMC[0]) == 0:
+            config.Data.splitting = 'LumiBased'
+            config.Data.unitsPerJob = DATA_UNITS_PER_JOB
+            config.Data.lumiMask = DATA_LUMI_MASK
+
+            print "################# -- setting up job as follows : -- ##################################"   
+            print "################# ", samp[1], " #################"
+
+            cragConfigPYfile = crabJobLocation + '/crabConfig_' + samp[1]+".py"
+            print config 
+            print 'saved in crab config file ', cragConfigPYfile
+            fi = open(cragConfigPYfile,'w')
+            print >> fi, config
+            fi.close()
+            if DRY_RUN is True :
+                submitCommandList.append("crab submit --dryrun  --skip-estimates --config="+cragConfigPYfile)
+            else :
+                submitCommandList.append("crab submit --config="+cragConfigPYfile)                
+            resetConfig(config)
+
+            print "#######################################################################################"
+
+             
+
+        if int(args.isMC[0]) == 1:
+            config.Data.splitting = 'EventAwareLumiBased'
+            config.Data.unitsPerJob = MC_EVENTS_PER_JOB
+          
+            requestedJobs = (1.0*samp[3])/config.Data.unitsPerJob
+            if requestedJobs < MAX_JOBS_PER_TASK :
+               
+                print "################# -- setting up job as follows : -- ##################################"   
+                print "################# ", samp[1], " #################"
+               
+                cragConfigPYfile = crabJobLocation + '/crabConfig_' + samp[1]+".py"
+                print config 
+                print 'saved in crab config file ', cragConfigPYfile               
+                fi = open(cragConfigPYfile,'w')
+                print >> fi, config
+                fi.close()
+
+                if DRY_RUN is True :
+                    submitCommandList.append("crab submit --dryrun  --skip-estimates --config="+cragConfigPYfile)
+                else :
+                    submitCommandList.append("crab submit --config="+cragConfigPYfile)   
+                resetConfig(config)
+
+                print "#######################################################################################"
+
+            else :
+                # have a big MC sample, need to split the task up by LumiSections, generating the JSON files on-the-fly                    
+                requestedTasks = math.ceil((1.0*requestedJobs)/MAX_JOBS_PER_TASK)
+                print '------> task for ', samp[0]
+                print '------> would require > ', (requestedJobs), ' jobs which is too high, will split into '
+                print '------> ',(requestedTasks), ' tasks instead'
+                print config
+
+                print '------> sample has ', samp[4], 'LuminosityBlocks to be used for splitting ...'
+
+                print "################# -- setting (split) MC job as follows : -- ##################################"   
+                print "################# ", samp[1], " #################"
+
+                start_ = 1
+                end_ = 1
+                for s in range(1,int(requestedTasks)+1):
+                    
+                    print "************** split ", s , " of ", int(requestedTasks), "************************"
+
+                    if s != 1:
+                        start_ = end_ + 1
+
+                    if s == int(requestedTasks):
+                        end_ = samp[4]     
+
+                    else :
+                        end_ = start_ + math.ceil(samp[4]/requestedTasks)
+
+                    jsonLine_ = '{\"1\": [[' + str(int(start_))+', '+str(int(end_))+']]}'  
+                    cragConfigPYfile = crabJobLocation + '/crabConfig_' + samp[1]+"_lumiSplit_"+str(int(start_))+"_"+str(int(end_))+".py"
+                    lumiSplitJSON_   = crabJobLocation + '/JSON_' + samp[1]+"_lumiSplit_"+str(int(start_))+"_"+str(int(end_))+".txt"
+                    config.General.requestName = samp[1] + "_lumiSplit_"+str(int(start_))+"_"+str(int(end_))
+
+                    li = open(lumiSplitJSON_,'w')
+                    print >> li, jsonLine_
+                    li.close()
+                    config.Data.lumiMask = lumiSplitJSON_
+
+                    fi = open(cragConfigPYfile,'w')
+                    print >> fi, config
+                    fi.close()
+
+                    print "***** will use JSON file ", lumiSplitJSON_
+                    print "***** and config file ", cragConfigPYfile
+                    print config 
+
+                    if DRY_RUN is True :
+                        submitCommandList.append("crab submit --dryrun  --skip-estimates --config="+cragConfigPYfile)
+                    else :
+                        submitCommandList.append("crab submit --config="+cragConfigPYfile)   
+                    resetConfig(config)
+
         #submit(config) this line causes duplicate process fails on crab
         # trying my own fix instead (the wiki fix does not fix)
         # see https://twiki.cern.ch/twiki/bin/view/CMSPublic/CRAB3FAQ#Multiple_submission_fails_with_a
