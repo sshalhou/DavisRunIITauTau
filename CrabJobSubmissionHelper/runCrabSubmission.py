@@ -52,8 +52,8 @@ parser.add_argument('--workAreaName', nargs=1, required=True,
 parser.add_argument('--outputDatasetTag', nargs=1, required=True,
                    help='ex: --outputDatasetTag=\"Sub-Directory Name on EOS\"')
 
-parser.add_argument('--dryRun', type=bool, nargs=1, required=True,
-                   help='ex: --dryRun=True (if true crab sets up the jobs but does not actually submit)')
+parser.add_argument('--dryRun', type=int, nargs=1, required=True,
+                   help='ex: --dryRun=1 (if 1 crab sets up the jobs but does not actually submit, if 0 will submit)')
 
 
 args = parser.parse_args(sys.argv[1:])
@@ -75,9 +75,13 @@ if os.path.isfile(str(args.dataSetList[0])) is False:
 ###########################
 # is this a dry run ?
 
-DRY_RUN = bool(args.dryRun[0])
+DRY_RUN = int(args.dryRun[0])
 
-if DRY_RUN is True :
+print 'DRY_RUN = ', DRY_RUN, args.dryRun[0]
+print 'IS MC = ', int(args.isMC[0])
+
+
+if DRY_RUN == 1 :
     print '************** DRY RUN MODE nothing will be submitted to CRAB **************'
     print '************** DRY RUN MODE nothing will be submitted to CRAB **************'
 
@@ -244,7 +248,7 @@ if __name__ == '__main__':
             fi = open(cragConfigPYfile,'w')
             print >> fi, config
             fi.close()
-            if DRY_RUN is True :
+            if DRY_RUN == 1 :
                 submitCommandList.append("crab submit --dryrun  --skip-estimates --config="+cragConfigPYfile)
             else :
                 submitCommandList.append("crab submit --config="+cragConfigPYfile)                
@@ -275,7 +279,7 @@ if __name__ == '__main__':
                 print >> fi, config
                 fi.close()
 
-                if DRY_RUN is True :
+                if DRY_RUN == 1 :
                     submitCommandList.append("crab submit --dryrun  --skip-estimates --config="+cragConfigPYfile)
                 else :
                     submitCommandList.append("crab submit --config="+cragConfigPYfile)   
@@ -332,7 +336,7 @@ if __name__ == '__main__':
                     print "***** and config file ", cragConfigPYfile
                     print config 
 
-                    if DRY_RUN is True :
+                    if DRY_RUN == 1 :
                         submitCommandList.append("crab submit --dryrun  --skip-estimates --config="+cragConfigPYfile)
                     else :
                         submitCommandList.append("crab submit --config="+cragConfigPYfile)   
