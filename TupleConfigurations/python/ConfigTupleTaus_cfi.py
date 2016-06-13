@@ -26,7 +26,8 @@ filter_ = []
 
 # ----------------------------------------------------
 # ------------[user edit here]------------------------
-filter_.append('pt>20.0') 	   # be careful here to allow for tau ES variation
+filter_.append('pt>20.0') 	   
+# taus will be filtered on pT using (ptRaw * X) * Y > cutPoint, where X = tau ES corr. and Y = up 1 sigma shift 
 filter_.append('abs(eta)<2.3') 
 filter_.append('tauID("decayModeFinding")>0.5')
 filter_.append('abs(userFloat("dz"))<0.2')

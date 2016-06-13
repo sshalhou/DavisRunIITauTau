@@ -23,6 +23,8 @@ from and_string_concatonator import and_string_concatonator
 
 ########################
 # starting jet collection
+# this is whatever is the mini-aod default
+# corrections are applied later based on this collection
 
 StartingJetCollection = "slimmedJets"
 

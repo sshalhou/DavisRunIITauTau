@@ -636,6 +636,13 @@ generalConfig = cms.PSet(
 			# number of these that we can keep 
 
 			tauIDsToKeep = cms.vstring(				
+				"againstElectronLooseMVA6",	
+				"againstElectronMediumMVA6",
+				"againstElectronVTightMVA6",
+				"byIsolationMVA3oldDMwLTraw",
+				"chargedIsoPtSum",
+				"neutralIsoPtSum",
+				"puCorrPtSum",
 				"againstElectronTightMVA5",
 				"againstElectronTightMVA6",
 				"againstElectronVLooseMVA5",
@@ -662,6 +669,8 @@ generalConfig = cms.PSet(
 				"decayModeFindingNewDMs"
 # bad				"decayModeFindingOldDMs"
 					),
+
+
 
 
 			#############################################

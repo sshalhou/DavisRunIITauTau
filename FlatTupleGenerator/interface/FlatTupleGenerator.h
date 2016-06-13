@@ -178,7 +178,7 @@ public:
 	/* MASTER VALUE FOR Ntuples std::pair flattening, and generating branches on-the-fly based on
 	   FlatTupleGenerator/python/FlatTupleConfig_cfi.py   */
   
-  	static const int THE_MAX = 30; /* do we ever really want to keep >30 tauIDs, b-taggers etc? */
+  	static const int THE_MAX = 50; /* do we ever really want to keep >50 tauIDs, b-taggers etc? */
 
 	/* the input collection sources */
 

@@ -10,6 +10,7 @@ generateH2TauSyncTree::generateH2TauSyncTree(FlatTreeReader R_, bool run_)
 	R = R_;
 
 	// init counters
+	num_total = 0;
 	num_et = 0;
 	num_em = 0;
 	num_tt = 0;
@@ -32,69 +33,6 @@ generateH2TauSyncTree::generateH2TauSyncTree(FlatTreeReader R_, bool run_)
 	setupBranches(tree_EleTau);
 	setupBranches(tree_TauTau);
 	setupBranches(tree_EleMu);
-
-
-	// READ IN THE MET FILTER VETO FILES
-	std::ifstream file_DoubleEG("MET_FILTER/eventlist_DoubleEG_csc2015.txt");
-	std::ifstream file_MuonEG("MET_FILTER/eventlist_MuonEG_csc2015.txt");
-	std::ifstream file_SingleElectron("MET_FILTER/eventlist_SingleElectron_csc2015.txt");
-	std::ifstream file_SingleMuon("MET_FILTER/eventlist_SingleMuon_csc2015.txt");
-	std::ifstream file_Tau("MET_FILTER/eventlist_Tau_csc2015.txt");
-
-	std::string aline;
-	if (file_DoubleEG.is_open())
-	{
-		while ( getline (file_DoubleEG,aline) )
-		{
-		  metFilter_DoubleEG.push_back(aline);
-		}
-		file_DoubleEG.close();
-	}
-
-	if (file_MuonEG.is_open())
-	{
-		while ( getline (file_MuonEG,aline) )
-		{
-		  metFilter_MuonEG.push_back(aline);
-		}
-		file_MuonEG.close();
-	}
-
-	if (file_SingleElectron.is_open())
-	{
-		while ( getline (file_SingleElectron,aline) )
-		{
-		  metFilter_SingleElectron.push_back(aline);
-		}
-		file_SingleElectron.close();
-	}
-
-	if (file_SingleMuon.is_open())
-	{
-		while ( getline (file_SingleMuon,aline) )
-		{
-		  metFilter_SingleMuon.push_back(aline);
-		}
-		file_SingleMuon.close();
-	}
-
-	if (file_Tau.is_open())
-	{
-		while ( getline (file_Tau,aline) )
-		{
-		  metFilter_Tau.push_back(aline);
-		}
-		file_Tau.close();
-	}
-
-	std::cout<<" file_DoubleEG "<<metFilter_DoubleEG.size()<<"\n";
-	std::cout<<" file_MuonEG "<<metFilter_MuonEG.size()<<"\n";
-	std::cout<<" file_SingleElectron "<<metFilter_SingleElectron.size()<<"\n";
-	std::cout<<" file_SingleMuon "<<metFilter_SingleMuon.size()<<"\n";
-	std::cout<<" file_Tau "<<metFilter_Tau.size()<<"\n";
-
-
-
 
 
 	}
@@ -137,6 +75,11 @@ void generateH2TauSyncTree::finish()
 		outFile_EleMu->Close();
 
 	}
+
+	 std::cout<<"final count etau = "<<num_et<<"\n";
+	 std::cout<<"final count mtau = "<<num_mt<<"\n";
+	 std::cout<<"final count tt = "<<num_tt<<"\n";
+	 std::cout<<"final count em = "<<num_em<<"\n";
 }
 
 generateH2TauSyncTree::~generateH2TauSyncTree()
@@ -158,251 +101,304 @@ generateH2TauSyncTree::~generateH2TauSyncTree()
 
 void generateH2TauSyncTree::handleEvent()
 {
+	num_total ++; /* total events seen */
+
+
 	// reset values
 	reset();
 
+	//////////////////////////////////////////////////////////////////////////////
 	// some 4-vectors we will need
 
-	TLorentzVector l1, l2, pfMetVec, j1_20, j2_20;
+	TLorentzVector l1, l2, j1_20, j2_20;
+	TLorentzVector pfMetVec, puppiMetVec, mvaMetVec;
+
 
 	l1.SetPtEtaPhiM(R.getD("leg1_pt"),R.getD("leg1_eta"),R.getD("leg1_phi"),R.getD("leg1_M"));
 	l2.SetPtEtaPhiM(R.getD("leg2_pt"),R.getD("leg2_eta"),R.getD("leg2_phi"),R.getD("leg2_M"));
 	pfMetVec.SetPtEtaPhiM(R.getD("pfMET"),0.0,R.getD("pfMETphi"),0.0);
+	puppiMetVec.SetPtEtaPhiM(R.getD("puppiMET"),0.0,R.getD("puppiMETphi"),0.0);
+	mvaMetVec.SetPtEtaPhiM(R.getD("corr_mvaMET"),0.0,R.getD("corr_mvaMETphi"),0.0);
 
-	// extra lepton + dilepton vetoes
-
-	setExtraLepVetoes(l1, l2);
-
-	// Only fill if njetspt20>=2 
-		
-	std::vector<double> jets20_pt = R.getVD("jets_pt");
-	std::vector<double> jets20_eta = R.getVD("jets_eta");
-	std::vector<double> jets20_phi = R.getVD("jets_phi");
-	std::vector<double> jets20_M = R.getVD("jets_M");
-	std::vector<double> jets20_MVA = R.getVD("jets_PU_jetIdRaw");
-
-	std::vector<double> Bjets_pt = R.getVD("bjets_pt");
-	std::vector<double> Bjets_eta = R.getVD("bjets_eta");
-	std::vector<double> Bjets_phi = R.getVD("bjets_phi");
-	std::vector<double> Bjets_M = R.getVD("bjets_M");
-	std::vector<double> Bjets_MVA = R.getVD("bjets_PU_jetIdRaw");
-	std::vector<float> Bjets_CSV = R.getVF("bjets_defaultBtagAlgorithm_RawScore");
-
-
-	if(R.getI("numberOfJets")>=1) j1_20.SetPtEtaPhiM(jets20_pt[0],jets20_eta[0],jets20_phi[0],jets20_M[0]);
-
-	if(R.getI("numberOfJets")>=2)
-	{	
-		j2_20.SetPtEtaPhiM(jets20_pt[1],jets20_eta[1],jets20_phi[1],jets20_M[1]);
-	
-
-		mjj = (j1_20+j2_20).M();
-	 	jdeta = (j1_20.Eta()-j2_20.Eta());
-	 	jdphi = (j1_20.Phi()-j2_20.Phi());
-
-		 njetingap = 0;
-		 njetingap20 = 0;
-
-		 if(jets20_eta.size()>2)
-		 {
-		 	for(std::size_t i = 2; i<jets20_eta.size();++i)
-		 	{
-		 		double current_eta = jets20_eta[i];
-		 		double low_bound = std::min(jets20_eta[0],jets20_eta[1]);
-		 		double high_bound = std::max(jets20_eta[0],jets20_eta[1]);
-
-		 		if(current_eta>low_bound && high_bound>current_eta)
-		 		{
-		 			if(jets20_pt[i]>20) njetingap20++;
-		 			if(jets20_pt[i]>30) njetingap++;
-		 		}
-
-
-
-		 	}
-
-		 }
-
-
-	}
-
-	/// some jet info 
-
-	nbtag =  R.getI("numberOfBJets");
-	njets =  R.getI("numberOfJets30");
-	njetspt20 =  R.getI("numberOfJets");
-	 
-	if(njetspt20>=1)
-	{ 
-		jpt_1 =  jets20_pt[0];
-		jeta_1 =  jets20_eta[0];
-		jphi_1 =  jets20_phi[0];
-		jrawf_1 =  1.0;
-		jmva_1 =  jets20_MVA[0];
-	} 
-
-	if(njetspt20>=2)
-	{ 
-		jpt_2 =  jets20_pt[1];
-		jeta_2 =  jets20_eta[1];
-		jphi_2 =  jets20_phi[1];
-		jrawf_2 =  1.0;
-		jmva_2 =  jets20_MVA[1];
-	} 
-
-
-	if(nbtag>=1)
-	{
-		bpt_1 =  Bjets_pt[0];
-		beta_1 =  Bjets_eta[0];
-		bphi_1 =  Bjets_phi[0];
-		brawf_1 =  1.0;
-		bmva_1 =  Bjets_MVA[0];
-		bcsv_1 =  Bjets_CSV[0];
-	}
-
-	if(nbtag>=2)
-	{
-		bpt_2 =  Bjets_pt[1];
-		beta_2 =  Bjets_eta[1];
-		bphi_2 =  Bjets_phi[1];
-		brawf_2 =  1.0;
-		bmva_2 =  Bjets_MVA[1];
-		bcsv_2 =  Bjets_CSV[1];
-	}	 
-
-
-
-
-	///// the tree elements
+	//////////////////////////////////////////////////////////////////////////////
 
 	run = R.getUI("run");
 	event = R.getUI("event");
 	lumi = R.getUI("luminosityBlock");
 
-	isOsPair = R.getI("isOsPair");
-	pairRank = R.getUI("pairRank");
 	npv = R.getI("NumberOfGoodVertices");
-	npu = R.getF("NumTruePileUpInt");
-	rho = R.getD("rho");
+ 	npu = R.getF("NumTruePileUpInt");
+ 	rho = R.getD("rho");
+ 	puweight = R.getD("puWeight");
 
-	pt_1 = R.getD("leg1_pt");
+
+ 	// leg 1 info 
+
+ 	pt_1 = R.getD("leg1_pt");
 	phi_1 = R.getD("leg1_phi");
 	eta_1 = R.getD("leg1_eta");
 	m_1 = R.getD("leg1_M");
 	q_1 = R.getI("leg1_charge");
 	d0_1 = R.getF("leg1_dxy");
 	dZ_1 = R.getF("leg1_dz");
-	mt_1 = R.getD("MTpfMET_leg1");
+	mt_1 = R.getD("corr_MTmvaMET_leg1");
+	pfmt_1 = R.getD("MTpfMET_leg1");
+	puppimt_1 = R.getD("MTpuppiMET_leg1");
 	iso_1 = R.getF("leg1_RelIso");
+	id_e_mva_nt_loose_1 = R.getF("leg1_raw_electronMVA");
+	gen_match_1 = R.getI("leg1_MCMatchType");
 
-	if(R.getI("leg1_leptonType") == 1)
-	{
-		id_e_mva_nt_loose_1 = R.getF("leg1_raw_electronMVA");
-	}
-	if(R.getI("leg1_leptonType") == 3)
-	{
-		againstElectronLooseMVA5_1 = R.getF("leg1_againstElectronLooseMVA5");
-		againstElectronMediumMVA5_1 = R.getF("leg1_againstElectronMediumMVA5");
-		againstElectronTightMVA5_1 = R.getF("leg1_againstElectronTightMVA5");
-		againstElectronVLooseMVA5_1 = R.getF("leg1_againstElectronVLooseMVA5");
-		againstElectronVTightMVA5_1 = R.getF("leg1_againstElectronVTightMVA5");
-		againstMuonLoose3_1 = R.getF("leg1_againstMuonLoose3");
-		againstMuonTight3_1 = R.getF("leg1_againstMuonTight3");
-		byCombinedIsolationDeltaBetaCorrRaw3Hits_1 = R.getF("leg1_byCombinedIsolationDeltaBetaCorrRaw3Hits");
-		// byIsolationMVA3newDMwoLTraw_1 = R.getF("leg1_byIsolationMVA3newDMwoLTraw");
-		// byIsolationMVA3oldDMwoLTraw_1 = R.getF("leg1_byIsolationMVA3oldDMwoLTraw");
-		// byIsolationMVA3newDMwLTraw_1 = R.getF("leg1_byIsolationMVA3newDMwLTraw");
-		// byIsolationMVA3oldDMwLTraw_1 = R.getF("leg1_byIsolationMVA3oldDMwLTraw");
-		chargedIsoPtSum_1 = R.getF("leg1_chargedIsoPtSum");
-		decayModeFindingNewDMs_1 = R.getF("leg1_decayModeFindingNewDMs");
-		neutralIsoPtSum_1 = R.getF("leg1_neutralIsoPtSum");
-		puCorrPtSum_1 = R.getF("leg1_puCorrPtSum");	
-	}
-
-	pt_2 = R.getD("leg2_pt");
+ 	pt_2 = R.getD("leg2_pt");
 	phi_2 = R.getD("leg2_phi");
 	eta_2 = R.getD("leg2_eta");
 	m_2 = R.getD("leg2_M");
 	q_2 = R.getI("leg2_charge");
 	d0_2 = R.getF("leg2_dxy");
 	dZ_2 = R.getF("leg2_dz");
-	mt_2 = R.getD("MTpfMET_leg1");
+	mt_2 = R.getD("corr_MTmvaMET_leg2");
+	pfmt_2 = R.getD("MTpfMET_leg2");
+	puppimt_2 = R.getD("MTpuppiMET_leg2");
 	iso_2 = R.getF("leg2_RelIso");
-
-	if(R.getI("leg2_leptonType") == 1)
-	{
-		id_e_mva_nt_loose_2 = R.getF("leg2_raw_electronMVA");
-	}
-	if(R.getI("leg2_leptonType") == 3)
-	{
-		againstElectronLooseMVA5_2 = R.getF("leg2_againstElectronLooseMVA5");
-		againstElectronMediumMVA5_2 = R.getF("leg2_againstElectronMediumMVA5");
-		againstElectronTightMVA5_2 = R.getF("leg2_againstElectronTightMVA5");
-		againstElectronVLooseMVA5_2 = R.getF("leg2_againstElectronVLooseMVA5");
-		againstElectronVTightMVA5_2 = R.getF("leg2_againstElectronVTightMVA5");
-		againstMuonLoose3_2 = R.getF("leg2_againstMuonLoose3");
-		againstMuonTight3_2 = R.getF("leg2_againstMuonTight3");
-		byCombinedIsolationDeltaBetaCorrRaw3Hits_2 = R.getF("leg2_byCombinedIsolationDeltaBetaCorrRaw3Hits");
-		//byIsolationMVA3newDMwoLTraw_2 = R.getF("leg2_byIsolationMVA3newDMwoLTraw");
-		//byIsolationMVA3oldDMwoLTraw_2 = R.getF("leg2_byIsolationMVA3oldDMwoLTraw");
-		//byIsolationMVA3newDMwLTraw_2 = R.getF("leg2_byIsolationMVA3newDMwLTraw");
-		//byIsolationMVA3oldDMwLTraw_2 = R.getF("leg2_byIsolationMVA3oldDMwLTraw");
-		chargedIsoPtSum_2 = R.getF("leg2_chargedIsoPtSum");
-		decayModeFindingNewDMs_2 = R.getF("leg2_decayModeFindingNewDMs");
-		neutralIsoPtSum_2 = R.getF("leg2_neutralIsoPtSum");
-		puCorrPtSum_2 = R.getF("leg2_puCorrPtSum");	
-	}
+	id_e_mva_nt_loose_2 = R.getF("leg2_raw_electronMVA");
+	gen_match_2 = R.getI("leg2_MCMatchType");
 
 
-	m_vis = R.getD("VISMass");
+
+	//////////////////////
+	// tau IDs          //
+	//////////////////////
+
+
+	// have in 1st FlatTuple try
+
+	againstElectronTightMVA6_1 = R.getF("leg1_againstElectronTightMVA6");
+	againstElectronVLooseMVA6_1 = R.getF("leg1_againstElectronVLooseMVA6");
+	againstMuonLoose3_1 = R.getF("leg1_againstMuonLoose3");
+	againstMuonTight3_1 = R.getF("leg1_againstMuonTight3");
+	byCombinedIsolationDeltaBetaCorrRaw3Hits_1 = R.getF("leg1_byCombinedIsolationDeltaBetaCorrRaw3Hits");
+	byIsolationMVA3newDMwLTraw_1 = R.getF("leg1_byIsolationMVA3newDMwLTraw");
+
+	againstElectronTightMVA6_2 = R.getF("leg2_againstElectronTightMVA6");
+	againstElectronVLooseMVA6_2 = R.getF("leg2_againstElectronVLooseMVA6");
+	againstMuonLoose3_2 = R.getF("leg2_againstMuonLoose3");
+	againstMuonTight3_2 = R.getF("leg2_againstMuonTight3");
+	byCombinedIsolationDeltaBetaCorrRaw3Hits_2 = R.getF("leg2_byCombinedIsolationDeltaBetaCorrRaw3Hits");
+	byIsolationMVA3newDMwLTraw_2 = R.getF("leg2_byIsolationMVA3newDMwLTraw");
+
+	// don't have in 1st FlatTuple try
+	
+	//if(num_total%1000==0) std::cout<<" Remember to Turn on new tau IDs for round II flatTuples \n";
+
+	againstElectronLooseMVA6_1 = R.getF("leg1_againstElectronLooseMVA6");
+	againstElectronMediumMVA6_1 = R.getF("leg1_againstElectronMediumMVA6");
+	againstElectronVTightMVA6_1 = R.getF("leg1_againstElectronVTightMVA6");
+	byIsolationMVA3oldDMwLTraw_1 = R.getF("leg1_byIsolationMVA3oldDMwLTraw");
+	chargedIsoPtSum_1 = R.getF("leg1_chargedIsoPtSum");
+	neutralIsoPtSum_1 = R.getF("leg1_neutralIsoPtSum");
+	puCorrPtSum_1 = R.getF("leg1_puCorrPtSum");
+
+	againstElectronLooseMVA6_2 = R.getF("leg2_againstElectronLooseMVA6");
+	againstElectronMediumMVA6_2 = R.getF("leg2_againstElectronMediumMVA6");
+	againstElectronVTightMVA6_2 = R.getF("leg2_againstElectronVTightMVA6");
+	byIsolationMVA3oldDMwLTraw_2 = R.getF("leg2_byIsolationMVA3oldDMwLTraw");
+	chargedIsoPtSum_2 = R.getF("leg2_chargedIsoPtSum");
+	neutralIsoPtSum_2 = R.getF("leg2_neutralIsoPtSum");
+	puCorrPtSum_2 = R.getF("leg2_puCorrPtSum");
+
+	decayModeFindingOldDMs_1 = R.getF("leg1_decayModeFinding");
+	decayModeFindingOldDMs_2 = R.getF("leg2_decayModeFinding");
+
+
+
+	// bad in 76X ---- will cause asserts
+
+	// decayModeFindingOldDMs_1 = R.getF("leg1_decayModeFindingOldDMs");
+	// byIsolationMVA3newDMwoLTraw_1 = R.getF("leg1_byIsolationMVA3newDMwoLTraw");
+	// byIsolationMVA3oldDMwoLTraw_1 = R.getF("leg1_byIsolationMVA3oldDMwoLTraw");
+	// decayModeFindingOldDMs_2 = R.getF("leg2_decayModeFindingOldDMs");
+	// byIsolationMVA3newDMwoLTraw_2 = R.getF("leg2_byIsolationMVA3newDMwoLTraw");
+	// byIsolationMVA3oldDMwoLTraw_2 = R.getF("leg2_byIsolationMVA3oldDMwoLTraw");
+
+
 	pt_tt = (l1+l2+pfMetVec).Pt();
-
+	mt_tot = mtTotCalc(l1, l2, mvaMetVec);
+	m_vis = R.getD("VISMass");
+	m_sv = R.getD("SVMass");
+	mt_sv = R.getD("SVTransverseMass");
 
 
 	met = R.getD("pfMET");
 	metphi = R.getD("pfMETphi");	
+
+	puppimet = R.getD("puppiMET");
+	puppimetphi = R.getD("puppiMETphi");
+
+	mvamet = R.getD("corr_mvaMET");
+	mvametphi = R.getD("corr_mvaMETphi");
+	
+
+	pzetavis = pzetaVisCalc(l1,l2);
+	pzetamiss = pzetaMissCalc(l1,l2,mvaMetVec);
+	pfpzetamiss = pzetaMissCalc(l1,l2,pfMetVec);
+	puppipzetamiss = pzetaMissCalc(l1,l2,puppiMetVec);
+	mvacov00 = R.getD("mvaMET_cov00");
+	mvacov01 = R.getD("mvaMET_cov01");
+	mvacov10 = R.getD("mvaMET_cov10");
+	mvacov11 = R.getD("mvaMET_cov11");
 	metcov00 = R.getD("pfMET_cov00");
 	metcov01 = R.getD("pfMET_cov01");
 	metcov10 = R.getD("pfMET_cov10");
 	metcov11 = R.getD("pfMET_cov11");
 
-	mvamet = R.getD("mvaMET");
-	mvametphi = R.getD("mvaMETphi");
-	mvacov00 = R.getD("mvaMET_cov00");
-	mvacov01 = R.getD("mvaMET_cov01");
-	mvacov10 = R.getD("mvaMET_cov10");
-	mvacov11 = R.getD("mvaMET_cov11");
 
-	if(R.getI("CandidateEventType")==2) 
-	{		
-		pzetavis = pzetaVisCalc(l1,l2);
-		pzetamiss = pzetaMissCalc(l1,l2,pfMetVec);
+	////////////////////////////////////////////////////////
+	// handling of jets & b-jets is different in Fall15   //
+
+
+	std::vector<double> jets_pt = R.getVD("jets_pt");
+	std::vector<double> jets_eta = R.getVD("jets_eta");
+	std::vector<double> jets_phi = R.getVD("jets_phi");
+	std::vector<double> jets_M = R.getVD("jets_M");
+	std::vector<double> jets_PU_jetIdRaw = R.getVD("jets_PU_jetIdRaw");
+	std::vector<bool> jets_PU_jetIdPassed = R.getVB("jets_PU_jetIdPassed");
+	std::vector<bool> jets_PF_jetIdPassed = R.getVB("jets_PF_jetIdPassed");
+	std::vector<float> jets_defaultBtagAlgorithm_RawScore = R.getVF("jets_defaultBtagAlgorithm_RawScore");
+	std::vector<int> jets_PARTON_flavour = R.getVI("jets_PARTON_flavour");
+	std::vector<int> jets_HADRON_flavour = R.getVI("jets_HADRON_flavour");
+	std::vector<double> jets_BtagSF_LooseWpCentral = R.getVD("jets_BtagSF_LooseWpCentral");
+	std::vector<double> jets_BtagSF_LooseWpUp = R.getVD("jets_BtagSF_LooseWpUp");
+	std::vector<double> jets_BtagSF_LooseWpDown = R.getVD("jets_BtagSF_LooseWpDown");
+	std::vector<double> jets_BtagSF_MediumWpCentral = R.getVD("jets_BtagSF_MediumWpCentral");
+	std::vector<double> jets_BtagSF_MediumWpUp = R.getVD("jets_BtagSF_MediumWpUp");
+	std::vector<double> jets_BtagSF_MediumWpDown = R.getVD("jets_BtagSF_MediumWpDown");
+	std::vector<double> jets_BtagSF_TightWpCentral = R.getVD("jets_BtagSF_TightWpCentral");
+	std::vector<double> jets_BtagSF_TightWpUp = R.getVD("jets_BtagSF_TightWpUp");
+	std::vector<double> jets_BtagSF_TightWpDown = R.getVD("jets_BtagSF_TightWpDown");
+	std::vector<double> jets_BtagEff_LooseWp = R.getVD("jets_BtagEff_LooseWp");
+	std::vector<double> jets_BtagEff_MediumWp = R.getVD("jets_BtagEff_MediumWp");
+	std::vector<double> jets_BtagEff_TightWp = R.getVD("jets_BtagEff_TightWp");
+	std::vector<double> jets_IsBTagged_LooseWpCentral = R.getVD("jets_IsBTagged_LooseWpCentral");
+	std::vector<double> jets_IsBTagged_LooseWpUp = R.getVD("jets_IsBTagged_LooseWpUp");
+	std::vector<double> jets_IsBTagged_LooseWpDown = R.getVD("jets_IsBTagged_LooseWpDown");
+	std::vector<double> jets_IsBTagged_MediumWpCentral = R.getVD("jets_IsBTagged_MediumWpCentral");
+	std::vector<double> jets_IsBTagged_MediumWpUp = R.getVD("jets_IsBTagged_MediumWpUp");
+	std::vector<double> jets_IsBTagged_MediumWpDown = R.getVD("jets_IsBTagged_MediumWpDown");
+	std::vector<double> jets_IsBTagged_TightWpCentral = R.getVD("jets_IsBTagged_TightWpCentral");
+	std::vector<double> jets_IsBTagged_TightWpUp = R.getVD("jets_IsBTagged_TightWpUp");
+	std::vector<double> jets_IsBTagged_TightWpDown = R.getVD("jets_IsBTagged_TightWpDown");
+	std::vector<bool> jets_PF_jetIdPassedTight = R.getVB("jets_PF_jetIdPassedTight");
+
+	j1_20.SetPtEtaPhiM(0.,0.,0.,0.);
+	j2_20.SetPtEtaPhiM(0.,0.,0.,0.);
+	njetingap = 0;
+	njetingap20 = 0;
+	njetspt20 = 0;
+	njets = 0;
+	nbtag = 0;
+
+	std::size_t b1_index = 99999.0;
+	std::size_t b2_index = 99999.0;
+
+	for(std::size_t i = 0; i<jets_pt.size();++i)
+	{
+		if( fabs(jets_eta[i]) < 4.7 && jets_pt[i] > 20 ) njetspt20 ++;
+		if( fabs(jets_eta[i]) < 4.7 && jets_pt[i] > 30 ) njets ++;
+		//if( fabs(jets_eta[i]) < 2.4 && jets_pt[i] > 20 && jets_defaultBtagAlgorithm_RawScore[i] > 0.80)
+		if( fabs(jets_eta[i]) < 2.4 && jets_pt[i] > 20 && jets_IsBTagged_MediumWpCentral[i] > 0.5)
+		{ 
+			if(b1_index == 99999.0) b1_index = i;
+			else if(b2_index == 99999.0) b2_index = i; 
+			nbtag ++;
+		}
+	}	
+
+	if(b1_index != 99999.0)
+	{	
+		bpt_1 = jets_pt[b1_index];
+		beta_1 = jets_eta[b1_index];
+		bphi_1 = jets_phi[b1_index];
+		bm_1 = jets_M[b1_index];
+		/* not kept brawf_1 */
+		bmva_1 = jets_PU_jetIdRaw[b1_index];
+		bcsv_1 = jets_defaultBtagAlgorithm_RawScore[b1_index];
+	}
+
+	if(b2_index != 99999.0)
+	{
+		bpt_2 = jets_pt[b2_index];
+		beta_2 = jets_eta[b2_index];
+		bphi_2 = jets_phi[b2_index];
+		bm_2 = jets_M[b2_index];
+		/* not kept brawf_1 */
+		bmva_2 = jets_PU_jetIdRaw[b2_index];
+		bcsv_2 = jets_defaultBtagAlgorithm_RawScore[b2_index];
+	}
+
+	if(jets_pt.size() >= 1) 
+	{
+		j1_20.SetPtEtaPhiM(jets_pt[0],jets_eta[0],jets_phi[0],jets_M[0]);
+		jpt_1 = jets_pt[0];
+		jeta_1 = jets_eta[0];
+		jphi_1 = jets_phi[0];
+		jm_1 = jets_M[0];
+		jmva_1 = jets_PU_jetIdRaw[0];
+		/* we dont keep jrawf_1 */
 	}
 
 
-
-	// the DY info
-
-	isZtt = R.getB("EventHasZtoTauTau");
-	isZee = R.getB("EventHasZtoEE");
-	isZmm = R.getB("EventHasZtoMM"); 
-
-	/* needs a gen loop to be fully right WHY DID THEY CHANGE ALL THESE FROM ZL, ZTT etc.*/
-	isZmt = 0;
-	isZet = 0;
-	isZem = 0;
-	isZEE = 0;  	
-	isZMM = 0;  	
-	isZLL = 0;  	
-	isFake = 0;
+	if(jets_pt.size() >= 2)
+	{	
+		j2_20.SetPtEtaPhiM(jets_pt[1],jets_eta[1],jets_phi[1],jets_M[1]);
+		jpt_2 = jets_pt[1];
+		jeta_2 = jets_eta[1];
+		jphi_2 = jets_phi[1];
+		jm_2 = jets_M[1];
+		jmva_2 = jets_PU_jetIdRaw[1];
+		/* we dont keep jrawf_2 */
 
 
-	trigweight_1 = 0;
-	trigweight_2 = 0;
-		
+		mjj = (j1_20+j2_20).M();
+	 	jdeta = (j1_20.Eta()-j2_20.Eta());
+	 	jdphi = (j1_20.Phi()-j2_20.Phi());
 
+
+
+		 if(jets_eta.size()>2)
+		 {
+		 	for(std::size_t i = 2; i<jets_eta.size();++i)
+		 	{
+		 		double current_eta = jets_eta[i];
+		 		double low_bound = std::min(jets_eta[0],jets_eta[1]);
+		 		double high_bound = std::max(jets_eta[0],jets_eta[1]);
+
+		 		if(current_eta>low_bound && high_bound>current_eta)
+		 		{
+		 			if(jets_pt[i]>20) njetingap20++;
+		 			if(jets_pt[i]>30) njetingap++;
+		 		}
+		 	}
+		 }
+	} // at least 2 jets
+
+
+
+
+	// extra lepton + dilepton vetoes
+
+	dilepton_veto = 0.0;
+	extraelec_veto = 0.0;
+	extramuon_veto = 0.0;
+
+	if(R.getF("DiMuon_Flag") > 0.5 || R.getF("DiElectron_Flag") > 0.5) dilepton_veto = 1.0;
+	if(R.getF("ThirdElectron_Flag") > 0.5) extraelec_veto = 1.0;
+	if(R.getF("ThirdMuon_Flag") > 0.5) extramuon_veto = 1.0;
+
+
+	NUP = R.getI("hepNUP");
 	generatorEventWeight = R.getD("generatorEventWeight");
+
+	// information related to sample and weights
+
 	DataSet = R.getS("DataSet");
     EventTotal = R.getI("EventTotal");
     EventType = R.getS("EventType");
@@ -412,136 +408,13 @@ void generateH2TauSyncTree::handleEvent()
 
 
 
-
-if(R.getI("CandidateEventType")==2)
-{
-	/* e+mu HLT Paths for Phys14 */
-	if(R.getF("leg1_HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL") == 1.0) trigweight_1 = 1.0;
-	if(R.getF("leg2_HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL") == 1.0) trigweight_2 = 1.0;
-
-	if(R.getF("leg1_HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL") == 1.0) trigweight_1 = 1.0;
-	if(R.getF("leg2_HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL") == 1.0) trigweight_2 = 1.0;
-
-}
-
-if(R.getI("CandidateEventType")==3)
-{
-	/* e+tau HLT Paths for Phys14 */
-	if(R.getF("leg1_HLT_Ele22_eta2p1_WP75_Gsf_LooseIsoPFTau20") == 1.0) trigweight_1 = 1.0;
-	if(R.getF("leg2_HLT_Ele22_eta2p1_WP75_Gsf_LooseIsoPFTau20") == 1.0) trigweight_2 = 1.0;
-
-
-	if(R.getF("leg1_HLT_Ele32_eta2p1_WP75_Gsf") == 1.0) trigweight_1 = 1.0;
-	/* no 2nd leg really, so use leg1 */ if(R.getF("leg1_HLT_Ele32_eta2p1_WP75_Gsf") == 1.0) trigweight_2 = 1.0;
-
-}
-
-
-if(R.getI("CandidateEventType")==5)
-{
-	/* mu+tau HLT Paths for Phys14 */
-	if(R.getF("leg1_HLT_IsoMu17_eta2p1_LooseIsoPFTau20") == 1.0) trigweight_1 = 1.0;
-	if(R.getF("leg2_HLT_IsoMu17_eta2p1_LooseIsoPFTau20") == 1.0) trigweight_2 = 1.0;
+	if(R.getI("CandidateEventType")==3) {num_et++; tree_EleTau->Fill();}
+	else if(R.getI("CandidateEventType")==2){num_em++; tree_EleMu->Fill();}
+	else if(R.getI("CandidateEventType")==5){num_mt++; tree_MuTau->Fill();}
+	else if(R.getI("CandidateEventType")==6) {num_tt++; tree_TauTau->Fill();}
 	
-	if(R.getF("leg1_HLT_IsoMu24_eta2p1") == 1.0) trigweight_1 = 1.0;
-	/* no 2nd leg really, so use leg1 */ if(R.getF("leg1_HLT_IsoMu24_eta2p1") == 1.0) trigweight_2 = 1.0;
 
-}
-
-if(R.getI("CandidateEventType")==6)
-{
-	/* tau+tau HLT Paths for Phys14 */
-	if(R.getF("leg1_HLT_DoubleMediumIsoPFTau40_Trk1_eta2p1_Reg") == 1.0) trigweight_1 = 1.0;
-	if(R.getF("leg2_HLT_DoubleMediumIsoPFTau40_Trk1_eta2p1_Reg") == 1.0) trigweight_2 = 1.0;
-
-}
-
-
-	// std::cout<<" --- --------------\n ";
-
-
-	
-	/* some additional cuts */
-	//if(R.getUI("pairRank") != 0) return;
-	//if(R.getI("isOsPair") != 1) return;
-	if(fabs(R.getI("leg1_charge")) != 1) return;
-	if(fabs(R.getI("leg2_charge")) != 1) return;
-
-
-
-	// MET FILTER FLAGS
-	
-	std::string checkString = std::to_string(run)+":"+std::to_string(lumi)+":"+std::to_string(event);
-	bool GOOD_MET_FLAG = 1;
-
-
-
-
-
-	if(KeyName == "Run2015D_TauOct" || KeyName == "Run2015D_TauPromptRv4")
-	{
-		if (std::find(metFilter_Tau.begin(), metFilter_Tau.end(), 
-		checkString) != metFilter_Tau.end()) 
-			{
-				std::cout<<" BAD in metFilter_Tau "<<checkString<<"\n";
-				GOOD_MET_FLAG = 0;
-			}
-	}
-
-	if(KeyName == "Run2015D_MuonEGOct" || KeyName == "Run2015D_MuonEGPromptRv4")
-	{
-		if (std::find(metFilter_MuonEG.begin(), metFilter_MuonEG.end(), 
-		checkString) != metFilter_MuonEG.end()) 
-			{
-				std::cout<<" BAD in metFilter_MuonEG "<<checkString<<"\n";
-				GOOD_MET_FLAG = 0;
-			}
-	}
-
-
-
-	if(KeyName == "Run2015D_DoubleEGPromptRv4" || KeyName == "Run2015D_DoubleEGOct")
-	{
-		if (std::find(metFilter_DoubleEG.begin(), metFilter_DoubleEG.end(), 
-		checkString) != metFilter_DoubleEG.end()) 
-			{
-				std::cout<<" BAD in metFilter_DoubleEG "<<checkString<<"\n";
-				GOOD_MET_FLAG = 0;
-			}
-	}
-
-
-
-	if(KeyName == "Run2015D_SingleElectronPromptRv4" || KeyName == "Run2015D_SingleElectronOct")
-	{
-		if (std::find(metFilter_SingleElectron.begin(), metFilter_SingleElectron.end(), 
-		checkString) != metFilter_SingleElectron.end()) 
-			{
-				std::cout<<" BAD in metFilter_SingleElectron "<<checkString<<"\n";
-				GOOD_MET_FLAG = 0;
-			}
-	}
-
-
-	if(KeyName == "Run2015D_SingleMuonPromptRv4" || KeyName == "Run2015D_SingleMuonOct")
-	{
-		if (std::find(metFilter_SingleMuon.begin(), metFilter_SingleMuon.end(), 
-		checkString) != metFilter_SingleMuon.end()) 
-			{
-				std::cout<<" BAD in metFilter_SingleMuon "<<checkString<<"\n";
-				GOOD_MET_FLAG = 0;
-			}
-	}
-
-	/////////// DON'T CHANGE VALUES AFTER THIS :)
-	/* see TupleCandidateEventTypes */
-
-	if(R.getI("CandidateEventType")==3 && l1.DeltaR(l2) > 0.5 && l1.Pt()>24 && GOOD_MET_FLAG) {num_et++; tree_EleTau->Fill();}
-	else if(R.getI("CandidateEventType")==2 && l1.DeltaR(l2) > 0.3  && GOOD_MET_FLAG ){num_em++; tree_EleMu->Fill();}
-	else if(R.getI("CandidateEventType")==5 && l1.DeltaR(l2) > 0.5 && l1.Pt()>19  && GOOD_MET_FLAG){num_mt++; tree_MuTau->Fill();}
-	else if(R.getI("CandidateEventType")==6 && l1.DeltaR(l2) > 0.5  && GOOD_MET_FLAG) {num_tt++; tree_TauTau->Fill();}
-	
-	if(num_et%1000==0){
+	if(num_total%1000==0){
 	 std::cout<<" etau = "<<num_et<<"\n";
 	 std::cout<<" mtau = "<<num_mt<<"\n";
 	 std::cout<<" tt = "<<num_tt<<"\n";
@@ -556,16 +429,18 @@ void generateH2TauSyncTree::setupBranches(TTree * T)
 	/* all trees get same branch address, but will only write event
 	 to one tree per event based on CandidateEventType */
 
+	T->Branch("pairRank",&pairRank);
+	T->Branch("isOsPair",&isOsPair);
+	
 	T->Branch("run",&run);
 	T->Branch("event",&event);
 	T->Branch("lumi",&lumi);
-	T->Branch("isOsPair",&isOsPair);
-	
-	T->Branch("pairRank",&pairRank);
+
 	T->Branch("npv",&npv);
 	T->Branch("npu",&npu);
 	T->Branch("rho",&rho);
-	
+	T->Branch("puweight",&puweight);
+
 	T->Branch("pt_1", &pt_1);
 	T->Branch("phi_1", &phi_1);
 	T->Branch("eta_1", &eta_1);
@@ -574,13 +449,16 @@ void generateH2TauSyncTree::setupBranches(TTree * T)
 	T->Branch("d0_1", &d0_1);
 	T->Branch("dZ_1", &dZ_1);
 	T->Branch("mt_1", &mt_1);
+	T->Branch("pfmt_1", &pfmt_1);
+	T->Branch("puppimt_1", &puppimt_1);
 	T->Branch("iso_1", &iso_1);
 	T->Branch("id_e_mva_nt_loose_1", &id_e_mva_nt_loose_1);
-	T->Branch("againstElectronLooseMVA5_1", &againstElectronLooseMVA5_1);
-	T->Branch("againstElectronMediumMVA5_1", &againstElectronMediumMVA5_1);
-	T->Branch("againstElectronTightMVA5_1", &againstElectronTightMVA5_1);
-	T->Branch("againstElectronVLooseMVA5_1", &againstElectronVLooseMVA5_1);
-	T->Branch("againstElectronVTightMVA5_1", &againstElectronVTightMVA5_1);
+	T->Branch("gen_match_1", &gen_match_1);
+	T->Branch("againstElectronLooseMVA6_1", &againstElectronLooseMVA6_1);
+	T->Branch("againstElectronMediumMVA6_1", &againstElectronMediumMVA6_1);
+	T->Branch("againstElectronTightMVA6_1", &againstElectronTightMVA6_1);
+	T->Branch("againstElectronVLooseMVA6_1", &againstElectronVLooseMVA6_1);
+	T->Branch("againstElectronVTightMVA6_1", &againstElectronVTightMVA6_1);
 	T->Branch("againstMuonLoose3_1", &againstMuonLoose3_1);
 	T->Branch("againstMuonTight3_1", &againstMuonTight3_1);
 	T->Branch("byCombinedIsolationDeltaBetaCorrRaw3Hits_1", &byCombinedIsolationDeltaBetaCorrRaw3Hits_1);
@@ -589,9 +467,11 @@ void generateH2TauSyncTree::setupBranches(TTree * T)
 	T->Branch("byIsolationMVA3newDMwLTraw_1", &byIsolationMVA3newDMwLTraw_1);
 	T->Branch("byIsolationMVA3oldDMwLTraw_1", &byIsolationMVA3oldDMwLTraw_1);
 	T->Branch("chargedIsoPtSum_1", &chargedIsoPtSum_1);
-	T->Branch("decayModeFindingNewDMs_1", &decayModeFindingNewDMs_1);
+	T->Branch("decayModeFindingOldDMs_1", &decayModeFindingOldDMs_1);
 	T->Branch("neutralIsoPtSum_1", &neutralIsoPtSum_1);
 	T->Branch("puCorrPtSum_1", &puCorrPtSum_1);
+	//T->Branch("trigweight_1", &trigweight_1);
+	//T->Branch("idisoweight_1", &idisoweight_1);
 
 	T->Branch("pt_2", &pt_2);
 	T->Branch("phi_2", &phi_2);
@@ -601,13 +481,16 @@ void generateH2TauSyncTree::setupBranches(TTree * T)
 	T->Branch("d0_2", &d0_2);
 	T->Branch("dZ_2", &dZ_2);
 	T->Branch("mt_2", &mt_2);
+	T->Branch("pfmt_2", &pfmt_2);
+	T->Branch("puppimt_2", &puppimt_2);
 	T->Branch("iso_2", &iso_2);
 	T->Branch("id_e_mva_nt_loose_2", &id_e_mva_nt_loose_2);
-	T->Branch("againstElectronLooseMVA5_2", &againstElectronLooseMVA5_2);
-	T->Branch("againstElectronMediumMVA5_2", &againstElectronMediumMVA5_2);
-	T->Branch("againstElectronTightMVA5_2", &againstElectronTightMVA5_2);
-	T->Branch("againstElectronVLooseMVA5_2", &againstElectronVLooseMVA5_2);
-	T->Branch("againstElectronVTightMVA5_2", &againstElectronVTightMVA5_2);
+	T->Branch("gen_match_2", &gen_match_2);
+	T->Branch("againstElectronLooseMVA6_2", &againstElectronLooseMVA6_2);
+	T->Branch("againstElectronMediumMVA6_2", &againstElectronMediumMVA6_2);
+	T->Branch("againstElectronTightMVA6_2", &againstElectronTightMVA6_2);
+	T->Branch("againstElectronVLooseMVA6_2", &againstElectronVLooseMVA6_2);
+	T->Branch("againstElectronVTightMVA6_2", &againstElectronVTightMVA6_2);
 	T->Branch("againstMuonLoose3_2", &againstMuonLoose3_2);
 	T->Branch("againstMuonTight3_2", &againstMuonTight3_2);
 	T->Branch("byCombinedIsolationDeltaBetaCorrRaw3Hits_2", &byCombinedIsolationDeltaBetaCorrRaw3Hits_2);
@@ -616,85 +499,86 @@ void generateH2TauSyncTree::setupBranches(TTree * T)
 	T->Branch("byIsolationMVA3newDMwLTraw_2", &byIsolationMVA3newDMwLTraw_2);
 	T->Branch("byIsolationMVA3oldDMwLTraw_2", &byIsolationMVA3oldDMwLTraw_2);
 	T->Branch("chargedIsoPtSum_2", &chargedIsoPtSum_2);
-	T->Branch("decayModeFindingNewDMs_2", &decayModeFindingNewDMs_2);
+	T->Branch("decayModeFindingOldDMs_2", &decayModeFindingOldDMs_2);
 	T->Branch("neutralIsoPtSum_2", &neutralIsoPtSum_2);
 	T->Branch("puCorrPtSum_2", &puCorrPtSum_2);
+	//T->Branch("trigweight_2", &trigweight_2);
+	//T->Branch("idisoweight_2", &idisoweight_2);
 
-	T->Branch("pt_tt" , &pt_tt);
-	T->Branch("m_vis" , &m_vis);
-	T->Branch("met" , &met);
-	T->Branch("metphi" , &metphi);
-	T->Branch("mvamet" , &mvamet);
-	T->Branch("mvametphi" , &mvametphi);
-	T->Branch("pzetavis" , &pzetavis);
-	T->Branch("pzetamiss" , &pzetamiss);
-	T->Branch("mvacov00" , &mvacov00);
-	T->Branch("mvacov01" , &mvacov01);
-	T->Branch("mvacov10" , &mvacov10);
-	T->Branch("mvacov11" , &mvacov11);
-	T->Branch("metcov00" , &metcov00);
-	T->Branch("metcov01" , &metcov01);
-	T->Branch("metcov10" , &metcov10);
-	T->Branch("metcov11" , &metcov11);
-	
-	T->Branch("mjj" , &mjj);
-	T->Branch("jdeta" , &jdeta);
-	T->Branch("njetingap" , &njetingap);
-	T->Branch("njetingap20" , &njetingap20);
-	T->Branch("jdphi" , &jdphi);
+	T->Branch("pt_tt", &pt_tt);
+	T->Branch("mt_tot", &mt_tot);
+	T->Branch("m_vis", &m_vis);
+	T->Branch("m_sv", &m_sv);
+	T->Branch("mt_sv", &mt_sv);
 
-	T->Branch("nbtag" , &nbtag);
-	T->Branch("njets" , &njets);
-	T->Branch("njetspt20" , &njetspt20);
+	T->Branch("met", &met);
+	T->Branch("metphi", &metphi);
+	T->Branch("puppimet", &puppimet);
+	T->Branch("puppimetphi", &puppimetphi);
+	T->Branch("mvamet", &mvamet);
+	T->Branch("mvametphi", &mvametphi);
+	T->Branch("pzetavis", &pzetavis);
+	T->Branch("pzetamiss", &pzetamiss);
+	T->Branch("pfpzetamiss", &pfpzetamiss);
+	T->Branch("puppipzetamiss", &puppipzetamiss);
+	T->Branch("mvacov00", &mvacov00);
+	T->Branch("mvacov01", &mvacov01);
+	T->Branch("mvacov10", &mvacov10);
+	T->Branch("mvacov11", &mvacov11);
+	T->Branch("metcov00", &metcov00);
+	T->Branch("metcov01", &metcov01);
+	T->Branch("metcov10", &metcov10);
+	T->Branch("metcov11", &metcov11);
 
-	T->Branch("jpt_1" , &jpt_1);
-	T->Branch("jeta_1" , &jeta_1);
-	T->Branch("jphi_1" , &jphi_1);
-	T->Branch("jrawf_1" , &jrawf_1);
-	T->Branch("jmva_1" , &jmva_1);
 
-	T->Branch("jpt_2" , &jpt_2);
-	T->Branch("jeta_2" , &jeta_2);
-	T->Branch("jphi_2" , &jphi_2);
-	T->Branch("jrawf_2" , &jrawf_2);
-	T->Branch("jmva_2" , &jmva_2);
+	T->Branch("mjj", &mjj);
+	T->Branch("jdeta", &jdeta);
+	T->Branch("njetingap", &njetingap);
+	T->Branch("njetingap20", &njetingap20);
+	T->Branch("jdphi", &jdphi);
 
-	T->Branch("bpt_1" , &bpt_1);
-	T->Branch("beta_1" , &beta_1);
-	T->Branch("bphi_1" , &bphi_1);
-	T->Branch("brawf_1" , &brawf_1);
-	T->Branch("bmva_1" , &bmva_1);
-	T->Branch("bcsv_1" , &bcsv_1);
+	T->Branch("nbtag", &nbtag);
+	T->Branch("njets", &njets);
+	T->Branch("njetspt20", &njetspt20);
 
-	T->Branch("bpt_2" , &bpt_2);
-	T->Branch("beta_2" , &beta_2);
-	T->Branch("bphi_2" , &bphi_2);
-	T->Branch("brawf_2" , &brawf_2);
-	T->Branch("bmva_2" , &bmva_2);
-	T->Branch("bcsv_2" , &bcsv_2);
+	T->Branch("jpt_1", &jpt_1);
+	T->Branch("jeta_1", &jeta_1);
+	T->Branch("jphi_1", &jphi_1);
+	T->Branch("jm_1", &jm_1);
+	T->Branch("jrawf_1", &jrawf_1);
+	T->Branch("jmva_1", &jmva_1);
+
+	T->Branch("jpt_2", &jpt_2);
+	T->Branch("jeta_2", &jeta_2);
+	T->Branch("jphi_2", &jphi_2);
+	T->Branch("jm_2", &jm_2);
+	T->Branch("jrawf_2", &jrawf_2);
+	T->Branch("jmva_2", &jmva_2);
+
+	T->Branch("bpt_1", &bpt_1);
+	T->Branch("beta_1", &beta_1);
+	T->Branch("bphi_1", &bphi_1);
+	T->Branch("bm_1", &bm_1);
+	T->Branch("brawf_1", &brawf_1);
+	T->Branch("bmva_1", &bmva_1);
+	T->Branch("bcsv_1", &bcsv_1);
+
+	T->Branch("bpt_2", &bpt_2);
+	T->Branch("beta_2", &beta_2);
+	T->Branch("bphi_2", &bphi_2);
+	T->Branch("bm_2", &bm_2);
+	T->Branch("brawf_2", &brawf_2);
+	T->Branch("bmva_2", &bmva_2);
+	T->Branch("bcsv_2", &bcsv_2);
 
 	T->Branch("dilepton_veto", &dilepton_veto);
 	T->Branch("extraelec_veto", &extraelec_veto);
 	T->Branch("extramuon_veto", &extramuon_veto);
 
-	
-
-	T->Branch("isZtt", &isZtt);
-	T->Branch("isZee", &isZee);
-	T->Branch("isZmm", &isZmm);
-	T->Branch("isZmt", &isZmt);
-	T->Branch("isZet", &isZet);
-	T->Branch("isZem", &isZem);
-	T->Branch("isZEE", &isZEE);
-	T->Branch("isZMM", &isZMM);
-	T->Branch("isZLL", &isZLL);
-	T->Branch("isFake", &isFake);
-
-	T->Branch("trigweight_1", &trigweight_1);
-	T->Branch("trigweight_2", &trigweight_2);
-
-
+	T->Branch("NUP", &NUP);
+	T->Branch("weight", &weight);
 	T->Branch("generatorEventWeight", &generatorEventWeight);
+
 	T->Branch("DataSet", &DataSet);
 	T->Branch("EventTotal", &EventTotal);
 	T->Branch("EventType", &EventType);
@@ -702,9 +586,20 @@ void generateH2TauSyncTree::setupBranches(TTree * T)
 	T->Branch("CrossSection", &CrossSection);
 	T->Branch("FilterEff", &FilterEff);
 
-
 }
 
+double generateH2TauSyncTree::mtTotCalc(TLorentzVector l1, TLorentzVector l2, TLorentzVector met )
+{
+        double value = 0.;
+
+        double part1 = 2 * l1.Pt() * met.Pt() * (1-cos(l1.DeltaPhi(met)));
+        double part2 = 2 * l2.Pt() * met.Pt() * (1-cos(l2.DeltaPhi(met)));
+        double part3 = 2 * l1.Pt() * l2.Pt()  * (1-cos(l1.DeltaPhi(l2)));
+
+        if( part1 + part2 + part3 > 0) value = sqrt( part1 + part2 + part3 );
+
+        return value;
+}
 
 
 double generateH2TauSyncTree::pzetaVisCalc(TLorentzVector e, TLorentzVector mu)
@@ -735,7 +630,7 @@ double generateH2TauSyncTree::pzetaMissCalc(TLorentzVector e, TLorentzVector mu,
 }
 
 void generateH2TauSyncTree::setExtraLepVetoes(TLorentzVector l1_, TLorentzVector l2_)
-{
+{	/* OLD no longer used for >= 76X */
 	dilepton_veto = 0;	
 	extraelec_veto = 0; 	
 	extramuon_veto = 0;
@@ -890,87 +785,108 @@ void generateH2TauSyncTree::setExtraLepVetoes(TLorentzVector l1_, TLorentzVector
 void generateH2TauSyncTree::reset()
 {
 
+	pairRank = 999;
+	isOsPair = -999;
+
 	run = 0;
 	event = 0;
 	lumi = 0;
-	pairRank = 999;
-	isOsPair = -999;
+
+
 	npv =  0;
 	npu =  -999.0;
 	rho =  -999.0;
-	 
-	pt_1 =  -999.0;
-	phi_1 =  -999.0;
-	eta_1 =  -999.0;
-	m_1 =  -999.0;
-	q_1 =  0;
-	d0_1 =  -999.0;
-	dZ_1 =  -999.0;
-	mt_1 =  -999.0;
-	iso_1 =  -999.0;
-	id_e_mva_nt_loose_1 =  -999.0;
-	againstElectronLooseMVA5_1 =  -999.0;
-	againstElectronMediumMVA5_1 =  -999.0;
-	againstElectronTightMVA5_1 =  -999.0;
-	againstElectronVLooseMVA5_1 =  -999.0;
-	againstElectronVTightMVA5_1 =  -999.0;
-	againstMuonLoose3_1 =  -999.0;
-	againstMuonTight3_1 =  -999.0;
-	byCombinedIsolationDeltaBetaCorrRaw3Hits_1 =  -999.0;
-	byIsolationMVA3newDMwoLTraw_1 =  -999.0;
-	byIsolationMVA3oldDMwoLTraw_1 =  -999.0;
-	byIsolationMVA3newDMwLTraw_1 =  -999.0;
-	byIsolationMVA3oldDMwLTraw_1 =  -999.0;
-	chargedIsoPtSum_1 =  -999.0;
-	decayModeFindingNewDMs_1 =  -999.0;
-	neutralIsoPtSum_1 =  -999.0;
-	puCorrPtSum_1 =  -999.0;
-	 
-	 
-	pt_2 =  -999.0;
-	phi_2 =  -999.0;
-	eta_2 =  -999.0;
-	m_2 =  -999.0;
-	q_2 =  0;
-	d0_2 =  -999.0;
-	dZ_2 =  -999.0;
-	mt_2 =  -999.0;
-	iso_2 =  -999.0;
-	id_e_mva_nt_loose_2 =  -999.0;
-	againstElectronLooseMVA5_2 =  -999.0;
-	againstElectronMediumMVA5_2 =  -999.0;
-	againstElectronTightMVA5_2 =  -999.0;
-	againstElectronVLooseMVA5_2 =  -999.0;
-	againstElectronVTightMVA5_2 =  -999.0;
-	againstMuonLoose3_2 =  -999.0;
-	againstMuonTight3_2 =  -999.0;
-	byCombinedIsolationDeltaBetaCorrRaw3Hits_2 =  -999.0;
-	byIsolationMVA3newDMwoLTraw_2 =  -999.0;
-	byIsolationMVA3oldDMwoLTraw_2 =  -999.0;
-	byIsolationMVA3newDMwLTraw_2 =  -999.0;
-	byIsolationMVA3oldDMwLTraw_2 =  -999.0;
-	chargedIsoPtSum_2 =  -999.0;
-	decayModeFindingNewDMs_2 =  -999.0;
-	neutralIsoPtSum_2 =  -999.0;
-	puCorrPtSum_2 =  -999.0;
-	 
+	puweight = 1.0;
+
+	pt_1  = -999.0;
+	phi_1  = -999.0;
+	eta_1  = -999.0;
+	m_1  = -999.0;
+	q_1  = 0;
+	d0_1  = -999.0;
+	dZ_1  = -999.0;
+	mt_1  = -999.0;
+	pfmt_1  = -999.0;
+	puppimt_1  = -999.0;
+	iso_1  = -999.0;
+	id_e_mva_nt_loose_1  = -999.0;
+	gen_match_1  = 0;
+	againstElectronLooseMVA6_1  = -999.0;
+	againstElectronMediumMVA6_1  = -999.0;
+	againstElectronTightMVA6_1  = -999.0;
+	againstElectronVLooseMVA6_1  = -999.0;
+	againstElectronVTightMVA6_1  = -999.0;
+	againstMuonLoose3_1  = -999.0;
+	againstMuonTight3_1  = -999.0;
+	byCombinedIsolationDeltaBetaCorrRaw3Hits_1  = -999.0;
+	byIsolationMVA3newDMwoLTraw_1  = -999.0;
+	byIsolationMVA3oldDMwoLTraw_1  = -999.0;
+	byIsolationMVA3newDMwLTraw_1  = -999.0;
+	byIsolationMVA3oldDMwLTraw_1  = -999.0;
+	chargedIsoPtSum_1  = -999.0;
+	decayModeFindingOldDMs_1  = -999.0;
+	neutralIsoPtSum_1  = -999.0;
+	puCorrPtSum_1  = -999.0;
+	// trigweight_1  = -999.0;
+	// idisoweight_1  = -999.0;
+
+	pt_2  = -999.0;
+	phi_2  = -999.0;
+	eta_2  = -999.0;
+	m_2  = -999.0;
+	q_2  = 0;
+	d0_2  = -999.0;
+	dZ_2  = -999.0;
+	mt_2  = -999.0;
+	pfmt_2  = -999.0;
+	puppimt_2  = -999.0;
+	iso_2  = -999.0;
+	id_e_mva_nt_loose_2  = -999.0;
+	gen_match_2  = 0;
+	againstElectronLooseMVA6_2  = -999.0;
+	againstElectronMediumMVA6_2  = -999.0;
+	againstElectronTightMVA6_2  = -999.0;
+	againstElectronVLooseMVA6_2  = -999.0;
+	againstElectronVTightMVA6_2  = -999.0;
+	againstMuonLoose3_2  = -999.0;
+	againstMuonTight3_2  = -999.0;
+	byCombinedIsolationDeltaBetaCorrRaw3Hits_2  = -999.0;
+	byIsolationMVA3newDMwoLTraw_2  = -999.0;
+	byIsolationMVA3oldDMwoLTraw_2  = -999.0;
+	byIsolationMVA3newDMwLTraw_2  = -999.0;
+	byIsolationMVA3oldDMwLTraw_2  = -999.0;
+	chargedIsoPtSum_2  = -999.0;
+	decayModeFindingOldDMs_2  = -999.0;
+	neutralIsoPtSum_2  = -999.0;
+	puCorrPtSum_2  = -999.0;
+	// trigweight_2  = -999.0;
+	// idisoweight_2  = -999.0;
+	
 	pt_tt =  -999.0;
+	mt_tot =  -999.0;
 	m_vis =  -999.0;
-	 
+	m_sv =  -999.0;
+	mt_sv =  -999.0;
+
 	met =  -999.0;
 	metphi =  -999.0;
+	puppimet =  -999.0;
+	puppimetphi =  -999.0;
 	mvamet =  -999.0;
 	mvametphi =  -999.0;
 	pzetavis =  -999.0;
-	pzetamiss =  -999.0;
+	pzetamiss =  -999.0;    
+	pfpzetamiss =  -999.0;  
+	puppipzetamiss =  -999.0; 
 	mvacov00 =  -999.0;
 	mvacov01 =  -999.0;
 	mvacov10 =  -999.0;
 	mvacov11 =  -999.0;
-	metcov00 =  -999.0;
+	metcov00 =  -999.0;  
 	metcov01 =  -999.0;
 	metcov10 =  -999.0;
 	metcov11 =  -999.0;
+
 	 
 	mjj =  -999.0;
 	jdeta =  -999.0;
@@ -986,6 +902,7 @@ void generateH2TauSyncTree::reset()
 	jpt_1 =  -999.0;
 	jeta_1 =  -999.0;
 	jphi_1 =  -999.0;
+	jm_1   = -999.0;
 	jrawf_1 =  -999.0;
 	jmva_1 =  -999.0;
 	 
@@ -993,6 +910,7 @@ void generateH2TauSyncTree::reset()
 	jpt_2 =  -999.0;
 	jeta_2 =  -999.0;
 	jphi_2 =  -999.0;
+	jm_2   = -999.0;
 	jrawf_2 =  -999.0;
 	jmva_2 =  -999.0;
 	 
@@ -1000,6 +918,7 @@ void generateH2TauSyncTree::reset()
 	bpt_1 =  -999.0;
 	beta_1 =  -999.0;
 	bphi_1 =  -999.0;
+	bm_1 = -999.0;
 	brawf_1 =  -999.0;
 	bmva_1 =  -999.0;
 	bcsv_1 =  -999.0;
@@ -1008,6 +927,7 @@ void generateH2TauSyncTree::reset()
 	bpt_2 =  -999.0;
 	beta_2 =  -999.0;
 	bphi_2 =  -999.0;
+	bm_2 = -999.0;
 	brawf_2 =  -999.0;
 	bmva_2 =  -999.0;
 	bcsv_2 =  -999.0;
@@ -1016,21 +936,10 @@ void generateH2TauSyncTree::reset()
 	extraelec_veto = 0; 	
 	extramuon_veto = 0;
 
-	isZtt = 0;  	
-	isZmt = 0;  	
-	isZet = 0;  	
-	isZee = 0;  	
-	isZmm = 0;  	
-	isZem = 0;  	
-	isZEE = 0;  	
-	isZMM = 0;  	
-	isZLL = 0;  	
-	isFake = 0;
+	NUP = 0;
+	weight  = 1.0;
+	generatorEventWeight = 1.0;
 
-	trigweight_1 = 0;
-	trigweight_2 = 0;
-
-    generatorEventWeight = 1.0;
 	DataSet = "NULL";
     EventTotal = 1;
     EventType = "NULL";
