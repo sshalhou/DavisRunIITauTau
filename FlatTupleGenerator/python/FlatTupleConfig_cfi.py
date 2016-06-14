@@ -582,16 +582,30 @@ lowDeltaRCuts = cms.VPSet(
 # config for basic settings 
 generalConfig = cms.PSet(
 
+			keepOnlyBestRankedPair = cms.bool(True), # for debugging set to False (best pair will have pairRank = 0), default should be True
 			Mt = cms.vdouble(-1.0e30,30.0), # not used at the moment
 			keepOS = cms.bool(True),
 			keepSS = cms.bool(True),			
 			# how to rank pairs within this selection
 			rankByPtSum = cms.bool(False),
 			rankByIsolation = cms.bool(True), # checks leg1 isolation, then pt in case of tie
+			
+			#######################################
+			# in 76X have a new complication :
+			# for DeltaBeta (ex: byCombinedIsolationDeltaBetaCorrRaw3Hits)  smaller value = more isolated
+			# for MVA iso (ex: byIsolationMVArun2v1DBnewDMwLTraw) bigger value = more isolated
+			# so now the pair rank algorithm accepts the args x_isSmallerValueMoreIsolated 
+			# which should tell how to handle the particular isolation used for ranking
+
+
 			electronIsolationForRank = cms.string("DeltaBetaCorrectedRelIso"),
+			electron_isSmallerValueMoreIsolated = cms.bool(True),
+
 			muonIsolationForRank = cms.string("DeltaBetaCorrectedRelIso"),
-			# (74X and below) tauIDisolationForRank = cms.string("byCombinedIsolationDeltaBetaCorrRaw3Hits"),
+			muon_isSmallerValueMoreIsolated = cms.bool(True),
+			
 			tauIDisolationForRank = cms.string("byIsolationMVArun2v1DBoldDMwLTraw"),
+			tau_isSmallerValueMoreIsolated = cms.bool(False),
 
 			# isolations to keep as the leg1_relativeIsolation and 
 			# leg2_relativeIsolation branches 
@@ -700,10 +714,12 @@ generalConfig = cms.PSet(
 			###################
 			# jet cut strings
 			jetLeptonDRmin = cms.double(0.5),
+
 			# note PU jet ID is not to be applied yet
 			# you *MUST* make sure this jetIDcut is inclusive of any b-tag selection you
 			# wish to apply later 
-			jetIDcut = cms.string("pt>20 && abs(eta) < 4.7  && PF_jetIdPassed"),
+			jetIDcut = cms.string("pt>20 && abs(eta) < 4.7  && PF_jetIdPassed")
+
 					)
 
 

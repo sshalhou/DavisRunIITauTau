@@ -288,6 +288,64 @@ void generateH2TauSyncTree::handleEvent()
 	std::vector<double> jets_IsBTagged_TightWpDown = R.getVD("jets_IsBTagged_TightWpDown");
 	std::vector<bool> jets_PF_jetIdPassedTight = R.getVB("jets_PF_jetIdPassedTight");
 
+
+
+	//////////////////// JET TEST ----- START
+
+	// std::cout<<" ****>>> event "<<event<<"\n";
+
+
+	// int test_njet = 0;
+
+
+	// for(unsigned int t=0; t<jets_pt.size();++t)
+	// {
+	// 	bool cut_pt20 = 0;
+	// 	bool cut_eta = 0;
+	// 	bool cut_pf = 0;
+	// 	bool cut_dr1 = 0;
+	// 	bool cut_dr2 = 0;
+	// 	j1_20.SetPtEtaPhiM(jets_pt[t],jets_eta[t],jets_phi[t],jets_M[t]);
+
+
+	// 	if(jets_pt[t] > 20.)  					cut_pt20 = 1;
+	// 	if(fabs(jets_eta[t]) < 4.7)				cut_eta = 1;
+	// 	if(jets_PF_jetIdPassed[t] > 0.5)		cut_pf = 1;
+	// 	if(j1_20.DeltaR(l1)>0.5)				cut_dr1 = 1;	
+	// 	if(j1_20.DeltaR(l2) > 0.5)				cut_dr2 = 1;
+
+	// 	// turn off problematic cuts
+	// 	cut_dr2 = 1;
+
+	// 	if(cut_pt20 && cut_eta && cut_pf && cut_dr1 && cut_dr2)
+	// 	{	
+	// 		test_njet++;
+	// 		std::cout<<" ****************************>>> jet of pt = "<<jets_pt[t]<<" passes all cuts \n";
+	// 	}	
+	// 	else 
+	// 	{
+	// 		std::cout<<" ****************************>>> jet of pt = "<<jets_pt[t]<<" fails: ";
+	// 		if(cut_pt20 == 0) std::cout<<" [pt cut] ";
+	// 		if(cut_eta == 0)  std::cout<<" [eta cut] "; 	
+	// 		if(cut_pf == 0)	  std::cout<<" [pf cut] "; 	
+	// 		if(cut_dr1 == 0)  std::cout<<" [dr1 cut] ";	
+	// 		if(cut_dr2 == 0)  std::cout<<" [dr2 cut] ";
+	// 		std::cout<<"\n";
+	// 	}
+
+
+	// }	
+
+	// std::cout<<" ****************************>>> njet = "<<test_njet<<"\n";
+
+	
+
+	//////////////////// JET TEST ----- END
+
+
+
+
+
 	j1_20.SetPtEtaPhiM(0.,0.,0.,0.);
 	j2_20.SetPtEtaPhiM(0.,0.,0.,0.);
 	njetingap = 0;
@@ -299,8 +357,24 @@ void generateH2TauSyncTree::handleEvent()
 	std::size_t b1_index = 99999.0;
 	std::size_t b2_index = 99999.0;
 
+	//std::cout<<"////////////////////////////////////////////////////// \n";
+	//std::cout<<" event "<<event<<" njets20 = "<<jets_pt.size()<<" \n";
+
+
 	for(std::size_t i = 0; i<jets_pt.size();++i)
 	{
+
+		// std::cout<<" ---------- jet pt  "<<jets_pt[i]<<" jet eta "<<fabs(jets_eta[i]);
+		// std::cout<<" pf_passID "<<jets_PF_jetIdPassed[i];
+		// std::cout<<" btagged "<<jets_IsBTagged_MediumWpCentral[i]<<" ";
+		// std::cout<<" rawScore "<<jets_defaultBtagAlgorithm_RawScore[i]<<" ";
+
+
+//		std::cout<<" tau_pt "<<pt_2<<" muon_pt "<<pt_1;
+
+		//std::cout<<"\n";
+
+
 		if( fabs(jets_eta[i]) < 4.7 && jets_pt[i] > 20 ) njetspt20 ++;
 		if( fabs(jets_eta[i]) < 4.7 && jets_pt[i] > 30 ) njets ++;
 		//if( fabs(jets_eta[i]) < 2.4 && jets_pt[i] > 20 && jets_defaultBtagAlgorithm_RawScore[i] > 0.80)
@@ -311,6 +385,9 @@ void generateH2TauSyncTree::handleEvent()
 			nbtag ++;
 		}
 	}	
+
+	//std::cout<<" ---------- njets30 = "<<njets<<"\n";
+
 
 	if(b1_index != 99999.0)
 	{	

@@ -217,6 +217,7 @@ public:
 
 	std::vector<std::string> tauIDsToKeep;
 	std::vector<std::string> triggerSummaryChecks;
+	bool keepOnlyBestRankedPair;
 	bool keepOS;
 	bool keepSS;
 	bool keepTauEsNominal;
@@ -224,9 +225,15 @@ public:
 	bool keepTauEsDown; 
 	bool rankByPtSum;
 	bool rankByIsolation;
+
 	std::string electronIsolationForRank;
+	bool electron_isSmallerValueMoreIsolated;
+
 	std::string muonIsolationForRank;
+	bool muon_isSmallerValueMoreIsolated;
+
 	std::string tauIDisolationForRank;
+	bool tau_isSmallerValueMoreIsolated;
 
 	std::string electronIsolationForRelIsoBranch; 
 	std::string muonIsolationForRelIsoBranch;

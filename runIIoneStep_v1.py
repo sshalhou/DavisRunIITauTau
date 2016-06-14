@@ -20,7 +20,8 @@ dataSetName_ = "/SUSYGluGluToHToTauTau_M-160_TuneCUETP8M1_13TeV-pythia8/RunIIFal
 myfilelist = cms.untracked.vstring()
 
 if dataSetName_ == "/SUSYGluGluToHToTauTau_M-160_TuneCUETP8M1_13TeV-pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM":
-	myfilelist.extend(['file:/uscms_data/d3/shalhout/pickevents_missingMuTau14.root'])
+	myfilelist.extend(['file:/uscms_data/d3/shalhout/pickevents_muTauJetTest.root'])
+#	myfilelist.extend(['file:/uscms_data/d3/shalhout/pickevents_missingMuTau14.root'])
 #	myfilelist.extend(['file:/uscms_data/d3/shalhout/miniAODv2_SyncSample.root'])
 
 if dataSetName_ == "/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM":

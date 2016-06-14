@@ -49,6 +49,7 @@ svMassAtFlatTupleConfig_(iConfig.getParameter<edm::ParameterSet>("SVMassConfig")
   triggerSummaryChecks = EventCutSrc_.getParameter<std::vector<std::string> >("triggerSummaryChecks"); 
   assert(THE_MAX>=triggerSummaryChecks.size());
 
+  keepOnlyBestRankedPair = EventCutSrc_.getParameter<bool>("keepOnlyBestRankedPair");
 	keepOS = EventCutSrc_.getParameter<bool>("keepOS");
 	keepSS = EventCutSrc_.getParameter<bool>("keepSS");
 	
@@ -67,9 +68,15 @@ svMassAtFlatTupleConfig_(iConfig.getParameter<edm::ParameterSet>("SVMassConfig")
   rankByPtSum = EventCutSrc_.getParameter<bool>("rankByPtSum");
 	rankByIsolation = EventCutSrc_.getParameter<bool>("rankByIsolation");
 	assert(rankByPtSum!=rankByIsolation);
-	electronIsolationForRank = EventCutSrc_.getParameter<std::string>("electronIsolationForRank");
+	
+  electronIsolationForRank = EventCutSrc_.getParameter<std::string>("electronIsolationForRank");
+  electron_isSmallerValueMoreIsolated  = EventCutSrc_.getParameter<bool>("electron_isSmallerValueMoreIsolated");
+
 	muonIsolationForRank = EventCutSrc_.getParameter<std::string>("muonIsolationForRank");
+  muon_isSmallerValueMoreIsolated  = EventCutSrc_.getParameter<bool>("muon_isSmallerValueMoreIsolated");
+
 	tauIDisolationForRank = EventCutSrc_.getParameter<std::string>("tauIDisolationForRank");
+  tau_isSmallerValueMoreIsolated  = EventCutSrc_.getParameter<bool>("tau_isSmallerValueMoreIsolated");
 
   electronIsolationForRelIsoBranch = EventCutSrc_.getParameter<std::string>("electronIsolationForRelIsoBranch");
   muonIsolationForRelIsoBranch = EventCutSrc_.getParameter<std::string>("muonIsolationForRelIsoBranch");
@@ -525,12 +532,24 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
 
   else if(rankByIsolation) 
   {
-    rankHelper_EleMuon.init(retainedPairs_EleMuon,electronIsolationForRank,muonIsolationForRank,tauIDisolationForRank);
-    rankHelper_EleTau.init(retainedPairs_EleTau,electronIsolationForRank,muonIsolationForRank,tauIDisolationForRank);
-    rankHelper_MuonTau.init(retainedPairs_MuonTau,electronIsolationForRank,muonIsolationForRank,tauIDisolationForRank);
-    rankHelper_TauTau.init(retainedPairs_TauTau,electronIsolationForRank,muonIsolationForRank,tauIDisolationForRank);
-    rankHelper_EleEle.init(retainedPairs_EleEle,electronIsolationForRank,muonIsolationForRank,tauIDisolationForRank);
-    rankHelper_MuonMuon.init(retainedPairs_MuonMuon,electronIsolationForRank,muonIsolationForRank,tauIDisolationForRank);
+    rankHelper_EleMuon.init(retainedPairs_EleMuon,electronIsolationForRank,muonIsolationForRank,tauIDisolationForRank,
+      electron_isSmallerValueMoreIsolated, muon_isSmallerValueMoreIsolated);
+
+    rankHelper_EleTau.init(retainedPairs_EleTau,electronIsolationForRank,muonIsolationForRank,tauIDisolationForRank,
+      electron_isSmallerValueMoreIsolated, tau_isSmallerValueMoreIsolated);
+
+    rankHelper_MuonTau.init(retainedPairs_MuonTau,electronIsolationForRank,muonIsolationForRank,tauIDisolationForRank,
+      muon_isSmallerValueMoreIsolated, tau_isSmallerValueMoreIsolated);
+
+    rankHelper_TauTau.init(retainedPairs_TauTau,electronIsolationForRank,muonIsolationForRank,tauIDisolationForRank,
+      tau_isSmallerValueMoreIsolated, tau_isSmallerValueMoreIsolated);
+
+    rankHelper_EleEle.init(retainedPairs_EleEle,electronIsolationForRank,muonIsolationForRank,tauIDisolationForRank,
+      electron_isSmallerValueMoreIsolated, electron_isSmallerValueMoreIsolated);
+
+    rankHelper_MuonMuon.init(retainedPairs_MuonMuon,electronIsolationForRank,muonIsolationForRank,tauIDisolationForRank,
+      muon_isSmallerValueMoreIsolated, muon_isSmallerValueMoreIsolated);
+
   }
 
   // get the individual rank-pair std::pairs
@@ -606,7 +625,7 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
       reInit();
 
       pairRank = retainedPairsWithRank[p].first;
-      if(pairRank!=0) continue; /* no reason to keep more than the best pair/event */
+      if(pairRank!=0 && keepOnlyBestRankedPair) continue; /* no reason to keep more than the best pair/event */
 
 
       ////////////////////////////////
