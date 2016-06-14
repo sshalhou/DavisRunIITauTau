@@ -6,7 +6,7 @@ process = cms.Process('DavisNtuple')
 ###################################
 
 # how many events to run, -1 means run all 
-MAX_EVENTS = 50
+MAX_EVENTS = 500
 #MAX_EVENTS = 9153
 
 # datasets for local running 
@@ -20,9 +20,9 @@ dataSetName_ = "/SUSYGluGluToHToTauTau_M-160_TuneCUETP8M1_13TeV-pythia8/RunIIFal
 myfilelist = cms.untracked.vstring()
 
 if dataSetName_ == "/SUSYGluGluToHToTauTau_M-160_TuneCUETP8M1_13TeV-pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM":
-	myfilelist.extend(['file:/uscms_data/d3/shalhout/pickevents_muTauJetTest.root'])
+#	myfilelist.extend(['file:/uscms_data/d3/shalhout/pickevents_muTauJetTest.root'])
 #	myfilelist.extend(['file:/uscms_data/d3/shalhout/pickevents_missingMuTau14.root'])
-#	myfilelist.extend(['file:/uscms_data/d3/shalhout/miniAODv2_SyncSample.root'])
+	myfilelist.extend(['file:/uscms_data/d3/shalhout/miniAODv2_SyncSample.root'])
 
 if dataSetName_ == "/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM":
 	myfilelist.extend(['file:/uscms_data/d3/shalhout/miniAODv2_DYnlo.root'])
@@ -467,8 +467,13 @@ if RUN_MEM_CHECK is True:
 
 from DavisRunIITauTau.FlatTupleGenerator.FlatTupleConfig_cfi import generalConfig as TauIsoConfigRank
 tauIsolForOrderingPair_ = TauIsoConfigRank.getParameter("tauIDisolationForRank")
+smallerTauIsoValueIsBetter_ = TauIsoConfigRank.getParameter("tau_isSmallerValueMoreIsolated")
 
 print "Tau_h + Tau_h pairs will be ordered by", tauIsolForOrderingPair_
+if smallerTauIsoValueIsBetter_ is True:
+	print " smaller value of tau iso is better isolated"
+else:
+	print " larger value of tau iso is better isolated"
 
 process.TupleCandidateEvents = cms.EDProducer('TupleCandidateEventProducer' ,
 	puppiMETSrc = cms.InputTag("slimmedMETsPuppi"),
@@ -484,6 +489,7 @@ process.TupleCandidateEvents = cms.EDProducer('TupleCandidateEventProducer' ,
     svMassVerbose = cms.int32(SVMASS_VERBOSE),
     # need to order the taus by isolation in tau_h + tau_h pairs
     tauIsolForOrderingPair = tauIsolForOrderingPair_,
+    smallerTauIsoValueIsBetter = smallerTauIsoValueIsBetter_,
     EffElectronSrc = cms.InputTag("TrimmedFilteredCustomElectrons:TrimmedFilteredCustomElectrons:DavisNtuple"),
     EffMuonSrc = cms.InputTag("TrimmedFilteredCustomMuons:TrimmedFilteredCustomMuons:DavisNtuple"),
     EffTauSrc = cms.InputTag("TrimmedFilteredCustomTausEsNominal:TrimmedFilteredCustomTausEsNominal:DavisNtuple"),
@@ -505,6 +511,7 @@ process.TupleCandidateEventsTauEsUp = cms.EDProducer('TupleCandidateEventProduce
     svMassVerbose = cms.int32(SVMASS_VERBOSE),
     # need to order the taus by isolation in tau_h + tau_h pairs
     tauIsolForOrderingPair = tauIsolForOrderingPair_,
+    smallerTauIsoValueIsBetter = smallerTauIsoValueIsBetter_,
     EffElectronSrc = cms.InputTag("TrimmedFilteredCustomElectrons:TrimmedFilteredCustomElectrons:DavisNtuple"),
     EffMuonSrc = cms.InputTag("TrimmedFilteredCustomMuons:TrimmedFilteredCustomMuons:DavisNtuple"),
     EffTauSrc = cms.InputTag("TrimmedFilteredCustomTausEsUp:TrimmedFilteredCustomTausEsUp:DavisNtuple"),
@@ -525,6 +532,7 @@ process.TupleCandidateEventsTauEsDown = cms.EDProducer('TupleCandidateEventProdu
     svMassVerbose = cms.int32(SVMASS_VERBOSE),
     # need to order the taus by isolation in tau_h + tau_h pairs
     tauIsolForOrderingPair = tauIsolForOrderingPair_,
+    smallerTauIsoValueIsBetter = smallerTauIsoValueIsBetter_,
     EffElectronSrc = cms.InputTag("TrimmedFilteredCustomElectrons:TrimmedFilteredCustomElectrons:DavisNtuple"),
     EffMuonSrc = cms.InputTag("TrimmedFilteredCustomMuons:TrimmedFilteredCustomMuons:DavisNtuple"),
     EffTauSrc = cms.InputTag("TrimmedFilteredCustomTausEsDown:TrimmedFilteredCustomTausEsDown:DavisNtuple"),

@@ -118,6 +118,7 @@ private:
 
 
   string tauIsolForOrderingPair_;
+  bool smallerTauIsoValueIsBetter_;
   bool BuildEfficiencyTree_;
 
 };
@@ -150,6 +151,7 @@ EffElectronSrc_(iConfig.getParameter<edm::InputTag>("EffElectronSrc" )),
 EffMuonSrc_(iConfig.getParameter<edm::InputTag>("EffMuonSrc" )),
 EffTauSrc_(iConfig.getParameter<edm::InputTag>("EffTauSrc" )),
 tauIsolForOrderingPair_(iConfig.getParameter<string>("tauIsolForOrderingPair" )),
+smallerTauIsoValueIsBetter_(iConfig.getParameter<bool>("smallerTauIsoValueIsBetter" )),
 BuildEfficiencyTree_(iConfig.getParameter<bool>("BuildEfficiencyTree" ))
 {
 
@@ -362,9 +364,19 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
 
           const pat::Tau* legA = dynamic_cast<const pat::Tau*>(mvamets->at(m).userCand("lepton0").get());
           const pat::Tau* legB = dynamic_cast<const pat::Tau*>(mvamets->at(m).userCand("lepton1").get());
-            
-          if(legA->tauID(tauIsolForOrderingPair_) <=\
-             legB->tauID(tauIsolForOrderingPair_))
+          
+          bool default_ordering = 0;
+
+          if(smallerTauIsoValueIsBetter_ && legA->tauID(tauIsolForOrderingPair_) <= legB->tauID(tauIsolForOrderingPair_))
+          {
+            default_ordering = 1;
+          }
+          else if(!smallerTauIsoValueIsBetter_ && legA->tauID(tauIsolForOrderingPair_) >= legB->tauID(tauIsolForOrderingPair_))
+          {
+            default_ordering = 1;
+          }
+
+          if(default_ordering)
           {
 
             CurrentCandidateEvent.set_leg1(*legA);

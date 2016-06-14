@@ -164,6 +164,8 @@ private:
 	double metphi;
 	double puppimet;
 	double puppimetphi;
+	double uncorr_mvamet;
+	double uncorr_mvametphi;
 	double mvamet;
 	double mvametphi;
 	double pzetavis;

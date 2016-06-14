@@ -236,6 +236,10 @@ void generateH2TauSyncTree::handleEvent()
 	mvamet = R.getD("corr_mvaMET");
 	mvametphi = R.getD("corr_mvaMETphi");
 	
+	uncorr_mvamet = R.getD("uncorr_mvaMET");
+	uncorr_mvametphi = R.getD("uncorr_mvaMETphi");
+	
+
 
 	pzetavis = pzetaVisCalc(l1,l2);
 	pzetamiss = pzetaMissCalc(l1,l2,mvaMetVec);
@@ -594,6 +598,10 @@ void generateH2TauSyncTree::setupBranches(TTree * T)
 	T->Branch("puppimetphi", &puppimetphi);
 	T->Branch("mvamet", &mvamet);
 	T->Branch("mvametphi", &mvametphi);
+
+	T->Branch("uncorr_mvamet", &uncorr_mvamet);
+	T->Branch("uncorr_mvametphi", &uncorr_mvametphi);
+
 	T->Branch("pzetavis", &pzetavis);
 	T->Branch("pzetamiss", &pzetamiss);
 	T->Branch("pfpzetamiss", &pfpzetamiss);
@@ -949,6 +957,10 @@ void generateH2TauSyncTree::reset()
 	metphi =  -999.0;
 	puppimet =  -999.0;
 	puppimetphi =  -999.0;
+
+	uncorr_mvamet =  -999.0;
+	uncorr_mvametphi =  -999.0;
+
 	mvamet =  -999.0;
 	mvametphi =  -999.0;
 	pzetavis =  -999.0;
