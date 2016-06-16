@@ -786,6 +786,9 @@ void FlatTupleGenerator::handleMvaMetAndRecoil(const edm::Event& iEvent, const e
         if(genhelper.leg2_MCMatchType() == GenMcMatchTypes::jetOrPuFake) njets++;
       }
     }
+
+    ////////////////////////////
+    numberOfJetsForRecoilCorr = njets;
     ////////////////////////////
 
 
@@ -3106,7 +3109,7 @@ void FlatTupleGenerator::handlePairIndepInfo(const edm::Event& iEvent, const edm
   muonBadTrackFilter = 1;
 
 
-
+  numberOfJetsForRecoilCorr = -999;
   numberOfJets30 = -999;
   numberOfJets = -999;
   jets_pt.clear();
@@ -3844,6 +3847,7 @@ void FlatTupleGenerator::beginJob()
 
 
   /* fullyCorrected jet info */
+  FlatTuple->Branch("numberOfJetsForRecoilCorr",&numberOfJetsForRecoilCorr);
   FlatTuple->Branch("numberOfJets", &numberOfJets);
   FlatTuple->Branch("numberOfJets30", &numberOfJets30);
   FlatTuple->Branch("jets_pt", &jets_pt);

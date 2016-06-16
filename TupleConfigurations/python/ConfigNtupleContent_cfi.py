@@ -22,16 +22,16 @@ BUILD_EFFICIENCY_TREE  = False
 # MAX SIZE OF LEPTON LISTS-only keep 1st MAX_X_COUNT leptons passing all selections for pair formation)
 ####################################################################################################
 
-MAX_ELECTRON_COUNT = 7
-MAX_MUON_COUNT = 7
-MAX_TAU_COUNT = 7
+MAX_ELECTRON_COUNT = 10
+MAX_MUON_COUNT = 10
+MAX_TAU_COUNT = 10
 
 
 ####################################################################################################
 # edit the following to turn on/off Tau ES variants
 ####################################################################################################
 
-BUILD_TAU_ES_VARIANTS = False # not needed in early sync
+BUILD_TAU_ES_VARIANTS = True # not needed in early sync
 
 ####################################################################################################
 # some options to run SVFit at Ntuple level 

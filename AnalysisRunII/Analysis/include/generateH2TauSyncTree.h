@@ -67,11 +67,18 @@ private:
 
 	unsigned int pairRank; 
 	int isOsPair; 
+    double genBosonTotal_pt, genBosonTotal_eta, genBosonTotal_phi, genBosonTotal_M; 	    /* the gen total 4-vector of W/Z/H */
+	double genBosonVisible_pt, genBosonVisible_eta, genBosonVisible_phi, genBosonVisible_M; /* the gen visible 4-vector of W/Z/H */
+
+	int numberOfJets30; /* rm later on */ 
+	int numberOfJetsForRecoilCorr;
+
 
 	/* event ID variables */
 
 	unsigned int run;
 	unsigned int event;
+	unsigned int evt;
 	unsigned int lumi;
 
 	/* pile up */
@@ -248,6 +255,7 @@ private:
 	int NUP;
 	double weight; /* global event weight (MC xSection and num events excluded) ? */
 	double generatorEventWeight;
+
 
 
 	// information related to sample and weights

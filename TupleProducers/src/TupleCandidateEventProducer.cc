@@ -316,6 +316,7 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
 
     for(std::size_t m = 0; m < mvamets->size(); ++m)
     {
+     // std::cout<<" ++++++++ event "<<iEvent.id().event()<<" has mvamet at index "<<m<<" with pT = "<<mvamets->at(m).pt()<<"\n";
 
       /* NOTE NEED AN ELSE CASE FOR only 1 or 0 leptos, for scale factors */
       if( mvamets->at(m).hasUserCand("lepton0") && mvamets->at(m).hasUserCand("lepton1") )
@@ -713,6 +714,12 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
           
         //  std::cout<<" TLOR DR = "<<l1.DeltaR(l2)<<"\n";
           
+          // std::cout<<" xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\n";
+          // std::cout<<" xxxx event "<<iEvent.id().event()<<" \n";
+          // std::cout<<" xxxx ................. mva met "<<mvamets->at(m).pt()<<" \n";
+          // std::cout<<" xxxx ................. l1pt "<<l1.Pt()<<" \n";
+          // std::cout<<" xxxx ................. l2pt "<<l2.Pt()<<" \n";
+
           TupleCandidateEvents->push_back(CurrentCandidateEvent);
 
       } // correctly formed mva met + leg1 + leg2

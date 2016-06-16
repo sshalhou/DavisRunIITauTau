@@ -642,6 +642,7 @@ public:
 
 	int numberOfJets;  /* overall number of jets passing jet selection */
 	int numberOfJets30;  /* overall number of jets passing jet selection + pT > 30 cut */
+	int numberOfJetsForRecoilCorr; /* number of jets used when applying recoil corr. */
 
 	/* Good Jets (passing JetCuts, ranked in Pt) info, note JEC info is to be added */
 	std::vector<double> jets_pt; 				/* vectors of 4-vector components */

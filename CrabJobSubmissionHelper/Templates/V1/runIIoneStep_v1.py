@@ -155,8 +155,6 @@ process.load('Configuration.StandardSequences.GeometryRecoDB_cff')
 process.load('Configuration.StandardSequences.MagneticField_38T_cff')
 process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff")
 
-from DavisRunIITauTau.TupleConfigurations.ConfigJets_cfi import StartingJetCollection
-print "******* starting jet collection = ", StartingJetCollection, " *******"
 
 from RecoMET.METPUSubtraction.localSqlite import recorrectJets
 
@@ -743,11 +741,6 @@ process.p = cms.Path()
 
 process.p *= process.Cumulative
 process.p *= process.filteredVertices
-
-process.p *= process.patJetCorrFactorsReapplyJEC 
-process.p *= process.patJetsReapplyJEC
-
-
 process.p *= process.filteredSlimmedJets
 
 

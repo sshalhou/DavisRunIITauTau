@@ -5,7 +5,7 @@
 //
 /**\class CustomPatTauProducer CustomPatTauProducer.cc TEMP/CustomPatTauProducer/src/CustomPatTauProducer.cc
 
-Description: produce 3 copies of the input pat::tau collection with user embedded info and ES variation
+Description: produce a copy of the input pat::tau collection with user embedded info and ES variation/correction
 
 Implementation:
 [Notes on implementation]
@@ -93,17 +93,12 @@ private:
 
 
   double TauEsCorrection_;
-  double TauEsUpSystematic_;
-  double TauEsDownSystematic_;
+  double TauEsSystematicShift_;
   edm::EDGetTokenT<edm::TriggerResults> triggerBitSrc_;
   edm::EDGetTokenT<pat::PackedTriggerPrescales> triggerPreScaleSrc_;
   edm::EDGetTokenT<pat::TriggerObjectStandAloneCollection> triggerObjectSrc_;
  
-
-  std::string NAME_NOMINAL;
-  std::string NAME_UP;
-  std::string NAME_DOWN;
-
+  
   vInputTag rhoSources_;
   std::vector < edm::EDGetTokenT<double> > rhoTokens_;
 
@@ -129,21 +124,14 @@ tauSrc_(iConfig.getParameter<edm::InputTag>("tauSrc" )),
 NAME_(iConfig.getParameter<string>("NAME" )),
 vertexSrc_(iConfig.getParameter<edm::InputTag>("vertexSrc" )),
 TauEsCorrection_(iConfig.getParameter<double>("TauEsCorrection" )),
-TauEsUpSystematic_(iConfig.getParameter<double>("TauEsUpSystematic" )),
-TauEsDownSystematic_(iConfig.getParameter<double>("TauEsDownSystematic" )),
+TauEsSystematicShift_(iConfig.getParameter<double>("TauEsSystematicShift" )),
 triggerBitSrc_(consumes<edm::TriggerResults>(iConfig.getParameter<edm::InputTag>("triggerBitSrc"))),
 triggerPreScaleSrc_(consumes<pat::PackedTriggerPrescales>(iConfig.getParameter<edm::InputTag>("triggerPreScaleSrc"))),
 triggerObjectSrc_(consumes<pat::TriggerObjectStandAloneCollection>(iConfig.getParameter<edm::InputTag>("triggerObjectSrc"))),
 rhoSources_(iConfig.getParameter<vInputTag>("rhoSources" ))
 {
 
-  NAME_NOMINAL = NAME_+"TauEsNominal";
-  NAME_UP = NAME_+"TauEsUp";
-  NAME_DOWN = NAME_+"TauEsDown";
-
-  produces<PatTauCollection>(NAME_NOMINAL).setBranchAlias(NAME_NOMINAL);
-  produces<PatTauCollection>(NAME_UP).setBranchAlias(NAME_UP);
-  produces<PatTauCollection>(NAME_DOWN).setBranchAlias(NAME_DOWN);
+  produces<PatTauCollection>(NAME_).setBranchAlias(NAME_);
 
   tauToken_ = consumes< edm::View<pat::Tau> >(tauSrc_);
 
@@ -235,66 +223,39 @@ CustomPatTauProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
   // for data no corrections will be applied due to the genJet requirement
   // need to be careful about this when embedded samples arrive
 
-  TauClones allClones(taus,first_vertex,TauEsCorrection_,TauEsUpSystematic_,TauEsDownSystematic_,
+  TauClones allClones(taus,first_vertex,TauEsCorrection_,TauEsSystematicShift_,
                       triggerBits,triggerObjects,triggerPreScales,names,rhoNames,rhos);
 
 
-
-  auto_ptr<PatTauCollection> storedTausNominal (new PatTauCollection);
-  auto_ptr<PatTauCollection> storedTausUp (new PatTauCollection);
-  auto_ptr<PatTauCollection> storedTausDown (new PatTauCollection);
+  auto_ptr<PatTauCollection> storedTaus (new PatTauCollection);
 
 
   // control memory usage by reserving max size 
   std::size_t reserveSize =  taus->size();
-  storedTausNominal->reserve( reserveSize );
-  storedTausUp->reserve( reserveSize );
-  storedTausDown->reserve( reserveSize );
-
+  storedTaus->reserve( reserveSize );
 
 
   for (std::size_t i = 0; i<taus->size(); i++)
   {
 
 
-    //const pat::Tau & original = allClones.clones[i];
-    const pat::Tau & TauToStoreNominal = allClones.clonesCorrectedNominalEsShift[i];
-    const pat::Tau & TauToStoreUp = allClones.clonesCorrectedUpEsShift[i];
-    const pat::Tau & TauToStoreDown = allClones.clonesCorrectedDownEsShift[i];
+
+    const pat::Tau & TauToStore = allClones.clonesCorrectedAndShifted[i];
 
 
     //dump userFloats -- test start
-    // for (std::size_t ii = 0; ii < TauToStoreNominal.userFloatNames().size(); ii ++ )
+    // for (std::size_t ii = 0; ii < TauToStore.userFloatNames().size(); ii ++ )
     // {
-    //     std::cout<<"nominal tau "<<i<<" "<<TauToStoreNominal.userFloatNames().at(ii)<<" "<<TauToStoreNominal.userFloat(TauToStoreNominal.userFloatNames().at(ii))<<"\n";
-    // }
-    
-    // for (std::size_t ii = 0; ii < TauToStoreUp.userFloatNames().size(); ii ++ )
-    // {
-    //     std::cout<<"up tau "<<i<<" "<<TauToStoreUp.userFloatNames().at(ii)<<" "<<TauToStoreUp.userFloat(TauToStoreUp.userFloatNames().at(ii))<<"\n";
-    // }
-
-    // for (std::size_t ii = 0; ii < TauToStoreDown.userFloatNames().size(); ii ++ )
-    // {
-    //     std::cout<<"down tau "<<i<<" "<<TauToStoreDown.userFloatNames().at(ii)<<" "<<TauToStoreDown.userFloat(TauToStoreDown.userFloatNames().at(ii))<<"\n";
+    //     std::cout<<"modified tau "<<i<<" "<<TauToStore.userFloatNames().at(ii)<<" "<<TauToStore.userFloat(TauToStore.userFloatNames().at(ii))<<"\n";
     // }
     //dump userFloats -- test end
 
-
-
-
-    storedTausNominal->push_back(TauToStoreNominal);
-    storedTausUp->push_back(TauToStoreUp);
-    storedTausDown->push_back(TauToStoreDown);
-
-
+    storedTaus->push_back(TauToStore);
   }
 
   // add the taus to the event output
 
-  iEvent.put(storedTausNominal,NAME_NOMINAL);
-  iEvent.put(storedTausUp,NAME_UP);
-  iEvent.put(storedTausDown,NAME_DOWN);
+  iEvent.put(storedTaus,NAME_);
 
 
 }

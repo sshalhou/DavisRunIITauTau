@@ -44,8 +44,7 @@ class TauClones
 	const slimmedPatTauCollection& taus;
 	const reco::Vertex & first_vertex;
 	const float EsCorrectionFactor;
-	const float EsShiftScaleFactorUp;
-	const float EsShiftScaleFactorDown;
+	const float EsShiftScaleFactor;
 
 	// trigger related collections
 
@@ -61,7 +60,7 @@ class TauClones
 
 
 	public:
-		TauClones(const slimmedPatTauCollection&, const reco::Vertex &, const float, const float, const float,
+		TauClones(const slimmedPatTauCollection&, const reco::Vertex &, const float, const float,
 			edm::Handle<edm::TriggerResults> &,
 			edm::Handle<pat::TriggerObjectStandAloneCollection> &,
 			edm::Handle<pat::PackedTriggerPrescales>&,
@@ -74,21 +73,9 @@ class TauClones
 		/////////////////////////////////////////////////////////////////////
 		// the cloned collection which will have the user floats embedded and ES changed
 		/////////////////////////////////////////////////////////////////////
-		/* only change is embedded userFloats */
 
-		std::vector <pat::Tau> clones; 
+		std::vector <pat::Tau> clonesCorrectedAndShifted; 
 
-		/* embed userFloats and correct Es */
-
-		std::vector <pat::Tau> clonesCorrectedNominalEsShift; 
-
-		/* embed userFloats and correct Es and sys. shift Up */
-
-		std::vector <pat::Tau> clonesCorrectedUpEsShift; 
-
-		/* embed userFloats and correct Es and sys. shift Down */
-
-		std::vector <pat::Tau> clonesCorrectedDownEsShift; 
 
 
 	private:

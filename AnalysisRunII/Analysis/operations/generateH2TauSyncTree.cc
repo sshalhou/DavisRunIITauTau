@@ -124,6 +124,7 @@ void generateH2TauSyncTree::handleEvent()
 
 	run = R.getUI("run");
 	event = R.getUI("event");
+	evt = R.getUI("event");
 	lumi = R.getUI("luminosityBlock");
 
 	npv = R.getI("NumberOfGoodVertices");
@@ -131,6 +132,19 @@ void generateH2TauSyncTree::handleEvent()
  	rho = R.getD("rho");
  	puweight = R.getD("puWeight");
 
+
+ 	isOsPair = R.getI("isOsPair");
+	pairRank = R.getUI("pairRank");
+
+	genBosonTotal_pt = R.getD("genBosonTotal_pt"); 
+    genBosonTotal_eta = R.getD("genBosonTotal_eta");
+    genBosonTotal_phi = R.getD("genBosonTotal_phi");
+    genBosonTotal_M = R.getD("genBosonTotal_M");
+
+	genBosonVisible_pt = R.getD("genBosonVisible_pt");
+	genBosonVisible_eta = R.getD("genBosonVisible_eta");
+	genBosonVisible_phi = R.getD("genBosonVisible_phi");
+	genBosonVisible_M = R.getD("genBosonVisible_M");
 
  	// leg 1 info 
 
@@ -390,6 +404,11 @@ void generateH2TauSyncTree::handleEvent()
 		}
 	}	
 
+	numberOfJets30 = R.getI("numberOfJets30"); /* rm later on */ 
+	numberOfJetsForRecoilCorr = R.getI("numberOfJetsForRecoilCorr");
+
+
+
 	//std::cout<<" ---------- njets30 = "<<njets<<"\n";
 
 
@@ -513,8 +532,20 @@ void generateH2TauSyncTree::setupBranches(TTree * T)
 	T->Branch("pairRank",&pairRank);
 	T->Branch("isOsPair",&isOsPair);
 	
+	T->Branch("genBosonTotal_pt",&genBosonTotal_pt);
+    T->Branch("genBosonTotal_eta",&genBosonTotal_eta);
+    T->Branch("genBosonTotal_phi",&genBosonTotal_phi);
+    T->Branch("genBosonTotal_M",&genBosonTotal_M);
+
+	T->Branch("genBosonVisible_pt",&genBosonVisible_pt);
+	T->Branch("genBosonVisible_eta",&genBosonVisible_eta);
+	T->Branch("genBosonVisible_phi",&genBosonVisible_phi);
+	T->Branch("genBosonVisible_M",&genBosonVisible_M);
+
+
 	T->Branch("run",&run);
 	T->Branch("event",&event);
+	T->Branch("evt",&evt);
 	T->Branch("lumi",&lumi);
 
 	T->Branch("npv",&npv);
@@ -625,6 +656,12 @@ void generateH2TauSyncTree::setupBranches(TTree * T)
 	T->Branch("nbtag", &nbtag);
 	T->Branch("njets", &njets);
 	T->Branch("njetspt20", &njetspt20);
+
+
+	T->Branch("numberOfJets30", &numberOfJets30); /* rm later on */ 
+	T->Branch("numberOfJetsForRecoilCorr", &numberOfJetsForRecoilCorr);
+
+
 
 	T->Branch("jpt_1", &jpt_1);
 	T->Branch("jeta_1", &jeta_1);
@@ -872,9 +909,21 @@ void generateH2TauSyncTree::reset()
 
 	pairRank = 999;
 	isOsPair = -999;
+    genBosonTotal_pt = -999.;
+    genBosonTotal_eta = -999.;
+    genBosonTotal_phi = -999.;
+    genBosonTotal_M = -999.;
+
+	genBosonVisible_pt = -999.;
+	genBosonVisible_eta = -999.;
+	genBosonVisible_phi = -999.;
+	genBosonVisible_M = -999.;
+
+
 
 	run = 0;
 	event = 0;
+	evt = 0;
 	lumi = 0;
 
 
@@ -987,6 +1036,11 @@ void generateH2TauSyncTree::reset()
 	njets =  0;
 	njetspt20 =  0;
 	 
+
+	numberOfJets30 = 0; /* rm later on */ 
+	numberOfJetsForRecoilCorr = 0;
+
+
 	 
 	jpt_1 =  -999.0;
 	jeta_1 =  -999.0;
