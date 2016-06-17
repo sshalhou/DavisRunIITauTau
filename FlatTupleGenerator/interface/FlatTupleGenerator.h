@@ -214,8 +214,10 @@ public:
 
 
 
-	/* the parameters to be read from EventCutSrc_ in FlatTupleConfig_cfi.py */
+	/* the parameters to be read from FlatTupleConfig_cfi.py */
 
+	bool SmallTree_;
+	bool BuildEffTree_;
 	std::vector<std::string> tauIDsToKeep;
 	std::vector<std::string> triggerSummaryChecks;
 	bool keepOnlyBestRankedPair;
@@ -296,7 +298,7 @@ public:
 	int CandidateEventType;  		/* see TupleObjects/interface/TupleCandidateEventTypes.h */
 	float TauEsNumberSigmasShifted; /* number of sigmas the tau ES was shifted in this event */
 	float ElectronEsNumberSigmasShifted; /* number of sigmas the tau ES was shifted in this event */
-	
+	bool isSmallTree; /* indicates if SmallTree_ reduction was applied to the TTree */
 
 	/* new for 76X need recoil variants : uncorr_, corr_, responseUP_, responseDOWN_, resolutionUP_, 
 		resolutionDOWN_ versions of MVAMET and the MT variables related to MVA MET 	

@@ -6,8 +6,27 @@ import FWCore.ParameterSet.Config as cms
 from DavisRunIITauTau.TupleConfigurations.and_string_concatonator import and_string_concatonator
 
 ###################################################
+# do we want a smaller version of the FlatTuple ?
+###################################################
+
+SmallTree_ = True
+
+if SmallTree_ is True :
+	print "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+	print " SmallTree_ option is Active... "
+	print "     -- FlatTuple size reduction of ~50%  "
+	print "     -- eliminates inputs to electron/muon/tau ID and MVAs "
+	print "     -- eliminates bTag SF and Eff (but keep tag pass/fail) "
+	print "     -- eliminates genMothers and genDaughters (but not genParticles) "
+	print "     -- still allows for full analysis (excluding more detailed side studies) "
+	print "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+
+
+
+###################################################
 # do we want to build low DR FlatTuples as well?  #
 ###################################################
+
 BUILD_LOWDR = True
 
 ##########################################
@@ -576,8 +595,7 @@ lowDeltaRCuts = cms.VPSet(
 				)
 	)
 
-
-		
+from DavisRunIITauTau.TupleConfigurations.ConfigNtupleContent_cfi import BUILD_EFFICIENCY_TREE as BuildEffTree_
 
 # config for basic settings 
 generalConfig = cms.PSet(
@@ -590,6 +608,17 @@ generalConfig = cms.PSet(
 			rankByPtSum = cms.bool(False),
 			rankByIsolation = cms.bool(True), # checks leg1 isolation, then pt in case of tie
 			
+			####################################
+			# new options for a FlatTuple 
+			# size reduction of ~50% 
+			# when True :
+			# -- eliminates inputs to electron/muon/tau ID and MVAs
+			# -- eliminates genMothers and genDaughters (but not genParticles)
+			# -- still allows for full analysis (excluding more detailed side studies)
+
+			SmallTree = cms.bool(SmallTree_),
+			BuildEffTree = cms.bool(BuildEffTree_), # if false no effLep info will be in FlatTuple
+
 			#######################################
 			# in 76X have a new complication :
 			# for DeltaBeta (ex: byCombinedIsolationDeltaBetaCorrRaw3Hits)  smaller value = more isolated

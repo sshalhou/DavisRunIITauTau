@@ -289,18 +289,20 @@ void generateH2TauSyncTree::handleEvent()
 	std::vector<float> jets_defaultBtagAlgorithm_RawScore = R.getVF("jets_defaultBtagAlgorithm_RawScore");
 	std::vector<int> jets_PARTON_flavour = R.getVI("jets_PARTON_flavour");
 	std::vector<int> jets_HADRON_flavour = R.getVI("jets_HADRON_flavour");
-	std::vector<double> jets_BtagSF_LooseWpCentral = R.getVD("jets_BtagSF_LooseWpCentral");
-	std::vector<double> jets_BtagSF_LooseWpUp = R.getVD("jets_BtagSF_LooseWpUp");
-	std::vector<double> jets_BtagSF_LooseWpDown = R.getVD("jets_BtagSF_LooseWpDown");
-	std::vector<double> jets_BtagSF_MediumWpCentral = R.getVD("jets_BtagSF_MediumWpCentral");
-	std::vector<double> jets_BtagSF_MediumWpUp = R.getVD("jets_BtagSF_MediumWpUp");
-	std::vector<double> jets_BtagSF_MediumWpDown = R.getVD("jets_BtagSF_MediumWpDown");
-	std::vector<double> jets_BtagSF_TightWpCentral = R.getVD("jets_BtagSF_TightWpCentral");
-	std::vector<double> jets_BtagSF_TightWpUp = R.getVD("jets_BtagSF_TightWpUp");
-	std::vector<double> jets_BtagSF_TightWpDown = R.getVD("jets_BtagSF_TightWpDown");
-	std::vector<double> jets_BtagEff_LooseWp = R.getVD("jets_BtagEff_LooseWp");
-	std::vector<double> jets_BtagEff_MediumWp = R.getVD("jets_BtagEff_MediumWp");
-	std::vector<double> jets_BtagEff_TightWp = R.getVD("jets_BtagEff_TightWp");
+	
+
+	// std::vector<double> jets_BtagSF_LooseWpCentral = R.getVD("jets_BtagSF_LooseWpCentral");
+	// std::vector<double> jets_BtagSF_LooseWpUp = R.getVD("jets_BtagSF_LooseWpUp");
+	// std::vector<double> jets_BtagSF_LooseWpDown = R.getVD("jets_BtagSF_LooseWpDown");
+	// std::vector<double> jets_BtagSF_MediumWpCentral = R.getVD("jets_BtagSF_MediumWpCentral");
+	// std::vector<double> jets_BtagSF_MediumWpUp = R.getVD("jets_BtagSF_MediumWpUp");
+	// std::vector<double> jets_BtagSF_MediumWpDown = R.getVD("jets_BtagSF_MediumWpDown");
+	// std::vector<double> jets_BtagSF_TightWpCentral = R.getVD("jets_BtagSF_TightWpCentral");
+	// std::vector<double> jets_BtagSF_TightWpUp = R.getVD("jets_BtagSF_TightWpUp");
+	// std::vector<double> jets_BtagSF_TightWpDown = R.getVD("jets_BtagSF_TightWpDown");
+	// std::vector<double> jets_BtagEff_LooseWp = R.getVD("jets_BtagEff_LooseWp");
+	// std::vector<double> jets_BtagEff_MediumWp = R.getVD("jets_BtagEff_MediumWp");
+	// std::vector<double> jets_BtagEff_TightWp = R.getVD("jets_BtagEff_TightWp");
 	std::vector<double> jets_IsBTagged_LooseWpCentral = R.getVD("jets_IsBTagged_LooseWpCentral");
 	std::vector<double> jets_IsBTagged_LooseWpUp = R.getVD("jets_IsBTagged_LooseWpUp");
 	std::vector<double> jets_IsBTagged_LooseWpDown = R.getVD("jets_IsBTagged_LooseWpDown");
