@@ -28,10 +28,12 @@ MAX_TAU_COUNT = 10
 
 
 ####################################################################################################
-# edit the following to turn on/off Tau ES variants
+# edit the following to turn on/off Tau/electron ES variants
 ####################################################################################################
 
-BUILD_TAU_ES_VARIANTS = True # not needed in early sync
+BUILD_TAU_ES_VARIANTS = True 
+BUILD_ELECTRON_ES_VARIANTS = True # only used for e+mu channel
+
 
 ####################################################################################################
 # some options to run SVFit at Ntuple level 

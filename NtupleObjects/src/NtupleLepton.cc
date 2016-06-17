@@ -23,6 +23,7 @@ NtupleLepton::NtupleLepton()
   m_ooEmooP = NAN;
   m_full5x5_sigmaIetaIeta = NAN;
   m_TauEsVariant = NAN; 
+  m_ElectronEsVariant = NAN; 
   m_IP = NAN;                   
   m_IPerror = NAN;              
   m_PUchargedHadronIso = NAN;   
@@ -366,6 +367,7 @@ void NtupleLepton::printLEP()
   std::cout<<"<LEPPRINT "<<type_print<<"> ELECTRON ooEmooP "<<m_ooEmooP<<"\n";
   std::cout<<"<LEPPRINT "<<type_print<<"> ELECTRON full5x5_sigmaIetaIeta "<<m_full5x5_sigmaIetaIeta<<"\n";
   std::cout<<"<LEPPRINT "<<type_print<<"> TauEsVariant "<<m_TauEsVariant<<"\n";
+  std::cout<<"<LEPPRINT "<<type_print<<"> ElectronEsVariant "<<m_ElectronEsVariant<<"\n";
 
 std::cout<<"<LEPPRINT "<<type_print<<"> IP : " << m_IP << std::endl;
 std::cout<<"<LEPPRINT "<<type_print<<"> IPerror : " << m_IPerror << std::endl;
@@ -485,6 +487,8 @@ void NtupleLepton::userFloatVectorParser(stringVec & labels_,floatVec & values_)
     else if(labels_[i]=="ooEmooP") {m_ooEmooP = values_[i];}  
     else if(labels_[i]=="full5x5_sigmaIetaIeta") {m_full5x5_sigmaIetaIeta = values_[i];}  
     else if(labels_[i]=="TauEsVariant") {m_TauEsVariant = values_[i];}      
+    else if(labels_[i]=="ElectronEsVariant") {m_ElectronEsVariant = values_[i];}      
+
     else if(labels_[i]=="IP") {m_IP = values_[i];}      
     else if(labels_[i]=="IPerror") { m_IPerror = values_[i];}      
     else if(labels_[i]=="PUchargedHadronIso") { m_PUchargedHadronIso = values_[i];}      
@@ -714,6 +718,7 @@ float NtupleLepton::ooEmooP() const {return m_ooEmooP;}
 float NtupleLepton::full5x5_sigmaIetaIeta() const {return m_full5x5_sigmaIetaIeta;} 
 
 float NtupleLepton::TauEsVariant() const {return m_TauEsVariant;} 
+float NtupleLepton::ElectronEsVariant() const {return m_ElectronEsVariant;} 
 float NtupleLepton::IP() const {return m_IP;} 
 float NtupleLepton::IPerror() const {return m_IPerror;} 
 float NtupleLepton::PUchargedHadronIso() const {return m_PUchargedHadronIso;} 

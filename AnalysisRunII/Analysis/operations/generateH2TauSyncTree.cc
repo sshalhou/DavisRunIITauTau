@@ -4,7 +4,7 @@
 #include <string>
 
 
-generateH2TauSyncTree::generateH2TauSyncTree(FlatTreeReader R_, bool run_)
+generateH2TauSyncTree::generateH2TauSyncTree(FlatTreeReader R_, bool run_, std::string fileOutName_)
 {
 	m_run = run_;
 	R = R_;
@@ -19,10 +19,16 @@ generateH2TauSyncTree::generateH2TauSyncTree(FlatTreeReader R_, bool run_)
 	if(m_run)
 	{
 
-	outFile_MuTau = new TFile("davis_syncTree_MuTau.root","RECREATE");
-	outFile_EleTau  = new TFile("davis_syncTree_EleTau.root","RECREATE");
-	outFile_TauTau  = new TFile("davis_syncTree_TauTau.root","RECREATE");
-	outFile_EleMu  = new TFile("davis_syncTree_EleMu.root","RECREATE");
+	std::string MuTauName = "davis_syncTree_"+fileOutName_+"MuTau.root";
+	std::string EleTauName = "davis_syncTree_"+fileOutName_+"EleTau.root";
+	std::string TauTauName = "davis_syncTree_"+fileOutName_+"TauTau.root";
+	std::string EleMuName = "davis_syncTree_"+fileOutName_+"EleMu.root";
+
+
+	outFile_MuTau = new TFile(MuTauName.c_str(),"RECREATE");
+	outFile_EleTau  = new TFile(EleTauName.c_str(),"RECREATE");
+	outFile_TauTau  = new TFile(TauTauName.c_str(),"RECREATE");
+	outFile_EleMu  = new TFile(EleMuName.c_str(),"RECREATE");
 
 	tree_MuTau = new TTree("tree_MuTau","tree_MuTau");
 	tree_EleTau = new TTree("tree_EleTau","tree_EleTau");

@@ -99,6 +99,7 @@ public:
     float ooEmooP() const;         				
     float full5x5_sigmaIetaIeta() const;   
 	float TauEsVariant() const; 
+	float ElectronEsVariant() const; 
 	float IP() const; 								
 	float IPerror() const; 							
 	float PUchargedHadronIso() const; 					
@@ -222,6 +223,7 @@ private:
 	float m_numberOfMissingOuterHits;
 	float m_numberOfTrackHits;
 	float m_passConversionVeto;
+    float m_ElectronEsVariant;						//  -1 if ElectronEs DOWN, +1 if UP, 0 if Nominal
 
 	//////////////////////////////////////////////////
 	// paramenters meaningful for taus only

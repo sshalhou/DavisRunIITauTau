@@ -195,6 +195,7 @@ public:
 	std::string MetSystematicType_; // the type of mva met sys. pulled from sample meta data 
 	edm::ParameterSet EventCutSrc_;
 	std::string TauEsVariantToKeep_;  // should be NOMINAL, UP or DOWN
+	std::string ElectronEsVariantToKeep_;  // should be NOMINAL, UP or DOWN
 	std::vector<edm::ParameterSet> LeptonCutVecSrc_;
 	edm::ParameterSet svMassAtFlatTupleConfig_;	
 
@@ -223,6 +224,9 @@ public:
 	bool keepTauEsNominal;
 	bool keepTauEsUp; 
 	bool keepTauEsDown; 
+	bool keepElectronEsNominal;
+	bool keepElectronEsUp; 
+	bool keepElectronEsDown; 
 	bool rankByPtSum;
 	bool rankByIsolation;
 
@@ -291,6 +295,7 @@ public:
 	int isOsPair;		  			/* 1 if sign(leg1)!=sign(leg2), 0 otherwise */
 	int CandidateEventType;  		/* see TupleObjects/interface/TupleCandidateEventTypes.h */
 	float TauEsNumberSigmasShifted; /* number of sigmas the tau ES was shifted in this event */
+	float ElectronEsNumberSigmasShifted; /* number of sigmas the tau ES was shifted in this event */
 	
 
 	/* new for 76X need recoil variants : uncorr_, corr_, responseUP_, responseDOWN_, resolutionUP_, 

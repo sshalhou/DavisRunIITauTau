@@ -38,7 +38,7 @@ class generateH2TauSyncTree
 {
 
 public:
-	generateH2TauSyncTree(FlatTreeReader, bool);
+	generateH2TauSyncTree(FlatTreeReader, bool, std::string);
 	virtual ~generateH2TauSyncTree();	
 	void handleEvent();
 	void finish();

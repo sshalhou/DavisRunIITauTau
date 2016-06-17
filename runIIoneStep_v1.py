@@ -6,7 +6,7 @@ process = cms.Process('DavisNtuple')
 ###################################
 
 # how many events to run, -1 means run all 
-MAX_EVENTS = 10000
+MAX_EVENTS = 50
 #MAX_EVENTS = 9153
 
 # datasets for local running 
@@ -137,7 +137,63 @@ process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(MAX_EVENTS) 
 # input - remove for crab running
 ###################################
 
-process.source = cms.Source("PoolSource",fileNames=myfilelist)
+#process.source = cms.Source("PoolSource",fileNames=myfilelist)
+
+
+process.source = cms.Source("PoolSource",fileNames=myfilelist,
+			eventsToProcess = cms.untracked.VEventRange('1:103608-1:103608','1:103610-1:103610','1:103649-1:103649','1:103706-1:103706','1:103769-1:103769','1:103806-1:103806',
+'1:103926-1:103926','1:104000-1:104000','1:104055-1:104055','1:104131-1:104131','1:109698-1:109698','1:109756-1:109756',
+'1:109758-1:109758','1:109804-1:109804','1:109843-1:109843','1:110007-1:110007','1:110137-1:110137','1:110254-1:110254',
+'1:110465-1:110465','1:110541-1:110541','1:110576-1:110576','1:110725-1:110725','1:110739-1:110739','1:113464-1:113464',
+'1:113473-1:113473','1:113510-1:113510','1:113544-1:113544','1:113635-1:113635','1:113656-1:113656','1:113737-1:113737',
+'1:113782-1:113782','1:114111-1:114111','1:114117-1:114117','1:115326-1:115326','1:115342-1:115342','1:115405-1:115405',
+'1:115681-1:115681','1:115719-1:115719','1:115757-1:115757','1:115778-1:115778','1:115972-1:115972','1:116133-1:116133',
+'1:116279-1:116279','1:117467-1:117467','1:117581-1:117581','1:117601-1:117601','1:117801-1:117801','1:117822-1:117822',
+'1:117833-1:117833','1:117932-1:117932','1:117963-1:117963','1:119022-1:119022','1:119102-1:119102','1:119148-1:119148',
+'1:119239-1:119239','1:119242-1:119242','1:119276-1:119276','1:119346-1:119346','1:119431-1:119431','1:119497-1:119497',
+'1:119530-1:119530','1:119709-1:119709','1:119789-1:119789','1:119832-1:119832','1:119855-1:119855','1:119978-1:119978',
+'1:119993-1:119993','1:120025-1:120025','1:120085-1:120085','1:120112-1:120112','1:120179-1:120179','1:123007-1:123007',
+'1:123076-1:123076','1:123091-1:123091','1:123146-1:123146','1:123293-1:123293','1:123384-1:123384','1:123454-1:123454',
+'1:123605-1:123605','1:123625-1:123625','1:123656-1:123656','1:123718-1:123718','1:123835-1:123835','1:123947-1:123947',
+'1:124007-1:124007','1:128578-1:128578','1:128681-1:128681','1:130256-1:130256','1:130260-1:130260','1:130290-1:130290',
+'1:130316-1:130316','1:130393-1:130393','1:130421-1:130421','1:130446-1:130446','1:130463-1:130463','1:130477-1:130477',
+'1:130589-1:130589','1:133622-1:133622','1:133633-1:133633','1:133728-1:133728','1:133741-1:133741','1:133842-1:133842',
+'1:133869-1:133869','1:133959-1:133959','1:133994-1:133994','1:134031-1:134031','1:134085-1:134085','1:134320-1:134320',
+'1:134372-1:134372','1:134518-1:134518','1:136762-1:136762','1:136798-1:136798','1:136892-1:136892','1:136984-1:136984',
+'1:137061-1:137061','1:137076-1:137076','1:137097-1:137097','1:137101-1:137101','1:137130-1:137130','1:137139-1:137139',
+'1:137148-1:137148','1:137379-1:137379','1:137421-1:137421','1:137433-1:137433','1:137453-1:137453','1:137526-1:137526',
+'1:137529-1:137529','1:137557-1:137557','1:137569-1:137569','1:137712-1:137712','1:137717-1:137717','1:137723-1:137723',
+'1:137748-1:137748','1:137766-1:137766','1:137789-1:137789','1:137810-1:137810','1:137837-1:137837','1:137933-1:137933',
+'1:138147-1:138147','1:138168-1:138168','1:138246-1:138246','1:138384-1:138384','1:138392-1:138392','1:138463-1:138463',
+'1:140202-1:140202','1:140580-1:140580','1:140651-1:140651','1:140658-1:140658','1:140685-1:140685','1:140707-1:140707',
+'1:144627-1:144627','1:144683-1:144683','1:144716-1:144716','1:144805-1:144805','1:144810-1:144810','1:144834-1:144834',
+'1:145109-1:145109','1:145717-1:145717','1:145833-1:145833','1:145874-1:145874','1:145910-1:145910','1:145912-1:145912',
+'1:145918-1:145918','1:145925-1:145925','1:145929-1:145929','1:145964-1:145964','1:146009-1:146009','1:146055-1:146055',
+'1:146074-1:146074','1:146122-1:146122','1:146127-1:146127','1:146156-1:146156','1:146223-1:146223','1:146232-1:146232'))
+
+# '1:146241-1:146241','1:146248-1:146248','1:146406-1:146406','1:146423-1:146423','1:146460-1:146460','1:146528-1:146528',
+# '1:146530-1:146530','1:146642-1:146642','1:146646-1:146646','1:146767-1:146767','1:146779-1:146779','1:158058-1:158058',
+# '1:158189-1:158189','1:158222-1:158222','1:158312-1:158312','1:158341-1:158341','1:158350-1:158350','1:158365-1:158365',
+# '1:158367-1:158367','1:158375-1:158375','1:162548-1:162548','1:162634-1:162634','1:162701-1:162701','1:162722-1:162722',
+# '1:162823-1:162823','1:162868-1:162868','1:163340-1:163340','1:163349-1:163349','1:163372-1:163372','1:163420-1:163420',
+# '1:163530-1:163530','1:163560-1:163560','1:163620-1:163620','1:166245-1:166245','1:166267-1:166267','1:166366-1:166366',
+# '1:166386-1:166386','1:166405-1:166405','1:166457-1:166457','1:166489-1:166489','1:166524-1:166524','1:166607-1:166607',
+# '1:166624-1:166624','1:168291-1:168291','1:168299-1:168299','1:170129-1:170129','1:170221-1:170221','1:171281-1:171281',
+# '1:171396-1:171396','1:171413-1:171413','1:171460-1:171460','1:31751-1:31751','1:31783-1:31783','1:31866-1:31866',
+# '1:31952-1:31952','1:31991-1:31991','1:32030-1:32030','1:4465-1:4465','1:4480-1:4480','1:4491-1:4491','1:4501-1:4501',
+# '1:4536-1:4536','1:4545-1:4545','1:4609-1:4609','1:4732-1:4732','1:4774-1:4774','1:4778-1:4778','1:4945-1:4945',
+# '1:4956-1:4956','1:4983-1:4983','1:53415-1:53415','1:53507-1:53507','1:53562-1:53562','1:53605-1:53605','1:53700-1:53700',
+# '1:57089-1:57089','1:57136-1:57136','1:57163-1:57163','1:57177-1:57177','1:57280-1:57280','1:57420-1:57420','1:57436-1:57436',
+# '1:6123-1:6123','1:6213-1:6213','1:6260-1:6260','1:6277-1:6277','1:6328-1:6328','1:6359-1:6359','1:6370-1:6370','1:6376-1:6376',
+# '1:6445-1:6445','1:73396-1:73396','1:73454-1:73454','1:83154-1:83154','1:83263-1:83263','1:83290-1:83290','1:83291-1:83291',
+# '1:83348-1:83348','1:83407-1:83407','1:83472-1:83472','1:83603-1:83603','1:83637-1:83637','1:84225-1:84225','1:84249-1:84249',
+# '1:84255-1:84255','1:84385-1:84385','1:84528-1:84528','1:84598-1:84598','1:84733-1:84733','1:86630-1:86630',
+# '1:86722-1:86722','1:86750-1:86750','1:86767-1:86767','1:86791-1:86791','1:86942-1:86942','1:90366-1:90366',
+# '1:90367-1:90367','1:90436-1:90436','1:90477-1:90477','1:90521-1:90521','1:91978-1:91978','1:92027-1:92027',
+# '1:92039-1:92039','1:92051-1:92051','1:92082-1:92082','1:92180-1:92180','1:92230-1:92230','1:92325-1:92325',
+# '1:92356-1:92356','1:92382-1:92382','1:92408-1:92408','1:92409-1:92409','1:92424-1:92424','1:92486-1:92486'))
+
+
 
 # process.source = cms.Source("PoolSource",fileNames=myfilelist,
 # 			eventsToProcess = cms.untracked.VEventRange('1:4487-1:4487','1:4492-1:4492','1:4600-1:4600','1:4632-1:4632',
@@ -269,7 +325,9 @@ cutVeto = cms.InputTag("egmGsfElectronIDs:cutBasedElectronID-Spring15-25ns-V1-st
 process.customSlimmedElectrons = cms.EDProducer('CustomPatElectronProducer' ,
 							electronSrc =cms.InputTag('slimmedElectrons'),
 							vertexSrc =cms.InputTag('filteredVertices::DavisNtuple'),
-							NAME=cms.string("customSlimmedElectrons"),
+							NAME=cms.string(""),
+						    BarrelEnergyShift = cms.double(1.0),
+						    EndcapEnergyShift = cms.double(1.0),
 							triggerBitSrc = cms.InputTag("TriggerResults","","HLT"),
 							triggerPreScaleSrc = cms.InputTag("patTrigger"),
 							triggerObjectSrc = cms.InputTag("selectedPatTrigger"),							
@@ -280,6 +338,45 @@ process.customSlimmedElectrons = cms.EDProducer('CustomPatElectronProducer' ,
 							mvaCategoriesMap = wpCats,
 							eleVetoIdMap = cutVeto
 							                 )
+
+
+
+
+process.customSlimmedElectronsEsUp = cms.EDProducer('CustomPatElectronProducer' ,
+							electronSrc =cms.InputTag('slimmedElectrons'),
+							vertexSrc =cms.InputTag('filteredVertices::DavisNtuple'),
+							NAME=cms.string(""),
+						    BarrelEnergyShift = cms.double(1.01),
+						    EndcapEnergyShift = cms.double(1.025),							
+							triggerBitSrc = cms.InputTag("TriggerResults","","HLT"),
+							triggerPreScaleSrc = cms.InputTag("patTrigger"),
+							triggerObjectSrc = cms.InputTag("selectedPatTrigger"),							
+							rhoSources = rhoSourceList,
+							eleMediumIdMap = wp80,
+							eleTightIdMap = wp90,
+							mvaValuesMap     = wpVals,
+							mvaCategoriesMap = wpCats,
+							eleVetoIdMap = cutVeto
+							                 )
+
+
+process.customSlimmedElectronsEsDown = cms.EDProducer('CustomPatElectronProducer' ,
+							electronSrc =cms.InputTag('slimmedElectrons'),
+							vertexSrc =cms.InputTag('filteredVertices::DavisNtuple'),
+							NAME=cms.string(""),
+						    BarrelEnergyShift = cms.double(0.99),
+						    EndcapEnergyShift = cms.double(0.975),								
+							triggerBitSrc = cms.InputTag("TriggerResults","","HLT"),
+							triggerPreScaleSrc = cms.InputTag("patTrigger"),
+							triggerObjectSrc = cms.InputTag("selectedPatTrigger"),							
+							rhoSources = rhoSourceList,
+							eleMediumIdMap = wp80,
+							eleTightIdMap = wp90,
+							mvaValuesMap     = wpVals,
+							mvaCategoriesMap = wpCats,
+							eleVetoIdMap = cutVeto
+							                 )
+
 
 
 process.customSlimmedMuons = cms.EDProducer('CustomPatMuonProducer' ,
@@ -300,7 +397,6 @@ process.customSlimmedMuons = cms.EDProducer('CustomPatMuonProducer' ,
 process.customSlimmedTausTauEsNominal = cms.EDProducer('CustomPatTauProducer' ,
 							tauSrc =cms.InputTag('slimmedTaus'),
 							vertexSrc =cms.InputTag('filteredVertices::DavisNtuple'),
-							#NAME=cms.string("customSlimmedTausTauEsNominal"),
 							NAME=cms.string(""),
 							#TauEsCorrection=cms.double(0.99),
 							TauEsCorrection=cms.double(1.0),
@@ -315,7 +411,6 @@ process.customSlimmedTausTauEsNominal = cms.EDProducer('CustomPatTauProducer' ,
 process.customSlimmedTausTauEsUp = cms.EDProducer('CustomPatTauProducer' ,
 							tauSrc =cms.InputTag('slimmedTaus'),
 							vertexSrc =cms.InputTag('filteredVertices::DavisNtuple'),
-							#NAME=cms.string("customSlimmedTausTauEsUp"),
 							NAME=cms.string(""),
 							#TauEsCorrection=cms.double(0.99),
 							TauEsCorrection=cms.double(1.0),
@@ -331,7 +426,6 @@ process.customSlimmedTausTauEsUp = cms.EDProducer('CustomPatTauProducer' ,
 process.customSlimmedTausTauEsDown = cms.EDProducer('CustomPatTauProducer' ,
 							tauSrc =cms.InputTag('slimmedTaus'),
 							vertexSrc =cms.InputTag('filteredVertices::DavisNtuple'),
-#							NAME=cms.string("customSlimmedTausTauEsDown"),
 							NAME=cms.string(""),
 							#TauEsCorrection=cms.double(0.99),
 							TauEsCorrection=cms.double(1.0),
@@ -359,9 +453,20 @@ from DavisRunIITauTau.TupleConfigurations.ConfigTupleTaus_cfi import tauFilter
 
 
 process.filteredCustomElectrons = cms.EDFilter("PATElectronRefSelector",
-	src = cms.InputTag('customSlimmedElectrons:customSlimmedElectrons:DavisNtuple'),
+	src = cms.InputTag('customSlimmedElectrons::DavisNtuple'),
 	cut = electronFilter
 	)
+
+process.filteredCustomElectronsEsUp = cms.EDFilter("PATElectronRefSelector",
+	src = cms.InputTag('customSlimmedElectronsEsUp::DavisNtuple'),
+	cut = electronFilter
+	)
+
+process.filteredCustomElectronsEsDown = cms.EDFilter("PATElectronRefSelector",
+	src = cms.InputTag('customSlimmedElectronsEsDown::DavisNtuple'),
+	cut = electronFilter
+	)
+
 
 process.filteredCustomMuons = cms.EDFilter("PATMuonRefSelector",
 	src = cms.InputTag('customSlimmedMuons:customSlimmedMuons:DavisNtuple'),
@@ -394,6 +499,18 @@ process.TrimmedFilteredCustomElectrons = cms.EDProducer('TrimmedPatElectronProdu
    					 electronSrc = cms.InputTag("filteredCustomElectrons::DavisNtuple"),
 				     MAX_TO_KEEP = cms.uint32(MAX_ELECTRON_COUNT),
 				     NAME=cms.string("TrimmedFilteredCustomElectrons"))
+
+
+process.TrimmedFilteredCustomElectronsEsUp = cms.EDProducer('TrimmedPatElectronProducer' ,
+   					 electronSrc = cms.InputTag("filteredCustomElectronsEsUp::DavisNtuple"),
+				     MAX_TO_KEEP = cms.uint32(MAX_ELECTRON_COUNT),
+				     NAME=cms.string("TrimmedFilteredCustomElectronsEsUp"))
+
+
+process.TrimmedFilteredCustomElectronsEsDown = cms.EDProducer('TrimmedPatElectronProducer' ,
+   					 electronSrc = cms.InputTag("filteredCustomElectronsEsDown::DavisNtuple"),
+				     MAX_TO_KEEP = cms.uint32(MAX_ELECTRON_COUNT),
+				     NAME=cms.string("TrimmedFilteredCustomElectronsEsDown"))
 
 
 process.TrimmedFilteredCustomMuons = cms.EDProducer('TrimmedPatMuonProducer' ,
@@ -432,7 +549,17 @@ from DavisRunIITauTau.TupleConfigurations.ConfigVetoMuons_cfi import muonVetoFil
 
 
 process.filteredVetoElectrons = cms.EDFilter("PATElectronRefSelector",
-	src = cms.InputTag('customSlimmedElectrons:customSlimmedElectrons:DavisNtuple'),
+	src = cms.InputTag('customSlimmedElectrons::DavisNtuple'),
+	cut = electronVetoFilter
+	)
+
+process.filteredVetoElectronsEsUp = cms.EDFilter("PATElectronRefSelector",
+	src = cms.InputTag('customSlimmedElectronsEsUp::DavisNtuple'),
+	cut = electronVetoFilter
+	)
+
+process.filteredVetoElectronsEsDown = cms.EDFilter("PATElectronRefSelector",
+	src = cms.InputTag('customSlimmedElectronsEsDown::DavisNtuple'),
 	cut = electronVetoFilter
 	)
 
@@ -452,7 +579,7 @@ process.filteredVetoMuons = cms.EDFilter("PATMuonRefSelector",
 
 
 process.requireCandidateHiggsPair = cms.EDFilter("HiggsCandidateCountFilter",
-  	electronSource = cms.InputTag("TrimmedFilteredCustomElectrons:TrimmedFilteredCustomElectrons:DavisNtuple"),
+  	electronSource = cms.InputTag("TrimmedFilteredCustomElectronsEsDown:TrimmedFilteredCustomElectronsEsDown:DavisNtuple"), # always count with Down ES shift
 	muonSource     = cms.InputTag("TrimmedFilteredCustomMuons:TrimmedFilteredCustomMuons:DavisNtuple"),
 	tauSource      = cms.InputTag("TrimmedFilteredCustomTausEsDown:TrimmedFilteredCustomTausEsDown:DavisNtuple"), # always count with Down ES shift
 	countElectronElectrons = cms.bool(BUILD_ELECTRON_ELECTRON),
@@ -471,6 +598,65 @@ process.requireCandidateHiggsPair = cms.EDFilter("HiggsCandidateCountFilter",
 
 from RecoMET.METPUSubtraction.LeptonSelectionTools_cff import applyTauID as tauIDforMVAmetEsUp
 from RecoMET.METPUSubtraction.LeptonSelectionTools_cff import applyTauID as tauIDforMVAmetEsDown
+from RecoMET.METPUSubtraction.LeptonSelectionTools_cff import applyTauID as tauIDforMVAmetNominal
+
+from RecoMET.METPUSubtraction.LeptonSelectionTools_cff import applyElectronID as electronIDforMVAmetUp
+from RecoMET.METPUSubtraction.LeptonSelectionTools_cff import applyElectronID as electronIDforMVAmetDown
+from RecoMET.METPUSubtraction.LeptonSelectionTools_cff import applyElectronID as electronIDforMVAmet
+
+
+#######################################################
+# special electron collections needed for mvamet   
+# settings should match MVAMETConfiguration_cff.py
+########################################################
+
+electronIDforMVAmet(process, 
+                label = "Tight", 
+                src   = "customSlimmedElectrons",
+                iso_map_charged_hadron  = '',
+                iso_map_neutral_hadron  = '',
+                iso_map_photon          = '',
+                typeIso = "rhoCorr",
+                electron_id_map = 'egmGsfElectronIDs:cutBasedElectronID-Spring15-25ns-V1-standalone-tight',
+                relativeIsolationCutVal = 0.12
+                )
+
+electronIDforMVAmetUp(process, 
+                label = "Tight", 
+                src   = "customSlimmedElectronsUp",
+                iso_map_charged_hadron  = '',
+                iso_map_neutral_hadron  = '',
+                iso_map_photon          = '',
+                typeIso = "rhoCorr",
+                electron_id_map = 'egmGsfElectronIDs:cutBasedElectronID-Spring15-25ns-V1-standalone-tight',
+                relativeIsolationCutVal = 0.12
+                )
+
+electronIDforMVAmetDown(process, 
+                label = "Tight", 
+                src   = "customSlimmedElectronsEsDown",
+                iso_map_charged_hadron  = '',
+                iso_map_neutral_hadron  = '',
+                iso_map_photon          = '',
+                typeIso = "rhoCorr",
+                electron_id_map = 'egmGsfElectronIDs:cutBasedElectronID-Spring15-25ns-V1-standalone-tight',
+                relativeIsolationCutVal = 0.12
+                )
+
+
+
+
+
+#######################################################
+# special tau collections needed for mvamet   
+# settings should match MVAMETConfiguration_cff.py
+########################################################
+
+tauIDforMVAmetNominal( process, 
+            label = "Loose", 
+            src = "customSlimmedTausTauEsNominal",
+            muonCollection     = "slimmedMuons"+"Tight",
+            electronCollection = "slimmedElectrons"+"Tight")
 
 
 tauIDforMVAmetEsUp( process, 
@@ -487,35 +673,73 @@ tauIDforMVAmetEsDown( process,
             electronCollection = "slimmedElectrons"+"Tight")
 
 
+##################################
+# init mva met 
+##################################
 
 from RecoMET.METPUSubtraction.MVAMETConfiguration_cff import runMVAMET
-
-runMVAMET( process, jetCollectionPF = "patJetsReapplyJEC", srcTaus="customSlimmedTausTauEsNominal" )
-
+runMVAMET( process, jetCollectionPF = "patJetsReapplyJEC")
 
 
-
-
+#################################
+# modify the default mva met    #
+#################################
 
 process.MVAMET.srcLeptons  = cms.VInputTag("TrimmedFilteredCustomMuons:TrimmedFilteredCustomMuons:DavisNtuple", 
 										   "TrimmedFilteredCustomElectrons:TrimmedFilteredCustomElectrons:DavisNtuple", 
 										   "TrimmedFilteredCustomTausEsNominal:TrimmedFilteredCustomTausEsNominal:DavisNtuple")
+
+process.MVAMET.srcTaus = cms.InputTag("customSlimmedTausTauEsNominalLooseCleaned")
+process.MVAMET.srcElectrons = cms.InputTag("customSlimmedElectronsTight")
+
 process.MVAMET.requireOS = cms.bool(False)
 
 
+##################################################################
+# clone the default (with mods) and adjust for tau ES up
+##################################################################
 
 process.MVAMETtauEsUp = process.MVAMET.clone(srcLeptons  = cms.VInputTag("TrimmedFilteredCustomMuons:TrimmedFilteredCustomMuons:DavisNtuple", 
 											   "TrimmedFilteredCustomElectrons:TrimmedFilteredCustomElectrons:DavisNtuple", 
 											   "TrimmedFilteredCustomTausEsUp:TrimmedFilteredCustomTausEsUp:DavisNtuple"),
+												srcElectrons = cms.InputTag("customSlimmedElectronsTight"),
 												srcTaus = cms.InputTag("customSlimmedTausTauEsUpLooseCleaned"),
 												requireOS = cms.bool(False))
 
 
+##################################################################
+# clone the default (with mods) and adjust for tau ES down
+##################################################################
+
 process.MVAMETtauEsDown = process.MVAMET.clone(srcLeptons  = cms.VInputTag("TrimmedFilteredCustomMuons:TrimmedFilteredCustomMuons:DavisNtuple", 
 											   "TrimmedFilteredCustomElectrons:TrimmedFilteredCustomElectrons:DavisNtuple", 
 											   "TrimmedFilteredCustomTausEsDown:TrimmedFilteredCustomTausEsDown:DavisNtuple"),
+												srcElectrons = cms.InputTag("customSlimmedElectronsTight"),
 												srcTaus = cms.InputTag("customSlimmedTausTauEsDownLooseCleaned"),
 												requireOS = cms.bool(False))
+
+
+##################################################################
+# clone the default (with mods) and adjust for electron ES up
+# since the electron ES systematic applies only for e+mu
+# evaluate only e + mu pairs (that is why srcLeptons does not use taus)
+##################################################################
+
+process.MVAMETelectronEsUp = process.MVAMET.clone(srcLeptons  = cms.VInputTag("TrimmedFilteredCustomMuons:TrimmedFilteredCustomMuons:DavisNtuple", 
+											   "TrimmedFilteredCustomElectronsEsUp:TrimmedFilteredCustomElectronsEsUp:DavisNtuple"),
+												srcElectrons = cms.InputTag("customSlimmedElectronsEsUpTight"),
+												srcTaus = cms.InputTag("customSlimmedTausTauEsNominalLooseCleaned"),
+												requireOS = cms.bool(False))
+
+
+process.MVAMETelectronEsDown = process.MVAMET.clone(srcLeptons  = cms.VInputTag("TrimmedFilteredCustomMuons:TrimmedFilteredCustomMuons:DavisNtuple", 
+											   "TrimmedFilteredCustomElectronsEsDown:TrimmedFilteredCustomElectronsEsDown:DavisNtuple"),
+												srcElectrons = cms.InputTag("customSlimmedElectronsEsDownTight"),
+												srcTaus = cms.InputTag("customSlimmedTausTauEsNominalLooseCleaned"),
+												requireOS = cms.bool(False))
+
+
+
 
 ###########
 
@@ -610,6 +834,53 @@ process.TupleCandidateEventsTauEsDown = cms.EDProducer('TupleCandidateEventProdu
 						)	
 
 
+process.TupleCandidateEventsElectronEsUp = cms.EDProducer('TupleCandidateEventProducer' ,
+	puppiMETSrc = cms.InputTag("slimmedMETsPuppi"),
+	pfMETSrc = cms.InputTag("patpfMETT1"), # this has the updated JECs
+	mvaMETSrc = cms.InputTag("MVAMETelectronEsUp:MVAMET:DavisNtuple"),
+	electronVetoSrc =cms.InputTag("filteredVetoElectronsEsUp","","DavisNtuple"),
+	muonVetoSrc = cms.InputTag("filteredVetoMuons","","DavisNtuple"),				
+	pairDeltaRmin = cms.double(0.1), 
+	NAME=cms.string("TupleCandidateEventsElectronEsUp"),
+    doSVMass = cms.bool(COMPUTE_SVMASS_AT_NTUPLE),
+    useMVAMET = cms.bool(USE_MVAMET),
+    logMterm = cms.double(SVMASS_LOG_M),
+    svMassVerbose = cms.int32(SVMASS_VERBOSE),
+    # need to order the taus by isolation in tau_h + tau_h pairs
+    tauIsolForOrderingPair = tauIsolForOrderingPair_,
+    smallerTauIsoValueIsBetter = smallerTauIsoValueIsBetter_,
+    EffElectronSrc = cms.InputTag("TrimmedFilteredCustomElectronsEsUp:TrimmedFilteredCustomElectronsEsUp:DavisNtuple"),
+    EffMuonSrc = cms.InputTag("TrimmedFilteredCustomMuons:TrimmedFilteredCustomMuons:DavisNtuple"),
+    EffTauSrc = cms.InputTag("TrimmedFilteredCustomTausEsNominal:TrimmedFilteredCustomTausEsNominal:DavisNtuple"),
+    BuildEfficiencyTree = cms.bool(False)
+						)	
+
+
+
+process.TupleCandidateEventsElectronEsDown = cms.EDProducer('TupleCandidateEventProducer' ,
+	puppiMETSrc = cms.InputTag("slimmedMETsPuppi"),
+	pfMETSrc = cms.InputTag("patpfMETT1"), # this has the updated JECs
+	mvaMETSrc = cms.InputTag("MVAMETelectronEsDown:MVAMET:DavisNtuple"),
+	electronVetoSrc =cms.InputTag("filteredVetoElectronsEsDown","","DavisNtuple"),
+	muonVetoSrc = cms.InputTag("filteredVetoMuons","","DavisNtuple"),				
+	pairDeltaRmin = cms.double(0.1), 
+	NAME=cms.string("TupleCandidateEventsElectronEsDown"),
+    doSVMass = cms.bool(COMPUTE_SVMASS_AT_NTUPLE),
+    useMVAMET = cms.bool(USE_MVAMET),
+    logMterm = cms.double(SVMASS_LOG_M),
+    svMassVerbose = cms.int32(SVMASS_VERBOSE),
+    # need to order the taus by isolation in tau_h + tau_h pairs
+    tauIsolForOrderingPair = tauIsolForOrderingPair_,
+    smallerTauIsoValueIsBetter = smallerTauIsoValueIsBetter_,
+    EffElectronSrc = cms.InputTag("TrimmedFilteredCustomElectronsEsDown:TrimmedFilteredCustomElectronsEsDown:DavisNtuple"),
+    EffMuonSrc = cms.InputTag("TrimmedFilteredCustomMuons:TrimmedFilteredCustomMuons:DavisNtuple"),
+    EffTauSrc = cms.InputTag("TrimmedFilteredCustomTausEsNominal:TrimmedFilteredCustomTausEsNominal:DavisNtuple"),
+    BuildEfficiencyTree = cms.bool(False)
+						)	
+
+
+
+
 #####################################
 # config the NtupleEvents producer  #
 
@@ -685,6 +956,44 @@ process.NtupleEventsTauEsDown = cms.EDProducer('NtupleEventProducer' ,
 				 tau_triggerMatchTypesSrc = tauTriggerMatch_Types,
 				 tau_triggerMatchPathsAndFiltersSrc = tauTriggerPathsAndFilters,
 			     NAME=cms.string("NtupleEventsTauEsDown"))
+
+
+process.NtupleEventsElectronEsUp = cms.EDProducer('NtupleEventProducer' ,
+				 tupleCandidateEventSrc = cms.InputTag("TupleCandidateEventsElectronEsUp","TupleCandidateEventsElectronEsUp","DavisNtuple"),
+				 l1extraParticlesSrc = cms.InputTag("l1extraParticles","IsoTau","RECO"),
+				 triggerBitSrc = cms.InputTag("TriggerResults","","HLT"),
+				 triggerPreScaleSrc = cms.InputTag("patTrigger"),
+				 triggerObjectSrc = cms.InputTag("selectedPatTrigger"),				 
+				 electron_triggerMatchDRSrc = electronTriggerMatch_DR,
+				 electron_triggerMatchTypesSrc = electronTriggerMatch_Types,
+				 electron_triggerMatchPathsAndFiltersSrc = electronTriggerPathsAndFilters,
+				 muon_triggerMatchDRSrc = muonTriggerMatch_DR,
+				 muon_triggerMatchTypesSrc = muonTriggerMatch_Types,
+				 muon_triggerMatchPathsAndFiltersSrc = muonTriggerPathsAndFilters,
+				 tau_triggerMatchDRSrc = tauTriggerMatch_DR,
+				 tau_triggerMatchTypesSrc = tauTriggerMatch_Types,
+				 tau_triggerMatchPathsAndFiltersSrc = tauTriggerPathsAndFilters,
+			     NAME=cms.string("NtupleEventsElectronEsUp"))
+
+process.NtupleEventsElectronEsDown = cms.EDProducer('NtupleEventProducer' ,
+				 tupleCandidateEventSrc = cms.InputTag("TupleCandidateEventsElectronEsDown","TupleCandidateEventsElectronEsDown","DavisNtuple"),
+				 l1extraParticlesSrc = cms.InputTag("l1extraParticles","IsoTau","RECO"),
+				 triggerBitSrc = cms.InputTag("TriggerResults","","HLT"),
+				 triggerPreScaleSrc = cms.InputTag("patTrigger"),
+				 triggerObjectSrc = cms.InputTag("selectedPatTrigger"),				 
+				 electron_triggerMatchDRSrc = electronTriggerMatch_DR,
+				 electron_triggerMatchTypesSrc = electronTriggerMatch_Types,
+				 electron_triggerMatchPathsAndFiltersSrc = electronTriggerPathsAndFilters,
+				 muon_triggerMatchDRSrc = muonTriggerMatch_DR,
+				 muon_triggerMatchTypesSrc = muonTriggerMatch_Types,
+				 muon_triggerMatchPathsAndFiltersSrc = muonTriggerPathsAndFilters,
+				 tau_triggerMatchDRSrc = tauTriggerMatch_DR,
+				 tau_triggerMatchTypesSrc = tauTriggerMatch_Types,
+				 tau_triggerMatchPathsAndFiltersSrc = tauTriggerPathsAndFilters,
+			     NAME=cms.string("NtupleEventsElectronEsDown"))
+
+
+
 
 
 #################################
@@ -764,6 +1073,7 @@ process.BASELINE = cms.EDAnalyzer('FlatTupleGenerator',
 	MetSystematicType = sampleData.MetSystematicType,
 	EventCutSrc = generalConfig,
 	TauEsVariantToKeep = cms.string("NOMINAL"), # only NOMINAL, UP or DOWN are valid
+	ElectronEsVariantToKeep = cms.string("NOMINAL"), # only NOMINAL, UP or DOWN are valid
 	LeptonCutVecSrc = defaultCuts,
 	SVMassConfig = svMassAtFlatTupleConfig
 	)
@@ -778,6 +1088,7 @@ process.BASELINEupTau = cms.EDAnalyzer('FlatTupleGenerator',
 	MetSystematicType = sampleData.MetSystematicType,
 	EventCutSrc = generalConfig,
 	TauEsVariantToKeep = cms.string("UP"), # only NOMINAL, UP or DOWN are valid
+	ElectronEsVariantToKeep = cms.string("NOMINAL"), # only NOMINAL, UP or DOWN are valid
 	LeptonCutVecSrc = defaultCuts,
 	SVMassConfig = svMassAtFlatTupleConfig
 	)
@@ -791,9 +1102,41 @@ process.BASELINEdownTau = cms.EDAnalyzer('FlatTupleGenerator',
 	MetSystematicType = sampleData.MetSystematicType,
 	EventCutSrc = generalConfig,
 	TauEsVariantToKeep = cms.string("DOWN"), # only NOMINAL, UP or DOWN are valid
+	ElectronEsVariantToKeep = cms.string("NOMINAL"), # only NOMINAL, UP or DOWN are valid
 	LeptonCutVecSrc = defaultCuts,
 	SVMassConfig = svMassAtFlatTupleConfig
 	)
+
+process.BASELINEupElectron = cms.EDAnalyzer('FlatTupleGenerator',
+	pairSrc = cms.InputTag('NtupleEventsElectronEsUp','NtupleEventsElectronEsUp','DavisNtuple'),
+	indepSrc = cms.InputTag('pairIndep','NtupleEventPairIndep','DavisNtuple'),
+	NAME = cms.string("BASELINEupElectron"),
+	FillEffLeptonBranches = cms.bool(False), 
+	RecoilCorrection = sampleData.RecoilCorrection,
+	MetSystematicType = sampleData.MetSystematicType,
+	EventCutSrc = generalConfig,
+	TauEsVariantToKeep = cms.string("NOMINAL"), # only NOMINAL, UP or DOWN are valid
+	ElectronEsVariantToKeep = cms.string("UP"), # only NOMINAL, UP or DOWN are valid
+	LeptonCutVecSrc = defaultCuts,
+	SVMassConfig = svMassAtFlatTupleConfig
+	)
+
+process.BASELINEdownElectron = cms.EDAnalyzer('FlatTupleGenerator',
+	pairSrc = cms.InputTag('NtupleEventsElectronEsDown','NtupleEventsElectronEsDown','DavisNtuple'),
+	indepSrc = cms.InputTag('pairIndep','NtupleEventPairIndep','DavisNtuple'),
+	NAME = cms.string("BASELINEdownElectron"),
+	FillEffLeptonBranches = cms.bool(False),	
+	RecoilCorrection = sampleData.RecoilCorrection,
+	MetSystematicType = sampleData.MetSystematicType,
+	EventCutSrc = generalConfig,
+	TauEsVariantToKeep = cms.string("NOMINAL"), # only NOMINAL, UP or DOWN are valid
+	ElectronEsVariantToKeep = cms.string("DOWN"), # only NOMINAL, UP or DOWN are valid
+	LeptonCutVecSrc = defaultCuts,
+	SVMassConfig = svMassAtFlatTupleConfig
+	)
+
+
+
 
 process.LOWDELTAR = cms.EDAnalyzer('FlatTupleGenerator',
 	pairSrc = cms.InputTag('NtupleEvents','NtupleEvents','DavisNtuple'),
@@ -804,6 +1147,7 @@ process.LOWDELTAR = cms.EDAnalyzer('FlatTupleGenerator',
 	MetSystematicType = sampleData.MetSystematicType,
 	EventCutSrc = generalConfig,
 	TauEsVariantToKeep = cms.string("NOMINAL"), # only NOMINAL, UP or DOWN are valid
+	ElectronEsVariantToKeep = cms.string("NOMINAL"), # only NOMINAL, UP or DOWN are valid
 	LeptonCutVecSrc = lowDeltaRCuts,
 	SVMassConfig = svMassAtFlatTupleConfig
 	)
@@ -818,6 +1162,7 @@ process.LOWDELTARupTau = cms.EDAnalyzer('FlatTupleGenerator',
 	MetSystematicType = sampleData.MetSystematicType,
 	EventCutSrc = generalConfig,
 	TauEsVariantToKeep = cms.string("UP"), # only NOMINAL, UP or DOWN are valid
+	ElectronEsVariantToKeep = cms.string("NOMINAL"), # only NOMINAL, UP or DOWN are valid
 	LeptonCutVecSrc = lowDeltaRCuts,
 	SVMassConfig = svMassAtFlatTupleConfig
 	)
@@ -831,9 +1176,42 @@ process.LOWDELTARdownTau = cms.EDAnalyzer('FlatTupleGenerator',
 	MetSystematicType = sampleData.MetSystematicType,
 	EventCutSrc = generalConfig,
 	TauEsVariantToKeep = cms.string("DOWN"), # only NOMINAL, UP or DOWN are valid
+	ElectronEsVariantToKeep = cms.string("NOMINAL"), # only NOMINAL, UP or DOWN are valid
 	LeptonCutVecSrc = lowDeltaRCuts,
 	SVMassConfig = svMassAtFlatTupleConfig
 	)
+
+
+
+process.LOWDELTARupElectron = cms.EDAnalyzer('FlatTupleGenerator',
+	pairSrc = cms.InputTag('NtupleEventsElectronEsUp','NtupleEventsElectronEsUp','DavisNtuple'),
+	indepSrc = cms.InputTag('pairIndep','NtupleEventPairIndep','DavisNtuple'),
+	NAME = cms.string("LOWDELTARupElectron"),
+	FillEffLeptonBranches = cms.bool(False),	
+	RecoilCorrection = sampleData.RecoilCorrection,
+	MetSystematicType = sampleData.MetSystematicType,
+	EventCutSrc = generalConfig,
+	TauEsVariantToKeep = cms.string("NOMINAL"), # only NOMINAL, UP or DOWN are valid
+	ElectronEsVariantToKeep = cms.string("UP"), # only NOMINAL, UP or DOWN are valid
+	LeptonCutVecSrc = lowDeltaRCuts,
+	SVMassConfig = svMassAtFlatTupleConfig
+	)
+
+process.LOWDELTARdownElectron = cms.EDAnalyzer('FlatTupleGenerator',
+	pairSrc = cms.InputTag('NtupleEventsElectronEsDown','NtupleEventsElectronEsDown','DavisNtuple'),
+	indepSrc = cms.InputTag('pairIndep','NtupleEventPairIndep','DavisNtuple'),
+	NAME = cms.string("LOWDELTARdownElectron"),
+	FillEffLeptonBranches = cms.bool(False),	
+	RecoilCorrection = sampleData.RecoilCorrection,
+	MetSystematicType = sampleData.MetSystematicType,
+	EventCutSrc = generalConfig,
+	TauEsVariantToKeep = cms.string("NOMINAL"), # only NOMINAL, UP or DOWN are valid
+	ElectronEsVariantToKeep = cms.string("DOWN"), # only NOMINAL, UP or DOWN are valid
+	LeptonCutVecSrc = lowDeltaRCuts,
+	SVMassConfig = svMassAtFlatTupleConfig
+	)
+
+
 
 
 
@@ -851,17 +1229,24 @@ process.p *= process.filteredSlimmedJets
 
 process.p *= process.egmGsfElectronIDSequence
 process.p *= process.customSlimmedElectrons
+process.p *= process.customSlimmedElectronsEsUp
+process.p *= process.customSlimmedElectronsEsDown
 process.p *= process.customSlimmedMuons
 process.p *= process.customSlimmedTausTauEsNominal
 process.p *= process.customSlimmedTausTauEsUp
 process.p *= process.customSlimmedTausTauEsDown
 process.p *= process.filteredCustomElectrons
+process.p *= process.filteredCustomElectronsEsUp
+process.p *= process.filteredCustomElectronsEsDown
 process.p *= process.filteredCustomMuons
 process.p *= process.filteredCustomTausEsNominal
 process.p *= process.filteredCustomTausEsUp
 process.p *= process.filteredCustomTausEsDown
 
 process.p *= process.TrimmedFilteredCustomElectrons
+process.p *= process.TrimmedFilteredCustomElectronsEsUp
+process.p *= process.TrimmedFilteredCustomElectronsEsDown
+
 process.p *= process.TrimmedFilteredCustomMuons 
 process.p *= process.TrimmedFilteredCustomTausEsNominal 
 process.p *= process.TrimmedFilteredCustomTausEsUp 
@@ -870,6 +1255,9 @@ process.p *= process.TrimmedFilteredCustomTausEsDown
 
 
 process.p *= process.filteredVetoElectrons
+process.p *= process.filteredVetoElectronsEsUp
+process.p *= process.filteredVetoElectronsEsDown
+
 process.p *= process.filteredVetoMuons
 
 
@@ -880,34 +1268,49 @@ if BUILD_TAU_ES_VARIANTS is True :
 	process.MVAMETtauEsUp
 	process.MVAMETtauEsDown
 
+if BUILD_ELECTRON_ES_VARIANTS is True :
+	process.MVAMETelectronEsUp
+	process.MVAMETelectronEsDown
 
 
 process.p *= process.TupleCandidateEvents
-
-if BUILD_TAU_ES_VARIANTS is True :
-	process.p *= process.TupleCandidateEventsTauEsUp
-	process.p *= process.TupleCandidateEventsTauEsDown
-
 process.p *= process.NtupleEvents
 
 
 if BUILD_TAU_ES_VARIANTS is True :
+	process.p *= process.TupleCandidateEventsTauEsUp
+	process.p *= process.TupleCandidateEventsTauEsDown
 	process.p *= process.NtupleEventsTauEsUp
 	process.p *= process.NtupleEventsTauEsDown
 
-process.p *= process.pairIndep
 
+if BUILD_ELECTRON_ES_VARIANTS is True :
+	process.p *= process.TupleCandidateEventsElectronEsDown
+	process.p *= process.TupleCandidateEventsElectronEsUp
+	process.p *= process.NtupleEventsElectronEsUp
+	process.p *= process.NtupleEventsElectronEsDown
+
+process.p *= process.pairIndep
 process.p *= process.BASELINE
 
 if BUILD_TAU_ES_VARIANTS is True :
 	process.p *= process.BASELINEupTau 
 	process.p *= process.BASELINEdownTau
 
+if BUILD_ELECTRON_ES_VARIANTS is True :
+	process.p *= process.BASELINEupElectron
+	process.p *= process.BASELINEdownElectron
+
+
 if BUILD_LOWDR is True :
 	process.p *= process.LOWDELTAR	
 	if BUILD_TAU_ES_VARIANTS is True :
 		process.p *= process.LOWDELTARupTau 
 		process.p *= process.LOWDELTARdownTau
+	if BUILD_ELECTRON_ES_VARIANTS is True :
+		process.p *= process.LOWDELTARupElectron
+		process.p *= process.LOWDELTARdownElectron
+
 
 process.TFileService = cms.Service("TFileService", fileName = cms.string("FlatTuple.root"))
 process.e = cms.EndPath()

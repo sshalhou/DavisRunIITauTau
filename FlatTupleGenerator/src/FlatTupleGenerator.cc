@@ -19,6 +19,7 @@ RECOILCORRECTION_(iConfig.getParameter<string>("RecoilCorrection" )),
 MetSystematicType_(iConfig.getParameter<string>("MetSystematicType" )),
 EventCutSrc_(iConfig.getParameter<edm::ParameterSet>("EventCutSrc")),
 TauEsVariantToKeep_(iConfig.getParameter<string>("TauEsVariantToKeep")),
+ElectronEsVariantToKeep_(iConfig.getParameter<string>("ElectronEsVariantToKeep")),
 LeptonCutVecSrc_(iConfig.getParameter<std::vector<edm::ParameterSet>>("LeptonCutVecSrc")),
 svMassAtFlatTupleConfig_(iConfig.getParameter<edm::ParameterSet>("SVMassConfig"))
 {
@@ -61,6 +62,17 @@ svMassAtFlatTupleConfig_(iConfig.getParameter<edm::ParameterSet>("SVMassConfig")
   if( TauEsVariantToKeep_=="NOMINAL" ) keepTauEsNominal = 1;
   else if( TauEsVariantToKeep_=="UP" ) keepTauEsUp = 1;
   else if( TauEsVariantToKeep_=="DOWN" ) keepTauEsDown = 1;
+
+
+  assert(ElectronEsVariantToKeep_=="NOMINAL" || ElectronEsVariantToKeep_=="UP" || ElectronEsVariantToKeep_=="DOWN");
+  keepElectronEsNominal = 0;
+  keepElectronEsUp = 0;
+  keepElectronEsDown = 0;
+  
+  if( ElectronEsVariantToKeep_=="NOMINAL" ) keepElectronEsNominal = 1;
+  else if( ElectronEsVariantToKeep_=="UP" ) keepElectronEsUp = 1;
+  else if( ElectronEsVariantToKeep_=="DOWN" ) keepElectronEsDown = 1;
+
 
 
 
@@ -463,12 +475,21 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
              (keepTauEsDown && currentPairToCheck.TauEsNumberSigmasShifted()==-1.0) 
       );
 
+
+      bool keepElectronEsVariant = (
+             (keepElectronEsNominal && currentPairToCheck.ElectronEsNumberSigmasShifted()==0.0) ||
+             (keepElectronEsNominal && isnan(currentPairToCheck.ElectronEsNumberSigmasShifted())) || /* for muTau, eleTau, TauTau, MuMu */
+             (keepElectronEsUp && currentPairToCheck.ElectronEsNumberSigmasShifted()==1.0) ||
+             (keepElectronEsDown && currentPairToCheck.ElectronEsNumberSigmasShifted()==-1.0) 
+      );
+
+
       /* check if the cuts pass */
 
       bool leptonCutsPass = LeptonCutHelper.cutEvaluator(currentPairToCheck, LeptonCutVecSrc_);
       
       ///////////////////
-      if(keepSignPair && keepTauEsVariant && leptonCutsPass) 
+      if(keepSignPair && keepTauEsVariant && leptonCutsPass && keepElectronEsVariant) 
       {
         if(currentPairToCheck.CandidateEventType() == TupleCandidateEventTypes::EleTau) 
         { 
@@ -680,7 +701,7 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
         if(USE_PUPPIMET_FOR_SVFit_AT_FlatTuple) handleSVFitCall(iEvent,iSetup,currentPair, "PUPPIMET");
      
         /* we don't compute systematics on sytematics so only call these for Tau ES nominal*/
-        if(TauEsVariantToKeep_=="NOMINAL")
+        if(TauEsVariantToKeep_=="NOMINAL" && ElectronEsVariantToKeep_=="NOMINAL" )
         {
           if(USE_MVAMET_uncorrected_FOR_SVFit_AT_FlatTuple) handleSVFitCall(iEvent,iSetup,currentPair, "MVAMET_UNCORR");
           if(USE_MVAMET_responseUP_FOR_SVFit_AT_FlatTuple) handleSVFitCall(iEvent,iSetup,currentPair, "MVAMET_RESPONSEUP");
@@ -2050,6 +2071,7 @@ NtupleEvent currentPair)
   {
   
     TauEsNumberSigmasShifted = currentPair.TauEsNumberSigmasShifted(); 
+    ElectronEsNumberSigmasShifted = currentPair.ElectronEsNumberSigmasShifted(); 
     isOsPair = currentPair.isOsPair();
     SVMass = currentPair.SVMass()[0];
     VISMass = currentPair.VISMass()[0];   
@@ -2717,6 +2739,7 @@ void FlatTupleGenerator::handlePairIndepInfo(const edm::Event& iEvent, const edm
 
   CandidateEventType = -999; 
   TauEsNumberSigmasShifted = NAN;
+  ElectronEsNumberSigmasShifted = NAN;
   isOsPair = -999;
   
 
@@ -3458,6 +3481,7 @@ void FlatTupleGenerator::beginJob()
 
   FlatTuple->Branch("CandidateEventType", &CandidateEventType);
   FlatTuple->Branch("TauEsNumberSigmasShifted", &TauEsNumberSigmasShifted);
+  FlatTuple->Branch("ElectronEsNumberSigmasShifted", &ElectronEsNumberSigmasShifted);
   FlatTuple->Branch("isOsPair", &isOsPair);
   
   FlatTuple->Branch("SVMass", &SVMass);

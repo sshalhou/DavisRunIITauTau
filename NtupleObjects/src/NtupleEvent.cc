@@ -12,6 +12,7 @@ NtupleEvent::NtupleEvent()
 {
 	m_CandidateEventType = -999;
 	m_TauEsNumberSigmasShifted = NAN;
+	m_ElectronEsNumberSigmasShifted = NAN;
 	m_isOsPair = -999;
 	m_isRealData = 0;
 
@@ -301,6 +302,10 @@ void NtupleEvent::fill(TupleCandidateEvent TCE)
 		if(isnan(m_leg2.TauEsVariant()) == 0) m_TauEsNumberSigmasShifted = m_leg2.TauEsVariant();
 		else if(isnan(m_leg1.TauEsVariant()) == 0) m_TauEsNumberSigmasShifted = m_leg1.TauEsVariant();
 
+		if(isnan(m_leg2.ElectronEsVariant()) == 0) m_ElectronEsNumberSigmasShifted = m_leg2.ElectronEsVariant();
+		else if(isnan(m_leg1.ElectronEsVariant()) == 0) m_ElectronEsNumberSigmasShifted = m_leg1.ElectronEsVariant();
+
+
 
 
 		if (m_leg1.charge() == m_leg2.charge()) m_isOsPair = 0;
@@ -416,6 +421,8 @@ bool NtupleEvent::PairPassesDoubleTauIsoTau28MatchCut() const
 
 int NtupleEvent::CandidateEventType() const { return m_CandidateEventType; }
 float NtupleEvent::TauEsNumberSigmasShifted() const {return m_TauEsNumberSigmasShifted;}
+float NtupleEvent::ElectronEsNumberSigmasShifted() const {return m_ElectronEsNumberSigmasShifted;}
+
 NtupleLepton NtupleEvent::leg1() const { return m_leg1; }
 NtupleLepton NtupleEvent::leg2() const { return m_leg2; }
 std::vector<NtupleLepton> NtupleEvent::EffLepton() const {return m_EffLepton;}

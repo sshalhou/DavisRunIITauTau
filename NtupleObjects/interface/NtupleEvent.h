@@ -122,6 +122,8 @@ public:
 
 	int CandidateEventType() const; 
   float TauEsNumberSigmasShifted() const;
+  float ElectronEsNumberSigmasShifted() const;
+
 	NtupleLepton leg1() const; 
 	NtupleLepton leg2() const; 
   std::vector< NtupleLepton > EffLepton() const;
@@ -164,6 +166,7 @@ private:
 
 	int m_CandidateEventType; 
   float m_TauEsNumberSigmasShifted;
+  float m_ElectronEsNumberSigmasShifted;
   int m_isOsPair;
 	NtupleLepton m_leg1; 
 	NtupleLepton m_leg2; 

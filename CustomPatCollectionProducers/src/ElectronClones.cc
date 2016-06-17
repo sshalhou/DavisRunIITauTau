@@ -61,7 +61,7 @@ float electronClones::passedCutBasedID(pat::Electron& e)
 	assert(1==2); /* this function should not be called anymore! since CMSSW742 there is better way for e cut-based ID*/
 
 
-	float ABS_SC_ETA = abs(e.superCluster()->eta());
+	float ABS_SC_ETA = fabs(e.superCluster()->eta());
 
 	float c_dEtaIn  = 0;
 	float c_dPhiIn  = 0;
