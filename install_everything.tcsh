@@ -101,6 +101,9 @@ mkdir DavisRunIITauTau/RunTimeDataInput/data/BTAGEFF
 cp /afs/cern.ch/user/s/sshalhou/public/INSTALL_PUBLIC_FILES/76X/BTAGEFF/tagging_efficiencies.root DavisRunIITauTau/RunTimeDataInput/data/BTAGEFF/.
 cp /afs/cern.ch/user/s/sshalhou/public/INSTALL_PUBLIC_FILES/76X/BTAGEFF/tagging_efficiencies_loosewp.root DavisRunIITauTau/RunTimeDataInput/data/BTAGEFF/.
 
+# bug fix in MVA met (replaced p4() comparisons with small DR comparisons instead)
+cp DavisRunIITauTau/External/MVAMET.cc_763patch2 RecoMET/METPUSubtraction/plugins/MVAMET.cc
+
 # compile
 
 scram b -j 20

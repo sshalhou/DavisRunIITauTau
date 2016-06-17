@@ -17,6 +17,18 @@ import FWCore.ParameterSet.Config as cms
 from DavisRunIITauTau.TupleConfigurations.getSampleInfoForDataSet import getSampleInfoForDataSet
 import math
 
+
+def DeleteCMSTypes(arg, type):
+    temp = str(arg)
+    temp = temp.replace("("," ")
+    temp = temp.replace(")"," ")
+    temp = temp.replace("\x27","")
+    temp = temp.replace("\'","")
+    temp = temp.replace("\"","")
+    temp = temp.split(" ", 2)[1].replace(" ","")
+    return type(temp)
+
+
 ###############################
 # define a few variables here
 ###############################
@@ -135,13 +147,27 @@ for line in fileinput.input(str(args.dataSetList[0])):
     sampleData = getSampleInfoForDataSet(str(line.strip()))
 
     # seems kind of clumsy, but works for now
-    version =  ((str(sampleData.getParameter("CodeVersion")).strip("cms.double('")).strip("')")).replace('.','_') 
-    requestName = ((str(sampleData.getParameter("KeyName")).strip("cms.string('")).strip("')"))
-    requestName = requestName+"_version_"+version
-    EventTotal =  int((str(sampleData.getParameter("EventTotal")).strip("cms.int32('")).strip("')"))
-    NumberOfLumis =  int((str(sampleData.getParameter("NumberOfLumis")).strip("cms.int32('")).strip("')"))
+    # version =  ((str(sampleData.getParameter("CodeVersion")).strip("cms.double('")).strip("')")).replace('.','_') 
+    # requestName = ((str(sampleData.getParameter("KeyName")).strip("cms.string('")).strip("')"))
+    # requestName = requestName+"_version_"+version
+    # EventTotal =  int((str(sampleData.getParameter("EventTotal")).strip("cms.int32('")).strip("')"))
+    # NumberOfLumis =  int((str(sampleData.getParameter("NumberOfLumis")).strip("cms.int32('")).strip("')"))
 
+    # tempConfigName = crabJobLocation+"/"+requestName+".py"
+
+    version = DeleteCMSTypes(sampleData.getParameter("CodeVersion"), str).replace('.','_')  
+    requestName = DeleteCMSTypes(sampleData.getParameter("KeyName"), str)+"_version_"+version
+    EventTotal = DeleteCMSTypes(sampleData.getParameter("EventTotal"), int)
+    NumberOfLumis = DeleteCMSTypes(sampleData.getParameter("NumberOfLumis"), int)
     tempConfigName = crabJobLocation+"/"+requestName+".py"
+
+    print 'version = ', version
+    print 'requestName = ', requestName
+    print 'EventTotal = ', EventTotal
+    print 'NumberOfLumis = ', NumberOfLumis
+    print 'tempConfigName = ', tempConfigName
+
+
 
     # some sed swaps in the job config file (really just putting the dataset name in)
     sedHappySampleName = str(line.strip()).replace("/","\/")

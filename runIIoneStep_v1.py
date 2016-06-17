@@ -6,7 +6,7 @@ process = cms.Process('DavisNtuple')
 ###################################
 
 # how many events to run, -1 means run all 
-MAX_EVENTS = 1003
+MAX_EVENTS = -1
 #MAX_EVENTS = 9153
 
 # datasets for local running 
@@ -20,9 +20,9 @@ dataSetName_ = "/SUSYGluGluToHToTauTau_M-160_TuneCUETP8M1_13TeV-pythia8/RunIIFal
 myfilelist = cms.untracked.vstring()
 
 if dataSetName_ == "/SUSYGluGluToHToTauTau_M-160_TuneCUETP8M1_13TeV-pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM":
-#	myfilelist.extend(['file:/uscms_data/d3/shalhout/pickevents_muTauJetTest.root'])
-#	myfilelist.extend(['file:/uscms_data/d3/shalhout/pickevents_missingMuTau14.root'])
-	myfilelist.extend(['file:/uscms_data/d3/shalhout/miniAODv2_SyncSample.root'])
+	myfilelist.extend(['file:/uscms_data/d3/shalhout/pickeventsMissing26.root'])
+	myfilelist.extend(['file:/uscms_data/d3/shalhout/pickevents_missingMuTau14.root'])
+#	myfilelist.extend(['file:/uscms_data/d3/shalhout/miniAODv2_SyncSample.root'])
 
 if dataSetName_ == "/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM":
 	myfilelist.extend(['file:/uscms_data/d3/shalhout/miniAODv2_DYnlo.root'])
@@ -89,6 +89,7 @@ if BUILD_MUON_MUON : print 'mu-mu',
 if BUILD_MUON_TAU : print 'mu-tau',
 if BUILD_TAU_TAU : print 'tau-tau',
 if BUILD_TAU_ES_VARIANTS : print ' + tau Es Variants',
+if BUILD_ELECTRON_ES_VARIANTS : print ' + electron Es Variants for eleMu channel (only!) '
 if BUILD_EFFICIENCY_TREE : print ' will generate eff tree for e+X, mu+X, and tau+X',
 print ']'
 
@@ -573,15 +574,22 @@ process.filteredVetoMuons = cms.EDFilter("PATMuonRefSelector",
 ###################################
 # double lepton requirement
 # only applied if 
-# BUILD_EFFICIENCY_TREE
-# are all False
+# BUILD_EFFICIENCY_TREE is False
+# make sure to give the VInputTag
+# all variants of e, mu, and tau
+# final collections 
 ###################################
 
 
 process.requireCandidateHiggsPair = cms.EDFilter("HiggsCandidateCountFilter",
-  	electronSource = cms.InputTag("TrimmedFilteredCustomElectronsEsDown:TrimmedFilteredCustomElectronsEsDown:DavisNtuple"), # always count with Down ES shift
-	muonSource     = cms.InputTag("TrimmedFilteredCustomMuons:TrimmedFilteredCustomMuons:DavisNtuple"),
-	tauSource      = cms.InputTag("TrimmedFilteredCustomTausEsDown:TrimmedFilteredCustomTausEsDown:DavisNtuple"), # always count with Down ES shift
+  	electronSources = cms.VInputTag("TrimmedFilteredCustomElectrons:TrimmedFilteredCustomElectrons:DavisNtuple",
+  									"TrimmedFilteredCustomElectronsEsUp:TrimmedFilteredCustomElectronsEsUp:DavisNtuple",
+  									"TrimmedFilteredCustomElectronsEsDown:TrimmedFilteredCustomElectronsEsDown:DavisNtuple"), 
+	muonSources     = cms.VInputTag("TrimmedFilteredCustomMuons:TrimmedFilteredCustomMuons:DavisNtuple"),
+
+	tauSources      = cms.VInputTag("TrimmedFilteredCustomTausEsNominal:TrimmedFilteredCustomTausEsNominal:DavisNtuple",
+									"TrimmedFilteredCustomTausEsUp:TrimmedFilteredCustomTausEsUp:DavisNtuple",
+									"TrimmedFilteredCustomTausEsDown:TrimmedFilteredCustomTausEsDown:DavisNtuple"), 
 	countElectronElectrons = cms.bool(BUILD_ELECTRON_ELECTRON),
 	countElectronMuons  = cms.bool(BUILD_ELECTRON_MUON),
 	countElectronTaus = cms.bool(BUILD_ELECTRON_TAU),
@@ -589,89 +597,12 @@ process.requireCandidateHiggsPair = cms.EDFilter("HiggsCandidateCountFilter",
 	countMuonTaus = cms.bool(BUILD_MUON_TAU),
 	countTauTaus = cms.bool(BUILD_TAU_TAU),
     filter = cms.bool(True)
-)
+	)
 
 #########################################
 # new MVA MET (pairwise) interface
 # along with setup for tau ES var
 ##########################################
-
-from RecoMET.METPUSubtraction.LeptonSelectionTools_cff import applyTauID as tauIDforMVAmetEsUp
-from RecoMET.METPUSubtraction.LeptonSelectionTools_cff import applyTauID as tauIDforMVAmetEsDown
-from RecoMET.METPUSubtraction.LeptonSelectionTools_cff import applyTauID as tauIDforMVAmetNominal
-
-from RecoMET.METPUSubtraction.LeptonSelectionTools_cff import applyElectronID as electronIDforMVAmetUp
-from RecoMET.METPUSubtraction.LeptonSelectionTools_cff import applyElectronID as electronIDforMVAmetDown
-from RecoMET.METPUSubtraction.LeptonSelectionTools_cff import applyElectronID as electronIDforMVAmet
-
-
-#######################################################
-# special electron collections needed for mvamet   
-# settings should match MVAMETConfiguration_cff.py
-########################################################
-
-electronIDforMVAmet(process, 
-                label = "Tight", 
-                src   = "customSlimmedElectrons",
-                iso_map_charged_hadron  = '',
-                iso_map_neutral_hadron  = '',
-                iso_map_photon          = '',
-                typeIso = "rhoCorr",
-                electron_id_map = 'egmGsfElectronIDs:cutBasedElectronID-Spring15-25ns-V1-standalone-tight',
-                relativeIsolationCutVal = 0.12
-                )
-
-electronIDforMVAmetUp(process, 
-                label = "Tight", 
-                src   = "customSlimmedElectronsUp",
-                iso_map_charged_hadron  = '',
-                iso_map_neutral_hadron  = '',
-                iso_map_photon          = '',
-                typeIso = "rhoCorr",
-                electron_id_map = 'egmGsfElectronIDs:cutBasedElectronID-Spring15-25ns-V1-standalone-tight',
-                relativeIsolationCutVal = 0.12
-                )
-
-electronIDforMVAmetDown(process, 
-                label = "Tight", 
-                src   = "customSlimmedElectronsEsDown",
-                iso_map_charged_hadron  = '',
-                iso_map_neutral_hadron  = '',
-                iso_map_photon          = '',
-                typeIso = "rhoCorr",
-                electron_id_map = 'egmGsfElectronIDs:cutBasedElectronID-Spring15-25ns-V1-standalone-tight',
-                relativeIsolationCutVal = 0.12
-                )
-
-
-
-
-
-#######################################################
-# special tau collections needed for mvamet   
-# settings should match MVAMETConfiguration_cff.py
-########################################################
-
-tauIDforMVAmetNominal( process, 
-            label = "Loose", 
-            src = "customSlimmedTausTauEsNominal",
-            muonCollection     = "slimmedMuons"+"Tight",
-            electronCollection = "slimmedElectrons"+"Tight")
-
-
-tauIDforMVAmetEsUp( process, 
-            label = "Loose", 
-            src = "customSlimmedTausTauEsUp",
-            muonCollection     = "slimmedMuons"+"Tight",
-            electronCollection = "slimmedElectrons"+"Tight")
-
-
-tauIDforMVAmetEsDown( process, 
-            label = "Loose", 
-            src = "customSlimmedTausTauEsDown",
-            muonCollection     = "slimmedMuons"+"Tight",
-            electronCollection = "slimmedElectrons"+"Tight")
-
 
 ##################################
 # init mva met 
@@ -688,10 +619,6 @@ runMVAMET( process, jetCollectionPF = "patJetsReapplyJEC")
 process.MVAMET.srcLeptons  = cms.VInputTag("TrimmedFilteredCustomMuons:TrimmedFilteredCustomMuons:DavisNtuple", 
 										   "TrimmedFilteredCustomElectrons:TrimmedFilteredCustomElectrons:DavisNtuple", 
 										   "TrimmedFilteredCustomTausEsNominal:TrimmedFilteredCustomTausEsNominal:DavisNtuple")
-
-process.MVAMET.srcTaus = cms.InputTag("customSlimmedTausTauEsNominalLooseCleaned")
-process.MVAMET.srcElectrons = cms.InputTag("customSlimmedElectronsTight")
-
 process.MVAMET.requireOS = cms.bool(False)
 
 
@@ -702,8 +629,6 @@ process.MVAMET.requireOS = cms.bool(False)
 process.MVAMETtauEsUp = process.MVAMET.clone(srcLeptons  = cms.VInputTag("TrimmedFilteredCustomMuons:TrimmedFilteredCustomMuons:DavisNtuple", 
 											   "TrimmedFilteredCustomElectrons:TrimmedFilteredCustomElectrons:DavisNtuple", 
 											   "TrimmedFilteredCustomTausEsUp:TrimmedFilteredCustomTausEsUp:DavisNtuple"),
-												srcElectrons = cms.InputTag("customSlimmedElectronsTight"),
-												srcTaus = cms.InputTag("customSlimmedTausTauEsUpLooseCleaned"),
 												requireOS = cms.bool(False))
 
 
@@ -714,8 +639,6 @@ process.MVAMETtauEsUp = process.MVAMET.clone(srcLeptons  = cms.VInputTag("Trimme
 process.MVAMETtauEsDown = process.MVAMET.clone(srcLeptons  = cms.VInputTag("TrimmedFilteredCustomMuons:TrimmedFilteredCustomMuons:DavisNtuple", 
 											   "TrimmedFilteredCustomElectrons:TrimmedFilteredCustomElectrons:DavisNtuple", 
 											   "TrimmedFilteredCustomTausEsDown:TrimmedFilteredCustomTausEsDown:DavisNtuple"),
-												srcElectrons = cms.InputTag("customSlimmedElectronsTight"),
-												srcTaus = cms.InputTag("customSlimmedTausTauEsDownLooseCleaned"),
 												requireOS = cms.bool(False))
 
 
@@ -727,15 +650,11 @@ process.MVAMETtauEsDown = process.MVAMET.clone(srcLeptons  = cms.VInputTag("Trim
 
 process.MVAMETelectronEsUp = process.MVAMET.clone(srcLeptons  = cms.VInputTag("TrimmedFilteredCustomMuons:TrimmedFilteredCustomMuons:DavisNtuple", 
 											   "TrimmedFilteredCustomElectronsEsUp:TrimmedFilteredCustomElectronsEsUp:DavisNtuple"),
-												srcElectrons = cms.InputTag("customSlimmedElectronsEsUpTight"),
-												srcTaus = cms.InputTag("customSlimmedTausTauEsNominalLooseCleaned"),
 												requireOS = cms.bool(False))
 
 
 process.MVAMETelectronEsDown = process.MVAMET.clone(srcLeptons  = cms.VInputTag("TrimmedFilteredCustomMuons:TrimmedFilteredCustomMuons:DavisNtuple", 
 											   "TrimmedFilteredCustomElectronsEsDown:TrimmedFilteredCustomElectronsEsDown:DavisNtuple"),
-												srcElectrons = cms.InputTag("customSlimmedElectronsEsDownTight"),
-												srcTaus = cms.InputTag("customSlimmedTausTauEsNominalLooseCleaned"),
 												requireOS = cms.bool(False))
 
 
@@ -1311,9 +1230,35 @@ if BUILD_LOWDR is True :
 		process.p *= process.LOWDELTARupElectron
 		process.p *= process.LOWDELTARdownElectron
 
+###################################
+# output config - should not be in crab
+# script 
+###################################
+
+DEBUG_NTUPLE = False
+
+if DEBUG_NTUPLE is True :
+
+	print "+++++ DEBUG NTUPLE ***** will create Ntuple for Debugging "
+	print "+++++ DEBUG NTUPLE ***** with edmProvDump & edmDumpEventContent "
+
+	process.out = cms.OutputModule("PoolOutputModule",
+				fileName = cms.untracked.string('NtupleFile.root'),
+				SelectEvents = cms.untracked.PSet(
+				                SelectEvents = cms.vstring('p')
+				                ),
+				#outputCommands = cms.untracked.vstring('drop *')
+				outputCommands = cms.untracked.vstring('keep *')
+
+	)
+
 
 process.TFileService = cms.Service("TFileService", fileName = cms.string("FlatTuple.root"))
-process.e = cms.EndPath()
+
+if DEBUG_NTUPLE is True :
+	process.e = cms.EndPath(process.out)
+else :
+	process.e = cms.EndPath()
 
 
 

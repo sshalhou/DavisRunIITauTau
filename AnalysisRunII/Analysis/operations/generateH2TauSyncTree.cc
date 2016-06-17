@@ -413,7 +413,7 @@ void generateH2TauSyncTree::handleEvent()
 	}	
 
 	numberOfJets30 = R.getI("numberOfJets30"); /* rm later on */ 
-	numberOfJetsForRecoilCorr = R.getI("numberOfJetsForRecoilCorr");
+//	numberOfJetsForRecoilCorr = R.getI("numberOfJetsForRecoilCorr");
 
 
 

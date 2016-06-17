@@ -26,6 +26,7 @@ namespace pat {
 
       explicit HiggsCandidateCountFilter(const edm::ParameterSet & iConfig);
       virtual ~HiggsCandidateCountFilter();
+      typedef std::vector<edm::InputTag> vInputTag;
 
     private:
 
@@ -33,16 +34,16 @@ namespace pat {
 
     private:
 
-      edm::InputTag electronSource_;
-      edm::EDGetTokenT<edm::View< pat::Electron > > electronToken_;
+      vInputTag electronTags_;
+      std::vector<edm::EDGetTokenT<reco::CandidateView > > electronSources_;
 
-      edm::InputTag muonSource_;
-      edm::EDGetTokenT<edm::View< pat::Muon > > muonToken_;
+      vInputTag muonTags_;
+      std::vector<edm::EDGetTokenT<reco::CandidateView > > muonSources_;
 
-      edm::InputTag tauSource_;
-      edm::EDGetTokenT<edm::View< pat::Tau > > tauToken_;
+      vInputTag tauTags_;
+      std::vector<edm::EDGetTokenT<reco::CandidateView > > tauSources_;
 
-
+    
       bool countElectronElectrons_;
       bool countElectronMuons_;
       bool countElectronTaus_;
