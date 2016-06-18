@@ -1,15 +1,38 @@
-import FWCore.ParameterSet.Config as cms
-process = cms.Process('DavisNtuple') 
+#################################################################
+# preliminaries -- user edits 
+#################################################################
+#		 MAX_EVENTS    -- stop execution after MAX_EVENTS events, -1 to run all
+#		 dataSetName_  -- full DBS name of dataSet	
+#        myfilelist    -- the input list of miniAOD or Ntuple files
+#		 DEBUG_NTUPLE  -- produce both ntuple & flatTuple if True
+# 		 DEBUG_NTUPLE_INPUT -- input NtupleFile, output FlatTuple
+#########################################################
 
-###################################
-# preliminaries 
-###################################
 
+######################################
+# if DEBUG_NTUPLE is set to True
+# will write both FlatTuple and Ntuple to disk
+######################################
+
+DEBUG_NTUPLE = False
+
+######################################
+# if DEBUG_NTUPLE_INPUT is set to True
+# code will run on a (davis) Ntuple (not mini-AOD)
+# and output a FlatTuple
+######################################
+
+DEBUG_NTUPLE_INPUT = False
+
+######################################
 # how many events to run, -1 means run all 
-MAX_EVENTS = -1
-#MAX_EVENTS = 9153
+######################################
 
+MAX_EVENTS = 200
+
+######################################
 # datasets for local running 
+######################################
 
 dataSetName_ = "/SUSYGluGluToHToTauTau_M-160_TuneCUETP8M1_13TeV-pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM"
 #dataSetName_= "/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM"
@@ -17,12 +40,16 @@ dataSetName_ = "/SUSYGluGluToHToTauTau_M-160_TuneCUETP8M1_13TeV-pythia8/RunIIFal
 #dataSetName_="/ZprimeToA0hToA0chichihtautau_2HDM_MZp-1200_MA0-400_13TeV-madgraph/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM"
 #dataSetName_="/WJetsToLNu_HT-200To400_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM"
 
+######################################
+#  list of files to process 
+######################################
+
 myfilelist = cms.untracked.vstring()
 
 if dataSetName_ == "/SUSYGluGluToHToTauTau_M-160_TuneCUETP8M1_13TeV-pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM":
-	myfilelist.extend(['file:/uscms_data/d3/shalhout/pickeventsMissing26.root'])
-	myfilelist.extend(['file:/uscms_data/d3/shalhout/pickevents_missingMuTau14.root'])
-#	myfilelist.extend(['file:/uscms_data/d3/shalhout/miniAODv2_SyncSample.root'])
+#	myfilelist.extend(['file:/uscms_data/d3/shalhout/pickeventsMissing26.root'])
+#	myfilelist.extend(['file:/uscms_data/d3/shalhout/pickevents_missingMuTau14.root'])
+	myfilelist.extend(['file:/uscms_data/d3/shalhout/miniAODv2_SyncSample.root'])
 
 if dataSetName_ == "/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM":
 	myfilelist.extend(['file:/uscms_data/d3/shalhout/miniAODv2_DYnlo.root'])
@@ -33,7 +60,8 @@ if dataSetName_ == "/ZprimeToA0hToA0chichihtautau_2HDM_MZp-1200_MA0-400_13TeV-ma
 if dataSetName_ == "/WJetsToLNu_HT-200To400_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM":
 	myfilelist.extend(['file:/uscms_data/d3/shalhout/WJetsToLNu_HT-100To200.root'])
 
-
+if DEBUG_NTUPLE_INPUT is True:
+	myfilelist = cms.untracked.vstring(['file:./NtupleFile.root'])
 
 if MAX_EVENTS != -1:
 	print '*****************************************************************'
@@ -43,6 +71,20 @@ if MAX_EVENTS != -1:
 	print '*****************************************************************'
 	print '*****************************************************************'
 
+
+########################################
+# begin cmsRun job config
+########################################
+
+DAVISprocessName = "DavisNtuple"
+
+if DEBUG_NTUPLE_INPUT is True:
+	DAVISprocessName = "DavisNtupleDebug"
+
+
+
+import FWCore.ParameterSet.Config as cms
+process = cms.Process(DAVISprocessName) 
 
 
 from DavisRunIITauTau.TupleConfigurations.ConfigNtupleContent_cfi import *
@@ -141,60 +183,6 @@ process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(MAX_EVENTS) 
 process.source = cms.Source("PoolSource",fileNames=myfilelist)
 
 
-# process.source = cms.Source("PoolSource",fileNames=myfilelist,
-# 			eventsToProcess = cms.untracked.VEventRange('1:103608-1:103608','1:103610-1:103610','1:103649-1:103649','1:103706-1:103706','1:103769-1:103769','1:103806-1:103806',
-# '1:103926-1:103926','1:104000-1:104000','1:104055-1:104055','1:104131-1:104131','1:109698-1:109698','1:109756-1:109756',
-# '1:109758-1:109758','1:109804-1:109804','1:109843-1:109843','1:110007-1:110007','1:110137-1:110137','1:110254-1:110254',
-# '1:110465-1:110465','1:110541-1:110541','1:110576-1:110576','1:110725-1:110725','1:110739-1:110739','1:113464-1:113464',
-# '1:113473-1:113473','1:113510-1:113510','1:113544-1:113544','1:113635-1:113635','1:113656-1:113656','1:113737-1:113737',
-# '1:113782-1:113782','1:114111-1:114111','1:114117-1:114117','1:115326-1:115326','1:115342-1:115342','1:115405-1:115405',
-# '1:115681-1:115681','1:115719-1:115719','1:115757-1:115757','1:115778-1:115778','1:115972-1:115972','1:116133-1:116133',
-# '1:116279-1:116279','1:117467-1:117467','1:117581-1:117581','1:117601-1:117601','1:117801-1:117801','1:117822-1:117822',
-# '1:117833-1:117833','1:117932-1:117932','1:117963-1:117963','1:119022-1:119022','1:119102-1:119102','1:119148-1:119148',
-# '1:119239-1:119239','1:119242-1:119242','1:119276-1:119276','1:119346-1:119346','1:119431-1:119431','1:119497-1:119497',
-# '1:119530-1:119530','1:119709-1:119709','1:119789-1:119789','1:119832-1:119832','1:119855-1:119855','1:119978-1:119978',
-# '1:119993-1:119993','1:120025-1:120025','1:120085-1:120085','1:120112-1:120112','1:120179-1:120179','1:123007-1:123007',
-# '1:123076-1:123076','1:123091-1:123091','1:123146-1:123146','1:123293-1:123293','1:123384-1:123384','1:123454-1:123454',
-# '1:123605-1:123605','1:123625-1:123625','1:123656-1:123656','1:123718-1:123718','1:123835-1:123835','1:123947-1:123947',
-# '1:124007-1:124007','1:128578-1:128578','1:128681-1:128681','1:130256-1:130256','1:130260-1:130260','1:130290-1:130290',
-# '1:130316-1:130316','1:130393-1:130393','1:130421-1:130421','1:130446-1:130446','1:130463-1:130463','1:130477-1:130477',
-# '1:130589-1:130589','1:133622-1:133622','1:133633-1:133633','1:133728-1:133728','1:133741-1:133741','1:133842-1:133842',
-# '1:133869-1:133869','1:133959-1:133959','1:133994-1:133994','1:134031-1:134031','1:134085-1:134085','1:134320-1:134320',
-# '1:134372-1:134372','1:134518-1:134518','1:136762-1:136762','1:136798-1:136798','1:136892-1:136892','1:136984-1:136984',
-# '1:137061-1:137061','1:137076-1:137076','1:137097-1:137097','1:137101-1:137101','1:137130-1:137130','1:137139-1:137139',
-# '1:137148-1:137148','1:137379-1:137379','1:137421-1:137421','1:137433-1:137433','1:137453-1:137453','1:137526-1:137526',
-# '1:137529-1:137529','1:137557-1:137557','1:137569-1:137569','1:137712-1:137712','1:137717-1:137717','1:137723-1:137723',
-# '1:137748-1:137748','1:137766-1:137766','1:137789-1:137789','1:137810-1:137810','1:137837-1:137837','1:137933-1:137933',
-# '1:138147-1:138147','1:138168-1:138168','1:138246-1:138246','1:138384-1:138384','1:138392-1:138392','1:138463-1:138463',
-# '1:140202-1:140202','1:140580-1:140580','1:140651-1:140651','1:140658-1:140658','1:140685-1:140685','1:140707-1:140707',
-# '1:144627-1:144627','1:144683-1:144683','1:144716-1:144716','1:144805-1:144805','1:144810-1:144810','1:144834-1:144834',
-# '1:145109-1:145109','1:145717-1:145717','1:145833-1:145833','1:145874-1:145874','1:145910-1:145910','1:145912-1:145912',
-# '1:145918-1:145918','1:145925-1:145925','1:145929-1:145929','1:145964-1:145964','1:146009-1:146009','1:146055-1:146055',
-# '1:146074-1:146074','1:146122-1:146122','1:146127-1:146127','1:146156-1:146156','1:146223-1:146223','1:146232-1:146232'))
-
-# '1:146241-1:146241','1:146248-1:146248','1:146406-1:146406','1:146423-1:146423','1:146460-1:146460','1:146528-1:146528',
-# '1:146530-1:146530','1:146642-1:146642','1:146646-1:146646','1:146767-1:146767','1:146779-1:146779','1:158058-1:158058',
-# '1:158189-1:158189','1:158222-1:158222','1:158312-1:158312','1:158341-1:158341','1:158350-1:158350','1:158365-1:158365',
-# '1:158367-1:158367','1:158375-1:158375','1:162548-1:162548','1:162634-1:162634','1:162701-1:162701','1:162722-1:162722',
-# '1:162823-1:162823','1:162868-1:162868','1:163340-1:163340','1:163349-1:163349','1:163372-1:163372','1:163420-1:163420',
-# '1:163530-1:163530','1:163560-1:163560','1:163620-1:163620','1:166245-1:166245','1:166267-1:166267','1:166366-1:166366',
-# '1:166386-1:166386','1:166405-1:166405','1:166457-1:166457','1:166489-1:166489','1:166524-1:166524','1:166607-1:166607',
-# '1:166624-1:166624','1:168291-1:168291','1:168299-1:168299','1:170129-1:170129','1:170221-1:170221','1:171281-1:171281',
-# '1:171396-1:171396','1:171413-1:171413','1:171460-1:171460','1:31751-1:31751','1:31783-1:31783','1:31866-1:31866',
-# '1:31952-1:31952','1:31991-1:31991','1:32030-1:32030','1:4465-1:4465','1:4480-1:4480','1:4491-1:4491','1:4501-1:4501',
-# '1:4536-1:4536','1:4545-1:4545','1:4609-1:4609','1:4732-1:4732','1:4774-1:4774','1:4778-1:4778','1:4945-1:4945',
-# '1:4956-1:4956','1:4983-1:4983','1:53415-1:53415','1:53507-1:53507','1:53562-1:53562','1:53605-1:53605','1:53700-1:53700',
-# '1:57089-1:57089','1:57136-1:57136','1:57163-1:57163','1:57177-1:57177','1:57280-1:57280','1:57420-1:57420','1:57436-1:57436',
-# '1:6123-1:6123','1:6213-1:6213','1:6260-1:6260','1:6277-1:6277','1:6328-1:6328','1:6359-1:6359','1:6370-1:6370','1:6376-1:6376',
-# '1:6445-1:6445','1:73396-1:73396','1:73454-1:73454','1:83154-1:83154','1:83263-1:83263','1:83290-1:83290','1:83291-1:83291',
-# '1:83348-1:83348','1:83407-1:83407','1:83472-1:83472','1:83603-1:83603','1:83637-1:83637','1:84225-1:84225','1:84249-1:84249',
-# '1:84255-1:84255','1:84385-1:84385','1:84528-1:84528','1:84598-1:84598','1:84733-1:84733','1:86630-1:86630',
-# '1:86722-1:86722','1:86750-1:86750','1:86767-1:86767','1:86791-1:86791','1:86942-1:86942','1:90366-1:90366',
-# '1:90367-1:90367','1:90436-1:90436','1:90477-1:90477','1:90521-1:90521','1:91978-1:91978','1:92027-1:92027',
-# '1:92039-1:92039','1:92051-1:92051','1:92082-1:92082','1:92180-1:92180','1:92230-1:92230','1:92325-1:92325',
-# '1:92356-1:92356','1:92382-1:92382','1:92408-1:92408','1:92409-1:92409','1:92424-1:92424','1:92486-1:92486'))
-
-
 
 # process.source = cms.Source("PoolSource",fileNames=myfilelist,
 # 			eventsToProcess = cms.untracked.VEventRange('1:4487-1:4487','1:4492-1:4492','1:4600-1:4600','1:4632-1:4632',
@@ -203,6 +191,11 @@ process.source = cms.Source("PoolSource",fileNames=myfilelist)
 # 				'1:53712-1:53712','1:57146-1:57146','1:57157-1:57157','1:57182-1:57182','1:57231-1:57231',
 # 				'1:57295-1:57295','1:57358-1:57358','1:57441-1:57441','1:73415-1:73415','1:73420-1:73420'))	
 
+# process.source = cms.Source("PoolSource",fileNames=myfilelist,
+# 			eventsToProcess = cms.untracked.VEventRange(
+# '1:90327-1:90327','1:90328-1:90328','1:90335-1:90335','1:90336-1:90336','1:90347-1:90347',
+# '1:90348-1:90348','1:90363-1:90363','1:90366-1:90366','1:90366-1:90366','1:90366-1:90366',
+# '1:90367-1:90367','1:90385-1:90385'))
 
 
 
@@ -984,8 +977,8 @@ print  sampleData.MetSystematicType, ' settings '
 
 
 process.BASELINE = cms.EDAnalyzer('FlatTupleGenerator',
-	pairSrc = cms.InputTag('NtupleEvents','NtupleEvents','DavisNtuple'),
-	indepSrc = cms.InputTag('pairIndep','NtupleEventPairIndep','DavisNtuple'),
+	pairSrc = cms.InputTag('NtupleEvents','NtupleEvents',DAVISprocessName),
+	indepSrc = cms.InputTag('pairIndep','NtupleEventPairIndep',DAVISprocessName),
 	NAME = cms.string("BASELINE"),
 	FillEffLeptonBranches = cms.bool(BUILD_EFFICIENCY_TREE), # everywhere else it should be always False
 	RecoilCorrection = sampleData.RecoilCorrection,
@@ -999,8 +992,8 @@ process.BASELINE = cms.EDAnalyzer('FlatTupleGenerator',
 
 
 process.BASELINEupTau = cms.EDAnalyzer('FlatTupleGenerator',
-	pairSrc = cms.InputTag('NtupleEventsTauEsUp','NtupleEventsTauEsUp','DavisNtuple'),
-	indepSrc = cms.InputTag('pairIndep','NtupleEventPairIndep','DavisNtuple'),
+	pairSrc = cms.InputTag('NtupleEventsTauEsUp','NtupleEventsTauEsUp',DAVISprocessName),
+	indepSrc = cms.InputTag('pairIndep','NtupleEventPairIndep',DAVISprocessName),
 	NAME = cms.string("BASELINEupTau"),
 	FillEffLeptonBranches = cms.bool(False), 
 	RecoilCorrection = sampleData.RecoilCorrection,
@@ -1013,8 +1006,8 @@ process.BASELINEupTau = cms.EDAnalyzer('FlatTupleGenerator',
 	)
 
 process.BASELINEdownTau = cms.EDAnalyzer('FlatTupleGenerator',
-	pairSrc = cms.InputTag('NtupleEventsTauEsDown','NtupleEventsTauEsDown','DavisNtuple'),
-	indepSrc = cms.InputTag('pairIndep','NtupleEventPairIndep','DavisNtuple'),
+	pairSrc = cms.InputTag('NtupleEventsTauEsDown','NtupleEventsTauEsDown',DAVISprocessName),
+	indepSrc = cms.InputTag('pairIndep','NtupleEventPairIndep',DAVISprocessName),
 	NAME = cms.string("BASELINEdownTau"),
 	FillEffLeptonBranches = cms.bool(False),	
 	RecoilCorrection = sampleData.RecoilCorrection,
@@ -1027,8 +1020,8 @@ process.BASELINEdownTau = cms.EDAnalyzer('FlatTupleGenerator',
 	)
 
 process.BASELINEupElectron = cms.EDAnalyzer('FlatTupleGenerator',
-	pairSrc = cms.InputTag('NtupleEventsElectronEsUp','NtupleEventsElectronEsUp','DavisNtuple'),
-	indepSrc = cms.InputTag('pairIndep','NtupleEventPairIndep','DavisNtuple'),
+	pairSrc = cms.InputTag('NtupleEventsElectronEsUp','NtupleEventsElectronEsUp',DAVISprocessName),
+	indepSrc = cms.InputTag('pairIndep','NtupleEventPairIndep',DAVISprocessName),
 	NAME = cms.string("BASELINEupElectron"),
 	FillEffLeptonBranches = cms.bool(False), 
 	RecoilCorrection = sampleData.RecoilCorrection,
@@ -1041,8 +1034,8 @@ process.BASELINEupElectron = cms.EDAnalyzer('FlatTupleGenerator',
 	)
 
 process.BASELINEdownElectron = cms.EDAnalyzer('FlatTupleGenerator',
-	pairSrc = cms.InputTag('NtupleEventsElectronEsDown','NtupleEventsElectronEsDown','DavisNtuple'),
-	indepSrc = cms.InputTag('pairIndep','NtupleEventPairIndep','DavisNtuple'),
+	pairSrc = cms.InputTag('NtupleEventsElectronEsDown','NtupleEventsElectronEsDown',DAVISprocessName),
+	indepSrc = cms.InputTag('pairIndep','NtupleEventPairIndep',DAVISprocessName),
 	NAME = cms.string("BASELINEdownElectron"),
 	FillEffLeptonBranches = cms.bool(False),	
 	RecoilCorrection = sampleData.RecoilCorrection,
@@ -1058,8 +1051,8 @@ process.BASELINEdownElectron = cms.EDAnalyzer('FlatTupleGenerator',
 
 
 process.LOWDELTAR = cms.EDAnalyzer('FlatTupleGenerator',
-	pairSrc = cms.InputTag('NtupleEvents','NtupleEvents','DavisNtuple'),
-	indepSrc = cms.InputTag('pairIndep','NtupleEventPairIndep','DavisNtuple'),
+	pairSrc = cms.InputTag('NtupleEvents','NtupleEvents',DAVISprocessName),
+	indepSrc = cms.InputTag('pairIndep','NtupleEventPairIndep',DAVISprocessName),
 	NAME = cms.string("LOWDELTAR"),
 	FillEffLeptonBranches = cms.bool(False),	
 	RecoilCorrection = sampleData.RecoilCorrection,
@@ -1073,8 +1066,8 @@ process.LOWDELTAR = cms.EDAnalyzer('FlatTupleGenerator',
 
 
 process.LOWDELTARupTau = cms.EDAnalyzer('FlatTupleGenerator',
-	pairSrc = cms.InputTag('NtupleEventsTauEsUp','NtupleEventsTauEsUp','DavisNtuple'),
-	indepSrc = cms.InputTag('pairIndep','NtupleEventPairIndep','DavisNtuple'),
+	pairSrc = cms.InputTag('NtupleEventsTauEsUp','NtupleEventsTauEsUp',DAVISprocessName),
+	indepSrc = cms.InputTag('pairIndep','NtupleEventPairIndep',DAVISprocessName),
 	NAME = cms.string("LOWDELTARupTau"),
 	FillEffLeptonBranches = cms.bool(False),	
 	RecoilCorrection = sampleData.RecoilCorrection,
@@ -1087,8 +1080,8 @@ process.LOWDELTARupTau = cms.EDAnalyzer('FlatTupleGenerator',
 	)
 
 process.LOWDELTARdownTau = cms.EDAnalyzer('FlatTupleGenerator',
-	pairSrc = cms.InputTag('NtupleEventsTauEsDown','NtupleEventsTauEsDown','DavisNtuple'),
-	indepSrc = cms.InputTag('pairIndep','NtupleEventPairIndep','DavisNtuple'),
+	pairSrc = cms.InputTag('NtupleEventsTauEsDown','NtupleEventsTauEsDown',DAVISprocessName),
+	indepSrc = cms.InputTag('pairIndep','NtupleEventPairIndep',DAVISprocessName),
 	NAME = cms.string("LOWDELTARdownTau"),
 	FillEffLeptonBranches = cms.bool(False),	
 	RecoilCorrection = sampleData.RecoilCorrection,
@@ -1103,8 +1096,8 @@ process.LOWDELTARdownTau = cms.EDAnalyzer('FlatTupleGenerator',
 
 
 process.LOWDELTARupElectron = cms.EDAnalyzer('FlatTupleGenerator',
-	pairSrc = cms.InputTag('NtupleEventsElectronEsUp','NtupleEventsElectronEsUp','DavisNtuple'),
-	indepSrc = cms.InputTag('pairIndep','NtupleEventPairIndep','DavisNtuple'),
+	pairSrc = cms.InputTag('NtupleEventsElectronEsUp','NtupleEventsElectronEsUp',DAVISprocessName),
+	indepSrc = cms.InputTag('pairIndep','NtupleEventPairIndep',DAVISprocessName),
 	NAME = cms.string("LOWDELTARupElectron"),
 	FillEffLeptonBranches = cms.bool(False),	
 	RecoilCorrection = sampleData.RecoilCorrection,
@@ -1117,8 +1110,8 @@ process.LOWDELTARupElectron = cms.EDAnalyzer('FlatTupleGenerator',
 	)
 
 process.LOWDELTARdownElectron = cms.EDAnalyzer('FlatTupleGenerator',
-	pairSrc = cms.InputTag('NtupleEventsElectronEsDown','NtupleEventsElectronEsDown','DavisNtuple'),
-	indepSrc = cms.InputTag('pairIndep','NtupleEventPairIndep','DavisNtuple'),
+	pairSrc = cms.InputTag('NtupleEventsElectronEsDown','NtupleEventsElectronEsDown',DAVISprocessName),
+	indepSrc = cms.InputTag('pairIndep','NtupleEventPairIndep',DAVISprocessName),
 	NAME = cms.string("LOWDELTARdownElectron"),
 	FillEffLeptonBranches = cms.bool(False),	
 	RecoilCorrection = sampleData.RecoilCorrection,
@@ -1131,134 +1124,149 @@ process.LOWDELTARdownElectron = cms.EDAnalyzer('FlatTupleGenerator',
 	)
 
 
-
-
-
 process.p = cms.Path()
 
-process.p *= process.Cumulative
-process.p *= process.filteredVertices
+if DEBUG_NTUPLE == DEBUG_NTUPLE_INPUT and DEBUG_NTUPLE_INPUT is True:
+	print '++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++'
+	print '++++ FAIL both debug modes active, doing nothing .... '
+	print '++++ change DEBUG_NTUPLE and/or DEBUG_NTUPLE_INPUT  .... '
+	print '++++ in runIIoneStep_*.py .... '
+	quit()
 
-process.p *= process.patJetCorrFactorsReapplyJEC 
-process.p *= process.patJetsReapplyJEC
-
-
-process.p *= process.filteredSlimmedJets
-
-
-process.p *= process.egmGsfElectronIDSequence
-process.p *= process.customSlimmedElectrons
-process.p *= process.customSlimmedElectronsEsUp
-process.p *= process.customSlimmedElectronsEsDown
-process.p *= process.customSlimmedMuons
-process.p *= process.customSlimmedTausTauEsNominal
-process.p *= process.customSlimmedTausTauEsUp
-process.p *= process.customSlimmedTausTauEsDown
-process.p *= process.filteredCustomElectrons
-process.p *= process.filteredCustomElectronsEsUp
-process.p *= process.filteredCustomElectronsEsDown
-process.p *= process.filteredCustomMuons
-process.p *= process.filteredCustomTausEsNominal
-process.p *= process.filteredCustomTausEsUp
-process.p *= process.filteredCustomTausEsDown
-
-process.p *= process.TrimmedFilteredCustomElectrons
-process.p *= process.TrimmedFilteredCustomElectronsEsUp
-process.p *= process.TrimmedFilteredCustomElectronsEsDown
-
-process.p *= process.TrimmedFilteredCustomMuons 
-process.p *= process.TrimmedFilteredCustomTausEsNominal 
-process.p *= process.TrimmedFilteredCustomTausEsUp 
-process.p *= process.TrimmedFilteredCustomTausEsDown 
-
-
-
-process.p *= process.filteredVetoElectrons
-process.p *= process.filteredVetoElectronsEsUp
-process.p *= process.filteredVetoElectronsEsDown
-
-process.p *= process.filteredVetoMuons
-
-
-if BUILD_EFFICIENCY_TREE is False:
-	process.p *= process.requireCandidateHiggsPair
-
-if BUILD_TAU_ES_VARIANTS is True :
-	process.MVAMETtauEsUp
-	process.MVAMETtauEsDown
-
-if BUILD_ELECTRON_ES_VARIANTS is True :
-	process.MVAMETelectronEsUp
-	process.MVAMETelectronEsDown
-
-
-process.p *= process.TupleCandidateEvents
-process.p *= process.NtupleEvents
-
-
-if BUILD_TAU_ES_VARIANTS is True :
-	process.p *= process.TupleCandidateEventsTauEsUp
-	process.p *= process.TupleCandidateEventsTauEsDown
-	process.p *= process.NtupleEventsTauEsUp
-	process.p *= process.NtupleEventsTauEsDown
-
-
-if BUILD_ELECTRON_ES_VARIANTS is True :
-	process.p *= process.TupleCandidateEventsElectronEsDown
-	process.p *= process.TupleCandidateEventsElectronEsUp
-	process.p *= process.NtupleEventsElectronEsUp
-	process.p *= process.NtupleEventsElectronEsDown
-
-process.p *= process.pairIndep
-process.p *= process.BASELINE
-
-if BUILD_TAU_ES_VARIANTS is True :
-	process.p *= process.BASELINEupTau 
-	process.p *= process.BASELINEdownTau
-
-if BUILD_ELECTRON_ES_VARIANTS is True :
-	process.p *= process.BASELINEupElectron
-	process.p *= process.BASELINEdownElectron
-
-
-if BUILD_LOWDR is True :
-	process.p *= process.LOWDELTAR	
-	if BUILD_TAU_ES_VARIANTS is True :
-		process.p *= process.LOWDELTARupTau 
-		process.p *= process.LOWDELTARdownTau
-	if BUILD_ELECTRON_ES_VARIANTS is True :
-		process.p *= process.LOWDELTARupElectron
-		process.p *= process.LOWDELTARdownElectron
-
-###################################
-# output config - should not be in crab
-# script 
-###################################
-
-DEBUG_NTUPLE = False
-
-if DEBUG_NTUPLE is True :
-
-	print "+++++ DEBUG NTUPLE ***** will create Ntuple for Debugging "
-	print "+++++ DEBUG NTUPLE ***** with edmProvDump & edmDumpEventContent "
-
-	process.out = cms.OutputModule("PoolOutputModule",
-				fileName = cms.untracked.string('NtupleFile.root'),
-				SelectEvents = cms.untracked.PSet(
-				                SelectEvents = cms.vstring('p')
-				                ),
-				#outputCommands = cms.untracked.vstring('drop *')
-				outputCommands = cms.untracked.vstring('keep *')
-
-	)
-
-
-process.TFileService = cms.Service("TFileService", fileName = cms.string("FlatTuple.root"))
-
-if DEBUG_NTUPLE is True :
-	process.e = cms.EndPath(process.out)
 else :
-	process.e = cms.EndPath()
+
+	if DEBUG_NTUPLE_INPUT is True :
+		print "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+		print "+++++ DEBUG NTUPLE_INPUT ***** will run using Ntuple as input (not mini-AOD) "
+		print "+++++ DEBUG NTUPLE_INPUT ***** and produce FlatTuple          "
+		print "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+
+
+
+	if DEBUG_NTUPLE_INPUT is False :
+		process.p *= process.Cumulative
+		process.p *= process.filteredVertices
+
+		process.p *= process.patJetCorrFactorsReapplyJEC 
+		process.p *= process.patJetsReapplyJEC
+
+
+		process.p *= process.filteredSlimmedJets
+
+
+		process.p *= process.egmGsfElectronIDSequence
+		process.p *= process.customSlimmedElectrons
+		process.p *= process.customSlimmedElectronsEsUp
+		process.p *= process.customSlimmedElectronsEsDown
+		process.p *= process.customSlimmedMuons
+		process.p *= process.customSlimmedTausTauEsNominal
+		process.p *= process.customSlimmedTausTauEsUp
+		process.p *= process.customSlimmedTausTauEsDown
+		process.p *= process.filteredCustomElectrons
+		process.p *= process.filteredCustomElectronsEsUp
+		process.p *= process.filteredCustomElectronsEsDown
+		process.p *= process.filteredCustomMuons
+		process.p *= process.filteredCustomTausEsNominal
+		process.p *= process.filteredCustomTausEsUp
+		process.p *= process.filteredCustomTausEsDown
+
+		process.p *= process.TrimmedFilteredCustomElectrons
+		process.p *= process.TrimmedFilteredCustomElectronsEsUp
+		process.p *= process.TrimmedFilteredCustomElectronsEsDown
+
+		process.p *= process.TrimmedFilteredCustomMuons 
+		process.p *= process.TrimmedFilteredCustomTausEsNominal 
+		process.p *= process.TrimmedFilteredCustomTausEsUp 
+		process.p *= process.TrimmedFilteredCustomTausEsDown 
+
+
+
+		process.p *= process.filteredVetoElectrons
+		process.p *= process.filteredVetoElectronsEsUp
+		process.p *= process.filteredVetoElectronsEsDown
+
+		process.p *= process.filteredVetoMuons
+
+
+		if BUILD_EFFICIENCY_TREE is False:
+			process.p *= process.requireCandidateHiggsPair
+
+		if BUILD_TAU_ES_VARIANTS is True :
+			process.MVAMETtauEsUp
+			process.MVAMETtauEsDown
+
+		if BUILD_ELECTRON_ES_VARIANTS is True :
+			process.MVAMETelectronEsUp
+			process.MVAMETelectronEsDown
+
+
+		process.p *= process.TupleCandidateEvents
+		process.p *= process.NtupleEvents
+
+
+		if BUILD_TAU_ES_VARIANTS is True :
+			process.p *= process.TupleCandidateEventsTauEsUp
+			process.p *= process.TupleCandidateEventsTauEsDown
+			process.p *= process.NtupleEventsTauEsUp
+			process.p *= process.NtupleEventsTauEsDown
+
+
+		if BUILD_ELECTRON_ES_VARIANTS is True :
+			process.p *= process.TupleCandidateEventsElectronEsDown
+			process.p *= process.TupleCandidateEventsElectronEsUp
+			process.p *= process.NtupleEventsElectronEsUp
+			process.p *= process.NtupleEventsElectronEsDown
+
+		process.p *= process.pairIndep
+	process.p *= process.BASELINE
+
+	if BUILD_TAU_ES_VARIANTS is True :
+		process.p *= process.BASELINEupTau 
+		process.p *= process.BASELINEdownTau
+
+	if BUILD_ELECTRON_ES_VARIANTS is True :
+		process.p *= process.BASELINEupElectron
+		process.p *= process.BASELINEdownElectron
+
+
+	if BUILD_LOWDR is True :
+		process.p *= process.LOWDELTAR	
+		if BUILD_TAU_ES_VARIANTS is True :
+			process.p *= process.LOWDELTARupTau 
+			process.p *= process.LOWDELTARdownTau
+		if BUILD_ELECTRON_ES_VARIANTS is True :
+			process.p *= process.LOWDELTARupElectron
+			process.p *= process.LOWDELTARdownElectron
+
+	###################################
+	# output config - should not be in crab
+	# script 
+	###################################
+
+
+	if DEBUG_NTUPLE is True :
+		print "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+		print "+++++ DEBUG NTUPLE ***** will create Ntuple for Debugging "
+		print "+++++ DEBUG NTUPLE ***** with edmProvDump & edmDumpEventContent "
+		print "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+
+		process.out = cms.OutputModule("PoolOutputModule",
+					fileName = cms.untracked.string('NtupleFile.root'),
+					SelectEvents = cms.untracked.PSet(
+					                SelectEvents = cms.vstring('p')
+					                ),
+					#outputCommands = cms.untracked.vstring('drop *')
+					outputCommands = cms.untracked.vstring('keep *')
+
+		)
+
+
+	process.TFileService = cms.Service("TFileService", fileName = cms.string("FlatTuple.root"))
+
+	if DEBUG_NTUPLE is True :
+		process.e = cms.EndPath(process.out)
+	else :
+		process.e = cms.EndPath()
 
 
 
