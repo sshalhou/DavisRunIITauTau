@@ -46,7 +46,7 @@ cd -
 git clone git@github.com:veelken/SVfit_standalone.git TauAnalysis/SVfitStandalone
 cd TauAnalysis/SVfitStandalone
 echo "***** Ignore Detatched Head Warnings ...."
-git checkout dd7cf43e3f930040959f7d700cef976307d7cec3
+git checkout HIG-16-006
 cd -
 
 # pilup reweight code -- this is done to turn of cout statements
