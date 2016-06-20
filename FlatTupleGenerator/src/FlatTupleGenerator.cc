@@ -1814,12 +1814,12 @@ void FlatTupleGenerator::handleSVFitCall(const edm::Event& iEvent, const edm::Ev
         measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
         svFitStandalone::kTauToHadDecay,
         currentPair.leg1().p4().pt(),currentPair.leg1().p4().eta(),currentPair.leg1().p4().phi(),
-        currentPair.leg1().p4().mass(), leg1_decayMode));
+        currentPair.leg1().p4().mass(), currentPair.leg1().decayMode()));
 
         measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
         svFitStandalone::kTauToHadDecay,
         currentPair.leg2().p4().pt(),currentPair.leg2().p4().eta(),currentPair.leg2().p4().phi(),
-        currentPair.leg2().p4().mass(), leg2_decayMode));
+        currentPair.leg2().p4().mass(), currentPair.leg2().decayMode()));
 
         
       }
@@ -1828,12 +1828,12 @@ void FlatTupleGenerator::handleSVFitCall(const edm::Event& iEvent, const edm::Ev
         measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
         svFitStandalone::kTauToHadDecay,
         currentPair.leg2().p4().pt(),currentPair.leg2().p4().eta(),currentPair.leg2().p4().phi(),
-        currentPair.leg2().p4().mass(), leg2_decayMode));
+        currentPair.leg2().p4().mass(), currentPair.leg2().decayMode()));
 
         measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
         svFitStandalone::kTauToHadDecay,
         currentPair.leg1().p4().pt(),currentPair.leg1().p4().eta(),currentPair.leg1().p4().phi(),
-        currentPair.leg1().p4().mass(), leg1_decayMode));
+        currentPair.leg1().p4().mass(), currentPair.leg1().decayMode()));
 
       }
     }
@@ -1899,7 +1899,7 @@ void FlatTupleGenerator::handleSVFitCall(const edm::Event& iEvent, const edm::Ev
         measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
         svFitStandalone::kTauToHadDecay,
         currentPair.leg2().p4().pt(),currentPair.leg2().p4().eta(),currentPair.leg2().p4().phi(),
-        currentPair.leg2().p4().mass(), leg2_decayMode));
+        currentPair.leg2().p4().mass(), currentPair.leg2().decayMode()));
 
       }
 
@@ -1915,7 +1915,7 @@ void FlatTupleGenerator::handleSVFitCall(const edm::Event& iEvent, const edm::Ev
         measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
         svFitStandalone::kTauToHadDecay,
         currentPair.leg1().p4().pt(),currentPair.leg1().p4().eta(),currentPair.leg1().p4().phi(),
-        currentPair.leg1().p4().mass(), leg1_decayMode));
+        currentPair.leg1().p4().mass(), currentPair.leg1().decayMode()));
 
       }
 
@@ -1940,7 +1940,7 @@ void FlatTupleGenerator::handleSVFitCall(const edm::Event& iEvent, const edm::Ev
         measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
         svFitStandalone::kTauToHadDecay,
         currentPair.leg2().p4().pt(),currentPair.leg2().p4().eta(),currentPair.leg2().p4().phi(),
-        currentPair.leg2().p4().mass(), leg2_decayMode));
+        currentPair.leg2().p4().mass(), currentPair.leg2().decayMode()));
 
       }
 
@@ -1956,12 +1956,18 @@ void FlatTupleGenerator::handleSVFitCall(const edm::Event& iEvent, const edm::Ev
         measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
         svFitStandalone::kTauToHadDecay,
         currentPair.leg1().p4().pt(),currentPair.leg1().p4().eta(),currentPair.leg1().p4().phi(),
-        currentPair.leg1().p4().mass(), leg1_decayMode));
+        currentPair.leg1().p4().mass(), currentPair.leg1().decayMode()));
 
       }
 
     }
 
+
+
+// std::cout<<" leg1 "<<currentPair.leg1().p4().pt()<<" , "<<currentPair.leg1().p4().eta()<<" , "<<currentPair.leg1().p4().phi()<<" , "<<svFitStandalone::muonMass<<" \n";
+// std::cout<<" leg2 "<<currentPair.leg2().p4().pt()<<" , "<<currentPair.leg2().p4().eta()<<" , "<<currentPair.leg2().p4().phi()<<" , "<<currentPair.leg2().p4().mass()<<" , "<<currentPair.leg2().decayMode()<<"\n";
+// std::cout<<" met "<<svMassMET.Px()<<" , "<<svMassMET.Py()<<"\n";
+// std::cout<<" cov "<<covMET[0][0]<<" , "<<covMET[0][1]<<" , "<<covMET[1][0]<<" , "<<covMET[1][1]<<"\n";
 
 
 
@@ -1983,7 +1989,7 @@ void FlatTupleGenerator::handleSVFitCall(const edm::Event& iEvent, const edm::Ev
   double temp_SVMass = svFitAlgorithm.getMass();
   double temp_SVTransverseMass = svFitAlgorithm.transverseMass();
 
-
+  //std::cout<<svFitAlgorithm.getTransverseMass()<<" vs "<<svFitAlgorithm.transverseMass()<<"\n";
 
   if(METtoUSE == "MVAMET_CORR")
   {
