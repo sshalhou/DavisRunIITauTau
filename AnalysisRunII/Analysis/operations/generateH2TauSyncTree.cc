@@ -56,6 +56,8 @@ generateH2TauSyncTree::generateH2TauSyncTree(FlatTreeReader R_, bool run_, std::
 		tree_EleMu = nullptr;
 	}
 
+	initScaleFactorParametersRunII();
+
 }
 
 
@@ -227,6 +229,11 @@ void generateH2TauSyncTree::handleEvent()
 
 	decayModeFindingOldDMs_1 = R.getF("leg1_decayModeFinding");
 	decayModeFindingOldDMs_2 = R.getF("leg2_decayModeFinding");
+
+	tau_decay_mode_1 = R.getI("leg1_decayMode");
+	tau_decay_mode_2 = R.getI("leg2_decayMode");
+
+
 
 
 
@@ -592,6 +599,7 @@ void generateH2TauSyncTree::setupBranches(TTree * T)
 	T->Branch("puCorrPtSum_1", &puCorrPtSum_1);
 	//T->Branch("trigweight_1", &trigweight_1);
 	//T->Branch("idisoweight_1", &idisoweight_1);
+	T->Branch("tau_decay_mode_1",&tau_decay_mode_1);
 
 	T->Branch("pt_2", &pt_2);
 	T->Branch("phi_2", &phi_2);
@@ -624,6 +632,8 @@ void generateH2TauSyncTree::setupBranches(TTree * T)
 	T->Branch("puCorrPtSum_2", &puCorrPtSum_2);
 	//T->Branch("trigweight_2", &trigweight_2);
 	//T->Branch("idisoweight_2", &idisoweight_2);
+	T->Branch("tau_decay_mode_2",&tau_decay_mode_2);
+
 
 	T->Branch("pt_tt", &pt_tt);
 	T->Branch("mt_tot", &mt_tot);
@@ -971,6 +981,9 @@ void generateH2TauSyncTree::reset()
 	puCorrPtSum_1  = -999.0;
 	// trigweight_1  = -999.0;
 	// idisoweight_1  = -999.0;
+	tau_decay_mode_1 = -999;
+
+
 
 	pt_2  = -999.0;
 	phi_2  = -999.0;
@@ -1003,7 +1016,9 @@ void generateH2TauSyncTree::reset()
 	puCorrPtSum_2  = -999.0;
 	// trigweight_2  = -999.0;
 	// idisoweight_2  = -999.0;
+	tau_decay_mode_2 = -999;
 	
+
 	pt_tt =  -999.0;
 	mt_tot =  -999.0;
 	m_vis =  -999.0;
@@ -1098,3 +1113,188 @@ void generateH2TauSyncTree::reset()
     CrossSection = 1.0;    
     FilterEff = 1.0; 
 }
+
+std::vector<double> generateH2TauSyncTree::GetLeg1Leg2McTriggerWeights(TLorentzVector l1,TLorentzVector l2,
+			int candType, int sysShift)
+{
+	std::vector<double> returnVec; /* index 0 is leg1 sf, index 1 is leg2 sf */
+	returnVec.clear();
+
+
+
+
+	return returnVec;
+
+}
+
+double generateH2TauSyncTree::CBeff(double pt, std::array <double, 5> par)
+{
+	/* note : arg must be ordered in this way :
+	 m0    = par[0]
+	 sigma = par[1] 
+	 alpha = par[2]
+	 n     = par[3]
+	 norm =  par[4]
+	*/
+
+	return CBeff(pt, par[0], par[1], par[2] , par[3] , par[4]);
+
+}
+
+
+
+double generateH2TauSyncTree::CBeff(double pt, double m0, double sigma, double alpha, double n, double norm)
+{
+	/* from python in https://indico.cern.ch/event/489915/contributions/
+	1167924/attachments/1227657/1798150/htt_12_2_2016.pdf#page=6*/
+	
+	double sqrtPiOver2 = std::sqrt(TMath::PiOver2());
+	double sqrt2 = std::sqrt(2.);
+	double sig = fabs(sigma);
+	double t = (pt - m0)/sig * alpha /fabs(alpha);
+	double absAlpha = fabs(alpha/sig); 
+
+	double a = TMath::Power(n/absAlpha, n) * TMath::Exp(-0.5*absAlpha*absAlpha); 
+	double b = absAlpha - n/absAlpha;
+	double arg = absAlpha/sqrt2; 
+
+	double ApproxErf = 1.;
+
+	if (arg > 5.)  		  ApproxErf = 1.; 
+	else if (arg < -5.)   ApproxErf = - 1.;
+	else  				  ApproxErf = TMath::Erf(arg);
+
+	double leftArea    = ( 1. +  ApproxErf) * sqrtPiOver2; 
+	double rightArea   = ( a *1./TMath::Power(absAlpha-b, n-1) ) / (n-1) ;
+	double area        = leftArea + rightArea; 
+
+
+	if (t <= absAlpha )
+	{
+		arg = t / sqrt2;
+		if (arg > 5.)        ApproxErf = 1.;
+		else if (arg < -5.)  ApproxErf = -1.;
+		else  			     ApproxErf = TMath::Erf(arg);
+	
+		return norm * (1+ ApproxErf) * sqrtPiOver2 / area; 
+	}
+
+
+	else
+	{
+		double num = norm * (leftArea + a * (1./TMath::Power(t-b,n-1) - 1./TMath::Power(absAlpha - b,n-1)) / (1-n));
+		return (num / area);
+	}
+}
+
+
+
+
+void generateH2TauSyncTree::initScaleFactorParametersRunII()
+{
+
+	// Run II efficiencies for HLT_DoubleMediumIsoPFTau35_Trk1_eta2p1_Reg
+
+	Run2_TauTau_legTriggerEff_Data = {3.45412e+01 , 5.63353e+00 , 2.49242e+00 , 3.35896e+00 , 1.00000e+00};
+	Run2_TauTau_legTriggerEff_DataUP = {3.31713e+01 , 5.66551e+00 , 1.87175e+00 , 8.07790e+00 , 1.00000e+00};
+	Run2_TauTau_legTriggerEff_DataDOWN = {3.56264e+01 , 5.30711e+00 , 2.81591e+00 , 2.40649e+00 , 9.99958e-01};
+	Run2_TauTau_legTriggerEff_Mc = {3.60274e+01 , 5.89434e+00 , 5.82870e+00 , 1.83737e+00 , 9.58000e-01};
+	Run2_TauTau_legTriggerEff_McUP = {3.56012e+01 , 5.97209e+00 , 6.09604e+00 , 1.68740e+00 , 9.87653e-01};
+	Run2_TauTau_legTriggerEff_McDOWN = {3.62436e+01 , 5.58461e+00 , 5.12924e+00 , 2.05921e+00 , 9.32305e-01};
+
+
+	// for(std::size_t pt = 0; pt<200; pt+=10.)
+	// {	
+	// 	std::cout<<" ----------------------------- \n";
+	// 	std::cout<<pt<<" ... (data) "<<CBeff(pt, Run2_TauTau_legTriggerEff_Data)<<" ";
+	// 	std::cout<<" (dataUp) "<<CBeff(pt, Run2_TauTau_legTriggerEff_DataUP)<<" ";
+	// 	std::cout<<" (dataDn) "<<CBeff(pt, Run2_TauTau_legTriggerEff_DataDOWN)<<"\n";
+
+	// 	std::cout<<pt<<" ... (mc) "<<CBeff(pt, Run2_TauTau_legTriggerEff_Mc)<<" ";
+	// 	std::cout<<" (McUp) "<<CBeff(pt, Run2_TauTau_legTriggerEff_McUP)<<" ";
+	// 	std::cout<<" (McDn) "<<CBeff(pt, Run2_TauTau_legTriggerEff_McDOWN)<<"\n";
+
+	// 	std::cout<<" ---> sf = "<<CBeff(pt, Run2_TauTau_legTriggerEff_Data)/CBeff(pt, Run2_TauTau_legTriggerEff_Mc)<<"\n";
+	// 	std::cout<<" ---> sfUp = "<<CBeff(pt, Run2_TauTau_legTriggerEff_DataUP)/CBeff(pt, Run2_TauTau_legTriggerEff_McDOWN)<<"\n";
+	// 	std::cout<<" ---> sfDn = "<<CBeff(pt, Run2_TauTau_legTriggerEff_DataDOWN)/CBeff(pt, Run2_TauTau_legTriggerEff_McUP)<<"\n";
+
+
+	// }
+	// assert(1==23);
+
+
+// // data
+// m0    = 3.45412e+01 
+// sigma = 5.63353e+00 
+// alpha = 2.49242e+00 
+// n     = 3.35896e+00 
+// norm  = 1.00000e+00
+
+// // data up
+// m0    = 3.31713e+01
+// sigma = 5.66551e+00 
+// alpha = 1.87175e+00 
+// n     = 8.07790e+00 
+// norm  = 1.00000e+00
+
+// // data dn
+
+// m0    = 3.56264e+01 
+// sigma = 5.30711e+00 
+// alpha = 2.81591e+00 
+// n     = 2.40649e+00 
+// norm  = 9.99958e-01
+
+
+// // mc
+// m0    = 3.60274e+01
+// sigma = 5.89434e+00 
+// alpha = 5.82870e+00 
+// n     = 1.83737e+00 
+// norm  = 9.58000e-01
+
+// // mc up
+
+// m0    = 3.56012e+01 
+// sigma = 5.97209e+00 
+// alpha = 6.09604e+00 
+// n     = 1.68740e+00 
+// norm  = 9.87653e-01
+
+// // mc dn
+
+// m0    = 3.62436e+01 
+// sigma = 5.58461e+00 
+// alpha = 5.12924e+00 
+// n     = 2.05921e+00 
+// norm  = 9.32305e-01
+
+
+
+
+		 //std::map< std::string, std::map<std::string, double> >  sf_parameters;
+
+
+		//std::map< std::string, double[10] > sf_parameters;
+
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

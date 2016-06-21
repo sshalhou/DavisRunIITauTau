@@ -64,6 +64,40 @@ void GenHelper::fillRecoIndependentInfo()
 
 }
 
+
+std::vector <double> GenHelper::getTopPts()
+{
+	/* loop through genPartciles and find all particles with
+	abs(m_genMother_pdgId) == 6 and gen_FromHardProcess() and m_genParticle_isLastCopy
+	*/
+
+	std::vector <double> retVec_;
+	retVec_.clear();
+
+	for(std::size_t g = 0; g < m_genParticle_pdgId.size(); ++g)
+  	{
+		if(abs(m_genParticle_pdgId[g].second) == 6)
+		{
+			if( m_genParticle_fromHardProcess[g].second == 1 && m_genParticle_isLastCopy[g].second == 1)
+			{
+				if(retVec_.size() <= 2)
+				{
+					retVec_.push_back(m_genParticle_pt[g].second);
+				}
+
+			}
+
+
+		}
+
+
+	}
+
+	return retVec_;
+
+}
+
+
 /* reset variables to zero/empty vectors */
 void GenHelper::resetVars()
 {
@@ -106,6 +140,9 @@ void GenHelper::resetVars()
     temp_effLep_genMCmatch_phi = NAN;
     temp_effLep_genMCmatch_M = NAN;
     temp_effLep_MCMatchPdgId = -999;
+
+    m_top_pt_1 = NAN;
+    m_top_pt_2 = NAN;
 
 
     m_IsZTT = -999;

@@ -11,6 +11,7 @@ see : https://twiki.cern.ch/twiki/bin/viewauth/CMS/HiggsToTauTauWorking2015#Sync
 ////////////////////////////
 
 #include <TROOT.h>
+#include <TMath.h>
 #include <TChain.h>
 #include <TTree.h>
 #include <TFile.h>
@@ -47,6 +48,11 @@ public:
 	void reset(); /* reset values each event */
 	void setExtraLepVetoes(TLorentzVector, TLorentzVector);
 	double mtTotCalc(TLorentzVector, TLorentzVector, TLorentzVector);
+
+	/* GetLeg1Leg2McTriggerWeights args : leg1, leg2, CandidateEventType, -1,0,1 
+	for down nominal up shifted-systematic */
+	
+	std::vector<double> GetLeg1Leg2McTriggerWeights(TLorentzVector,TLorentzVector,int,int); 
 
 private:
 	FlatTreeReader R;
@@ -120,6 +126,7 @@ private:
 	float  decayModeFindingOldDMs_1;
 	float  neutralIsoPtSum_1;
 	float  puCorrPtSum_1;
+	int    tau_decay_mode_1;
 
 
 	/* leg_2 */
@@ -156,6 +163,8 @@ private:
 	float  puCorrPtSum_2;
 	float  trigweight_2;
 	float  idisoweight_2;
+	int    tau_decay_mode_2;
+
 
 	/* di-tau system */
 
@@ -281,15 +290,31 @@ private:
 	TTree * tree_TauTau;
 	TTree * tree_EleMu;
 
-	// to hold run:lumi:event from MET 
-	// filter veto files 	
 
-	std::vector < std::string > metFilter_DoubleEG;
-	std::vector < std::string > metFilter_MuonEG;
-	std::vector < std::string > metFilter_SingleElectron;
-	std::vector < std::string > metFilter_SingleMuon;
-	std::vector < std::string > metFilter_Tau;
+	////////////////////////////////
+	// scale factor helper functions
+	void initScaleFactorParametersRunII();
 
+
+	/////////////////////////////////
+	// scale factor parameters
+
+	// Run II efficiencies for HLT_DoubleMediumIsoPFTau35_Trk1_eta2p1_Reg
+
+	std::array <double, 5> Run2_TauTau_legTriggerEff_Data;
+	std::array <double, 5> Run2_TauTau_legTriggerEff_DataUP;
+	std::array <double, 5> Run2_TauTau_legTriggerEff_DataDOWN;
+
+	std::array <double, 5> Run2_TauTau_legTriggerEff_Mc;
+	std::array <double, 5> Run2_TauTau_legTriggerEff_McUP;
+	std::array <double, 5> Run2_TauTau_legTriggerEff_McDOWN;
+
+
+	// MC scale factor functions
+
+	/* crystal ball (x) step function -- args can be either doubles, or pt  + std::array <double, 5>*/
+	double CBeff(double x, double m0, double sigma, double alpha, double n, double norm);
+	double CBeff(double x, std::array <double, 5>);
 
 };
 

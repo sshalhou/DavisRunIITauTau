@@ -2702,6 +2702,12 @@ void FlatTupleGenerator::handlePairIndepInfo(const edm::Event& iEvent, const edm
 
 
 
+
+  /* top pT */
+  std::vector<double> topPts = genhelper.getTopPts();
+  if(topPts.size()>0) genTopPt1 = topPts[0];
+  if(topPts.size()>1) genTopPt2 = topPts[1];
+
 }
 
 
@@ -3408,6 +3414,9 @@ void FlatTupleGenerator::handlePairIndepInfo(const edm::Event& iEvent, const edm
   genBosonVisible_M = NAN;
 
 
+  genTopPt1 = NAN;
+  genTopPt2 = NAN;
+
   DiMuon_Flag = 0;
   DiElectron_Flag = 0;
   ThirdMuon_Flag  = 0;
@@ -3491,22 +3500,22 @@ void FlatTupleGenerator::beginJob()
   FlatTuple->Branch("ElectronEsNumberSigmasShifted", &ElectronEsNumberSigmasShifted);
   FlatTuple->Branch("isOsPair", &isOsPair);
   
-  FlatTuple->Branch("SVMass", &SVMass);
-  FlatTuple->Branch("SVTransverseMass", &SVTransverseMass);
-  FlatTuple->Branch("SVMass_uncorr_mvaMET", &SVMass_uncorr_mvaMET);
-  FlatTuple->Branch("SVTransverseMass_uncorr_mvaMET", &SVTransverseMass_uncorr_mvaMET);
-  FlatTuple->Branch("SVMass_responseUP_mvaMET", &SVMass_responseUP_mvaMET);
-  FlatTuple->Branch("SVTransverseMass_responseUP_mvaMET", &SVTransverseMass_responseUP_mvaMET);
-  FlatTuple->Branch("SVMass_responseDN_mvaMET", &SVMass_responseDN_mvaMET);
-  FlatTuple->Branch("SVTransverseMass_responseDN_mvaMET", &SVTransverseMass_responseDN_mvaMET);
-  FlatTuple->Branch("SVMass_resolutionUP_mvaMET", &SVMass_resolutionUP_mvaMET);
-  FlatTuple->Branch("SVTransverseMass_resolutionUP_mvaMET", &SVTransverseMass_resolutionUP_mvaMET);
-  FlatTuple->Branch("SVMass_resolutionDN_mvaMET", &SVMass_resolutionDN_mvaMET);
-  FlatTuple->Branch("SVTransverseMass_resolutionDN_mvaMET", &SVTransverseMass_resolutionDN_mvaMET);
-  FlatTuple->Branch("SVMass_pfMET", &SVMass_pfMET);
-  FlatTuple->Branch("SVTransverseMass_pfMET", &SVTransverseMass_pfMET);
-  FlatTuple->Branch("SVMass_puppiMET", &SVMass_puppiMET);
-  FlatTuple->Branch("SVTransverseMass_puppiMET", &SVTransverseMass_puppiMET);
+  if(USE_MVAMET_FOR_SVFit_AT_FlatTuple) FlatTuple->Branch("SVMass", &SVMass);
+  if(USE_MVAMET_FOR_SVFit_AT_FlatTuple) FlatTuple->Branch("SVTransverseMass", &SVTransverseMass);
+  if(USE_MVAMET_uncorrected_FOR_SVFit_AT_FlatTuple) FlatTuple->Branch("SVMass_uncorr_mvaMET", &SVMass_uncorr_mvaMET);
+  if(USE_MVAMET_uncorrected_FOR_SVFit_AT_FlatTuple) FlatTuple->Branch("SVTransverseMass_uncorr_mvaMET", &SVTransverseMass_uncorr_mvaMET);
+  if(USE_MVAMET_responseUP_FOR_SVFit_AT_FlatTuple) FlatTuple->Branch("SVMass_responseUP_mvaMET", &SVMass_responseUP_mvaMET);
+  if(USE_MVAMET_responseUP_FOR_SVFit_AT_FlatTuple) FlatTuple->Branch("SVTransverseMass_responseUP_mvaMET", &SVTransverseMass_responseUP_mvaMET);
+  if(USE_MVAMET_responseDOWN_FOR_SVFit_AT_FlatTuple) FlatTuple->Branch("SVMass_responseDN_mvaMET", &SVMass_responseDN_mvaMET);
+  if(USE_MVAMET_responseDOWN_FOR_SVFit_AT_FlatTuple) FlatTuple->Branch("SVTransverseMass_responseDN_mvaMET", &SVTransverseMass_responseDN_mvaMET);
+  if(USE_MVAMET_resolutionUP_FOR_SVFit_AT_FlatTuple) FlatTuple->Branch("SVMass_resolutionUP_mvaMET", &SVMass_resolutionUP_mvaMET);
+  if(USE_MVAMET_resolutionUP_FOR_SVFit_AT_FlatTuple) FlatTuple->Branch("SVTransverseMass_resolutionUP_mvaMET", &SVTransverseMass_resolutionUP_mvaMET);
+  if(USE_MVAMET_resolutionDOWN_FOR_SVFit_AT_FlatTuple) FlatTuple->Branch("SVMass_resolutionDN_mvaMET", &SVMass_resolutionDN_mvaMET);
+  if(USE_MVAMET_resolutionDOWN_FOR_SVFit_AT_FlatTuple) FlatTuple->Branch("SVTransverseMass_resolutionDN_mvaMET", &SVTransverseMass_resolutionDN_mvaMET);
+  if(USE_PFMET_FOR_SVFit_AT_FlatTuple) FlatTuple->Branch("SVMass_pfMET", &SVMass_pfMET);
+  if(USE_PFMET_FOR_SVFit_AT_FlatTuple) FlatTuple->Branch("SVTransverseMass_pfMET", &SVTransverseMass_pfMET);
+  if(USE_PUPPIMET_FOR_SVFit_AT_FlatTuple) FlatTuple->Branch("SVMass_puppiMET", &SVMass_puppiMET);
+  if(USE_PUPPIMET_FOR_SVFit_AT_FlatTuple) FlatTuple->Branch("SVTransverseMass_puppiMET", &SVTransverseMass_puppiMET);
 
   FlatTuple->Branch("MTpfMET_leg1", &MTpfMET_leg1);
   FlatTuple->Branch("MTpfMET_leg2", &MTpfMET_leg2);
@@ -3583,8 +3592,8 @@ void FlatTupleGenerator::beginJob()
   if( !SmallTree_ ) FlatTuple->Branch("leg1_EffectiveArea", &leg1_EffectiveArea);
   FlatTuple->Branch("leg1_charge", &leg1_charge);
   FlatTuple->Branch("leg1_PFpdgId", &leg1_PFpdgId);
-  FlatTuple->Branch("leg1_GENpdgId", &leg1_GENpdgId);
-  FlatTuple->Branch("leg1_GENMOTHERpdgId", &leg1_GENMOTHERpdgId);
+  if( !SmallTree_ ) FlatTuple->Branch("leg1_GENpdgId", &leg1_GENpdgId);
+  if( !SmallTree_ ) FlatTuple->Branch("leg1_GENMOTHERpdgId", &leg1_GENMOTHERpdgId);
   if( !SmallTree_ ) FlatTuple->Branch("leg1_IP", &leg1_IP);
   if( !SmallTree_ ) FlatTuple->Branch("leg1_IPerror", &leg1_IPerror);
   if( !SmallTree_ ) FlatTuple->Branch("leg1_PUchargedHadronIso", &leg1_PUchargedHadronIso);
@@ -3643,8 +3652,8 @@ void FlatTupleGenerator::beginJob()
   if( !SmallTree_ ) FlatTuple->Branch("leg2_EffectiveArea", &leg2_EffectiveArea);
   FlatTuple->Branch("leg2_charge", &leg2_charge);
   FlatTuple->Branch("leg2_PFpdgId", &leg2_PFpdgId);
-  FlatTuple->Branch("leg2_GENpdgId", &leg2_GENpdgId);
-  FlatTuple->Branch("leg2_GENMOTHERpdgId", &leg2_GENMOTHERpdgId);
+  if( !SmallTree_ ) FlatTuple->Branch("leg2_GENpdgId", &leg2_GENpdgId);
+  if( !SmallTree_ ) FlatTuple->Branch("leg2_GENMOTHERpdgId", &leg2_GENMOTHERpdgId);
   if( !SmallTree_ ) FlatTuple->Branch("leg2_IP", &leg2_IP);
   if( !SmallTree_ ) FlatTuple->Branch("leg2_IPerror", &leg2_IPerror);
   if( !SmallTree_ ) FlatTuple->Branch("leg2_PUchargedHadronIso", &leg2_PUchargedHadronIso);
@@ -3699,37 +3708,37 @@ void FlatTupleGenerator::beginJob()
   FlatTuple->Branch("leg2_dzTauVertex", &leg2_dzTauVertex);
 
   FlatTuple->Branch("leg2_pt", &leg2_pt);
-  FlatTuple->Branch("leg2_gen_pt", &leg2_gen_pt);
+  if( !SmallTree_ ) FlatTuple->Branch("leg2_gen_pt", &leg2_gen_pt);
   if( !SmallTree_ ) FlatTuple->Branch("leg2_genMother_pt", &leg2_genMother_pt);
-  FlatTuple->Branch("leg2_genJet_pt", &leg2_genJet_pt);
+  if( !SmallTree_ ) FlatTuple->Branch("leg2_genJet_pt", &leg2_genJet_pt);
   FlatTuple->Branch("leg1_pt", &leg1_pt);
-  FlatTuple->Branch("leg1_gen_pt", &leg1_gen_pt);
- if( !SmallTree_ )  FlatTuple->Branch("leg1_genMother_pt", &leg1_genMother_pt);
-  FlatTuple->Branch("leg1_genJet_pt", &leg1_genJet_pt);
+  if( !SmallTree_ ) FlatTuple->Branch("leg1_gen_pt", &leg1_gen_pt);
+  if( !SmallTree_ ) FlatTuple->Branch("leg1_genMother_pt", &leg1_genMother_pt);
+  if( !SmallTree_ ) FlatTuple->Branch("leg1_genJet_pt", &leg1_genJet_pt);
   FlatTuple->Branch("leg2_eta", &leg2_eta);
-  FlatTuple->Branch("leg2_gen_eta", &leg2_gen_eta);
+  if( !SmallTree_ ) FlatTuple->Branch("leg2_gen_eta", &leg2_gen_eta);
   if( !SmallTree_ ) FlatTuple->Branch("leg2_genMother_eta", &leg2_genMother_eta);
-  FlatTuple->Branch("leg2_genJet_eta", &leg2_genJet_eta);
+  if( !SmallTree_ ) FlatTuple->Branch("leg2_genJet_eta", &leg2_genJet_eta);
   FlatTuple->Branch("leg1_eta", &leg1_eta);
-  FlatTuple->Branch("leg1_gen_eta", &leg1_gen_eta);
+  if( !SmallTree_ ) FlatTuple->Branch("leg1_gen_eta", &leg1_gen_eta);
   if( !SmallTree_ ) FlatTuple->Branch("leg1_genMother_eta", &leg1_genMother_eta);
-  FlatTuple->Branch("leg1_genJet_eta", &leg1_genJet_eta);
+  if( !SmallTree_ ) FlatTuple->Branch("leg1_genJet_eta", &leg1_genJet_eta);
   FlatTuple->Branch("leg2_phi", &leg2_phi);
-  FlatTuple->Branch("leg2_gen_phi", &leg2_gen_phi);
+  if( !SmallTree_ ) FlatTuple->Branch("leg2_gen_phi", &leg2_gen_phi);
   if( !SmallTree_ ) FlatTuple->Branch("leg2_genMother_phi", &leg2_genMother_phi);
-  FlatTuple->Branch("leg2_genJet_phi", &leg2_genJet_phi);
+  if( !SmallTree_ ) FlatTuple->Branch("leg2_genJet_phi", &leg2_genJet_phi);
   FlatTuple->Branch("leg1_phi", &leg1_phi);
-  FlatTuple->Branch("leg1_gen_phi", &leg1_gen_phi);
+  if( !SmallTree_ ) FlatTuple->Branch("leg1_gen_phi", &leg1_gen_phi);
   if( !SmallTree_ ) FlatTuple->Branch("leg1_genMother_phi", &leg1_genMother_phi);
-  FlatTuple->Branch("leg1_genJet_phi", &leg1_genJet_phi);
+  if( !SmallTree_ ) FlatTuple->Branch("leg1_genJet_phi", &leg1_genJet_phi);
   FlatTuple->Branch("leg2_M", &leg2_M);
-  FlatTuple->Branch("leg2_gen_M", &leg2_gen_M);
+  if( !SmallTree_ ) FlatTuple->Branch("leg2_gen_M", &leg2_gen_M);
   if( !SmallTree_ ) FlatTuple->Branch("leg2_genMother_M", &leg2_genMother_M);
-  FlatTuple->Branch("leg2_genJet_M", &leg2_genJet_M);
+  if( !SmallTree_ ) FlatTuple->Branch("leg2_genJet_M", &leg2_genJet_M);
   FlatTuple->Branch("leg1_M", &leg1_M);
-  FlatTuple->Branch("leg1_gen_M", &leg1_gen_M);
+  if( !SmallTree_ ) FlatTuple->Branch("leg1_gen_M", &leg1_gen_M);
   if( !SmallTree_ ) FlatTuple->Branch("leg1_genMother_M", &leg1_genMother_M);
-  FlatTuple->Branch("leg1_genJet_M", &leg1_genJet_M);
+  if( !SmallTree_ ) FlatTuple->Branch("leg1_genJet_M", &leg1_genJet_M);
   FlatTuple->Branch("leg1_RelIso",&leg1_RelIso);
   FlatTuple->Branch("leg2_RelIso",&leg2_RelIso);
 
@@ -3740,25 +3749,25 @@ void FlatTupleGenerator::beginJob()
     FlatTuple->Branch("effLep_eta", &effLep_eta);
     FlatTuple->Branch("effLep_phi", &effLep_phi);
     FlatTuple->Branch("effLep_M", &effLep_M);
-    FlatTuple->Branch("effLep_gen_pt", &effLep_gen_pt);
-    FlatTuple->Branch("effLep_gen_eta", &effLep_gen_eta);
-    FlatTuple->Branch("effLep_gen_phi", &effLep_gen_phi);
-    FlatTuple->Branch("effLep_gen_M", &effLep_gen_M);
+    if( !SmallTree_ ) FlatTuple->Branch("effLep_gen_pt", &effLep_gen_pt);
+    if( !SmallTree_ ) FlatTuple->Branch("effLep_gen_eta", &effLep_gen_eta);
+    if( !SmallTree_ ) FlatTuple->Branch("effLep_gen_phi", &effLep_gen_phi);
+    if( !SmallTree_ ) FlatTuple->Branch("effLep_gen_M", &effLep_gen_M);
     if( !SmallTree_ ) FlatTuple->Branch("effLep_genMother_pt", &effLep_genMother_pt);
     if( !SmallTree_ ) FlatTuple->Branch("effLep_genMother_eta", &effLep_genMother_eta);
     if( !SmallTree_ ) FlatTuple->Branch("effLep_genMother_phi", &effLep_genMother_phi);
     if( !SmallTree_ ) FlatTuple->Branch("effLep_genMother_M", &effLep_genMother_M);
-    FlatTuple->Branch("effLep_genJet_pt", &effLep_genJet_pt);
-    FlatTuple->Branch("effLep_genJet_eta", &effLep_genJet_eta);
-    FlatTuple->Branch("effLep_genJet_phi", &effLep_genJet_phi);
-    FlatTuple->Branch("effLep_genJet_M", &effLep_genJet_M);
+    if( !SmallTree_ ) FlatTuple->Branch("effLep_genJet_pt", &effLep_genJet_pt);
+    if( !SmallTree_ ) FlatTuple->Branch("effLep_genJet_eta", &effLep_genJet_eta);
+    if( !SmallTree_ ) FlatTuple->Branch("effLep_genJet_phi", &effLep_genJet_phi);
+    if( !SmallTree_ ) FlatTuple->Branch("effLep_genJet_M", &effLep_genJet_M);
     FlatTuple->Branch("effLep_dz", &effLep_dz);
     FlatTuple->Branch("effLep_dxy", &effLep_dxy);
     if( !SmallTree_ ) FlatTuple->Branch("effLep_EffectiveArea", &effLep_EffectiveArea);
     FlatTuple->Branch("effLep_charge", &effLep_charge);
     FlatTuple->Branch("effLep_PFpdgId", &effLep_PFpdgId);
-    FlatTuple->Branch("effLep_GENpdgId", &effLep_GENpdgId);
-    FlatTuple->Branch("effLep_GENMOTHERpdgId", &effLep_GENMOTHERpdgId);
+    if( !SmallTree_ ) FlatTuple->Branch("effLep_GENpdgId", &effLep_GENpdgId);
+    if( !SmallTree_ ) FlatTuple->Branch("effLep_GENMOTHERpdgId", &effLep_GENMOTHERpdgId);
     if( !SmallTree_ ) FlatTuple->Branch("effLep_IP", &effLep_IP);
     if( !SmallTree_ ) FlatTuple->Branch("effLep_IPerror", &effLep_IPerror);
     if( !SmallTree_ ) FlatTuple->Branch("effLep_PUchargedHadronIso", &effLep_PUchargedHadronIso);
@@ -3814,36 +3823,36 @@ void FlatTupleGenerator::beginJob()
     FlatTuple->Branch("effLep_RelIso", &effLep_RelIso);
   }
 
-  FlatTuple->Branch("leg1_genJet_pdgId", &leg1_genJet_pdgId);
-  FlatTuple->Branch("leg2_genJet_pdgId", &leg2_genJet_pdgId);
-  if( BuildEffTree_ ) FlatTuple->Branch("effLep_genJet_pdgId", &effLep_genJet_pdgId);
+  if( !SmallTree_ ) FlatTuple->Branch("leg1_genJet_pdgId", &leg1_genJet_pdgId);
+  if( !SmallTree_ ) FlatTuple->Branch("leg2_genJet_pdgId", &leg2_genJet_pdgId);
+  if( BuildEffTree_ ) { if( !SmallTree_ ) FlatTuple->Branch("effLep_genJet_pdgId", &effLep_genJet_pdgId); }
 
 
-  FlatTuple->Branch("veto_leptonType", &veto_leptonType);
-  FlatTuple->Branch("veto_pt", &veto_pt);
-  FlatTuple->Branch("veto_eta", &veto_eta);
-  FlatTuple->Branch("veto_phi", &veto_phi);
-  FlatTuple->Branch("veto_M", &veto_M);
-  FlatTuple->Branch("veto_charge", &veto_charge);
+  if( !SmallTree_ ) FlatTuple->Branch("veto_leptonType", &veto_leptonType);
+  if( !SmallTree_ ) FlatTuple->Branch("veto_pt", &veto_pt);
+  if( !SmallTree_ ) FlatTuple->Branch("veto_eta", &veto_eta);
+  if( !SmallTree_ ) FlatTuple->Branch("veto_phi", &veto_phi);
+  if( !SmallTree_ ) FlatTuple->Branch("veto_M", &veto_M);
+  if( !SmallTree_ ) FlatTuple->Branch("veto_charge", &veto_charge);
 
-  FlatTuple->Branch("veto_dxy", &veto_dxy);
-  FlatTuple->Branch("veto_dz", &veto_dz);
-  FlatTuple->Branch("veto_RelIso", &veto_RelIso);
-  FlatTuple->Branch("veto_passesMediumMuonId", &veto_passesMediumMuonId);
-  FlatTuple->Branch("veto_rawElectronMVA", &veto_rawElectronMVA);
-  FlatTuple->Branch("veto_categoryElectronMVA", &veto_categoryElectronMVA);
-  FlatTuple->Branch("veto_passElectronMVA80", &veto_passElectronMVA80);
-  FlatTuple->Branch("veto_passElectronMVA90", &veto_passElectronMVA90);
-  FlatTuple->Branch("veto_passElectronCutBased", &veto_passElectronCutBased);
-  FlatTuple->Branch("veto_isTrackerGlobalPFMuon", &veto_isTrackerGlobalPFMuon);
-  FlatTuple->Branch("veto_numberOfMissingInnerHits", &veto_numberOfMissingInnerHits);
-  FlatTuple->Branch("veto_numberOfMissingOuterHits", &veto_numberOfMissingOuterHits);
-  FlatTuple->Branch("veto_passConversionVeto", &veto_passConversionVeto);
+  if( !SmallTree_ ) FlatTuple->Branch("veto_dxy", &veto_dxy);
+  if( !SmallTree_ ) FlatTuple->Branch("veto_dz", &veto_dz);
+  if( !SmallTree_ ) FlatTuple->Branch("veto_RelIso", &veto_RelIso);
+  if( !SmallTree_ ) FlatTuple->Branch("veto_passesMediumMuonId", &veto_passesMediumMuonId);
+  if( !SmallTree_ ) FlatTuple->Branch("veto_rawElectronMVA", &veto_rawElectronMVA);
+  if( !SmallTree_ ) FlatTuple->Branch("veto_categoryElectronMVA", &veto_categoryElectronMVA);
+  if( !SmallTree_ ) FlatTuple->Branch("veto_passElectronMVA80", &veto_passElectronMVA80);
+  if( !SmallTree_ ) FlatTuple->Branch("veto_passElectronMVA90", &veto_passElectronMVA90);
+  if( !SmallTree_ ) FlatTuple->Branch("veto_passElectronCutBased", &veto_passElectronCutBased);
+  if( !SmallTree_ ) FlatTuple->Branch("veto_isTrackerGlobalPFMuon", &veto_isTrackerGlobalPFMuon);
+  if( !SmallTree_ ) FlatTuple->Branch("veto_numberOfMissingInnerHits", &veto_numberOfMissingInnerHits);
+  if( !SmallTree_ ) FlatTuple->Branch("veto_numberOfMissingOuterHits", &veto_numberOfMissingOuterHits);
+  if( !SmallTree_ ) FlatTuple->Branch("veto_passConversionVeto", &veto_passConversionVeto);
 
-  FlatTuple->Branch("veto_LeptonPassesThirdElectronVetoCuts", &veto_LeptonPassesThirdElectronVetoCuts);
-  FlatTuple->Branch("veto_LeptonPassesThirdMuonVetoCuts", &veto_LeptonPassesThirdMuonVetoCuts);
-  FlatTuple->Branch("veto_LeptonPassesDiElectronVetoCuts", &veto_LeptonPassesDiElectronVetoCuts);
-  FlatTuple->Branch("veto_LeptonPassesDiMuonVetoCuts", &veto_LeptonPassesDiMuonVetoCuts);
+  if( !SmallTree_ ) FlatTuple->Branch("veto_LeptonPassesThirdElectronVetoCuts", &veto_LeptonPassesThirdElectronVetoCuts);
+  if( !SmallTree_ ) FlatTuple->Branch("veto_LeptonPassesThirdMuonVetoCuts", &veto_LeptonPassesThirdMuonVetoCuts);
+  if( !SmallTree_ ) FlatTuple->Branch("veto_LeptonPassesDiElectronVetoCuts", &veto_LeptonPassesDiElectronVetoCuts);
+  if( !SmallTree_ ) FlatTuple->Branch("veto_LeptonPassesDiMuonVetoCuts", &veto_LeptonPassesDiMuonVetoCuts);
 
 
 
@@ -3942,14 +3951,14 @@ void FlatTupleGenerator::beginJob()
   if( !SmallTree_ ) FlatTuple->Branch("jets_BtagEff_MediumWp_JECshiftedUp", &jets_BtagEff_MediumWp_JECshiftedUp);
   if( !SmallTree_ ) FlatTuple->Branch("jets_BtagEff_TightWp_JECshiftedUp", &jets_BtagEff_TightWp_JECshiftedUp);
   FlatTuple->Branch("jets_IsBTagged_LooseWpCentral_JECshiftedUp", &jets_IsBTagged_LooseWpCentral_JECshiftedUp);
-  FlatTuple->Branch("jets_IsBTagged_LooseWpUp_JECshiftedUp", &jets_IsBTagged_LooseWpUp_JECshiftedUp);
-  FlatTuple->Branch("jets_IsBTagged_LooseWpDown_JECshiftedUp", &jets_IsBTagged_LooseWpDown_JECshiftedUp);
+  if( !SmallTree_ ) FlatTuple->Branch("jets_IsBTagged_LooseWpUp_JECshiftedUp", &jets_IsBTagged_LooseWpUp_JECshiftedUp);
+  if( !SmallTree_ ) FlatTuple->Branch("jets_IsBTagged_LooseWpDown_JECshiftedUp", &jets_IsBTagged_LooseWpDown_JECshiftedUp);
   FlatTuple->Branch("jets_IsBTagged_MediumWpCentral_JECshiftedUp", &jets_IsBTagged_MediumWpCentral_JECshiftedUp);
-  FlatTuple->Branch("jets_IsBTagged_MediumWpUp_JECshiftedUp", &jets_IsBTagged_MediumWpUp_JECshiftedUp);
-  FlatTuple->Branch("jets_IsBTagged_MediumWpDown_JECshiftedUp", &jets_IsBTagged_MediumWpDown_JECshiftedUp);
+  if( !SmallTree_ ) FlatTuple->Branch("jets_IsBTagged_MediumWpUp_JECshiftedUp", &jets_IsBTagged_MediumWpUp_JECshiftedUp);
+  if( !SmallTree_ ) FlatTuple->Branch("jets_IsBTagged_MediumWpDown_JECshiftedUp", &jets_IsBTagged_MediumWpDown_JECshiftedUp);
   FlatTuple->Branch("jets_IsBTagged_TightWpCentral_JECshiftedUp", &jets_IsBTagged_TightWpCentral_JECshiftedUp);
-  FlatTuple->Branch("jets_IsBTagged_TightWpUp_JECshiftedUp", &jets_IsBTagged_TightWpUp_JECshiftedUp);
-  FlatTuple->Branch("jets_IsBTagged_TightWpDown_JECshiftedUp", &jets_IsBTagged_TightWpDown_JECshiftedUp);
+  if( !SmallTree_ ) FlatTuple->Branch("jets_IsBTagged_TightWpUp_JECshiftedUp", &jets_IsBTagged_TightWpUp_JECshiftedUp);
+  if( !SmallTree_ ) FlatTuple->Branch("jets_IsBTagged_TightWpDown_JECshiftedUp", &jets_IsBTagged_TightWpDown_JECshiftedUp);
   FlatTuple->Branch("jets_PF_jetIdPassedTight_JECshiftedUp", &jets_PF_jetIdPassedTight_JECshiftedUp);
   
 
@@ -3979,14 +3988,14 @@ void FlatTupleGenerator::beginJob()
   if( !SmallTree_ ) FlatTuple->Branch("jets_BtagEff_MediumWp_JECshiftedDown", &jets_BtagEff_MediumWp_JECshiftedDown);
   if( !SmallTree_ ) FlatTuple->Branch("jets_BtagEff_TightWp_JECshiftedDown", &jets_BtagEff_TightWp_JECshiftedDown);
   FlatTuple->Branch("jets_IsBTagged_LooseWpCentral_JECshiftedDown", &jets_IsBTagged_LooseWpCentral_JECshiftedDown);
-  FlatTuple->Branch("jets_IsBTagged_LooseWpUp_JECshiftedDown", &jets_IsBTagged_LooseWpUp_JECshiftedDown);
-  FlatTuple->Branch("jets_IsBTagged_LooseWpDown_JECshiftedDown", &jets_IsBTagged_LooseWpDown_JECshiftedDown);
+  if( !SmallTree_ ) FlatTuple->Branch("jets_IsBTagged_LooseWpUp_JECshiftedDown", &jets_IsBTagged_LooseWpUp_JECshiftedDown);
+  if( !SmallTree_ ) FlatTuple->Branch("jets_IsBTagged_LooseWpDown_JECshiftedDown", &jets_IsBTagged_LooseWpDown_JECshiftedDown);
   FlatTuple->Branch("jets_IsBTagged_MediumWpCentral_JECshiftedDown", &jets_IsBTagged_MediumWpCentral_JECshiftedDown);
-  FlatTuple->Branch("jets_IsBTagged_MediumWpUp_JECshiftedDown", &jets_IsBTagged_MediumWpUp_JECshiftedDown);
-  FlatTuple->Branch("jets_IsBTagged_MediumWpDown_JECshiftedDown", &jets_IsBTagged_MediumWpDown_JECshiftedDown);
+  if( !SmallTree_ ) FlatTuple->Branch("jets_IsBTagged_MediumWpUp_JECshiftedDown", &jets_IsBTagged_MediumWpUp_JECshiftedDown);
+  if( !SmallTree_ ) FlatTuple->Branch("jets_IsBTagged_MediumWpDown_JECshiftedDown", &jets_IsBTagged_MediumWpDown_JECshiftedDown);
   FlatTuple->Branch("jets_IsBTagged_TightWpCentral_JECshiftedDown", &jets_IsBTagged_TightWpCentral_JECshiftedDown);
-  FlatTuple->Branch("jets_IsBTagged_TightWpUp_JECshiftedDown", &jets_IsBTagged_TightWpUp_JECshiftedDown);
-  FlatTuple->Branch("jets_IsBTagged_TightWpDown_JECshiftedDown", &jets_IsBTagged_TightWpDown_JECshiftedDown);
+  if( !SmallTree_ ) FlatTuple->Branch("jets_IsBTagged_TightWpUp_JECshiftedDown", &jets_IsBTagged_TightWpUp_JECshiftedDown);
+  if( !SmallTree_ ) FlatTuple->Branch("jets_IsBTagged_TightWpDown_JECshiftedDown", &jets_IsBTagged_TightWpDown_JECshiftedDown);
   FlatTuple->Branch("jets_PF_jetIdPassedTight_JECshiftedDown", &jets_PF_jetIdPassedTight_JECshiftedDown);
  
 
@@ -4019,14 +4028,14 @@ void FlatTupleGenerator::beginJob()
   if( !SmallTree_ ) FlatTuple->Branch("jets_BtagEff_MediumWp_JERup", &jets_BtagEff_MediumWp_JERup);
   if( !SmallTree_ ) FlatTuple->Branch("jets_BtagEff_TightWp_JERup", &jets_BtagEff_TightWp_JERup);
   FlatTuple->Branch("jets_IsBTagged_LooseWpCentral_JERup", &jets_IsBTagged_LooseWpCentral_JERup);
-  FlatTuple->Branch("jets_IsBTagged_LooseWpUp_JERup", &jets_IsBTagged_LooseWpUp_JERup);
-  FlatTuple->Branch("jets_IsBTagged_LooseWpDown_JERup", &jets_IsBTagged_LooseWpDown_JERup);
+  if( !SmallTree_ ) FlatTuple->Branch("jets_IsBTagged_LooseWpUp_JERup", &jets_IsBTagged_LooseWpUp_JERup);
+  if( !SmallTree_ ) FlatTuple->Branch("jets_IsBTagged_LooseWpDown_JERup", &jets_IsBTagged_LooseWpDown_JERup);
   FlatTuple->Branch("jets_IsBTagged_MediumWpCentral_JERup", &jets_IsBTagged_MediumWpCentral_JERup);
-  FlatTuple->Branch("jets_IsBTagged_MediumWpUp_JERup", &jets_IsBTagged_MediumWpUp_JERup);
-  FlatTuple->Branch("jets_IsBTagged_MediumWpDown_JERup", &jets_IsBTagged_MediumWpDown_JERup);
+  if( !SmallTree_ ) FlatTuple->Branch("jets_IsBTagged_MediumWpUp_JERup", &jets_IsBTagged_MediumWpUp_JERup);
+  if( !SmallTree_ ) FlatTuple->Branch("jets_IsBTagged_MediumWpDown_JERup", &jets_IsBTagged_MediumWpDown_JERup);
   FlatTuple->Branch("jets_IsBTagged_TightWpCentral_JERup", &jets_IsBTagged_TightWpCentral_JERup);
-  FlatTuple->Branch("jets_IsBTagged_TightWpUp_JERup", &jets_IsBTagged_TightWpUp_JERup);
-  FlatTuple->Branch("jets_IsBTagged_TightWpDown_JERup", &jets_IsBTagged_TightWpDown_JERup);
+  if( !SmallTree_ ) FlatTuple->Branch("jets_IsBTagged_TightWpUp_JERup", &jets_IsBTagged_TightWpUp_JERup);
+  if( !SmallTree_ ) FlatTuple->Branch("jets_IsBTagged_TightWpDown_JERup", &jets_IsBTagged_TightWpDown_JERup);
   FlatTuple->Branch("jets_PF_jetIdPassedTight_JERup", &jets_PF_jetIdPassedTight_JERup);
   
 
@@ -4056,31 +4065,31 @@ void FlatTupleGenerator::beginJob()
   if( !SmallTree_ ) FlatTuple->Branch("jets_BtagEff_MediumWp_JERdown", &jets_BtagEff_MediumWp_JERdown);
   if( !SmallTree_ ) FlatTuple->Branch("jets_BtagEff_TightWp_JERdown", &jets_BtagEff_TightWp_JERdown);
   FlatTuple->Branch("jets_IsBTagged_LooseWpCentral_JERdown", &jets_IsBTagged_LooseWpCentral_JERdown);
-  FlatTuple->Branch("jets_IsBTagged_LooseWpUp_JERdown", &jets_IsBTagged_LooseWpUp_JERdown);
-  FlatTuple->Branch("jets_IsBTagged_LooseWpDown_JERdown", &jets_IsBTagged_LooseWpDown_JERdown);
+  if( !SmallTree_ ) FlatTuple->Branch("jets_IsBTagged_LooseWpUp_JERdown", &jets_IsBTagged_LooseWpUp_JERdown);
+  if( !SmallTree_ ) FlatTuple->Branch("jets_IsBTagged_LooseWpDown_JERdown", &jets_IsBTagged_LooseWpDown_JERdown);
   FlatTuple->Branch("jets_IsBTagged_MediumWpCentral_JERdown", &jets_IsBTagged_MediumWpCentral_JERdown);
-  FlatTuple->Branch("jets_IsBTagged_MediumWpUp_JERdown", &jets_IsBTagged_MediumWpUp_JERdown);
-  FlatTuple->Branch("jets_IsBTagged_MediumWpDown_JERdown", &jets_IsBTagged_MediumWpDown_JERdown);
+  if( !SmallTree_ ) FlatTuple->Branch("jets_IsBTagged_MediumWpUp_JERdown", &jets_IsBTagged_MediumWpUp_JERdown);
+  if( !SmallTree_ ) FlatTuple->Branch("jets_IsBTagged_MediumWpDown_JERdown", &jets_IsBTagged_MediumWpDown_JERdown);
   FlatTuple->Branch("jets_IsBTagged_TightWpCentral_JERdown", &jets_IsBTagged_TightWpCentral_JERdown);
-  FlatTuple->Branch("jets_IsBTagged_TightWpUp_JERdown", &jets_IsBTagged_TightWpUp_JERdown);
-  FlatTuple->Branch("jets_IsBTagged_TightWpDown_JERdown", &jets_IsBTagged_TightWpDown_JERdown);
+  if( !SmallTree_ ) FlatTuple->Branch("jets_IsBTagged_TightWpUp_JERdown", &jets_IsBTagged_TightWpUp_JERdown);
+  if( !SmallTree_ ) FlatTuple->Branch("jets_IsBTagged_TightWpDown_JERdown", &jets_IsBTagged_TightWpDown_JERdown);
   FlatTuple->Branch("jets_PF_jetIdPassedTight_JERdown", &jets_PF_jetIdPassedTight_JERdown);
 
 
 
 
-  FlatTuple->Branch("genParticle_pdgId", &genParticle_pdgId);
-  FlatTuple->Branch("genParticle_status", &genParticle_status);
-  FlatTuple->Branch("genParticle_isPrompt", &genParticle_isPrompt);
-  FlatTuple->Branch("genParticle_isPromptFinalState", &genParticle_isPromptFinalState);
-  FlatTuple->Branch("genParticle_isDirectPromptTauDecayProduct", &genParticle_isDirectPromptTauDecayProduct);
-  FlatTuple->Branch("genParticle_isDirectPromptTauDecayProductFinalState", &genParticle_isDirectPromptTauDecayProductFinalState);
-  FlatTuple->Branch("genParticle_fromHardProcess", &genParticle_fromHardProcess);
-  FlatTuple->Branch("genParticle_isLastCopy", &genParticle_isLastCopy);
-  FlatTuple->Branch("genParticle_pt", &genParticle_pt);
-  FlatTuple->Branch("genParticle_eta", &genParticle_eta);
-  FlatTuple->Branch("genParticle_phi", &genParticle_phi);
-  FlatTuple->Branch("genParticle_M", &genParticle_M);
+ if( !SmallTree_ ) FlatTuple->Branch("genParticle_pdgId", &genParticle_pdgId);
+ if( !SmallTree_ ) FlatTuple->Branch("genParticle_status", &genParticle_status);
+ if( !SmallTree_ ) FlatTuple->Branch("genParticle_isPrompt", &genParticle_isPrompt);
+ if( !SmallTree_ ) FlatTuple->Branch("genParticle_isPromptFinalState", &genParticle_isPromptFinalState);
+ if( !SmallTree_ ) FlatTuple->Branch("genParticle_isDirectPromptTauDecayProduct", &genParticle_isDirectPromptTauDecayProduct);
+ if( !SmallTree_ ) FlatTuple->Branch("genParticle_isDirectPromptTauDecayProductFinalState", &genParticle_isDirectPromptTauDecayProductFinalState);
+ if( !SmallTree_ ) FlatTuple->Branch("genParticle_fromHardProcess", &genParticle_fromHardProcess);
+ if( !SmallTree_ ) FlatTuple->Branch("genParticle_isLastCopy", &genParticle_isLastCopy);
+ if( !SmallTree_ ) FlatTuple->Branch("genParticle_pt", &genParticle_pt);
+ if( !SmallTree_ ) FlatTuple->Branch("genParticle_eta", &genParticle_eta);
+ if( !SmallTree_ ) FlatTuple->Branch("genParticle_phi", &genParticle_phi);
+ if( !SmallTree_ ) FlatTuple->Branch("genParticle_M", &genParticle_M);
 
   if( !SmallTree_ ) FlatTuple->Branch("genDaughter_pdgId", &genDaughter_pdgId);
   if( !SmallTree_ ) FlatTuple->Branch("genDaughter_status", &genDaughter_status);
@@ -4143,6 +4152,9 @@ void FlatTupleGenerator::beginJob()
   FlatTuple->Branch("genBosonVisible_eta", &genBosonVisible_eta); 
   FlatTuple->Branch("genBosonVisible_phi", &genBosonVisible_phi); 
   FlatTuple->Branch("genBosonVisible_M", &genBosonVisible_M); 
+
+  FlatTuple->Branch("genTopPt1",&genTopPt1);
+  FlatTuple->Branch("genTopPt2",&genTopPt2);
 
   FlatTuple->Branch("leg1_maxPtTrigObjMatch", &leg1_maxPtTrigObjMatch);
   FlatTuple->Branch("leg2_maxPtTrigObjMatch", &leg2_maxPtTrigObjMatch);

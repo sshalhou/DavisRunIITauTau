@@ -116,6 +116,9 @@ public:
   	std::vector <std::pair< int, double>> genMother_phi();
   	std::vector <std::pair< int, double>> genMother_M();
 
+
+    std::vector <double> getTopPts();
+
     /* Access Run II MC matching info */
 
     int leg1_MCMatchType(); /* match codes defined in GenMcMatchTypes.h */
@@ -139,8 +142,6 @@ public:
     std::vector<double> effLep_genMCmatch_phi(); 
     std::vector<double> effLep_genMCmatch_M();
     std::vector<int> effLep_MCMatchPdgId();
-
-
 
     /* run II Z decay modes */
 
@@ -214,6 +215,10 @@ private:
   std::vector<double> m_effLep_genMCmatch_M;
   std::vector<int> m_effLep_MCMatchPdgId;
 
+  /* top pt for top reweight */
+
+  double m_top_pt_1;
+  double m_top_pt_2;
 
 
   /* run II Z decay modes */
