@@ -84,9 +84,12 @@ public:
 	int GENpdgId() const; 
 	int GENMOTHERpdgId() const; 
 	LorentzVector 	genJet_p4() const;
+	int genJet_pdgId() const;
+
 	float ZimpactTau() const;
 	float numStrips() const;
 	float numHadrons() const;
+	int   decayMode() const;
 	float dzTauVertex() const;
 	float raw_electronMVA() const; 
 	float category_electronMVA() const;
@@ -96,6 +99,7 @@ public:
     float ooEmooP() const;         				
     float full5x5_sigmaIetaIeta() const;   
 	float TauEsVariant() const; 
+	float ElectronEsVariant() const; 
 	float IP() const; 								
 	float IPerror() const; 							
 	float PUchargedHadronIso() const; 					
@@ -219,15 +223,18 @@ private:
 	float m_numberOfMissingOuterHits;
 	float m_numberOfTrackHits;
 	float m_passConversionVeto;
+    float m_ElectronEsVariant;						//  -1 if ElectronEs DOWN, +1 if UP, 0 if Nominal
 
 	//////////////////////////////////////////////////
 	// paramenters meaningful for taus only
 	//////////////////////////////////////////////////
     float m_TauEsVariant;							//  -1 if TauEs DOWN, +1 if UP, 0 if Nominal
 	LorentzVector 	m_genJet_p4;					//  the pat-matched genJet p4
+	int m_genJet_pdgId;								//  the pat-matched genJet pdgId
 	float m_ZimpactTau; 							// tau-event vertex match quality parameter
 	float m_numStrips;								//  number strips
 	float m_numHadrons;								//	number hadrons
+	int m_decayMode; 								//  tau decay mode code
 	stringFloatPairVec m_tauIDs;                    //  pair rho name : value 
 	float m_dzTauVertex; 							//  tau.z - vertex.z
 

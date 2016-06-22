@@ -59,17 +59,30 @@ public:
   /* fill NUP */
   void fill_hepNUP(int);
 
+  /* fill the gen level HT and numberOutgoingPartons - used for stitching */
+  void fill_lheHT(double);
+  void fill_lheOutGoingPartons(int);
+
+
+
+
 
   /* fill various MET filters */
 
   void fill_HBHENoiseFilter(bool);
-  void fill_HBHEIsoNoiseFilter(bool);
-  void fill_CSCTightHaloFilter(bool);
-  void fill_goodVerticesFilter(bool);
-  void fill_eeBadScFilter(bool);
+  void fill_HBHENoiseIsoFilter(bool);
+  void fill_CSCTightHalo2015Filter(bool);
   void fill_EcalDeadCellTriggerPrimitiveFilter(bool);
+  void fill_goodVertices(bool);
+  void fill_eeBadScFilter(bool);
+  void fill_chargedHadronTrackResolutionFilter(bool);
+  void fill_muonBadTrackFilter(bool);
 
 
+  /* fill the boson 4-vectors at gen level */
+
+  void fill_GenBosonVisibleMomentum(LorentzVector);
+  void fill_GenBosonTotalMomentum(LorentzVector); 
 
 
 
@@ -90,6 +103,9 @@ public:
   float NumTruePileUpIntP1() const;
   double generatorEventWeight() const;
   int hepNUP() const;
+  double lheHT() const;
+  int lheOutGoingPartons() const;
+
 
   std::string DataSet() const;
   int EventTotal() const;
@@ -99,13 +115,22 @@ public:
   double FilterEff() const;
   double CodeVersion() const;
 
-  bool HBHENoiseFilter() const;
-  bool HBHEIsoNoiseFilter() const;
-  bool CSCTightHaloFilter() const;
-  bool goodVerticesFilter() const;
-  bool eeBadScFilter() const;
-  bool EcalDeadCellTriggerPrimitiveFilter() const;
 
+
+  bool HBHENoiseFilter() const;
+  bool HBHENoiseIsoFilter() const;
+  bool CSCTightHalo2015Filter() const;
+  bool EcalDeadCellTriggerPrimitiveFilter() const;
+  bool goodVertices() const;
+  bool eeBadScFilter() const;
+  bool chargedHadronTrackResolutionFilter() const;
+  bool muonBadTrackFilter() const;
+
+
+  /* gen boson 4-vectors */
+
+  LorentzVector GenBosonVisibleMomentum() const;
+  LorentzVector GenBosonTotalMomentum() const;
 
 
 private:
@@ -135,6 +160,10 @@ private:
   /* n partons at gen level */
   int m_hepNUP;
 
+  /* for HT and njet binned sample weight */
+  double m_lheHT;
+  int m_lheOutGoingPartons;
+
   /* sample info */
 
   std::string m_DataSet;
@@ -148,13 +177,18 @@ private:
   /* MET filters */
 
   bool m_HBHENoiseFilter;
-  bool m_HBHEIsoNoiseFilter;
-  bool m_CSCTightHaloFilter;
-  bool m_goodVerticesFilter;
-  bool m_eeBadScFilter;
+  bool m_HBHENoiseIsoFilter;
+  bool m_CSCTightHalo2015Filter;
   bool m_EcalDeadCellTriggerPrimitiveFilter;
+  bool m_goodVertices;
+  bool m_eeBadScFilter;
+  bool m_chargedHadronTrackResolutionFilter;
+  bool m_muonBadTrackFilter;
 
+  /* gen boson 4-vectors */
 
+  LorentzVector m_GenBosonVisibleMomentum;
+  LorentzVector m_GenBosonTotalMomentum;
 
 };
 

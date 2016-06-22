@@ -1,9 +1,9 @@
 // -*- C++ -*-
 //
-// Package:    SinglePatTauProducer
-// Class:      SinglePatTauProducer
+// Package:    TrimmedPatMuonProducer
+// Class:      TrimmedPatMuonProducer
 //
-/**\class SinglePatTauProducer SinglePatTauProducer.cc TEMP/SinglePatTauProducer/src/SinglePatTauProducer.cc
+/**\class TrimmedPatMuonProducer TrimmedPatMuonProducer.cc TEMP/TrimmedPatMuonProducer/src/TrimmedPatMuonProducer.cc
 
 Description: [one line class summary]
 
@@ -28,10 +28,10 @@ Implementation:
 #include "FWCore/Framework/interface/MakerMacros.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 
-// needed by ntuple tau producer
+// needed by ntuple muon producer
 #include <vector>
 #include <iostream>
-#include "DataFormats/PatCandidates/interface/Tau.h"
+#include "DataFormats/PatCandidates/interface/Muon.h"
 #include "RecoEgamma/EgammaTools/interface/ConversionTools.h"
 #include "EgammaAnalysis/ElectronTools/interface/EGammaCutBasedEleId.h"
 #include "DataFormats/PatCandidates/interface/Conversion.h"
@@ -57,10 +57,10 @@ using namespace pat;
 // class declaration
 //
 
-class SinglePatTauProducer : public edm::EDProducer {
+class TrimmedPatMuonProducer : public edm::EDProducer {
 public:
-  explicit SinglePatTauProducer(const edm::ParameterSet&);
-  ~SinglePatTauProducer();
+  explicit TrimmedPatMuonProducer(const edm::ParameterSet&);
+  ~TrimmedPatMuonProducer();
 
   static void fillDescriptions(edm::ConfigurationDescriptions& descriptions);
 
@@ -78,8 +78,10 @@ private:
 
   // ----------member data ---------------------------
 
-  edm::InputTag tauSrc_;
-  unsigned int INDEX_;
+  edm::InputTag muonSrc_;
+  edm::EDGetTokenT<edm::View< pat::Muon > > muonToken_;
+
+  unsigned int MAX_TO_KEEP_;
   string NAME_;
 
 };
@@ -96,15 +98,16 @@ private:
 //
 // constructors and destructor
 //
-SinglePatTauProducer::SinglePatTauProducer(const edm::ParameterSet& iConfig):
-tauSrc_(iConfig.getParameter<edm::InputTag>("tauSrc" )),
-INDEX_(iConfig.getParameter<unsigned int>("INDEX" )),
+TrimmedPatMuonProducer::TrimmedPatMuonProducer(const edm::ParameterSet& iConfig):
+muonSrc_(iConfig.getParameter<edm::InputTag>("muonSrc" )),
+MAX_TO_KEEP_(iConfig.getParameter<unsigned int>("MAX_TO_KEEP" )),
 NAME_(iConfig.getParameter<string>("NAME" ))
 {
 
 
-  produces<vector<pat::Tau>>(NAME_).setBranchAlias(NAME_);
+  produces<vector<pat::Muon>>(NAME_).setBranchAlias(NAME_);
 
+  muonToken_ = consumes< edm::View<pat::Muon> >(muonSrc_);
 
 
 
@@ -123,7 +126,7 @@ NAME_(iConfig.getParameter<string>("NAME" ))
 }
 
 
-SinglePatTauProducer::~SinglePatTauProducer()
+TrimmedPatMuonProducer::~TrimmedPatMuonProducer()
 {
 
   // do anything here that needs to be done at desctruction time
@@ -138,30 +141,32 @@ SinglePatTauProducer::~SinglePatTauProducer()
 
 // ------------ method called to produce the data  ------------
 void
-SinglePatTauProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
+TrimmedPatMuonProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
 {
 
 
 
-  // get tau collection
-  edm::Handle<edm::View<pat::Tau> > taus;
-  iEvent.getByLabel(tauSrc_,taus);
-
-  std::vector<pat::Tau> * storedTaus = new std::vector<pat::Tau>();
+  // get muon collection
+  edm::Handle<edm::View<pat::Muon> > muons;
+  iEvent.getByToken(muonToken_,muons);
 
 
-  if(INDEX_<taus->size())
+  std::vector<pat::Muon> * storedMuons = new std::vector<pat::Muon>();
+
+
+  for (std::size_t i = 0; i<muons->size(); i++)
   {
-
-
-    const pat::Tau & tauToStore = taus->at(INDEX_);
-    storedTaus->push_back(tauToStore);
-
-
+    if(i<MAX_TO_KEEP_)
+    {
+       const pat::Muon & muonToStore = muons->at(i);
+       storedMuons->push_back(muonToStore);
+    }
   }
 
-  // add the taus to the event output
-  std::auto_ptr<std::vector<pat::Tau> > eptr(storedTaus);
+
+
+  // add the muons to the event output
+  std::auto_ptr<std::vector<pat::Muon> > eptr(storedMuons);
   iEvent.put(eptr,NAME_);
 
 
@@ -169,42 +174,42 @@ SinglePatTauProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
 
 // ------------ method called once each job just before starting event loop  ------------
 void
-SinglePatTauProducer::beginJob()
+TrimmedPatMuonProducer::beginJob()
 {
 }
 
 // ------------ method called once each job just after ending the event loop  ------------
 void
-SinglePatTauProducer::endJob() {
+TrimmedPatMuonProducer::endJob() {
 }
 
 // ------------ method called when starting to processes a run  ------------
 void
-SinglePatTauProducer::beginRun(edm::Run&, edm::EventSetup const&)
+TrimmedPatMuonProducer::beginRun(edm::Run&, edm::EventSetup const&)
 {
 }
 
 // ------------ method called when ending the processing of a run  ------------
 void
-SinglePatTauProducer::endRun(edm::Run&, edm::EventSetup const&)
+TrimmedPatMuonProducer::endRun(edm::Run&, edm::EventSetup const&)
 {
 }
 
 // ------------ method called when starting to processes a luminosity block  ------------
 void
-SinglePatTauProducer::beginLuminosityBlock(edm::LuminosityBlock&, edm::EventSetup const&)
+TrimmedPatMuonProducer::beginLuminosityBlock(edm::LuminosityBlock&, edm::EventSetup const&)
 {
 }
 
 // ------------ method called when ending the processing of a luminosity block  ------------
 void
-SinglePatTauProducer::endLuminosityBlock(edm::LuminosityBlock&, edm::EventSetup const&)
+TrimmedPatMuonProducer::endLuminosityBlock(edm::LuminosityBlock&, edm::EventSetup const&)
 {
 }
 
 // ------------ method fills 'descriptions' with the allowed parameters for the module  ------------
 void
-SinglePatTauProducer::fillDescriptions(edm::ConfigurationDescriptions& descriptions) {
+TrimmedPatMuonProducer::fillDescriptions(edm::ConfigurationDescriptions& descriptions) {
   //The following says we do not know what parameters are allowed so do no validation
   // Please change this to state exactly what you do use, even if it is no parameters
   edm::ParameterSetDescription desc;
@@ -213,4 +218,4 @@ SinglePatTauProducer::fillDescriptions(edm::ConfigurationDescriptions& descripti
 }
 
 //define this as a plug-in
-DEFINE_FWK_MODULE(SinglePatTauProducer);
+DEFINE_FWK_MODULE(TrimmedPatMuonProducer);

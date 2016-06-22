@@ -14,33 +14,45 @@ BUILD_ELECTRON_TAU = True
 BUILD_MUON_MUON = False
 BUILD_MUON_TAU = True
 BUILD_TAU_TAU = True
-
-####################################################################################################
-# edit the following to turn on/off Tau ES variants
-####################################################################################################
-
-BUILD_TAU_ES_VARIANTS = False # not needed in early sync
+# new options (any one of these will run eff. flatTuple options)
+BUILD_EFFICIENCY_TREE  = False
 
 
 ####################################################################################################
-# edit the following MET settings 
+# MAX SIZE OF LEPTON LISTS-only keep 1st MAX_X_COUNT leptons passing all selections for pair formation)
 ####################################################################################################
 
-USE_MVAMET = True #  True = MVA MET, False = PFMET
+MAX_ELECTRON_COUNT = 10
+MAX_MUON_COUNT = 10
+MAX_TAU_COUNT = 10
+
 
 ####################################################################################################
-# edit the following SVMass settings 
+# edit the following to turn on/off Tau/electron ES variants
 ####################################################################################################
 
-COMPUTE_SVMASS = False 
+BUILD_TAU_ES_VARIANTS = True 
+BUILD_ELECTRON_ES_VARIANTS = True # only used for e+mu channel
+
+
+####################################################################################################
+# some options to run SVFit at Ntuple level 
+# in general you do not want to run SVFit at Ntuple level
+# due to the lack of recoil corrections 
+# setting COMPUTE_SVMASS to True is only useful for testing 
+# actual SVFit should be configured in FlatTupleConfig_cfi.py
+####################################################################################################
+
+COMPUTE_SVMASS_AT_NTUPLE = False 
 SVMASS_LOG_M = 0.0
-SVMASS_VERBOSE = 1
+SVMASS_VERBOSE = 2
+USE_MVAMET = True #  True = use MVA MET for SVFit calc, False = use PFMET
 
 ####################################################################################################
 # Set RUN_MEM_CHECK to True to run SimpleMemoryCheck
 ####################################################################################################
 
-RUN_MEM_CHECK = False
+RUN_MEM_CHECK = True
 
 
 ####################################################################################################
@@ -50,23 +62,38 @@ RUN_MEM_CHECK = False
 
 GEN_PARTICLES_TO_KEEP = cms.vint32()
 
+
+GEN_PARTICLES_TO_KEEP.append(1) # keep d-quarks
+GEN_PARTICLES_TO_KEEP.append(2) # keep u-quarks
+GEN_PARTICLES_TO_KEEP.append(3) # keep s-quarks
+GEN_PARTICLES_TO_KEEP.append(4) # keep c-quarks
 GEN_PARTICLES_TO_KEEP.append(5) # keep b-quarks
 GEN_PARTICLES_TO_KEEP.append(6) # keep top-quarks
-GEN_PARTICLES_TO_KEEP.append(11) # keep electrons
-GEN_PARTICLES_TO_KEEP.append(13) # keep muons
-GEN_PARTICLES_TO_KEEP.append(15) # keep taus
+GEN_PARTICLES_TO_KEEP.append(9) # a gluon (also 21 in some schemes)
+GEN_PARTICLES_TO_KEEP.append(11) # keep electrons (Must Always Keep!)
 GEN_PARTICLES_TO_KEEP.append(12) # keep electron-neutrino
+GEN_PARTICLES_TO_KEEP.append(13) # keep muons (Must Always Keep!)
 GEN_PARTICLES_TO_KEEP.append(14) # keep muon-neutrino
+GEN_PARTICLES_TO_KEEP.append(15) # keep taus (Must Always Keep!)
 GEN_PARTICLES_TO_KEEP.append(16) # keep tau-neutrino
-GEN_PARTICLES_TO_KEEP.append(22) # keep photons
+GEN_PARTICLES_TO_KEEP.append(17) # a non-SM tau' 
+GEN_PARTICLES_TO_KEEP.append(18) # a nu'_tau (the dm particle) - from central prod.
+GEN_PARTICLES_TO_KEEP.append(21) # a gluon (also 9 in some schemes)
+GEN_PARTICLES_TO_KEEP.append(22) # a photon
 GEN_PARTICLES_TO_KEEP.append(23) # keep Z
 GEN_PARTICLES_TO_KEEP.append(24) # keep W
 GEN_PARTICLES_TO_KEEP.append(25) # keep SM Higgs
+GEN_PARTICLES_TO_KEEP.append(28) # the A0 - from central prod.
+GEN_PARTICLES_TO_KEEP.append(32) # a Z' variant - from central prod.
+GEN_PARTICLES_TO_KEEP.append(33) # a Z'' exo particle
+GEN_PARTICLES_TO_KEEP.append(34) # a W' exo particle
 GEN_PARTICLES_TO_KEEP.append(35) # keep non-SM Higgs
 GEN_PARTICLES_TO_KEEP.append(36) # keep non-SM Higgs
 GEN_PARTICLES_TO_KEEP.append(37) # keep non-SM Higgs
 GEN_PARTICLES_TO_KEEP.append(211) # keep pi+, pi-
 GEN_PARTICLES_TO_KEEP.append(111) # keep pi0
+GEN_PARTICLES_TO_KEEP.append(9000001) # Z' variant - from private prod.
+GEN_PARTICLES_TO_KEEP.append(9000007) # chi (the dm particle) - from private prod.
 
 
 ####################################################################################################
@@ -77,12 +104,7 @@ GEN_PARTICLES_TO_KEEP.append(111) # keep pi0
 ####################################################################################################
 
 DEFAULT_BTAG_ALGORITHM = "pfCombinedInclusiveSecondaryVertexV2BJetTags"
-APPLY_BTAG_SF = False 						
-BTAG_SF_SEED = 123456	#############################################################################
-						# note : if BTAG_SF_SEED is anything other than 0, the seed of the TRandom3 
-						#   	 used in the BtagSF tool will be set to that value
-						#        if however, BTAG_SF_SEED is 0, then the seed defaults to 	
-						#        (int)(eta+5)*100000) using a custom edit to the BtagSF.hh file 		
+
 
 ####################################################################################################
 ####################################################################################################

@@ -225,6 +225,11 @@ CustomPatMuonProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup
 
   auto_ptr<PatMuonCollection> storedMuons (new PatMuonCollection);
 
+  // control memory usage by reserving max size 
+  std::size_t reserveSize =  muons->size();
+  storedMuons->reserve( reserveSize );
+
+
 
   for (std::size_t i = 0; i<muons->size(); i++)
   {

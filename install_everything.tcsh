@@ -46,7 +46,7 @@ cd -
 git clone git@github.com:veelken/SVfit_standalone.git TauAnalysis/SVfitStandalone
 cd TauAnalysis/SVfitStandalone
 echo "***** Ignore Detatched Head Warnings ...."
-git checkout dd7cf43e3f930040959f7d700cef976307d7cec3
+git checkout HIG-16-006
 cd -
 
 # pilup reweight code -- this is done to turn of cout statements
@@ -72,6 +72,10 @@ cd HiggsAnalysis/CombinedLimit
 git checkout 74x-root6 # is there a newer branch?
 cd -
 
+# get the recoil CORRECTIONS for MVA MET
+git clone https://github.com/CMS-HTT/RecoilCorrections.git  HTT-utilities/RecoilCorrections 
+
+
 # relocate the davis code
 mv ../../DavisRunIITauTau .
 
@@ -79,44 +83,26 @@ mv ../../DavisRunIITauTau .
 
 cp /afs/cern.ch/work/a/adewit/public/pileup-hists/*root DavisRunIITauTau/RunTimeDataInput/data/PileUpReWeightFiles/.
 
-# # temp fix for PU jet ID and MVA MET incompatibility 
+# get the right JER SF file for this release
+# if new file, need to code the change in runIIoneStep_v0.py and runIIntuple_v0.py
 
-# #git cms-merge-topic ahinzmann:fixMVAmetPUid
+mkdir DavisRunIITauTau/RunTimeDataInput/data/JER_FILES
+wget https://raw.githubusercontent.com/cms-jet/JRDatabase/master/textFiles/Fall15_25nsV2_MC/Fall15_25nsV2_MC_SF_AK4PFchs.txt .
+wget https://raw.githubusercontent.com/cms-jet/JRDatabase/master/textFiles/Fall15_25nsV2_MC/Fall15_25nsV2_MC_PtResolution_AK4PFchs.txt .
+mv Fall15_25nsV2_MC_SF_AK4PFchs.txt DavisRunIITauTau/RunTimeDataInput/data/JER_FILES/.
+mv Fall15_25nsV2_MC_PtResolution_AK4PFchs.txt DavisRunIITauTau/RunTimeDataInput/data/JER_FILES/.
 
-# # mva met installation
+# get the BTAG SF CSV File  and EFF root files 
+# if the file is new, need to change the name used in FlatTupleConfig_cfi.py
 
-# git cms-addpkg RecoMET/METPUSubtraction/
-# cd RecoMET/METPUSubtraction/
-# git clone https://github.com/rfriese/RecoMET-METPUSubtraction data -b 74X-13TeV-Summer15-July2015
-# cd -
-# echo "please ignore stuff about detached head..."
-# echo "copying files, this can take a while ..."
-# cp /afs/cern.ch/user/s/sshalhou/public/INSTALL_PUBLIC_FILES/74X/mvaPFMET_db_cfi.py RecoMET/METPUSubtraction/python/.
-# sed -i 's/puJetIdForPFMVAMEt = pileupJetIdEvaluator.clone/from RecoMET.METPUSubtraction.mvaPFMET_db_cfi import mvaPFMEtGBRForestsFromDB\npuJetIdForPFMVAMEt = pileupJetIdEvaluator.clone/g' RecoMET/METPUSubtraction/python/mvaPFMET_cff.py
-# cp /afs/cern.ch/user/s/sshalhou/public/INSTALL_PUBLIC_FILES/74X/mvaPFMEt_747_25ns_Mar2015.db RecoMET/METPUSubtraction/data/.
-# rm -rf RecoMET/METPUSubtraction/data/.git
-# sed -i 's/tmvaSpectators/\n        etaBinnedWeights=cms.bool(False),\n        tmvaSpectators/g' RecoMET/METPUSubtraction/python/mvaPFMET_cff.py
+mkdir DavisRunIITauTau/RunTimeDataInput/data/BTAGSF
+cp /afs/cern.ch/user/s/sshalhou/public/INSTALL_PUBLIC_FILES/76X/BTAGSF/CSVv2.csv DavisRunIITauTau/RunTimeDataInput/data/BTAGSF/.
+mkdir DavisRunIITauTau/RunTimeDataInput/data/BTAGEFF
+cp /afs/cern.ch/user/s/sshalhou/public/INSTALL_PUBLIC_FILES/76X/BTAGEFF/tagging_efficiencies.root DavisRunIITauTau/RunTimeDataInput/data/BTAGEFF/.
+cp /afs/cern.ch/user/s/sshalhou/public/INSTALL_PUBLIC_FILES/76X/BTAGEFF/tagging_efficiencies_loosewp.root DavisRunIITauTau/RunTimeDataInput/data/BTAGEFF/.
 
-
-
-# # temp fix for PU jet ID and MVA MET incompatibility 
-
-# #git cms-merge-topic ahinzmann:fixMVAmetPUid
-
-# # add a local copy of PU jet ID
-# git cms-addpkg RecoJets/JetProducers
-
-# # add CL software
-
-# git clone https://github.com/cms-analysis/HiggsAnalysis-CombinedLimit.git HiggsAnalysis/CombinedLimit
-# cd HiggsAnalysis/CombinedLimit
-# git checkout 74x-root6
-
-# cd -
-
-# # move the Davis code into the reight area
-
-# mv ../../DavisRunIITauTau .
+# bug fix in MVA met (replaced p4() comparisons with small DR comparisons instead)
+cp DavisRunIITauTau/External/MVAMET.cc_763patch2 RecoMET/METPUSubtraction/plugins/MVAMET.cc
 
 # compile
 

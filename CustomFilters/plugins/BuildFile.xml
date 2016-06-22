@@ -1,3 +1,4 @@
+<Flags CXXFLAGS="-g"/>
 <export>
 </export>
 <library   name="DavisRunIITauTauCustomFilters_plugins" file="*.cc">

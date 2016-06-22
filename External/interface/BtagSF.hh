@@ -1,6 +1,7 @@
 #ifndef DavisRunIITauTau_External_BtagSF_hh
 #define DavisRunIITauTau_External_BtagSF_hh
 
+/* NOT USED IN 76X and newer */
 
 #include "TRandom3.h"
 #include <TMath.h>

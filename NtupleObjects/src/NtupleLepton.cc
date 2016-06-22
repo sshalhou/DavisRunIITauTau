@@ -23,6 +23,7 @@ NtupleLepton::NtupleLepton()
   m_ooEmooP = NAN;
   m_full5x5_sigmaIetaIeta = NAN;
   m_TauEsVariant = NAN; 
+  m_ElectronEsVariant = NAN; 
   m_IP = NAN;                   
   m_IPerror = NAN;              
   m_PUchargedHadronIso = NAN;   
@@ -65,8 +66,10 @@ NtupleLepton::NtupleLepton()
   m_passConversionVeto = NAN;
 
   m_genJet_p4.SetXYZT(NAN,NAN,NAN,NAN);
+  m_genJet_pdgId = -999;
   m_numStrips = NAN;
   m_numHadrons  = NAN;
+  m_decayMode = -999;
   m_dzTauVertex = NAN;
   m_ZimpactTau = NAN;
 }
@@ -364,6 +367,7 @@ void NtupleLepton::printLEP()
   std::cout<<"<LEPPRINT "<<type_print<<"> ELECTRON ooEmooP "<<m_ooEmooP<<"\n";
   std::cout<<"<LEPPRINT "<<type_print<<"> ELECTRON full5x5_sigmaIetaIeta "<<m_full5x5_sigmaIetaIeta<<"\n";
   std::cout<<"<LEPPRINT "<<type_print<<"> TauEsVariant "<<m_TauEsVariant<<"\n";
+  std::cout<<"<LEPPRINT "<<type_print<<"> ElectronEsVariant "<<m_ElectronEsVariant<<"\n";
 
 std::cout<<"<LEPPRINT "<<type_print<<"> IP : " << m_IP << std::endl;
 std::cout<<"<LEPPRINT "<<type_print<<"> IPerror : " << m_IPerror << std::endl;
@@ -414,7 +418,12 @@ std::cout<<"<LEPPRINT "<<type_print<<"> dzTauVertex : " << m_dzTauVertex << std:
 std::cout<<"<LEPPRINT "<<type_print<<"> ZimpactTau : " << m_ZimpactTau << std::endl;
 std::cout<<"<LEPPRINT "<<type_print<<"> num strips : " << m_numStrips << std::endl;
 std::cout<<"<LEPPRINT "<<type_print<<"> num hadrons : " << m_numHadrons << std::endl;
+std::cout<<"<LEPPRINT "<<type_print<<"> tau decay mode : " << m_decayMode << std::endl;
 std::cout<<"<LEPPRINT "<<type_print<<"> genJet p4 pt :  " << m_genJet_p4.pt() << std::endl;
+std::cout<<"<LEPPRINT "<<type_print<<"> genJet pdgId :  " << m_genJet_pdgId << std::endl;
+
+
+
 
   std::cout<<" END: printing lepton <------------------\n";
 
@@ -478,6 +487,8 @@ void NtupleLepton::userFloatVectorParser(stringVec & labels_,floatVec & values_)
     else if(labels_[i]=="ooEmooP") {m_ooEmooP = values_[i];}  
     else if(labels_[i]=="full5x5_sigmaIetaIeta") {m_full5x5_sigmaIetaIeta = values_[i];}  
     else if(labels_[i]=="TauEsVariant") {m_TauEsVariant = values_[i];}      
+    else if(labels_[i]=="ElectronEsVariant") {m_ElectronEsVariant = values_[i];}      
+
     else if(labels_[i]=="IP") {m_IP = values_[i];}      
     else if(labels_[i]=="IPerror") { m_IPerror = values_[i];}      
     else if(labels_[i]=="PUchargedHadronIso") { m_PUchargedHadronIso = values_[i];}      
@@ -519,6 +530,7 @@ void NtupleLepton::userFloatVectorParser(stringVec & labels_,floatVec & values_)
     else if(labels_[i]=="numberOfTrackHits") {m_numberOfTrackHits = values_[i];}
     else if(labels_[i]=="passConversionVeto") {m_passConversionVeto = values_[i];}
     else if(labels_[i]=="numHadrons") {m_numHadrons = values_[i];}
+    else if(labels_[i]=="decayMode") {m_decayMode = values_[i];}
     else if(labels_[i]=="numStrips") {m_numStrips = values_[i];}
     else if(labels_[i]=="dzTauVertex") {m_dzTauVertex = values_[i];}
     else if(labels_[i]=="ZimpactTau") {m_ZimpactTau = values_[i];}
@@ -651,8 +663,11 @@ void NtupleLepton::fill(pat::Tau dummy_)
   m_p4 = dummy_.p4();
   m_PFpdgId = dummy_.pdgId();
   m_charge = dummy_.charge();
+  m_decayMode = dummy_.decayMode();
+
   
   if(dummy_.genJet()) { m_genJet_p4 = dummy_.genJet()->p4(); }
+  if(dummy_.genJet()) { m_genJet_pdgId = dummy_.genJet()->pdgId(); }
 
   if(dummy_.genLepton()) fillGenLeptonInfo(*(dummy_.genLepton()));
 
@@ -703,6 +718,7 @@ float NtupleLepton::ooEmooP() const {return m_ooEmooP;}
 float NtupleLepton::full5x5_sigmaIetaIeta() const {return m_full5x5_sigmaIetaIeta;} 
 
 float NtupleLepton::TauEsVariant() const {return m_TauEsVariant;} 
+float NtupleLepton::ElectronEsVariant() const {return m_ElectronEsVariant;} 
 float NtupleLepton::IP() const {return m_IP;} 
 float NtupleLepton::IPerror() const {return m_IPerror;} 
 float NtupleLepton::PUchargedHadronIso() const {return m_PUchargedHadronIso;} 
@@ -746,8 +762,10 @@ float NtupleLepton::passConversionVeto() const {return m_passConversionVeto;}
 
 
 LorentzVector NtupleLepton::genJet_p4() const {return m_genJet_p4;}
+int NtupleLepton::genJet_pdgId() const {return m_genJet_pdgId;}
 float NtupleLepton::dzTauVertex() const {return m_dzTauVertex;}
 float NtupleLepton::numStrips() const {return m_numStrips;}
 float NtupleLepton::numHadrons() const {return m_numHadrons;}
+int NtupleLepton::decayMode() const {return m_decayMode;}
 float NtupleLepton::ZimpactTau() const {return m_ZimpactTau;}
 

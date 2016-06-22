@@ -116,7 +116,7 @@ if doExample3 :
                 print 'jet uncorrected SF = ', value,
                 UncorrectedSF.Fill(value)
                 print jet.defaultBtagAlgorithm_Name(), 'raw score = ', jet.defaultBtagAlgorithm_RawScore(), 
-                print 'pass/fail = ', jet.defaultBtagAlgorithm_isPassed()
+                print 'pass/fail = ', jet.defaultBtagAlgorithmMediumWP_isPassed()
 
     # write to file
     outFileEx3.cd()

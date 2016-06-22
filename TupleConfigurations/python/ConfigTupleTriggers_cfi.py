@@ -302,40 +302,40 @@ class ConfigTriggerHelper:
 		if(self.sampleData_.ProductionInfo == 'Run2015D'):
 			#########################################################		
 			# HLT paths and filters for Run2015D  Data -- START		#
+			# updated for Fall 15 mini AOD	
 			#########################################################
 			print '******** SETTING TRIGGER INFO FOR ', self.sampleData_.ProductionInfo
 
-
-			####  Run2015D path : Mu23+Ele12 #####
+			####  Run2015D path : Mu17+Ele12 #####
 
 			mlist1_ = []
-			mlist1_.append('HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v*') # path
+			mlist1_.append('HLT_Mu17_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v*') # path
 			mlist1_.append('AND') # AND or OR of the following filters
-			mlist1_.append('hltMu23TrkIsoVVLEle12CaloIdLTrackIdLIsoVLMuonlegL3IsoFiltered23') # filter
+			mlist1_.append('hltMu17TrkIsoVVLEle12CaloIdLTrackIdLIsoVLMuonlegL3IsoFiltered17') # filter
 			self.muon_masterList_.append(mlist1_)
 
 			elist1_ = []
-			elist1_.append('HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v*') # path
+			elist1_.append('HLT_Mu17_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v*') # path
 			elist1_.append('AND') # AND or OR of the following filters
-			elist1_.append('hltMu23TrkIsoVVLEle12CaloIdLTrackIdLIsoVLElectronlegTrackIsoFilter') # filter
+			elist1_.append('hltMu17TrkIsoVVLEle12CaloIdLTrackIdLIsoVLElectronlegTrackIsoFilter') # filter
 			self.electron_masterList_.append(elist1_)
 
 
-			#### Run2015D path : Mu8+Ele23 #####
+			#### Run2015D path : Mu8+Ele17 #####
 
 			mlist2_ = []
-			mlist2_.append('HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v*') # path
+			mlist2_.append('HLT_Mu8_TrkIsoVVL_Ele17_CaloIdL_TrackIdL_IsoVL_v*') # path
 			mlist2_.append('AND') # AND or OR of the following filters
-			mlist2_.append('hltMu8TrkIsoVVLEle23CaloIdLTrackIdLIsoVLMuonlegL3IsoFiltered8') # filter
+			mlist2_.append('hltMu8TrkIsoVVLEle17CaloIdLTrackIdLIsoVLMuonlegL3IsoFiltered8') # filter
 			self.muon_masterList_.append(mlist2_)
 
 			elist2_ = []
-			elist2_.append('HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v*') # path
+			elist2_.append('HLT_Mu8_TrkIsoVVL_Ele17_CaloIdL_TrackIdL_IsoVL_v*') # path
 			elist2_.append('AND') # AND or OR of the following filters
-			elist2_.append('hltMu8TrkIsoVVLEle23CaloIdLTrackIdLIsoVLElectronlegTrackIsoFilter') # filter
+			elist2_.append('hltMu8TrkIsoVVLEle17CaloIdLTrackIdLIsoVLElectronlegTrackIsoFilter') # filter
 			self.electron_masterList_.append(elist2_)
 
-	
+
 			#### Run2015D path : Iso Mu 18 #####
 
 			mlist3_ = []
@@ -347,13 +347,11 @@ class ConfigTriggerHelper:
 
 			#### Run2015D path : Ele23 #####
 
-
 			elist4_ = []
 			elist4_.append('HLT_Ele23_WPLoose_Gsf_v*') # path
 			elist4_.append('AND') # AND or OR of the following filters
 			elist4_.append('hltEle23WPLooseGsfTrackIsoFilter') # filter
 			self.electron_masterList_.append(elist4_)
-
 
 
 			#### Run2015D path : Double Med Iso PF Tau 35 #####
@@ -592,6 +590,71 @@ class ConfigTriggerHelper:
 			#########################################################		
 			# HLT paths and filters for Spring15MCminiAODv2 MC   -- END		#
 			#########################################################
+
+
+		if(self.sampleData_.ProductionInfo == 'Fall15MCminiAOD'):
+			#########################################################		
+			# HLT paths and filters for Fall15MCminiAOD   -- START		#
+			#########################################################
+			print '******** SETTING TRIGGER INFO FOR ', self.sampleData_.ProductionInfo
+			####  Fall15MCminiAOD path : Mu17+Ele12 #####
+
+			mlist1_ = []
+			mlist1_.append('HLT_Mu17_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v*') # path
+			mlist1_.append('AND') # AND or OR of the following filters
+			mlist1_.append('hltMu17TrkIsoVVLEle12CaloIdLTrackIdLIsoVLMuonlegL3IsoFiltered17') # filter
+			self.muon_masterList_.append(mlist1_)
+
+			elist1_ = []
+			elist1_.append('HLT_Mu17_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v*') # path
+			elist1_.append('AND') # AND or OR of the following filters
+			elist1_.append('hltMu17TrkIsoVVLEle12CaloIdLTrackIdLIsoVLElectronlegTrackIsoFilter') # filter
+			self.electron_masterList_.append(elist1_)
+
+			# #### Fall15MCminiAOD path : Mu8+Ele17 #####
+
+			mlist2_ = []
+			mlist2_.append('HLT_Mu8_TrkIsoVVL_Ele17_CaloIdL_TrackIdL_IsoVL_v*') # path
+			mlist2_.append('AND') # AND or OR of the following filters
+			mlist2_.append('hltMu8TrkIsoVVLEle17CaloIdLTrackIdLIsoVLMuonlegL3IsoFiltered8') # filter
+			self.muon_masterList_.append(mlist2_)
+
+			elist2_ = []
+			elist2_.append('HLT_Mu8_TrkIsoVVL_Ele17_CaloIdL_TrackIdL_IsoVL_v*') # path
+			elist2_.append('AND') # AND or OR of the following filters
+			elist2_.append('hltMu8TrkIsoVVLEle17CaloIdLTrackIdLIsoVLElectronlegTrackIsoFilter') # filter
+			self.electron_masterList_.append(elist2_)
+
+			# #### Fall15MCminiAOD path : Iso Mu 18 #####
+
+			mlist3_ = []
+			mlist3_.append('HLT_IsoMu18_v*') # path
+			mlist3_.append('AND') # AND or OR of the following filters
+			mlist3_.append('hltL3crIsoL1sMu16L1f0L2f10QL3f18QL3trkIsoFiltered0p09') # filter
+			self.muon_masterList_.append(mlist3_)		
+
+
+			# #### Fall15MCminiAOD path : Ele23 #####
+
+			elist4_ = []
+			elist4_.append('HLT_Ele23_WPLoose_Gsf_v*') # path
+			elist4_.append('AND') # AND or OR of the following filters
+			elist4_.append('hltEle23WPLooseGsfTrackIsoFilter') # filter
+			self.electron_masterList_.append(elist4_)
+
+
+			# #### Fall15MCminiAOD path : Double Med Iso PF Tau 35 #####
+
+			tlist3_ = []
+			tlist3_.append('HLT_DoubleMediumIsoPFTau35_Trk1_eta2p1_Reg_v*') # path
+			tlist3_.append('AND') # AND or OR of the following filters
+			tlist3_.append('hltDoublePFTau35TrackPt1MediumIsolationDz02Reg') # filter
+			self.tau_masterList_.append(tlist3_)
+
+			#########################################################		
+			# HLT paths and filters for Fall15MCminiAOD MC   -- END		#
+			#########################################################
+
 
 
 		####################################################################################################

@@ -92,6 +92,9 @@ private:
   edm::EDGetTokenT<edm::View< pat::Electron > > electronToken_;
 
   string NAME_;
+  double BarrelEnergyShift_;
+  double EndcapEnergyShift_;
+
 
   edm::InputTag vertexSrc_;
   edm::EDGetTokenT< edm::View<reco::Vertex> > vertexToken_;
@@ -142,6 +145,8 @@ private:
 CustomPatElectronProducer::CustomPatElectronProducer(const edm::ParameterSet& iConfig):
 electronSrc_(iConfig.getParameter<edm::InputTag>("electronSrc" )),
 NAME_(iConfig.getParameter<string>("NAME" )),
+BarrelEnergyShift_(iConfig.getParameter<double>("BarrelEnergyShift" )),
+EndcapEnergyShift_(iConfig.getParameter<double>("EndcapEnergyShift" )),
 vertexSrc_(iConfig.getParameter<edm::InputTag>("vertexSrc" )),
 triggerBitSrc_(consumes<edm::TriggerResults>(iConfig.getParameter<edm::InputTag>("triggerBitSrc"))),
 triggerPreScaleSrc_(consumes<pat::PackedTriggerPrescales>(iConfig.getParameter<edm::InputTag>("triggerPreScaleSrc"))),
@@ -285,6 +290,10 @@ CustomPatElectronProducer::produce(edm::Event& iEvent, const edm::EventSetup& iS
 
   auto_ptr<PatElectronCollection> storedElectrons (new PatElectronCollection);
 
+  // control memory usage by reserving max size 
+  std::size_t reserveSize =  electrons->size();
+  storedElectrons->reserve( reserveSize );
+
 
   for (std::size_t i = 0; i<electrons->size(); i++)
   {
@@ -306,6 +315,44 @@ CustomPatElectronProducer::produce(edm::Event& iEvent, const edm::EventSetup& iS
     ele.clones[i].addUserFloat("PASS_nonTrigMVA90",float(isPassTight));
     ele.clones[i].addUserFloat("CATEGORY_nonTrigMVA",float(mvaCategory));
     ele.clones[i].addUserFloat("passCutBasedVetoID",passCutBasedVetoID);
+
+
+
+  // if an energy shift is needed, apply it
+
+  float ABS_SC_ETA = fabs(ele.clones[i].superCluster()->eta());
+
+  if(ABS_SC_ETA<= 1.479 && BarrelEnergyShift_!=1.)
+  {
+      //std::cout<<" shifting barrel electron from "<<ele.clones[i].p4().pt()<<" to ";
+       ele.clones[i].setP4(ele.clones[i].p4() * BarrelEnergyShift_);
+       //std::cout<<ele.clones[i].p4().pt()<<"  sf = "<<BarrelEnergyShift_<<"\n";
+
+       if(BarrelEnergyShift_ > 1.0)  ele.clones[i].addUserFloat("ElectronEsVariant",1.0);
+       else ele.clones[i].addUserFloat("ElectronEsVariant",-1.0);
+ 
+  }
+
+  else if(ABS_SC_ETA > 1.479 && ABS_SC_ETA < 2.5 && EndcapEnergyShift_!=1.)    
+  {
+       //std::cout<<" shifting endcap electron from "<<ele.clones[i].p4().pt()<<" to ";
+       ele.clones[i].setP4(ele.clones[i].p4() * EndcapEnergyShift_);
+       //std::cout<<ele.clones[i].p4().pt()<<"  sf = "<<EndcapEnergyShift_<<"\n";
+
+
+       if(EndcapEnergyShift_ > 1.0)  ele.clones[i].addUserFloat("ElectronEsVariant",1.0);
+       else ele.clones[i].addUserFloat("ElectronEsVariant",-1.0);
+
+  }
+
+  else
+  {
+     ele.clones[i].addUserFloat("ElectronEsVariant",0.0);
+  }
+
+
+
+
 
 
    // std::cout<<" isPassCutBasedVetoId "<<passCutBasedVetoID<<"\n";

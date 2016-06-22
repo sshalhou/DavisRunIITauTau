@@ -19,9 +19,9 @@ using namespace pat;
 
 
 HiggsCandidateCountFilter::HiggsCandidateCountFilter(const edm::ParameterSet & iConfig) {
-  electronSource_ = iConfig.getParameter<edm::InputTag>( "electronSource" );
-  muonSource_     = iConfig.getParameter<edm::InputTag>( "muonSource" );
-  tauSource_      = iConfig.getParameter<edm::InputTag>( "tauSource" );
+  electronTags_ = iConfig.getParameter<vInputTag>("electronSources");
+  muonTags_ = iConfig.getParameter<vInputTag>("muonSources");
+  tauTags_ = iConfig.getParameter<vInputTag>("tauSources");
   countElectronElectrons_  = iConfig.getParameter<bool>         ( "countElectronElectrons" );
   countElectronMuons_  = iConfig.getParameter<bool>         ( "countElectronMuons" );
   countElectronTaus_ = iConfig.getParameter<bool>         ( "countElectronTaus" );
@@ -29,9 +29,23 @@ HiggsCandidateCountFilter::HiggsCandidateCountFilter(const edm::ParameterSet & i
   countMuonTaus_     = iConfig.getParameter<bool>         ( "countMuonTaus" );
   countTauTaus_ = iConfig.getParameter<bool>         ( "countTauTaus" );
 
-  electronToken_ = consumes< edm::View<pat::Electron> >(electronSource_);
-  muonToken_ = consumes< edm::View<pat::Muon> >(muonSource_);
-  tauToken_ = consumes< edm::View<pat::Tau> >(tauSource_);
+
+  for(vInputTag::const_iterator it=electronTags_.begin();it!=electronTags_.end();it++) 
+  {
+    electronSources_.push_back( consumes<reco::CandidateView >( *it ) );
+  }
+    
+  for(vInputTag::const_iterator it=muonTags_.begin();it!=muonTags_.end();it++) 
+  {
+    muonSources_.push_back( consumes<reco::CandidateView >( *it ) );
+  }
+    
+  for(vInputTag::const_iterator it=tauTags_.begin();it!=tauTags_.end();it++) 
+  {
+    tauSources_.push_back( consumes<reco::CandidateView >( *it ) );
+  }
+    
+
 
 }
 
@@ -41,21 +55,47 @@ HiggsCandidateCountFilter::~HiggsCandidateCountFilter() {
 
 
 bool HiggsCandidateCountFilter::filter(edm::Event & iEvent, const edm::EventSetup & iSetup) {
-  edm::Handle<edm::View<Electron> > electrons;
-  iEvent.getByToken(electronToken_, electrons);
-  
-  edm::Handle<edm::View<Muon> > muons;
-  iEvent.getByToken(muonToken_, muons);
-  
-  edm::Handle<edm::View<Tau> > taus;
-  iEvent.getByToken(tauToken_, taus);
+
+  std::size_t NUM_ELECTRONS = 0;
+  std::size_t NUM_MUONS = 0;
+  std::size_t NUM_TAUS = 0;
 
 
-  std::size_t NUM_TAUS = taus->size();
-  std::size_t NUM_ELECTRONS = electrons->size();
-  std::size_t NUM_MUONS = muons->size();
+  for ( std::vector<edm::EDGetTokenT<reco::CandidateView > >::const_iterator electronSources_i = electronSources_.begin(); 
+        electronSources_i != electronSources_.end(); ++electronSources_i )
+  {
+    edm::Handle<reco::CandidateView> temp;
+    iEvent.getByToken(*electronSources_i, temp);
+    
+    NUM_ELECTRONS += temp->size();
 
-//  std::cout<<" e, mu, tau size : "<<NUM_ELECTRONS<<" , "<<NUM_MUONS<<" , "<<NUM_TAUS<<" KEEP = ";
+  }
+
+
+
+  for ( std::vector<edm::EDGetTokenT<reco::CandidateView > >::const_iterator muonSources_i = muonSources_.begin(); 
+        muonSources_i != muonSources_.end(); ++muonSources_i )
+  {
+    edm::Handle<reco::CandidateView> temp;
+    iEvent.getByToken(*muonSources_i, temp);
+    
+    NUM_MUONS += temp->size();
+
+  }
+
+
+  for ( std::vector<edm::EDGetTokenT<reco::CandidateView > >::const_iterator tauSources_i = tauSources_.begin(); 
+        tauSources_i != tauSources_.end(); ++tauSources_i )
+  {
+    edm::Handle<reco::CandidateView> temp;
+    iEvent.getByToken(*tauSources_i, temp);
+    
+    NUM_TAUS += temp->size();
+
+  }
+
+
+ // std::cout<<" e, mu, tau size : "<<NUM_ELECTRONS<<" , "<<NUM_MUONS<<" , "<<NUM_TAUS<<" KEEP = ";
 
   bool KEEP = 0;
 

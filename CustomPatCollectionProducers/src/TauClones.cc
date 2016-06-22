@@ -32,8 +32,7 @@ typedef edm::Handle<edm::View<pat::Tau> > 	slimmedPatTauCollection;
 
 TauClones::TauClones(const slimmedPatTauCollection& inputColl, const reco::Vertex & input_vertex,
 	const float EsCorrectionFactor,
-	const float EsShiftScaleFactorUp,
-	const float EsShiftScaleFactorDown,
+	const float EsShiftScaleFactor,
 	edm::Handle<edm::TriggerResults> & triggerBits_,
 	edm::Handle<pat::TriggerObjectStandAloneCollection> & triggerObjects_,
 	edm::Handle<pat::PackedTriggerPrescales> & triggerPreScales_,
@@ -43,8 +42,7 @@ TauClones::TauClones(const slimmedPatTauCollection& inputColl, const reco::Verte
 		taus(inputColl),
 		first_vertex(input_vertex),
 		EsCorrectionFactor(EsCorrectionFactor),
-		EsShiftScaleFactorUp(EsShiftScaleFactorUp),
-		EsShiftScaleFactorDown(EsShiftScaleFactorDown),
+		EsShiftScaleFactor(EsShiftScaleFactor),
 		triggerBits(triggerBits_),
 		triggerObjects(triggerObjects_),
 		triggerPreScales(triggerPreScales_),
@@ -54,21 +52,14 @@ TauClones::TauClones(const slimmedPatTauCollection& inputColl, const reco::Verte
 		{
 
 		 clone();
-		 ChangeEnergyAndFillUserFloats(clones,1.0,1.0);		  
-		 ChangeEnergyAndFillUserFloats(clonesCorrectedNominalEsShift,EsCorrectionFactor,1.0);		  
-		 ChangeEnergyAndFillUserFloats(clonesCorrectedUpEsShift,EsCorrectionFactor,EsShiftScaleFactorUp);		  
-		 ChangeEnergyAndFillUserFloats(clonesCorrectedDownEsShift,EsCorrectionFactor,EsShiftScaleFactorDown);		  
-
-
+		 ChangeEnergyAndFillUserFloats(clonesCorrectedAndShifted,EsCorrectionFactor,EsShiftScaleFactor);		  
+		
 		}
 
 // destructor 
 
 TauClones::~TauClones(){ 
-	clones.clear();
-	clonesCorrectedNominalEsShift.clear();	
-	clonesCorrectedUpEsShift.clear();
-	clonesCorrectedDownEsShift.clear();
+	clonesCorrectedAndShifted.clear();
 						}
 
 // clone the collection 
@@ -79,10 +70,7 @@ void TauClones::clone()
   edm::View<pat::Tau>::const_iterator Tau;
   for(Tau=taus->begin(); Tau!=taus->end(); ++Tau)
   {
-  	clones.push_back(*Tau);
-  	clonesCorrectedNominalEsShift.push_back(*Tau);
-	clonesCorrectedUpEsShift.push_back(*Tau);
-	clonesCorrectedDownEsShift.push_back(*Tau);
+  	clonesCorrectedAndShifted.push_back(*Tau);
   }
 }
 
@@ -173,8 +161,10 @@ void TauClones::ChangeEnergyAndFillUserFloats(std::vector <pat::Tau> & clones,
 
 		// tau IDs and MVA isolations
 
+		//std::cout<<"... checking tau ID list .... \n";
 		for (std::size_t p=0; p<t.tauIDs().size(); ++p)
 		{
+		//	std::cout<<" known tau ID "<<t.tauIDs()[p].first<<"\n";
 
 			t.addUserFloat("tauID_"+t.tauIDs()[p].first,t.tauIDs()[p].second);
 

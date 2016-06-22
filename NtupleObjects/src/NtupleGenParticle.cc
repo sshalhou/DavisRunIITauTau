@@ -11,6 +11,9 @@ NtupleGenParticle::NtupleGenParticle()
   m_gen_isPromptFinalState = 0;
   m_gen_isDirectPromptTauDecayProduct = 0;
   m_gen_isDirectPromptTauDecayProductFinalState = 0;
+  m_gen_FromHardProcess  = -999;
+  m_gen_IsLastCopy = -999;
+
   m_gen_p4.SetXYZT(NAN,NAN,NAN,NAN);
   m_gen_vertex_x = NAN;
   m_gen_vertex_y = NAN;
@@ -36,6 +39,9 @@ NtupleGenParticle::NtupleGenParticle()
     m_gen_isPromptFinalState = int(genPart.isPromptFinalState());
     m_gen_isDirectPromptTauDecayProduct = int(genPart.statusFlags().isDirectPromptTauDecayProduct());
     m_gen_isDirectPromptTauDecayProductFinalState = int(genPart.isDirectPromptTauDecayProductFinalState());
+
+    m_gen_FromHardProcess  = int(genPart.statusFlags().fromHardProcess());
+    m_gen_IsLastCopy = int(genPart.statusFlags().isLastCopy());
 
     m_gen_p4 = genPart.p4();
     m_gen_vertex_x = genPart.vertex().X();
@@ -73,6 +79,9 @@ NtupleGenParticle::NtupleGenParticle()
   int NtupleGenParticle::gen_isDirectPromptTauDecayProduct() const { return m_gen_isDirectPromptTauDecayProduct; } 
   int NtupleGenParticle::gen_isDirectPromptTauDecayProductFinalState() const { return m_gen_isDirectPromptTauDecayProductFinalState; } 
 
+
+  int NtupleGenParticle::gen_FromHardProcess() const { return m_gen_FromHardProcess; } 
+  int NtupleGenParticle::gen_IsLastCopy() const { return m_gen_IsLastCopy; } 
 
   LorentzVector NtupleGenParticle::gen_p4() const { return m_gen_p4; } 
   float NtupleGenParticle::gen_vertex_x() const { return m_gen_vertex_x; } 

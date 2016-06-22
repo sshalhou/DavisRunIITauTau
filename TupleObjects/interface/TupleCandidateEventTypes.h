@@ -15,11 +15,7 @@ enum TupleCandidateEventTypes
      MuonMuon = 4,
      MuonTau = 5,
      TauTau = 6,
-     EleNull = 7,
-     MuonNull = 8,
-     TauNull = 9,
-     Null = 10
-
+     EffCand = 7
 };
 
 #endif

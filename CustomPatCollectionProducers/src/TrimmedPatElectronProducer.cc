@@ -1,9 +1,9 @@
 // -*- C++ -*-
 //
-// Package:    SinglePatMuonProducer
-// Class:      SinglePatMuonProducer
+// Package:    TrimmedPatElectronProducer
+// Class:      TrimmedPatElectronProducer
 //
-/**\class SinglePatMuonProducer SinglePatMuonProducer.cc TEMP/SinglePatMuonProducer/src/SinglePatMuonProducer.cc
+/**\class TrimmedPatElectronProducer TrimmedPatElectronProducer.cc TEMP/TrimmedPatElectronProducer/src/TrimmedPatElectronProducer.cc
 
 Description: [one line class summary]
 
@@ -28,10 +28,10 @@ Implementation:
 #include "FWCore/Framework/interface/MakerMacros.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 
-// needed by ntuple muon producer
+// needed by ntuple electron producer
 #include <vector>
 #include <iostream>
-#include "DataFormats/PatCandidates/interface/Muon.h"
+#include "DataFormats/PatCandidates/interface/Electron.h"
 #include "RecoEgamma/EgammaTools/interface/ConversionTools.h"
 #include "EgammaAnalysis/ElectronTools/interface/EGammaCutBasedEleId.h"
 #include "DataFormats/PatCandidates/interface/Conversion.h"
@@ -57,10 +57,10 @@ using namespace pat;
 // class declaration
 //
 
-class SinglePatMuonProducer : public edm::EDProducer {
+class TrimmedPatElectronProducer : public edm::EDProducer {
 public:
-  explicit SinglePatMuonProducer(const edm::ParameterSet&);
-  ~SinglePatMuonProducer();
+  explicit TrimmedPatElectronProducer(const edm::ParameterSet&);
+  ~TrimmedPatElectronProducer();
 
   static void fillDescriptions(edm::ConfigurationDescriptions& descriptions);
 
@@ -78,8 +78,10 @@ private:
 
   // ----------member data ---------------------------
 
-  edm::InputTag muonSrc_;
-  unsigned int INDEX_;
+  edm::InputTag electronSrc_;
+  edm::EDGetTokenT<edm::View< pat::Electron > > electronToken_;
+
+  unsigned int MAX_TO_KEEP_;
   string NAME_;
 
 };
@@ -96,15 +98,16 @@ private:
 //
 // constructors and destructor
 //
-SinglePatMuonProducer::SinglePatMuonProducer(const edm::ParameterSet& iConfig):
-muonSrc_(iConfig.getParameter<edm::InputTag>("muonSrc" )),
-INDEX_(iConfig.getParameter<unsigned int>("INDEX" )),
+TrimmedPatElectronProducer::TrimmedPatElectronProducer(const edm::ParameterSet& iConfig):
+electronSrc_(iConfig.getParameter<edm::InputTag>("electronSrc" )),
+MAX_TO_KEEP_(iConfig.getParameter<unsigned int>("MAX_TO_KEEP" )),
 NAME_(iConfig.getParameter<string>("NAME" ))
 {
 
 
-  produces<vector<pat::Muon>>(NAME_).setBranchAlias(NAME_);
+  produces<vector<pat::Electron>>(NAME_).setBranchAlias(NAME_);
 
+  electronToken_ = consumes< edm::View<pat::Electron> >(electronSrc_);
 
 
 
@@ -123,7 +126,7 @@ NAME_(iConfig.getParameter<string>("NAME" ))
 }
 
 
-SinglePatMuonProducer::~SinglePatMuonProducer()
+TrimmedPatElectronProducer::~TrimmedPatElectronProducer()
 {
 
   // do anything here that needs to be done at desctruction time
@@ -138,30 +141,31 @@ SinglePatMuonProducer::~SinglePatMuonProducer()
 
 // ------------ method called to produce the data  ------------
 void
-SinglePatMuonProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
+TrimmedPatElectronProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
 {
 
 
 
-  // get muon collection
-  edm::Handle<edm::View<pat::Muon> > muons;
-  iEvent.getByLabel(muonSrc_,muons);
+  // get electron collection
+  edm::Handle<edm::View<pat::Electron> > electrons;
+  iEvent.getByToken(electronToken_,electrons);
 
-  std::vector<pat::Muon> * storedMuons = new std::vector<pat::Muon>();
+  std::vector<pat::Electron> * storedElectrons = new std::vector<pat::Electron>();
 
 
-  if(INDEX_<muons->size())
+  for (std::size_t i = 0; i<electrons->size(); i++)
   {
-
-
-    const pat::Muon & muonToStore = muons->at(INDEX_);
-    storedMuons->push_back(muonToStore);
-
-
+    if(i<MAX_TO_KEEP_)
+    {
+       const pat::Electron & electronToStore = electrons->at(i);
+       storedElectrons->push_back(electronToStore);
+    }
   }
 
-  // add the muons to the event output
-  std::auto_ptr<std::vector<pat::Muon> > eptr(storedMuons);
+
+
+  // add the electrons to the event output
+  std::auto_ptr<std::vector<pat::Electron> > eptr(storedElectrons);
   iEvent.put(eptr,NAME_);
 
 
@@ -169,42 +173,42 @@ SinglePatMuonProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup
 
 // ------------ method called once each job just before starting event loop  ------------
 void
-SinglePatMuonProducer::beginJob()
+TrimmedPatElectronProducer::beginJob()
 {
 }
 
 // ------------ method called once each job just after ending the event loop  ------------
 void
-SinglePatMuonProducer::endJob() {
+TrimmedPatElectronProducer::endJob() {
 }
 
 // ------------ method called when starting to processes a run  ------------
 void
-SinglePatMuonProducer::beginRun(edm::Run&, edm::EventSetup const&)
+TrimmedPatElectronProducer::beginRun(edm::Run&, edm::EventSetup const&)
 {
 }
 
 // ------------ method called when ending the processing of a run  ------------
 void
-SinglePatMuonProducer::endRun(edm::Run&, edm::EventSetup const&)
+TrimmedPatElectronProducer::endRun(edm::Run&, edm::EventSetup const&)
 {
 }
 
 // ------------ method called when starting to processes a luminosity block  ------------
 void
-SinglePatMuonProducer::beginLuminosityBlock(edm::LuminosityBlock&, edm::EventSetup const&)
+TrimmedPatElectronProducer::beginLuminosityBlock(edm::LuminosityBlock&, edm::EventSetup const&)
 {
 }
 
 // ------------ method called when ending the processing of a luminosity block  ------------
 void
-SinglePatMuonProducer::endLuminosityBlock(edm::LuminosityBlock&, edm::EventSetup const&)
+TrimmedPatElectronProducer::endLuminosityBlock(edm::LuminosityBlock&, edm::EventSetup const&)
 {
 }
 
 // ------------ method fills 'descriptions' with the allowed parameters for the module  ------------
 void
-SinglePatMuonProducer::fillDescriptions(edm::ConfigurationDescriptions& descriptions) {
+TrimmedPatElectronProducer::fillDescriptions(edm::ConfigurationDescriptions& descriptions) {
   //The following says we do not know what parameters are allowed so do no validation
   // Please change this to state exactly what you do use, even if it is no parameters
   edm::ParameterSetDescription desc;
@@ -213,4 +217,4 @@ SinglePatMuonProducer::fillDescriptions(edm::ConfigurationDescriptions& descript
 }
 
 //define this as a plug-in
-DEFINE_FWK_MODULE(SinglePatMuonProducer);
+DEFINE_FWK_MODULE(TrimmedPatElectronProducer);
