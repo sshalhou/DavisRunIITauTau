@@ -125,9 +125,11 @@ process.source = cms.Source("PoolSource")
 ###################################
 
 from DavisRunIITauTau.TupleConfigurations.ConfigNtupleWeights_cfi import mcGenWeightSrcInputTag
+from DavisRunIITauTau.TupleConfigurations.ConfigNtupleWeights_cfi import LHEEventProductSrcInputTag
 
 process.Cumulative = cms.EDAnalyzer('CumulativeInfoAdder',
-	mcGenWeightSrc = mcGenWeightSrcInputTag
+	mcGenWeightSrc = mcGenWeightSrcInputTag,
+	LHEEventProductSrc = LHEEventProductSrcInputTag
 	)
 
 
@@ -817,8 +819,6 @@ from DavisRunIITauTau.TupleConfigurations.ConfigJets_cfi import PFjetIDworkingPo
 from DavisRunIITauTau.TupleConfigurations.ConfigJets_cfi import TightPFjetIDworkingPoint
 from DavisRunIITauTau.TupleConfigurations.ConfigNtupleWeights_cfi import PUntupleWeightSettings
 from DavisRunIITauTau.TupleConfigurations.ConfigNtupleWeights_cfi import pileupSrcInputTag
-#from DavisRunIITauTau.TupleConfigurations.ConfigNtupleWeights_cfi import mcGenWeightSrcInputTag
-from DavisRunIITauTau.TupleConfigurations.ConfigNtupleWeights_cfi import LHEEventProductSrcInputTag
 from DavisRunIITauTau.TupleConfigurations.SampleMetaData_cfi import sampleInfo
 
 

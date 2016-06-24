@@ -46,6 +46,10 @@ NtuplePairIndependentInfo::NtuplePairIndependentInfo()
   m_GenBosonVisibleMomentum.SetXYZT(NAN,NAN,NAN,NAN);
   m_GenBosonTotalMomentum.SetXYZT(NAN,NAN,NAN,NAN);
 
+  m_originalXWGTUP = NAN;
+  m_theory_scale_factors.clear();
+
+
 }
 
 
@@ -58,6 +62,16 @@ void  NtuplePairIndependentInfo::fill_GenBosonTotalMomentum(LorentzVector X)
   m_GenBosonTotalMomentum  = X;
 }
 
+
+void  NtuplePairIndependentInfo::fill_originalXWGTUP(float dummy_)
+{
+  m_originalXWGTUP = dummy_;
+}
+
+void NtuplePairIndependentInfo::fill_theory_scale_factors(std::vector<float> dummy_)
+{
+  m_theory_scale_factors = dummy_;
+}
 
 
 void  NtuplePairIndependentInfo::fill_HBHENoiseFilter(bool arg)
@@ -284,4 +298,7 @@ bool NtuplePairIndependentInfo::muonBadTrackFilter() const { return m_muonBadTra
 
 LorentzVector  NtuplePairIndependentInfo::GenBosonVisibleMomentum() const { return m_GenBosonVisibleMomentum; };
 LorentzVector  NtuplePairIndependentInfo::GenBosonTotalMomentum() const { return m_GenBosonTotalMomentum; };
+
+float NtuplePairIndependentInfo::originalXWGTUP() const {return m_originalXWGTUP; };
+std::vector<float> NtuplePairIndependentInfo::theory_scale_factors() const { return m_theory_scale_factors; };
 

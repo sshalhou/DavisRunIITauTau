@@ -51,7 +51,7 @@ Implementation:
 #include "DavisRunIITauTau/External/interface/PUPFjetIdHelper.hh"
 #include "SimDataFormats/GeneratorProducts/interface/GenEventInfoProduct.h"
 #include "SimDataFormats/GeneratorProducts/interface/LHEEventProduct.h"
-
+#include "SimDataFormats/GeneratorProducts/interface/LHERunInfoProduct.h"
 /* for JEC Uncertainty */
 
 #include "CondFormats/JetMETObjects/interface/JetCorrectionUncertainty.h"
@@ -670,19 +670,37 @@ NtuplePairIndependentInfoProducer::produce(edm::Event& iEvent, const edm::EventS
   /*   get the MC generated LHE collection - for NUP used in n-jet sample stitching  */
   /////////////////////////////////////////////////////////////////////////////////////
 
-  edm::Handle<LHEEventProduct> LHEEventProductSrc;
-  iEvent.getByToken(LHEEventProductToken_,LHEEventProductSrc);
-
   edm::Handle<LHEEventProduct > LHEHandle;
-  const LHEEventProduct* LHE = 0;
   iEvent.getByToken(LHEEventProductToken_,LHEHandle);
+
+  //std::cout<<" LHEHandle.isValid() "<<LHEHandle.isValid()<<"\n";
+
   if(LHEHandle.isValid())
   {
-    LHE = LHEHandle.product();
-    InfoToWrite.fill_hepNUP((LHE->hepeup()).NUP);
+
+    InfoToWrite.fill_hepNUP((LHEHandle.product()->hepeup()).NUP);
 
 
-    const lhef::HEPEUP& lheEvent = LHE->hepeup();
+    //////////////// -- weights start
+    float orig = float(LHEHandle.product()->originalXWGTUP());
+
+    std::vector <float> theory_sf;
+
+    for(size_t i = 0; i < LHEHandle.product()->weights().size(); ++i)
+    {
+      float sf = 1.0;
+      if(orig != 0) sf = float(LHEHandle.product()->weights()[i].wgt)/orig;
+      theory_sf.push_back(sf);
+    }
+
+    InfoToWrite.fill_originalXWGTUP(orig);
+    InfoToWrite.fill_theory_scale_factors(theory_sf);
+    //////////////// -- weights end
+
+
+
+
+    const lhef::HEPEUP& lheEvent = LHEHandle.product()->hepeup();
     std::vector<lhef::HEPEUP::FiveVector> lheParticles = lheEvent.PUP;
   
     double lheHt = 0.; /* this is the gen level HT */
@@ -700,7 +718,7 @@ NtuplePairIndependentInfoProducer::produce(edm::Event& iEvent, const edm::EventS
       } 
     }
 
-    //std::cout<<" gen level HT  = "<<lheHt<<" gen level outgoing partons = "<<nOutgoing<<"\n";
+//    std::cout<<" gen level HT  = "<<lheHt<<" gen level outgoing partons = "<<nOutgoing<<"\n";
 
     InfoToWrite.fill_lheHT(lheHt);
     InfoToWrite.fill_lheOutGoingPartons(nOutgoing);

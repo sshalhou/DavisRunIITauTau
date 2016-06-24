@@ -84,6 +84,12 @@ public:
   void fill_GenBosonVisibleMomentum(LorentzVector);
   void fill_GenBosonTotalMomentum(LorentzVector); 
 
+  /* fill the theory weights */
+
+  void fill_originalXWGTUP(float);
+  void fill_theory_scale_factors(std::vector<float>);
+
+
 
 
   // getters
@@ -131,6 +137,12 @@ public:
 
   LorentzVector GenBosonVisibleMomentum() const;
   LorentzVector GenBosonTotalMomentum() const;
+
+
+  /* get theory weights */
+
+  float originalXWGTUP() const;
+  std::vector<float> theory_scale_factors() const;
 
 
 private:
@@ -189,6 +201,12 @@ private:
 
   LorentzVector m_GenBosonVisibleMomentum;
   LorentzVector m_GenBosonTotalMomentum;
+
+  /* holder for theory unc. */
+
+  float m_originalXWGTUP;
+  std::vector<float> m_theory_scale_factors; /* these are all weight/originalXWGTUP, 
+                                                only filled for lhe-valid MC samples (see log file for translation) */
 
 };
 
