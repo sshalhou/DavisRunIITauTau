@@ -2362,6 +2362,7 @@ void FlatTupleGenerator::handlePairIndepInfo(const edm::Event& iEvent, const edm
   EventTotal = currentINDEP.EventTotal();
   EventType = currentINDEP.EventType();
   KeyName = currentINDEP.KeyName();
+  DataCard = currentINDEP.DataCard();
   CrossSection = currentINDEP.CrossSection();
   FilterEff = currentINDEP.FilterEff();
   CodeVersion = currentINDEP.CodeVersion();
@@ -2400,7 +2401,7 @@ void FlatTupleGenerator::handlePairIndepInfo(const edm::Event& iEvent, const edm
   hepNUP = currentINDEP.hepNUP();
   lheHT = currentINDEP.lheHT();
   lheOutGoingPartons = currentINDEP.lheOutGoingPartons();
-
+  lheZmass = currentINDEP.lheZmass();
 
 
 
@@ -3201,6 +3202,7 @@ void FlatTupleGenerator::handlePairIndepInfo(const edm::Event& iEvent, const edm
   hepNUP = -999;
   lheHT = NAN;
   lheOutGoingPartons = -999;
+  lheZmass = NAN;
 
   HBHENoiseFilter = 1;
   HBHENoiseIsoFilter = 1;
@@ -3462,6 +3464,7 @@ void FlatTupleGenerator::handlePairIndepInfo(const edm::Event& iEvent, const edm
   EventTotal = 0;
   EventType = "NULL";
   KeyName = "NULL";
+  DataCard = "NULL";
   CrossSection = 1.0;
   FilterEff = 1.0;
   CodeVersion = 0.0;
@@ -3995,7 +3998,7 @@ void FlatTupleGenerator::beginJob()
   FlatTuple->Branch("hepNUP",&hepNUP);
   FlatTuple->Branch("lheHT",&lheHT);
   FlatTuple->Branch("lheOutGoingPartons",&lheOutGoingPartons);
-
+  FlatTuple->Branch("lheZmass", &lheZmass);
 
 
 
@@ -4247,6 +4250,7 @@ void FlatTupleGenerator::beginJob()
   FlatTuple->Branch("EventTotal", &EventTotal); 
   FlatTuple->Branch("EventType", &EventType); 
   FlatTuple->Branch("KeyName", &KeyName); 
+  FlatTuple->Branch("DataCard", &DataCard);
   FlatTuple->Branch("CrossSection", &CrossSection); 
   FlatTuple->Branch("FilterEff", &FilterEff); 
   FlatTuple->Branch("CodeVersion", &CodeVersion); 

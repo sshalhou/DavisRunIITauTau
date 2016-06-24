@@ -59,9 +59,10 @@ public:
   /* fill NUP */
   void fill_hepNUP(int);
 
-  /* fill the gen level HT and numberOutgoingPartons - used for stitching */
+  /* fill the gen level HT, Zmass, & numberOutgoingPartons - used for stitching */
   void fill_lheHT(double);
   void fill_lheOutGoingPartons(int);
+  void fill_lheZmass(double);
 
 
 
@@ -111,12 +112,13 @@ public:
   int hepNUP() const;
   double lheHT() const;
   int lheOutGoingPartons() const;
-
+  double lheZmass() const;
 
   std::string DataSet() const;
   int EventTotal() const;
   std::string EventType() const;
   std::string KeyName() const;
+  std::string DataCard() const;
   double CrossSection() const;
   double FilterEff() const;
   double CodeVersion() const;
@@ -175,6 +177,7 @@ private:
   /* for HT and njet binned sample weight */
   double m_lheHT;
   int m_lheOutGoingPartons;
+  double m_lheZmass;
 
   /* sample info */
 
@@ -182,6 +185,7 @@ private:
   int m_EventTotal;
   std::string m_EventType;
   std::string m_KeyName;
+  std::string m_DataCard;
   double m_CrossSection;
   double m_FilterEff;
   double m_CodeVersion;

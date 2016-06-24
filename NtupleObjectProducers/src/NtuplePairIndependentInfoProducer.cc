@@ -704,24 +704,47 @@ NtuplePairIndependentInfoProducer::produce(edm::Event& iEvent, const edm::EventS
     std::vector<lhef::HEPEUP::FiveVector> lheParticles = lheEvent.PUP;
   
     double lheHt = 0.; /* this is the gen level HT */
+    double lheZmass = 0.; /* this is the gen level Z mass */
+
     size_t numParticles = lheParticles.size();
     int nOutgoing = 0; /* gen level njets aka. Number of outgoing partons */
+
+    std::vector <TLorentzVector> lhe_Z;
+    lhe_Z.clear();
 
     for ( size_t idxParticle = 0; idxParticle < numParticles; ++idxParticle ) 
     {
       int absPdgId = TMath::Abs(lheEvent.IDUP[idxParticle]);
       int status = lheEvent.ISTUP[idxParticle];
+     
+
+      // Z decay products 
+      if ( status == 1 && (absPdgId == 11 || absPdgId == 13 || absPdgId == 15)  ) 
+      {  
+        TLorentzVector lvect(lheParticles[idxParticle].x[0],lheParticles[idxParticle].x[1],lheParticles[idxParticle].x[2],lheParticles[idxParticle].x[3]);
+        lhe_Z.push_back(lvect);
+      }  
+
+      // quarks and gluons
       if ( status == 1 && ((absPdgId >= 1 && absPdgId <= 6) || absPdgId == 21) ) 
-      { // quarks and gluons
-        lheHt += TMath::Sqrt(TMath::Power(lheParticles[idxParticle][0], 2.) + TMath::Power(lheParticles[idxParticle][1], 2.)); // first entry is px, second py
+      { 
+        // first entry is px, second py
+        lheHt += TMath::Sqrt(TMath::Power(lheParticles[idxParticle][0], 2.) + TMath::Power(lheParticles[idxParticle][1], 2.)); 
         ++nOutgoing;
       } 
+
+
     }
 
-//    std::cout<<" gen level HT  = "<<lheHt<<" gen level outgoing partons = "<<nOutgoing<<"\n";
+
+    if(lhe_Z.size()==2) lheZmass = (lhe_Z[0] + lhe_Z[1]).M();
+
+    //std::cout<<" gen level HT  = "<<lheHt<<" gen level outgoing partons = "<<nOutgoing<<" gen level Z mass  = "<<lheZmass<<"\n";
+
 
     InfoToWrite.fill_lheHT(lheHt);
     InfoToWrite.fill_lheOutGoingPartons(nOutgoing);
+    InfoToWrite.fill_lheZmass(lheZmass);
 
   }
 

@@ -256,6 +256,7 @@ public:
     int EventTotal; 		/* the number of events in the MC sample */ 
     std::string EventType;  /* description of the event, DATA, MC, EMBEDDED, etc. */
     std::string KeyName;    /* description of the sample as given during crab job */
+	std::string DataCard;   /* process category used for data card formation/mva training */
     double CrossSection;    /* MC process cross section */
     double FilterEff;       /* gen level filter eff. (needed if any is applied) */
     double CodeVersion;     /* Davis code tracking version number */
@@ -664,7 +665,7 @@ public:
 	int hepNUP;
 	double lheHT;
 	int lheOutGoingPartons;
-
+	double lheZmass;
 
 
 
