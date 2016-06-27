@@ -1,5 +1,7 @@
 getenv = True
 Executable = run_analysis
+Place Arguments
+Place Input
 Output = runMessages.stout
 Error = runErrors.stderr
 universe = vanilla
