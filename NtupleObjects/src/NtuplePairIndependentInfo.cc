@@ -22,12 +22,13 @@ NtuplePairIndependentInfo::NtuplePairIndependentInfo()
   m_hepNUP = -999;
   m_lheHT = NAN;
   m_lheOutGoingPartons = -999;
-
+  m_lheZmass = NAN;
 
   m_DataSet = "NULL";
   m_EventTotal = -999;
   m_EventType = "NULL";
   m_KeyName = "NULL";
+  m_DataCard = "NULL";
   m_CrossSection = NAN;
   m_FilterEff = NAN;
   m_CodeVersion = NAN;
@@ -46,6 +47,10 @@ NtuplePairIndependentInfo::NtuplePairIndependentInfo()
   m_GenBosonVisibleMomentum.SetXYZT(NAN,NAN,NAN,NAN);
   m_GenBosonTotalMomentum.SetXYZT(NAN,NAN,NAN,NAN);
 
+  m_originalXWGTUP = NAN;
+  m_theory_scale_factors.clear();
+
+
 }
 
 
@@ -58,6 +63,16 @@ void  NtuplePairIndependentInfo::fill_GenBosonTotalMomentum(LorentzVector X)
   m_GenBosonTotalMomentum  = X;
 }
 
+
+void  NtuplePairIndependentInfo::fill_originalXWGTUP(float dummy_)
+{
+  m_originalXWGTUP = dummy_;
+}
+
+void NtuplePairIndependentInfo::fill_theory_scale_factors(std::vector<float> dummy_)
+{
+  m_theory_scale_factors = dummy_;
+}
 
 
 void  NtuplePairIndependentInfo::fill_HBHENoiseFilter(bool arg)
@@ -104,6 +119,7 @@ void  NtuplePairIndependentInfo::fill_sampleInfo(edm::ParameterSet argSet)
     m_EventTotal = argSet.getParameter< int >("EventTotal");
     m_EventType = argSet.getParameter< std::string >("EventType");
     m_KeyName = argSet.getParameter< std::string >("KeyName");
+    m_DataCard = argSet.getParameter< std::string > ("DataCard");
     m_CrossSection = argSet.getParameter< double >("CrossSection");
     m_FilterEff = argSet.getParameter< double >("FilterEff");
     m_CodeVersion = argSet.getParameter< double >("CodeVersion");
@@ -123,6 +139,11 @@ void  NtuplePairIndependentInfo::fill_lheHT(double arg)
 void  NtuplePairIndependentInfo::fill_lheOutGoingPartons(int arg)
   {
     m_lheOutGoingPartons = arg;
+  }
+
+void  NtuplePairIndependentInfo::fill_lheZmass(double arg)
+  {
+    m_lheZmass = arg;
   }
 
 
@@ -262,11 +283,15 @@ double NtuplePairIndependentInfo::generatorEventWeight() const {return m_generat
 int NtuplePairIndependentInfo::hepNUP() const {return m_hepNUP; };
 double NtuplePairIndependentInfo::lheHT() const {return m_lheHT; };
 int NtuplePairIndependentInfo::lheOutGoingPartons() const {return m_lheOutGoingPartons; };
+double NtuplePairIndependentInfo::lheZmass() const {return m_lheZmass; };
+
+
 
 std::string NtuplePairIndependentInfo::DataSet() const { return m_DataSet; };
 int NtuplePairIndependentInfo::EventTotal() const { return m_EventTotal; };
 std::string NtuplePairIndependentInfo::EventType() const { return m_EventType; };
 std::string NtuplePairIndependentInfo::KeyName() const { return m_KeyName; };
+std::string NtuplePairIndependentInfo::DataCard() const {return m_DataCard; };
 double NtuplePairIndependentInfo::CrossSection() const { return m_CrossSection; };
 double NtuplePairIndependentInfo::FilterEff() const { return m_FilterEff; };
 double NtuplePairIndependentInfo::CodeVersion() const { return m_CodeVersion; };
@@ -284,4 +309,7 @@ bool NtuplePairIndependentInfo::muonBadTrackFilter() const { return m_muonBadTra
 
 LorentzVector  NtuplePairIndependentInfo::GenBosonVisibleMomentum() const { return m_GenBosonVisibleMomentum; };
 LorentzVector  NtuplePairIndependentInfo::GenBosonTotalMomentum() const { return m_GenBosonTotalMomentum; };
+
+float NtuplePairIndependentInfo::originalXWGTUP() const {return m_originalXWGTUP; };
+std::vector<float> NtuplePairIndependentInfo::theory_scale_factors() const { return m_theory_scale_factors; };
 

@@ -46,7 +46,7 @@
 #include "CommonTools/UtilAlgos/interface/TFileService.h"
 #include "SimDataFormats/GeneratorProducts/interface/GenEventInfoProduct.h"
 #include "SimDataFormats/GeneratorProducts/interface/LHEEventProduct.h"
-
+#include "SimDataFormats/GeneratorProducts/interface/LHERunInfoProduct.h"
 // Custom object include files
 
 
@@ -84,6 +84,9 @@ public:
       virtual void analyze(const edm::Event&, const edm::EventSetup&) override;
       virtual void endJob() override;
       virtual void reInit(); 
+  	  virtual void endRun(edm::Run const&, edm::EventSetup const&) override;
+
+
 
 // private:
 // 	virtual void beginJob() ;
@@ -108,6 +111,9 @@ public:
 	edm::InputTag mcGenWeightSrc_;
     edm::EDGetTokenT<GenEventInfoProduct> mcGenWeightToken_;
 
+    edm::InputTag LHEEventProductSrc_;
+  	edm::EDGetTokenT<LHERunInfoProduct> LHEEventProductToken_;
+  
 
 	/* variables for the TTree */
 

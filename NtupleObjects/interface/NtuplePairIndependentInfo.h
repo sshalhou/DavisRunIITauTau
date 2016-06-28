@@ -59,9 +59,10 @@ public:
   /* fill NUP */
   void fill_hepNUP(int);
 
-  /* fill the gen level HT and numberOutgoingPartons - used for stitching */
+  /* fill the gen level HT, Zmass, & numberOutgoingPartons - used for stitching */
   void fill_lheHT(double);
   void fill_lheOutGoingPartons(int);
+  void fill_lheZmass(double);
 
 
 
@@ -84,6 +85,12 @@ public:
   void fill_GenBosonVisibleMomentum(LorentzVector);
   void fill_GenBosonTotalMomentum(LorentzVector); 
 
+  /* fill the theory weights */
+
+  void fill_originalXWGTUP(float);
+  void fill_theory_scale_factors(std::vector<float>);
+
+
 
 
   // getters
@@ -105,12 +112,13 @@ public:
   int hepNUP() const;
   double lheHT() const;
   int lheOutGoingPartons() const;
-
+  double lheZmass() const;
 
   std::string DataSet() const;
   int EventTotal() const;
   std::string EventType() const;
   std::string KeyName() const;
+  std::string DataCard() const;
   double CrossSection() const;
   double FilterEff() const;
   double CodeVersion() const;
@@ -131,6 +139,12 @@ public:
 
   LorentzVector GenBosonVisibleMomentum() const;
   LorentzVector GenBosonTotalMomentum() const;
+
+
+  /* get theory weights */
+
+  float originalXWGTUP() const;
+  std::vector<float> theory_scale_factors() const;
 
 
 private:
@@ -163,6 +177,7 @@ private:
   /* for HT and njet binned sample weight */
   double m_lheHT;
   int m_lheOutGoingPartons;
+  double m_lheZmass;
 
   /* sample info */
 
@@ -170,6 +185,7 @@ private:
   int m_EventTotal;
   std::string m_EventType;
   std::string m_KeyName;
+  std::string m_DataCard;
   double m_CrossSection;
   double m_FilterEff;
   double m_CodeVersion;
@@ -189,6 +205,12 @@ private:
 
   LorentzVector m_GenBosonVisibleMomentum;
   LorentzVector m_GenBosonTotalMomentum;
+
+  /* holder for theory unc. */
+
+  float m_originalXWGTUP;
+  std::vector<float> m_theory_scale_factors; /* these are all weight/originalXWGTUP, 
+                                                only filled for lhe-valid MC samples (see log file for translation) */
 
 };
 

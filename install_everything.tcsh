@@ -104,6 +104,13 @@ cp /afs/cern.ch/user/s/sshalhou/public/INSTALL_PUBLIC_FILES/76X/BTAGEFF/tagging_
 # bug fix in MVA met (replaced p4() comparisons with small DR comparisons instead)
 cp DavisRunIITauTau/External/MVAMET.cc_763patch2 RecoMET/METPUSubtraction/plugins/MVAMET.cc
 
+# Lepton Eff for Muon & Electron for Fall15 
+cd DavisRunIITauTau/AnalysisRunII/Analysis/
+git clone https://github.com/CMS-HTT/LeptonEff-interface.git HTT-utilities
+cd HTT-utilities/LepEffInterface
+git clone https://github.com/CMS-HTT/LeptonEfficiencies.git data
+cd ${CMSSW_BASE}/src
+
 # compile
 
 scram b -j 20

@@ -1693,282 +1693,253 @@ void FlatTupleGenerator::handleSVFitCall(const edm::Event& iEvent, const edm::Ev
 //////////////////////////////////////////////////////
 //////// begin an SVMass computation 
 
-  // if any hadronically decaying taus did not pass decayModeFindingNewDMs,
-  // do not run SVFit 
+  std::vector<svFitStandalone::MeasuredTauLepton> measuredTauLeptons;
+  measuredTauLeptons.clear();
 
-  bool goodTauDecays = 1;
+  // new way to order legs for SV mass in 76X analysis 
 
-  /* turning this off, since we already impose a decayMode finding in ConfigTupleTaus_cfi.py */
-  // if(currentPair.leg1().leptonType() == TupleLeptonTypes::aTau)
-  // {
-  //   if(currentPair.leg1().tauID("decayModeFindingNewDMs") < 0.5 ) goodTauDecays = 0;
-  // }
 
-  // if(currentPair.leg2().leptonType() == TupleLeptonTypes::aTau)
-  // {
-  //   if(currentPair.leg2().tauID("decayModeFindingNewDMs") < 0.5 ) goodTauDecays = 0;
-  // }
+  ////////////////////////////////////////////////////////
+  // ele + ele choose higher pt leg to push back 1st    //
+  ////////////////////////////////////////////////////////
 
-  // goodTauDecays = 1; 
 
-  if(goodTauDecays)
+  if(CandidateEventType == TupleCandidateEventTypes::EleEle)
+  {
+    if(currentPair.leg1().p4().pt() >= currentPair.leg2().p4().pt())
+    {
+
+      measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
+      svFitStandalone::kTauToElecDecay, 
+      currentPair.leg1().p4().pt(),currentPair.leg1().p4().eta(),currentPair.leg1().p4().phi(),
+      svFitStandalone::electronMass));
+
+      measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
+      svFitStandalone::kTauToElecDecay, 
+      currentPair.leg2().p4().pt(),currentPair.leg2().p4().eta(),currentPair.leg2().p4().phi(),
+      svFitStandalone::electronMass));
+
+    }
+    else
+    {
+      
+      measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
+      svFitStandalone::kTauToElecDecay, 
+      currentPair.leg2().p4().pt(),currentPair.leg2().p4().eta(),currentPair.leg2().p4().phi(),
+      svFitStandalone::electronMass));
+
+      measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
+      svFitStandalone::kTauToElecDecay, 
+      currentPair.leg1().p4().pt(),currentPair.leg1().p4().eta(),currentPair.leg1().p4().phi(),
+      svFitStandalone::electronMass));
+
+    }
+  }
+
+  ////////////////////////////////////////////////////////
+  // mu + mu choose higher pt leg to push back 1st    //
+  ////////////////////////////////////////////////////////
+
+
+  if(CandidateEventType == TupleCandidateEventTypes::MuonMuon)
+  {
+    if(currentPair.leg1().p4().pt() >= currentPair.leg2().p4().pt())
+    {
+
+      measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
+      svFitStandalone::kTauToMuDecay, 
+      currentPair.leg1().p4().pt(),currentPair.leg1().p4().eta(),currentPair.leg1().p4().phi(),
+      svFitStandalone::muonMass));
+
+
+      measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
+      svFitStandalone::kTauToMuDecay, 
+      currentPair.leg2().p4().pt(),currentPair.leg2().p4().eta(),currentPair.leg2().p4().phi(),
+      svFitStandalone::muonMass));
+
+      
+    }
+    else
+    {
+
+
+      measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
+      svFitStandalone::kTauToMuDecay, 
+      currentPair.leg2().p4().pt(),currentPair.leg2().p4().eta(),currentPair.leg2().p4().phi(),
+      svFitStandalone::muonMass));
+
+      measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
+      svFitStandalone::kTauToMuDecay, 
+      currentPair.leg1().p4().pt(),currentPair.leg1().p4().eta(),currentPair.leg1().p4().phi(),
+      svFitStandalone::muonMass));
+
+      
+    }
+  }
+
+  ////////////////////////////////////////////////////////
+  // tau + tau choose higher pt leg to push back 1st    //
+  ////////////////////////////////////////////////////////
+
+
+  if(CandidateEventType == TupleCandidateEventTypes::TauTau)
+  {
+  //  std::cout<<" Flat Decay Mode **** 1, 2 = "<<currentPair.leg1().decayMode()<<" "<<currentPair.leg2().decayMode()<<"\n";
+
+
+    if(currentPair.leg1().p4().pt() >= currentPair.leg2().p4().pt())
+    {
+
+      measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
+      svFitStandalone::kTauToHadDecay,
+      currentPair.leg1().p4().pt(),currentPair.leg1().p4().eta(),currentPair.leg1().p4().phi(),
+      currentPair.leg1().p4().mass(), currentPair.leg1().decayMode()));
+
+      measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
+      svFitStandalone::kTauToHadDecay,
+      currentPair.leg2().p4().pt(),currentPair.leg2().p4().eta(),currentPair.leg2().p4().phi(),
+      currentPair.leg2().p4().mass(), currentPair.leg2().decayMode()));
+
+      
+    }
+    else
+    {
+      measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
+      svFitStandalone::kTauToHadDecay,
+      currentPair.leg2().p4().pt(),currentPair.leg2().p4().eta(),currentPair.leg2().p4().phi(),
+      currentPair.leg2().p4().mass(), currentPair.leg2().decayMode()));
+
+      measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
+      svFitStandalone::kTauToHadDecay,
+      currentPair.leg1().p4().pt(),currentPair.leg1().p4().eta(),currentPair.leg1().p4().phi(),
+      currentPair.leg1().p4().mass(), currentPair.leg1().decayMode()));
+
+    }
+  }
+
+
+  ////////////////////////////////////////////////////////
+  // ele + mu choose ele leg to push back 1st    //
+  ////////////////////////////////////////////////////////
+
+
+  if(CandidateEventType == TupleCandidateEventTypes::EleMuon)
   {
 
-    std::vector<svFitStandalone::MeasuredTauLepton> measuredTauLeptons;
-    measuredTauLeptons.clear();
-
-    // new way to order legs for SV mass in 76X analysis 
-
-
-    ////////////////////////////////////////////////////////
-    // ele + ele choose higher pt leg to push back 1st    //
-    ////////////////////////////////////////////////////////
-
-
-    if(CandidateEventType == TupleCandidateEventTypes::EleEle)
-    {
-      if(currentPair.leg1().p4().pt() >= currentPair.leg2().p4().pt())
-      {
-
-        measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
-        svFitStandalone::kTauToElecDecay, 
-        currentPair.leg1().p4().pt(),currentPair.leg1().p4().eta(),currentPair.leg1().p4().phi(),
-        svFitStandalone::electronMass));
-
-        measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
-        svFitStandalone::kTauToElecDecay, 
-        currentPair.leg2().p4().pt(),currentPair.leg2().p4().eta(),currentPair.leg2().p4().phi(),
-        svFitStandalone::electronMass));
-
-      }
-      else
-      {
-        
-        measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
-        svFitStandalone::kTauToElecDecay, 
-        currentPair.leg2().p4().pt(),currentPair.leg2().p4().eta(),currentPair.leg2().p4().phi(),
-        svFitStandalone::electronMass));
-
-        measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
-        svFitStandalone::kTauToElecDecay, 
-        currentPair.leg1().p4().pt(),currentPair.leg1().p4().eta(),currentPair.leg1().p4().phi(),
-        svFitStandalone::electronMass));
-
-      }
-    }
-
-    ////////////////////////////////////////////////////////
-    // mu + mu choose higher pt leg to push back 1st    //
-    ////////////////////////////////////////////////////////
-
-
-    if(CandidateEventType == TupleCandidateEventTypes::MuonMuon)
-    {
-      if(currentPair.leg1().p4().pt() >= currentPair.leg2().p4().pt())
-      {
-
-        measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
-        svFitStandalone::kTauToMuDecay, 
-        currentPair.leg1().p4().pt(),currentPair.leg1().p4().eta(),currentPair.leg1().p4().phi(),
-        svFitStandalone::muonMass));
-
-
-        measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
-        svFitStandalone::kTauToMuDecay, 
-        currentPair.leg2().p4().pt(),currentPair.leg2().p4().eta(),currentPair.leg2().p4().phi(),
-        svFitStandalone::muonMass));
-
-        
-      }
-      else
-      {
-
-
-        measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
-        svFitStandalone::kTauToMuDecay, 
-        currentPair.leg2().p4().pt(),currentPair.leg2().p4().eta(),currentPair.leg2().p4().phi(),
-        svFitStandalone::muonMass));
-
-        measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
-        svFitStandalone::kTauToMuDecay, 
-        currentPair.leg1().p4().pt(),currentPair.leg1().p4().eta(),currentPair.leg1().p4().phi(),
-        svFitStandalone::muonMass));
-
-        
-      }
-    }
-
-    ////////////////////////////////////////////////////////
-    // tau + tau choose higher pt leg to push back 1st    //
-    ////////////////////////////////////////////////////////
-
-
-    if(CandidateEventType == TupleCandidateEventTypes::TauTau)
-    {
-    //  std::cout<<" Flat Decay Mode **** 1, 2 = "<<currentPair.leg1().decayMode()<<" "<<currentPair.leg2().decayMode()<<"\n";
-
-
-      if(currentPair.leg1().p4().pt() >= currentPair.leg2().p4().pt())
-      {
-
-        measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
-        svFitStandalone::kTauToHadDecay,
-        currentPair.leg1().p4().pt(),currentPair.leg1().p4().eta(),currentPair.leg1().p4().phi(),
-        currentPair.leg1().p4().mass(), currentPair.leg1().decayMode()));
-
-        measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
-        svFitStandalone::kTauToHadDecay,
-        currentPair.leg2().p4().pt(),currentPair.leg2().p4().eta(),currentPair.leg2().p4().phi(),
-        currentPair.leg2().p4().mass(), currentPair.leg2().decayMode()));
-
-        
-      }
-      else
-      {
-        measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
-        svFitStandalone::kTauToHadDecay,
-        currentPair.leg2().p4().pt(),currentPair.leg2().p4().eta(),currentPair.leg2().p4().phi(),
-        currentPair.leg2().p4().mass(), currentPair.leg2().decayMode()));
-
-        measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
-        svFitStandalone::kTauToHadDecay,
-        currentPair.leg1().p4().pt(),currentPair.leg1().p4().eta(),currentPair.leg1().p4().phi(),
-        currentPair.leg1().p4().mass(), currentPair.leg1().decayMode()));
-
-      }
-    }
-
-
-    ////////////////////////////////////////////////////////
-    // ele + mu choose ele leg to push back 1st    //
-    ////////////////////////////////////////////////////////
-
-
-    if(CandidateEventType == TupleCandidateEventTypes::EleMuon)
+    if(currentPair.leg1().leptonType() == TupleLeptonTypes::anElectron)
     {
 
-      if(currentPair.leg1().leptonType() == TupleLeptonTypes::anElectron)
-      {
+      measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
+      svFitStandalone::kTauToElecDecay, 
+      currentPair.leg1().p4().pt(),currentPair.leg1().p4().eta(),currentPair.leg1().p4().phi(),
+      svFitStandalone::electronMass));
 
-        measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
-        svFitStandalone::kTauToElecDecay, 
-        currentPair.leg1().p4().pt(),currentPair.leg1().p4().eta(),currentPair.leg1().p4().phi(),
-        svFitStandalone::electronMass));
-
-        measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
-        svFitStandalone::kTauToMuDecay, 
-        currentPair.leg2().p4().pt(),currentPair.leg2().p4().eta(),currentPair.leg2().p4().phi(),
-        svFitStandalone::muonMass));
-
-      }
-
-      else 
-      {
-
-        measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
-        svFitStandalone::kTauToElecDecay, 
-        currentPair.leg2().p4().pt(),currentPair.leg2().p4().eta(),currentPair.leg2().p4().phi(),
-        svFitStandalone::electronMass));
-
-        measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
-        svFitStandalone::kTauToMuDecay, 
-        currentPair.leg1().p4().pt(),currentPair.leg1().p4().eta(),currentPair.leg1().p4().phi(),
-        svFitStandalone::muonMass));
-
-      }
+      measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
+      svFitStandalone::kTauToMuDecay, 
+      currentPair.leg2().p4().pt(),currentPair.leg2().p4().eta(),currentPair.leg2().p4().phi(),
+      svFitStandalone::muonMass));
 
     }
 
-
-    ////////////////////////////////////////////////////////
-    // ele + tau choose ele leg to push back 1st    //
-    ////////////////////////////////////////////////////////
-
-
-    if(CandidateEventType == TupleCandidateEventTypes::EleTau)
+    else 
     {
 
-      if(currentPair.leg1().leptonType() == TupleLeptonTypes::anElectron)
-      {
+      measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
+      svFitStandalone::kTauToElecDecay, 
+      currentPair.leg2().p4().pt(),currentPair.leg2().p4().eta(),currentPair.leg2().p4().phi(),
+      svFitStandalone::electronMass));
 
-        measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
-        svFitStandalone::kTauToElecDecay, 
-        currentPair.leg1().p4().pt(),currentPair.leg1().p4().eta(),currentPair.leg1().p4().phi(),
-        svFitStandalone::electronMass));
-
-        measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
-        svFitStandalone::kTauToHadDecay,
-        currentPair.leg2().p4().pt(),currentPair.leg2().p4().eta(),currentPair.leg2().p4().phi(),
-        currentPair.leg2().p4().mass(), currentPair.leg2().decayMode()));
-
-      }
-
-      else 
-      {
-
-        measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
-        svFitStandalone::kTauToElecDecay, 
-        currentPair.leg2().p4().pt(),currentPair.leg2().p4().eta(),currentPair.leg2().p4().phi(),
-        svFitStandalone::electronMass));
-
-
-        measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
-        svFitStandalone::kTauToHadDecay,
-        currentPair.leg1().p4().pt(),currentPair.leg1().p4().eta(),currentPair.leg1().p4().phi(),
-        currentPair.leg1().p4().mass(), currentPair.leg1().decayMode()));
-
-      }
+      measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
+      svFitStandalone::kTauToMuDecay, 
+      currentPair.leg1().p4().pt(),currentPair.leg1().p4().eta(),currentPair.leg1().p4().phi(),
+      svFitStandalone::muonMass));
 
     }
 
+  }
 
-    ////////////////////////////////////////////////////////
-    // mu + tau choose mu leg to push back 1st    //
-    ////////////////////////////////////////////////////////
 
-   if(CandidateEventType == TupleCandidateEventTypes::MuonTau)
+  ////////////////////////////////////////////////////////
+  // ele + tau choose ele leg to push back 1st    //
+  ////////////////////////////////////////////////////////
+
+
+  if(CandidateEventType == TupleCandidateEventTypes::EleTau)
+  {
+
+    if(currentPair.leg1().leptonType() == TupleLeptonTypes::anElectron)
     {
 
-      if(currentPair.leg1().leptonType() == TupleLeptonTypes::aMuon)
-      {
+      measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
+      svFitStandalone::kTauToElecDecay, 
+      currentPair.leg1().p4().pt(),currentPair.leg1().p4().eta(),currentPair.leg1().p4().phi(),
+      svFitStandalone::electronMass));
 
-        measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
-        svFitStandalone::kTauToMuDecay, 
-        currentPair.leg1().p4().pt(),currentPair.leg1().p4().eta(),currentPair.leg1().p4().phi(),
-        svFitStandalone::muonMass));
-
-        measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
-        svFitStandalone::kTauToHadDecay,
-        currentPair.leg2().p4().pt(),currentPair.leg2().p4().eta(),currentPair.leg2().p4().phi(),
-        currentPair.leg2().p4().mass(), currentPair.leg2().decayMode()));
-
-      }
-
-      else 
-      {
-
-        measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
-        svFitStandalone::kTauToMuDecay, 
-        currentPair.leg2().p4().pt(),currentPair.leg2().p4().eta(),currentPair.leg2().p4().phi(),
-        svFitStandalone::muonMass));
-
-
-        measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
-        svFitStandalone::kTauToHadDecay,
-        currentPair.leg1().p4().pt(),currentPair.leg1().p4().eta(),currentPair.leg1().p4().phi(),
-        currentPair.leg1().p4().mass(), currentPair.leg1().decayMode()));
-
-      }
+      measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
+      svFitStandalone::kTauToHadDecay,
+      currentPair.leg2().p4().pt(),currentPair.leg2().p4().eta(),currentPair.leg2().p4().phi(),
+      currentPair.leg2().p4().mass(), currentPair.leg2().decayMode()));
 
     }
 
+    else 
+    {
+
+      measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
+      svFitStandalone::kTauToElecDecay, 
+      currentPair.leg2().p4().pt(),currentPair.leg2().p4().eta(),currentPair.leg2().p4().phi(),
+      svFitStandalone::electronMass));
 
 
-// std::cout<<" leg1 "<<currentPair.leg1().p4().pt()<<" , "<<currentPair.leg1().p4().eta()<<" , "<<currentPair.leg1().p4().phi()<<" , "<<svFitStandalone::muonMass<<" \n";
-// std::cout<<" leg2 "<<currentPair.leg2().p4().pt()<<" , "<<currentPair.leg2().p4().eta()<<" , "<<currentPair.leg2().p4().phi()<<" , "<<currentPair.leg2().p4().mass()<<" , "<<currentPair.leg2().decayMode()<<"\n";
-// std::cout<<" met "<<svMassMET.Px()<<" , "<<svMassMET.Py()<<"\n";
-// std::cout<<" cov "<<covMET[0][0]<<" , "<<covMET[0][1]<<" , "<<covMET[1][0]<<" , "<<covMET[1][1]<<"\n";
+      measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
+      svFitStandalone::kTauToHadDecay,
+      currentPair.leg1().p4().pt(),currentPair.leg1().p4().eta(),currentPair.leg1().p4().phi(),
+      currentPair.leg1().p4().mass(), currentPair.leg1().decayMode()));
 
+    }
+
+  }
+
+
+  ////////////////////////////////////////////////////////
+  // mu + tau choose mu leg to push back 1st    //
+  ////////////////////////////////////////////////////////
+
+ if(CandidateEventType == TupleCandidateEventTypes::MuonTau)
+  {
+
+    if(currentPair.leg1().leptonType() == TupleLeptonTypes::aMuon)
+    {
+
+      measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
+      svFitStandalone::kTauToMuDecay, 
+      currentPair.leg1().p4().pt(),currentPair.leg1().p4().eta(),currentPair.leg1().p4().phi(),
+      svFitStandalone::muonMass));
+
+      measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
+      svFitStandalone::kTauToHadDecay,
+      currentPair.leg2().p4().pt(),currentPair.leg2().p4().eta(),currentPair.leg2().p4().phi(),
+      currentPair.leg2().p4().mass(), currentPair.leg2().decayMode()));
+
+    }
+
+    else 
+    {
+
+      measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
+      svFitStandalone::kTauToMuDecay, 
+      currentPair.leg2().p4().pt(),currentPair.leg2().p4().eta(),currentPair.leg2().p4().phi(),
+      svFitStandalone::muonMass));
+
+
+      measuredTauLeptons.push_back(svFitStandalone::MeasuredTauLepton(
+      svFitStandalone::kTauToHadDecay,
+      currentPair.leg1().p4().pt(),currentPair.leg1().p4().eta(),currentPair.leg1().p4().phi(),
+      currentPair.leg1().p4().mass(), currentPair.leg1().decayMode()));
+
+    }
+
+  }
 
 
   if (flatTuple_svMassVerbose)  covMET.Print();
@@ -1979,71 +1950,115 @@ void FlatTupleGenerator::handleSVFitCall(const edm::Event& iEvent, const edm::Ev
   else svFitAlgorithm.addLogM(false, 0.);
 
 
-  //svFitAlgorithm.integrateVEGAS();
   //std::cout<<" shiftVisPt turned off \n";
 
   svFitAlgorithm.shiftVisPt(true, inputFile_visPtResolution);
 
   svFitAlgorithm.integrateMarkovChain();
+  //  svFitAlgorithm.integrateVEGAS();
+
+  /* set the fitted diTau pt, eta, phi, mass, and MT */
 
   double temp_SVMass = svFitAlgorithm.getMass();
+  double temp_SVPt = svFitAlgorithm.pt();
+  double temp_SVEta = svFitAlgorithm.eta();
+  double temp_SVPhi = svFitAlgorithm.phi();
   double temp_SVTransverseMass = svFitAlgorithm.transverseMass();
 
-  //std::cout<<svFitAlgorithm.getTransverseMass()<<" vs "<<svFitAlgorithm.transverseMass()<<"\n";
+  /* set the fitted MET */
+
+  TLorentzVector temp_SVFitted_MET(0.,0.,0.,0.);
+  temp_SVFitted_MET.SetPxPyPzE(svFitAlgorithm.fittedMET().x(),svFitAlgorithm.fittedMET().y(),svFitAlgorithm.fittedMET().z(),0.); 
 
   if(METtoUSE == "MVAMET_CORR")
   {
     SVMass = temp_SVMass;
     SVTransverseMass = temp_SVTransverseMass;
+    SVFit_mvaMET_diTau_pt = temp_SVPt;
+    SVFit_mvaMET_diTau_eta = temp_SVEta;
+    SVFit_mvaMET_diTau_phi = temp_SVPhi;    
+    SVFit_mvaMET_FittedMET = temp_SVFitted_MET.Pt();
+    SVFit_mvaMET_FittedMETphi = temp_SVFitted_MET.Phi();
     if (flatTuple_svMassVerbose) std::cout<<"SVFIT with "<<METtoUSE<<" (Mass, MT) = ( "<<temp_SVMass<<" , "<<temp_SVTransverseMass<<" ) \n";
   }  
   else if(METtoUSE == "MVAMET_UNCORR")
   {
     SVMass_uncorr_mvaMET = temp_SVMass;
-    SVTransverseMass_uncorr_mvaMET = temp_SVTransverseMass;   
+    SVTransverseMass_uncorr_mvaMET = temp_SVTransverseMass; 
+    SVFit_uncorr_mvaMET_diTau_pt = temp_SVPt;
+    SVFit_uncorr_mvaMET_diTau_eta = temp_SVEta;
+    SVFit_uncorr_mvaMET_diTau_phi = temp_SVPhi;      
+    SVFit_uncorr_mvaMET_FittedMET = temp_SVFitted_MET.Pt();
+    SVFit_uncorr_mvaMET_FittedMETphi = temp_SVFitted_MET.Phi();
     if (flatTuple_svMassVerbose) std::cout<<"SVFIT with "<<METtoUSE<<" (Mass, MT) = ( "<<temp_SVMass<<" , "<<temp_SVTransverseMass<<" ) \n";
   }
   else if(METtoUSE == "MVAMET_RESPONSEUP")
   {
     SVMass_responseUP_mvaMET = temp_SVMass;
     SVTransverseMass_responseUP_mvaMET = temp_SVTransverseMass;   
+    SVFit_responseUP_mvaMET_diTau_pt = temp_SVPt;
+    SVFit_responseUP_mvaMET_diTau_eta = temp_SVEta;
+    SVFit_responseUP_mvaMET_diTau_phi = temp_SVPhi;
+    SVFit_responseUP_mvaMET_FittedMET = temp_SVFitted_MET.Pt();
+    SVFit_responseUP_mvaMET_FittedMETphi = temp_SVFitted_MET.Phi();
     if (flatTuple_svMassVerbose) std::cout<<"SVFIT with "<<METtoUSE<<" (Mass, MT) = ( "<<temp_SVMass<<" , "<<temp_SVTransverseMass<<" ) \n";
   }
   else if(METtoUSE == "MVAMET_RESPONSEDOWN")
   {
     SVMass_responseDN_mvaMET = temp_SVMass;
     SVTransverseMass_responseDN_mvaMET = temp_SVTransverseMass;
+    SVFit_responseDN_mvaMET_diTau_pt = temp_SVPt;
+    SVFit_responseDN_mvaMET_diTau_eta = temp_SVEta;
+    SVFit_responseDN_mvaMET_diTau_phi = temp_SVPhi;
+    SVFit_responseDN_mvaMET_FittedMET = temp_SVFitted_MET.Pt();
+    SVFit_responseDN_mvaMET_FittedMETphi = temp_SVFitted_MET.Phi();
     if (flatTuple_svMassVerbose) std::cout<<"SVFIT with "<<METtoUSE<<" (Mass, MT) = ( "<<temp_SVMass<<" , "<<temp_SVTransverseMass<<" ) \n";
   }
   else if(METtoUSE == "MVAMET_RESOLUTIONUP")
   {
     SVMass_resolutionUP_mvaMET = temp_SVMass;
     SVTransverseMass_resolutionUP_mvaMET = temp_SVTransverseMass;
+    SVFit_resolutionUP_mvaMET_diTau_pt = temp_SVPt;
+    SVFit_resolutionUP_mvaMET_diTau_eta = temp_SVEta;
+    SVFit_resolutionUP_mvaMET_diTau_phi = temp_SVPhi;
+    SVFit_resolutionUP_mvaMET_FittedMET = temp_SVFitted_MET.Pt();
+    SVFit_resolutionUP_mvaMET_FittedMETphi = temp_SVFitted_MET.Phi();
     if (flatTuple_svMassVerbose) std::cout<<"SVFIT with "<<METtoUSE<<" (Mass, MT) = ( "<<temp_SVMass<<" , "<<temp_SVTransverseMass<<" ) \n";
   }
   else if(METtoUSE == "MVAMET_RESOLUTIONDOWN")
   {
     SVMass_resolutionDN_mvaMET = temp_SVMass;
     SVTransverseMass_resolutionDN_mvaMET = temp_SVTransverseMass;
+    SVFit_resolutionDN_mvaMET_diTau_pt = temp_SVPt;
+    SVFit_resolutionDN_mvaMET_diTau_eta = temp_SVEta;
+    SVFit_resolutionDN_mvaMET_diTau_phi = temp_SVPhi;
+    SVFit_resolutionDN_mvaMET_FittedMET = temp_SVFitted_MET.Pt();
+    SVFit_resolutionDN_mvaMET_FittedMETphi = temp_SVFitted_MET.Phi();
     if (flatTuple_svMassVerbose) std::cout<<"SVFIT with "<<METtoUSE<<" (Mass, MT) = ( "<<temp_SVMass<<" , "<<temp_SVTransverseMass<<" ) \n";
   }
   else if(METtoUSE == "PFMET")
   {
     SVMass_pfMET = temp_SVMass;
     SVTransverseMass_pfMET = temp_SVTransverseMass;
+    SVFit_pfMET_diTau_pt = temp_SVPt;
+    SVFit_pfMET_diTau_eta = temp_SVEta;
+    SVFit_pfMET_diTau_phi = temp_SVPhi;
+    SVFit_pfMET_FittedMET = temp_SVFitted_MET.Pt();
+    SVFit_pfMET_FittedMETphi = temp_SVFitted_MET.Phi();
     if (flatTuple_svMassVerbose) std::cout<<"SVFIT with "<<METtoUSE<<" (Mass, MT) = ( "<<temp_SVMass<<" , "<<temp_SVTransverseMass<<" ) \n";
   }
   else if(METtoUSE == "PUPPIMET")
   {
     SVMass_puppiMET = temp_SVMass;
     SVTransverseMass_puppiMET = temp_SVTransverseMass;
+    SVFit_puppiMET_diTau_pt = temp_SVPt;
+    SVFit_puppiMET_diTau_eta = temp_SVEta;
+    SVFit_puppiMET_diTau_phi = temp_SVPhi;
+    SVFit_puppiMET_FittedMET = temp_SVFitted_MET.Pt();
+    SVFit_puppiMET_FittedMETphi = temp_SVFitted_MET.Phi();    
     if (flatTuple_svMassVerbose) std::cout<<"SVFIT with "<<METtoUSE<<" (Mass, MT) = ( "<<temp_SVMass<<" , "<<temp_SVTransverseMass<<" ) \n";
   }
 
-
-
-
-} // good tau decays
 
 ////////////// END SV MASS COMP ///////////////////////////////  
 
@@ -2347,6 +2362,7 @@ void FlatTupleGenerator::handlePairIndepInfo(const edm::Event& iEvent, const edm
   EventTotal = currentINDEP.EventTotal();
   EventType = currentINDEP.EventType();
   KeyName = currentINDEP.KeyName();
+  DataCard = currentINDEP.DataCard();
   CrossSection = currentINDEP.CrossSection();
   FilterEff = currentINDEP.FilterEff();
   CodeVersion = currentINDEP.CodeVersion();
@@ -2385,7 +2401,7 @@ void FlatTupleGenerator::handlePairIndepInfo(const edm::Event& iEvent, const edm
   hepNUP = currentINDEP.hepNUP();
   lheHT = currentINDEP.lheHT();
   lheOutGoingPartons = currentINDEP.lheOutGoingPartons();
-
+  lheZmass = currentINDEP.lheZmass();
 
 
 
@@ -2708,6 +2724,14 @@ void FlatTupleGenerator::handlePairIndepInfo(const edm::Event& iEvent, const edm
   if(topPts.size()>0) genTopPt1 = topPts[0];
   if(topPts.size()>1) genTopPt2 = topPts[1];
 
+  /* theory scale factors */
+  originalXWGTUP = currentINDEP.originalXWGTUP();
+  theory_scale_factors = currentINDEP.theory_scale_factors();
+
+
+
+
+
 }
 
 
@@ -2807,6 +2831,47 @@ void FlatTupleGenerator::handlePairIndepInfo(const edm::Event& iEvent, const edm
   SVMass_puppiMET = NAN;
   SVTransverseMass_puppiMET = NAN;
 
+  SVFit_mvaMET_diTau_pt = NAN; 
+  SVFit_mvaMET_diTau_eta = NAN; 
+  SVFit_mvaMET_diTau_phi = NAN; 
+  SVFit_uncorr_mvaMET_diTau_pt = NAN; 
+  SVFit_uncorr_mvaMET_diTau_eta = NAN; 
+  SVFit_uncorr_mvaMET_diTau_phi = NAN; 
+  SVFit_responseUP_mvaMET_diTau_pt = NAN; 
+  SVFit_responseUP_mvaMET_diTau_eta = NAN; 
+  SVFit_responseUP_mvaMET_diTau_phi = NAN; 
+  SVFit_responseDN_mvaMET_diTau_pt = NAN; 
+  SVFit_responseDN_mvaMET_diTau_eta = NAN; 
+  SVFit_responseDN_mvaMET_diTau_phi = NAN; 
+  SVFit_resolutionUP_mvaMET_diTau_pt = NAN; 
+  SVFit_resolutionUP_mvaMET_diTau_eta = NAN; 
+  SVFit_resolutionUP_mvaMET_diTau_phi = NAN; 
+  SVFit_resolutionDN_mvaMET_diTau_pt = NAN; 
+  SVFit_resolutionDN_mvaMET_diTau_eta = NAN; 
+  SVFit_resolutionDN_mvaMET_diTau_phi = NAN; 
+  SVFit_pfMET_diTau_pt = NAN; 
+  SVFit_pfMET_diTau_eta = NAN; 
+  SVFit_pfMET_diTau_phi = NAN; 
+  SVFit_puppiMET_diTau_pt = NAN; 
+  SVFit_puppiMET_diTau_eta = NAN; 
+  SVFit_puppiMET_diTau_phi = NAN; 
+
+  SVFit_mvaMET_FittedMET = NAN; 
+  SVFit_mvaMET_FittedMETphi = NAN; 
+  SVFit_uncorr_mvaMET_FittedMET = NAN; 
+  SVFit_uncorr_mvaMET_FittedMETphi = NAN; 
+  SVFit_responseUP_mvaMET_FittedMET = NAN; 
+  SVFit_responseUP_mvaMET_FittedMETphi = NAN; 
+  SVFit_responseDN_mvaMET_FittedMET = NAN; 
+  SVFit_responseDN_mvaMET_FittedMETphi = NAN; 
+  SVFit_resolutionUP_mvaMET_FittedMET = NAN; 
+  SVFit_resolutionUP_mvaMET_FittedMETphi = NAN; 
+  SVFit_resolutionDN_mvaMET_FittedMET = NAN; 
+  SVFit_resolutionDN_mvaMET_FittedMETphi = NAN; 
+  SVFit_pfMET_FittedMET = NAN; 
+  SVFit_pfMET_FittedMETphi = NAN; 
+  SVFit_puppiMET_FittedMET = NAN; 
+  SVFit_puppiMET_FittedMETphi = NAN; 
 
 
 
@@ -3137,6 +3202,7 @@ void FlatTupleGenerator::handlePairIndepInfo(const edm::Event& iEvent, const edm
   hepNUP = -999;
   lheHT = NAN;
   lheOutGoingPartons = -999;
+  lheZmass = NAN;
 
   HBHENoiseFilter = 1;
   HBHENoiseIsoFilter = 1;
@@ -3398,6 +3464,7 @@ void FlatTupleGenerator::handlePairIndepInfo(const edm::Event& iEvent, const edm
   EventTotal = 0;
   EventType = "NULL";
   KeyName = "NULL";
+  DataCard = "NULL";
   CrossSection = 1.0;
   FilterEff = 1.0;
   CodeVersion = 0.0;
@@ -3416,6 +3483,11 @@ void FlatTupleGenerator::handlePairIndepInfo(const edm::Event& iEvent, const edm
 
   genTopPt1 = NAN;
   genTopPt2 = NAN;
+
+  originalXWGTUP = NAN;
+  theory_scale_factors.clear();
+
+
 
   DiMuon_Flag = 0;
   DiElectron_Flag = 0;
@@ -3516,6 +3588,48 @@ void FlatTupleGenerator::beginJob()
   if(USE_PFMET_FOR_SVFit_AT_FlatTuple) FlatTuple->Branch("SVTransverseMass_pfMET", &SVTransverseMass_pfMET);
   if(USE_PUPPIMET_FOR_SVFit_AT_FlatTuple) FlatTuple->Branch("SVMass_puppiMET", &SVMass_puppiMET);
   if(USE_PUPPIMET_FOR_SVFit_AT_FlatTuple) FlatTuple->Branch("SVTransverseMass_puppiMET", &SVTransverseMass_puppiMET);
+
+  if(USE_MVAMET_FOR_SVFit_AT_FlatTuple) FlatTuple->Branch("SVFit_mvaMET_diTau_pt", &SVFit_mvaMET_diTau_pt);
+  if(USE_MVAMET_FOR_SVFit_AT_FlatTuple) FlatTuple->Branch("SVFit_mvaMET_diTau_eta", &SVFit_mvaMET_diTau_eta);
+  if(USE_MVAMET_FOR_SVFit_AT_FlatTuple) FlatTuple->Branch("SVFit_mvaMET_diTau_phi", &SVFit_mvaMET_diTau_phi);
+  if(USE_MVAMET_uncorrected_FOR_SVFit_AT_FlatTuple) FlatTuple->Branch("SVFit_uncorr_mvaMET_diTau_pt", &SVFit_uncorr_mvaMET_diTau_pt);
+  if(USE_MVAMET_uncorrected_FOR_SVFit_AT_FlatTuple) FlatTuple->Branch("SVFit_uncorr_mvaMET_diTau_eta", &SVFit_uncorr_mvaMET_diTau_eta);
+  if(USE_MVAMET_uncorrected_FOR_SVFit_AT_FlatTuple) FlatTuple->Branch("SVFit_uncorr_mvaMET_diTau_phi", &SVFit_uncorr_mvaMET_diTau_phi);
+  if(USE_MVAMET_responseUP_FOR_SVFit_AT_FlatTuple) FlatTuple->Branch("SVFit_responseUP_mvaMET_diTau_pt", &SVFit_responseUP_mvaMET_diTau_pt);
+  if(USE_MVAMET_responseUP_FOR_SVFit_AT_FlatTuple) FlatTuple->Branch("SVFit_responseUP_mvaMET_diTau_eta", &SVFit_responseUP_mvaMET_diTau_eta);
+  if(USE_MVAMET_responseUP_FOR_SVFit_AT_FlatTuple) FlatTuple->Branch("SVFit_responseUP_mvaMET_diTau_phi", &SVFit_responseUP_mvaMET_diTau_phi);
+  if(USE_MVAMET_responseDOWN_FOR_SVFit_AT_FlatTuple) FlatTuple->Branch("SVFit_responseDN_mvaMET_diTau_pt", &SVFit_responseDN_mvaMET_diTau_pt);
+  if(USE_MVAMET_responseDOWN_FOR_SVFit_AT_FlatTuple) FlatTuple->Branch("SVFit_responseDN_mvaMET_diTau_eta", &SVFit_responseDN_mvaMET_diTau_eta);
+  if(USE_MVAMET_responseDOWN_FOR_SVFit_AT_FlatTuple) FlatTuple->Branch("SVFit_responseDN_mvaMET_diTau_phi", &SVFit_responseDN_mvaMET_diTau_phi);
+  if(USE_MVAMET_resolutionUP_FOR_SVFit_AT_FlatTuple) FlatTuple->Branch("SVFit_resolutionUP_mvaMET_diTau_pt", &SVFit_resolutionUP_mvaMET_diTau_pt);
+  if(USE_MVAMET_resolutionUP_FOR_SVFit_AT_FlatTuple) FlatTuple->Branch("SVFit_resolutionUP_mvaMET_diTau_eta", &SVFit_resolutionUP_mvaMET_diTau_eta);
+  if(USE_MVAMET_resolutionUP_FOR_SVFit_AT_FlatTuple) FlatTuple->Branch("SVFit_resolutionUP_mvaMET_diTau_phi", &SVFit_resolutionUP_mvaMET_diTau_phi);
+  if(USE_MVAMET_resolutionDOWN_FOR_SVFit_AT_FlatTuple) FlatTuple->Branch("SVFit_resolutionDN_mvaMET_diTau_pt", &SVFit_resolutionDN_mvaMET_diTau_pt);
+  if(USE_MVAMET_resolutionDOWN_FOR_SVFit_AT_FlatTuple) FlatTuple->Branch("SVFit_resolutionDN_mvaMET_diTau_eta", &SVFit_resolutionDN_mvaMET_diTau_eta);
+  if(USE_MVAMET_resolutionDOWN_FOR_SVFit_AT_FlatTuple) FlatTuple->Branch("SVFit_resolutionDN_mvaMET_diTau_phi", &SVFit_resolutionDN_mvaMET_diTau_phi);
+  if(USE_PFMET_FOR_SVFit_AT_FlatTuple) FlatTuple->Branch("SVFit_pfMET_diTau_pt", &SVFit_pfMET_diTau_pt);
+  if(USE_PFMET_FOR_SVFit_AT_FlatTuple) FlatTuple->Branch("SVFit_pfMET_diTau_eta", &SVFit_pfMET_diTau_eta);
+  if(USE_PFMET_FOR_SVFit_AT_FlatTuple) FlatTuple->Branch("SVFit_pfMET_diTau_phi", &SVFit_pfMET_diTau_phi);
+  if(USE_PUPPIMET_FOR_SVFit_AT_FlatTuple) FlatTuple->Branch("SVFit_puppiMET_diTau_pt", &SVFit_puppiMET_diTau_pt);
+  if(USE_PUPPIMET_FOR_SVFit_AT_FlatTuple) FlatTuple->Branch("SVFit_puppiMET_diTau_eta", &SVFit_puppiMET_diTau_eta);
+  if(USE_PUPPIMET_FOR_SVFit_AT_FlatTuple) FlatTuple->Branch("SVFit_puppiMET_diTau_phi", &SVFit_puppiMET_diTau_phi);
+
+  if(USE_MVAMET_FOR_SVFit_AT_FlatTuple) FlatTuple->Branch("SVFit_mvaMET_FittedMET", &SVFit_mvaMET_FittedMET);
+  if(USE_MVAMET_FOR_SVFit_AT_FlatTuple) FlatTuple->Branch("SVFit_mvaMET_FittedMETphi", &SVFit_mvaMET_FittedMETphi);
+  if(USE_MVAMET_uncorrected_FOR_SVFit_AT_FlatTuple) FlatTuple->Branch("SVFit_uncorr_mvaMET_FittedMET", &SVFit_uncorr_mvaMET_FittedMET);
+  if(USE_MVAMET_uncorrected_FOR_SVFit_AT_FlatTuple) FlatTuple->Branch("SVFit_uncorr_mvaMET_FittedMETphi", &SVFit_uncorr_mvaMET_FittedMETphi);
+  if(USE_MVAMET_responseUP_FOR_SVFit_AT_FlatTuple) FlatTuple->Branch("SVFit_responseUP_mvaMET_FittedMET", &SVFit_responseUP_mvaMET_FittedMET);
+  if(USE_MVAMET_responseUP_FOR_SVFit_AT_FlatTuple) FlatTuple->Branch("SVFit_responseUP_mvaMET_FittedMETphi", &SVFit_responseUP_mvaMET_FittedMETphi);
+  if(USE_MVAMET_responseDOWN_FOR_SVFit_AT_FlatTuple) FlatTuple->Branch("SVFit_responseDN_mvaMET_FittedMET", &SVFit_responseDN_mvaMET_FittedMET);
+  if(USE_MVAMET_responseDOWN_FOR_SVFit_AT_FlatTuple) FlatTuple->Branch("SVFit_responseDN_mvaMET_FittedMETphi", &SVFit_responseDN_mvaMET_FittedMETphi);
+  if(USE_MVAMET_resolutionUP_FOR_SVFit_AT_FlatTuple) FlatTuple->Branch("SVFit_resolutionUP_mvaMET_FittedMET", &SVFit_resolutionUP_mvaMET_FittedMET);
+  if(USE_MVAMET_resolutionUP_FOR_SVFit_AT_FlatTuple) FlatTuple->Branch("SVFit_resolutionUP_mvaMET_FittedMETphi", &SVFit_resolutionUP_mvaMET_FittedMETphi);
+  if(USE_MVAMET_resolutionDOWN_FOR_SVFit_AT_FlatTuple) FlatTuple->Branch("SVFit_resolutionDN_mvaMET_FittedMET", &SVFit_resolutionDN_mvaMET_FittedMET);
+  if(USE_MVAMET_resolutionDOWN_FOR_SVFit_AT_FlatTuple) FlatTuple->Branch("SVFit_resolutionDN_mvaMET_FittedMETphi", &SVFit_resolutionDN_mvaMET_FittedMETphi);
+  if(USE_PFMET_FOR_SVFit_AT_FlatTuple) FlatTuple->Branch("SVFit_pfMET_FittedMET", &SVFit_pfMET_FittedMET);
+  if(USE_PFMET_FOR_SVFit_AT_FlatTuple) FlatTuple->Branch("SVFit_pfMET_FittedMETphi", &SVFit_pfMET_FittedMETphi);
+  if(USE_PUPPIMET_FOR_SVFit_AT_FlatTuple) FlatTuple->Branch("SVFit_puppiMET_FittedMET", &SVFit_puppiMET_FittedMET);
+  if(USE_PUPPIMET_FOR_SVFit_AT_FlatTuple) FlatTuple->Branch("SVFit_puppiMET_FittedMETphi", &SVFit_puppiMET_FittedMETphi);
 
   FlatTuple->Branch("MTpfMET_leg1", &MTpfMET_leg1);
   FlatTuple->Branch("MTpfMET_leg2", &MTpfMET_leg2);
@@ -3884,7 +3998,7 @@ void FlatTupleGenerator::beginJob()
   FlatTuple->Branch("hepNUP",&hepNUP);
   FlatTuple->Branch("lheHT",&lheHT);
   FlatTuple->Branch("lheOutGoingPartons",&lheOutGoingPartons);
-
+  FlatTuple->Branch("lheZmass", &lheZmass);
 
 
 
@@ -4078,25 +4192,25 @@ void FlatTupleGenerator::beginJob()
 
 
 
- if( !SmallTree_ ) FlatTuple->Branch("genParticle_pdgId", &genParticle_pdgId);
- if( !SmallTree_ ) FlatTuple->Branch("genParticle_status", &genParticle_status);
- if( !SmallTree_ ) FlatTuple->Branch("genParticle_isPrompt", &genParticle_isPrompt);
- if( !SmallTree_ ) FlatTuple->Branch("genParticle_isPromptFinalState", &genParticle_isPromptFinalState);
- if( !SmallTree_ ) FlatTuple->Branch("genParticle_isDirectPromptTauDecayProduct", &genParticle_isDirectPromptTauDecayProduct);
- if( !SmallTree_ ) FlatTuple->Branch("genParticle_isDirectPromptTauDecayProductFinalState", &genParticle_isDirectPromptTauDecayProductFinalState);
- if( !SmallTree_ ) FlatTuple->Branch("genParticle_fromHardProcess", &genParticle_fromHardProcess);
- if( !SmallTree_ ) FlatTuple->Branch("genParticle_isLastCopy", &genParticle_isLastCopy);
- if( !SmallTree_ ) FlatTuple->Branch("genParticle_pt", &genParticle_pt);
- if( !SmallTree_ ) FlatTuple->Branch("genParticle_eta", &genParticle_eta);
- if( !SmallTree_ ) FlatTuple->Branch("genParticle_phi", &genParticle_phi);
- if( !SmallTree_ ) FlatTuple->Branch("genParticle_M", &genParticle_M);
+  FlatTuple->Branch("genParticle_pdgId", &genParticle_pdgId);
+  FlatTuple->Branch("genParticle_status", &genParticle_status);
+  FlatTuple->Branch("genParticle_isPrompt", &genParticle_isPrompt);
+  FlatTuple->Branch("genParticle_isPromptFinalState", &genParticle_isPromptFinalState);
+  FlatTuple->Branch("genParticle_isDirectPromptTauDecayProduct", &genParticle_isDirectPromptTauDecayProduct);
+  FlatTuple->Branch("genParticle_isDirectPromptTauDecayProductFinalState", &genParticle_isDirectPromptTauDecayProductFinalState);
+  FlatTuple->Branch("genParticle_fromHardProcess", &genParticle_fromHardProcess);
+  FlatTuple->Branch("genParticle_isLastCopy", &genParticle_isLastCopy);
+  FlatTuple->Branch("genParticle_pt", &genParticle_pt);
+  FlatTuple->Branch("genParticle_eta", &genParticle_eta);
+  FlatTuple->Branch("genParticle_phi", &genParticle_phi);
+  FlatTuple->Branch("genParticle_M", &genParticle_M);
 
-  if( !SmallTree_ ) FlatTuple->Branch("genDaughter_pdgId", &genDaughter_pdgId);
-  if( !SmallTree_ ) FlatTuple->Branch("genDaughter_status", &genDaughter_status);
-  if( !SmallTree_ ) FlatTuple->Branch("genDaughter_pt", &genDaughter_pt);
-  if( !SmallTree_ ) FlatTuple->Branch("genDaughter_eta", &genDaughter_eta);
-  if( !SmallTree_ ) FlatTuple->Branch("genDaughter_phi", &genDaughter_phi);
-  if( !SmallTree_ ) FlatTuple->Branch("genDaughter_M", &genDaughter_M);
+  FlatTuple->Branch("genDaughter_pdgId", &genDaughter_pdgId);
+  FlatTuple->Branch("genDaughter_status", &genDaughter_status);
+  FlatTuple->Branch("genDaughter_pt", &genDaughter_pt);
+  FlatTuple->Branch("genDaughter_eta", &genDaughter_eta);
+  FlatTuple->Branch("genDaughter_phi", &genDaughter_phi);
+  FlatTuple->Branch("genDaughter_M", &genDaughter_M);
   if( !SmallTree_ ) FlatTuple->Branch("genMother_pdgId", &genMother_pdgId);
   if( !SmallTree_ ) FlatTuple->Branch("genMother_status", &genMother_status);
   if( !SmallTree_ ) FlatTuple->Branch("genMother_pt", &genMother_pt);
@@ -4136,6 +4250,7 @@ void FlatTupleGenerator::beginJob()
   FlatTuple->Branch("EventTotal", &EventTotal); 
   FlatTuple->Branch("EventType", &EventType); 
   FlatTuple->Branch("KeyName", &KeyName); 
+  FlatTuple->Branch("DataCard", &DataCard);
   FlatTuple->Branch("CrossSection", &CrossSection); 
   FlatTuple->Branch("FilterEff", &FilterEff); 
   FlatTuple->Branch("CodeVersion", &CodeVersion); 
@@ -4155,6 +4270,11 @@ void FlatTupleGenerator::beginJob()
 
   FlatTuple->Branch("genTopPt1",&genTopPt1);
   FlatTuple->Branch("genTopPt2",&genTopPt2);
+
+
+  FlatTuple->Branch("originalXWGTUP",&originalXWGTUP);
+  FlatTuple->Branch("theory_scale_factors",&theory_scale_factors);
+
 
   FlatTuple->Branch("leg1_maxPtTrigObjMatch", &leg1_maxPtTrigObjMatch);
   FlatTuple->Branch("leg2_maxPtTrigObjMatch", &leg2_maxPtTrigObjMatch);

@@ -256,6 +256,7 @@ public:
     int EventTotal; 		/* the number of events in the MC sample */ 
     std::string EventType;  /* description of the event, DATA, MC, EMBEDDED, etc. */
     std::string KeyName;    /* description of the sample as given during crab job */
+	std::string DataCard;   /* process category used for data card formation/mva training */
     double CrossSection;    /* MC process cross section */
     double FilterEff;       /* gen level filter eff. (needed if any is applied) */
     double CodeVersion;     /* Davis code tracking version number */
@@ -354,6 +355,29 @@ public:
 	/* with puppiMET */
 	double SVMass_puppiMET; 		  			
 	double SVTransverseMass_puppiMET; 	
+
+
+	/* the SV fitted leptons and MET - only valid for MC integration (not Vegas) */
+
+	double SVFit_mvaMET_diTau_pt , SVFit_mvaMET_diTau_eta , SVFit_mvaMET_diTau_phi;
+	double SVFit_uncorr_mvaMET_diTau_pt , SVFit_uncorr_mvaMET_diTau_eta , SVFit_uncorr_mvaMET_diTau_phi;
+	double SVFit_responseUP_mvaMET_diTau_pt , SVFit_responseUP_mvaMET_diTau_eta , SVFit_responseUP_mvaMET_diTau_phi;
+	double SVFit_responseDN_mvaMET_diTau_pt , SVFit_responseDN_mvaMET_diTau_eta , SVFit_responseDN_mvaMET_diTau_phi;
+	double SVFit_resolutionUP_mvaMET_diTau_pt , SVFit_resolutionUP_mvaMET_diTau_eta , SVFit_resolutionUP_mvaMET_diTau_phi;
+	double SVFit_resolutionDN_mvaMET_diTau_pt , SVFit_resolutionDN_mvaMET_diTau_eta , SVFit_resolutionDN_mvaMET_diTau_phi;
+	double SVFit_pfMET_diTau_pt , SVFit_pfMET_diTau_eta , SVFit_pfMET_diTau_phi;
+	double SVFit_puppiMET_diTau_pt , SVFit_puppiMET_diTau_eta , SVFit_puppiMET_diTau_phi;
+
+	double SVFit_mvaMET_FittedMET , SVFit_mvaMET_FittedMETphi;
+	double SVFit_uncorr_mvaMET_FittedMET , SVFit_uncorr_mvaMET_FittedMETphi;
+	double SVFit_responseUP_mvaMET_FittedMET , SVFit_responseUP_mvaMET_FittedMETphi;
+	double SVFit_responseDN_mvaMET_FittedMET , SVFit_responseDN_mvaMET_FittedMETphi;
+	double SVFit_resolutionUP_mvaMET_FittedMET , SVFit_resolutionUP_mvaMET_FittedMETphi;
+	double SVFit_resolutionDN_mvaMET_FittedMET , SVFit_resolutionDN_mvaMET_FittedMETphi;
+	double SVFit_pfMET_FittedMET , SVFit_pfMET_FittedMETphi;
+	double SVFit_puppiMET_FittedMET , SVFit_puppiMET_FittedMETphi;
+
+
 
 	double VISMass; 	  			/* the visible mass  */
 	double MTpfMET_leg1;  			/* MT using pf MET & leg1 */ 	
@@ -641,7 +665,7 @@ public:
 	int hepNUP;
 	double lheHT;
 	int lheOutGoingPartons;
-
+	double lheZmass;
 
 
 
@@ -911,7 +935,9 @@ public:
     double genTopPt1;
     double genTopPt2;
 
-
+    /* theory weights and SF - will be valid for LHE valid MC */
+    float originalXWGTUP; /* theory_scale_factors are relative to this */
+    std::vector<float> theory_scale_factors;
 
 };  
 

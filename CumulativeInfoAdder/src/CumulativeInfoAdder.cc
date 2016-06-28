@@ -10,10 +10,12 @@
 
 
 CumulativeInfoAdder::CumulativeInfoAdder(const edm::ParameterSet& iConfig):
-mcGenWeightSrc_(iConfig.getParameter<edm::InputTag>("mcGenWeightSrc"))
+mcGenWeightSrc_(iConfig.getParameter<edm::InputTag>("mcGenWeightSrc")),
+LHEEventProductSrc_(iConfig.getParameter<edm::InputTag>("LHEEventProductSrc"))
 {
 
   mcGenWeightToken_ = consumes<GenEventInfoProduct>(mcGenWeightSrc_);
+  LHEEventProductToken_ = consumes<LHERunInfoProduct, edm::InRun> (LHEEventProductSrc_);
 
 }
 
@@ -114,6 +116,48 @@ void CumulativeInfoAdder::beginJob()
 //////////////////////////////////////////////////
 
 void CumulativeInfoAdder::endJob() {}
+
+
+void CumulativeInfoAdder::endRun(edm::Run const& iRun, edm::EventSetup const& iEvent) 
+{
+
+  std::cout<<" CumulativeInfoAdder---END \n";
+
+
+  edm::Handle<LHERunInfoProduct> LHEHandle;
+  iRun.getByToken(LHEEventProductToken_,LHEHandle);
+
+  //iRun.getByLabel( "externalLHEProducer", LHEHandle );
+
+  std::cout<<" LHEHandle.isValid() "<<LHEHandle.isValid()<<"\n";
+
+  if(LHEHandle.isValid())
+  {
+  
+
+    typedef std::vector<LHERunInfoProduct::Header>::const_iterator headers_const_iterator;
+ 
+    LHERunInfoProduct myLHERunInfoProduct = *(LHEHandle.product());
+ 
+    for (headers_const_iterator iter=myLHERunInfoProduct.headers_begin(); iter!=myLHERunInfoProduct.headers_end(); iter++)
+    {
+        std::cout << iter->tag() << std::endl;
+        std::vector<std::string> lines = iter->lines();
+        for (unsigned int iLine = 0; iLine<lines.size(); iLine++) 
+        {
+          std::cout << lines.at(iLine);
+        }
+    }
+
+
+
+
+  }
+
+
+}
+
+
 
 
 /*

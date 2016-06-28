@@ -27,7 +27,7 @@ if SmallTree_ is True :
 # do we want to build low DR FlatTuples as well?  #
 ###################################################
 
-BUILD_LOWDR = True
+BUILD_LOWDR = False
 
 ##########################################
 # set up SVMass  @ FlatTuple level	     #
@@ -51,7 +51,7 @@ SVMASS_VERBOSE_FlatTuple = True
 ############################################
 
 
-USE_MVAMET_FOR_SVFit_AT_FlatTuple = False  				# this is the default choice (recoil corrected MVA MET)
+USE_MVAMET_FOR_SVFit_AT_FlatTuple = True  				# this is the default choice (recoil corrected MVA MET)
 USE_MVAMET_uncorrected_FOR_SVFit_AT_FlatTuple = False
 USE_MVAMET_responseUP_FOR_SVFit_AT_FlatTuple = False
 USE_MVAMET_responseDOWN_FOR_SVFit_AT_FlatTuple = False
