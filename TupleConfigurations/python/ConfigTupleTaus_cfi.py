@@ -34,16 +34,29 @@ filter_.append('abs(charge)==1')
 # ----------------------------------------------------
 # ----------------------------------------------------
 
+from DavisRunIITauTau.FlatTupleGenerator.FlatTupleConfig_cfi import APPLY_POST_SYNC_TAU_CUTS as ApplyTauCuts_
+from DavisRunIITauTau.FlatTupleGenerator.FlatTupleConfig_cfi import post_sync_tauCutRaw as PostSyncTauIsoCuts_
+from DavisRunIITauTau.FlatTupleGenerator.FlatTupleConfig_cfi import post_sync_tauAntiEMuRaw as PostSyncTauMVACuts_
+
+if(ApplyTauCuts_):
+	filter_.append(PostSyncTauIsoCuts_)
+	filter_.append(PostSyncTauMVACuts_)
 
 tauFilter = cms.string(and_string_concatonator(filter_))
 
+if ApplyTauCuts_ :
+	print '++++ with post sync tau ISO and MVA cuts applied, '
+	print '++++ only considering taus which pass :'
+	print '==========================================='
+	print '==========================================='
+	print tauFilter
+	print '==========================================='
+	print '==========================================='
+
 
 ####################################################################################################
 ####################################################################################################
 ####################################################################################################
-
-
-
 
 
 

@@ -33,8 +33,8 @@ def DeleteCMSTypes(arg, type):
 # define a few variables here
 ###############################
 
-MC_EVENTS_PER_JOB = 2500 # used for MC only
-MAX_JOBS_PER_TASK = 8000 # true crab limit is 10,000 we should be below this
+MC_EVENTS_PER_JOB = 2000 # used for MC only
+MAX_JOBS_PER_TASK = 9500 # true crab limit is 10,000 we should be below this
 DATA_UNITS_PER_JOB = 150
 DATA_LUMI_MASK = 'https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions15/13TeV/Cert_246908-260627_13TeV_PromptReco_Collisions15_25ns_JSON.txt'
 

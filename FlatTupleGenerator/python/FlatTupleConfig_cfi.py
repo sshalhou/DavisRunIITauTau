@@ -22,12 +22,27 @@ if SmallTree_ is True :
 	print "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
 
 
-
 ###################################################
 # do we want to build low DR FlatTuples as well?  #
 ###################################################
 
 BUILD_LOWDR = False
+
+
+#########################################################
+# do we want to apply post-sync/baseline iso and anti-e/anti-mu ?
+# cuts on the hadronically decaying tau legs?
+#########################################################
+
+APPLY_POST_SYNC_TAU_CUTS = True
+
+#########################################################
+# do we want to apply post-sync/baseline extra lepton
+# and di-lepton veto cuts to the em, et, mt, and tt
+# channels?
+#########################################################
+
+APPLY_POST_SYNC_LEPTON_VETOES = True
 
 ##########################################
 # set up SVMass  @ FlatTuple level	     #
@@ -287,6 +302,46 @@ cut_muon_DiMuonVeto =  cms.string(and_string_concatonator(muon_DiMuonVeto))
 cut_ele_EleEle = cms.string(and_string_concatonator(ele_EleEle))
 cut_muon_MuonMuon = cms.string(and_string_concatonator(muon_MuonMuon))
 
+
+#################################
+# post-sync baseline tau ID cuts
+# these need to be loose enough for all channels + QCD and W anti-iso 
+# background methods
+
+
+post_sync_tauIso_ = cms.string('1==1')
+post_sync_tauAntiEMu_ = cms.string('1==1')
+
+# define in two steps to get a version without the cms.string prefix 
+# this is needed in ConfigTupleTaus_cfi.py :
+
+post_sync_tauCutRaw = '(tauID("byTightIsolationMVArun2v1DBoldDMwLT") > 0.5 || tauID("byVTightIsolationMVArun2v1DBoldDMwLT") > 0.5 || tauID("byLooseIsolationMVArun2v1DBoldDMwLT") > 0.5 || tauID("byMediumIsolationMVArun2v1DBoldDMwLT") > 0.5 || tauID("byVLooseIsolationMVArun2v1DBoldDMwLT") > 0.5 || tauID("byVVTightIsolationMVArun2v1DBoldDMwLT") > 0.5)'
+post_sync_tauAntiEMuRaw = '(tauID("againstElectronVLooseMVA6") > 0.5 || tauID("againstMuonTight3") > 0.5 || tauID("againstElectronTightMVA6") > 0.5 || tauID("againstMuonLoose3") > 0.5)'
+
+if APPLY_POST_SYNC_TAU_CUTS is True :
+	post_sync_tauIso_ = cms.string(post_sync_tauCutRaw)
+	post_sync_tauAntiEMu_ = cms.string(post_sync_tauAntiEMuRaw)
+
+	print '++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++'
+	print '++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++'
+	print '++ WARNING -- applying post sync/baseline tau iso and mva cuts'
+	print '++ sync ntuples will not compare well to other groups !!! '
+	print '++ make sure these cuts are loose enough for all analysis cuts + bkg methods'
+	print '++ change in FlatTupleConfig_cfi.py ...'
+	print '++', post_sync_tauIso_
+	print '++', post_sync_tauAntiEMu_
+	print '++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++'
+	print '++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++'
+
+
+if APPLY_POST_SYNC_LEPTON_VETOES is True:
+	print '++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++'
+	print '++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++'
+	print '++ WARNING -- applying post sync/baseline di-Muon, di-Electron,'
+	print '++ third-Electron & third-Muon event vetoes                !!! '
+	print '++ turn off in FlatTupleConfig_cfi.py ...'
+	print '++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++'
+	print '++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++'
 
 
 
@@ -596,6 +651,12 @@ lowDeltaRCuts = cms.VPSet(
 	)
 
 from DavisRunIITauTau.TupleConfigurations.ConfigNtupleContent_cfi import BUILD_EFFICIENCY_TREE as BuildEffTree_
+from DavisRunIITauTau.TupleConfigurations.ConfigNtupleContent_cfi import BUILD_ELECTRON_ELECTRON as BuildEleEle_
+from DavisRunIITauTau.TupleConfigurations.ConfigNtupleContent_cfi import BUILD_ELECTRON_MUON as BuildEleMuon_
+from DavisRunIITauTau.TupleConfigurations.ConfigNtupleContent_cfi import BUILD_ELECTRON_TAU as BuildEleTau_
+from DavisRunIITauTau.TupleConfigurations.ConfigNtupleContent_cfi import BUILD_MUON_MUON as BuildMuonMuon_
+from DavisRunIITauTau.TupleConfigurations.ConfigNtupleContent_cfi import BUILD_MUON_TAU as BuildMuonTau_
+from DavisRunIITauTau.TupleConfigurations.ConfigNtupleContent_cfi import BUILD_TAU_TAU as BuildTauTau_
 
 # config for basic settings 
 generalConfig = cms.PSet(
@@ -618,6 +679,25 @@ generalConfig = cms.PSet(
 
 			SmallTree = cms.bool(SmallTree_),
 			BuildEffTree = cms.bool(BuildEffTree_), # if false no effLep info will be in FlatTuple
+			
+			#######################################
+			# pair types to keep or reject (set in ConfigNtupleContent_cfi.py)
+			BuildEleEle = cms.bool(BuildEleEle_),
+			BuildEleMuon = cms.bool(BuildEleMuon_),
+			BuildEleTau = cms.bool(BuildEleTau_),
+			BuildMuonMuon = cms.bool(BuildMuonMuon_),
+			BuildMuonTau = cms.bool(BuildMuonTau_),
+			BuildTauTau = cms.bool(BuildTauTau_),			
+
+			#######################################
+			# tau ID and ISO cuts (post-baseline)
+			post_sync_tauIso = post_sync_tauIso_,
+			post_sync_tauAntiEMu = post_sync_tauAntiEMu_,
+
+			##########################################
+			# should we apply extra lepton and di-lepton vetoes ?
+
+			applyPostSyncLeptonVetoes = cms.bool(APPLY_POST_SYNC_LEPTON_VETOES),
 
 			#######################################
 			# in 76X have a new complication :
@@ -679,19 +759,6 @@ generalConfig = cms.PSet(
 			# number of these that we can keep 
 
 			tauIDsToKeep = cms.vstring(				
-				"againstElectronLooseMVA6",	
-				"againstElectronMediumMVA6",
-				"againstElectronVTightMVA6",
-				"byIsolationMVA3oldDMwLTraw",
-				"chargedIsoPtSum",
-				"neutralIsoPtSum",
-				"puCorrPtSum",
-				"againstElectronTightMVA5",
-				"againstElectronTightMVA6",
-				"againstElectronVLooseMVA5",
-				"againstElectronVLooseMVA6",
-				"againstMuonLoose3",
-				"againstMuonTight3",
 				"byIsolationMVArun2v1DBoldDMwLTraw",
 				"byTightIsolationMVArun2v1DBoldDMwLT",
 				"byVTightIsolationMVArun2v1DBoldDMwLT",
@@ -699,16 +766,32 @@ generalConfig = cms.PSet(
 				"byMediumIsolationMVArun2v1DBoldDMwLT",
 				"byVLooseIsolationMVArun2v1DBoldDMwLT",
 				"byVVTightIsolationMVArun2v1DBoldDMwLT",
+
+				"againstElectronVLooseMVA6",
+				"againstMuonTight3",
+				"againstElectronTightMVA6",
+				"againstMuonLoose3",
+				"decayModeFinding",
+
+
+				#"againstElectronLooseMVA6",	
+				#"againstElectronMediumMVA6",
+				#"againstElectronVTightMVA6",
+				"byIsolationMVA3oldDMwLTraw",
+				#"chargedIsoPtSum",
+				#"neutralIsoPtSum",
+				#"puCorrPtSum",
+				#"againstElectronTightMVA5",
+				#"againstElectronVLooseMVA5",
 				"byCombinedIsolationDeltaBetaCorrRaw3Hits",
 				"byIsolationMVArun2v1DBnewDMwLTraw",
-				"byTightIsolationMVArun2v1DBnewDMwLT",
-				"byVTightIsolationMVArun2v1DBnewDMwLT",
-				"byLooseIsolationMVArun2v1DBnewDMwLT",
-				"byMediumIsolationMVArun2v1DBnewDMwLT",
-				"byVLooseIsolationMVArun2v1DBnewDMwLT",
-				"byVVTightIsolationMVArun2v1DBnewDMwLT",
-				"byIsolationMVA3newDMwLTraw",
-				"decayModeFinding",
+				#"byTightIsolationMVArun2v1DBnewDMwLT",
+				#"byVTightIsolationMVArun2v1DBnewDMwLT",
+				#"byLooseIsolationMVArun2v1DBnewDMwLT",
+				#"byMediumIsolationMVArun2v1DBnewDMwLT",
+				#"byVLooseIsolationMVArun2v1DBnewDMwLT",
+				#"byVVTightIsolationMVArun2v1DBnewDMwLT",
+				#"byIsolationMVA3newDMwLTraw",
 				"decayModeFindingNewDMs"
 # bad				"decayModeFindingOldDMs"
 					),

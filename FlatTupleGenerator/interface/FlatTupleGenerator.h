@@ -130,7 +130,7 @@ public:
       virtual void endJob() override;
       virtual void reInit(); 
       virtual void handlePairIndepInfo(const edm::Event&, const edm::EventSetup&, NtuplePairIndependentInfo); 
-      virtual void handleCurrentEventInfo(const edm::Event&, const edm::EventSetup&, NtupleEvent); 
+      virtual void handleCurrentEventInfo(const edm::Event&, const edm::EventSetup&, NtupleEvent, bool&); 
       virtual void handleMvaMetAndRecoil(const edm::Event&, const edm::EventSetup&, NtupleEvent);
       virtual void handleSVFitCall(const edm::Event&, const edm::EventSetup&, NtupleEvent, std::string); 
       virtual void handleLeg1AndLeg2Info(const edm::Event&, const edm::EventSetup&, NtupleEvent); 
@@ -193,6 +193,7 @@ public:
 	bool FillEffLeptonBranches_; /* we only want eff leptons under regular tau ES, basic selection */
 	std::string RECOILCORRECTION_; // type of recoil correction, pulled from sample meta data config file
 	std::string MetSystematicType_; // the type of mva met sys. pulled from sample meta data 
+	bool KeepTheoryScaleFactors_; // should we fill the theory scale factors vector
 	edm::ParameterSet EventCutSrc_;
 	std::string TauEsVariantToKeep_;  // should be NOMINAL, UP or DOWN
 	std::string ElectronEsVariantToKeep_;  // should be NOMINAL, UP or DOWN
@@ -218,6 +219,14 @@ public:
 
 	bool SmallTree_;
 	bool BuildEffTree_;
+	bool BuildEleEle_;
+	bool BuildEleMuon_;
+	bool BuildEleTau_;
+	bool BuildMuonMuon_;
+	bool BuildMuonTau_;
+	bool BuildTauTau_;
+
+
 	std::vector<std::string> tauIDsToKeep;
 	std::vector<std::string> triggerSummaryChecks;
 	bool keepOnlyBestRankedPair;
@@ -277,6 +286,12 @@ public:
 	double diLeptonMinDR;
 
 
+	/* post-sync baseline tau ID and MVA cuts */
+	std::string post_sync_tauIso;
+	std::string post_sync_tauAntiEMu;
+
+	/* do we apply post-sync baseline extra and di-lepton vetoes ?*/
+	bool applyPostSyncLeptonVetoes;
 
 
 	/* the lepton cut helper object */
@@ -940,7 +955,6 @@ public:
     std::vector<float> theory_scale_factors;
 
 };  
-
 
 //define this as a plug-in
 DEFINE_FWK_MODULE(FlatTupleGenerator);
