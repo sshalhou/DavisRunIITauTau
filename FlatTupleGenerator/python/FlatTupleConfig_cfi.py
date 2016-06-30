@@ -34,15 +34,7 @@ BUILD_LOWDR = False
 # cuts on the hadronically decaying tau legs?
 #########################################################
 
-APPLY_POST_SYNC_TAU_CUTS = True
-
-#########################################################
-# do we want to apply post-sync/baseline extra lepton
-# and di-lepton veto cuts to the em, et, mt, and tt
-# channels?
-#########################################################
-
-APPLY_POST_SYNC_LEPTON_VETOES = True
+APPLY_POST_SYNC_TAU_CUTS = True # default true unless you want to check sync 
 
 ##########################################
 # set up SVMass  @ FlatTuple level	     #
@@ -310,17 +302,19 @@ cut_muon_MuonMuon = cms.string(and_string_concatonator(muon_MuonMuon))
 
 
 post_sync_tauIso_ = cms.string('1==1')
-post_sync_tauAntiEMu_ = cms.string('1==1')
+post_sync_EleTau_tauMVACuts_ = cms.string('1==1')
+post_sync_MuonTau_tauMVACuts_ = cms.string('1==1')
+post_sync_TauTau_tauMVACuts_ = cms.string('1==1')
 
-# define in two steps to get a version without the cms.string prefix 
-# this is needed in ConfigTupleTaus_cfi.py :
-
-post_sync_tauCutRaw = '(tauID("byTightIsolationMVArun2v1DBoldDMwLT") > 0.5 || tauID("byVTightIsolationMVArun2v1DBoldDMwLT") > 0.5 || tauID("byLooseIsolationMVArun2v1DBoldDMwLT") > 0.5 || tauID("byMediumIsolationMVArun2v1DBoldDMwLT") > 0.5 || tauID("byVLooseIsolationMVArun2v1DBoldDMwLT") > 0.5 || tauID("byVVTightIsolationMVArun2v1DBoldDMwLT") > 0.5)'
-post_sync_tauAntiEMuRaw = '(tauID("againstElectronVLooseMVA6") > 0.5 || tauID("againstMuonTight3") > 0.5 || tauID("againstElectronTightMVA6") > 0.5 || tauID("againstMuonLoose3") > 0.5)'
+##################################################################
+# turn them into real cuts if APPLY_POST_SYNC_TAU_CUTS
 
 if APPLY_POST_SYNC_TAU_CUTS is True :
-	post_sync_tauIso_ = cms.string(post_sync_tauCutRaw)
-	post_sync_tauAntiEMu_ = cms.string(post_sync_tauAntiEMuRaw)
+	post_sync_tauIso_ = cms.string('(tauID("byTightIsolationMVArun2v1DBoldDMwLT") > 0.5 || tauID("byVTightIsolationMVArun2v1DBoldDMwLT") > 0.5 || tauID("byLooseIsolationMVArun2v1DBoldDMwLT") > 0.5 || tauID("byMediumIsolationMVArun2v1DBoldDMwLT") > 0.5 || tauID("byVLooseIsolationMVArun2v1DBoldDMwLT") > 0.5 || tauID("byVVTightIsolationMVArun2v1DBoldDMwLT") > 0.5)')
+	post_sync_EleTau_tauMVACuts_ = cms.string("(tauID('againstElectronTightMVA6')> 0.5 && tauID('againstMuonLoose3')>0.5)")
+	post_sync_MuonTau_tauMVACuts_ = cms.string("(tauID('againstElectronVLooseMVA6')> 0.5 && tauID('againstMuonTight3')>0.5)")
+	post_sync_TauTau_tauMVACuts_ = cms.string("(tauID('againstElectronVLooseMVA6')> 0.5 && tauID('againstMuonLoose3')>0.5)")
+
 
 	print '++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++'
 	print '++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++'
@@ -329,17 +323,10 @@ if APPLY_POST_SYNC_TAU_CUTS is True :
 	print '++ make sure these cuts are loose enough for all analysis cuts + bkg methods'
 	print '++ change in FlatTupleConfig_cfi.py ...'
 	print '++', post_sync_tauIso_
-	print '++', post_sync_tauAntiEMu_
-	print '++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++'
-	print '++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++'
-
-
-if APPLY_POST_SYNC_LEPTON_VETOES is True:
-	print '++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++'
-	print '++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++'
-	print '++ WARNING -- applying post sync/baseline di-Muon, di-Electron,'
-	print '++ third-Electron & third-Muon event vetoes                !!! '
-	print '++ turn off in FlatTupleConfig_cfi.py ...'
+	print '+++++++++++'
+	print '++ in channel EleTau will require tau leg to pass', post_sync_EleTau_tauMVACuts_
+	print '++ in channel MuonTau will require tau leg to pass', post_sync_MuonTau_tauMVACuts_
+	print '++ in channel TauTau will require tau legs to pass', post_sync_TauTau_tauMVACuts_
 	print '++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++'
 	print '++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++'
 
@@ -650,6 +637,25 @@ lowDeltaRCuts = cms.VPSet(
 				)
 	)
 
+############################################################
+# check isLeg1GoodForHLTPath_Labels, isLeg2GoodForHLTPath_Labels
+# for the following trigger paths (only a summary, need more functions to access new triggers)
+# not requested in FlatTupleConfif_cfi.py summary variables
+# note : the hardcoded THE_MAX variable in FlatTupleGenerator.cc limits the 
+# number of these that we can keep 
+# be sure to include the _v1, _v2 etc. version suffix as v* 
+# also make sure none are repeats 
+
+
+triggerSummaryChecks_ = cms.vstring(
+	"HLT_Mu17_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v*",
+	"HLT_Mu8_TrkIsoVVL_Ele17_CaloIdL_TrackIdL_IsoVL_v*",
+	"HLT_IsoMu18_v*",
+	"HLT_Ele23_WPLoose_Gsf_v*",
+	"HLT_DoubleMediumIsoPFTau35_Trk1_eta2p1_Reg_v*"				
+	)
+############################################################
+
 from DavisRunIITauTau.TupleConfigurations.ConfigNtupleContent_cfi import BUILD_EFFICIENCY_TREE as BuildEffTree_
 from DavisRunIITauTau.TupleConfigurations.ConfigNtupleContent_cfi import BUILD_ELECTRON_ELECTRON as BuildEleEle_
 from DavisRunIITauTau.TupleConfigurations.ConfigNtupleContent_cfi import BUILD_ELECTRON_MUON as BuildEleMuon_
@@ -657,6 +663,11 @@ from DavisRunIITauTau.TupleConfigurations.ConfigNtupleContent_cfi import BUILD_E
 from DavisRunIITauTau.TupleConfigurations.ConfigNtupleContent_cfi import BUILD_MUON_MUON as BuildMuonMuon_
 from DavisRunIITauTau.TupleConfigurations.ConfigNtupleContent_cfi import BUILD_MUON_TAU as BuildMuonTau_
 from DavisRunIITauTau.TupleConfigurations.ConfigNtupleContent_cfi import BUILD_TAU_TAU as BuildTauTau_
+
+
+
+
+
 
 # config for basic settings 
 generalConfig = cms.PSet(
@@ -689,16 +700,7 @@ generalConfig = cms.PSet(
 			BuildMuonTau = cms.bool(BuildMuonTau_),
 			BuildTauTau = cms.bool(BuildTauTau_),			
 
-			#######################################
-			# tau ID and ISO cuts (post-baseline)
-			post_sync_tauIso = post_sync_tauIso_,
-			post_sync_tauAntiEMu = post_sync_tauAntiEMu_,
-
-			##########################################
-			# should we apply extra lepton and di-lepton vetoes ?
-
-			applyPostSyncLeptonVetoes = cms.bool(APPLY_POST_SYNC_LEPTON_VETOES),
-
+		
 			#######################################
 			# in 76X have a new complication :
 			# for DeltaBeta (ex: byCombinedIsolationDeltaBetaCorrRaw3Hits)  smaller value = more isolated
@@ -744,13 +746,7 @@ generalConfig = cms.PSet(
 			# also make sure none are repeats 
 
 
-			triggerSummaryChecks = cms.vstring(
-				"HLT_Mu17_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v*",
-				"HLT_Mu8_TrkIsoVVL_Ele17_CaloIdL_TrackIdL_IsoVL_v*",
-				"HLT_IsoMu18_v*",
-				"HLT_Ele23_WPLoose_Gsf_v*",
-				"HLT_DoubleMediumIsoPFTau35_Trk1_eta2p1_Reg_v*"				
-				),
+			triggerSummaryChecks = triggerSummaryChecks_,
 
 
 

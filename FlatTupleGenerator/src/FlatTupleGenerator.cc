@@ -131,10 +131,7 @@ svMassAtFlatTupleConfig_(iConfig.getParameter<edm::ParameterSet>("SVMassConfig")
   diLeptonMinDR = EventCutSrc_.getParameter<double>("diLeptonMinDR");
 
 
-  post_sync_tauIso =  EventCutSrc_.getParameter<std::string>("post_sync_tauIso");
-  post_sync_tauAntiEMu =  EventCutSrc_.getParameter<std::string>("post_sync_tauAntiEMu");
 
-  applyPostSyncLeptonVetoes =  EventCutSrc_.getParameter<bool>("applyPostSyncLeptonVetoes");
 
   /* create all pairs needed for EffLepton tauID and HLT info */
 
@@ -458,8 +455,7 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
       switching them around will cause problems */
 
       handlePairIndepInfo(iEvent,iSetup,currentINDEP);
-      bool dummy_ = 1; /* extra vetoes never applied for eff leptons */
-      handleCurrentEventInfo(iEvent,iSetup,currentPairToCheck, dummy_);      
+      handleCurrentEventInfo(iEvent,iSetup,currentPairToCheck);      
       handleEffLeptonInfo(iEvent,iSetup,currentPairToCheck); 
 
 
@@ -688,43 +684,6 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
 
       NtuplePairIndependentInfo currentINDEP =   ((*pairIndepInfos)[0]);
 
-
-      /////////////////////////////////////////////////////
-      // apply the post-baseline tau ID and MVA cuts     //
-
-      bool TausAreOK = 1;
-
-
-      if(currentPair.CandidateEventType()==TupleCandidateEventTypes::EleTau || 
-         currentPair.CandidateEventType()==TupleCandidateEventTypes::MuonTau ||
-         currentPair.CandidateEventType()==TupleCandidateEventTypes::TauTau)
-      {
-
-        StringCutObjectSelector<NtupleLepton> tauIso(post_sync_tauIso);
-        StringCutObjectSelector<NtupleLepton> tauAntiEMu(post_sync_tauAntiEMu);
-
-        /* check leg2 for eTau, muTau, and TauTau */
-
-        if( !tauIso(currentPair.leg2()) ) TausAreOK = 0;
-        if( !tauAntiEMu(currentPair.leg2()) ) TausAreOK = 0;
-
-        /* check leg1 for TauTau */
-
-        if(currentPair.CandidateEventType()==TupleCandidateEventTypes::TauTau)
-        {
-          if( !tauIso(currentPair.leg1()) ) TausAreOK = 0;
-          if( !tauAntiEMu(currentPair.leg1()) ) TausAreOK = 0;
-        }
-
-
-      }
-
-
-      if(!TausAreOK) continue;
-
-
-
-
       /////////////////////////////////////////////////////////////////////
       // init the JetHelper and GenHelper tools and fill pairIndep info  //
       // once per pair note: GenHelper and JetHelper                     // 
@@ -751,8 +710,7 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
       switching them around will cause problems */
 
       handlePairIndepInfo(iEvent,iSetup,currentINDEP);
-      bool PassesExtraLepVeto = 1;
-      handleCurrentEventInfo(iEvent,iSetup, currentPair, PassesExtraLepVeto);
+      handleCurrentEventInfo(iEvent,iSetup, currentPair);
       handleMvaMetAndRecoil( iEvent, iSetup, currentPair);
       
       /* don't call SVFit for EleEle or MuonMuon */
@@ -782,7 +740,7 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
    //   std::cout<<" ievent isReal data "<<isRealData<<" vs new function "<<currentPair.isRealData();
 
 
-      if(PassesExtraLepVeto) FlatTuple->Fill();
+      FlatTuple->Fill();
 
   }
 
@@ -2130,7 +2088,7 @@ void FlatTupleGenerator::handleSVFitCall(const edm::Event& iEvent, const edm::Ev
 
 
 void FlatTupleGenerator::handleCurrentEventInfo(const edm::Event& iEvent, const edm::EventSetup& iSetup,
-NtupleEvent currentPair, bool &PassesExtraLepVeto)
+NtupleEvent currentPair)
 {
 
   
@@ -2396,28 +2354,28 @@ NtupleEvent currentPair, bool &PassesExtraLepVeto)
 
 
   ////////////////////////////////////////////
-  bool KEEP_IT = 1;
-  if(applyPostSyncLeptonVetoes)
-  { 
-    if(currentPair.CandidateEventType()==TupleCandidateEventTypes::EleMuon)
-    {
-      if(ThirdMuon_Flag > 0.5 || ThirdElectron_Flag > 0.5) KEEP_IT = 0;
-    }
-    if(currentPair.CandidateEventType()==TupleCandidateEventTypes::EleTau)
-    {
-      if(ThirdElectron_Flag > 0.5 || DiElectron_Flag > 0.5) KEEP_IT = 0;
-    }
-    if(currentPair.CandidateEventType()==TupleCandidateEventTypes::MuonTau)
-    {
-      if(ThirdMuon_Flag > 0.5 || DiMuon_Flag > 0.5) KEEP_IT = 0;
-    }
-    if(currentPair.CandidateEventType()==TupleCandidateEventTypes::TauTau)
-    {
-      if(ThirdMuon_Flag > 0.5 || ThirdElectron_Flag > 0.5) KEEP_IT = 0;
-    }
-  }
+  //bool KEEP_IT = 1;
+  // if(applyPostSyncLeptonVetoes)
+  // { 
+  //   if(currentPair.CandidateEventType()==TupleCandidateEventTypes::EleMuon)
+  //   {
+  //     if(ThirdMuon_Flag > 0.5 || ThirdElectron_Flag > 0.5) KEEP_IT = 0;
+  //   }
+  //   if(currentPair.CandidateEventType()==TupleCandidateEventTypes::EleTau)
+  //   {
+  //     if(ThirdElectron_Flag > 0.5 || DiElectron_Flag > 0.5) KEEP_IT = 0;
+  //   }
+  //   if(currentPair.CandidateEventType()==TupleCandidateEventTypes::MuonTau)
+  //   {
+  //     if(ThirdMuon_Flag > 0.5 || DiMuon_Flag > 0.5) KEEP_IT = 0;
+  //   }
+  //   if(currentPair.CandidateEventType()==TupleCandidateEventTypes::TauTau)
+  //   {
+  //     if(ThirdMuon_Flag > 0.5 || ThirdElectron_Flag > 0.5) KEEP_IT = 0;
+  //   }
+  // }
 
-  PassesExtraLepVeto = KEEP_IT;
+  // PassesExtraLepVeto = KEEP_IT;
   ////////////////////////////////////////////
 
 
@@ -4126,9 +4084,10 @@ void FlatTupleGenerator::beginJob()
   //////////////////////////////////////
   /* the veto lepton collections      */
   //////////////////////////////////////
+  // need to keep to allow us to do VH (Z->ll or W->lv) + H->tau tau
 
-  if( !SmallTree_ )
-  {  
+  // if( !SmallTree_ )
+  // {  
     FlatTuple->Branch("veto_leptonType", &veto_leptonType);
     FlatTuple->Branch("veto_pt", &veto_pt);
     FlatTuple->Branch("veto_eta", &veto_eta);
@@ -4154,7 +4113,7 @@ void FlatTupleGenerator::beginJob()
     FlatTuple->Branch("veto_LeptonPassesThirdMuonVetoCuts", &veto_LeptonPassesThirdMuonVetoCuts);
     FlatTuple->Branch("veto_LeptonPassesDiElectronVetoCuts", &veto_LeptonPassesDiElectronVetoCuts);
     FlatTuple->Branch("veto_LeptonPassesDiMuonVetoCuts", &veto_LeptonPassesDiMuonVetoCuts);
-  }
+  // }
 
 
   //////////////////////////////////////

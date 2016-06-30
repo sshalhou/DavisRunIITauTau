@@ -16,6 +16,7 @@
 #include "DataFormats/PatCandidates/interface/Muon.h"
 #include "DataFormats/PatCandidates/interface/Tau.h"
 #include "DataFormats/PatCandidates/interface/Lepton.h"
+#include "CommonTools/Utils/interface/StringCutObjectSelector.h"
 
 namespace pat {
 
@@ -35,23 +36,73 @@ namespace pat {
     private:
 
       vInputTag electronTags_;
-      std::vector<edm::EDGetTokenT<reco::CandidateView > > electronSources_;
+      std::vector<edm::EDGetTokenT< edm::View< pat::Electron > > > electronSources_;
 
       vInputTag muonTags_;
-      std::vector<edm::EDGetTokenT<reco::CandidateView > > muonSources_;
+      std::vector<edm::EDGetTokenT< edm::View< pat::Muon > > > muonSources_;
 
       vInputTag tauTags_;
-      std::vector<edm::EDGetTokenT<reco::CandidateView > > tauSources_;
+      std::vector<edm::EDGetTokenT< edm::View< pat::Tau > > > tauSources_;
 
-    
       bool countElectronElectrons_;
       bool countElectronMuons_;
       bool countElectronTaus_;
       bool countMuonMuons_;
       bool countMuonTaus_;
       bool countTauTaus_;
+      std::string tauMVAfilter_EleTau_; 
+      std::string tauMVAfilter_MuonTau_; 
+      std::string tauMVAfilter_TauTau_; 
+      std::string tauIsofilter_;
+      std::vector<std::string> hlt_Filter_;
+
   };
 
+
+
+
+template<typename T>
+bool Davis_checkTriggerPathAccept(T lep_, std::vector<std::string> hlt_Filter_)
+{
+
+  /* format the trigger paths we want to check */
+
+  std::vector <std::string> triggerSummaryChecksMod_;
+  triggerSummaryChecksMod_.clear();
+
+  for(std::size_t tt = 0; tt<hlt_Filter_.size(); ++tt)
+  {
+
+    std::string temp__ = "AcceptWithPreScale_" + hlt_Filter_[tt];
+    temp__.erase(temp__.find("_v"),temp__.length());
+    triggerSummaryChecksMod_.push_back(temp__);
+
+  }
+
+  // tauToCheck.userFloatNames()
+  ///////////////////////////////////////
+  for (std::size_t ii = 0; ii < lep_.userFloatNames().size(); ii ++ )
+  {
+    std::string test_ = lep_.userFloatNames()[ii];
+    std::string testOrig_ = lep_.userFloatNames()[ii];
+
+    if(test_.find("AcceptWithPreScale_") != std::string::npos)
+    {
+      test_.erase(test_.find("_v"),test_.length());
+
+      for(std::size_t k = 0; k < triggerSummaryChecksMod_.size(); ++k)
+      {
+        if(test_ == triggerSummaryChecksMod_[k])
+        {
+          if(lep_.userFloat(testOrig_) == 1.0) return 1;
+        }
+      }              
+    }
+  }
+  ///////////////////////////////////////
+  // if made it here there was no match
+  return 0;
+}
 
 
 }

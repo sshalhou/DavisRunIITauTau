@@ -28,19 +28,20 @@ DEBUG_NTUPLE_INPUT = False
 # how many events to run, -1 means run all 
 ######################################
 
-MAX_EVENTS = 2000
+MAX_EVENTS = 20000
 
 ######################################
 # datasets for local running 
 ######################################
 
+#dataSetName_= "/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM"
 #dataSetName_ = "/DYJetsToLL_M-10to50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12_ext1-v1/MINIAODSIM"
 #dataSetName_ = "/SUSYGluGluToHToTauTau_M-160_TuneCUETP8M1_13TeV-pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM"
-dataSetName_ = "/TT_TuneCUETP8M1_13TeV-powheg-pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12_ext4-v1/MINIAODSIM"
-#dataSetName_= "/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM"
+#dataSetName_ = "/TT_TuneCUETP8M1_13TeV-powheg-pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12_ext4-v1/MINIAODSIM"
 #dataSetName_="/ZZTo4L_13TeV-amcatnloFXFX-pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM"
 #dataSetName_="/ZprimeToA0hToA0chichihtautau_2HDM_MZp-1200_MA0-400_13TeV-madgraph/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM"
 #dataSetName_="/WJetsToLNu_HT-200To400_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM"
+dataSetName_="/WJetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM"
 
 ######################################
 #  list of files to process 
@@ -64,6 +65,8 @@ if dataSetName_ == "/ZprimeToA0hToA0chichihtautau_2HDM_MZp-1200_MA0-400_13TeV-ma
 	myfilelist.extend(['file:/uscms_data/d3/shalhout/monoHiggsRunIIFall15MiniAODv2_2HDMzpToA0h_1200_400.root'])
 if dataSetName_ == "/WJetsToLNu_HT-200To400_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM":
 	myfilelist.extend(['file:/uscms_data/d3/shalhout/WJetsToLNu_HT-100To200.root'])
+if dataSetName_ == "/WJetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM":
+	myfilelist.extend(['file:/uscms_data/d3/shalhout/miniAODv2_WJetsToLNu.root'])
 
 if DEBUG_NTUPLE_INPUT is True:
 	myfilelist = cms.untracked.vstring(['file:./NtupleFile.root'])
@@ -157,7 +160,7 @@ print 'default btag algoritm = ', DEFAULT_BTAG_ALGORITHM
 
 # import of standard configurations
 process.load("FWCore.MessageService.MessageLogger_cfi")
-process.MessageLogger.cerr.FwkReport.reportEvery = 1
+process.MessageLogger.cerr.FwkReport.reportEvery = 500
 
 process.load('Configuration.StandardSequences.Services_cff')
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
@@ -588,6 +591,11 @@ process.filteredVetoMuons = cms.EDFilter("PATMuonRefSelector",
 # final collections 
 ###################################
 
+from DavisRunIITauTau.FlatTupleGenerator.FlatTupleConfig_cfi import post_sync_EleTau_tauMVACuts_  as tauMVAfilter_EleTau_
+from DavisRunIITauTau.FlatTupleGenerator.FlatTupleConfig_cfi import post_sync_MuonTau_tauMVACuts_ as tauMVAfilter_MuonTau_
+from DavisRunIITauTau.FlatTupleGenerator.FlatTupleConfig_cfi import post_sync_TauTau_tauMVACuts_  as tauMVAfilter_TauTau_
+from DavisRunIITauTau.FlatTupleGenerator.FlatTupleConfig_cfi import post_sync_tauIso_ as tauIsofilter_
+from DavisRunIITauTau.FlatTupleGenerator.FlatTupleConfig_cfi import triggerSummaryChecks_ as hlt_Filter_
 
 process.requireCandidateHiggsPair = cms.EDFilter("HiggsCandidateCountFilter",
   	electronSources = cms.VInputTag("TrimmedFilteredCustomElectrons:TrimmedFilteredCustomElectrons:DavisNtuple",
@@ -604,6 +612,11 @@ process.requireCandidateHiggsPair = cms.EDFilter("HiggsCandidateCountFilter",
 	countMuonMuons = cms.bool(BUILD_MUON_MUON),
 	countMuonTaus = cms.bool(BUILD_MUON_TAU),
 	countTauTaus = cms.bool(BUILD_TAU_TAU),
+	tauMVAfilter_EleTau = tauMVAfilter_EleTau_,
+	tauMVAfilter_MuonTau = tauMVAfilter_MuonTau_,
+	tauMVAfilter_TauTau = tauMVAfilter_TauTau_,
+	tauIsofilter = tauIsofilter_,
+	hlt_Filter = hlt_Filter_,
     filter = cms.bool(True)
 	)
 
@@ -865,7 +878,7 @@ process.NtupleEventsTauEsUp = cms.EDProducer('NtupleEventProducer' ,
 				 muon_triggerMatchPathsAndFiltersSrc = muonTriggerPathsAndFilters,
 				 tau_triggerMatchDRSrc = tauTriggerMatch_DR,
 				 tau_triggerMatchTypesSrc = tauTriggerMatch_Types,
-				 tau_triggerMatchPathsAndFiltersSrc = tauTriggerPathsAndFilters,
+				 tau_triggerMatchPathsAndFiltersSrc = tauTriggerPathsAndFilters,			 
 			     NAME=cms.string("NtupleEventsTauEsUp"))
 
 
@@ -883,7 +896,7 @@ process.NtupleEventsTauEsDown = cms.EDProducer('NtupleEventProducer' ,
 				 muon_triggerMatchPathsAndFiltersSrc = muonTriggerPathsAndFilters,
 				 tau_triggerMatchDRSrc = tauTriggerMatch_DR,
 				 tau_triggerMatchTypesSrc = tauTriggerMatch_Types,
-				 tau_triggerMatchPathsAndFiltersSrc = tauTriggerPathsAndFilters,
+				 tau_triggerMatchPathsAndFiltersSrc = tauTriggerPathsAndFilters,				 
 			     NAME=cms.string("NtupleEventsTauEsDown"))
 
 
@@ -901,7 +914,7 @@ process.NtupleEventsElectronEsUp = cms.EDProducer('NtupleEventProducer' ,
 				 muon_triggerMatchPathsAndFiltersSrc = muonTriggerPathsAndFilters,
 				 tau_triggerMatchDRSrc = tauTriggerMatch_DR,
 				 tau_triggerMatchTypesSrc = tauTriggerMatch_Types,
-				 tau_triggerMatchPathsAndFiltersSrc = tauTriggerPathsAndFilters,
+				 tau_triggerMatchPathsAndFiltersSrc = tauTriggerPathsAndFilters,				 
 			     NAME=cms.string("NtupleEventsElectronEsUp"))
 
 process.NtupleEventsElectronEsDown = cms.EDProducer('NtupleEventProducer' ,
@@ -918,7 +931,7 @@ process.NtupleEventsElectronEsDown = cms.EDProducer('NtupleEventProducer' ,
 				 muon_triggerMatchPathsAndFiltersSrc = muonTriggerPathsAndFilters,
 				 tau_triggerMatchDRSrc = tauTriggerMatch_DR,
 				 tau_triggerMatchTypesSrc = tauTriggerMatch_Types,
-				 tau_triggerMatchPathsAndFiltersSrc = tauTriggerPathsAndFilters,
+				 tau_triggerMatchPathsAndFiltersSrc = tauTriggerPathsAndFilters,			 
 			     NAME=cms.string("NtupleEventsElectronEsDown"))
 
 

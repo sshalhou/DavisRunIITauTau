@@ -33,7 +33,7 @@ def DeleteCMSTypes(arg, type):
 # define a few variables here
 ###############################
 
-MC_EVENTS_PER_JOB = 2000 # used for MC only
+MC_EVENTS_PER_JOB = 15000 # used for MC only
 MAX_JOBS_PER_TASK = 9500 # true crab limit is 10,000 we should be below this
 DATA_UNITS_PER_JOB = 150
 DATA_LUMI_MASK = 'https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions15/13TeV/Cert_246908-260627_13TeV_PromptReco_Collisions15_25ns_JSON.txt'
@@ -156,7 +156,7 @@ for line in fileinput.input(str(args.dataSetList[0])):
     # tempConfigName = crabJobLocation+"/"+requestName+".py"
 
     version = DeleteCMSTypes(sampleData.getParameter("CodeVersion"), str).replace('.','_')  
-    requestName = DeleteCMSTypes(sampleData.getParameter("KeyName"), str)+"_version_"+version
+    requestName = DeleteCMSTypes(sampleData.getParameter("KeyName"), str)+"_v"+version
     EventTotal = DeleteCMSTypes(sampleData.getParameter("EventTotal"), int)
     NumberOfLumis = DeleteCMSTypes(sampleData.getParameter("NumberOfLumis"), int)
     tempConfigName = crabJobLocation+"/"+requestName+".py"
@@ -345,9 +345,9 @@ if __name__ == '__main__':
                     config.Data.unitsPerJob = MC_EVENTS_PER_JOB
 
                     jsonLine_ = '{\"1\": [[' + str(int(start_))+', '+str(int(end_))+']]}'  
-                    cragConfigPYfile = crabJobLocation + '/crabConfig_' + samp[1]+"_lumiSplit_"+str(int(start_))+"_"+str(int(end_))+".py"
-                    lumiSplitJSON_   = crabJobLocation + '/JSON_' + samp[1]+"_lumiSplit_"+str(int(start_))+"_"+str(int(end_))+".txt"
-                    config.General.requestName = samp[1] + "_lumiSplit_"+str(int(start_))+"_"+str(int(end_))
+                    cragConfigPYfile = crabJobLocation + '/crabConfig_' + samp[1]+"_"+str(int(start_))+"_"+str(int(end_))+".py"
+                    lumiSplitJSON_   = crabJobLocation + '/JSON_' + samp[1]+"_"+str(int(start_))+"_"+str(int(end_))+".txt"
+                    config.General.requestName = samp[1] + "_"+str(int(start_))+"_"+str(int(end_))
                     config.Data.lumiMask = lumiSplitJSON_
 
                     li = open(lumiSplitJSON_,'w')

@@ -130,7 +130,7 @@ public:
       virtual void endJob() override;
       virtual void reInit(); 
       virtual void handlePairIndepInfo(const edm::Event&, const edm::EventSetup&, NtuplePairIndependentInfo); 
-      virtual void handleCurrentEventInfo(const edm::Event&, const edm::EventSetup&, NtupleEvent, bool&); 
+      virtual void handleCurrentEventInfo(const edm::Event&, const edm::EventSetup&, NtupleEvent); 
       virtual void handleMvaMetAndRecoil(const edm::Event&, const edm::EventSetup&, NtupleEvent);
       virtual void handleSVFitCall(const edm::Event&, const edm::EventSetup&, NtupleEvent, std::string); 
       virtual void handleLeg1AndLeg2Info(const edm::Event&, const edm::EventSetup&, NtupleEvent); 
@@ -284,15 +284,6 @@ public:
 	std::string diEleVeto;
 	std::string diMuonVeto;
 	double diLeptonMinDR;
-
-
-	/* post-sync baseline tau ID and MVA cuts */
-	std::string post_sync_tauIso;
-	std::string post_sync_tauAntiEMu;
-
-	/* do we apply post-sync baseline extra and di-lepton vetoes ?*/
-	bool applyPostSyncLeptonVetoes;
-
 
 	/* the lepton cut helper object */
 	LeptonFlatTupleCutHelper LeptonCutHelper;

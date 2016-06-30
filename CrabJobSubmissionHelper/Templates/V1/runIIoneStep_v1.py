@@ -87,7 +87,7 @@ print 'default btag algoritm = ', DEFAULT_BTAG_ALGORITHM
 
 # import of standard configurations
 process.load("FWCore.MessageService.MessageLogger_cfi")
-process.MessageLogger.cerr.FwkReport.reportEvery = 1
+process.MessageLogger.cerr.FwkReport.reportEvery = 500
 
 process.load('Configuration.StandardSequences.Services_cff')
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
@@ -483,6 +483,12 @@ process.filteredVetoMuons = cms.EDFilter("PATMuonRefSelector",
 # final collections 
 ###################################
 
+from DavisRunIITauTau.FlatTupleGenerator.FlatTupleConfig_cfi import post_sync_EleTau_tauMVACuts_  as tauMVAfilter_EleTau_
+from DavisRunIITauTau.FlatTupleGenerator.FlatTupleConfig_cfi import post_sync_MuonTau_tauMVACuts_ as tauMVAfilter_MuonTau_
+from DavisRunIITauTau.FlatTupleGenerator.FlatTupleConfig_cfi import post_sync_TauTau_tauMVACuts_  as tauMVAfilter_TauTau_
+from DavisRunIITauTau.FlatTupleGenerator.FlatTupleConfig_cfi import post_sync_tauIso_ as tauIsofilter_
+from DavisRunIITauTau.FlatTupleGenerator.FlatTupleConfig_cfi import triggerSummaryChecks_ as hlt_Filter_
+
 
 process.requireCandidateHiggsPair = cms.EDFilter("HiggsCandidateCountFilter",
   	electronSources = cms.VInputTag("TrimmedFilteredCustomElectrons:TrimmedFilteredCustomElectrons:DavisNtuple",
@@ -499,6 +505,11 @@ process.requireCandidateHiggsPair = cms.EDFilter("HiggsCandidateCountFilter",
 	countMuonMuons = cms.bool(BUILD_MUON_MUON),
 	countMuonTaus = cms.bool(BUILD_MUON_TAU),
 	countTauTaus = cms.bool(BUILD_TAU_TAU),
+	tauMVAfilter_EleTau = tauMVAfilter_EleTau_,
+	tauMVAfilter_MuonTau = tauMVAfilter_MuonTau_,
+	tauMVAfilter_TauTau = tauMVAfilter_TauTau_,
+	tauIsofilter = tauIsofilter_,
+	hlt_Filter = hlt_Filter_,	
     filter = cms.bool(True)
 	)
 

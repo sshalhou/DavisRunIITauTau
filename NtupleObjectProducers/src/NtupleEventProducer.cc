@@ -27,6 +27,7 @@ Implementation:
 #include "FWCore/Framework/interface/Event.h"
 #include "FWCore/Framework/interface/MakerMacros.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
+#include "CommonTools/Utils/interface/StringCutObjectSelector.h"
 
 // needed by ntuple Tau producer
 #include <vector>
@@ -213,6 +214,10 @@ NtupleEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
     edm::Handle<l1extra::L1JetParticleCollection> L1IsoTaus;
     iEvent.getByToken(l1extraParticlesToken_,L1IsoTaus);
 
+
+    // init some selectors 
+
+
     if(pairs.isValid()) 
     {
 
@@ -291,10 +296,10 @@ NtupleEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
             /* needed for triggers */
 
             anNtupleEvent.set_isRealData(iEvent.isRealData());
-          
+            
 
           /* push back the current pair */
-           NtupleEvents->push_back(anNtupleEvent);
+          NtupleEvents->push_back(anNtupleEvent);
         }
 
       }

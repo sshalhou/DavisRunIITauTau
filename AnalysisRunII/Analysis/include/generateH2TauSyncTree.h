@@ -33,7 +33,7 @@ see : https://twiki.cern.ch/twiki/bin/viewauth/CMS/HiggsToTauTauWorking2015#Sync
 #include <assert.h>
 #include "FlatTreeReader.h"
 #include <math.h>
-
+#include "ScaleFactor.h"
 
 class generateH2TauSyncTree
 {
@@ -315,6 +315,10 @@ private:
 	/* crystal ball (x) step function -- args can be either doubles, or pt  + std::array <double, 5>*/
 	double CBeff(double x, double m0, double sigma, double alpha, double n, double norm);
 	double CBeff(double x, std::array <double, 5>);
+
+	//////////////////////////////
+	// muon and electron Scale Factors 
+
 
 };
 

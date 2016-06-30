@@ -378,6 +378,30 @@ sampleInfo.append(aPSet)
 
 
 
+############
+aPSet = cms.PSet(   
+    DataSet = cms.string("/WJetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM"),
+    EventTotal = cms.int32(47161328),
+    NumberOfLumis = cms.int32(237748), # obtain from DAS using summary dataset command
+    EventType = cms.string("MC"), # valid EventTypes are :  MC, DATA, EMBEDDED (expand as needed)
+    KeyName = cms.string("Fall15_2HDM_WJetsToLNu"), # a unique descriptor for this sample to be used throught all parts of the code
+    DataCard = cms.string("W"), # sample classification for H2TauTau datacards 
+    CrossSection = cms.double(61526.7), # cross section in pb (include *BR if needed)
+    FilterEff = cms.double(1.0), # generator level filter effi. 
+    CodeVersion = cms.double(1.0), # allow us to track differences as ntuples and flattuples evolve
+    ProductionInfo = cms.string("Fall15MCminiAOD"), # needed for correct trigger settings
+    RecoilCorrection = cms.string("MG5_W"), # options are aMCatNLO_DY, aMCatNLO_W, MG5_DY, MG5_W, HIGGS, NONE (for mono-H, data, ttbar, single-top and diboson)
+    # for MetSystematicType use:
+    #       "NONE" for data 
+    #       "MEtSys::ProcessType::BOSON" for Z/W/Higgs
+    #       "MEtSys::ProcessType::EWK" for single top and Diboson
+    #       "MEtSys::ProcessType::TOP" for t t-bar samples
+    MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
+    KeepTheoryScaleFactors = cms.bool(False) # usually only needed for mono-H signals since H2Tau group does the rest
+                )
+sampleInfo.append(aPSet)
+############ 
+
 
 
 ###############################
