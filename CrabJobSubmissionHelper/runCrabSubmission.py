@@ -389,10 +389,10 @@ if __name__ == '__main__':
         # p.start()
         # p.join()
 
-#     print 'submitting jobs for ', len(submitCommandList), 'datasets'
-#     for com in submitCommandList:
-#         print 'issuing crab sumbit command: ', com
-#         os.system(com)
+    print 'submitting jobs for ', len(submitCommandList), 'datasets'
+    for com in submitCommandList:
+        print 'issuing crab sumbit command: ', com
+        os.system(com)
 
 
 
