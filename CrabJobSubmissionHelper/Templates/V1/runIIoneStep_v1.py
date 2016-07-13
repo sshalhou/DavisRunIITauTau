@@ -87,7 +87,7 @@ print 'default btag algoritm = ', DEFAULT_BTAG_ALGORITHM
 
 # import of standard configurations
 process.load("FWCore.MessageService.MessageLogger_cfi")
-process.MessageLogger.cerr.FwkReport.reportEvery = 1
+process.MessageLogger.cerr.FwkReport.reportEvery = 500
 
 process.load('Configuration.StandardSequences.Services_cff')
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
@@ -483,6 +483,12 @@ process.filteredVetoMuons = cms.EDFilter("PATMuonRefSelector",
 # final collections 
 ###################################
 
+from DavisRunIITauTau.FlatTupleGenerator.FlatTupleConfig_cfi import post_sync_EleTau_tauMVACuts_  as tauMVAfilter_EleTau_
+from DavisRunIITauTau.FlatTupleGenerator.FlatTupleConfig_cfi import post_sync_MuonTau_tauMVACuts_ as tauMVAfilter_MuonTau_
+from DavisRunIITauTau.FlatTupleGenerator.FlatTupleConfig_cfi import post_sync_TauTau_tauMVACuts_  as tauMVAfilter_TauTau_
+from DavisRunIITauTau.FlatTupleGenerator.FlatTupleConfig_cfi import post_sync_tauIso_ as tauIsofilter_
+from DavisRunIITauTau.FlatTupleGenerator.FlatTupleConfig_cfi import triggerSummaryChecks_ as hlt_Filter_
+
 
 process.requireCandidateHiggsPair = cms.EDFilter("HiggsCandidateCountFilter",
   	electronSources = cms.VInputTag("TrimmedFilteredCustomElectrons:TrimmedFilteredCustomElectrons:DavisNtuple",
@@ -499,6 +505,11 @@ process.requireCandidateHiggsPair = cms.EDFilter("HiggsCandidateCountFilter",
 	countMuonMuons = cms.bool(BUILD_MUON_MUON),
 	countMuonTaus = cms.bool(BUILD_MUON_TAU),
 	countTauTaus = cms.bool(BUILD_TAU_TAU),
+	tauMVAfilter_EleTau = tauMVAfilter_EleTau_,
+	tauMVAfilter_MuonTau = tauMVAfilter_MuonTau_,
+	tauMVAfilter_TauTau = tauMVAfilter_TauTau_,
+	tauIsofilter = tauIsofilter_,
+	hlt_Filter = hlt_Filter_,	
     filter = cms.bool(True)
 	)
 
@@ -884,6 +895,7 @@ process.BASELINE = cms.EDAnalyzer('FlatTupleGenerator',
 	FillEffLeptonBranches = cms.bool(BUILD_EFFICIENCY_TREE), # everywhere else it should be always False
 	RecoilCorrection = sampleData.RecoilCorrection,
 	MetSystematicType = sampleData.MetSystematicType,
+	KeepTheoryScaleFactors = sampleData.KeepTheoryScaleFactors,
 	EventCutSrc = generalConfig,
 	TauEsVariantToKeep = cms.string("NOMINAL"), # only NOMINAL, UP or DOWN are valid
 	ElectronEsVariantToKeep = cms.string("NOMINAL"), # only NOMINAL, UP or DOWN are valid
@@ -899,6 +911,7 @@ process.BASELINEupTau = cms.EDAnalyzer('FlatTupleGenerator',
 	FillEffLeptonBranches = cms.bool(False), 
 	RecoilCorrection = sampleData.RecoilCorrection,
 	MetSystematicType = sampleData.MetSystematicType,
+	KeepTheoryScaleFactors = sampleData.KeepTheoryScaleFactors,
 	EventCutSrc = generalConfig,
 	TauEsVariantToKeep = cms.string("UP"), # only NOMINAL, UP or DOWN are valid
 	ElectronEsVariantToKeep = cms.string("NOMINAL"), # only NOMINAL, UP or DOWN are valid
@@ -913,6 +926,7 @@ process.BASELINEdownTau = cms.EDAnalyzer('FlatTupleGenerator',
 	FillEffLeptonBranches = cms.bool(False),	
 	RecoilCorrection = sampleData.RecoilCorrection,
 	MetSystematicType = sampleData.MetSystematicType,
+	KeepTheoryScaleFactors = sampleData.KeepTheoryScaleFactors,
 	EventCutSrc = generalConfig,
 	TauEsVariantToKeep = cms.string("DOWN"), # only NOMINAL, UP or DOWN are valid
 	ElectronEsVariantToKeep = cms.string("NOMINAL"), # only NOMINAL, UP or DOWN are valid
@@ -927,6 +941,7 @@ process.BASELINEupElectron = cms.EDAnalyzer('FlatTupleGenerator',
 	FillEffLeptonBranches = cms.bool(False), 
 	RecoilCorrection = sampleData.RecoilCorrection,
 	MetSystematicType = sampleData.MetSystematicType,
+	KeepTheoryScaleFactors = sampleData.KeepTheoryScaleFactors,
 	EventCutSrc = generalConfig,
 	TauEsVariantToKeep = cms.string("NOMINAL"), # only NOMINAL, UP or DOWN are valid
 	ElectronEsVariantToKeep = cms.string("UP"), # only NOMINAL, UP or DOWN are valid
@@ -941,6 +956,7 @@ process.BASELINEdownElectron = cms.EDAnalyzer('FlatTupleGenerator',
 	FillEffLeptonBranches = cms.bool(False),	
 	RecoilCorrection = sampleData.RecoilCorrection,
 	MetSystematicType = sampleData.MetSystematicType,
+	KeepTheoryScaleFactors = sampleData.KeepTheoryScaleFactors,
 	EventCutSrc = generalConfig,
 	TauEsVariantToKeep = cms.string("NOMINAL"), # only NOMINAL, UP or DOWN are valid
 	ElectronEsVariantToKeep = cms.string("DOWN"), # only NOMINAL, UP or DOWN are valid
@@ -957,6 +973,7 @@ process.LOWDELTAR = cms.EDAnalyzer('FlatTupleGenerator',
 	FillEffLeptonBranches = cms.bool(False),	
 	RecoilCorrection = sampleData.RecoilCorrection,
 	MetSystematicType = sampleData.MetSystematicType,
+	KeepTheoryScaleFactors = sampleData.KeepTheoryScaleFactors,
 	EventCutSrc = generalConfig,
 	TauEsVariantToKeep = cms.string("NOMINAL"), # only NOMINAL, UP or DOWN are valid
 	ElectronEsVariantToKeep = cms.string("NOMINAL"), # only NOMINAL, UP or DOWN are valid
@@ -972,6 +989,7 @@ process.LOWDELTARupTau = cms.EDAnalyzer('FlatTupleGenerator',
 	FillEffLeptonBranches = cms.bool(False),	
 	RecoilCorrection = sampleData.RecoilCorrection,
 	MetSystematicType = sampleData.MetSystematicType,
+	KeepTheoryScaleFactors = sampleData.KeepTheoryScaleFactors,
 	EventCutSrc = generalConfig,
 	TauEsVariantToKeep = cms.string("UP"), # only NOMINAL, UP or DOWN are valid
 	ElectronEsVariantToKeep = cms.string("NOMINAL"), # only NOMINAL, UP or DOWN are valid
@@ -986,6 +1004,7 @@ process.LOWDELTARdownTau = cms.EDAnalyzer('FlatTupleGenerator',
 	FillEffLeptonBranches = cms.bool(False),	
 	RecoilCorrection = sampleData.RecoilCorrection,
 	MetSystematicType = sampleData.MetSystematicType,
+	KeepTheoryScaleFactors = sampleData.KeepTheoryScaleFactors,
 	EventCutSrc = generalConfig,
 	TauEsVariantToKeep = cms.string("DOWN"), # only NOMINAL, UP or DOWN are valid
 	ElectronEsVariantToKeep = cms.string("NOMINAL"), # only NOMINAL, UP or DOWN are valid
@@ -1001,6 +1020,7 @@ process.LOWDELTARupElectron = cms.EDAnalyzer('FlatTupleGenerator',
 	FillEffLeptonBranches = cms.bool(False),	
 	RecoilCorrection = sampleData.RecoilCorrection,
 	MetSystematicType = sampleData.MetSystematicType,
+	KeepTheoryScaleFactors = sampleData.KeepTheoryScaleFactors,
 	EventCutSrc = generalConfig,
 	TauEsVariantToKeep = cms.string("NOMINAL"), # only NOMINAL, UP or DOWN are valid
 	ElectronEsVariantToKeep = cms.string("UP"), # only NOMINAL, UP or DOWN are valid
@@ -1015,6 +1035,7 @@ process.LOWDELTARdownElectron = cms.EDAnalyzer('FlatTupleGenerator',
 	FillEffLeptonBranches = cms.bool(False),	
 	RecoilCorrection = sampleData.RecoilCorrection,
 	MetSystematicType = sampleData.MetSystematicType,
+	KeepTheoryScaleFactors = sampleData.KeepTheoryScaleFactors,
 	EventCutSrc = generalConfig,
 	TauEsVariantToKeep = cms.string("NOMINAL"), # only NOMINAL, UP or DOWN are valid
 	ElectronEsVariantToKeep = cms.string("DOWN"), # only NOMINAL, UP or DOWN are valid

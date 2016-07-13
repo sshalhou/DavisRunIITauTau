@@ -33,10 +33,10 @@ def DeleteCMSTypes(arg, type):
 # define a few variables here
 ###############################
 
-MC_EVENTS_PER_JOB = 2500 # used for MC only
-MAX_JOBS_PER_TASK = 8000 # true crab limit is 10,000 we should be below this
+MC_EVENTS_PER_JOB = 9500 # used for MC only
+MAX_JOBS_PER_TASK = 9500 # true crab limit is 10,000 we should be below this
 DATA_UNITS_PER_JOB = 150
-DATA_LUMI_MASK = 'https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions15/13TeV/Cert_246908-260627_13TeV_PromptReco_Collisions15_25ns_JSON.txt'
+DATA_LUMI_MASK = 'https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions15/13TeV/Cert_246908-260627_13TeV_PromptReco_Collisions15_25ns_JSON_v2.txt'
 
 
 ############################
@@ -156,15 +156,17 @@ for line in fileinput.input(str(args.dataSetList[0])):
     # tempConfigName = crabJobLocation+"/"+requestName+".py"
 
     version = DeleteCMSTypes(sampleData.getParameter("CodeVersion"), str).replace('.','_')  
-    requestName = DeleteCMSTypes(sampleData.getParameter("KeyName"), str)+"_version_"+version
+    requestName = DeleteCMSTypes(sampleData.getParameter("KeyName"), str)+"_v"+version
     EventTotal = DeleteCMSTypes(sampleData.getParameter("EventTotal"), int)
     NumberOfLumis = DeleteCMSTypes(sampleData.getParameter("NumberOfLumis"), int)
+    MaxLumi = DeleteCMSTypes(sampleData.getParameter("MaxLumiBlock"), int)
     tempConfigName = crabJobLocation+"/"+requestName+".py"
 
     print 'version = ', version
     print 'requestName = ', requestName
     print 'EventTotal = ', EventTotal
     print 'NumberOfLumis = ', NumberOfLumis
+    print 'MaxLumi =', MaxLumi
     print 'tempConfigName = ', tempConfigName
 
 
@@ -177,7 +179,7 @@ for line in fileinput.input(str(args.dataSetList[0])):
 
     os.system(sed_command)
   
-    sampleNames.append([str(line.strip()), requestName, tempConfigName, EventTotal, NumberOfLumis])
+    sampleNames.append([str(line.strip()), requestName, tempConfigName, EventTotal, NumberOfLumis, MaxLumi])
 
 
 # ################################
@@ -320,6 +322,17 @@ if __name__ == '__main__':
                 print '------> would require > ', (requestedJobs), ' jobs which is too high, will split into '
                 print '------> ',(requestedTasks), ' tasks instead'
                 print '------> sample has ', samp[4], 'LuminosityBlocks to be used for splitting ...'
+                print '------> the max lumi block is # ', samp[5], '....'
+
+                last_lumi = samp[5]
+
+                if last_lumi < samp[4] :
+                    print "+++++++++++++++++++++++++++++++++++ FAIL FAIL FAIL ---> ABORT SUBMISSION FOR "
+                    print "+++++++++++++++++++++++++++++++++++ ", samp
+                    print "+++++++++++++++++++++++++++++++++++ MAX LUMI BLOCK # is LESS THAN Total Count of Lumi Blocks"
+                    print " setting max lumi block to 100 x Total lumi block count "
+                    last_lumi = 100 *  samp[4]
+
 
                 print "################# -- setting (split) MC job as follows : -- ##################################"   
                 print "################# ", samp[1], " #################"
@@ -334,7 +347,7 @@ if __name__ == '__main__':
                         start_ = end_ + 1
 
                     if s == int(requestedTasks):
-                        end_ = samp[4]     
+                        end_ = last_lumi     
 
                     else :
                         end_ = start_ + math.ceil(samp[4]/requestedTasks)
@@ -345,9 +358,9 @@ if __name__ == '__main__':
                     config.Data.unitsPerJob = MC_EVENTS_PER_JOB
 
                     jsonLine_ = '{\"1\": [[' + str(int(start_))+', '+str(int(end_))+']]}'  
-                    cragConfigPYfile = crabJobLocation + '/crabConfig_' + samp[1]+"_lumiSplit_"+str(int(start_))+"_"+str(int(end_))+".py"
-                    lumiSplitJSON_   = crabJobLocation + '/JSON_' + samp[1]+"_lumiSplit_"+str(int(start_))+"_"+str(int(end_))+".txt"
-                    config.General.requestName = samp[1] + "_lumiSplit_"+str(int(start_))+"_"+str(int(end_))
+                    cragConfigPYfile = crabJobLocation + '/crabConfig_' + samp[1]+"_"+str(int(start_))+"_"+str(int(end_))+".py"
+                    lumiSplitJSON_   = crabJobLocation + '/JSON_' + samp[1]+"_"+str(int(start_))+"_"+str(int(end_))+".txt"
+                    config.General.requestName = samp[1] + "_"+str(int(start_))+"_"+str(int(end_))
                     config.Data.lumiMask = lumiSplitJSON_
 
                     li = open(lumiSplitJSON_,'w')

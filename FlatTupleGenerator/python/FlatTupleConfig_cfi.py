@@ -22,12 +22,19 @@ if SmallTree_ is True :
 	print "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
 
 
-
 ###################################################
 # do we want to build low DR FlatTuples as well?  #
 ###################################################
 
 BUILD_LOWDR = False
+
+
+#########################################################
+# do we want to apply post-sync/baseline iso and anti-e/anti-mu ?
+# cuts on the hadronically decaying tau legs?
+#########################################################
+
+APPLY_POST_SYNC_TAU_CUTS = True # default true unless you want to check sync 
 
 ##########################################
 # set up SVMass  @ FlatTuple level	     #
@@ -287,6 +294,41 @@ cut_muon_DiMuonVeto =  cms.string(and_string_concatonator(muon_DiMuonVeto))
 cut_ele_EleEle = cms.string(and_string_concatonator(ele_EleEle))
 cut_muon_MuonMuon = cms.string(and_string_concatonator(muon_MuonMuon))
 
+
+#################################
+# post-sync baseline tau ID cuts
+# these need to be loose enough for all channels + QCD and W anti-iso 
+# background methods
+
+
+post_sync_tauIso_ = cms.string('1==1')
+post_sync_EleTau_tauMVACuts_ = cms.string('1==1')
+post_sync_MuonTau_tauMVACuts_ = cms.string('1==1')
+post_sync_TauTau_tauMVACuts_ = cms.string('1==1')
+
+##################################################################
+# turn them into real cuts if APPLY_POST_SYNC_TAU_CUTS
+
+if APPLY_POST_SYNC_TAU_CUTS is True :
+	post_sync_tauIso_ = cms.string('(tauID("byTightIsolationMVArun2v1DBoldDMwLT") > 0.5 || tauID("byVTightIsolationMVArun2v1DBoldDMwLT") > 0.5 || tauID("byLooseIsolationMVArun2v1DBoldDMwLT") > 0.5 || tauID("byMediumIsolationMVArun2v1DBoldDMwLT") > 0.5 || tauID("byVLooseIsolationMVArun2v1DBoldDMwLT") > 0.5 || tauID("byVVTightIsolationMVArun2v1DBoldDMwLT") > 0.5)')
+	post_sync_EleTau_tauMVACuts_ = cms.string("(tauID('againstElectronTightMVA6')> 0.5 && tauID('againstMuonLoose3')>0.5)")
+	post_sync_MuonTau_tauMVACuts_ = cms.string("(tauID('againstElectronVLooseMVA6')> 0.5 && tauID('againstMuonTight3')>0.5)")
+	post_sync_TauTau_tauMVACuts_ = cms.string("(tauID('againstElectronVLooseMVA6')> 0.5 && tauID('againstMuonLoose3')>0.5)")
+
+
+	print '++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++'
+	print '++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++'
+	print '++ WARNING -- applying post sync/baseline tau iso and mva cuts'
+	print '++ sync ntuples will not compare well to other groups !!! '
+	print '++ make sure these cuts are loose enough for all analysis cuts + bkg methods'
+	print '++ change in FlatTupleConfig_cfi.py ...'
+	print '++', post_sync_tauIso_
+	print '+++++++++++'
+	print '++ in channel EleTau will require tau leg to pass', post_sync_EleTau_tauMVACuts_
+	print '++ in channel MuonTau will require tau leg to pass', post_sync_MuonTau_tauMVACuts_
+	print '++ in channel TauTau will require tau legs to pass', post_sync_TauTau_tauMVACuts_
+	print '++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++'
+	print '++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++'
 
 
 
@@ -595,7 +637,37 @@ lowDeltaRCuts = cms.VPSet(
 				)
 	)
 
+############################################################
+# check isLeg1GoodForHLTPath_Labels, isLeg2GoodForHLTPath_Labels
+# for the following trigger paths (only a summary, need more functions to access new triggers)
+# not requested in FlatTupleConfif_cfi.py summary variables
+# note : the hardcoded THE_MAX variable in FlatTupleGenerator.cc limits the 
+# number of these that we can keep 
+# be sure to include the _v1, _v2 etc. version suffix as v* 
+# also make sure none are repeats 
+
+
+triggerSummaryChecks_ = cms.vstring(
+	"HLT_Mu17_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v*",
+	"HLT_Mu8_TrkIsoVVL_Ele17_CaloIdL_TrackIdL_IsoVL_v*",
+	"HLT_IsoMu18_v*",
+	"HLT_Ele23_WPLoose_Gsf_v*",
+	"HLT_DoubleMediumIsoPFTau35_Trk1_eta2p1_Reg_v*"				
+	)
+############################################################
+
 from DavisRunIITauTau.TupleConfigurations.ConfigNtupleContent_cfi import BUILD_EFFICIENCY_TREE as BuildEffTree_
+from DavisRunIITauTau.TupleConfigurations.ConfigNtupleContent_cfi import BUILD_ELECTRON_ELECTRON as BuildEleEle_
+from DavisRunIITauTau.TupleConfigurations.ConfigNtupleContent_cfi import BUILD_ELECTRON_MUON as BuildEleMuon_
+from DavisRunIITauTau.TupleConfigurations.ConfigNtupleContent_cfi import BUILD_ELECTRON_TAU as BuildEleTau_
+from DavisRunIITauTau.TupleConfigurations.ConfigNtupleContent_cfi import BUILD_MUON_MUON as BuildMuonMuon_
+from DavisRunIITauTau.TupleConfigurations.ConfigNtupleContent_cfi import BUILD_MUON_TAU as BuildMuonTau_
+from DavisRunIITauTau.TupleConfigurations.ConfigNtupleContent_cfi import BUILD_TAU_TAU as BuildTauTau_
+
+
+
+
+
 
 # config for basic settings 
 generalConfig = cms.PSet(
@@ -618,7 +690,17 @@ generalConfig = cms.PSet(
 
 			SmallTree = cms.bool(SmallTree_),
 			BuildEffTree = cms.bool(BuildEffTree_), # if false no effLep info will be in FlatTuple
+			
+			#######################################
+			# pair types to keep or reject (set in ConfigNtupleContent_cfi.py)
+			BuildEleEle = cms.bool(BuildEleEle_),
+			BuildEleMuon = cms.bool(BuildEleMuon_),
+			BuildEleTau = cms.bool(BuildEleTau_),
+			BuildMuonMuon = cms.bool(BuildMuonMuon_),
+			BuildMuonTau = cms.bool(BuildMuonTau_),
+			BuildTauTau = cms.bool(BuildTauTau_),			
 
+		
 			#######################################
 			# in 76X have a new complication :
 			# for DeltaBeta (ex: byCombinedIsolationDeltaBetaCorrRaw3Hits)  smaller value = more isolated
@@ -664,13 +746,7 @@ generalConfig = cms.PSet(
 			# also make sure none are repeats 
 
 
-			triggerSummaryChecks = cms.vstring(
-				"HLT_Mu17_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v*",
-				"HLT_Mu8_TrkIsoVVL_Ele17_CaloIdL_TrackIdL_IsoVL_v*",
-				"HLT_IsoMu18_v*",
-				"HLT_Ele23_WPLoose_Gsf_v*",
-				"HLT_DoubleMediumIsoPFTau35_Trk1_eta2p1_Reg_v*"				
-				),
+			triggerSummaryChecks = triggerSummaryChecks_,
 
 
 
@@ -679,19 +755,6 @@ generalConfig = cms.PSet(
 			# number of these that we can keep 
 
 			tauIDsToKeep = cms.vstring(				
-				"againstElectronLooseMVA6",	
-				"againstElectronMediumMVA6",
-				"againstElectronVTightMVA6",
-				"byIsolationMVA3oldDMwLTraw",
-				"chargedIsoPtSum",
-				"neutralIsoPtSum",
-				"puCorrPtSum",
-				"againstElectronTightMVA5",
-				"againstElectronTightMVA6",
-				"againstElectronVLooseMVA5",
-				"againstElectronVLooseMVA6",
-				"againstMuonLoose3",
-				"againstMuonTight3",
 				"byIsolationMVArun2v1DBoldDMwLTraw",
 				"byTightIsolationMVArun2v1DBoldDMwLT",
 				"byVTightIsolationMVArun2v1DBoldDMwLT",
@@ -699,16 +762,32 @@ generalConfig = cms.PSet(
 				"byMediumIsolationMVArun2v1DBoldDMwLT",
 				"byVLooseIsolationMVArun2v1DBoldDMwLT",
 				"byVVTightIsolationMVArun2v1DBoldDMwLT",
+
+				"againstElectronVLooseMVA6",
+				"againstMuonTight3",
+				"againstElectronTightMVA6",
+				"againstMuonLoose3",
+				"decayModeFinding",
+
+
+				#"againstElectronLooseMVA6",	
+				#"againstElectronMediumMVA6",
+				#"againstElectronVTightMVA6",
+				"byIsolationMVA3oldDMwLTraw",
+				#"chargedIsoPtSum",
+				#"neutralIsoPtSum",
+				#"puCorrPtSum",
+				#"againstElectronTightMVA5",
+				#"againstElectronVLooseMVA5",
 				"byCombinedIsolationDeltaBetaCorrRaw3Hits",
 				"byIsolationMVArun2v1DBnewDMwLTraw",
-				"byTightIsolationMVArun2v1DBnewDMwLT",
-				"byVTightIsolationMVArun2v1DBnewDMwLT",
-				"byLooseIsolationMVArun2v1DBnewDMwLT",
-				"byMediumIsolationMVArun2v1DBnewDMwLT",
-				"byVLooseIsolationMVArun2v1DBnewDMwLT",
-				"byVVTightIsolationMVArun2v1DBnewDMwLT",
-				"byIsolationMVA3newDMwLTraw",
-				"decayModeFinding",
+				#"byTightIsolationMVArun2v1DBnewDMwLT",
+				#"byVTightIsolationMVArun2v1DBnewDMwLT",
+				#"byLooseIsolationMVArun2v1DBnewDMwLT",
+				#"byMediumIsolationMVArun2v1DBnewDMwLT",
+				#"byVLooseIsolationMVArun2v1DBnewDMwLT",
+				#"byVVTightIsolationMVArun2v1DBnewDMwLT",
+				#"byIsolationMVA3newDMwLTraw",
 				"decayModeFindingNewDMs"
 # bad				"decayModeFindingOldDMs"
 					),

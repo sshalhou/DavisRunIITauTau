@@ -193,6 +193,7 @@ public:
 	bool FillEffLeptonBranches_; /* we only want eff leptons under regular tau ES, basic selection */
 	std::string RECOILCORRECTION_; // type of recoil correction, pulled from sample meta data config file
 	std::string MetSystematicType_; // the type of mva met sys. pulled from sample meta data 
+	bool KeepTheoryScaleFactors_; // should we fill the theory scale factors vector
 	edm::ParameterSet EventCutSrc_;
 	std::string TauEsVariantToKeep_;  // should be NOMINAL, UP or DOWN
 	std::string ElectronEsVariantToKeep_;  // should be NOMINAL, UP or DOWN
@@ -218,6 +219,14 @@ public:
 
 	bool SmallTree_;
 	bool BuildEffTree_;
+	bool BuildEleEle_;
+	bool BuildEleMuon_;
+	bool BuildEleTau_;
+	bool BuildMuonMuon_;
+	bool BuildMuonTau_;
+	bool BuildTauTau_;
+
+
 	std::vector<std::string> tauIDsToKeep;
 	std::vector<std::string> triggerSummaryChecks;
 	bool keepOnlyBestRankedPair;
@@ -275,9 +284,6 @@ public:
 	std::string diEleVeto;
 	std::string diMuonVeto;
 	double diLeptonMinDR;
-
-
-
 
 	/* the lepton cut helper object */
 	LeptonFlatTupleCutHelper LeptonCutHelper;
@@ -940,7 +946,6 @@ public:
     std::vector<float> theory_scale_factors;
 
 };  
-
 
 //define this as a plug-in
 DEFINE_FWK_MODULE(FlatTupleGenerator);
