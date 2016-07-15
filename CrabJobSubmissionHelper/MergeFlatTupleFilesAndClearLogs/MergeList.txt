@@ -1,0 +1,29 @@
+# lines should be 3 columns:
+# 1st column /eos/uscms/store path
+# 2nd column max number of files to merge int one root file
+# 3rd column TTree used to vaildate event counts with 
+# 4th 1 if you wish to delete originals & log files on EOS, 0 if not
+
+#/eos/uscms/store/user/shalhout/SingleElectron/trigFilter_fall15_76Xsmall 40 Cumulative/CumulativeTuple 1
+#/eos/uscms/store/user/shalhout/SingleMuon/trigFilter_fall15_76Xsmall 40 Cumulative/CumulativeTuple 1
+#/eos/uscms/store/user/shalhout/Tau/trigFilter_fall15_76Xsmall 40 Cumulative/CumulativeTuple 1
+#/eos/uscms/store/user/shalhout/MuonEG/trigFilter_fall15_76Xsmall 40 Cumulative/CumulativeTuple 1
+#/eos/uscms/store/user/shalhout/W1JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/trigFilter_fall15_76Xsmall 75 Cumulative/CumulativeTuple 1
+#/eos/uscms/store/user/shalhout/W2JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/trigFilter_fall15_76Xsmall 75 Cumulative/CumulativeTuple 1
+#/eos/uscms/store/user/shalhout/W3JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/trigFilter_fall15_76Xsmall 75 Cumulative/CumulativeTuple 1
+#/eos/uscms/store/user/shalhout/W4JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/trigFilter_fall15_76Xsmall 75 Cumulative/CumulativeTuple 1
+#/eos/uscms/store/user/shalhout/WJetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/trigFilter_fall15_76Xsmall 75 Cumulative/CumulativeTuple 1
+/eos/uscms/store/user/shalhout/TT_TuneCUETP8M1_13TeV-powheg-pythia8/trigFilter_fall15_76Xsmall 75 Cumulative/CumulativeTuple 1
+/eos/uscms/store/user/shalhout/TT_TuneCUETP8M1_13TeV-powheg-pythia8/trigFilter_fall15_76Xsmall_recover 75 Cumulative/CumulativeTuple 1
+/eos/uscms/store/user/shalhout/ZZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythia8/trigFilter_fall15_76Xsmall 75 Cumulative/CumulativeTuple 1
+/eos/uscms/store/user/shalhout/ZZTo4L_13TeV-amcatnloFXFX-pythia8/trigFilter_fall15_76Xsmall 75 Cumulative/CumulativeTuple 1
+/eos/uscms/store/user/shalhout/WZTo1L3Nu_13TeV_amcatnloFXFX_madspin_pythia8/trigFilter_fall15_76Xsmall 75 Cumulative/CumulativeTuple 1
+/eos/uscms/store/user/shalhout/WZJToLLLNu_TuneCUETP8M1_13TeV-amcnlo-pythia8/trigFilter_fall15_76Xsmall 75 Cumulative/CumulativeTuple 1
+/eos/uscms/store/user/shalhout/WWTo1L1Nu2Q_13TeV_amcatnloFXFX_madspin_pythia8/trigFilter_fall15_76Xsmall 75 Cumulative/CumulativeTuple 1
+/eos/uscms/store/user/shalhout/WZTo1L1Nu2Q_13TeV_amcatnloFXFX_madspin_pythia8/trigFilter_fall15_76Xsmall 75 Cumulative/CumulativeTuple 1
+/eos/uscms/store/user/shalhout/VVTo2L2Nu_13TeV_amcatnloFXFX_madspin_pythia8/trigFilter_fall15_76Xsmall 75 Cumulative/CumulativeTuple 1
+/eos/uscms/store/user/shalhout/WZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythia8/trigFilter_fall15_76Xsmall 75 Cumulative/CumulativeTuple 1
+/eos/uscms/store/user/shalhout/ST_tW_top_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M1/trigFilter_fall15_76Xsmall 75 Cumulative/CumulativeTuple 1
+/eos/uscms/store/user/shalhout/ST_tW_antitop_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M1/trigFilter_fall15_76Xsmall 75 Cumulative/CumulativeTuple 1
+/eos/uscms/store/user/shalhout/ST_t-channel_top_4f_leptonDecays_13TeV-powheg-pythia8_TuneCUETP8M1/trigFilter_fall15_76Xsmall 75 Cumulative/CumulativeTuple 1
+/eos/uscms/store/user/shalhout/ST_t-channel_antitop_4f_leptonDecays_13TeV-powheg-pythia8_TuneCUETP8M1/trigFilter_fall15_76Xsmall 75 Cumulative/CumulativeTuple 1
