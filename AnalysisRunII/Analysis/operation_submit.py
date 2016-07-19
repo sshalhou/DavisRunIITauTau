@@ -68,9 +68,9 @@ def editCondorConfig(List):
       line = 'Initialdir = ' + List[4] + '\n'
     if 'Place Input' in line:
       if '.root' in List[2]:
-        line = 'transfer_input_files = ' + List[2] + ',' + os.getcwd() + '/supportFiles/pDistPlots.root,' + os.getcwd() + '/supportFiles/dRvP_singleSample2.root' + '\n'
+        line = 'transfer_input_files = ' + List[2] + ',' + os.getcwd() + '/supportFiles/pDistPlots.root'+ '\n'
       else:
-        line = 'transfer_input_files = ' + txtFileBlockFinal[0] + ',' + os.getcwd() + '/supportFiles/pDistPlots.root,' + os.getcwd() + '/supportFiles/dRvP_singleSample2.root' + '\n'
+        line = 'transfer_input_files = ' + txtFileBlockFinal[0] + ',' + os.getcwd() + '/supportFiles/pDistPlots.root' + '\n'
     condorConfigFileUse.write(line)
   condorConfigFileUse.close()
   condorConfigFileTmp.close()
