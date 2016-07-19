@@ -77,4 +77,5 @@ for i in range (0,len(bkgDirLists)):
     subprocess.call("python operation_submit.py -c -t \"BASELINE/FlatTuple,BASELINEupTau/FlatTuple,BASELINEdownTau/FlatTuple,BASELINEupElectron/FlatTuple,BASELINEdownElectron/FlatTuple\" -i " + str(fileListName) + ".txt" + " -o generateH2TauSyncTree -d " + str(fullDirName) + '\n', shell = True)
     subprocess.call('mv ' + fileListName + '.txt' + ' ' + storageDirName, shell = True)
 
-#subprocess.call('rm *c_*', shell = True)
+time.sleep(3)
+subprocess.call('rm c_*', shell = True)
