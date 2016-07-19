@@ -33,7 +33,7 @@ see : https://twiki.cern.ch/twiki/bin/viewauth/CMS/HiggsToTauTauWorking2015#Sync
 #include <assert.h>
 #include "FlatTreeReader.h"
 #include <math.h>
-#include "ScaleFactor.h"
+//#include "ScaleFactor.h"
 
 class generateH2TauSyncTree
 {
@@ -55,6 +55,7 @@ public:
 	std::vector<double> GetLeg1Leg2McTriggerWeights(TLorentzVector,TLorentzVector,int,int); 
 
 private:
+
 	FlatTreeReader R;
 	bool m_run; /* did we want to run this operation? */ 
 	void setupBranches(TTree*);
@@ -66,8 +67,24 @@ private:
 	int num_tt;
 	int num_mt;
 
+    //referenced for LPT
+    TFile* inFile = new TFile("pDistPlots.root","READ");
+    TH1F *eHistoFrac = (TH1F*)inFile->Get("/demo/eVisFrac");
+    TH1F *muHistoFrac = (TH1F*)inFile->Get("/demo/muVisFrac");
+    TH1F *h1p0sHistoFrac = (TH1F*)inFile->Get("/demo/h1p0sVisFrac");
+    TH1F *h1p1sHistoFrac = (TH1F*)inFile->Get("/demo/h1p1sVisFrac");
+    TH1F *h3p0sHistoFrac = (TH1F*)inFile->Get("/demo/h3p0sVisFrac");
 
-	// elements of the TTree 
+	// elements of the TTree
+    
+    /* tMVA flag */
+    
+    bool flat_MVAEventType;
+    
+    /* theory event weights */
+    
+    float originalXWGTUP;
+    std::vector < float > theory_scale_factors;
 
 	/* davis specific */
 
@@ -251,6 +268,41 @@ private:
 	double brawf_2;
 	double bmva_2;
 	float bcsv_2;
+    
+    //MVA variables
+    
+    double LPT;
+    double P_chi;
+    double M_min;
+    
+    //used in calculation
+    
+    double visFrac1;
+    double visFrac1Prob;
+    double visFrac2;
+    double visFrac2Prob;
+    double currentFracProb;
+    double bestFracProb;
+    double bestP;
+    
+    double ME_T;
+    double ME_T_phi;
+    double p_lt;
+    double eta_l;
+    double phi_l;
+    double p_Taut;
+    double eta_Tau;
+    double phi_Tau;
+    double M_l;
+
+    double p_lx;
+    double p_ly;
+    double p_lz;
+    double E_l;
+
+    double p_vx;
+    double p_vy;
+    double E_v;
 
 	// extra vetoes
 
