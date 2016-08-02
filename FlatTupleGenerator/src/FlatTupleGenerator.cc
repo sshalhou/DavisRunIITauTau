@@ -2744,6 +2744,9 @@ void FlatTupleGenerator::handlePairIndepInfo(const edm::Event& iEvent, const edm
   genParticle_isLastCopy = genhelper.genParticle_isLastCopy();
 
 
+  isZEEatGenLevel = genhelper.isZXXatGenLevel(currentINDEP.genParticles(),11);
+  isZMMatGenLevel = genhelper.isZXXatGenLevel(currentINDEP.genParticles(),13);
+  isZTTatGenLevel = genhelper.isZXXatGenLevel(currentINDEP.genParticles(),15);
 
 
   genParticle_pt = genhelper.genParticle_pt();
@@ -3526,6 +3529,10 @@ void FlatTupleGenerator::handlePairIndepInfo(const edm::Event& iEvent, const edm
   genBosonVisible_phi = NAN;
   genBosonVisible_M = NAN;
 
+  isZTTatGenLevel = 0;
+  isZEEatGenLevel = 0;
+  isZMMatGenLevel = 0;
+
 
   genTopPt1 = NAN;
   genTopPt2 = NAN;
@@ -4140,6 +4147,11 @@ void FlatTupleGenerator::beginJob()
   FlatTuple->Branch("genBosonVisible_eta", &genBosonVisible_eta); 
   FlatTuple->Branch("genBosonVisible_phi", &genBosonVisible_phi); 
   FlatTuple->Branch("genBosonVisible_M", &genBosonVisible_M); 
+
+  FlatTuple->Branch("isZTTatGenLevel", &isZTTatGenLevel);
+  FlatTuple->Branch("isZEEatGenLevel", &isZEEatGenLevel);
+  FlatTuple->Branch("isZMMatGenLevel", &isZMMatGenLevel);
+
 
   FlatTuple->Branch("genTopPt1",&genTopPt1);
   FlatTuple->Branch("genTopPt2",&genTopPt2);

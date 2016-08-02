@@ -937,6 +937,13 @@ public:
     double genBosonTotal_pt, genBosonTotal_eta, genBosonTotal_phi, genBosonTotal_M; 	    /* the gen total 4-vector of W/Z/H */
 	double genBosonVisible_pt, genBosonVisible_eta, genBosonVisible_phi, genBosonVisible_M; /* the gen visible 4-vector of W/Z/H */
 
+    /* for DY at gen level how does the Z decay ? */
+
+    bool isZTTatGenLevel;
+    bool isZEEatGenLevel;
+    bool isZMMatGenLevel;
+
+
     /* gen level top pt -- in RunII don't care which is which as the rewight is symmetric */
     double genTopPt1;
     double genTopPt2;
