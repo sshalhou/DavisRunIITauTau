@@ -66,16 +66,40 @@ for dir_ in dirFile_:
 	SUB_DIRS = []
 	split_dir_ = str(dir_).split(" ")
 	
+	if split_dir_[0].startswith("/eos/uscms"):
+		split_dir_[0] = split_dir_[0][len("/eos/uscms"):]
+	
+
+
+
 	#####################################
 	# search and find all subdirectories -- this assumes the usual CRAB job output dir structure 
 	#####################################
 
-	for name in os.listdir(split_dir_[0]):
-		#print "... checking subdir .... ", name
+
+	dirListtRaw = os.popen("eos root://cmseos.fnal.gov ls "+split_dir_[0]).read()
+	dirListt = dirListtRaw.split("\n")
+	print dirListt
+
+
+	for name in dirListt:
+		if name == '':
+			continue
+		print "... checking subdir .... ", name
 		subDir = split_dir_[0] + "/" + name
-		for subSubDir in os.listdir(subDir):
-			#print "... ... checking sub-subdir .... ", subSubDir
+
+		SUBdirListtRaw = os.popen("eos root://cmseos.fnal.gov ls "+subDir).read()
+		SUBdirListt = SUBdirListtRaw.split("\n")
+		print SUBdirListt
+
+
+		for subSubDir in SUBdirListt:
+			if subSubDir == "":
+				continue
+			print "... ... checking sub-subdir .... ", subSubDir
 			SUB_DIRS.append(subDir+"/"+subSubDir)
+
+		print SUB_DIRS
 
 	#####################################
 	# loop over sub-dirs and find ROOT FILES
@@ -83,8 +107,14 @@ for dir_ in dirFile_:
 
 	for d in range(0,len(SUB_DIRS)):
 		print "... ... ... Searching for ROOT files in \n ---------- ", SUB_DIRS[d]
+	
+		formatt_fix = SUB_DIRS[d]	
+		if formatt_fix.startswith("/eos/uscms"):
+			formatt_fix = SUB_DIRS[d][len("/eos/uscms"):]
+	
+		print " format fix = ", formatt_fix
 		# check which xrdfsls command as xrdfsls is an alias  
-		command = 'xrdfs root://cmseos.fnal.gov ls -u ' + SUB_DIRS[d] + ' | grep FlatTuple | grep root | grep -v merged | grep -v failed | grep -v log '
+		command = 'xrdfs root://cmseos.fnal.gov ls -u ' + formatt_fix + ' | grep FlatTuple | grep root | grep -v merged | grep -v failed | grep -v log '
 		fileListRaw = os.popen(command).read()
 		fileList = fileListRaw.split("\n")
 		if fileList[len(fileList)-1] == '':
@@ -205,7 +235,7 @@ for dir_ in dirFile_:
 					copyCommand = "xrdcp "+ xfile + " " +eos_file
 					print " copying merged file to EOS : ", copyCommand
 					os.system(copyCommand)
-					eos_total = ("/eos/"+eos_file.split("eos")[1])
+					eos_total = ("/eos/uscms/store"+eos_file.split("store")[1])
 					eos_base =  eos_total.split("FlatTuple")[0]
 					eos_file = 	eos_total.split("FlatTuple")[1]
 					md5sum_eos.append((os.popen(str("md5sum "+eos_total)).read()).split(" ")[0])
