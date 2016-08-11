@@ -1,7 +1,7 @@
 ################################
 # script for hadd based merging + EOS output area cleanup
 # given a text file containing lines 
-# /eos/uscms/store/user/shalhout/X/Y N TTreeName clean
+# /store/user/shalhout/X/Y N TTreeName clean
 # where X = DataSet
 # where Y = outputDatasetTag from the runCrabSubmission.py script
 # where N = number of files to merge together to produce a new file (ex 200)
@@ -29,7 +29,7 @@ def splitList(list, mergeCount):
 parser = argparse.ArgumentParser()
 
 parser.add_argument('--DIR_FILE', type=str, nargs=1, required=True, 
-                   help='ex: --DIR_FILE file.txt where file.txt contains lines like: /eos/uscms/store/user/shalhout/X/Y 200 Cumulative/CumulativeTuple 1 ')
+                   help='ex: --DIR_FILE file.txt where file.txt contains lines like: /store/user/shalhout/X/Y 200 Cumulative/CumulativeTuple 1 ')
 
 
 
@@ -79,7 +79,7 @@ for dir_ in dirFile_:
 
 	dirListtRaw = os.popen("eos root://cmseos.fnal.gov ls "+split_dir_[0]).read()
 	dirListt = dirListtRaw.split("\n")
-	print dirListt
+	#print dirListt
 
 
 	for name in dirListt:
@@ -90,7 +90,7 @@ for dir_ in dirFile_:
 
 		SUBdirListtRaw = os.popen("eos root://cmseos.fnal.gov ls "+subDir).read()
 		SUBdirListt = SUBdirListtRaw.split("\n")
-		print SUBdirListt
+		#print SUBdirListt
 
 
 		for subSubDir in SUBdirListt:
@@ -99,7 +99,7 @@ for dir_ in dirFile_:
 			print "... ... checking sub-subdir .... ", subSubDir
 			SUB_DIRS.append(subDir+"/"+subSubDir)
 
-		print SUB_DIRS
+		#print SUB_DIRS
 
 	#####################################
 	# loop over sub-dirs and find ROOT FILES
@@ -223,28 +223,33 @@ for dir_ in dirFile_:
 
 
 			####################################################	
-			#  obtain md5sum in prep for writing file to EOS   	 
+			#  obtain checksum in prep for writing file to EOS   	 
 
 			else :
-				md5sum_local = []
-				md5sum_eos = []
+				checksum_local = ""
+				checksum_eos = ""
 				for xfile in produced_files:
-					command = "md5sum "+xfile
-					md5sum_local.append((os.popen(command).read()).split(" ")[0])
+					command = "adler32 "+xfile
+					print command
+					checksum_local = ((os.popen(command).read()).split(" ")[0]).replace(" ","").replace("\n","")
 					eos_file = (master_split_list[m][0]).split("FlatTuple")[0]+xfile.split("/")[2]
-					copyCommand = "xrdcp "+ xfile + " " +eos_file
+					copyCommand = "xrdcp "+ xfile + " " +eos_file										
 					print " copying merged file to EOS : ", copyCommand
 					os.system(copyCommand)
-					eos_total = ("/eos/uscms/store"+eos_file.split("store")[1])
+					eos_total = ("/store"+eos_file.split("store")[1])
 					eos_base =  eos_total.split("FlatTuple")[0]
 					eos_file = 	eos_total.split("FlatTuple")[1]
-					md5sum_eos.append((os.popen(str("md5sum "+eos_total)).read()).split(" ")[0])
+					remoteCheck = "eos root://cmseos.fnal.gov fileinfo " + eos_total + " --checksum"
+					#print remoteCheck
+					checksum_eos = ((os.popen(remoteCheck).read()).split("xs:")[1]).replace(" ","").replace("\n","")
+					#print checksum_local
+					#print checksum_eos
 
 
 				print "----------------------------------------------------------"
 				print "-----transfer check--------"
-				print " MD5SUM LOCAL = ", md5sum_local
-				print " MD5SUM EOS = ", md5sum_eos
+				print " CHECKSUM LOCAL = ", checksum_local
+				print " CHECKSUM EOS = ", checksum_eos
 				sys.stdout.flush() 
 
 				print "----------------------------------------------------------"
@@ -254,12 +259,13 @@ for dir_ in dirFile_:
 				print "----------------------------------------------------------"
 				sys.stdout.flush() 
 
-				if md5sum_eos != md5sum_local:
+				if checksum_eos != checksum_local:
 					print " TRANSFER FAIL ... ABORT, PLEASE TRY AGAIN"
 					print "**** FOR MERGE ATTEMPT IN ", SUB_DIRS[d], " split group # ", m , " in ", localName
 					print "**** COPY TO EOS HAS FAILED no files from this merge will be modified on EOS ***" 
 				else:
 					print " TRANSFER SUCCESS"
+
 
 				if int(split_dir_[3]) == 1:
 					print " PERFORMING CLEANUP IN ", split_dir_[0]
@@ -270,6 +276,10 @@ for dir_ in dirFile_:
 						file_suffix = rm_file.split("FlatTuple")[1]
 						rm_commands.append("eos root://cmseos.fnal.gov rm "+eos_base+"FlatTuple"+file_suffix)
 
+
+				#print rm_commands
+
+
 				if total_event_count_for_all == total_event_count_for_all_merged :	
 					for do_rm in rm_commands:
 						os.system(do_rm)
@@ -277,3 +287,5 @@ for dir_ in dirFile_:
 						os.system("rm -rf "+xfile)
 
 				sys.stdout.flush() 
+
+
