@@ -111,6 +111,26 @@ cd HTT-utilities/LepEffInterface
 git clone https://github.com/CMS-HTT/LeptonEfficiencies.git data
 cd ${CMSSW_BASE}/src
 
+# Z reweight file used in analysis 
+cd ${CMSSW_BASE}/src/DavisRunIITauTau/AnalysisRunII/Analysis/
+mkdir ZReweight
+cp /afs/cern.ch/user/s/sshalhou/public/INSTALL_PUBLIC_FILES/76X_Zreweight/zpt_weights.root ZReweight/.
+cd -
+
+# NLO Higgs Pt reweight Tool for SUSY signals
+cd ${CMSSW_BASE}/src/DavisRunIITauTau/AnalysisRunII/Analysis/
+mkdir SUSYHiggsPtReweight
+cp /afs/cern.ch/user/s/sshalhou/public/INSTALL_PUBLIC_FILES/76X_NLOsusy/Reweight.root SUSYHiggsPtReweight/.
+cd -
+
+
+# QCD weights for MSSM ele+muon channel (2015 version)
+
+cd ${CMSSW_BASE}/src/DavisRunIITauTau/AnalysisRunII/Analysis/
+git clone https://github.com/CMS-HTT/QCDModelingEMu HTT-utilities/QCDModelingEMu
+cp /afs/cern.ch/user/s/sshalhou/public/INSTALL_PUBLIC_FILES/76X_QCDeMu/QCDModelForEMu.cc HTT-utilities/QCDModelingEMu/src/QCDModelForEMu.cc 
+cd -
+
 # compile
 
 scram b -j 20

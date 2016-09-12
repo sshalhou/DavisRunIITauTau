@@ -33,9 +33,9 @@ def DeleteCMSTypes(arg, type):
 # define a few variables here
 ###############################
 
-MC_EVENTS_PER_JOB = 9500 # used for MC only
-MAX_JOBS_PER_TASK = 9500 # true crab limit is 10,000 we should be below this
-DATA_UNITS_PER_JOB = 150
+MC_EVENTS_PER_JOB = 2000 # used for MC only
+MAX_JOBS_PER_TASK = 5000 # true crab limit is 10,000 we should be below this (~5000 is safe to avoid crab over-rounding issues on the last task)
+DATA_UNITS_PER_JOB = 75
 DATA_LUMI_MASK = 'https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions15/13TeV/Cert_246908-260627_13TeV_PromptReco_Collisions15_25ns_JSON_v2.txt'
 
 
@@ -200,7 +200,7 @@ for line in fileinput.input(str(args.dataSetList[0])):
 #####################################################
 
 config.General.transferOutputs = True
-config.General.transferLogs = True
+config.General.transferLogs = False # hurts debugging, but helps prevent hitting 500,000 EOS file limit
 config.JobType.pluginName = 'Analysis'
 config.Data.outLFNDirBase = '/store/user/%s/' % (getUsernameFromSiteDB())
 

@@ -64,10 +64,565 @@ aPSet = cms.PSet(
 sampleInfo.append(aPSet)
 ############
 
+############
+aPSet = cms.PSet(   
+    DataSet = cms.string("/Tau/Run2015D-16Dec2015-v1/MINIAOD"),
+    EventTotal = cms.int32(16345128),
+    NumberOfLumis = cms.int32(46362), # obtain from DAS using summary dataset command
+    MaxLumiBlock = cms.int32(1), # obtain using DAS website and run,lumi dataset="XXX" command
+    EventType = cms.string("DATA"), # valid EventTypes are :  MC, DATA, EMBEDDED (expand as needed)
+    KeyName = cms.string("Fall15_TauRunD"), # a unique descriptor for this sample to be used throught all parts of the code
+    DataCard = cms.string("DATA"), # sample classification for H2TauTau datacards 
+    CrossSection = cms.double(1.0), # cross section in pb (include *BR if needed)
+    FilterEff = cms.double(1.0), # generator level filter effi. 
+    CodeVersion = cms.double(1.0), # allow us to track differences as ntuples and flattuples evolve
+    ProductionInfo = cms.string("Run2015D"), # needed for correct trigger settings
+    RecoilCorrection = cms.string("NONE"), # options are aMCatNLO_DY, aMCatNLO_W, MG5_DY, MG5_W, HIGGS, NONE (for mono-H, data, ttbar, single-top and diboson)
+    # for MetSystematicType use:
+    #       "NONE" for data 
+    #       "MEtSys::ProcessType::BOSON" for Z/W/Higgs
+    #       "MEtSys::ProcessType::EWK" for single top and Diboson
+    #       "MEtSys::ProcessType::TOP" for t t-bar samples
+    MetSystematicType = cms.string("NONE"),
+    KeepTheoryScaleFactors = cms.bool(False) # usually only needed for mono-H signals since H2Tau group does the rest
+                )
+sampleInfo.append(aPSet)
+############
+
+############
+aPSet = cms.PSet(   
+    DataSet = cms.string("/MuonEG/Run2015D-16Dec2015-v1/MINIAOD"),
+    EventTotal = cms.int32(13442593),
+    NumberOfLumis = cms.int32(46268), # obtain from DAS using summary dataset command
+    MaxLumiBlock = cms.int32(1), # obtain using DAS website and run,lumi dataset="XXX" command
+    EventType = cms.string("DATA"), # valid EventTypes are :  MC, DATA, EMBEDDED (expand as needed)
+    KeyName = cms.string("Fall15_MuonEGRunD"), # a unique descriptor for this sample to be used throught all parts of the code
+    DataCard = cms.string("DATA"), # sample classification for H2TauTau datacards 
+    CrossSection = cms.double(1.0), # cross section in pb (include *BR if needed)
+    FilterEff = cms.double(1.0), # generator level filter effi. 
+    CodeVersion = cms.double(1.0), # allow us to track differences as ntuples and flattuples evolve
+    ProductionInfo = cms.string("Run2015D"), # needed for correct trigger settings
+    RecoilCorrection = cms.string("NONE"), # options are aMCatNLO_DY, aMCatNLO_W, MG5_DY, MG5_W, HIGGS, NONE (for mono-H, data, ttbar, single-top and diboson)
+    # for MetSystematicType use:
+    #       "NONE" for data 
+    #       "MEtSys::ProcessType::BOSON" for Z/W/Higgs
+    #       "MEtSys::ProcessType::EWK" for single top and Diboson
+    #       "MEtSys::ProcessType::TOP" for t t-bar samples
+    MetSystematicType = cms.string("NONE"),
+    KeepTheoryScaleFactors = cms.bool(False) # usually only needed for mono-H signals since H2Tau group does the rest
+                )
+sampleInfo.append(aPSet)
+############
+
+
+
 
 ####################################################
 # mini AOD Fall15 MC Samples                       #
 ####################################################
+
+
+
+############
+aPSet = cms.PSet(
+    DataSet = cms.string("/ZprimeToA0hToA0chichihtautau_2HDM_MZp-1000_MA0-300_13TeV-madgraph/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM"),
+    EventTotal = cms.int32(98400),
+    NumberOfLumis = cms.int32(492),
+    MaxLumiBlock = cms.int32(1),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("Fall15_2HDM_Zp1000_MA0300"),
+    DataCard = cms.string("SIGNAL_MONO_HIGGS"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(1.0),
+    ProductionInfo = cms.string("Fall15MCminiAOD"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
+    KeepTheoryScaleFactors = cms.bool(True)
+                )
+sampleInfo.append(aPSet)
+############ 
+
+############
+aPSet = cms.PSet(
+    DataSet = cms.string("/ZprimeToA0hToA0chichihtautau_2HDM_MZp-1000_MA0-600_13TeV-madgraph/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM"),
+    EventTotal = cms.int32(100000),
+    NumberOfLumis = cms.int32(500),
+    MaxLumiBlock = cms.int32(1),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("Fall15_2HDM_Zp1000_MA0600"),
+    DataCard = cms.string("SIGNAL_MONO_HIGGS"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(1.0),
+    ProductionInfo = cms.string("Fall15MCminiAOD"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
+    KeepTheoryScaleFactors = cms.bool(True)
+                )
+sampleInfo.append(aPSet)
+############ 
+
+############
+aPSet = cms.PSet(
+    DataSet = cms.string("/ZprimeToA0hToA0chichihtautau_2HDM_MZp-1000_MA0-400_13TeV-madgraph/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM"),
+    EventTotal = cms.int32(100000),
+    NumberOfLumis = cms.int32(500),
+    MaxLumiBlock = cms.int32(1),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("Fall15_2HDM_Zp1000_MA0400"),
+    DataCard = cms.string("SIGNAL_MONO_HIGGS"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(1.0),
+    ProductionInfo = cms.string("Fall15MCminiAOD"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
+    KeepTheoryScaleFactors = cms.bool(True)
+                )
+sampleInfo.append(aPSet)
+############ 
+
+############
+aPSet = cms.PSet(
+    DataSet = cms.string("/ZprimeToA0hToA0chichihtautau_2HDM_MZp-1200_MA0-400_13TeV-madgraph/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM"),
+    EventTotal = cms.int32(100000),
+    NumberOfLumis = cms.int32(500),
+    MaxLumiBlock = cms.int32(1),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("Fall15_2HDM_Zp1200_MA0400"),
+    DataCard = cms.string("SIGNAL_MONO_HIGGS"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(1.0),
+    ProductionInfo = cms.string("Fall15MCminiAOD"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
+    KeepTheoryScaleFactors = cms.bool(True)
+                )
+sampleInfo.append(aPSet)
+############ 
+
+############
+aPSet = cms.PSet(
+    DataSet = cms.string("/ZprimeToA0hToA0chichihtautau_2HDM_MZp-1200_MA0-300_13TeV-madgraph/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM"),
+    EventTotal = cms.int32(100000),
+    NumberOfLumis = cms.int32(500),
+    MaxLumiBlock = cms.int32(1),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("Fall15_2HDM_Zp1200_MA0300"),
+    DataCard = cms.string("SIGNAL_MONO_HIGGS"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(1.0),
+    ProductionInfo = cms.string("Fall15MCminiAOD"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
+    KeepTheoryScaleFactors = cms.bool(True)
+                )
+sampleInfo.append(aPSet)
+############ 
+
+############
+aPSet = cms.PSet(
+    DataSet = cms.string("/ZprimeToA0hToA0chichihtautau_2HDM_MZp-1200_MA0-800_13TeV-madgraph/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM"),
+    EventTotal = cms.int32(100000),
+    NumberOfLumis = cms.int32(500),
+    MaxLumiBlock = cms.int32(1),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("Fall15_2HDM_Zp1200_MA0800"),
+    DataCard = cms.string("SIGNAL_MONO_HIGGS"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(1.0),
+    ProductionInfo = cms.string("Fall15MCminiAOD"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
+    KeepTheoryScaleFactors = cms.bool(True)
+                )
+sampleInfo.append(aPSet)
+############ 
+
+############
+aPSet = cms.PSet(
+    DataSet = cms.string("/ZprimeToA0hToA0chichihtautau_2HDM_MZp-1200_MA0-700_13TeV-madgraph/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM"),
+    EventTotal = cms.int32(96400),
+    NumberOfLumis = cms.int32(482),
+    MaxLumiBlock = cms.int32(1),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("Fall15_2HDM_Zp1200_MA0700"),
+    DataCard = cms.string("SIGNAL_MONO_HIGGS"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(1.0),
+    ProductionInfo = cms.string("Fall15MCminiAOD"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
+    KeepTheoryScaleFactors = cms.bool(True)
+                )
+sampleInfo.append(aPSet)
+############ 
+
+############
+aPSet = cms.PSet(
+    DataSet = cms.string("/ZprimeToA0hToA0chichihtautau_2HDM_MZp-1400_MA0-700_13TeV-madgraph/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM"),
+    EventTotal = cms.int32(100000),
+    NumberOfLumis = cms.int32(500),
+    MaxLumiBlock = cms.int32(1),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("Fall15_2HDM_Zp1400_MA0700"),
+    DataCard = cms.string("SIGNAL_MONO_HIGGS"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(1.0),
+    ProductionInfo = cms.string("Fall15MCminiAOD"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
+    KeepTheoryScaleFactors = cms.bool(True)
+                )
+sampleInfo.append(aPSet)
+############ 
+
+############
+aPSet = cms.PSet(
+    DataSet = cms.string("/ZprimeToA0hToA0chichihtautau_2HDM_MZp-1400_MA0-300_13TeV-madgraph/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM"),
+    EventTotal = cms.int32(99200),
+    NumberOfLumis = cms.int32(496),
+    MaxLumiBlock = cms.int32(1),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("Fall15_2HDM_Zp1400_MA0300"),
+    DataCard = cms.string("SIGNAL_MONO_HIGGS"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(1.0),
+    ProductionInfo = cms.string("Fall15MCminiAOD"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
+    KeepTheoryScaleFactors = cms.bool(True)
+                )
+sampleInfo.append(aPSet)
+############ 
+
+############
+aPSet = cms.PSet(
+    DataSet = cms.string("/ZprimeToA0hToA0chichihtautau_2HDM_MZp-1700_MA0-300_13TeV-madgraph/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM"),
+    EventTotal = cms.int32(100000),
+    NumberOfLumis = cms.int32(500),
+    MaxLumiBlock = cms.int32(1),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("Fall15_2HDM_Zp1700_MA0300"),
+    DataCard = cms.string("SIGNAL_MONO_HIGGS"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(1.0),
+    ProductionInfo = cms.string("Fall15MCminiAOD"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
+    KeepTheoryScaleFactors = cms.bool(True)
+                )
+sampleInfo.append(aPSet)
+############ 
+
+############
+aPSet = cms.PSet(
+    DataSet = cms.string("/ZprimeToA0hToA0chichihtautau_2HDM_MZp-1400_MA0-800_13TeV-madgraph/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM"),
+    EventTotal = cms.int32(100000),
+    NumberOfLumis = cms.int32(500),
+    MaxLumiBlock = cms.int32(1),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("Fall15_2HDM_Zp1400_MA0800"),
+    DataCard = cms.string("SIGNAL_MONO_HIGGS"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(1.0),
+    ProductionInfo = cms.string("Fall15MCminiAOD"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
+    KeepTheoryScaleFactors = cms.bool(True)
+                )
+sampleInfo.append(aPSet)
+############ 
+
+############
+aPSet = cms.PSet(
+    DataSet = cms.string("/ZprimeToA0hToA0chichihtautau_2HDM_MZp-1700_MA0-700_13TeV-madgraph/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM"),
+    EventTotal = cms.int32(98400),
+    NumberOfLumis = cms.int32(492),
+    MaxLumiBlock = cms.int32(1),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("Fall15_2HDM_Zp1700_MA0700"),
+    DataCard = cms.string("SIGNAL_MONO_HIGGS"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(1.0),
+    ProductionInfo = cms.string("Fall15MCminiAOD"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
+    KeepTheoryScaleFactors = cms.bool(True)
+                )
+sampleInfo.append(aPSet)
+############ 
+
+############
+aPSet = cms.PSet(
+    DataSet = cms.string("/ZprimeToA0hToA0chichihtautau_2HDM_MZp-1700_MA0-500_13TeV-madgraph/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM"),
+    EventTotal = cms.int32(98600),
+    NumberOfLumis = cms.int32(493),
+    MaxLumiBlock = cms.int32(1),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("Fall15_2HDM_Zp1700_MA0500"),
+    DataCard = cms.string("SIGNAL_MONO_HIGGS"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(1.0),
+    ProductionInfo = cms.string("Fall15MCminiAOD"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
+    KeepTheoryScaleFactors = cms.bool(True)
+                )
+sampleInfo.append(aPSet)
+############ 
+
+############
+aPSet = cms.PSet(
+    DataSet = cms.string("/ZprimeToA0hToA0chichihtautau_2HDM_MZp-2000_MA0-500_13TeV-madgraph/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM"),
+    EventTotal = cms.int32(100000),
+    NumberOfLumis = cms.int32(500),
+    MaxLumiBlock = cms.int32(1),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("Fall15_2HDM_Zp2000_MA0500"),
+    DataCard = cms.string("SIGNAL_MONO_HIGGS"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(1.0),
+    ProductionInfo = cms.string("Fall15MCminiAOD"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
+    KeepTheoryScaleFactors = cms.bool(True)
+                )
+sampleInfo.append(aPSet)
+############ 
+
+############
+aPSet = cms.PSet(
+    DataSet = cms.string("/ZprimeToA0hToA0chichihtautau_2HDM_MZp-2000_MA0-300_13TeV-madgraph/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM"),
+    EventTotal = cms.int32(100000),
+    NumberOfLumis = cms.int32(500),
+    MaxLumiBlock = cms.int32(1),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("Fall15_2HDM_Zp2000_MA0300"),
+    DataCard = cms.string("SIGNAL_MONO_HIGGS"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(1.0),
+    ProductionInfo = cms.string("Fall15MCminiAOD"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
+    KeepTheoryScaleFactors = cms.bool(True)
+                )
+sampleInfo.append(aPSet)
+############ 
+
+############
+aPSet = cms.PSet(
+    DataSet = cms.string("/ZprimeToA0hToA0chichihtautau_2HDM_MZp-2000_MA0-800_13TeV-madgraph/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM"),
+    EventTotal = cms.int32(97200),
+    NumberOfLumis = cms.int32(486),
+    MaxLumiBlock = cms.int32(1),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("Fall15_2HDM_Zp2000_MA0800"),
+    DataCard = cms.string("SIGNAL_MONO_HIGGS"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(1.0),
+    ProductionInfo = cms.string("Fall15MCminiAOD"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
+    KeepTheoryScaleFactors = cms.bool(True)
+                )
+sampleInfo.append(aPSet)
+############ 
+
+############
+aPSet = cms.PSet(
+    DataSet = cms.string("/ZprimeToA0hToA0chichihtautau_2HDM_MZp-2000_MA0-600_13TeV-madgraph/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM"),
+    EventTotal = cms.int32(90600),
+    NumberOfLumis = cms.int32(453),
+    MaxLumiBlock = cms.int32(1),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("Fall15_2HDM_Zp2000_MA0600"),
+    DataCard = cms.string("SIGNAL_MONO_HIGGS"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(1.0),
+    ProductionInfo = cms.string("Fall15MCminiAOD"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
+    KeepTheoryScaleFactors = cms.bool(True)
+                )
+sampleInfo.append(aPSet)
+############ 
+
+############
+aPSet = cms.PSet(
+    DataSet = cms.string("/ZprimeToA0hToA0chichihtautau_2HDM_MZp-2500_MA0-500_13TeV-madgraph/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM"),
+    EventTotal = cms.int32(97600),
+    NumberOfLumis = cms.int32(488),
+    MaxLumiBlock = cms.int32(1),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("Fall15_2HDM_Zp2500_MA0500"),
+    DataCard = cms.string("SIGNAL_MONO_HIGGS"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(1.0),
+    ProductionInfo = cms.string("Fall15MCminiAOD"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
+    KeepTheoryScaleFactors = cms.bool(True)
+                )
+sampleInfo.append(aPSet)
+############ 
+
+############
+aPSet = cms.PSet(
+    DataSet = cms.string("/ZprimeToA0hToA0chichihtautau_2HDM_MZp-2500_MA0-300_13TeV-madgraph/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM"),
+    EventTotal = cms.int32(100000),
+    NumberOfLumis = cms.int32(501),
+    MaxLumiBlock = cms.int32(1),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("Fall15_2HDM_Zp2500_MA0300"),
+    DataCard = cms.string("SIGNAL_MONO_HIGGS"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(1.0),
+    ProductionInfo = cms.string("Fall15MCminiAOD"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
+    KeepTheoryScaleFactors = cms.bool(True)
+                )
+sampleInfo.append(aPSet)
+############ 
+
+############
+aPSet = cms.PSet(
+    DataSet = cms.string("/ZprimeToA0hToA0chichihtautau_2HDM_MZp-600_MA0-400_13TeV-madgraph/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM"),
+    EventTotal = cms.int32(98800),
+    NumberOfLumis = cms.int32(494),
+    MaxLumiBlock = cms.int32(1),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("Fall15_2HDM_Zp600_MA0400"),
+    DataCard = cms.string("SIGNAL_MONO_HIGGS"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(1.0),
+    ProductionInfo = cms.string("Fall15MCminiAOD"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
+    KeepTheoryScaleFactors = cms.bool(True)
+                )
+sampleInfo.append(aPSet)
+############ 
+
+############
+aPSet = cms.PSet(
+    DataSet = cms.string("/ZprimeToA0hToA0chichihtautau_2HDM_MZp-600_MA0-300_13TeV-madgraph/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM"),
+    EventTotal = cms.int32(100000),
+    NumberOfLumis = cms.int32(500),
+    MaxLumiBlock = cms.int32(1),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("Fall15_2HDM_Zp600_MA0300"),
+    DataCard = cms.string("SIGNAL_MONO_HIGGS"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(1.0),
+    ProductionInfo = cms.string("Fall15MCminiAOD"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
+    KeepTheoryScaleFactors = cms.bool(True)
+                )
+sampleInfo.append(aPSet)
+############ 
+
+############
+aPSet = cms.PSet(
+    DataSet = cms.string("/ZprimeToA0hToA0chichihtautau_2HDM_MZp-800_MA0-400_13TeV-madgraph/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM"),
+    EventTotal = cms.int32(99400),
+    NumberOfLumis = cms.int32(497),
+    MaxLumiBlock = cms.int32(1),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("Fall15_2HDM_Zp800_MA0400"),
+    DataCard = cms.string("SIGNAL_MONO_HIGGS"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(1.0),
+    ProductionInfo = cms.string("Fall15MCminiAOD"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
+    KeepTheoryScaleFactors = cms.bool(True)
+                )
+sampleInfo.append(aPSet)
+############ 
+
+############
+aPSet = cms.PSet(
+    DataSet = cms.string("/ZprimeToA0hToA0chichihtautau_2HDM_MZp-800_MA0-300_13TeV-madgraph/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM"),
+    EventTotal = cms.int32(100000),
+    NumberOfLumis = cms.int32(500),
+    MaxLumiBlock = cms.int32(1),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("Fall15_2HDM_Zp800_MA0300"),
+    DataCard = cms.string("SIGNAL_MONO_HIGGS"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(1.0),
+    ProductionInfo = cms.string("Fall15MCminiAOD"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
+    KeepTheoryScaleFactors = cms.bool(True)
+                )
+sampleInfo.append(aPSet)
+############ 
+
+############
+aPSet = cms.PSet(
+    DataSet = cms.string("/ZprimeToA0hToA0chichihtautau_2HDM_MZp-800_MA0-600_13TeV-madgraph/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM"),
+    EventTotal = cms.int32(99200),
+    NumberOfLumis = cms.int32(496),
+    MaxLumiBlock = cms.int32(1),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("Fall15_2HDM_Zp800_MA0600"),
+    DataCard = cms.string("SIGNAL_MONO_HIGGS"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(1.0),
+    ProductionInfo = cms.string("Fall15MCminiAOD"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
+    KeepTheoryScaleFactors = cms.bool(True)
+                )
+sampleInfo.append(aPSet)
+############ 
+
+############
+aPSet = cms.PSet(
+    DataSet = cms.string("/ZprimeToA0hToA0chichihtautau_2HDM_MZp-800_MA0-500_13TeV-madgraph/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM"),
+    EventTotal = cms.int32(99200),
+    NumberOfLumis = cms.int32(496),
+    MaxLumiBlock = cms.int32(1),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("Fall15_2HDM_Zp800_MA0500"),
+    DataCard = cms.string("SIGNAL_MONO_HIGGS"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(1.0),
+    ProductionInfo = cms.string("Fall15MCminiAOD"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
+    KeepTheoryScaleFactors = cms.bool(True)
+                )
+sampleInfo.append(aPSet)
+############
+
 
 
 ############
@@ -2454,30 +3009,7 @@ sampleInfo.append(aPSet)
 
 
 
-############
-aPSet = cms.PSet(   
-    DataSet = cms.string("/ZprimeToA0hToA0chichihtautau_2HDM_MZp-1200_MA0-400_13TeV-madgraph/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM"),
-    EventTotal = cms.int32(100000),
-    NumberOfLumis = cms.int32(1), # obtain from DAS using summary dataset command
-    MaxLumiBlock = cms.int32(1), # obtain using DAS website and run,lumi dataset="XXX" command
-    EventType = cms.string("MC"), # valid EventTypes are :  MC, DATA, EMBEDDED (expand as needed)
-    KeyName = cms.string("Fall15_2HDM_Zp1200_A0400"), # a unique descriptor for this sample to be used throught all parts of the code
-    DataCard = cms.string("MONO_HIGGS"), # sample classification for H2TauTau datacards 
-    CrossSection = cms.double(1.0), # cross section in pb (include *BR if needed)
-    FilterEff = cms.double(1.0), # generator level filter effi. 
-    CodeVersion = cms.double(1.0), # allow us to track differences as ntuples and flattuples evolve
-    ProductionInfo = cms.string("Fall15MCminiAOD"), # needed for correct trigger settings
-    RecoilCorrection = cms.string("NONE"), # options are aMCatNLO_DY, aMCatNLO_W, MG5_DY, MG5_W, HIGGS, NONE (for mono-H, data, ttbar, single-top and diboson)
-    # for MetSystematicType use:
-    #       "NONE" for data 
-    #       "MEtSys::ProcessType::BOSON" for Z/W/Higgs
-    #       "MEtSys::ProcessType::EWK" for single top and Diboson
-    #       "MEtSys::ProcessType::TOP" for t t-bar samples
-    MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
-    KeepTheoryScaleFactors = cms.bool(False) # usually only needed for mono-H signals since H2Tau group does the rest
-                )
-sampleInfo.append(aPSet)
-############ 
+
 
 ############
 aPSet = cms.PSet(   
