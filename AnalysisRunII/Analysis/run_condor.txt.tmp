@@ -1,10 +1,12 @@
 getenv = True
 Executable = run_analysis
+Place Arguments
+Place Input
 Output = runMessages.stout
 Error = runErrors.stderr
 universe = vanilla
 Log = runLog.log
-Should_Transfer_Files = YES
+should_transfer_files = yes
 WhenToTransferOutput = ON_EXIT
 
 Place Directory
