@@ -48,10 +48,10 @@ generateH2TauSyncTree::generateH2TauSyncTree(FlatTreeReader R_, bool run_, std::
 
 
 	// with DZeta cut ->
-	qcdWeights = new QCDModelForEMu("HTT-utilities/QCDModelingEMu/data/QCD_weight_emu.root"); 
+	qcdWeights = new QCDModelForEMu("QCD_weight_emu.root");
 
 	// w/o DZeta cut ->
-	qcdWeightsNoDZeta = new QCDModelForEMu("HTT-utilities/QCDModelingEMu/data/QCD_weight_emu_nodzeta.root"); 
+	qcdWeightsNoDZeta = new QCDModelForEMu("QCD_weight_emu_nodzeta.root");
 
 
 	/* init lepton sf tool */
@@ -67,16 +67,16 @@ generateH2TauSyncTree::generateH2TauSyncTree(FlatTreeReader R_, bool run_, std::
 	sfTool_Electron_Ele17_eff = new ScaleFactor();
 	sfTool_Electron_Ele12_eff = new ScaleFactor();
 
-	sfTool_Muon_IdIso0p10_eff->init_ScaleFactor("HTT-utilities/LepEffInterface/data/Muon/Muon_IdIso0p1_fall15.root");
-	sfTool_Muon_SingleMu_eff->init_ScaleFactor("HTT-utilities/LepEffInterface/data/Muon/Muon_SingleMu_eff.root");
-	sfTool_Muon_IdIso0p15_eff->init_ScaleFactor("HTT-utilities/LepEffInterface/data/Muon/Muon_IdIso0p15_fall15.root");
-	sfTool_Electron_IdIso0p10_eff->init_ScaleFactor("HTT-utilities/LepEffInterface/data/Electron/Electron_IdIso0p1_fall15.root");
-	sfTool_Electron_SingleEle_eff->init_ScaleFactor("HTT-utilities/LepEffInterface/data/Electron/Electron_SingleEle_eff.root");
-	sfTool_Electron_IdIso0p15_eff->init_ScaleFactor("HTT-utilities/LepEffInterface/data/Electron/Electron_IdIso0p15_fall15.root");
-	sfTool_Muon_Mu8_eff->init_ScaleFactor("HTT-utilities/LepEffInterface/data/Muon/Muon_Mu8_fall15.root");
-	sfTool_Muon_Mu17_eff->init_ScaleFactor("HTT-utilities/LepEffInterface/data/Muon/Muon_Mu17_fall15.root");
-	sfTool_Electron_Ele17_eff->init_ScaleFactor("HTT-utilities/LepEffInterface/data/Electron/Electron_Ele17_fall15.root");
-	sfTool_Electron_Ele12_eff->init_ScaleFactor("HTT-utilities/LepEffInterface/data/Electron/Electron_Ele12_fall15.root");
+	sfTool_Muon_IdIso0p10_eff->init_ScaleFactor("Muon_IdIso0p1_fall15.root");
+	sfTool_Muon_SingleMu_eff->init_ScaleFactor("Muon_SingleMu_eff.root");
+	sfTool_Muon_IdIso0p15_eff->init_ScaleFactor("Muon_IdIso0p15_fall15.root");
+	sfTool_Electron_IdIso0p10_eff->init_ScaleFactor("Electron_IdIso0p1_fall15.root");
+	sfTool_Electron_SingleEle_eff->init_ScaleFactor("Electron_SingleEle_eff.root");
+	sfTool_Electron_IdIso0p15_eff->init_ScaleFactor("Electron_IdIso0p15_fall15.root");
+	sfTool_Muon_Mu8_eff->init_ScaleFactor("Muon_Mu8_fall15.root");
+	sfTool_Muon_Mu17_eff->init_ScaleFactor("Muon_Mu17_fall15.root");
+	sfTool_Electron_Ele17_eff->init_ScaleFactor("Electron_Ele17_fall15.root");
+	sfTool_Electron_Ele12_eff->init_ScaleFactor("Electron_Ele12_fall15.root");
 
 	}
 
@@ -3166,7 +3166,7 @@ double generateH2TauSyncTree::getNLOReWeight(bool verbose_, int tanBeta_)
 void  generateH2TauSyncTree::NLO_ReadFile()
 {
 
-  TFile *file = new TFile("./SUSYHiggsPtReweight/Reweight.root");
+  TFile *file = new TFile("Reweight.root");
 
   const int num_of_tb = 60;  
 
