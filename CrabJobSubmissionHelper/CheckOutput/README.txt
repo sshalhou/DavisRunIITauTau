@@ -5,7 +5,7 @@
 
 Run as :
 
-python count_events.py --DIR /eos/uscms/store/user/shalhout/DY2JetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/trigFilter_fall15_76Xsmall --TTree Cumulative/CumulativeTuple
+python count_events.py --DIR /store/user/shalhout/DY2JetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/trigFilter_fall15_76Xsmall --TTree Cumulative/CumulativeTuple
 
 # NOTE: the script assumes a crab like directory structure 
 
