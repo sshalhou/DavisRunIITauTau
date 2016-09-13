@@ -283,7 +283,7 @@ private:
 
 	// needed for Z reweight 
 
-	TFile* zReweightFile = new TFile("ZReweight/zpt_weights.root","READ");
+	TFile* zReweightFile = new TFile("zpt_weights.root","READ");
 	TH2D *zweightHist = (TH2D*) zReweightFile->Get("zptmass_histo");
 
 
