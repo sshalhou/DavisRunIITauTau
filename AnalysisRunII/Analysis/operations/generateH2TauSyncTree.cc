@@ -157,6 +157,21 @@ void generateH2TauSyncTree::handleEvent()
 
 	reset();
 
+    /* set tMVA flag type */
+    float FRACTION_  = 0.1; /* this is how much of a mc sample is testing, and training - so 0.1 means 10% test, 10% train, 80% analysis */
+    TRandom3 rand_;
+    rand_.SetSeed(0); /* unique random pattern, once before the event loop */
+    float randVal = rand_.Uniform(1.);
+    
+    if (randVal < FRACTION_)
+    {
+        flag_MVAEventType = 0;
+    }
+    else if ((randVal > FRACTION_) && (randVal < 2.*FRACTION_))
+    {
+        flag_MVAEventType = 1;
+    }
+    else {flag_MVAEventType = -1;}
 
 	/* note: two factors can control what variables are available in the FlatTuple 
 	  -- (1) both tau ES and electron ES are nominal (it will be nan for channels without e or tau)
@@ -174,7 +189,6 @@ void generateH2TauSyncTree::handleEvent()
 
 	TLorentzVector l1(0.,0.,0.,0.); /* leg1 */
 	TLorentzVector l2(0.,0.,0.,0.); /* leg2 */
-	
 
 	TLorentzVector mvaMetVec(0.,0.,0.,0.);	
 	TLorentzVector mvaMetVec_uncorr(0.,0.,0.,0.);	
@@ -1227,7 +1241,7 @@ void generateH2TauSyncTree::setupBranches(TTree * T)
 	T->Branch("highPtTauEff_WeightUp", &highPtTauEff_WeightUp);
 	T->Branch("highPtTauEff_WeightDown", &highPtTauEff_WeightDown);
 
-
+    T->Branch("flag_MVAEventType", &flag_MVAEventType);
 
 	T->Branch("originalXWGTUP", &originalXWGTUP);
 	T->Branch("theory_scale_factors", &theory_scale_factors);
@@ -1815,6 +1829,8 @@ void generateH2TauSyncTree::reset()
 	QCDWeightForEleMuChannelNoPZetaCut_WeightDown = 1.0;
 	highPtTauEff_WeightUp = 1.0;
 	highPtTauEff_WeightDown = 1.0;
+
+    flag_MVAEventType = -999;
 
     originalXWGTUP = 1.0;			/* always init a weight to 1.0 */
     theory_scale_factors.clear();	/* std::vectors are reset using clear() */
