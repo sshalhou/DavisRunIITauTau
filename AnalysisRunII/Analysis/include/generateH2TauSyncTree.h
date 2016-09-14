@@ -39,6 +39,7 @@ see : https://twiki.cern.ch/twiki/bin/viewauth/CMS/HiggsToTauTauWorking2015#Sync
 #include "HTT-utilities/LepEffInterface/interface/ScaleFactor.h"
 #include "HTT-utilities/QCDModelingEMu/interface/QCDModelForEMu.h"
 #include <TGraphAsymmErrors.h>
+#include <TRandom3.h>
 
 /* new struct to contain jet info under a give correction or systematic shift */
 
@@ -214,8 +215,6 @@ public:
 
 	std::vector <double> computePchi_and_Mmin(bool, double, double); /* args are (bool flag for verbose running, met, metPhi) */
 
-
-
 	/* GetLeg1Leg2McTriggerWeights args : leg1, leg2, CandidateEventType, -1,0,1 
 	for down nominal up shifted-systematic */
 	
@@ -278,9 +277,6 @@ private:
 	ScaleFactor * sfTool_Electron_Ele17_eff;
 	ScaleFactor * sfTool_Electron_Ele12_eff;
 
-
-
-
 	// needed for Z reweight 
 
 	TFile* zReweightFile = new TFile("zpt_weights.root","READ");
@@ -307,10 +303,11 @@ private:
 
     /* tMVA flag */
     
-    // bool flat_MVAEventType; -- this will need to be added back in by Garrett later
+    // bool flag_MVAEventType; -- this will need to be added back in by Garrett later
     // also needs to be added to the .cc file 
+    //using int for analysis, train, or test -> -1.0,1
 
-
+    int flag_MVAEventType;
 
     /* theory event weights */
     
