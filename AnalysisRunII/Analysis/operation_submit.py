@@ -32,56 +32,30 @@ def getOptions(argv):
       operationList = arg.split()
     elif opt in ("-d", "--outDir"):
       outputDir = arg
-  return [useCondor,tTree , inFile, operationList, outputDir]
-
-def parseCommands(List):
-  inFileTitle = ""
-  txtFileList = ""
-  if List[0] ==1:
-    if '.txt' in List[2]:
-        fileTxt = open(os.getcwd() + '/' + List[2])
-        cFileList = open(os.getcwd() + '/' + 'c_' + List[2], 'w+')
-        for line in fileTxt:
-          txtFileList += str(line) + ","
-          line = line.rsplit('/',1)[1]
-          cFileList.write(line)
-        cFileList.close()
-        fileTxt.close()
-        txtFileList += os.getcwd() + '/c_' + List[2]
-    elif '.root' in List[2]:
-        inFileTitle = List[2].rsplit('/',1)[1]
-        txtFileList = List[2]
-  txtFileList = txtFileList.replace("\n","")
-  txtBlock = [txtFileList,inFileTitle]
-  return txtBlock
+  return [useCondor, tTree , inFile, operationList, outputDir]
 
 def editCondorConfig(List):
   condorConfigFileTmp = open(os.getcwd() + '/run_condor.txt.tmp')
   condorConfigFileUse = open(os.getcwd() + '/run_condor.txt', 'w')
   for line in condorConfigFileTmp:
     if 'Place Arguments' in line:
-      if '.root' in List[2]:
-        line = 'arguments = ' + List[1] + ' ' + List[2].rsplit('/',1)[1] + ' ' + List[3][0] + '\n'
-      else:
-        line = 'arguments = ' + List[1] + ' c_' + List[2] + ' ' + List[3][0] + '\n'
+      line = 'arguments = ' + List[1] + ' ' + List[2] + ' ' + List[3][0] + '\n'
     if 'Place Directory' in line:
       line = 'Initialdir = ' + List[4] + '\n'
     if 'Place Input' in line:
+      if '.txt' in List[2]:
+        line = 'transfer_input_files = ' + os.getcwd() + '/' + List[2] + ',' + os.getcwd() + '/supportFiles/pDistPlots.root' + ',' + os.getcwd() + '/ZReweight/zpt_weights.root'+ ',' + os.getcwd() + '/HTT-utilities/QCDModelingEMu/data/QCD_weight_emu.root'+ ',' + os.getcwd() + '/HTT-utilities/QCDModelingEMu/data/QCD_weight_emu_nodzeta.root' + ',' + os.getcwd() + '/HTT-utilities/LepEffInterface/data/Muon/Muon_IdIso0p1_fall15.root' + ',' + os.getcwd() + '/HTT-utilities/LepEffInterface/data/Muon/Muon_SingleMu_eff.root' + ',' + os.getcwd() + '/HTT-utilities/LepEffInterface/data/Muon/Muon_IdIso0p15_fall15.root' + ',' + os.getcwd() + '/HTT-utilities/LepEffInterface/data/Electron/Electron_IdIso0p1_fall15.root' + ',' + os.getcwd() + '/HTT-utilities/LepEffInterface/data/Electron/Electron_SingleEle_eff.root' + ',' + os.getcwd() + '/HTT-utilities/LepEffInterface/data/Electron/Electron_IdIso0p15_fall15.root' + ',' + os.getcwd() + '/HTT-utilities/LepEffInterface/data/Muon/Muon_Mu8_fall15.root' + ',' + os.getcwd() + '/HTT-utilities/LepEffInterface/data/Muon/Muon_Mu17_fall15.root' + ',' + os.getcwd() + '/HTT-utilities/LepEffInterface/data/Electron/Electron_Ele17_fall15.root' + ',' + os.getcwd() + '/HTT-utilities/LepEffInterface/data/Electron/Electron_Ele12_fall15.root' + ',' + os.getcwd() + '/SUSYHiggsPtReweight/Reweight.root' + '\n'
       if '.root' in List[2]:
-        line = 'transfer_input_files = ' + List[2] + ',' + os.getcwd() + '/supportFiles/pDistPlots.root' + ',' + os.getcwd() + '/ZReweight/zpt_weights.root'+ ',' + os.getcwd() + '/HTT-utilities/QCDModelingEMu/data/QCD_weight_emu.root'+ ',' + os.getcwd() + '/HTT-utilities/QCDModelingEMu/data/QCD_weight_emu_nodzeta.root' + ',' + os.getcwd() + '/HTT-utilities/LepEffInterface/data/Muon/Muon_IdIso0p1_fall15.root' + ',' + os.getcwd() + '/HTT-utilities/LepEffInterface/data/Muon/Muon_SingleMu_eff.root' + ',' + os.getcwd() + '/HTT-utilities/LepEffInterface/data/Muon/Muon_IdIso0p15_fall15.root' + ',' + os.getcwd() + '/HTT-utilities/LepEffInterface/data/Electron/Electron_IdIso0p1_fall15.root' + ',' + os.getcwd() + '/HTT-utilities/LepEffInterface/data/Electron/Electron_SingleEle_eff.root' + ',' + os.getcwd() + '/HTT-utilities/LepEffInterface/data/Electron/Electron_IdIso0p15_fall15.root' + ',' + os.getcwd() + '/HTT-utilities/LepEffInterface/data/Muon/Muon_Mu8_fall15.root' + ',' + os.getcwd() + '/HTT-utilities/LepEffInterface/data/Muon/Muon_Mu17_fall15.root' + ',' + os.getcwd() + '/HTT-utilities/LepEffInterface/data/Electron/Electron_Ele17_fall15.root' + ',' + os.getcwd() + '/HTT-utilities/LepEffInterface/data/Electron/Electron_Ele12_fall15.root' + ',' + os.getcwd() + '/SUSYHiggsPtReweight/Reweight.root' + '\n'
-      else:
-        line = 'transfer_input_files = ' + txtFileBlockFinal[0] + ',' + os.getcwd() + '/supportFiles/pDistPlots.root' + ',' + os.getcwd() + '/ZReweight/zpt_weights.root'+ ',' + os.getcwd() + '/HTT-utilities/QCDModelingEMu/data/QCD_weight_emu.root'+ ',' + os.getcwd() + '/HTT-utilities/QCDModelingEMu/data/QCD_weight_emu_nodzeta.root' + ',' + os.getcwd() + '/HTT-utilities/LepEffInterface/data/Muon/Muon_IdIso0p1_fall15.root' + ',' + os.getcwd() + '/HTT-utilities/LepEffInterface/data/Muon/Muon_SingleMu_eff.root' + ',' + os.getcwd() + '/HTT-utilities/LepEffInterface/data/Muon/Muon_IdIso0p15_fall15.root' + ',' + os.getcwd() + '/HTT-utilities/LepEffInterface/data/Electron/Electron_IdIso0p1_fall15.root' + ',' + os.getcwd() + '/HTT-utilities/LepEffInterface/data/Electron/Electron_SingleEle_eff.root' + ',' + os.getcwd() + '/HTT-utilities/LepEffInterface/data/Electron/Electron_IdIso0p15_fall15.root' + ',' + os.getcwd() + '/HTT-utilities/LepEffInterface/data/Muon/Muon_Mu8_fall15.root' + ',' + os.getcwd() + '/HTT-utilities/LepEffInterface/data/Muon/Muon_Mu17_fall15.root' + ',' + os.getcwd() + '/HTT-utilities/LepEffInterface/data/Electron/Electron_Ele17_fall15.root' + ',' + os.getcwd() + '/HTT-utilities/LepEffInterface/data/Electron/Electron_Ele12_fall15.root' + ',' + os.getcwd() + '/SUSYHiggsPtReweight/Reweight.root' + '\n'
+        line = 'transfer_input_files = ' + os.getcwd() + '/supportFiles/pDistPlots.root' + ',' + os.getcwd() + '/ZReweight/zpt_weights.root'+ ',' + os.getcwd() + '/HTT-utilities/QCDModelingEMu/data/QCD_weight_emu.root'+ ',' + os.getcwd() + '/HTT-utilities/QCDModelingEMu/data/QCD_weight_emu_nodzeta.root' + ',' + os.getcwd() + '/HTT-utilities/LepEffInterface/data/Muon/Muon_IdIso0p1_fall15.root' + ',' + os.getcwd() + '/HTT-utilities/LepEffInterface/data/Muon/Muon_SingleMu_eff.root' + ',' + os.getcwd() + '/HTT-utilities/LepEffInterface/data/Muon/Muon_IdIso0p15_fall15.root' + ',' + os.getcwd() + '/HTT-utilities/LepEffInterface/data/Electron/Electron_IdIso0p1_fall15.root' + ',' + os.getcwd() + '/HTT-utilities/LepEffInterface/data/Electron/Electron_SingleEle_eff.root' + ',' + os.getcwd() + '/HTT-utilities/LepEffInterface/data/Electron/Electron_IdIso0p15_fall15.root' + ',' + os.getcwd() + '/HTT-utilities/LepEffInterface/data/Muon/Muon_Mu8_fall15.root' + ',' + os.getcwd() + '/HTT-utilities/LepEffInterface/data/Muon/Muon_Mu17_fall15.root' + ',' + os.getcwd() + '/HTT-utilities/LepEffInterface/data/Electron/Electron_Ele17_fall15.root' + ',' + os.getcwd() + '/HTT-utilities/LepEffInterface/data/Electron/Electron_Ele12_fall15.root' + ',' + os.getcwd() + '/SUSYHiggsPtReweight/Reweight.root' + '\n'
     condorConfigFileUse.write(line)
   condorConfigFileUse.close()
   condorConfigFileTmp.close()
 
 allParams = getOptions(sys.argv[1:])
 print allParams
-txtFileBlockFinal = parseCommands(allParams)
-print "txtFileBlockFinal: " + str(txtFileBlockFinal)
-editCondorConfig(allParams)
 
 if allParams[0] == 1:
+  editCondorConfig(allParams)
   if os.path.isdir(allParams[4]) == 0:
     subprocess.call('mkdir -p ' + allParams[4], shell = True)
   subprocess.call('condor_submit run_condor.txt', shell = True)
