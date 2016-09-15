@@ -21,3 +21,10 @@ python operation_submit.py -c -t "PASSCUTS/FlatTuple" -i “/eos/uscms/store/use
 or 
 
 python operation_submit.py -c -t "PASSCUTS/FlatTuple" -i rootFiles.txt -o generateH2TauSyncTree\ histogramLeptonQuantities -d /eos/uscms/store/user/gfunk/NewTest
+
+
+Using checkProdErrors.py:
+
+python checkProdErrors.py
+
+When prompted, enter the full path to the top directory of your production from fullProdHelper.py. The script will search runErrors.sterr for problems submitting jobs to condor. 

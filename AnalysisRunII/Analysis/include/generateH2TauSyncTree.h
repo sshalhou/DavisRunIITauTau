@@ -196,6 +196,9 @@ struct jetDescription
 
 
 
+=======
+//#include "ScaleFactor.h"
+>>>>>>> be7b44ca92a316514e3d2bb108289e9d2f7549c4
 
 class generateH2TauSyncTree
 {
@@ -281,7 +284,6 @@ private:
 
 	TFile* zReweightFile = new TFile("zpt_weights.root","READ");
 	TH2D *zweightHist = (TH2D*) zReweightFile->Get("zptmass_histo");
-
 
     //referenced for LPT
     TFile* inFile = new TFile("pDistPlots.root","READ");
@@ -993,6 +995,48 @@ private:
 	double bmva_2_TightWp_JERdown; 	// for trailing b-jet in pt (pt > 20) (tight WP central)
 	float bcsv_2_TightWp_JERdown;	// for trailing b-jet in pt (pt > 20) (tight WP central)
 
+	double bpt_2;
+	double beta_2;
+	double bphi_2;
+	double bm_2;
+	double brawf_2;
+	double bmva_2;
+	float bcsv_2;
+    
+    //MVA variables
+    
+    double LPT;
+    double P_chi;
+    double M_min;
+    
+    //used in calculation
+    
+    double visFrac1;
+    double visFrac1Prob;
+    double visFrac2;
+    double visFrac2Prob;
+    double currentFracProb;
+    double bestFracProb;
+    double bestP;
+    
+    double ME_T;
+    double ME_T_phi;
+    double p_lt;
+    double eta_l;
+    double phi_l;
+    double p_Taut;
+    double eta_Tau;
+    double phi_Tau;
+    double M_l;
+
+    double p_lx;
+    double p_ly;
+    double p_lz;
+    double E_l;
+
+    double p_vx;
+    double p_vy;
+    double E_v;
 
 	// extra vetoes
 
@@ -1132,13 +1176,6 @@ private:
     double QCDWeightForEleMuChannelNoPZetaCut_WeightDown;
     double highPtTauEff_WeightUp;
     double highPtTauEff_WeightDown;
-
-
-
-
-
-
-
 
   	////////////////////////////////////////////////////
   	// END LIST OF Ntuple BRANCH-ASSOCIATED VARIABLES //

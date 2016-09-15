@@ -1,3 +1,4 @@
+
 # -*- coding: utf-8 -*-
 #!/usr/local/bin/python
 import subprocess
@@ -6,14 +7,12 @@ import sys
 import math
 import time
 
-#root://cmsxrootd.fnal.gov/
-
-
 filesPerJob = 5
 topDirName = "/eos/uscms/store/user/gfunk/SeptProduction_76X_Prelim_Abrev_1/"
 
-#subprocess.call('make clean', shell = True)
-#subprocess.call('make', shell = True)
+subprocess.call('make clean', shell = True)
+subprocess.call('make', shell = True)
+
 storageDirNames = topDirName.split("/")
 if storageDirNames[len(storageDirNames) - 1] == '':
    storageDirName = storageDirNames[len(storageDirNames) - 2] + '_fileLists'
