@@ -988,20 +988,6 @@ private:
 	double bm_2_TightWp_JERdown; 	// for trailing b-jet in pt (pt > 20) (tight WP central)
 	double bmva_2_TightWp_JERdown; 	// for trailing b-jet in pt (pt > 20) (tight WP central)
 	float bcsv_2_TightWp_JERdown;	// for trailing b-jet in pt (pt > 20) (tight WP central)
-
-	double bpt_2;
-	double beta_2;
-	double bphi_2;
-	double bm_2;
-	double brawf_2;
-	double bmva_2;
-	float bcsv_2;
-    
-    //MVA variables
-    
-    double LPT;
-    double P_chi;
-    double M_min;
     
     //used in calculation
     
