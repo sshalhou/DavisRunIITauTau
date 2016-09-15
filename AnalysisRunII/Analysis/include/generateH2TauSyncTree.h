@@ -194,12 +194,6 @@ struct jetDescription
 };
 
 
-
-
-=======
-//#include "ScaleFactor.h"
->>>>>>> be7b44ca92a316514e3d2bb108289e9d2f7549c4
-
 class generateH2TauSyncTree
 {
 
