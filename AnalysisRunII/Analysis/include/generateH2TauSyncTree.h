@@ -39,6 +39,7 @@ see : https://twiki.cern.ch/twiki/bin/viewauth/CMS/HiggsToTauTauWorking2015#Sync
 #include "HTT-utilities/LepEffInterface/interface/ScaleFactor.h"
 #include "HTT-utilities/QCDModelingEMu/interface/QCDModelForEMu.h"
 #include <TGraphAsymmErrors.h>
+#include <TRandom3.h>
 
 /* new struct to contain jet info under a give correction or systematic shift */
 
@@ -193,9 +194,6 @@ struct jetDescription
 };
 
 
-
-
-
 class generateH2TauSyncTree
 {
 
@@ -213,8 +211,6 @@ public:
 	double computeLPT(bool); /* arg is a bool flag for verbose running */
 
 	std::vector <double> computePchi_and_Mmin(bool, double, double); /* args are (bool flag for verbose running, met, metPhi) */
-
-
 
 	/* GetLeg1Leg2McTriggerWeights args : leg1, leg2, CandidateEventType, -1,0,1 
 	for down nominal up shifted-systematic */
@@ -278,14 +274,10 @@ private:
 	ScaleFactor * sfTool_Electron_Ele17_eff;
 	ScaleFactor * sfTool_Electron_Ele12_eff;
 
-
-
-
 	// needed for Z reweight 
 
-	TFile* zReweightFile = new TFile("ZReweight/zpt_weights.root","READ");
+	TFile* zReweightFile = new TFile("zpt_weights.root","READ");
 	TH2D *zweightHist = (TH2D*) zReweightFile->Get("zptmass_histo");
-
 
     //referenced for LPT
     TFile* inFile = new TFile("pDistPlots.root","READ");
@@ -307,10 +299,11 @@ private:
 
     /* tMVA flag */
     
-    // bool flat_MVAEventType; -- this will need to be added back in by Garrett later
+    // bool flag_MVAEventType; -- this will need to be added back in by Garrett later
     // also needs to be added to the .cc file 
+    //using int for analysis, train, or test -> -1.0,1
 
-
+    int flag_MVAEventType;
 
     /* theory event weights */
     
@@ -995,7 +988,35 @@ private:
 	double bm_2_TightWp_JERdown; 	// for trailing b-jet in pt (pt > 20) (tight WP central)
 	double bmva_2_TightWp_JERdown; 	// for trailing b-jet in pt (pt > 20) (tight WP central)
 	float bcsv_2_TightWp_JERdown;	// for trailing b-jet in pt (pt > 20) (tight WP central)
+    
+    //used in calculation
+    
+    double visFrac1;
+    double visFrac1Prob;
+    double visFrac2;
+    double visFrac2Prob;
+    double currentFracProb;
+    double bestFracProb;
+    double bestP;
+    
+    double ME_T;
+    double ME_T_phi;
+    double p_lt;
+    double eta_l;
+    double phi_l;
+    double p_Taut;
+    double eta_Tau;
+    double phi_Tau;
+    double M_l;
 
+    double p_lx;
+    double p_ly;
+    double p_lz;
+    double E_l;
+
+    double p_vx;
+    double p_vy;
+    double E_v;
 
 	// extra vetoes
 
@@ -1135,13 +1156,6 @@ private:
     double QCDWeightForEleMuChannelNoPZetaCut_WeightDown;
     double highPtTauEff_WeightUp;
     double highPtTauEff_WeightDown;
-
-
-
-
-
-
-
 
   	////////////////////////////////////////////////////
   	// END LIST OF Ntuple BRANCH-ASSOCIATED VARIABLES //
