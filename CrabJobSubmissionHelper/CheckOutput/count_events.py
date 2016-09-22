@@ -27,6 +27,10 @@ if dir_.startswith("/eos/uscms"):
 print "chaining root files in ", dir_, "...."
 
 
+def splitList(list, mergeCount):
+    for l in range(0, len(list), mergeCount):
+        yield list[l:l+mergeCount]
+
 #####################################
 # search and find all subdirectories -- this assumes the usual CRAB job output dir structure 
 #####################################
@@ -73,13 +77,26 @@ for name in dirListt:
 
 print "***** FOUND ", len(ALL_ROOT_FILES), " root files in total ******* "			
 
-check = TChain(args.TTree[0])	
-for ll in range(0, len(ALL_ROOT_FILES)):
-	check.Add(ALL_ROOT_FILES[ll])
+total = 0
 
-print " counting events, this may take a while ..."
+for split_list in splitList(ALL_ROOT_FILES, 5000):
+	#print "checking 1st ", len(split_list), " files ..."
+	check = TChain(args.TTree[0])	
+	for ll in range(0, len(split_list)):	
+		check.Add(split_list[ll])
+		total += check.GetEntries()
+		if(ll%100 == 0):
+			print "counted ", total, " event so far ..."
+		check.Reset()	
+		#print check.GetEntries(), " should be zero "
 
-total = check.GetEntries()
+# check = TChain(args.TTree[0])	
+# for ll in range(0, len(ALL_ROOT_FILES)):
+# 	check.Add(ALL_ROOT_FILES[ll])
+
+# print " counting events, this may take a while ..."
+
+# total = check.GetEntries()
 
 print "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
 print "++> In ", args.DIR[0]
