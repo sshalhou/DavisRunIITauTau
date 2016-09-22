@@ -2880,65 +2880,36 @@ double generateH2TauSyncTree::getNominalWeight(bool verbose_)
 
     	if(R.getB("isZTTatGenLevel") == 1)
     	{
-			if(outgoingJets_==0 && genBosonMass_ <= 150.0)  return 	0.023591635;
-			if(outgoingJets_==0 && genBosonMass_ >  150.0)  return 	0.001260616;
-			if(outgoingJets_==1 && genBosonMass_ <= 150.0)  return 	0.010479026;
-			if(outgoingJets_==1 && genBosonMass_ >  150.0)  return 	0.001181609;
-			if(outgoingJets_==2 && genBosonMass_ <= 150.0)  return 	0.010888175;
-			if(outgoingJets_==2 && genBosonMass_ >  150.0)  return 	0.001186637;
-			if(outgoingJets_==3 && genBosonMass_ <= 150.0)  return 	0.011304865;
-			if(outgoingJets_==3 && genBosonMass_ >  150.0)  return 	0.001191423;
-			if(outgoingJets_>=4 && genBosonMass_ <= 150.0)  return 	0.009498100;
-			if(outgoingJets_>=4 && genBosonMass_ >  150.0)  return 	0.001168007;
+
+			if(outgoingJets_==0 && genBosonMass_ <= 150.0) return 0.024618874;
+			if(outgoingJets_==0 && genBosonMass_ >  150.0) return 0.001276291;
+			if(outgoingJets_==1 && genBosonMass_ <= 150.0) return 0.010713441;
+			if(outgoingJets_==1 && genBosonMass_ >  150.0) return 0.001195827;
+			if(outgoingJets_==2 && genBosonMass_ <= 150.0) return 0.011198121;
+			if(outgoingJets_==2 && genBosonMass_ >  150.0) return 0.001201632;
+			if(outgoingJets_==3 && genBosonMass_ <= 150.0) return 0.011565680;
+			if(outgoingJets_==3 && genBosonMass_ >  150.0) return 0.001205744;
+			if(outgoingJets_>=4 && genBosonMass_ <= 150.0) return 0.009662968;
+			if(outgoingJets_>=4 && genBosonMass_ >  150.0) return 0.001181490;
+
+
     	}	
 
 	    if(R.getB("isZEEatGenLevel") == 1 || R.getB("isZMMatGenLevel") == 1)
 	    {
-			if(outgoingJets_==0 && genBosonMass_ <= 150.0)  return 	0.023591635;
-			if(outgoingJets_==0 && genBosonMass_ >  150.0)  return 	0.023591635;
-			if(outgoingJets_==1 && genBosonMass_ <= 150.0)  return 	0.010479026;
-			if(outgoingJets_==1 && genBosonMass_ >  150.0)  return 	0.010479026;
-			if(outgoingJets_==2 && genBosonMass_ <= 150.0)  return 	0.010888175;
-			if(outgoingJets_==2 && genBosonMass_ >  150.0)  return 	0.010888175;
-			if(outgoingJets_==3 && genBosonMass_ <= 150.0)  return 	0.011304865;
-			if(outgoingJets_==3 && genBosonMass_ >  150.0)  return 	0.011304865;
-			if(outgoingJets_>=4 && genBosonMass_ <= 150.0)  return 	0.009498100;
-			if(outgoingJets_>=4 && genBosonMass_ >  150.0)  return 	0.009498100;
+
+			if(outgoingJets_==0 && genBosonMass_ <= 150.0)  return 		0.024618874;
+			if(outgoingJets_==0 && genBosonMass_ >  150.0)  return 		0.024618874;
+			if(outgoingJets_==1 && genBosonMass_ <= 150.0)  return 		0.010713441;
+			if(outgoingJets_==1 && genBosonMass_ >  150.0)  return 		0.010713441;
+			if(outgoingJets_==2 && genBosonMass_ <= 150.0)  return 		0.011198121;
+			if(outgoingJets_==2 && genBosonMass_ >  150.0)  return 		0.011198121;
+			if(outgoingJets_==3 && genBosonMass_ <= 150.0)  return 		0.011565680;
+			if(outgoingJets_==3 && genBosonMass_ >  150.0)  return 		0.011565680;
+			if(outgoingJets_>=4 && genBosonMass_ <= 150.0)  return 		0.009662968;
+			if(outgoingJets_>=4 && genBosonMass_ >  150.0)  return 		0.009662968;
+
 	    }
-
-
-
-		// /* for incorrect treatment due to missing Z decay flags */
-
-
-  //   	if(R.getI("IsZTT") == 1 || R.getI("IsZJ") == 1)
-  //   	{
-		// 	if(outgoingJets_==0 && genBosonMass_ <= 150.0)  return 	0.023591635;
-		// 	if(outgoingJets_==0 && genBosonMass_ >  150.0)  return 	0.001260616;
-		// 	if(outgoingJets_==1 && genBosonMass_ <= 150.0)  return 	0.010479026;
-		// 	if(outgoingJets_==1 && genBosonMass_ >  150.0)  return 	0.001181609;
-		// 	if(outgoingJets_==2 && genBosonMass_ <= 150.0)  return 	0.010888175;
-		// 	if(outgoingJets_==2 && genBosonMass_ >  150.0)  return 	0.001186637;
-		// 	if(outgoingJets_==3 && genBosonMass_ <= 150.0)  return 	0.011304865;
-		// 	if(outgoingJets_==3 && genBosonMass_ >  150.0)  return 	0.001191423;
-		// 	if(outgoingJets_>=4 && genBosonMass_ <= 150.0)  return 	0.009498100;
-		// 	if(outgoingJets_>=4 && genBosonMass_ >  150.0)  return 	0.001168007;
-  //   	}	
-
-	 //    else
-	 //    {
-		// 	if(outgoingJets_==0 && genBosonMass_ <= 150.0)  return 	0.023591635;
-		// 	if(outgoingJets_==0 && genBosonMass_ >  150.0)  return 	0.023591635;
-		// 	if(outgoingJets_==1 && genBosonMass_ <= 150.0)  return 	0.010479026;
-		// 	if(outgoingJets_==1 && genBosonMass_ >  150.0)  return 	0.010479026;
-		// 	if(outgoingJets_==2 && genBosonMass_ <= 150.0)  return 	0.010888175;
-		// 	if(outgoingJets_==2 && genBosonMass_ >  150.0)  return 	0.010888175;
-		// 	if(outgoingJets_==3 && genBosonMass_ <= 150.0)  return 	0.011304865;
-		// 	if(outgoingJets_==3 && genBosonMass_ >  150.0)  return 	0.011304865;
-		// 	if(outgoingJets_>=4 && genBosonMass_ <= 150.0)  return 	0.009498100;
-		// 	if(outgoingJets_>=4 && genBosonMass_ >  150.0)  return 	0.009498100;
-	 //    }
-
 
 
 
@@ -2982,6 +2953,9 @@ double generateH2TauSyncTree::getNominalWeight(bool verbose_)
 		nominal_weight *= 1.0/0.98685;
 
 	}
+
+
+
 
 	return nominal_weight;
 
