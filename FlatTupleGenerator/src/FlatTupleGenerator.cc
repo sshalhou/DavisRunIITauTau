@@ -4168,7 +4168,7 @@ void FlatTupleGenerator::beginJob()
   /* non-essential gen level summary info */
   //////////////////////////////////////////
 
-  if( !SmallTree_ && !BuildEffTree_) /* keep for eff tree studies */
+  if( !SmallTree_ || BuildEffTree_) /* keep for eff tree studies */
   {
     FlatTuple->Branch("genParticle_pdgId", &genParticle_pdgId);
     FlatTuple->Branch("genParticle_status", &genParticle_status);
