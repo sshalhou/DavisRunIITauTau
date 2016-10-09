@@ -3049,19 +3049,11 @@ double wjetsNorm_NoPlots(TCut wNormCut)
 
 void setup_files_TauTau()
 {
-  
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/MuonEG/CondorJob0/davis_syncTree_BASELINE_TauTau.root");
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/MuonEG/CondorJob1/davis_syncTree_BASELINE_TauTau.root");
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/MuonEG/CondorJob2/davis_syncTree_BASELINE_TauTau.root");
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/SingleElectron/CondorJob0/davis_syncTree_BASELINE_TauTau.root");
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/SingleElectron/CondorJob1/davis_syncTree_BASELINE_TauTau.root");
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/SingleElectron/CondorJob2/davis_syncTree_BASELINE_TauTau.root");
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/SingleMuon/CondorJob0/davis_syncTree_BASELINE_TauTau.root");
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/SingleMuon/CondorJob1/davis_syncTree_BASELINE_TauTau.root");
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/SingleMuon/CondorJob2/davis_syncTree_BASELINE_TauTau.root");
+
     DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/Tau/CondorJob0/davis_syncTree_BASELINE_TauTau.root");
     DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/Tau/CondorJob1/davis_syncTree_BASELINE_TauTau.root");
     DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/Tau/CondorJob2/davis_syncTree_BASELINE_TauTau.root");
+    
     GluGluHTauTau->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/SIGNAL_GluGluHTauTau/GluGluHToTauTau_M125_13TeV_powheg_pythia8/CondorJob0/davis_syncTree_BASELINE_TauTau.root");
     //VBFHToTauTau_M125->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/SIGNAL_VBFHTauTau/VBFHToTauTau_M125_13TeV_amcatnloFXFX_pythia8/CondorJob0/davis_syncTree_BASELINE_TauTau.root");
     VBFHTauTau->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/SIGNAL_VBFHTauTau/VBFHToTauTau_M125_13TeV_powheg_pythia8/CondorJob0/davis_syncTree_BASELINE_TauTau.root");
@@ -4052,15 +4044,7 @@ void setup_files_TauTau()
     DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/MuonEG/CondorJob0/davis_syncTree_BASELINE_EleMu.root");
     DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/MuonEG/CondorJob1/davis_syncTree_BASELINE_EleMu.root");
     DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/MuonEG/CondorJob2/davis_syncTree_BASELINE_EleMu.root");
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/SingleElectron/CondorJob0/davis_syncTree_BASELINE_EleMu.root");
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/SingleElectron/CondorJob1/davis_syncTree_BASELINE_EleMu.root");
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/SingleElectron/CondorJob2/davis_syncTree_BASELINE_EleMu.root");
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/SingleMuon/CondorJob0/davis_syncTree_BASELINE_EleMu.root");
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/SingleMuon/CondorJob1/davis_syncTree_BASELINE_EleMu.root");
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/SingleMuon/CondorJob2/davis_syncTree_BASELINE_EleMu.root");
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/Tau/CondorJob0/davis_syncTree_BASELINE_EleMu.root");
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/Tau/CondorJob1/davis_syncTree_BASELINE_EleMu.root");
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/Tau/CondorJob2/davis_syncTree_BASELINE_EleMu.root");
+    
     GluGluHTauTau->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/SIGNAL_GluGluHTauTau/GluGluHToTauTau_M125_13TeV_powheg_pythia8/CondorJob0/davis_syncTree_BASELINE_EleMu.root");
     //VBFHToTauTau_M125->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/SIGNAL_VBFHTauTau/VBFHToTauTau_M125_13TeV_amcatnloFXFX_pythia8/CondorJob0/davis_syncTree_BASELINE_EleMu.root");
     VBFHTauTau->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/SIGNAL_VBFHTauTau/VBFHToTauTau_M125_13TeV_powheg_pythia8/CondorJob0/davis_syncTree_BASELINE_EleMu.root");
@@ -5046,18 +5030,10 @@ void setup_files_TauTau()
 void setup_files_eleTau()
 {
   
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/MuonEG/CondorJob0/davis_syncTree_BASELINE_EleTau.root");
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/MuonEG/CondorJob1/davis_syncTree_BASELINE_EleTau.root");
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/MuonEG/CondorJob2/davis_syncTree_BASELINE_EleTau.root");
     DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/SingleElectron/CondorJob0/davis_syncTree_BASELINE_EleTau.root");
     DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/SingleElectron/CondorJob1/davis_syncTree_BASELINE_EleTau.root");
     DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/SingleElectron/CondorJob2/davis_syncTree_BASELINE_EleTau.root");
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/SingleMuon/CondorJob0/davis_syncTree_BASELINE_EleTau.root");
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/SingleMuon/CondorJob1/davis_syncTree_BASELINE_EleTau.root");
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/SingleMuon/CondorJob2/davis_syncTree_BASELINE_EleTau.root");
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/Tau/CondorJob0/davis_syncTree_BASELINE_EleTau.root");
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/Tau/CondorJob1/davis_syncTree_BASELINE_EleTau.root");
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/Tau/CondorJob2/davis_syncTree_BASELINE_EleTau.root");
+
     GluGluHTauTau->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/SIGNAL_GluGluHTauTau/GluGluHToTauTau_M125_13TeV_powheg_pythia8/CondorJob0/davis_syncTree_BASELINE_EleTau.root");
     //VBFHToTauTau_M125->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/SIGNAL_VBFHTauTau/VBFHToTauTau_M125_13TeV_amcatnloFXFX_pythia8/CondorJob0/davis_syncTree_BASELINE_EleTau.root");
     VBFHTauTau->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/SIGNAL_VBFHTauTau/VBFHToTauTau_M125_13TeV_powheg_pythia8/CondorJob0/davis_syncTree_BASELINE_EleTau.root");
@@ -6045,18 +6021,10 @@ void setup_files_eleTau()
 void setup_files_muTau()
 {
   
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/MuonEG/CondorJob0/davis_syncTree_BASELINE_MuTau.root");
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/MuonEG/CondorJob1/davis_syncTree_BASELINE_MuTau.root");
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/MuonEG/CondorJob2/davis_syncTree_BASELINE_MuTau.root");
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/SingleElectron/CondorJob0/davis_syncTree_BASELINE_MuTau.root");
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/SingleElectron/CondorJob1/davis_syncTree_BASELINE_MuTau.root");
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/SingleElectron/CondorJob2/davis_syncTree_BASELINE_MuTau.root");
     DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/SingleMuon/CondorJob0/davis_syncTree_BASELINE_MuTau.root");
     DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/SingleMuon/CondorJob1/davis_syncTree_BASELINE_MuTau.root");
     DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/SingleMuon/CondorJob2/davis_syncTree_BASELINE_MuTau.root");
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/Tau/CondorJob0/davis_syncTree_BASELINE_MuTau.root");
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/Tau/CondorJob1/davis_syncTree_BASELINE_MuTau.root");
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/Tau/CondorJob2/davis_syncTree_BASELINE_MuTau.root");
+
     GluGluHTauTau->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/SIGNAL_GluGluHTauTau/GluGluHToTauTau_M125_13TeV_powheg_pythia8/CondorJob0/davis_syncTree_BASELINE_MuTau.root");
     //VBFHToTauTau_M125->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/SIGNAL_VBFHTauTau/VBFHToTauTau_M125_13TeV_amcatnloFXFX_pythia8/CondorJob0/davis_syncTree_BASELINE_MuTau.root");
     VBFHTauTau->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/SIGNAL_VBFHTauTau/VBFHToTauTau_M125_13TeV_powheg_pythia8/CondorJob0/davis_syncTree_BASELINE_MuTau.root");
@@ -7029,18 +6997,10 @@ void setup_files_muTau()
 void setup_upTau_files_TauTau()
 {
   
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/MuonEG/CondorJob0/davis_syncTree_BASELINEupTau_TauTau.root");
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/MuonEG/CondorJob1/davis_syncTree_BASELINEupTau_TauTau.root");
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/MuonEG/CondorJob2/davis_syncTree_BASELINEupTau_TauTau.root");
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/SingleElectron/CondorJob0/davis_syncTree_BASELINEupTau_TauTau.root");
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/SingleElectron/CondorJob1/davis_syncTree_BASELINEupTau_TauTau.root");
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/SingleElectron/CondorJob2/davis_syncTree_BASELINEupTau_TauTau.root");
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/SingleMuon/CondorJob0/davis_syncTree_BASELINEupTau_TauTau.root");
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/SingleMuon/CondorJob1/davis_syncTree_BASELINEupTau_TauTau.root");
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/SingleMuon/CondorJob2/davis_syncTree_BASELINEupTau_TauTau.root");
     DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/Tau/CondorJob0/davis_syncTree_BASELINEupTau_TauTau.root");
     DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/Tau/CondorJob1/davis_syncTree_BASELINEupTau_TauTau.root");
     DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/Tau/CondorJob2/davis_syncTree_BASELINEupTau_TauTau.root");
+    
     GluGluHTauTau->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/SIGNAL_GluGluHTauTau/GluGluHToTauTau_M125_13TeV_powheg_pythia8/CondorJob0/davis_syncTree_BASELINEupTau_TauTau.root");
     //VBFHToTauTau_M125->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/SIGNAL_VBFHTauTau/VBFHToTauTau_M125_13TeV_amcatnloFXFX_pythia8/CondorJob0/davis_syncTree_BASELINEupTau_TauTau.root");
     VBFHTauTau->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/SIGNAL_VBFHTauTau/VBFHToTauTau_M125_13TeV_powheg_pythia8/CondorJob0/davis_syncTree_BASELINEupTau_TauTau.root");
@@ -8023,19 +7983,11 @@ void setup_upTau_files_TauTau()
 }
 void setup_downTau_files_TauTau()
 {
-  
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/MuonEG/CondorJob0/davis_syncTree_BASELINEdownTau_TauTau.root");
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/MuonEG/CondorJob1/davis_syncTree_BASELINEdownTau_TauTau.root");
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/MuonEG/CondorJob2/davis_syncTree_BASELINEdownTau_TauTau.root");
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/SingleElectron/CondorJob0/davis_syncTree_BASELINEdownTau_TauTau.root");
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/SingleElectron/CondorJob1/davis_syncTree_BASELINEdownTau_TauTau.root");
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/SingleElectron/CondorJob2/davis_syncTree_BASELINEdownTau_TauTau.root");
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/SingleMuon/CondorJob0/davis_syncTree_BASELINEdownTau_TauTau.root");
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/SingleMuon/CondorJob1/davis_syncTree_BASELINEdownTau_TauTau.root");
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/SingleMuon/CondorJob2/davis_syncTree_BASELINEdownTau_TauTau.root");
+
     DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/Tau/CondorJob0/davis_syncTree_BASELINEdownTau_TauTau.root");
     DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/Tau/CondorJob1/davis_syncTree_BASELINEdownTau_TauTau.root");
     DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/Tau/CondorJob2/davis_syncTree_BASELINEdownTau_TauTau.root");
+    
     GluGluHTauTau->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/SIGNAL_GluGluHTauTau/GluGluHToTauTau_M125_13TeV_powheg_pythia8/CondorJob0/davis_syncTree_BASELINEdownTau_TauTau.root");
     //VBFHToTauTau_M125->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/SIGNAL_VBFHTauTau/VBFHToTauTau_M125_13TeV_amcatnloFXFX_pythia8/CondorJob0/davis_syncTree_BASELINEdownTau_TauTau.root");
     VBFHTauTau->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/SIGNAL_VBFHTauTau/VBFHToTauTau_M125_13TeV_powheg_pythia8/CondorJob0/davis_syncTree_BASELINEdownTau_TauTau.root");
@@ -9022,15 +8974,7 @@ void setup_upEle_files_eleMu()
     DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/MuonEG/CondorJob0/davis_syncTree_BASELINEupElectron_EleMu.root");
     DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/MuonEG/CondorJob1/davis_syncTree_BASELINEupElectron_EleMu.root");
     DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/MuonEG/CondorJob2/davis_syncTree_BASELINEupElectron_EleMu.root");
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/SingleElectron/CondorJob0/davis_syncTree_BASELINEupElectron_EleMu.root");
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/SingleElectron/CondorJob1/davis_syncTree_BASELINEupElectron_EleMu.root");
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/SingleElectron/CondorJob2/davis_syncTree_BASELINEupElectron_EleMu.root");
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/SingleMuon/CondorJob0/davis_syncTree_BASELINEupElectron_EleMu.root");
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/SingleMuon/CondorJob1/davis_syncTree_BASELINEupElectron_EleMu.root");
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/SingleMuon/CondorJob2/davis_syncTree_BASELINEupElectron_EleMu.root");
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/Tau/CondorJob0/davis_syncTree_BASELINEupElectron_EleMu.root");
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/Tau/CondorJob1/davis_syncTree_BASELINEupElectron_EleMu.root");
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/Tau/CondorJob2/davis_syncTree_BASELINEupElectron_EleMu.root");
+
     GluGluHTauTau->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/SIGNAL_GluGluHTauTau/GluGluHToTauTau_M125_13TeV_powheg_pythia8/CondorJob0/davis_syncTree_BASELINEupElectron_EleMu.root");
     //VBFHToTauTau_M125->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/SIGNAL_VBFHTauTau/VBFHToTauTau_M125_13TeV_amcatnloFXFX_pythia8/CondorJob0/davis_syncTree_BASELINEupElectron_EleMu.root");
     VBFHTauTau->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/SIGNAL_VBFHTauTau/VBFHToTauTau_M125_13TeV_powheg_pythia8/CondorJob0/davis_syncTree_BASELINEupElectron_EleMu.root");
@@ -10017,15 +9961,7 @@ void setup_downEle_files_eleMu()
     DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/MuonEG/CondorJob0/davis_syncTree_BASELINEdownElectron_EleMu.root");
     DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/MuonEG/CondorJob1/davis_syncTree_BASELINEdownElectron_EleMu.root");
     DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/MuonEG/CondorJob2/davis_syncTree_BASELINEdownElectron_EleMu.root");
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/SingleElectron/CondorJob0/davis_syncTree_BASELINEdownElectron_EleMu.root");
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/SingleElectron/CondorJob1/davis_syncTree_BASELINEdownElectron_EleMu.root");
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/SingleElectron/CondorJob2/davis_syncTree_BASELINEdownElectron_EleMu.root");
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/SingleMuon/CondorJob0/davis_syncTree_BASELINEdownElectron_EleMu.root");
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/SingleMuon/CondorJob1/davis_syncTree_BASELINEdownElectron_EleMu.root");
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/SingleMuon/CondorJob2/davis_syncTree_BASELINEdownElectron_EleMu.root");
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/Tau/CondorJob0/davis_syncTree_BASELINEdownElectron_EleMu.root");
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/Tau/CondorJob1/davis_syncTree_BASELINEdownElectron_EleMu.root");
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/Tau/CondorJob2/davis_syncTree_BASELINEdownElectron_EleMu.root");
+
     GluGluHTauTau->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/SIGNAL_GluGluHTauTau/GluGluHToTauTau_M125_13TeV_powheg_pythia8/CondorJob0/davis_syncTree_BASELINEdownElectron_EleMu.root");
     //VBFHToTauTau_M125->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/SIGNAL_VBFHTauTau/VBFHToTauTau_M125_13TeV_amcatnloFXFX_pythia8/CondorJob0/davis_syncTree_BASELINEdownElectron_EleMu.root");
     VBFHTauTau->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/SIGNAL_VBFHTauTau/VBFHToTauTau_M125_13TeV_powheg_pythia8/CondorJob0/davis_syncTree_BASELINEdownElectron_EleMu.root");
@@ -11008,19 +10944,11 @@ void setup_downEle_files_eleMu()
 }
 void setup_upTau_files_eleTau()
 {
-  
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/MuonEG/CondorJob0/davis_syncTree_BASELINEupTau_EleTau.root");
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/MuonEG/CondorJob1/davis_syncTree_BASELINEupTau_EleTau.root");
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/MuonEG/CondorJob2/davis_syncTree_BASELINEupTau_EleTau.root");
+
     DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/SingleElectron/CondorJob0/davis_syncTree_BASELINEupTau_EleTau.root");
     DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/SingleElectron/CondorJob1/davis_syncTree_BASELINEupTau_EleTau.root");
     DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/SingleElectron/CondorJob2/davis_syncTree_BASELINEupTau_EleTau.root");
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/SingleMuon/CondorJob0/davis_syncTree_BASELINEupTau_EleTau.root");
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/SingleMuon/CondorJob1/davis_syncTree_BASELINEupTau_EleTau.root");
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/SingleMuon/CondorJob2/davis_syncTree_BASELINEupTau_EleTau.root");
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/Tau/CondorJob0/davis_syncTree_BASELINEupTau_EleTau.root");
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/Tau/CondorJob1/davis_syncTree_BASELINEupTau_EleTau.root");
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/Tau/CondorJob2/davis_syncTree_BASELINEupTau_EleTau.root");
+
     GluGluHTauTau->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/SIGNAL_GluGluHTauTau/GluGluHToTauTau_M125_13TeV_powheg_pythia8/CondorJob0/davis_syncTree_BASELINEupTau_EleTau.root");
     //VBFHToTauTau_M125->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/SIGNAL_VBFHTauTau/VBFHToTauTau_M125_13TeV_amcatnloFXFX_pythia8/CondorJob0/davis_syncTree_BASELINEupTau_EleTau.root");
     VBFHTauTau->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/SIGNAL_VBFHTauTau/VBFHToTauTau_M125_13TeV_powheg_pythia8/CondorJob0/davis_syncTree_BASELINEupTau_EleTau.root");
@@ -12003,19 +11931,11 @@ void setup_upTau_files_eleTau()
 }
 void setup_downTau_files_eleTau()
 {
-  
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/MuonEG/CondorJob0/davis_syncTree_BASELINEdownTau_EleTau.root");
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/MuonEG/CondorJob1/davis_syncTree_BASELINEdownTau_EleTau.root");
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/MuonEG/CondorJob2/davis_syncTree_BASELINEdownTau_EleTau.root");
+
     DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/SingleElectron/CondorJob0/davis_syncTree_BASELINEdownTau_EleTau.root");
     DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/SingleElectron/CondorJob1/davis_syncTree_BASELINEdownTau_EleTau.root");
     DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/SingleElectron/CondorJob2/davis_syncTree_BASELINEdownTau_EleTau.root");
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/SingleMuon/CondorJob0/davis_syncTree_BASELINEdownTau_EleTau.root");
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/SingleMuon/CondorJob1/davis_syncTree_BASELINEdownTau_EleTau.root");
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/SingleMuon/CondorJob2/davis_syncTree_BASELINEdownTau_EleTau.root");
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/Tau/CondorJob0/davis_syncTree_BASELINEdownTau_EleTau.root");
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/Tau/CondorJob1/davis_syncTree_BASELINEdownTau_EleTau.root");
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/Tau/CondorJob2/davis_syncTree_BASELINEdownTau_EleTau.root");
+    
     GluGluHTauTau->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/SIGNAL_GluGluHTauTau/GluGluHToTauTau_M125_13TeV_powheg_pythia8/CondorJob0/davis_syncTree_BASELINEdownTau_EleTau.root");
     //VBFHToTauTau_M125->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/SIGNAL_VBFHTauTau/VBFHToTauTau_M125_13TeV_amcatnloFXFX_pythia8/CondorJob0/davis_syncTree_BASELINEdownTau_EleTau.root");
     VBFHTauTau->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/SIGNAL_VBFHTauTau/VBFHToTauTau_M125_13TeV_powheg_pythia8/CondorJob0/davis_syncTree_BASELINEdownTau_EleTau.root");
@@ -12998,19 +12918,11 @@ void setup_downTau_files_eleTau()
 }
 void setup_upEle_files_eleTau()
 {
-  
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/MuonEG/CondorJob0/davis_syncTree_BASELINEupElectron_EleTau.root");
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/MuonEG/CondorJob1/davis_syncTree_BASELINEupElectron_EleTau.root");
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/MuonEG/CondorJob2/davis_syncTree_BASELINEupElectron_EleTau.root");
+
     DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/SingleElectron/CondorJob0/davis_syncTree_BASELINEupElectron_EleTau.root");
     DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/SingleElectron/CondorJob1/davis_syncTree_BASELINEupElectron_EleTau.root");
     DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/SingleElectron/CondorJob2/davis_syncTree_BASELINEupElectron_EleTau.root");
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/SingleMuon/CondorJob0/davis_syncTree_BASELINEupElectron_EleTau.root");
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/SingleMuon/CondorJob1/davis_syncTree_BASELINEupElectron_EleTau.root");
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/SingleMuon/CondorJob2/davis_syncTree_BASELINEupElectron_EleTau.root");
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/Tau/CondorJob0/davis_syncTree_BASELINEupElectron_EleTau.root");
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/Tau/CondorJob1/davis_syncTree_BASELINEupElectron_EleTau.root");
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/Tau/CondorJob2/davis_syncTree_BASELINEupElectron_EleTau.root");
+
     GluGluHTauTau->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/SIGNAL_GluGluHTauTau/GluGluHToTauTau_M125_13TeV_powheg_pythia8/CondorJob0/davis_syncTree_BASELINEupElectron_EleTau.root");
     //VBFHToTauTau_M125->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/SIGNAL_VBFHTauTau/VBFHToTauTau_M125_13TeV_amcatnloFXFX_pythia8/CondorJob0/davis_syncTree_BASELINEupElectron_EleTau.root");
     VBFHTauTau->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/SIGNAL_VBFHTauTau/VBFHToTauTau_M125_13TeV_powheg_pythia8/CondorJob0/davis_syncTree_BASELINEupElectron_EleTau.root");
@@ -13993,19 +13905,11 @@ void setup_upEle_files_eleTau()
 }
 void setup_downEle_files_eleTau()
 {
-  
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/MuonEG/CondorJob0/davis_syncTree_BASELINEdownElectron_EleTau.root");
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/MuonEG/CondorJob1/davis_syncTree_BASELINEdownElectron_EleTau.root");
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/MuonEG/CondorJob2/davis_syncTree_BASELINEdownElectron_EleTau.root");
+
     DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/SingleElectron/CondorJob0/davis_syncTree_BASELINEdownElectron_EleTau.root");
     DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/SingleElectron/CondorJob1/davis_syncTree_BASELINEdownElectron_EleTau.root");
     DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/SingleElectron/CondorJob2/davis_syncTree_BASELINEdownElectron_EleTau.root");
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/SingleMuon/CondorJob0/davis_syncTree_BASELINEdownElectron_EleTau.root");
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/SingleMuon/CondorJob1/davis_syncTree_BASELINEdownElectron_EleTau.root");
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/SingleMuon/CondorJob2/davis_syncTree_BASELINEdownElectron_EleTau.root");
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/Tau/CondorJob0/davis_syncTree_BASELINEdownElectron_EleTau.root");
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/Tau/CondorJob1/davis_syncTree_BASELINEdownElectron_EleTau.root");
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/Tau/CondorJob2/davis_syncTree_BASELINEdownElectron_EleTau.root");
+
     GluGluHTauTau->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/SIGNAL_GluGluHTauTau/GluGluHToTauTau_M125_13TeV_powheg_pythia8/CondorJob0/davis_syncTree_BASELINEdownElectron_EleTau.root");
     //VBFHToTauTau_M125->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/SIGNAL_VBFHTauTau/VBFHToTauTau_M125_13TeV_amcatnloFXFX_pythia8/CondorJob0/davis_syncTree_BASELINEdownElectron_EleTau.root");
     VBFHTauTau->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/SIGNAL_VBFHTauTau/VBFHToTauTau_M125_13TeV_powheg_pythia8/CondorJob0/davis_syncTree_BASELINEdownElectron_EleTau.root");
@@ -14990,19 +14894,11 @@ void setup_downEle_files_eleTau()
 
 void setup_upTau_files_muTau()
 {
-  
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/MuonEG/CondorJob0/davis_syncTree_BASELINEupTau_MuTau.root");
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/MuonEG/CondorJob1/davis_syncTree_BASELINEupTau_MuTau.root");
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/MuonEG/CondorJob2/davis_syncTree_BASELINEupTau_MuTau.root");
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/SingleElectron/CondorJob0/davis_syncTree_BASELINEupTau_MuTau.root");
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/SingleElectron/CondorJob1/davis_syncTree_BASELINEupTau_MuTau.root");
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/SingleElectron/CondorJob2/davis_syncTree_BASELINEupTau_MuTau.root");
+
     DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/SingleMuon/CondorJob0/davis_syncTree_BASELINEupTau_MuTau.root");
     DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/SingleMuon/CondorJob1/davis_syncTree_BASELINEupTau_MuTau.root");
     DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/SingleMuon/CondorJob2/davis_syncTree_BASELINEupTau_MuTau.root");
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/Tau/CondorJob0/davis_syncTree_BASELINEupTau_MuTau.root");
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/Tau/CondorJob1/davis_syncTree_BASELINEupTau_MuTau.root");
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/Tau/CondorJob2/davis_syncTree_BASELINEupTau_MuTau.root");
+
     GluGluHTauTau->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/SIGNAL_GluGluHTauTau/GluGluHToTauTau_M125_13TeV_powheg_pythia8/CondorJob0/davis_syncTree_BASELINEupTau_MuTau.root");
     //VBFHToTauTau_M125->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/SIGNAL_VBFHTauTau/VBFHToTauTau_M125_13TeV_amcatnloFXFX_pythia8/CondorJob0/davis_syncTree_BASELINEupTau_MuTau.root");
     VBFHTauTau->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/SIGNAL_VBFHTauTau/VBFHToTauTau_M125_13TeV_powheg_pythia8/CondorJob0/davis_syncTree_BASELINEupTau_MuTau.root");
@@ -15986,19 +15882,11 @@ void setup_upTau_files_muTau()
 
 void setup_downTau_files_muTau()
 {
-  
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/MuonEG/CondorJob0/davis_syncTree_BASELINEdownTau_MuTau.root");
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/MuonEG/CondorJob1/davis_syncTree_BASELINEdownTau_MuTau.root");
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/MuonEG/CondorJob2/davis_syncTree_BASELINEdownTau_MuTau.root");
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/SingleElectron/CondorJob0/davis_syncTree_BASELINEdownTau_MuTau.root");
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/SingleElectron/CondorJob1/davis_syncTree_BASELINEdownTau_MuTau.root");
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/SingleElectron/CondorJob2/davis_syncTree_BASELINEdownTau_MuTau.root");
+
     DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/SingleMuon/CondorJob0/davis_syncTree_BASELINEdownTau_MuTau.root");
     DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/SingleMuon/CondorJob1/davis_syncTree_BASELINEdownTau_MuTau.root");
     DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/SingleMuon/CondorJob2/davis_syncTree_BASELINEdownTau_MuTau.root");
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/Tau/CondorJob0/davis_syncTree_BASELINEdownTau_MuTau.root");
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/Tau/CondorJob1/davis_syncTree_BASELINEdownTau_MuTau.root");
-    DATA->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/DATA/Tau/CondorJob2/davis_syncTree_BASELINEdownTau_MuTau.root");
+
     GluGluHTauTau->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/SIGNAL_GluGluHTauTau/GluGluHToTauTau_M125_13TeV_powheg_pythia8/CondorJob0/davis_syncTree_BASELINEdownTau_MuTau.root");
     //VBFHToTauTau_M125->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/SIGNAL_VBFHTauTau/VBFHToTauTau_M125_13TeV_amcatnloFXFX_pythia8/CondorJob0/davis_syncTree_BASELINEdownTau_MuTau.root");
     VBFHTauTau->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/SIGNAL_VBFHTauTau/VBFHToTauTau_M125_13TeV_powheg_pythia8/CondorJob0/davis_syncTree_BASELINEdownTau_MuTau.root");
