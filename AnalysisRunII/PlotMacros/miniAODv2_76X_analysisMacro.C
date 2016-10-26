@@ -38,6 +38,7 @@ bool do_mTau = 0;
 bool do_eTau = 0;
 bool do_eMu = 0;
 bool do_TauTau = 0;
+bool do_All = 0;
 
 /* DATA maximum factor on hists y-axis */
 
@@ -76,7 +77,7 @@ int drCut;
 
 /* lumi sf (3.0/fb projection)*/ 
 
-double lumi_sf = 2.3;
+double lumi_sf = 1.0;
 
 /* data marker style */
 
@@ -89,9 +90,9 @@ float metBinning[3] = {50.,0.,1000.};  /* for met in all regions */
 float m_visBinning[3] = {25.,0.,250.}; /* for m_vis in all regions */
 float ptBinning[3] = {40.,0.,200.}; /* for pT in all regions */
 float nbtagBinning[3] = {30.,0.,30.}; /* for nbtag in all regions */
-float lptBinning[3] = {105.,0.,3500};
+float lptBinning[3] = {35.,0.,3500.};
 float m_minBinning[3] = {20,0.,1000.};
-float p_chiBinning[3] = {20,-800.,800.};
+float p_chiBinning[3] = {30,-150.,150.};
 
 
 /* some hist x-axis labels */
@@ -163,10 +164,12 @@ TChain * DY1Jets = new TChain("TauCheck");
 TChain * DY2Jets = new TChain("TauCheck");
 TChain * DY3Jets = new TChain("TauCheck");
 TChain * DY4Jets = new TChain("TauCheck");
+
 //DY channels divided using bools
 TChain * ZTT = new TChain("TauCheck");
 TChain * ZJ = new TChain("TauCheck");
 TChain * ZL = new TChain("TauCheck");
+
 //ZH
 TChain * ZHTauTau = new TChain("TauCheck");
 //WH Main
@@ -222,14 +225,14 @@ double wjetsNorm_NoPlots(TCut);
 /* args are cut, w sf, qcd hist to fill, string expression to fill (pt_1 m_vis etc.), binning array,
 canvas name string */
 
-void fillQCD_Shape(TCut, double, TH1F *, std::string, float[3], std::string);
+void fillQCD_Shape(TCut, double, TH1F *, std::string, float[3], std::string, std::string);
 void fillQCD_Shape_NoPlots(TCut, double, TH1F *, std::string, float[3]);
 
 /* given a TCut and a w mc scale factor and a qcd shape draw string under float[3] binning */
 /* args are cut, w sf, qcd hist to draw, string expression to fill (pt_1 m_vis etc.), 
 binning array, canvas name */
 
-void drawSignalRegion(TCut, double, TH1F *, std::string, float[3], std::string);
+void drawSignalRegion(TCut, double, TH1F *, std::string, float[3], std::string, std::string);
 
 /*output vector of yields, no plots*/
 
@@ -251,7 +254,6 @@ double deltar_( double eta1, double phi1, double eta2, double phi2)
 	double dphi = TVector2::Phi_mpi_pi(phi1-phi2);
 	return TMath::Sqrt(deta*deta+dphi*dphi);
 }
-
 
 /* run channels */
 
@@ -278,17 +280,17 @@ int miniAODv2_76X_analysisMacro()
 	int choice3 = -1;
 	int choice4 = -1;
 
-	while(choice <1 || choice >4)
+	while(choice <1 || choice >5)
 	{
 		std::cout<<" Please enter a channel choice \n";
 		std::cout<<" 			enter 1 for muTau \n";
 		std::cout<<" 			enter 2 for eTau \n";
 		std::cout<<" 			enter 3 for eMu \n";
 		std::cout<<" 			enter 4 for TauTau \n";
+        std::cout<<" 			enter 5 for all channels \n";
 
 	    cin>>choice;
 	}
-
 
 	/* string for canvas saving */
 	saveName = "";
@@ -297,8 +299,8 @@ int miniAODv2_76X_analysisMacro()
 	if(choice==2) {do_eTau = 1; saveName += "EleTau_"; }
 	if(choice==3) {do_eMu = 1; saveName += "EleMu_"; }
 	if(choice==4) {do_TauTau = 1; saveName += "TauTau_"; }
+    if(choice==5) {do_All = 1; saveName += "AllChanRun_"; }
 
-    
 	while(choice2!=1 && choice2!=2 && choice2!=3 && choice2!=4)
 	{
 		std::cout<<" Choose a plot set : \n";
@@ -308,7 +310,7 @@ int miniAODv2_76X_analysisMacro()
         std::cout<<"                        enter 4 for ES shift systematics \n";
 		cin>>choice2;
 	}
-
+    
 	if(choice2==1)
 	{
 		signalRegionMETonly = 1;
@@ -354,7 +356,7 @@ int miniAODv2_76X_analysisMacro()
 		std::cout<<" enter DR range : \n";
 		std::cout<<"	   enter 1 for low  [ dr(tau,tau)<1 ] \n";
 		std::cout<<"	   enter 2 for medium  [ dr(tau,tau)>=1 && dr(tau,tau)<2 ] \n";
-        std::cout<<"	   enter 3 for no cuts \n";
+        std::cout<<"	   enter 3 for both regions \n";
 		cin>>choice4;
 
 		if(choice4==1)
@@ -370,7 +372,7 @@ int miniAODv2_76X_analysisMacro()
         if(choice4==3)
         {
          drCut = 3;
-         saveName += "NO_EXTRA_CUTS_";
+         saveName += "FullDR_";
         }
 	}
 	while(choice3!=1 && choice3!=2)
@@ -391,17 +393,17 @@ int miniAODv2_76X_analysisMacro()
 	/* some formatting */
 	setTDRStyle();
 	/* int colors */
-	colors["ZTT"] = 796;
-    colors["ZL"] = 796;
-    colors["ZJ"] = 796;
-	colors["TT"] = 592;
-    colors["VV"] = 2;
+	colors["ZTT"] = 92;
+    colors["ZL"] = 94;
+    colors["ZJ"] = 96;
+	colors["TT"] = 2;
+    colors["VV"] = 8;
 	colors["W"] = 634;
 	colors["QCD"] = 606;
     colors["GluGluHTauTau"] = 7;
-    colors["VBFHTauTau"] = 8;
-    colors["ttHJetTT"] = 8;
-	colors["ZHTauTau"] = 3;
+    colors["VBFHTauTau"] = 9;
+    colors["ttHJetTT"] = 11;
+	colors["ZHTauTau"] = 52;
     colors["WHTauTau"] = 5;
 	colors["MONO"] = 4;
 
@@ -409,7 +411,7 @@ int miniAODv2_76X_analysisMacro()
 
 	x_axisLabels["m_vis"] = "Visible di-#tau Mass [GeV]";
 	x_axisLabels["nbtag"] = "Number of Jets";
-	x_axisLabels["met"] = "Missing (PF) Transverse Energy [GeV]";
+	x_axisLabels["met"] = "Missing Transverse Energy (PF) [GeV]";
     x_axisLabels["LPT"] = "Likelihood Transverse Momentum of Pair Mother [GeV]";
 
 	if(do_eTau)
@@ -443,19 +445,33 @@ int miniAODv2_76X_analysisMacro()
 		x_axisLabels["pt_1"] = "Transverse Momentum of lead-#tau_{h} [GeV]";
 		x_axisLabels["pt_2"] = "Transverse Momentum of 2nd-#tau_{h} [GeV]";
 	}
+    
+    if(do_All)
+	{
+		x_axisLabels["mt_1"] = "Transverse Mass [GeV]";
+		x_axisLabels["pt_1"] = "Transverse Momentum of Leg 1 [GeV]";
+		x_axisLabels["pt_2"] = "Transverse Momentum of Leg 2 [GeV]";
+	}
 
     ///CutMaps///
     drCutMap[1] = "deltar_(eta_1,phi_1,eta_2,phi_2) < 1.";
     drCutMap[2] = "deltar_(eta_1,phi_1,eta_2,phi_2) >= 1. && deltar_(eta_1,phi_1,eta_2,phi_2)<=2.";
-    drCutMap[3] = "deltar_(eta_1,phi_1,eta_2,phi_2) > 0.";
+    drCutMap[3] = "deltar_(eta_1,phi_1,eta_2,phi_2) <=2.0";
+    
     met_options["NOM"] = "met > " + metCutVal;
     met_options["MET_RESP_UP"] = "responseUP_mvaMET_1 > " + metCutVal;
     met_options["MET_RESP_DOWN"] = "responseDOWN_mvaMET_1 > " + metCutVal;
     met_options["MET_RESO_UP"] = "resolutionUP_mvaMET_1 > " + metCutVal;
     met_options["MET_RESO_DOWN"] = "resolutionDOWN_mvaMET_1 > " + metCutVal;
+    
     jetCutMap["NOM"] = TCut("nbtag==0 && njets <= 2");
     jetCutMap["BUP"] = TCut("nbtag_oneSigmaUp==0 && njets <= 2");
     jetCutMap["BDOWN"] = TCut("nbtag_oneSigmaDown==0 && njets <= 2");
+    jetCutMap["NJECUP"] = TCut("nbtag==0 && njets_JECshiftedUp <= 2");
+    jetCutMap["NJECDOWN"] = TCut("nbtag==0 && njets_JECshiftedDown <= 2");
+    jetCutMap["NJERUP"] = TCut("nbtag==0 && njets_JERshiftedUp <= 2");
+    jetCutMap["NJERDOWN"] = TCut("nbtag==0 && njets_JERshiftedDown <= 2");
+
     wNorm_cut_options["NOM"] = TCut("mt_1 > 80");
     wNorm_cut_options["MET_RESP_UP"] = TCut("responseUP_MTmvaMET_1 > 80");
     wNorm_cut_options["MET_RESP_DOWN"] = TCut("responseDOWN_MTmvaMET_1 > 80");
@@ -465,20 +481,21 @@ int miniAODv2_76X_analysisMacro()
 	/* max */
 	if(setLog == 1) DATA_MAX = LOG_MAX;
 
-	/* mc sample weights */
-    weights["ZTT"] = " (final_weight) ";
-    weights["ZL"] = " (final_weight) ";
-    weights["ZJ"] = " (final_weight) ";
-	weights["TT"] = " (final_weight) ";
-    weights["VV"] = " (final_weight) ";
-	weights["W"] = " (final_weight) ";
-	weights["QCD"] = " (final_weight) ";
-    weights["GluGluHTauTau"] = " (final_weight) ";
-    weights["VBFHTauTau"] = " (final_weight) ";
-    weights["ttHJetTT"] = " (final_weight) ";
-	weights["ZHTauTau"] = " (final_weight) ";
-    weights["WHTauTau"] = " (final_weight) ";
-	weights["MONO"] = " (final_weight) ";
+	/* mc sample */
+    weights["DY"] = " (2.3 * final_weight) ";
+    weights["ZTT"] = " (2.3 * final_weight) ";
+    weights["ZL"] = " (2.3 * final_weight) ";
+    weights["ZJ"] = " (2.3 * final_weight) ";
+	weights["TT"] = " (2.3 * final_weight) ";
+    weights["VV"] = " (2.3 * final_weight) ";
+	weights["W"] = " (2.3 * final_weight) ";
+	weights["QCD"] = " (2.3 * final_weight) ";
+    weights["GluGluHTauTau"] = " (2.3 * final_weight) ";
+    weights["VBFHTauTau"] = " (2.3 * final_weight) ";
+    weights["ttHJetTT"] = " (2.3 * final_weight) ";
+	weights["ZHTauTau"] = " (2.3 * final_weight) ";
+    weights["WHTauTau"] = " (2.3 * final_weight) ";
+	weights["MONO"] = " (2.3 * final_weight) ";
 
 	std::cout<<" NOTE ************** mono-Higgs normalized to "<<weights["MONO"]<<"\n";
 	std::cout<<" event yields shown with extra (lumi) factor of "<<lumi_sf<<"\n";
@@ -491,6 +508,13 @@ int miniAODv2_76X_analysisMacro()
 	if(do_eTau) doEleTau();
 	if(do_eMu) doEleMu();
 	if(do_TauTau) doTauTau();
+    if(do_All)
+    {
+        doMuTau();
+        doEleTau();
+        doEleMu();
+        doTauTau();
+    }
 	
 	std::cout<<" press any key to exit root\n";
 	std::string k_;
@@ -510,8 +534,8 @@ void doTauTau()
 {
 	/* set channel label */
 
-    TCut SScut_TauTau_base("isOsPair==0 && dilepton_veto==0 && extramuon_veto==0 && againstElectronVLooseMVA5_1 == 1 && againstMuonLoose3_1 == 1 && againstMuonLoose3_2 == 1 && byCombinedIsolationDeltaBetaCorrRaw3Hits_1 < 1 && byCombinedIsolationDeltaBetaCorrRaw3Hits_2 < 1");
-    TCut signalCut_base("isOsPair==1 && dilepton_veto==0 && extramuon_veto==0 && againstElectronVLooseMVA5_1 == 1 && againstMuonLoose3_1 == 1 && againstMuonLoose3_2 == 1 && byCombinedIsolationDeltaBetaCorrRaw3Hits_1 < 1 && byCombinedIsolationDeltaBetaCorrRaw3Hits_2 < 1");
+    TCut SScut_TauTau_base("isOsPair==0 && dilepton_veto==0 && extramuon_veto==0 && againstElectronVLooseMVA6_1 > 0.5 && againstElectronVLooseMVA6_2 > 0.5 && againstMuonLoose3_1 > 0.5 && againstMuonLoose3_2 > 0.5 && byVTightIsolationMVArun2v1DBoldDMwLT_1 > 0.5 && byVTightIsolationMVArun2v1DBoldDMwLT_2 > 0.5");
+    TCut signalCut_base("isOsPair==1 && dilepton_veto==0 && extramuon_veto==0 && againstElectronVLooseMVA6_1 > 0.5 && againstElectronVLooseMVA6_2 > 0.5 && againstMuonLoose3_1 > 0.5 && againstMuonLoose3_2 > 0.5 && byVTightIsolationMVArun2v1DBoldDMwLT_1 > 0.5 && byVTightIsolationMVArun2v1DBoldDMwLT_2 > 0.5");
 
     std::string metCutTmp;
     if (cRegion) {metCutTmp = "met < 100";}
@@ -572,13 +596,13 @@ void doTauTau()
         global_title = "QCD (Same Sign) Estimate Region";
 
         double wSF_SS_TauTau = 1.0; /* temp */
-        fillQCD_Shape(SScut_TauTau_base * cut_options_nom, wSF_SS_TauTau, qcd_TauTau_mt, "mt_1", mtBinning, "QCD mt shape ext. in SS side band (TauTau)");
-        fillQCD_Shape(SScut_TauTau_base * cut_options_nom, wSF_SS_TauTau, qcd_TauTau_m_vis, "m_vis", m_visBinning,  "QCD mvis shape ext. in SS side band (TauTau)");
-        fillQCD_Shape(SScut_TauTau_base * cut_options_nom, wSF_SS_TauTau, qcd_TauTau_nbtag, "nbtag", nbtagBinning,  "QCD nbtag shape ext. in SS side band (TauTau)");
-        fillQCD_Shape(SScut_TauTau_base * cut_options_nom, wSF_SS_TauTau, qcd_TauTau_met, "met", metBinning,  "QCD met shape ext. in SS side band (TauTau)");
-        fillQCD_Shape(SScut_TauTau_base * cut_options_nom, wSF_SS_TauTau, qcd_TauTau_pt_1, "pt_1", ptBinning,  "QCD pt_1 shape ext. in SS side band (TauTau)");
-        fillQCD_Shape(SScut_TauTau_base * cut_options_nom, wSF_SS_TauTau, qcd_TauTau_pt_2, "pt_2", ptBinning,  "QCD pt_2 shape ext. in SS side band (TauTau)");
-        fillQCD_Shape(SScut_TauTau_base * cut_options_nom, wSF_SS_TauTau, qcd_TauTau_LPT, "LPT", lptBinning,  "QCD LPT shape ext. in SS side band (TauTau)");
+        fillQCD_Shape(SScut_TauTau_base * cut_options_nom, wSF_SS_TauTau, qcd_TauTau_mt, "mt_1", mtBinning, "QCD mt shape ext. in SS side band (TauTau)", "TauTau");
+        fillQCD_Shape(SScut_TauTau_base * cut_options_nom, wSF_SS_TauTau, qcd_TauTau_m_vis, "m_vis", m_visBinning,  "QCD mvis shape ext. in SS side band (TauTau)", "TauTau");
+        fillQCD_Shape(SScut_TauTau_base * cut_options_nom, wSF_SS_TauTau, qcd_TauTau_nbtag, "nbtag", nbtagBinning,  "QCD nbtag shape ext. in SS side band (TauTau)", "TauTau");
+        fillQCD_Shape(SScut_TauTau_base * cut_options_nom, wSF_SS_TauTau, qcd_TauTau_met, "met", metBinning,  "QCD met shape ext. in SS side band (TauTau)", "TauTau");
+        fillQCD_Shape(SScut_TauTau_base * cut_options_nom, wSF_SS_TauTau, qcd_TauTau_pt_1, "pt_1", ptBinning,  "QCD pt_1 shape ext. in SS side band (TauTau)", "TauTau");
+        fillQCD_Shape(SScut_TauTau_base * cut_options_nom, wSF_SS_TauTau, qcd_TauTau_pt_2, "pt_2", ptBinning,  "QCD pt_2 shape ext. in SS side band (TauTau)", "TauTau");
+        fillQCD_Shape(SScut_TauTau_base * cut_options_nom, wSF_SS_TauTau, qcd_TauTau_LPT, "LPT", lptBinning,  "QCD LPT shape ext. in SS side band (TauTau)", "TauTau");
 
         /* now draw the signal region in mt */
         
@@ -586,13 +610,15 @@ void doTauTau()
 
         global_title = "MET < 100 GeV Control Region";
 
-        drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_TauTau, qcd_TauTau_mt, "mt_1", mtBinning, "sig region (met<100) mt");
-        drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_TauTau, qcd_TauTau_m_vis, "m_vis", m_visBinning, "sig region (met<100) mvis");
-        drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_TauTau, qcd_TauTau_nbtag, "nbtag", nbtagBinning, "sig region (met<100) nbtag");
-        drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_TauTau, qcd_TauTau_met, "met", metBinning, "sig region (met<100) met");
-        drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_TauTau, qcd_TauTau_pt_1, "pt_1", ptBinning, "sig region (met<100) pt_1");
-        drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_TauTau, qcd_TauTau_pt_2, "pt_2", ptBinning, "sig region (met<100) pt_2");
-        drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_TauTau, qcd_TauTau_LPT, "LPT", lptBinning, "sig region (met<100) LPT");
+        drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_TauTau, qcd_TauTau_mt, "mt_1", mtBinning, "sig region (met<100) mt", "TauTau");
+        drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_TauTau, qcd_TauTau_m_vis, "m_vis", m_visBinning, "sig region (met<100) mvis", "TauTau");
+        drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_TauTau, qcd_TauTau_nbtag, "nbtag", nbtagBinning, "sig region (met<100) nbtag", "TauTau");
+        drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_TauTau, qcd_TauTau_met, "met", metBinning, "sig region (met<100) met", "TauTau");
+        drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_TauTau, qcd_TauTau_pt_1, "pt_1", ptBinning, "sig region (met<100) pt_1", "TauTau");
+        drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_TauTau, qcd_TauTau_pt_2, "pt_2", ptBinning, "sig region (met<100) pt_2", "TauTau");
+        drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_TauTau, qcd_TauTau_LPT, "LPT", lptBinning, "sig region (met<100) LPT", "TauTau");
+        
+        reset_files();
     }
     else if (evalBaselineSys==1)
     {
@@ -649,8 +675,8 @@ void doEleMu()
 	setup_files_eleMu();
 
     //TCut SScut_eleMu("isOsPair==0 && dilepton_veto==0 && extramuon_veto==0  && iso_1<0.15 && iso_2<0.15");
-    TCut SScut_eleMu_base("isOsPair==0 && dilepton_veto==0 && extramuon_veto==0  && ((iso_1<0.15 && iso_2>0.2 && iso_2<0.4) || (iso_2<0.15 && iso_1>0.2 && iso_1<0.4)) ");
-    TCut signalCut_base("isOsPair==1 && dilepton_veto==0 && extramuon_veto==0  && iso_1<0.15 && iso_2<0.15");
+    TCut SScut_eleMu_base("isOsPair==0 && dilepton_veto==0 && extramuon_veto==0  && iso_1 < 0.15 && iso_2 < 0.15");
+    TCut signalCut_base("isOsPair==1 && dilepton_veto==0 && extramuon_veto==0  && iso_1 < 0.15 && iso_2 < 0.15");
 
     std::string metCutTmp;
     if (cRegion) {metCutTmp = "met < 100";}
@@ -704,13 +730,13 @@ void doEleMu()
 
         global_title = "QCD (Same Sign) Estimate Region";
 
-        fillQCD_Shape(SScut_eleMu_base * cut_options_nom, wSF_SS_eleMu, qcd_eleMu_mt, "mt_1", mtBinning, "QCD mt shape ext. in SS side band (eleMu)");
-        fillQCD_Shape(SScut_eleMu_base * cut_options_nom, wSF_SS_eleMu, qcd_eleMu_m_vis, "m_vis", m_visBinning,  "QCD mvis shape ext. in SS side band (eleMu)");
-        fillQCD_Shape(SScut_eleMu_base * cut_options_nom, wSF_SS_eleMu, qcd_eleMu_nbtag, "nbtag", nbtagBinning,  "QCD nbtag shape ext. in SS side band (eleMu)");
-        fillQCD_Shape(SScut_eleMu_base * cut_options_nom, wSF_SS_eleMu, qcd_eleMu_met, "met", metBinning,  "QCD met shape ext. in SS side band (eleMu)");
-        fillQCD_Shape(SScut_eleMu_base * cut_options_nom, wSF_SS_eleMu, qcd_eleMu_pt_1, "pt_1", ptBinning,  "QCD pt_1 shape ext. in SS side band (eleMu)");
-        fillQCD_Shape(SScut_eleMu_base * cut_options_nom, wSF_SS_eleMu, qcd_eleMu_pt_2, "pt_2", ptBinning,  "QCD pt_2 shape ext. in SS side band (eleMu)");
-        fillQCD_Shape(SScut_eleMu_base * cut_options_nom, wSF_SS_eleMu, qcd_eleMu_LPT, "LPT", lptBinning,  "QCD LPT shape ext. in SS side band (eleMu)");
+        fillQCD_Shape(SScut_eleMu_base * cut_options_nom, wSF_SS_eleMu, qcd_eleMu_mt, "mt_1", mtBinning, "QCD mt shape ext. in SS side band (eleMu)", "EleMu");
+        fillQCD_Shape(SScut_eleMu_base * cut_options_nom, wSF_SS_eleMu, qcd_eleMu_m_vis, "m_vis", m_visBinning,  "QCD mvis shape ext. in SS side band (eleMu)", "EleMu");
+        fillQCD_Shape(SScut_eleMu_base * cut_options_nom, wSF_SS_eleMu, qcd_eleMu_nbtag, "nbtag", nbtagBinning,  "QCD nbtag shape ext. in SS side band (eleMu)", "EleMu");
+        fillQCD_Shape(SScut_eleMu_base * cut_options_nom, wSF_SS_eleMu, qcd_eleMu_met, "met", metBinning,  "QCD met shape ext. in SS side band (eleMu)", "EleMu");
+        fillQCD_Shape(SScut_eleMu_base * cut_options_nom, wSF_SS_eleMu, qcd_eleMu_pt_1, "pt_1", ptBinning,  "QCD pt_1 shape ext. in SS side band (eleMu)", "EleMu");
+        fillQCD_Shape(SScut_eleMu_base * cut_options_nom, wSF_SS_eleMu, qcd_eleMu_pt_2, "pt_2", ptBinning,  "QCD pt_2 shape ext. in SS side band (eleMu)", "EleMu");
+        fillQCD_Shape(SScut_eleMu_base * cut_options_nom, wSF_SS_eleMu, qcd_eleMu_LPT, "LPT", lptBinning,  "QCD LPT shape ext. in SS side band (eleMu)", "EleMu");
 
         /* now draw the signal region in mt */
         
@@ -718,13 +744,15 @@ void doEleMu()
 
         global_title = "MET < 100 GeV Control Region";
 
-        drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_eleMu, qcd_eleMu_mt, "mt_1", mtBinning, "sig region (met<100) mt");
-        drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_eleMu, qcd_eleMu_m_vis, "m_vis", m_visBinning, "sig region (met<100) mvis");
-        drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_eleMu, qcd_eleMu_nbtag, "nbtag", nbtagBinning, "sig region (met<100) nbtag");
-        drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_eleMu, qcd_eleMu_met, "met", metBinning, "sig region (met<100) met");
-        drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_eleMu, qcd_eleMu_pt_1, "pt_1", ptBinning, "sig region (met<100) pt_1");
-        drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_eleMu, qcd_eleMu_pt_2, "pt_2", ptBinning, "sig region (met<100) pt_2");
-        drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_eleMu, qcd_eleMu_LPT, "LPT", lptBinning, "sig region (met<100) LPT");
+        drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_eleMu, qcd_eleMu_mt, "mt_1", mtBinning, "sig region (met<100) mt", "EleMu");
+        drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_eleMu, qcd_eleMu_m_vis, "m_vis", m_visBinning, "sig region (met<100) mvis", "EleMu");
+        drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_eleMu, qcd_eleMu_nbtag, "nbtag", nbtagBinning, "sig region (met<100) nbtag", "EleMu");
+        drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_eleMu, qcd_eleMu_met, "met", metBinning, "sig region (met<100) met", "EleMu");
+        drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_eleMu, qcd_eleMu_pt_1, "pt_1", ptBinning, "sig region (met<100) pt_1", "EleMu");
+        drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_eleMu, qcd_eleMu_pt_2, "pt_2", ptBinning, "sig region (met<100) pt_2", "EleMu");
+        drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_eleMu, qcd_eleMu_LPT, "LPT", lptBinning, "sig region (met<100) LPT", "EleMu");
+        
+        reset_files();
     }
     else if (evalBaselineSys==1)
     {
@@ -774,11 +802,12 @@ void doEleTau()
     /* setup files for eleTau channel */
     setup_files_eleTau();
 
-	/* set channel label */
-    TCut OS_wNorm_eleTau_base("isOsPair==1 && dilepton_veto==0 && extramuon_veto==0 && againstMuonLoose3_2==1 && againstElectronTightMVA5_2==1  && iso_1<0.1 && byCombinedIsolationDeltaBetaCorrRaw3Hits_2 > 2.0 && byCombinedIsolationDeltaBetaCorrRaw3Hits_2<10");
-    TCut SS_wNorm_eleTau_base("isOsPair==0 && dilepton_veto==0 && extramuon_veto==0 && againstMuonLoose3_2==1 && againstElectronTightMVA5_2==1  && iso_1<0.1 && byCombinedIsolationDeltaBetaCorrRaw3Hits_2 > 2.0 && byCombinedIsolationDeltaBetaCorrRaw3Hits_2<10");
-    TCut SScut_eleTau_base("isOsPair==0 && dilepton_veto==0 && extramuon_veto==0 && againstMuonLoose3_2==1 && againstElectronTightMVA5_2==1  && iso_1<0.1 && byCombinedIsolationDeltaBetaCorrRaw3Hits_2 < 1.5");
-    TCut signalCut_base("isOsPair==1 && dilepton_veto==0 && extramuon_veto==0 && againstMuonLoose3_2==1 && againstElectronTightMVA5_2==1  && iso_1<0.1 && byCombinedIsolationDeltaBetaCorrRaw3Hits_2 < 1.5");
+	/* No WNorm in 76X */
+    TCut OS_wNorm_eleTau_base("isOsPair==1 && dilepton_veto==0 && extramuon_veto==0 && iso_1<0.1 && againstMuonLoose3_2 > 0.5 && againstElectronTightMVA6_2 > 0.5 && byTightIsolationMVArun2v1DBoldDMwLT_2 < 0.5");
+    TCut SS_wNorm_eleTau_base("isOsPair==0 && dilepton_veto==0 && extramuon_veto==0 && iso_1<0.1 && againstMuonLoose3_2 > 0.5 && againstElectronTightMVA6_2 > 0.5 && byTightIsolationMVArun2v1DBoldDMwLT_2 < 0.5");
+    
+    TCut SScut_eleTau_base("isOsPair==0 && dilepton_veto==0 && extramuon_veto==0 && iso_1 < 0.1 && againstMuonLoose3_2 > 0.5 && againstElectronTightMVA6_2 > 0.5 && byTightIsolationMVArun2v1DBoldDMwLT_2 > 0.5");
+    TCut signalCut_base("isOsPair==1 && dilepton_veto==0 && extramuon_veto==0 && iso_1 < 0.1 && againstMuonLoose3_2 > 0.5 && againstElectronTightMVA6_2 > 0.5 && byTightIsolationMVArun2v1DBoldDMwLT_2 > 0.5");
 
     std::string metCutTmp;
     if (cRegion) {metCutTmp = "met < 100";}
@@ -797,17 +826,15 @@ void doEleTau()
 
         global_title = "Opp. Sign high M_{T} Control Region";
 
-        //double wSF_OS_eleTau = 0.968287; //wjetsNorm(OS_wNorm_eleTau, "wjetsOS");
-
-        double wSF_OS_eleTau  = wjetsNorm(OS_wNorm_eleTau_base * wNorm_cut_options["NOM"], "wjetsOS");
+        double wSF_OS_eleTau = 1.0;
+        //double wSF_OS_eleTau  = wjetsNorm(OS_wNorm_eleTau_base * wNorm_cut_options["NOM"], "wjetsOS");
 
         /* perform the SS W+jets normalization estimate (to be used in the QCD control region) */
 
         global_title = "Same Sign high M_{T} Control Region";
 
-        //double wSF_SS_eleTau = 1.05979;//wjetsNorm(SS_wNorm_eleTau, "wjetsSSforQCD");
-
-        double wSF_SS_eleTau = wjetsNorm(SS_wNorm_eleTau_base * wNorm_cut_options["NOM"], "wjetsSSforQCD");
+        double wSF_SS_eleTau = 1.0;
+        //double wSF_SS_eleTau = wjetsNorm(SS_wNorm_eleTau_base * wNorm_cut_options["NOM"], "wjetsSSforQCD");
         
         /* declare the eleTau qcd shapes for each binning */		
 
@@ -859,29 +886,31 @@ void doEleTau()
         global_title = "QCD (Same Sign) Estimate Region";
         
         /* need to make this function more general for any dist. */
-        fillQCD_Shape(SScut_eleTau_base * cut_options_nom, wSF_SS_eleTau, qcd_eleTau_mt, "mt_1", mtBinning, "QCD mt shape ext. in SS side band (eleTau)");
-        fillQCD_Shape(SScut_eleTau_base * cut_options_nom, wSF_SS_eleTau, qcd_eleTau_m_vis, "m_vis", m_visBinning,  "QCD mvis shape ext. in SS side band (eleTau)");
-        fillQCD_Shape(SScut_eleTau_base * cut_options_nom, wSF_SS_eleTau, qcd_eleTau_nbtag, "nbtag", nbtagBinning,  "QCD nbtag shape ext. in SS side band (eleTau)");
-        fillQCD_Shape(SScut_eleTau_base * cut_options_nom, wSF_SS_eleTau, qcd_eleTau_met, "met", metBinning,  "QCD met shape ext. in SS side band (eleTau)");
-        fillQCD_Shape(SScut_eleTau_base * cut_options_nom, wSF_SS_eleTau, qcd_eleTau_pt_1, "pt_1", ptBinning,  "QCD pt_1 shape ext. in SS side band (eleTau)");
-        fillQCD_Shape(SScut_eleTau_base * cut_options_nom, wSF_SS_eleTau, qcd_eleTau_pt_2, "pt_2", ptBinning,  "QCD pt_2 shape ext. in SS side band (eleTau)");
-        fillQCD_Shape(SScut_eleTau_base * cut_options_nom, wSF_SS_eleTau, qcd_eleTau_LPT, "LPT", lptBinning, "QCD LPT shape ext. in SS side band (eleTau)");
-        fillQCD_Shape(SScut_eleTau_base * cut_options_nom, wSF_SS_eleTau, qcd_eleTau_m_min, "M_min", m_minBinning, "QCD Function M_min shape ext. in SS side band (eleTau)");
-        fillQCD_Shape(SScut_eleTau_base * cut_options_nom, wSF_SS_eleTau, qcd_eleTau_p_chi, "P_chi", p_chiBinning, "QCD Function P_chi shape ext. in SS side band (eleTau)");
+        fillQCD_Shape(SScut_eleTau_base * cut_options_nom, wSF_SS_eleTau, qcd_eleTau_mt, "mt_1", mtBinning, "QCD mt shape ext. in SS side band (eleTau)", "EleTau");
+        fillQCD_Shape(SScut_eleTau_base * cut_options_nom, wSF_SS_eleTau, qcd_eleTau_m_vis, "m_vis", m_visBinning,  "QCD mvis shape ext. in SS side band (eleTau)", "EleTau");
+        fillQCD_Shape(SScut_eleTau_base * cut_options_nom, wSF_SS_eleTau, qcd_eleTau_nbtag, "nbtag", nbtagBinning,  "QCD nbtag shape ext. in SS side band (eleTau)", "EleTau");
+        fillQCD_Shape(SScut_eleTau_base * cut_options_nom, wSF_SS_eleTau, qcd_eleTau_met, "met", metBinning,  "QCD met shape ext. in SS side band (eleTau)", "EleTau");
+        fillQCD_Shape(SScut_eleTau_base * cut_options_nom, wSF_SS_eleTau, qcd_eleTau_pt_1, "pt_1", ptBinning,  "QCD pt_1 shape ext. in SS side band (eleTau)", "EleTau");
+        fillQCD_Shape(SScut_eleTau_base * cut_options_nom, wSF_SS_eleTau, qcd_eleTau_pt_2, "pt_2", ptBinning,  "QCD pt_2 shape ext. in SS side band (eleTau)", "EleTau");
+        fillQCD_Shape(SScut_eleTau_base * cut_options_nom, wSF_SS_eleTau, qcd_eleTau_LPT, "LPT", lptBinning, "QCD LPT shape ext. in SS side band (eleTau)", "EleTau");
+        fillQCD_Shape(SScut_eleTau_base * cut_options_nom, wSF_SS_eleTau, qcd_eleTau_m_min, "M_min", m_minBinning, "QCD Function M_min shape ext. in SS side band (eleTau)", "EleTau");
+        fillQCD_Shape(SScut_eleTau_base * cut_options_nom, wSF_SS_eleTau, qcd_eleTau_p_chi, "P_chi", p_chiBinning, "QCD Function P_chi shape ext. in SS side band (eleTau)", "EleTau");
 
         /* now draw the signal region in mt */
 
         global_title = "MET < 100 GeV Control Region";
 
-        drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_eleTau, qcd_eleTau_mt, "mt_1", mtBinning, "sig region (met<100) mt");
-        drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_eleTau, qcd_eleTau_m_vis, "m_vis", m_visBinning, "sig region (met<100) mvis");
-        drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_eleTau, qcd_eleTau_nbtag, "nbtag", nbtagBinning, "sig region (met<100) nbtag");
-        drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_eleTau, qcd_eleTau_met, "met", metBinning, "sig region (met<100) met");
-        drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_eleTau, qcd_eleTau_pt_1, "pt_1", ptBinning, "sig region (met<100) pt_1");
-        drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_eleTau, qcd_eleTau_pt_2, "pt_2", ptBinning, "sig region (met<100) pt_2");
-        drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_eleTau, qcd_eleTau_LPT, "LPT", lptBinning, "sig region (met<100) LPT");
-        drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_eleTau, qcd_eleTau_m_min, "M_min", m_minBinning, "sig region (met<100) Function M_min");
-        drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_eleTau, qcd_eleTau_p_chi, "P_chi", p_chiBinning, "sig region (met<100) Function P_chi");
+        drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_eleTau, qcd_eleTau_mt, "mt_1", mtBinning, "sig region (met<100) mt", "EleTau");
+        drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_eleTau, qcd_eleTau_m_vis, "m_vis", m_visBinning, "sig region (met<100) mvis", "EleTau");
+        drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_eleTau, qcd_eleTau_nbtag, "nbtag", nbtagBinning, "sig region (met<100) nbtag", "EleTau");
+        drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_eleTau, qcd_eleTau_met, "met", metBinning, "sig region (met<100) met", "EleTau");
+        drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_eleTau, qcd_eleTau_pt_1, "pt_1", ptBinning, "sig region (met<100) pt_1", "EleTau");
+        drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_eleTau, qcd_eleTau_pt_2, "pt_2", ptBinning, "sig region (met<100) pt_2", "EleTau");
+        drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_eleTau, qcd_eleTau_LPT, "LPT", lptBinning, "sig region (met<100) LPT", "EleTau");
+        drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_eleTau, qcd_eleTau_m_min, "M_min", m_minBinning, "sig region (met<100) Function M_min", "EleTau");
+        drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_eleTau, qcd_eleTau_p_chi, "P_chi", p_chiBinning, "sig region (met<100) Function P_chi", "EleTau");
+        
+        reset_files();
         
     }
     else if (evalBaselineSys==1)
@@ -918,7 +947,6 @@ void doEleTau()
         cut_options_met_reso_up += jetCutMap["NOM"];
         
         //evalSysBaseline(nomYieldsVect, signalCut_base * cut_options_met_reso_up, signalCut_base * cut_options_met_reso_down, SS_wNorm_eleTau_base * wNorm_cut_options["MET_RESO_UP"], SS_wNorm_eleTau_base * wNorm_cut_options["MET_RESO_DOWN"], OS_wNorm_eleTau_base * wNorm_cut_options["MET_RESO_UP"], OS_wNorm_eleTau_base * wNorm_cut_options["MET_RESO_DOWN"], SScut_eleTau_base * cut_options_met_reso_up, SScut_eleTau_base * cut_options_met_reso_down, "met", metBinning, "MetResolution");
-        
     }
     else if (evalEnergyShiftSys==1)
     {
@@ -928,12 +956,12 @@ void doEleTau()
 
 void doMuTau()
 {
-	/* set channel label */
-
-    TCut OS_wNorm_muTau_base("isOsPair==1 && dilepton_veto==0 && extramuon_veto==0 && againstMuonTight3_2==1 && againstElectronVLooseMVA6_2==1 && iso_1<0.1 && byTightIsolationMVArun2v1DBoldDMwLT_2 < 0.5");
-    TCut SS_wNorm_muTau_base("isOsPair==0 && dilepton_veto==0 && extramuon_veto==0 && againstMuonTight3_2==1 && againstElectronVLooseMVA6_2==1&& iso_1<0.1 && byTightIsolationMVArun2v1DBoldDMwLT_2 < 0.5");
-    TCut SScut_muTau_base("isOsPair==0 && dilepton_veto==0 && extramuon_veto==0 && againstMuonTight3_2==1 && againstElectronVLooseMVA6_2==1 && iso_1<0.1 && byTightIsolationMVArun2v1DBoldDMwLT_2 > 0.5");
-    TCut signalCut_base("isOsPair==1 && dilepton_veto==0 && extramuon_veto==0 && againstMuonTight3_2==1 && againstElectronVLooseMVA6_2==1&& iso_1<0.1 && byTightIsolationMVArun2v1DBoldDMwLT_2 > 0.5");
+	/* No WNorm in 76X */
+    TCut OS_wNorm_muTau_base("isOsPair==1 && dilepton_veto==0 && extramuon_veto==0 && againstMuonTight3_2>0.5 && againstElectronVLooseMVA6_2>0.5 && iso_1 < 0.1 && byTightIsolationMVArun2v1DBoldDMwLT_2 < 0.5");
+    TCut SS_wNorm_muTau_base("isOsPair==0 && dilepton_veto==0 && extramuon_veto==0 && againstMuonTight3_2>0.5 && againstElectronVLooseMVA6_2>0.5 && iso_1 < 0.1 && byTightIsolationMVArun2v1DBoldDMwLT_2 < 0.5");
+    
+    TCut SScut_muTau_base("isOsPair==0 && dilepton_veto==0 && extramuon_veto==0 && againstMuonTight3_2>0.5 && againstElectronVLooseMVA6_2>0.5 && iso_1 < 0.1 && byTightIsolationMVArun2v1DBoldDMwLT_2 > 0.5");
+    TCut signalCut_base("isOsPair==1 && dilepton_veto==0 && extramuon_veto==0 && againstMuonTight3_2>0.5 && againstElectronVLooseMVA6_2>0.5 && iso_1 < 0.1 && byTightIsolationMVArun2v1DBoldDMwLT_2 > 0.5");
 
     std::string metCutTmp;
     if (cRegion) {metCutTmp = "met < 100";}
@@ -978,73 +1006,72 @@ void doMuTau()
         qcd_muTau_met->SetFillColor(colors["QCD"]);	
         
         /* m_vis */
-        TH1F * qcd_muTau_m_vis = new TH1F("qcd_muTau_m_vis","qcd_muTau_m_vis",m_visBinning[0],m_visBinning[1],m_visBinning[2]); 
+/*        TH1F * qcd_muTau_m_vis = new TH1F("qcd_muTau_m_vis","qcd_muTau_m_vis",m_visBinning[0],m_visBinning[1],m_visBinning[2]);
         qcd_muTau_m_vis->Sumw2(); 
         qcd_muTau_m_vis->SetFillColor(colors["QCD"]);	
-        
+*/
         /* pt_1 */
-        TH1F * qcd_muTau_pt_1 = new TH1F("qcd_muTau_pt_1","qcd_muTau_pt_1",ptBinning[0],ptBinning[1],ptBinning[2]); 
+/*        TH1F * qcd_muTau_pt_1 = new TH1F("qcd_muTau_pt_1","qcd_muTau_pt_1",ptBinning[0],ptBinning[1],ptBinning[2]);
         qcd_muTau_pt_1->Sumw2(); 
         qcd_muTau_pt_1->SetFillColor(colors["QCD"]);	
-        
+*/
         /* pt_2 */
-        TH1F * qcd_muTau_pt_2 = new TH1F("qcd_muTau_pt_2","qcd_muTau_pt_2",ptBinning[0],ptBinning[1],ptBinning[2]); 
+/*        TH1F * qcd_muTau_pt_2 = new TH1F("qcd_muTau_pt_2","qcd_muTau_pt_2",ptBinning[0],ptBinning[1],ptBinning[2]);
         qcd_muTau_pt_2->Sumw2(); 
         qcd_muTau_pt_2->SetFillColor(colors["QCD"]);	
-        
+*/
         /* LPT */
         TH1F * qcd_muTau_LPT = new TH1F("qcd_muTau_LPT","qcd_muTau_LPT",lptBinning[0],lptBinning[1],lptBinning[2]);
         qcd_muTau_LPT->Sumw2();
         qcd_muTau_LPT->SetFillColor(colors["QCD"]);
-
+        
         /* M_min */
-        TH1F * qcd_muTau_m_min = new TH1F("qcd_muTau_m_min","qcd_muTau_m_min",m_minBinning[0],m_minBinning[1],m_minBinning[2]);
+        
+/*        TH1F * qcd_muTau_m_min = new TH1F("qcd_muTau_m_min","qcd_muTau_m_min",m_minBinning[0],m_minBinning[1],m_minBinning[2]);
         qcd_muTau_m_min->Sumw2();
         qcd_muTau_m_min->SetFillColor(colors["QCD"]);
-
+*/
         /* P_chi */
         TH1F * qcd_muTau_p_chi = new TH1F("qcd_muTau_p_chi","qcd_muTau_p_chi",p_chiBinning[0],p_chiBinning[1],p_chiBinning[2]);
         qcd_muTau_p_chi->Sumw2();
         qcd_muTau_p_chi->SetFillColor(colors["QCD"]);
 
         /* nbtag */
-        TH1F * qcd_muTau_nbtag = new TH1F("qcd_muTau_nbtag","qcd_muTau_nbtag",nbtagBinning[0],nbtagBinning[1],nbtagBinning[2]); 
+/*        TH1F * qcd_muTau_nbtag = new TH1F("qcd_muTau_nbtag","qcd_muTau_nbtag",nbtagBinning[0],nbtagBinning[1],nbtagBinning[2]);
         qcd_muTau_nbtag->Sumw2(); 
         qcd_muTau_nbtag->SetFillColor(colors["QCD"]);
-
+*/
         global_title = "QCD (Same Sign) Estimate Region";
 
-        SScut_muTau_base * cut_options_nom; /* needs to match whatever we draw the full model in*/
-    
-        /* need to make this function more general for any dist. */
-        /*
-        fillQCD_Shape(SScut_muTau_base * cut_options_nom, wSF_SS_muTau, qcd_muTau_mt, "mt_1", mtBinning, "QCD mt shape ext. in SS side band (muTau)");
-        fillQCD_Shape(SScut_muTau_base * cut_options_nom, wSF_SS_muTau, qcd_muTau_m_vis, "m_vis", m_visBinning,  "QCD mvis shape ext. in SS side band (muTau)");
-        fillQCD_Shape(SScut_muTau_base * cut_options_nom, wSF_SS_muTau, qcd_muTau_nbtag, "nbtag", nbtagBinning,  "QCD nbtag shape ext. in SS side band (muTau)");
-        fillQCD_Shape(SScut_muTau_base * cut_options_nom, wSF_SS_muTau, qcd_muTau_met, "met", metBinning,  "QCD met shape ext. in SS side band (muTau)");
-        fillQCD_Shape(SScut_muTau_base * cut_options_nom, wSF_SS_muTau, qcd_muTau_pt_1, "pt_1", ptBinning,  "QCD pt_1 shape ext. in SS side band (muTau)");
-        fillQCD_Shape(SScut_muTau_base * cut_options_nom, wSF_SS_muTau, qcd_muTau_pt_2, "pt_2", ptBinning,  "QCD pt_2 shape ext. in SS side band (muTau)");
-        fillQCD_Shape(SScut_muTau_base * cut_options_nom, wSF_SS_muTau, qcd_muTau_LPT, "LPT", lptBinning,  "QCD LPT shape ext. in SS side band (muTau)");
-        fillQCD_Shape(SScut_muTau_base * cut_options_nom, wSF_SS_muTau, qcd_muTau_m_min, "M_min", m_minBinning, "QCD Function M_min shape ext. in SS side band (muTau)");
-        fillQCD_Shape(SScut_muTau_base * cut_options_nom, wSF_SS_muTau, qcd_muTau_p_chi, "P_chi", p_chiBinning, "QCD Function P_chi shape ext. in SS side band (muTau)");
-        */
-        //Loop through two maps for sys
-
+        //SScut_muTau_base * cut_options_nom; /* needs to match whatever we draw the full model in*/
+        
+        fillQCD_Shape(SScut_muTau_base * cut_options_nom, wSF_SS_muTau, qcd_muTau_mt, "mt_1", mtBinning, "QCD mt shape ext. in SS side band (muTau)", "MuTau");
+        //fillQCD_Shape(SScut_muTau_base * cut_options_nom, wSF_SS_muTau, qcd_muTau_m_vis, "m_vis", m_visBinning,  "QCD mvis shape ext. in SS side band (muTau)", "MuTau");
+        //fillQCD_Shape(SScut_muTau_base * cut_options_nom, wSF_SS_muTau, qcd_muTau_nbtag, "nbtag", nbtagBinning,  "QCD nbtag shape ext. in SS side band (muTau)", "MuTau");
+        fillQCD_Shape(SScut_muTau_base * cut_options_nom, wSF_SS_muTau, qcd_muTau_met, "met", metBinning,  "QCD met shape ext. in SS side band (muTau)", "MuTau");
+        //fillQCD_Shape(SScut_muTau_base * cut_options_nom, wSF_SS_muTau, qcd_muTau_pt_1, "pt_1", ptBinning,  "QCD pt_1 shape ext. in SS side band (muTau)", "MuTau");
+        //fillQCD_Shape(SScut_muTau_base * cut_options_nom, wSF_SS_muTau, qcd_muTau_pt_2, "pt_2", ptBinning,  "QCD pt_2 shape ext. in SS side band (muTau)", "MuTau");
+        fillQCD_Shape(SScut_muTau_base * cut_options_nom, wSF_SS_muTau, qcd_muTau_LPT, "LPT", lptBinning,  "QCD LPT shape ext. in SS side band (muTau)", "MuTau");
+        //fillQCD_Shape(SScut_muTau_base * cut_options_nom, wSF_SS_muTau, qcd_muTau_m_min, "M_min", m_minBinning, "QCD Function M_min shape ext. in SS side band (muTau)", "MuTau");
+        fillQCD_Shape(SScut_muTau_base * cut_options_nom, wSF_SS_muTau, qcd_muTau_p_chi, "P_chi", p_chiBinning, "QCD Function P_chi shape ext. in SS side band (muTau)", "MuTau");
+        
         /* now draw the signal region in mt */
         
         global_title = "MET < 100 GeV Control Region";
-
-        findBkgFractions(signalCut_base * cut_options_nom, wSF_OS_muTau, "met", metBinning);
-
-        drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_muTau, qcd_muTau_mt, "mt_1", mtBinning, "sig region (met<100) mt");
-        drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_muTau, qcd_muTau_m_vis, "m_vis", m_visBinning, "sig region (met<100) mvis");
-        drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_muTau, qcd_muTau_nbtag, "nbtag", nbtagBinning, "sig region (met<100) nbtag");
-        drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_muTau, qcd_muTau_met, "met", metBinning, "sig region (met<100) met");
-        drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_muTau, qcd_muTau_pt_1, "pt_1", ptBinning, "sig region (met<100) pt_1");
-        drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_muTau, qcd_muTau_pt_2, "pt_2", ptBinning, "sig region (met<100) pt_2");
-        drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_muTau, qcd_muTau_LPT, "LPT", lptBinning, "sig region (met<100) LPT");
-        drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_muTau, qcd_muTau_m_min, "M_min", m_minBinning, "sig region (met<100) Function M_min");
-        drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_muTau, qcd_muTau_p_chi, "P_chi", p_chiBinning, "sig region (met<100) Function P_chi");
+        
+        //findBkgFractions(signalCut_base * cut_options_nom, wSF_OS_muTau, "met", metBinning);
+        
+        drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_muTau, qcd_muTau_mt, "mt_1", mtBinning, "sig region (met<100) mt", "MuTau");
+        //drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_muTau, qcd_muTau_m_vis, "m_vis", m_visBinning, "sig region (met<100) mvis", "MuTau");
+        //drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_muTau, qcd_muTau_nbtag, "nbtag", nbtagBinning, "sig region (met<100) nbtag", "MuTau");
+        drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_muTau, qcd_muTau_met, "met", metBinning, "sig region (met<100) met", "MuTau");
+        //drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_muTau, qcd_muTau_pt_1, "pt_1", ptBinning, "sig region (met<100) pt_1", "MuTau");
+        //drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_muTau, qcd_muTau_pt_2, "pt_2", ptBinning, "sig region (met<100) pt_2", "MuTau");
+        drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_muTau, qcd_muTau_LPT, "LPT", lptBinning, "sig region (met<100) LPT", "MuTau");
+        //drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_muTau, qcd_muTau_m_min, "M_min", m_minBinning, "sig region (met<100) Function M_min", "MuTau");
+        drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_muTau, qcd_muTau_p_chi, "P_chi", p_chiBinning, "sig region (met<100) Function P_chi", "MuTau");
+        
+        reset_files();
         
     }
     else if (evalBaselineSys==1)
@@ -1054,41 +1081,54 @@ void doMuTau()
 
         /* perform the OS W+jets normalization estimate (to be used in the signal region) */
 
-        double wSF_OS_muTau =  wjetsNorm_NoPlots(OS_wNorm_muTau_base * wNorm_cut_options["NOM"]);
-
+        //double wSF_OS_muTau =  wjetsNorm_NoPlots(OS_wNorm_muTau_base * wNorm_cut_options["NOM"]);
+        double wSF_OS_muTau =  1.0;
         /* perform the SS W+jets normalization estimate (to be used in the QCD control region) */
-
-        double wSF_SS_muTau = wjetsNorm_NoPlots(SS_wNorm_muTau_base * wNorm_cut_options["NOM"]);
-        
+        //double wSF_SS_muTau = wjetsNorm_NoPlots(SS_wNorm_muTau_base * wNorm_cut_options["NOM"]);
+        double wSF_SS_muTau = 1.0;
         /* declare the muTau qcd shapes for each binning */
-        
         /* met */
         TH1F * qcd_muTau_met = new TH1F("qcd_muTau_met","qcd_muTau_met",metBinning[0],metBinning[1],metBinning[2]);
         qcd_muTau_met->Sumw2();
-
         /* need to make this function more general for any dist. */
         fillQCD_Shape_NoPlots(SScut_muTau_base * cut_options_nom, wSF_SS_muTau, qcd_muTau_met, "met", metBinning);
 
         /* use nominal analysis cuts to find nominal yields*/
-
         std::vector<std::vector<double>> nomYieldsVect;
-
         nomYieldsVect = countSignalRegion(signalCut_base * cut_options_nom, wSF_OS_muTau, qcd_muTau_met, "met", metBinning);
         
-        TCut cut_options_met_reso_up((drCutMap[drCut] + " && " + met_options["MET_RESO_UP"]).c_str());
-        cut_options_met_reso_up += jetCutMap["NOM"];
-        TCut cut_options_met_reso_down((drCutMap[drCut] + " && " + met_options["MET_RESO_DOWN"]).c_str());
-        cut_options_met_reso_up += jetCutMap["NOM"];
+        //metRESO
+        TCut cut_options_met_reso_up((drCutMap[drCut] + " && " + met_options["MET_RESO_UP"]).c_str()); cut_options_met_reso_up += jetCutMap["NOM"];
+        TCut cut_options_met_reso_down((drCutMap[drCut] + " && " + met_options["MET_RESO_DOWN"]).c_str()); cut_options_met_reso_down += jetCutMap["NOM"];
+        evalSysBaselineNoW(nomYieldsVect, signalCut_base * cut_options_met_reso_up, signalCut_base * cut_options_met_reso_down, SScut_muTau_base * cut_options_met_reso_up, SScut_muTau_base * cut_options_met_reso_down, "met", metBinning, "MetResolution");
         
-        //evalSysBaseline(nomYieldsVect, signalCut_base * cut_options_met_reso_up, signalCut_base * cut_options_met_reso_down, SS_wNorm_muTau_base * wNorm_cut_options["MET_RESO_UP"], SS_wNorm_muTau_base * wNorm_cut_options["MET_RESO_DOWN"], OS_wNorm_muTau_base * wNorm_cut_options["MET_RESO_UP"], OS_wNorm_muTau_base * wNorm_cut_options["MET_RESO_DOWN"], SScut_muTau_base * cut_options_met_reso_up, SScut_muTau_base * cut_options_met_reso_down, "met", metBinning, "MetResolution");
+        //metRESP
+        TCut cut_options_met_resp_up((drCutMap[drCut] + " && " + met_options["MET_RESP_UP"]).c_str()); cut_options_met_resp_up += jetCutMap["NOM"];
+        TCut cut_options_met_resp_down((drCutMap[drCut] + " && " + met_options["MET_RESP_DOWN"]).c_str());cut_options_met_resp_down += jetCutMap["NOM"];
+        evalSysBaselineNoW(nomYieldsVect, signalCut_base * cut_options_met_resp_up, signalCut_base * cut_options_met_resp_down, SScut_muTau_base * cut_options_met_resp_up, SScut_muTau_base * cut_options_met_resp_down, "met", metBinning, "MetResponse");
 
+        //Btag
+        TCut cut_options_met_b_up((drCutMap[drCut] + " && " + met_options["NOM"]).c_str());cut_options_met_b_up += jetCutMap["BUP"];
+        TCut cut_options_met_b_down((drCutMap[drCut] + " && " + met_options["NOM"]).c_str());cut_options_met_b_down += jetCutMap["BDOWN"];
+        evalSysBaselineNoW(nomYieldsVect, signalCut_base * cut_options_met_b_up, signalCut_base * cut_options_met_b_down, SScut_muTau_base * cut_options_met_b_up, SScut_muTau_base * cut_options_met_b_down, "met", metBinning, "Btag");
+        
+        //JEC
+        TCut cut_options_met_njec_up((drCutMap[drCut] + " && " + met_options["NOM"]).c_str()); cut_options_met_njec_up += jetCutMap["NJECUP"];
+        TCut cut_options_met_njec_down((drCutMap[drCut] + " && " + met_options["NOM"]).c_str());cut_options_met_njec_down += jetCutMap["NJECDOWN"];
+        evalSysBaselineNoW(nomYieldsVect, signalCut_base * cut_options_met_njec_up, signalCut_base * cut_options_met_njec_down, SScut_muTau_base * cut_options_met_njec_up, SScut_muTau_base * cut_options_met_njec_down, "met", metBinning, "NjetJEC");
+        
+        //JER
+        TCut cut_options_met_njer_up((drCutMap[drCut] + " && " + met_options["NOM"]).c_str()); cut_options_met_njer_up += jetCutMap["NJERUP"];
+        TCut cut_options_met_njer_down((drCutMap[drCut] + " && " + met_options["NOM"]).c_str());cut_options_met_njer_down += jetCutMap["NJERDOWN"];
+        evalSysBaselineNoW(nomYieldsVect, signalCut_base * cut_options_met_njer_up, signalCut_base * cut_options_met_njer_down, SScut_muTau_base * cut_options_met_njer_up, SScut_muTau_base * cut_options_met_njer_down, "met", metBinning, "NjetJER");
+    
     }
     else if (evalEnergyShiftSys==1)
     {
         
         setup_files_muTau();
-        double wSF_OS_muTau =  wjetsNorm_NoPlots(OS_wNorm_muTau_base * wNorm_cut_options["NOM"]);
-        double wSF_SS_muTau = wjetsNorm_NoPlots(SS_wNorm_muTau_base * wNorm_cut_options["NOM"]);
+        double wSF_OS_muTau =  1.0;
+        double wSF_SS_muTau = 1.0;
         /* met */
         TH1F * qcd_muTau_met = new TH1F("qcd_muTau_met","qcd_muTau_met",metBinning[0],metBinning[1],metBinning[2]);
         qcd_muTau_met->Sumw2();
@@ -1151,16 +1191,16 @@ void findBkgFractions(TCut cut, double sf, std::string parameter, float bin[3])
 	TH1F * DYlow_ = new TH1F("DYlow_","DYlow_",bin[0],bin[1],bin[2]);
 	DYlow_->Sumw2();
     
-    TH1F * DY1Jets_ = new TH1F("DY1Jets","DY1Jets_",bin[0],bin[1],bin[2]);
+    TH1F * DY1Jets_ = new TH1F("DY1Jets_","DY1Jets_",bin[0],bin[1],bin[2]);
 	DY1Jets_->Sumw2();
     
-    TH1F * DY2Jets_ = new TH1F("DY2Jets","DY2Jets_",bin[0],bin[1],bin[2]);
+    TH1F * DY2Jets_ = new TH1F("DY2Jets_","DY2Jets_",bin[0],bin[1],bin[2]);
 	DY2Jets_->Sumw2();
     
-    TH1F * DY3Jets_ = new TH1F("DY3Jets","DY3Jets_",bin[0],bin[1],bin[2]);
+    TH1F * DY3Jets_ = new TH1F("DY3Jets_","DY3Jets_",bin[0],bin[1],bin[2]);
 	DY3Jets_->Sumw2();
     
-    TH1F * DY4Jets_ = new TH1F("DY4Jets","DY4Jets_",bin[0],bin[1],bin[2]);
+    TH1F * DY4Jets_ = new TH1F("DY4Jets_","DY4Jets_",bin[0],bin[1],bin[2]);
 	DY4Jets_->Sumw2();
     
 	TH1F * WJetsToLNu_ = new TH1F("WJetsToLNu_","WJetsToLNu_",bin[0],bin[1],bin[2]);
@@ -1275,7 +1315,6 @@ void findBkgFractions(TCut cut, double sf, std::string parameter, float bin[3])
     W2JetsToLNu_->Scale(sf);
     W3JetsToLNu_->Scale(sf);
     W4JetsToLNu_->Scale(sf);
-    
     
     WJetsToLNu_->Scale(lumi_sf);
     W1JetsToLNu_->Scale(lumi_sf);
@@ -1447,7 +1486,6 @@ void findBkgFractions(TCut cut, double sf, std::string parameter, float bin[3])
     comb_->IntegralAndError(-1,1e3, error);
     std::cout<<" Combined Background Total................."<< comb_->Integral()<<" +/- "<<error<< "\n";
     
-    
     delete WJetsToLNu_;
     delete W1JetsToLNu_;
     delete W2JetsToLNu_;
@@ -1483,7 +1521,7 @@ void findBkgFractions(TCut cut, double sf, std::string parameter, float bin[3])
 }
 
 
-void drawSignalRegion(TCut cut, double sf, TH1F * QCDshape, std::string parameter, float bin[3], std::string can_name)
+void drawSignalRegion(TCut cut, double sf, TH1F * QCDshape, std::string parameter, float bin[3], std::string can_name, std::string chan)
 {
 
 	/* check if want blinded signal region met tail */
@@ -1565,13 +1603,12 @@ void drawSignalRegion(TCut cut, double sf, TH1F * QCDshape, std::string paramete
 	TH1F * zp1200_ = new TH1F("zp1200_","zp1200_",bin[0],bin[1],bin[2]); 
 	zp1200_->Sumw2(); 
 
-	TH1F * zp1400_ = new TH1F("zp1400_","zp1400_",bin[0],bin[1],bin[2]); 
-	zp1400_->Sumw2(); 
+	//TH1F * zp1400_ = new TH1F("zp1400_","zp1400_",bin[0],bin[1],bin[2]);
+	//zp1400_->Sumw2();
 
 	/* sum of all bks */
 	TH1F * comb_ = new TH1F("comb_","comb_",bin[0],bin[1],bin[2]); 
 	comb_->Sumw2(); 
-
 
 	/* fill the hists */
 	Signal_region->cd(1);
@@ -1609,7 +1646,7 @@ void drawSignalRegion(TCut cut, double sf, TH1F * QCDshape, std::string paramete
 	MZP800_MA0400->Draw((parameter+">>zp800_").c_str(),cut*weights["MONO"].c_str());
 	MZP1000_MA0400->Draw((parameter+">>zp1000_").c_str(),cut*weights["MONO"].c_str());
 	MZP1200_MA0400->Draw((parameter+">>zp1200_").c_str(),cut*weights["MONO"].c_str());
-	MZP1400_MA0700->Draw((parameter+">>zp1400_").c_str(),cut*weights["MONO"].c_str());
+	//MZP1400_MA0700->Draw((parameter+">>zp1400_").c_str(),cut*weights["MONO"].c_str());
 
 	qcd_->Add(QCDshape);
 	qcd_->Scale(qcdOStoSS);
@@ -1617,17 +1654,17 @@ void drawSignalRegion(TCut cut, double sf, TH1F * QCDshape, std::string paramete
 
 	THStack * sigMTstack  = new THStack();
 
-	sigMTstack->Add(vv_);
+    sigMTstack->Add(zhtautau_);
+    sigMTstack->Add(tthjettt_);
+    sigMTstack->Add(whtautau_);
+    sigMTstack->Add(vbfhtautau_);
+    sigMTstack->Add(glugluhtautau_);
+    sigMTstack->Add(vv_);
 	sigMTstack->Add(tt_);
 	sigMTstack->Add(w_);
 	sigMTstack->Add(ztt_);
     sigMTstack->Add(zj_);
     sigMTstack->Add(zl_);
-    sigMTstack->Add(zhtautau_);
-    sigMTstack->Add(tthjettt_);
-    sigMTstack->Add(glugluhtautau_);
-    sigMTstack->Add(vbfhtautau_);
-    sigMTstack->Add(whtautau_);
 	sigMTstack->Add(qcd_);
 
 	Signal_region->cd(1);
@@ -1644,16 +1681,16 @@ void drawSignalRegion(TCut cut, double sf, TH1F * QCDshape, std::string paramete
 	sigMTstack->Draw("histsames");
 
 	zp1000_->SetLineStyle(1);
-	zp1400_->SetLineStyle(2);
+	//zp1400_->SetLineStyle(2);
 
 	zp1000_->SetLineWidth(5);
-	zp1400_->SetLineWidth(5);
+	//zp1400_->SetLineWidth(5);
 
 	zp1000_->SetLineColor(6);
-	zp1400_->SetLineColor(1);
+	//zp1400_->SetLineColor(1);
 
 	if(shouldIplotSignals) 	zp1000_->DrawCopy("hist sames");
-	if(shouldIplotSignals)	zp1400_->DrawCopy(" hist sames");
+	//if(shouldIplotSignals)	zp1400_->DrawCopy("hist sames");
 
 	data_->DrawCopy("PEsames");
 
@@ -1683,11 +1720,10 @@ void drawSignalRegion(TCut cut, double sf, TH1F * QCDshape, std::string paramete
 		std::cout<<" **** EMPTY BLINDED DATA ****, setting eq to bkg total ****\n";
 		data_->Add(comb_);
 
-
 		data_->DrawCopy("PE");
 		sigMTstack->Draw("histsames");
 		if(shouldIplotSignals) 	zp1000_->DrawCopy("hist sames");
-		if(shouldIplotSignals)	zp1400_->DrawCopy(" hist sames");
+		//if(shouldIplotSignals)	zp1400_->DrawCopy(" hist sames");
 
 		data_->DrawCopy("PEsames");
 	}
@@ -1696,9 +1732,8 @@ void drawSignalRegion(TCut cut, double sf, TH1F * QCDshape, std::string paramete
 
 	Signal_region->DrawClone();
 
-	std::string localSaveName = saveName + parameter + ".png";
+	std::string localSaveName = saveName + parameter + "_" + chan + ".png";
 	Signal_region->cd()->SaveAs(localSaveName.c_str());
-
 
 	Signal_region->Close();
 
@@ -1720,7 +1755,7 @@ void drawSignalRegion(TCut cut, double sf, TH1F * QCDshape, std::string paramete
 	zp800_->Scale(lumi_sf);
 	zp1000_->Scale(lumi_sf);
 	zp1200_->Scale(lumi_sf);
-	zp1400_->Scale(lumi_sf);
+	//zp1400_->Scale(lumi_sf);
 	comb_->Scale(lumi_sf);
     
 	// print signal region bkg yields (under whatever cut is provided)
@@ -1794,9 +1829,9 @@ void drawSignalRegion(TCut cut, double sf, TH1F * QCDshape, std::string paramete
 	zp1200_->IntegralAndError(-1,1e3, error);
 	std::cout<<" ZP1200 ... "<<zp1200_->Integral()<<" +/- "<<error<<"\n";
 
-	error = 0;
-	zp1400_->IntegralAndError(-1,1e3, error);
-	std::cout<<" ZP1400 ... "<<zp1400_->Integral()<<" +/- "<<error<<"\n";
+	//error = 0;
+	//zp1400_->IntegralAndError(-1,1e3, error);
+	//std::cout<<" ZP1400 ... "<<zp1400_->Integral()<<" +/- "<<error<<"\n";
 
 	/* the sum */
 
@@ -1823,7 +1858,7 @@ void drawSignalRegion(TCut cut, double sf, TH1F * QCDshape, std::string paramete
     double zp800I, zp800E;
     double zp1000I, zp1000E;
     double zp1200I, zp1200E;
-    double zp1400I, zp1400E;
+    //double zp1400I, zp1400E;
 
     zp600I = zp600_->Integral(-1, zp600_->GetNbinsX()+1);
     zp600_->IntegralAndError(-1, zp600_->GetNbinsX()+1,zp600E);
@@ -1837,8 +1872,8 @@ void drawSignalRegion(TCut cut, double sf, TH1F * QCDshape, std::string paramete
     zp1200I = zp1200_->Integral(-1, zp1200_->GetNbinsX()+1);
     zp1200_->IntegralAndError(-1, zp1200_->GetNbinsX()+1,zp1200E);
 
-    zp1400I = zp1400_->Integral(-1, zp1400_->GetNbinsX()+1);
-    zp1400_->IntegralAndError(-1, zp1400_->GetNbinsX()+1,zp1400E);
+    //zp1400I = zp1400_->Integral(-1, zp1400_->GetNbinsX()+1);
+    //zp1400_->IntegralAndError(-1, zp1400_->GetNbinsX()+1,zp1400E);
 
     wI = w_->Integral(-1, w_->GetNbinsX()+1);
     w_->IntegralAndError(-1, w_->GetNbinsX()+1,wE);
@@ -1876,7 +1911,6 @@ void drawSignalRegion(TCut cut, double sf, TH1F * QCDshape, std::string paramete
     tthjetttI = tthjettt_->Integral(-1, tthjettt_->GetNbinsX()+1);
     tthjettt_->IntegralAndError(-1, tthjettt_->GetNbinsX()+1,tthjetttE);
 
-
     /* format the errors */
 
     if(wI>0.0){ wE = 1 + wE/wI; } else {wI = 0.0; wE = 1.0;}
@@ -1895,37 +1929,38 @@ void drawSignalRegion(TCut cut, double sf, TH1F * QCDshape, std::string paramete
     if(zp800I>0.0){ zp800E = 1 + zp800E/zp800I; } else {zp800I = 0.0; zp800E = 1.0;}
     if(zp1000I>0.0){ zp1000E = 1 + zp1000E/zp1000I; } else {zp1000I = 0.0; zp1000E = 1.0;}
     if(zp1200I>0.0){ zp1200E = 1 + zp1200E/zp1200I; } else {zp1200I = 0.0; zp1200E = 1.0;}
-    if(zp1400I>0.0){ zp1400E = 1 + zp1400E/zp1400I; } else {zp1400I = 0.0; zp1400E = 1.0;}
+    //if(zp1400I>0.0){ zp1400E = 1 + zp1400E/zp1400I; } else {zp1400I = 0.0; zp1400E = 1.0;}
 
     if(comb_->Integral()!=0) std::cout<<" @ ZP = 600 s/rt(b) = "<<zp600I/sqrt(comb_->Integral())<<"\n";
     if(comb_->Integral()!=0) std::cout<<" @ ZP = 800 s/rt(b) = "<<zp800I/sqrt(comb_->Integral())<<"\n";
     if(comb_->Integral()!=0) std::cout<<" @ ZP = 1000 s/rt(b) = "<<zp1000I/sqrt(comb_->Integral())<<"\n";
     if(comb_->Integral()!=0) std::cout<<" @ ZP = 1200 s/rt(b) = "<<zp1200I/sqrt(comb_->Integral())<<"\n";
-    if(comb_->Integral()!=0) std::cout<<" @ ZP = 1400 s/rt(b) = "<<zp1400I/sqrt(comb_->Integral())<<"\n";
+    //if(comb_->Integral()!=0) std::cout<<" @ ZP = 1400 s/rt(b) = "<<zp1400I/sqrt(comb_->Integral())<<"\n";
 
 
     printf("QUANTITY       %s %s %s %s %s %s %s %s %s %s %s %s %s \n","SIGNAL","W","VV","ZTT","ZJ","ZL","QCD","tt","ZHTauTau","WHTauTau","GluGluHTauTau","VBFHTauTau","ttHJetTT");
 
-    printf("ZP600 rate    %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf\n",zp600I,wI,vvI,zttI,zjI,zlI,qcdI,ttI,zhtautauI,whtautauI,glugluhtautauI,vbfhtautauI,tthjetttI);
-    printf("ZP600 stat.err %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf\n",zp600E,wE,vvE,zttE,zjE,zlE,qcdE,ttE,zhtautauE,whtautauE,glugluhtautauE,vbfhtautauE,tthjetttE);
+    printf("hiZP600 rate    %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf\n",zp600I,wI,vvI,zttI,zjI,zlI,qcdI,ttI,zhtautauI,whtautauI,glugluhtautauI,vbfhtautauI,tthjetttI);
+    printf("hiZP600 stat.err %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf\n",zp600E,wE,vvE,zttE,zjE,zlE,qcdE,ttE,zhtautauE,whtautauE,glugluhtautauE,vbfhtautauE,tthjetttE);
 
 
-    printf("ZP800 rate     %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf\n",zp800I,wI,vvI,zttI,zjI,zlI,qcdI,ttI,zhtautauI,whtautauI,glugluhtautauI,vbfhtautauI,tthjetttI);
-    printf("ZP800 stat.err %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf\n",zp800E,wE,vvE,zttE,zjE,zlE,qcdE,ttE,zhtautauE,whtautauE,glugluhtautauE,vbfhtautauE,tthjetttE);
+    printf("hiZP800 rate     %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf\n",zp800I,wI,vvI,zttI,zjI,zlI,qcdI,ttI,zhtautauI,whtautauI,glugluhtautauI,vbfhtautauI,tthjetttI);
+    printf("hiZP800 stat.err %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf\n",zp800E,wE,vvE,zttE,zjE,zlE,qcdE,ttE,zhtautauE,whtautauE,glugluhtautauE,vbfhtautauE,tthjetttE);
 
-    printf("ZP1000 rate     %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf\n",zp1000I,wI,vvI,zttI,zjI,zlI,qcdI,ttI,zhtautauI,whtautauI,glugluhtautauI,vbfhtautauI,tthjetttI);
-    printf("ZP1000 stat.err %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf\n",zp1000E,wE,vvE,zttE,zjE,zlE,qcdE,ttE,zhtautauE,whtautauE,glugluhtautauE,vbfhtautauE,tthjetttE);
+    printf("hiZP1000 rate     %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf\n",zp1000I,wI,vvI,zttI,zjI,zlI,qcdI,ttI,zhtautauI,whtautauI,glugluhtautauI,vbfhtautauI,tthjetttI);
+    printf("hiZP1000 stat.err %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf\n",zp1000E,wE,vvE,zttE,zjE,zlE,qcdE,ttE,zhtautauE,whtautauE,glugluhtautauE,vbfhtautauE,tthjetttE);
 
 
-    printf("ZP1200 rate     %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf\n",zp1200I,wI,vvI,zttI,zjI,zlI,qcdI,ttI,zhtautauI,whtautauI,glugluhtautauI,vbfhtautauI,tthjetttI);
-    printf("ZP1200 stat.err %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf\n",zp1200E,wE,vvE,zttE,zjE,zlE,qcdE,ttE,zhtautauE,whtautauE,glugluhtautauE,vbfhtautauE,tthjetttE);
+    printf("hiZP1200 rate     %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf\n",zp1200I,wI,vvI,zttI,zjI,zlI,qcdI,ttI,zhtautauI,whtautauI,glugluhtautauI,vbfhtautauI,tthjetttI);
+    printf("hiZP1200 stat.err %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf\n",zp1200E,wE,vvE,zttE,zjE,zlE,qcdE,ttE,zhtautauE,whtautauE,glugluhtautauE,vbfhtautauE,tthjetttE);
 
+/*
     printf("ZP1400 rate     %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf\n",zp1400I,wI,vvI,zttI,zjI,zlI,qcdI,ttI,zhtautauI,whtautauI,glugluhtautauI,vbfhtautauI,tthjetttI);
     printf("ZP1400 stat.err %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf %15.2lf\n",zp1400E,wE,vvE,zttE,zjE,zlE,qcdE,ttE,zhtautauE,whtautauE,glugluhtautauE,vbfhtautauE,tthjetttE);
-
+*/
 	// test
 
-	if(signalRegionMETonly && parameter=="LPT")
+	if(signalRegionMETonly && parameter=="met")
 	{
 		/* create a file to help with S/sqrt(S+B) cut opt */
 
@@ -1934,14 +1969,13 @@ void drawSignalRegion(TCut cut, double sf, TH1F * QCDshape, std::string paramete
 		cin>>optName;
 		TFile sbOp(optName.c_str(),"RECREATE");
 
-
 		sbOp.cd();
 		comb_->Write();
 		zp600_->Write();
 		zp800_->Write();
 		zp1200_->Write();
 		zp1000_->Write();
-		zp1400_->Write();
+		//zp1400_->Write();
 		sbOp.Close();
 	}
 
@@ -1964,7 +1998,7 @@ void drawSignalRegion(TCut cut, double sf, TH1F * QCDshape, std::string paramete
 	delete zp800_;
 	delete zp1000_;
 	delete zp1200_;
-	delete zp1400_;
+	//delete zp1400_;
 	delete Signal_region;
 	delete sigMTstack;
 
@@ -2359,8 +2393,7 @@ void evalSysBaseline(std::vector<std::vector<double>> nomYields, TCut upSigCut, 
     {
         for (int j = 0 ; j < 13; j++)
         {
-            //double diff = abs(upYieldsVect[i][j] - downYieldsVect[i][j]);
-            double diff = 0.5;
+            double diff = abs(upYieldsVect[i][j] - downYieldsVect[i][j]);
             double diffFrac = diff/(2.0 * nomYields[i][j]);
             out_data << diffFrac << "        ";
         }
@@ -2399,7 +2432,7 @@ void evalSysBaselineNoW(std::vector<std::vector<double>> nomYields, TCut upSigCu
     }
 }
 
-void fillQCD_Shape(TCut SScut, double WnormForQCD, TH1F * QCDshape, std::string parameter, float bin[3], std::string can_name)
+void fillQCD_Shape(TCut SScut, double WnormForQCD, TH1F * QCDshape, std::string parameter, float bin[3], std::string can_name, std::string chan)
 {
 
 	if(signalRegionMETonly && parameter!="met") return;
@@ -2477,8 +2510,8 @@ void fillQCD_Shape(TCut SScut, double WnormForQCD, TH1F * QCDshape, std::string 
 	TH1F * zp1200_ = new TH1F("zp1200_","zp1200_",bin[0],bin[1],bin[2]); 
 	zp1200_->Sumw2(); 
 
-	TH1F * zp1400_ = new TH1F("zp1400_","zp1400_",bin[0],bin[1],bin[2]); 
-	zp1400_->Sumw2(); 
+	//TH1F * zp1400_ = new TH1F("zp1400_","zp1400_",bin[0],bin[1],bin[2]);
+	//zp1400_->Sumw2();
 
 	/* fill the hists */
 	QCD_SS->cd(1);
@@ -2500,7 +2533,7 @@ void fillQCD_Shape(TCut SScut, double WnormForQCD, TH1F * QCDshape, std::string 
 	MZP800_MA0400->Draw((parameter+">>zp800_").c_str(),SScut*weights["MONO"].c_str());
 	MZP1000_MA0400->Draw((parameter+">>zp1000_").c_str(),SScut*weights["MONO"].c_str());
 	MZP1200_MA0400->Draw((parameter+">>zp1200_").c_str(),SScut*weights["MONO"].c_str());
-	MZP1400_MA0700->Draw((parameter+">>zp1400_").c_str(),SScut*weights["MONO"].c_str());
+	//MZP1400_MA0700->Draw((parameter+">>zp1400_").c_str(),SScut*weights["MONO"].c_str());
 
 	/* QCD is data - all mc bks */
 
@@ -2521,17 +2554,17 @@ void fillQCD_Shape(TCut SScut, double WnormForQCD, TH1F * QCDshape, std::string 
 
 	THStack * QCDStack  = new THStack();
 
+    QCDStack->Add(zhtautau_);
+    QCDStack->Add(whtautau_);
+    QCDStack->Add(tthjettt_);
+    QCDStack->Add(vbfhtautau_);
+    QCDStack->Add(glugluhtautau_);
 	QCDStack->Add(vv_);
 	QCDStack->Add(tt_);
 	QCDStack->Add(w_);
 	QCDStack->Add(ztt_);
     QCDStack->Add(zl_);
     QCDStack->Add(zj_);
-    QCDStack->Add(zhtautau_);
-    QCDStack->Add(whtautau_);
-    QCDStack->Add(glugluhtautau_);
-    QCDStack->Add(vbfhtautau_);
-    QCDStack->Add(tthjettt_);
 	QCDStack->Add(qcd_);
 
     QCD_SS->cd(1);data_->SetMaximum(DATA_MAX*data_->GetMaximum());data_->SetTitle(";XXX;Events/Bin");data_->GetXaxis()->SetTitle(x_axisLabels[parameter].c_str());data_->DrawCopy("PE");QCDStack->Draw("histsames");data_->DrawCopy("PEsames");QCD_SS->Update();
@@ -2549,7 +2582,7 @@ void fillQCD_Shape(TCut SScut, double WnormForQCD, TH1F * QCDshape, std::string 
     comb_->Add(tthjettt_);
 	comb_->Add(qcd_);
 
-  drawTcanvasAndLegendAndRatio(QCD_SS, data_, comb_,0);QCD_SS->DrawClone();std::string localSaveName = "QCD_"+saveName + parameter + ".png";QCD_SS->cd()->SaveAs(localSaveName.c_str());QCD_SS->Close();
+    drawTcanvasAndLegendAndRatio(QCD_SS, data_, comb_,0);QCD_SS->DrawClone();std::string localSaveName = "QCD_"+saveName + parameter + "_" + chan + ".png";QCD_SS->cd()->SaveAs(localSaveName.c_str());QCD_SS->Close();
 
 	/* eliminate negative bins */
 
@@ -2580,7 +2613,7 @@ void fillQCD_Shape(TCut SScut, double WnormForQCD, TH1F * QCDshape, std::string 
 	delete zp800_;
 	delete zp1000_;
 	delete zp1200_;
-	delete zp1400_;
+	//delete zp1400_;
 	delete comb_;
 	delete QCDStack;
 	delete QCD_SS;
@@ -2810,13 +2843,14 @@ double wjetsNorm(TCut wNormCut, std::string can_name)
 	TH1F * zp1200_ = new TH1F("zp1200_","zp1200_",mtBinning[0],mtBinning[1],mtBinning[2]); 
 	zp1200_->Sumw2(); 
 
-	TH1F * zp1400_ = new TH1F("zp1400_","zp1400_",mtBinning[0],mtBinning[1],mtBinning[2]); 
-	zp1400_->Sumw2();
+	//TH1F * zp1400_ = new TH1F("zp1400_","zp1400_",mtBinning[0],mtBinning[1],mtBinning[2]);
+	//zp1400_->Sumw2();
 
 	/* fill the hists */
 	wjetNorm_can->cd(1);
 
 	DATA->Draw("mt_1>>data_",wNormCut);
+    
 	W->Draw("mt_1>>w_",wNormCut*weights["W"].c_str());
 	ZTT->Draw("mt_1>>ztt_",wNormCut*weights["ZTT"].c_str());
     ZJ->Draw("mt_1>>zj_",wNormCut*weights["ZJ"].c_str());
@@ -2833,7 +2867,7 @@ double wjetsNorm(TCut wNormCut, std::string can_name)
 	MZP800_MA0400->Draw("mt_1>>zp800_",wNormCut*weights["MONO"].c_str());
 	MZP1000_MA0400->Draw("mt_1>>zp1000_",wNormCut*weights["MONO"].c_str());
 	MZP1200_MA0400->Draw("mt_1>>zp1200_",wNormCut*weights["MONO"].c_str());
-	MZP1400_MA0700->Draw("mt_1>>zp1400_",wNormCut*weights["MONO"].c_str());
+	//MZP1400_MA0700->Draw("mt_1>>zp1400_",wNormCut*weights["MONO"].c_str());
 
 	THStack * wnormStack  = new THStack();
 
@@ -2907,7 +2941,7 @@ double wjetsNorm(TCut wNormCut, std::string can_name)
 	delete zp800_;
 	delete zp1000_;
 	delete zp1200_;
-	delete zp1400_;
+	//delete zp1400_;
 
 	delete wnormStack;
 	delete wjetNorm_can;
@@ -3981,9 +4015,9 @@ void setup_files_TauTau()
     DY->Add(DY3Jets);
     DY->Add(DY4Jets);
     
-    TChain * ZTT = (TChain*) DY->CopyTree("IsZTT==1");
-    TChain * ZJ = (TChain*) DY->CopyTree("IsZJ==1");
-    TChain * ZL = (TChain*) DY->CopyTree("IsZL==1");
+    ZTT = (TChain*) DY->CopyTree("IsZTT==1");
+    ZJ = (TChain*) DY->CopyTree("IsZJ==1");
+    ZL = (TChain*) DY->CopyTree("IsZL==1");
     
 	//rm on inclusion of channel ints
     /*
@@ -4972,9 +5006,9 @@ void setup_files_TauTau()
     DY->Add(DY3Jets);
     DY->Add(DY4Jets);
     
-    TChain * ZTT = (TChain*) DY->CopyTree("IsZTT==1");
-    TChain * ZJ = (TChain*) DY->CopyTree("IsZJ==1");
-    TChain * ZL = (TChain*) DY->CopyTree("IsZL==1");
+    ZTT = (TChain*) DY->CopyTree("IsZTT==1");
+    ZJ = (TChain*) DY->CopyTree("IsZJ==1");
+    ZL = (TChain*) DY->CopyTree("IsZL==1");
     
 	//rm on inclusion of channel ints
     /*
@@ -5961,20 +5995,9 @@ void setup_files_eleTau()
     DY->Add(DY3Jets);
     DY->Add(DY4Jets);
     
-    TChain * ZTT = (TChain*) DY->CopyTree("IsZTT==1");
-    TChain * ZJ = (TChain*) DY->CopyTree("IsZJ==1");
-    TChain * ZL = (TChain*) DY->CopyTree("IsZL==1");
-    
-	//rm on inclusion of channel ints
-    /*
-    ZTT->Add(DYhigh);
-    ZTT->Add(DYlow);
-    ZJ->Add(DYinc);
-    ZL->Add(DY1Jets);
-    ZL->Add(DY2Jets);
-    ZL->Add(DY3Jets);
-    ZL->Add(DY4Jets);
-    */
+    ZTT = (TChain*) DY->CopyTree("IsZTT==1");
+    ZJ = (TChain*) DY->CopyTree("IsZJ==1");
+    ZL = (TChain*) DY->CopyTree("IsZL==1");
     
     W->Add(WJetsToLNu);
     W->Add(W1JetsToLNu);
@@ -6017,7 +6040,6 @@ void setup_files_eleTau()
 
 }
 
-//currenlty diminished for quick trouble shooting
 void setup_files_muTau()
 {
   
@@ -6157,7 +6179,7 @@ void setup_files_muTau()
     DY1Jets->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_DY/DY/DY1JetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/CondorJob0/davis_syncTree_BASELINE_MuTau.root");
 	DY1Jets->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_DY/DY/DY1JetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/CondorJob24/davis_syncTree_BASELINE_MuTau.root");
 	DY1Jets->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_DY/DY/DY1JetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/CondorJob4/davis_syncTree_BASELINE_MuTau.root");
-	DY1Jets->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_DY/DY/DY1JetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/CondorJob55/davis_syncTree_BASELINE_MuTau.root"); 
+    DY1Jets->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_DY/DY/DY1JetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/CondorJob55/davis_syncTree_BASELINE_MuTau.root");
 	DY1Jets->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_DY/DY/DY1JetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/CondorJob1/davis_syncTree_BASELINE_MuTau.root");
 	DY1Jets->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_DY/DY/DY1JetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/CondorJob25/davis_syncTree_BASELINE_MuTau.root");
 	DY1Jets->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_DY/DY/DY1JetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/CondorJob40/davis_syncTree_BASELINE_MuTau.root");
@@ -6906,8 +6928,8 @@ void setup_files_muTau()
 	DYlow->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_DY/DYlowMass/DYJetsToLL_M-10to50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/CondorJob6/davis_syncTree_BASELINE_MuTau.root");
 	DYlow->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_DY/DYlowMass/DYJetsToLL_M-10to50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/CondorJob7/davis_syncTree_BASELINE_MuTau.root");
 	DYlow->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_DY/DYlowMass/DYJetsToLL_M-10to50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/CondorJob8/davis_syncTree_BASELINE_MuTau.root");
-/*
-    MZP1000_MA0300->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/SIGNAL_MONO_HIGGS/ZprimeToA0hToA0chichihtautau_2HDM_MZp-1000_MA0-300_13TeV-madgraph/CondorJob0/davis_syncTree_BASELINE_MuTau.root");
+
+/*    MZP1000_MA0300->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/SIGNAL_MONO_HIGGS/ZprimeToA0hToA0chichihtautau_2HDM_MZp-1000_MA0-300_13TeV-madgraph/CondorJob0/davis_syncTree_BASELINE_MuTau.root");
     MZP1000_MA0400->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/SIGNAL_MONO_HIGGS/ZprimeToA0hToA0chichihtautau_2HDM_MZp-1000_MA0-400_13TeV-madgraph/CondorJob0/davis_syncTree_BASELINE_MuTau.root");
     MZP1000_MA0600->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/SIGNAL_MONO_HIGGS/ZprimeToA0hToA0chichihtautau_2HDM_MZp-1000_MA0-600_13TeV-madgraph/CondorJob0/davis_syncTree_BASELINE_MuTau.root");
     MZP1200_MA0300->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/SIGNAL_MONO_HIGGS/ZprimeToA0hToA0chichihtautau_2HDM_MZp-1200_MA0-300_13TeV-madgraph/CondorJob0/davis_syncTree_BASELINE_MuTau.root");
@@ -6933,6 +6955,7 @@ void setup_files_muTau()
     MZP800_MA0500->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/SIGNAL_MONO_HIGGS/ZprimeToA0hToA0chichihtautau_2HDM_MZp-800_MA0-500_13TeV-madgraph/CondorJob0/davis_syncTree_BASELINE_MuTau.root");
     MZP800_MA0600->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/SIGNAL_MONO_HIGGS/ZprimeToA0hToA0chichihtautau_2HDM_MZp-800_MA0-600_13TeV-madgraph/CondorJob0/davis_syncTree_BASELINE_MuTau.root");
 */
+
     //temporary signals list
     MZP600_MA0400->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/SIGNAL_MONO_HIGGS/ZprimeToA0hToA0chichihtautau_2HDM_MZp-600_MA0-400_13TeV-madgraph/CondorJob0/davis_syncTree_BASELINE_MuTau.root");
     MZP800_MA0400->Add("root://cmsxrootd.fnal.gov//store/user/gfunk/SeptProduction_76X_minusDY/SIGNAL_MONO_HIGGS/ZprimeToA0hToA0chichihtautau_2HDM_MZp-800_MA0-400_13TeV-madgraph/CondorJob0/davis_syncTree_BASELINE_MuTau.root");
@@ -6950,9 +6973,9 @@ void setup_files_muTau()
     DY->Add(DY3Jets);
     DY->Add(DY4Jets);
     
-    TChain * ZTT = (TChain*) DY->CopyTree("IsZTT==1");
-    TChain * ZJ = (TChain*) DY->CopyTree("IsZJ==1");
-    TChain * ZL = (TChain*) DY->CopyTree("IsZL==1");
+    ZTT = (TChain*) DY->CopyTree("IsZTT==1");
+    ZJ = (TChain*) DY->CopyTree("IsZJ==1");
+    ZL = (TChain*) DY->CopyTree("IsZL==1");
     
     W->Add(WJetsToLNu);
     W->Add(W1JetsToLNu);
@@ -7928,9 +7951,9 @@ void setup_upTau_files_TauTau()
     DY->Add(DY3Jets);
     DY->Add(DY4Jets);
     
-    TChain * ZTT = (TChain*) DY->CopyTree("IsZTT==1");
-    TChain * ZJ = (TChain*) DY->CopyTree("IsZJ==1");
-    TChain * ZL = (TChain*) DY->CopyTree("IsZL==1");
+    ZTT = (TChain*) DY->CopyTree("IsZTT==1");
+    ZJ = (TChain*) DY->CopyTree("IsZJ==1");
+    ZL = (TChain*) DY->CopyTree("IsZL==1");
     
 	//rm on inclusion of channel ints
     /*
@@ -8915,9 +8938,9 @@ void setup_downTau_files_TauTau()
     DY->Add(DY3Jets);
     DY->Add(DY4Jets);
     
-    TChain * ZTT = (TChain*) DY->CopyTree("IsZTT==1");
-    TChain * ZJ = (TChain*) DY->CopyTree("IsZJ==1");
-    TChain * ZL = (TChain*) DY->CopyTree("IsZL==1");
+    ZTT = (TChain*) DY->CopyTree("IsZTT==1");
+    ZJ = (TChain*) DY->CopyTree("IsZJ==1");
+    ZL = (TChain*) DY->CopyTree("IsZL==1");
     
 	//rm on inclusion of channel ints
     /*
@@ -9902,9 +9925,9 @@ void setup_upEle_files_eleMu()
     DY->Add(DY3Jets);
     DY->Add(DY4Jets);
     
-    TChain * ZTT = (TChain*) DY->CopyTree("IsZTT==1");
-    TChain * ZJ = (TChain*) DY->CopyTree("IsZJ==1");
-    TChain * ZL = (TChain*) DY->CopyTree("IsZL==1");
+    ZTT = (TChain*) DY->CopyTree("IsZTT==1");
+    ZJ = (TChain*) DY->CopyTree("IsZJ==1");
+    ZL = (TChain*) DY->CopyTree("IsZL==1");
     
 	//rm on inclusion of channel ints
     /*
@@ -10889,9 +10912,9 @@ void setup_downEle_files_eleMu()
     DY->Add(DY3Jets);
     DY->Add(DY4Jets);
     
-    TChain * ZTT = (TChain*) DY->CopyTree("IsZTT==1");
-    TChain * ZJ = (TChain*) DY->CopyTree("IsZJ==1");
-    TChain * ZL = (TChain*) DY->CopyTree("IsZL==1");
+    ZTT = (TChain*) DY->CopyTree("IsZTT==1");
+    ZJ = (TChain*) DY->CopyTree("IsZJ==1");
+    ZL = (TChain*) DY->CopyTree("IsZL==1");
     
 	//rm on inclusion of channel ints
     /*
@@ -11876,9 +11899,9 @@ void setup_upTau_files_eleTau()
     DY->Add(DY3Jets);
     DY->Add(DY4Jets);
     
-    TChain * ZTT = (TChain*) DY->CopyTree("IsZTT==1");
-    TChain * ZJ = (TChain*) DY->CopyTree("IsZJ==1");
-    TChain * ZL = (TChain*) DY->CopyTree("IsZL==1");
+    ZTT = (TChain*) DY->CopyTree("IsZTT==1");
+    ZJ = (TChain*) DY->CopyTree("IsZJ==1");
+    ZL = (TChain*) DY->CopyTree("IsZL==1");
     
 	//rm on inclusion of channel ints
     /*
@@ -12863,9 +12886,9 @@ void setup_downTau_files_eleTau()
     DY->Add(DY3Jets);
     DY->Add(DY4Jets);
     
-    TChain * ZTT = (TChain*) DY->CopyTree("IsZTT==1");
-    TChain * ZJ = (TChain*) DY->CopyTree("IsZJ==1");
-    TChain * ZL = (TChain*) DY->CopyTree("IsZL==1");
+    ZTT = (TChain*) DY->CopyTree("IsZTT==1");
+    ZJ = (TChain*) DY->CopyTree("IsZJ==1");
+    ZL = (TChain*) DY->CopyTree("IsZL==1");
     
 	//rm on inclusion of channel ints
     /*
@@ -13850,9 +13873,9 @@ void setup_upEle_files_eleTau()
     DY->Add(DY3Jets);
     DY->Add(DY4Jets);
     
-    TChain * ZTT = (TChain*) DY->CopyTree("IsZTT==1");
-    TChain * ZJ = (TChain*) DY->CopyTree("IsZJ==1");
-    TChain * ZL = (TChain*) DY->CopyTree("IsZL==1");
+    ZTT = (TChain*) DY->CopyTree("IsZTT==1");
+    ZJ = (TChain*) DY->CopyTree("IsZJ==1");
+    ZL = (TChain*) DY->CopyTree("IsZL==1");
     
 	//rm on inclusion of channel ints
     /*
@@ -14837,9 +14860,9 @@ void setup_downEle_files_eleTau()
     DY->Add(DY3Jets);
     DY->Add(DY4Jets);
     
-    TChain * ZTT = (TChain*) DY->CopyTree("IsZTT==1");
-    TChain * ZJ = (TChain*) DY->CopyTree("IsZJ==1");
-    TChain * ZL = (TChain*) DY->CopyTree("IsZL==1");
+    ZTT = (TChain*) DY->CopyTree("IsZTT==1");
+    ZJ = (TChain*) DY->CopyTree("IsZJ==1");
+    ZL = (TChain*) DY->CopyTree("IsZL==1");
     
 	//rm on inclusion of channel ints
     /*
@@ -15826,9 +15849,9 @@ void setup_upTau_files_muTau()
     DY->Add(DY3Jets);
     DY->Add(DY4Jets);
     
-    TChain * ZTT = (TChain*) DY->CopyTree("IsZTT==1");
-    TChain * ZJ = (TChain*) DY->CopyTree("IsZJ==1");
-    TChain * ZL = (TChain*) DY->CopyTree("IsZL==1");
+    ZTT = (TChain*) DY->CopyTree("IsZTT==1");
+    ZJ = (TChain*) DY->CopyTree("IsZJ==1");
+    ZL = (TChain*) DY->CopyTree("IsZL==1");
     
 	//rm on inclusion of channel ints
     /*
@@ -16814,9 +16837,9 @@ void setup_downTau_files_muTau()
     DY->Add(DY3Jets);
     DY->Add(DY4Jets);
     
-    TChain * ZTT = (TChain*) DY->CopyTree("IsZTT==1");
-    TChain * ZJ = (TChain*) DY->CopyTree("IsZJ==1");
-    TChain * ZL = (TChain*) DY->CopyTree("IsZL==1");
+    ZTT = (TChain*) DY->CopyTree("IsZTT==1");
+    ZJ = (TChain*) DY->CopyTree("IsZJ==1");
+    ZL = (TChain*) DY->CopyTree("IsZL==1");
     
 	//rm on inclusion of channel ints
     /*
@@ -16937,7 +16960,7 @@ void drawTcanvasAndLegendAndRatio(TCanvas * C, TH1F * num__, TH1F* den__, bool d
 	gPad->SetGridy(0);
 	gPad->SetLogy(setLog);
 
-	TLegend leg(.75,.6,.9,.85);
+	TLegend leg(.75,.35,1.0,.85);
     leg.SetTextSize(.04);
     leg.SetTextFont(22);
     leg.SetBorderSize(0);
@@ -16982,14 +17005,11 @@ void drawTcanvasAndLegendAndRatio(TCanvas * C, TH1F * num__, TH1F* den__, bool d
 	TH1F * qcd__ = new TH1F("qcd__","qcd__",mtBinning[0],mtBinning[1],mtBinning[2]); 
 	qcd__->SetFillColor(colors["QCD"]);
 
-
 	TH1F * zp600__ = new TH1F("zp600__","zp600__",mtBinning[0],mtBinning[1],mtBinning[2]); 
 	TH1F * zp800__ = new TH1F("zp800__","zp800__",mtBinning[0],mtBinning[1],mtBinning[2]); 
 	TH1F * zp1000__ = new TH1F("zp1000__","zp1000__",mtBinning[0],mtBinning[1],mtBinning[2]); 
 	TH1F * zp1200__ = new TH1F("zp1200__","zp1200__",mtBinning[0],mtBinning[1],mtBinning[2]); 
-	TH1F * zp1400__ = new TH1F("zp1400__","zp1400__",mtBinning[0],mtBinning[1],mtBinning[2]); 
-
-
+	TH1F * zp1400__ = new TH1F("zp1400__","zp1400__",mtBinning[0],mtBinning[1],mtBinning[2]);
 
     leg.AddEntry(data__, "Observed","PE");
     leg.AddEntry(qcd__, "QCD","F");
@@ -17027,13 +17047,10 @@ void drawTcanvasAndLegendAndRatio(TCanvas * C, TH1F * num__, TH1F* den__, bool d
 
     L3.DrawLatexNDC(0.12,0.76,chan_label.c_str());
 
-
     TLatex L4;
     //L2.SetFont(42);
     L4.SetTextSize(0.06);
     L4.DrawLatexNDC(0.15,0.925,("#font[42]{#bf{"+global_title+"}}").c_str());
-
-
 
     zp1000__->SetLineStyle(1);
 	zp1400__->SetLineStyle(2);
@@ -17046,13 +17063,12 @@ void drawTcanvasAndLegendAndRatio(TCanvas * C, TH1F * num__, TH1F* den__, bool d
 
 	if(shouldIplotSignals && drawSignals)
 	{
-	    TLegend legDM(.05,.3,.5,.55);
-	    legDM.SetTextSize(.04);
+	    TLegend legDM(.45,.6,.65,.85);
+	    legDM.SetTextSize(.03);
 	    legDM.SetTextFont(22);
 	    legDM.SetBorderSize(0);
 	    legDM.SetFillColor(0);
-	    legDM.AddEntry(zp1000__, "[m_{Z'},m_{A0},m_{#chi}] = [1000,300,100] GeV @ 1pb","L");
-	    legDM.AddEntry(zp1400__, "[m_{Z'},m_{A0},m_{#chi}] = [1400,300,100] GeV @ 1pb","L");
+	    legDM.AddEntry(zp1000__, "[m_{Z'},m_{A0},m_{#chi}] = [1000,400,100] GeV @ 1pb","L");
 		legDM.DrawClone();
 	}
 
