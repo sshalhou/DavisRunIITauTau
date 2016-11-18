@@ -2,7 +2,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-
+#include "TMVA/Reader.h"
 
 generateH2TauSyncTree::generateH2TauSyncTree(FlatTreeReader R_, bool run_, std::string fileOutName_)
 {
@@ -43,16 +43,13 @@ generateH2TauSyncTree::generateH2TauSyncTree(FlatTreeReader R_, bool run_, std::
 	/* init the susy signal pt reweight tool */
 	NLO_ReadFile();	
 
-
 	/* init qcd weight tool */
-
 
 	// with DZeta cut ->
 	qcdWeights = new QCDModelForEMu("QCD_weight_emu.root");
 
 	// w/o DZeta cut ->
 	qcdWeightsNoDZeta = new QCDModelForEMu("QCD_weight_emu_nodzeta.root");
-
 
 	/* init lepton sf tool */
 
@@ -93,9 +90,65 @@ generateH2TauSyncTree::generateH2TauSyncTree(FlatTreeReader R_, bool run_, std::
 		tree_EleMu = nullptr;
 	}
 
-
 	initScaleFactorParametersRunII();
+    
+    /*Prepare TMVA Readers */
+    
+    //mt readers
+    mt_MZP600A0400_reader.AddVariable( "read_pt_1", &read_pt_1 ); mt_MZP600A0400_reader.AddVariable( "read_pfmt_1", &read_pfmt_1 ); mt_MZP600A0400_reader.AddVariable( "read_pt_2", &read_pt_2 ); mt_MZP600A0400_reader.AddVariable( "read_pt_tt", &read_pt_tt ); mt_MZP600A0400_reader.AddVariable( "read_m_vis", &read_m_vis ); mt_MZP600A0400_reader.AddVariable( "read_met", &read_met ); mt_MZP600A0400_reader.AddVariable( "read_P_chi_pf", &read_P_chi_pf ); mt_MZP600A0400_reader.AddVariable( "read_LPT", &read_LPT ); mt_MZP600A0400_reader.AddVariable( "read_DeltaR_leg1_leg2", &read_DeltaR_leg1_leg2 );
+    
+    mt_MZP600A0400_reader.AddSpectator( "read_npu", &read_npu ); mt_MZP600A0400_reader.AddSpectator( "read_event", &read_event ); mt_MZP600A0400_reader.AddSpectator( "read_final_weight", &read_final_weight );
+    
+    mt_MZP600A0400_reader.BookMVA("MLP classifier","TMVAClassification_MLPBNN_MuTau_MZP600_MA0400_MDM100_nodes30_epoch1000.weights.xml");
+    
+    
+    mt_MZP800A0400_reader.AddVariable( "read_pt_1", &read_pt_1 ); mt_MZP800A0400_reader.AddVariable( "read_pfmt_1", &read_pfmt_1 ); mt_MZP800A0400_reader.AddVariable( "read_pt_2", &read_pt_2 ); mt_MZP800A0400_reader.AddVariable( "read_pt_tt", &read_pt_tt ); mt_MZP800A0400_reader.AddVariable( "read_m_vis", &read_m_vis ); mt_MZP800A0400_reader.AddVariable( "read_met", &read_met ); mt_MZP800A0400_reader.AddVariable( "read_P_chi_pf", &read_P_chi_pf ); mt_MZP800A0400_reader.AddVariable( "read_LPT", &read_LPT ); mt_MZP800A0400_reader.AddVariable( "read_DeltaR_leg1_leg2", &read_DeltaR_leg1_leg2 );
+    
+    mt_MZP800A0400_reader.AddSpectator( "read_npu", &read_npu ); mt_MZP800A0400_reader.AddSpectator( "read_event", &read_event ); mt_MZP800A0400_reader.AddSpectator( "read_final_weight", &read_final_weight );
+    
+    mt_MZP800A0400_reader.BookMVA("MLP classifier","TMVAClassification_MLPBNN_MuTau_MZP800_MA0400_MDM100_nodes30_epoch1000.weights.xml");
 
+    
+    mt_MZP1000A0400_reader.AddVariable( "read_pt_1", &read_pt_1 ); mt_MZP1000A0400_reader.AddVariable( "read_pfmt_1", &read_pfmt_1 ); mt_MZP1000A0400_reader.AddVariable( "read_pt_2", &read_pt_2 ); mt_MZP1000A0400_reader.AddVariable( "read_pt_tt", &read_pt_tt ); mt_MZP1000A0400_reader.AddVariable( "read_m_vis", &read_m_vis ); mt_MZP1000A0400_reader.AddVariable( "read_met", &read_met ); mt_MZP1000A0400_reader.AddVariable( "read_P_chi_pf", &read_P_chi_pf ); mt_MZP1000A0400_reader.AddVariable( "read_LPT", &read_LPT ); mt_MZP1000A0400_reader.AddVariable( "read_DeltaR_leg1_leg2", &read_DeltaR_leg1_leg2 );
+    
+    mt_MZP1000A0400_reader.AddSpectator( "read_npu", &read_npu ); mt_MZP1000A0400_reader.AddSpectator( "read_event", &read_event ); mt_MZP1000A0400_reader.AddSpectator( "read_final_weight", &read_final_weight );
+    
+    mt_MZP1000A0400_reader.BookMVA("MLP classifier","TMVAClassification_MLPBNN_MuTau_MZP1000_MA0400_MDM100_nodes30_epoch1000.weights.xml");
+    
+    
+    mt_MZP1200A0400_reader.AddVariable( "read_pt_1", &read_pt_1 ); mt_MZP1200A0400_reader.AddVariable( "read_pfmt_1", &read_pfmt_1 ); mt_MZP1200A0400_reader.AddVariable( "read_pt_2", &read_pt_2 ); mt_MZP1200A0400_reader.AddVariable( "read_pt_tt", &read_pt_tt ); mt_MZP1200A0400_reader.AddVariable( "read_m_vis", &read_m_vis ); mt_MZP1200A0400_reader.AddVariable( "read_met", &read_met ); mt_MZP1200A0400_reader.AddVariable( "read_P_chi_pf", &read_P_chi_pf ); mt_MZP1200A0400_reader.AddVariable( "read_LPT", &read_LPT ); mt_MZP1200A0400_reader.AddVariable( "read_DeltaR_leg1_leg2", &read_DeltaR_leg1_leg2 );
+    
+    mt_MZP1200A0400_reader.AddSpectator( "read_npu", &read_npu ); mt_MZP1200A0400_reader.AddSpectator( "read_event", &read_event ); mt_MZP1200A0400_reader.AddSpectator( "read_final_weight", &read_final_weight );
+    
+    mt_MZP1200A0400_reader.BookMVA("MLP classifier","TMVAClassification_MLPBNN_MuTau_MZP1200_MA0400_MDM100_nodes30_epoch1000.weights.xml");
+    
+    //et readers
+    et_MZP600A0400_reader.AddVariable( "read_pt_1", &read_pt_1 ); et_MZP600A0400_reader.AddVariable( "read_pfmt_1", &read_pfmt_1 ); et_MZP600A0400_reader.AddVariable( "read_pt_2", &read_pt_2 ); et_MZP600A0400_reader.AddVariable( "read_pt_tt", &read_pt_tt ); et_MZP600A0400_reader.AddVariable( "read_m_vis", &read_m_vis ); et_MZP600A0400_reader.AddVariable( "read_met", &read_met ); et_MZP600A0400_reader.AddVariable( "read_P_chi_pf", &read_P_chi_pf ); et_MZP600A0400_reader.AddVariable( "read_LPT", &read_LPT ); et_MZP600A0400_reader.AddVariable( "read_DeltaR_leg1_leg2", &read_DeltaR_leg1_leg2 );
+    
+    et_MZP600A0400_reader.AddSpectator( "read_npu", &read_npu ); et_MZP600A0400_reader.AddSpectator( "read_event", &read_event ); et_MZP600A0400_reader.AddSpectator( "read_final_weight", &read_final_weight );
+    
+    et_MZP600A0400_reader.BookMVA("MLP classifier","TMVAClassification_MLPBNN_EleTau_MZP600_MA0400_MDM100_nodes30_epoch1000.weights.xml");
+    
+    
+    et_MZP800A0400_reader.AddVariable( "read_pt_1", &read_pt_1 ); et_MZP800A0400_reader.AddVariable( "read_pfmt_1", &read_pfmt_1 ); et_MZP800A0400_reader.AddVariable( "read_pt_2", &read_pt_2 ); et_MZP800A0400_reader.AddVariable( "read_pt_tt", &read_pt_tt ); et_MZP800A0400_reader.AddVariable( "read_m_vis", &read_m_vis ); et_MZP800A0400_reader.AddVariable( "read_met", &read_met ); et_MZP800A0400_reader.AddVariable( "read_P_chi_pf", &read_P_chi_pf ); et_MZP800A0400_reader.AddVariable( "read_LPT", &read_LPT ); et_MZP800A0400_reader.AddVariable( "read_DeltaR_leg1_leg2", &read_DeltaR_leg1_leg2 );
+    
+    et_MZP800A0400_reader.AddSpectator( "read_npu", &read_npu ); et_MZP800A0400_reader.AddSpectator( "read_event", &read_event ); et_MZP800A0400_reader.AddSpectator( "read_final_weight", &read_final_weight );
+    
+    et_MZP800A0400_reader.BookMVA("MLP classifier","TMVAClassification_MLPBNN_EleTau_MZP800_MA0400_MDM100_nodes30_epoch1000.weights.xml");
+
+    
+    et_MZP1000A0400_reader.AddVariable( "read_pt_1", &read_pt_1 ); et_MZP1000A0400_reader.AddVariable( "read_pfmt_1", &read_pfmt_1 ); et_MZP1000A0400_reader.AddVariable( "read_pt_2", &read_pt_2 ); et_MZP1000A0400_reader.AddVariable( "read_pt_tt", &read_pt_tt ); et_MZP1000A0400_reader.AddVariable( "read_m_vis", &read_m_vis ); et_MZP1000A0400_reader.AddVariable( "read_met", &read_met ); et_MZP1000A0400_reader.AddVariable( "read_P_chi_pf", &read_P_chi_pf ); et_MZP1000A0400_reader.AddVariable( "read_LPT", &read_LPT ); et_MZP1000A0400_reader.AddVariable( "read_DeltaR_leg1_leg2", &read_DeltaR_leg1_leg2 );
+    
+    et_MZP1000A0400_reader.AddSpectator( "read_npu", &read_npu ); et_MZP1000A0400_reader.AddSpectator( "read_event", &read_event ); et_MZP1000A0400_reader.AddSpectator( "read_final_weight", &read_final_weight );
+    
+    et_MZP1000A0400_reader.BookMVA("MLP classifier","TMVAClassification_MLPBNN_EleTau_MZP1000_MA0400_MDM100_nodes30_epoch1000.weights.xml");
+    
+    
+    et_MZP1200A0400_reader.AddVariable( "read_pt_1", &read_pt_1 ); et_MZP1200A0400_reader.AddVariable( "read_pfmt_1", &read_pfmt_1 ); et_MZP1200A0400_reader.AddVariable( "read_pt_2", &read_pt_2 ); et_MZP1200A0400_reader.AddVariable( "read_pt_tt", &read_pt_tt ); et_MZP1200A0400_reader.AddVariable( "read_m_vis", &read_m_vis ); et_MZP1200A0400_reader.AddVariable( "read_met", &read_met ); et_MZP1200A0400_reader.AddVariable( "read_P_chi_pf", &read_P_chi_pf ); et_MZP1200A0400_reader.AddVariable( "read_LPT", &read_LPT ); et_MZP1200A0400_reader.AddVariable( "read_DeltaR_leg1_leg2", &read_DeltaR_leg1_leg2 );
+    
+    et_MZP1200A0400_reader.AddSpectator( "read_npu", &read_npu ); et_MZP1200A0400_reader.AddSpectator( "read_event", &read_event ); et_MZP1200A0400_reader.AddSpectator( "read_final_weight", &read_final_weight );
+    
+    et_MZP1200A0400_reader.BookMVA("MLP classifier","TMVAClassification_MLPBNN_EleTau_MZP1200_MA0400_MDM100_nodes30_epoch1000.weights.xml");
 }
 
 
@@ -119,9 +172,7 @@ void generateH2TauSyncTree::finish()
 		outFile_EleMu->cd();
 		tree_EleMu->CloneTree()->Write("TauCheck");		
 		outFile_EleMu->Close();
-
 	}
-
 	 std::cout<<"final count etau = "<<num_et<<"\n";
 	 std::cout<<"final count mtau = "<<num_mt<<"\n";
 	 std::cout<<"final count tt = "<<num_tt<<"\n";
@@ -161,6 +212,9 @@ void generateH2TauSyncTree::handleEvent()
     float FRACTION_  = 0.1; /* this is how much of a mc sample is testing, and training - so 0.1 means 10% test, 10% train, 80% analysis */
     TRandom3 rand_;
     rand_.SetSeed(0); /* unique random pattern, once before the event loop */
+    
+    userRand = rand_.Uniform(1.0);
+    
     float randVal = rand_.Uniform(1.);
     
     if (randVal < FRACTION_)
@@ -189,6 +243,7 @@ void generateH2TauSyncTree::handleEvent()
 
 	TLorentzVector l1(0.,0.,0.,0.); /* leg1 */
 	TLorentzVector l2(0.,0.,0.,0.); /* leg2 */
+    TLorentzVector lSum(0.,0.,0.,0.);
 
 	TLorentzVector mvaMetVec(0.,0.,0.,0.);	
 	TLorentzVector mvaMetVec_uncorr(0.,0.,0.,0.);	
@@ -207,7 +262,9 @@ void generateH2TauSyncTree::handleEvent()
 
 	l2.SetPtEtaPhiM(R.getD("leg2_pt"),R.getD("leg2_eta"),R.getD("leg2_phi"),R.getD("leg2_M"));
 
-
+    /* set addition of legs */
+    lSum = l1 + l2;
+    
 	/* set the MET 4-vectors */
 
 	mvaMetVec.SetPtEtaPhiM(R.getD("corr_mvaMET"),0.0,R.getD("corr_mvaMETphi"),0.0);
@@ -309,7 +366,6 @@ void generateH2TauSyncTree::handleEvent()
 	genMCmatch_M_1		= R.getD("leg1_genMCmatch_M");
 	MCMatchPdgId_1		= R.getI("leg1_MCMatchPdgId");
 
-
 	byIsolationMVArun2v1DBoldDMwLTraw_1 = R.getF("leg1_byIsolationMVArun2v1DBoldDMwLTraw");
 	byTightIsolationMVArun2v1DBoldDMwLT_1 = R.getF("leg1_byTightIsolationMVArun2v1DBoldDMwLT");
 	byVTightIsolationMVArun2v1DBoldDMwLT_1 = R.getF("leg1_byVTightIsolationMVArun2v1DBoldDMwLT");
@@ -326,7 +382,6 @@ void generateH2TauSyncTree::handleEvent()
 	byCombinedIsolationDeltaBetaCorrRaw3Hits_1 = R.getF("leg1_byCombinedIsolationDeltaBetaCorrRaw3Hits");
 	byIsolationMVArun2v1DBnewDMwLTraw_1 = R.getF("leg1_byIsolationMVArun2v1DBnewDMwLTraw");
 	decayModeFindingNewDMs_1 = R.getF("leg1_decayModeFindingNewDMs");
-
 
 	/* leg 2 quantities */
 
@@ -388,7 +443,8 @@ void generateH2TauSyncTree::handleEvent()
 	mt_tot = mtTotCalc(l1, l2, mvaMetVec);
 	m_vis = R.getD("VISMass");
 	DeltaR_leg1_leg2 = R.getD("DeltaR_leg1_leg2");
-
+    // Dphi between two legs
+    DeltaPhi_leg1_leg2 = TVector2::Phi_mpi_pi(phi_1-phi_2);
 
 	/* sv fit -- only keeping variants which use mvaMET, study by H2Tau group showed met variants have minimal impact on SVMass shape
 	and so those are omitted */
@@ -408,11 +464,14 @@ void generateH2TauSyncTree::handleEvent()
 	mvametphi			= R.getD("corr_mvaMETphi");
 	met					= R.getD("pfMET");
 	metphi				= R.getD("pfMETphi");
-	puppimet			= R.getD("puppiMET");	
+	puppimet			= R.getD("puppiMET");
 	puppimetphi			= R.getD("puppiMETphi");
 	uncorr_mvamet		= R.getD("uncorr_mvaMET");
 	uncorr_mvametphi	= R.getD("uncorr_mvaMETphi");
-
+    // Dphi between MET and combined higgs candidate
+    double lSumPhi = lSum.Phi();
+    DeltaPhi_MVAMET_Higgs = TVector2::Phi_mpi_pi(mvametphi-lSumPhi);
+    DeltaPhi_PFMET_Higgs = TVector2::Phi_mpi_pi(metphi-lSumPhi);
 
    	if(eventHasNominalLeptonEnergyScales)
    	{
@@ -462,9 +521,6 @@ void generateH2TauSyncTree::handleEvent()
 		pzetamiss_resolutionUP		= pzetaMissCalc(l1,l2,mvaMetVec_resolutionUP);
 		pzetamiss_resolutionDOWN	= pzetaMissCalc(l1,l2,mvaMetVec_resolutionDOWN);
    	}
-
-
-  
 
    	/* fill the jet and b-tag info */
 
@@ -602,9 +658,6 @@ void generateH2TauSyncTree::handleEvent()
 	bmva_2_TightWp_JECshiftedUp = jetINFOstruct.m_bmva_2_TightWp;
 	bcsv_2_TightWp_JECshiftedUp = jetINFOstruct.m_bcsv_2_TightWp;
 
-
-
-
    	/* for _JECshiftedDown jets */
    	argString = "_JECshiftedDown";
 
@@ -668,11 +721,6 @@ void generateH2TauSyncTree::handleEvent()
 	bmva_2_TightWp_JECshiftedDown = jetINFOstruct.m_bmva_2_TightWp;
 	bcsv_2_TightWp_JECshiftedDown = jetINFOstruct.m_bcsv_2_TightWp;
 	
-
-
-
-
-
    	/* for _JERup jets */
    	argString = "_JERup";
 
@@ -849,8 +897,6 @@ void generateH2TauSyncTree::handleEvent()
 	chargedHadronTrackResolutionFilter 	= R.getB("chargedHadronTrackResolutionFilter");
 	muonBadTrackFilter 					= R.getB("muonBadTrackFilter");
 
-
-
 	/* lhe and gen info */
 
 	NUP = R.getI("hepNUP");
@@ -879,15 +925,11 @@ void generateH2TauSyncTree::handleEvent()
 	TauEsNumberSigmasShifted = R.getF("TauEsNumberSigmasShifted");
 	ElectronEsNumberSigmasShifted = R.getF("ElectronEsNumberSigmasShifted");
 
-
 	//////////////////////////////////////////////////////////////////////////////
 
 	// tMVA variable calculations
 
-
 	LPT = computeLPT(0);
-
-
 
 	// Pchi and Mmin Calculations
 
@@ -931,6 +973,32 @@ void generateH2TauSyncTree::handleEvent()
 		M_min_resolutionDOWN = dummyPchiMmin[1];
 	}
 
+    /* TMVA Reader Section */
+    
+    read_pt_1 = pt_1;
+    read_pfmt_1 = pfmt_1;
+    read_pt_2 = pt_2;
+    read_pt_tt = pt_tt;
+    read_m_vis = m_vis;
+    read_met = met;
+    read_P_chi_pf = P_chi_pf;
+    read_LPT = LPT;
+    read_DeltaR_leg1_leg2 = DeltaR_leg1_leg2;
+    
+    read_npu = npu;
+    read_event = event;
+    read_final_weight = final_weight;
+    
+    mvaVar_mt_MZP600A0400= mt_MZP600A0400_reader.EvaluateMVA( "MLP classifier" );
+    mvaVar_mt_MZP800A0400= mt_MZP800A0400_reader.EvaluateMVA( "MLP classifier" );
+    mvaVar_mt_MZP1000A0400= mt_MZP1000A0400_reader.EvaluateMVA( "MLP classifier" );
+    mvaVar_mt_MZP1200A0400= mt_MZP1200A0400_reader.EvaluateMVA( "MLP classifier" );
+    
+    mvaVar_et_MZP600A0400= et_MZP600A0400_reader.EvaluateMVA( "MLP classifier" );
+    mvaVar_et_MZP800A0400= et_MZP800A0400_reader.EvaluateMVA( "MLP classifier" );
+    mvaVar_et_MZP1000A0400= et_MZP1000A0400_reader.EvaluateMVA( "MLP classifier" );
+    mvaVar_et_MZP1200A0400= et_MZP1200A0400_reader.EvaluateMVA( "MLP classifier" );
+
 
 	/* handle event weights */
 
@@ -945,7 +1013,6 @@ void generateH2TauSyncTree::handleEvent()
     ScaleFactorsForPair_WeightUp  = getFinalScaleFactorsForPair(0,1);
     ScaleFactorsForPair_WeightDown = getFinalScaleFactorsForPair(0,-1);
 
-
 	std::vector <double> qcd_eleMu = getQCDWeightForEleMuChannel(0);
 
     QCDWeightForEleMuChannel_Weight = qcd_eleMu[0];
@@ -959,10 +1026,7 @@ void generateH2TauSyncTree::handleEvent()
     highPtTauEff_WeightUp = highPtTauEff[0];
     highPtTauEff_WeightDown = highPtTauEff[1];
 
-
 	///////// cutoff ---- XXXXX 
-
-
 
 	if(R.getI("CandidateEventType")==3) {num_et++; tree_EleTau->Fill();}
 	else if(R.getI("CandidateEventType")==2){num_em++; tree_EleMu->Fill();}
@@ -1050,7 +1114,6 @@ std::vector <double> generateH2TauSyncTree::computePchi_and_Mmin(bool verbose_, 
        //Calculate E_v
         E_v = (ME_T*E_l)/(TMath::Sqrt(E_l*E_l - p_lz*p_lz));
        
-
        //Calculate P_chi
         P_chi_ = ME_T*(TMath::Cos(phi_l)*TMath::Cos(ME_T_phi) + TMath::Sin(phi_l)*TMath::Sin(ME_T_phi));
 
@@ -1242,6 +1305,7 @@ void generateH2TauSyncTree::setupBranches(TTree * T)
 	T->Branch("highPtTauEff_WeightDown", &highPtTauEff_WeightDown);
 
     T->Branch("flag_MVAEventType", &flag_MVAEventType);
+    T->Branch("userRand", &userRand);
 
 	T->Branch("originalXWGTUP", &originalXWGTUP);
 	T->Branch("theory_scale_factors", &theory_scale_factors);
@@ -1351,6 +1415,10 @@ void generateH2TauSyncTree::setupBranches(TTree * T)
 	T->Branch("decayModeFindingNewDMs_2", &decayModeFindingNewDMs_2);
 	T->Branch("pt_tt", &pt_tt);
 	T->Branch("DeltaR_leg1_leg2", &DeltaR_leg1_leg2);
+    T->Branch("DeltaPhi_leg1_leg2", &DeltaPhi_leg1_leg2);
+    T->Branch("DeltaPhi_MVAMET_Higgs", &DeltaPhi_MVAMET_Higgs);
+    T->Branch("DeltaPhi_PFMET_Higgs", &DeltaPhi_PFMET_Higgs);
+    
 	T->Branch("mt_tot", &mt_tot);
 	T->Branch("m_vis", &m_vis);
 	T->Branch("m_sv", &m_sv);
@@ -1748,10 +1816,16 @@ void generateH2TauSyncTree::setupBranches(TTree * T)
 	T->Branch("M_min_resolutionUP", &M_min_resolutionUP);
 	T->Branch("P_chi_resolutionDOWN", &P_chi_resolutionDOWN);
 	T->Branch("M_min_resolutionDOWN", &M_min_resolutionDOWN);
-
-
-
-
+    
+    T->Branch("mvaVar_mt_MZP600A0400", &mvaVar_mt_MZP600A0400);
+    T->Branch("mvaVar_mt_MZP800A0400", &mvaVar_mt_MZP800A0400);
+    T->Branch("mvaVar_mt_MZP1000A0400", &mvaVar_mt_MZP1000A0400);
+    T->Branch("mvaVar_mt_MZP1200A0400", &mvaVar_mt_MZP1200A0400);
+    
+    T->Branch("mvaVar_et_MZP600A0400", &mvaVar_et_MZP600A0400);
+    T->Branch("mvaVar_et_MZP800A0400", &mvaVar_et_MZP800A0400);
+    T->Branch("mvaVar_et_MZP1000A0400", &mvaVar_et_MZP1000A0400);
+    T->Branch("mvaVar_et_MZP1200A0400", &mvaVar_et_MZP1200A0400);
 }
 
 double generateH2TauSyncTree::mtTotCalc(TLorentzVector l1, TLorentzVector l2, TLorentzVector met )
@@ -1831,6 +1905,7 @@ void generateH2TauSyncTree::reset()
 	highPtTauEff_WeightDown = 1.0;
 
     flag_MVAEventType = -999;
+    userRand = -999.;
 
     originalXWGTUP = 1.0;			/* always init a weight to 1.0 */
     theory_scale_factors.clear();	/* std::vectors are reset using clear() */
@@ -1859,8 +1934,6 @@ void generateH2TauSyncTree::reset()
 	npu =  -999.0;
 	rho =  -999.0;
 	puweight = 1.0;
-
-
 
 	pt_1 = -999.0;
 	phi_1 = -999.0;
@@ -1950,6 +2023,9 @@ void generateH2TauSyncTree::reset()
 
 	pt_tt = -999.0;
 	DeltaR_leg1_leg2 = -999.0;
+    DeltaPhi_leg1_leg2 = -999.0;
+    DeltaPhi_MVAMET_Higgs = -999.0;
+    DeltaPhi_PFMET_Higgs = -999.0;
 	mt_tot = -999.0;
 	m_vis = -999.0;
 	m_sv = -999.0;
@@ -2339,10 +2415,32 @@ void generateH2TauSyncTree::reset()
 	veto_LeptonPassesDiElectronVetoCuts.clear();
 	veto_LeptonPassesDiMuonVetoCuts.clear();
 
-
     LPT = -999.;
-
-
+    
+    mvaVar_mt_MZP600A0400= -999.;
+    mvaVar_mt_MZP800A0400= -999.;
+    mvaVar_mt_MZP1000A0400= -999.;
+    mvaVar_mt_MZP1200A0400= -999.;
+    
+    mvaVar_et_MZP600A0400= -999.;
+    mvaVar_et_MZP800A0400= -999.;
+    mvaVar_et_MZP1000A0400= -999.;
+    mvaVar_et_MZP1200A0400= -999.;
+    
+    read_pt_1 = -999.;
+    read_pfmt_1 = -999.;
+    read_pt_2 = -999.;
+    read_pt_tt = -999.;
+    read_m_vis = -999.;
+    read_met = -999.;
+    read_P_chi_pf = -999.;
+    read_LPT = -999.;
+    read_DeltaR_leg1_leg2 = -999.;
+    
+    read_npu = -999.;
+    read_event = -999.;
+    read_final_weight = -999.;
+    
 	//  expanded for sys. + alternate mets
 
     P_chi = -999.;
@@ -2362,10 +2460,7 @@ void generateH2TauSyncTree::reset()
 	M_min_resolutionUP = -999.0;
 	P_chi_resolutionDOWN = -999.0;
 	M_min_resolutionDOWN = -999.0;
-
-
-
-
+    
 }
 
 std::vector<double> generateH2TauSyncTree::GetLeg1Leg2McTriggerWeights(TLorentzVector l1,TLorentzVector l2,
