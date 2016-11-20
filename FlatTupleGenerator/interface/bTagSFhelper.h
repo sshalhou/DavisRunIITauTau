@@ -18,6 +18,8 @@
 	- note : the heavy arg list is intended to offload much of the initialization of TH2F, TFile, BTagCalib/Reader
 	objects to the FlatTupleGenerator class' declaration. This is done to minimize disk reads and memory usage.
 
+	- note : after CMSSW_8_0_12 the up/down variants are contained within a single reader 
+
 - Shalhout
 */
 
@@ -36,7 +38,7 @@
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 #include "DavisRunIITauTau/NtupleObjects/interface/NtupleJet.h"
 #include "CondFormats/BTauObjects/interface/BTagCalibration.h"
-#include "CondFormats/BTauObjects/interface/BTagCalibrationReader.h"
+#include "CondTools/BTau/interface/BTagCalibrationReader.h"
 #include "CondFormats/BTauObjects/interface/BTagEntry.h"
 #include "TFile.h"
 #include "TH2F.h"
@@ -49,12 +51,15 @@ public:
 /* the loose btag WP cut, the medium btag WP cut, the tight btag wp cut, and the 9 btag eff histograms, the 18 b-tag calib readers */
   bTagSFhelper(BTagCalibration, edm::FileInPath, edm::FileInPath, edm::FileInPath, double, double, double,
   	TH2F, TH2F, TH2F,TH2F, TH2F, TH2F,TH2F, TH2F, TH2F,
-	BTagCalibrationReader, BTagCalibrationReader, BTagCalibrationReader,
-	BTagCalibrationReader, BTagCalibrationReader, BTagCalibrationReader,
-	BTagCalibrationReader, BTagCalibrationReader, BTagCalibrationReader,
-	BTagCalibrationReader, BTagCalibrationReader, BTagCalibrationReader,
-	BTagCalibrationReader, BTagCalibrationReader, BTagCalibrationReader,
-	BTagCalibrationReader, BTagCalibrationReader, BTagCalibrationReader); 
+	BTagCalibrationReader, 
+	BTagCalibrationReader, 
+	BTagCalibrationReader, 
+	BTagCalibrationReader, 
+	BTagCalibrationReader, 
+	BTagCalibrationReader,
+	BTagCalibrationReader, 
+	BTagCalibrationReader, 
+	BTagCalibrationReader ); 
   virtual ~bTagSFhelper(){}
 
   /* call the InitForJet function once per jet, per btag WP. args are :
@@ -100,31 +105,18 @@ private:
 	/* calibration tool and readers */
 	BTagCalibration m_calib;
 
-	BTagCalibrationReader	m_LooseWpReaderCentral_forBorC;
-	BTagCalibrationReader	m_LooseWpReaderUp_forBorC;
-	BTagCalibrationReader	m_LooseWpReaderDown_forBorC;
-	
-	BTagCalibrationReader	m_MediumWpReaderCentral_forBorC;
-	BTagCalibrationReader	m_MediumWpReaderUp_forBorC;
-	BTagCalibrationReader	m_MediumWpReaderDown_forBorC;
-	
-	BTagCalibrationReader	m_TightWpReaderCentral_forBorC;
-	BTagCalibrationReader	m_TightWpReaderUp_forBorC;
-	BTagCalibrationReader	m_TightWpReaderDown_forBorC;
-	
-	BTagCalibrationReader	m_LooseWpReaderCentral_forUDSG;
-	BTagCalibrationReader	m_LooseWpReaderUp_forUDSG;
-	BTagCalibrationReader	m_LooseWpReaderDown_forUDSG;
-	
-	BTagCalibrationReader	m_MediumWpReaderCentral_forUDSG;
-	BTagCalibrationReader	m_MediumWpReaderUp_forUDSG;
-	BTagCalibrationReader	m_MediumWpReaderDown_forUDSG;
-	
-	BTagCalibrationReader	m_TightWpReaderCentral_forUDSG;
-	BTagCalibrationReader	m_TightWpReaderUp_forUDSG;
-	BTagCalibrationReader	m_TightWpReaderDown_forUDSG;
+	BTagCalibrationReader	m_LooseWpReaderAllVariants_forB;
+	BTagCalibrationReader	m_MediumWpReaderAllVariants_forB;
+	BTagCalibrationReader	m_TightWpReaderAllVariants_forB;
 
+	BTagCalibrationReader	m_LooseWpReaderAllVariants_forC;
+	BTagCalibrationReader	m_MediumWpReaderAllVariants_forC;
+	BTagCalibrationReader	m_TightWpReaderAllVariants_forC;
 
+	BTagCalibrationReader	m_LooseWpReaderAllVariants_forUDSG;
+	BTagCalibrationReader	m_MediumWpReaderAllVariants_forUDSG;
+	BTagCalibrationReader	m_TightWpReaderAllVariants_forUDSG;
+	
 	edm::FileInPath m_looseEffRootFile;
 	edm::FileInPath m_mediumEffRootFile;
 	edm::FileInPath m_tightEffRootFile;

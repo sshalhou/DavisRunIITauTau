@@ -9,18 +9,15 @@ bTagSFhelper::bTagSFhelper(BTagCalibration calibTool, edm::FileInPath looseEffRo
     TH2F hist_LooseEff_b, TH2F hist_LooseEff_c, TH2F hist_LooseEff_usdg, 
 	TH2F hist_MediumEff_b, TH2F hist_MediumEff_c, TH2F hist_MediumEff_usdg, 
 	TH2F hist_TightEff_b, TH2F hist_TightEff_c, TH2F hist_TightEff_usdg,							
-	BTagCalibrationReader reader_LooseWpReaderCentral_forBorC, BTagCalibrationReader reader_LooseWpReaderUp_forBorC, 
-	BTagCalibrationReader reader_LooseWpReaderDown_forBorC, 
-	BTagCalibrationReader reader_MediumWpReaderCentral_forBorC, BTagCalibrationReader reader_MediumWpReaderUp_forBorC, 
-	BTagCalibrationReader reader_MediumWpReaderDown_forBorC,  
-	BTagCalibrationReader reader_TightWpReaderCentral_forBorC, BTagCalibrationReader reader_TightWpReaderUp_forBorC, 
-	BTagCalibrationReader reader_TightWpReaderDown_forBorC,  
-	BTagCalibrationReader reader_LooseWpReaderCentral_forUDSG, BTagCalibrationReader reader_LooseWpReaderUp_forUDSG, 
-	BTagCalibrationReader reader_LooseWpReaderDown_forUDSG,  
-	BTagCalibrationReader reader_MediumWpReaderCentral_forUDSG, BTagCalibrationReader reader_MediumWpReaderUp_forUDSG, 
-	BTagCalibrationReader reader_MediumWpReaderDown_forUDSG,  
-	BTagCalibrationReader reader_TightWpReaderCentral_forUDSG, BTagCalibrationReader reader_TightWpReaderUp_forUDSG, 
-	BTagCalibrationReader reader_TightWpReaderDown_forUDSG)
+	BTagCalibrationReader reader_LooseWpReaderAllVariants_forB,
+	BTagCalibrationReader reader_MediumWpReaderAllVariants_forB, 
+	BTagCalibrationReader reader_TightWpReaderAllVariants_forB, 
+	BTagCalibrationReader reader_LooseWpReaderAllVariants_forC,
+	BTagCalibrationReader reader_MediumWpReaderAllVariants_forC, 
+	BTagCalibrationReader reader_TightWpReaderAllVariants_forC, 
+	BTagCalibrationReader reader_LooseWpReaderAllVariants_forUDSG, 
+	BTagCalibrationReader reader_MediumWpReaderAllVariants_forUDSG, 
+	BTagCalibrationReader reader_TightWpReaderAllVariants_forUDSG)
 {
 
 	/* setup the Btag SF tool */
@@ -29,24 +26,17 @@ bTagSFhelper::bTagSFhelper(BTagCalibration calibTool, edm::FileInPath looseEffRo
 
 	/* setup the Btag SF readers */
 
-	m_LooseWpReaderCentral_forBorC  = reader_LooseWpReaderCentral_forBorC;
-	m_LooseWpReaderUp_forBorC  = reader_LooseWpReaderUp_forBorC;
-	m_LooseWpReaderDown_forBorC  = reader_LooseWpReaderDown_forBorC;
-	m_MediumWpReaderCentral_forBorC  = reader_MediumWpReaderCentral_forBorC;
-	m_MediumWpReaderUp_forBorC  = reader_MediumWpReaderUp_forBorC;
-	m_MediumWpReaderDown_forBorC  = reader_MediumWpReaderDown_forBorC;
-	m_TightWpReaderCentral_forBorC  = reader_TightWpReaderCentral_forBorC;
-	m_TightWpReaderUp_forBorC  = reader_TightWpReaderUp_forBorC;
-	m_TightWpReaderDown_forBorC  = reader_TightWpReaderDown_forBorC;
-	m_LooseWpReaderCentral_forUDSG  = reader_LooseWpReaderCentral_forUDSG;
-	m_LooseWpReaderUp_forUDSG  = reader_LooseWpReaderUp_forUDSG;
-	m_LooseWpReaderDown_forUDSG  = reader_LooseWpReaderDown_forUDSG;
-	m_MediumWpReaderCentral_forUDSG  = reader_MediumWpReaderCentral_forUDSG;
-	m_MediumWpReaderUp_forUDSG  = reader_MediumWpReaderUp_forUDSG;
-	m_MediumWpReaderDown_forUDSG  = reader_MediumWpReaderDown_forUDSG;
-	m_TightWpReaderCentral_forUDSG  = reader_TightWpReaderCentral_forUDSG;
-	m_TightWpReaderUp_forUDSG  = reader_TightWpReaderUp_forUDSG;
-	m_TightWpReaderDown_forUDSG  = reader_TightWpReaderDown_forUDSG;
+	m_LooseWpReaderAllVariants_forB  = reader_LooseWpReaderAllVariants_forB;
+	m_MediumWpReaderAllVariants_forB  = reader_MediumWpReaderAllVariants_forB;
+	m_TightWpReaderAllVariants_forB  = reader_TightWpReaderAllVariants_forB;
+
+	m_LooseWpReaderAllVariants_forC  = reader_LooseWpReaderAllVariants_forC;
+	m_MediumWpReaderAllVariants_forC  = reader_MediumWpReaderAllVariants_forC;
+	m_TightWpReaderAllVariants_forC  = reader_TightWpReaderAllVariants_forC;
+
+	m_LooseWpReaderAllVariants_forUDSG  = reader_LooseWpReaderAllVariants_forUDSG;
+	m_MediumWpReaderAllVariants_forUDSG  = reader_MediumWpReaderAllVariants_forUDSG;
+	m_TightWpReaderAllVariants_forUDSG  = reader_TightWpReaderAllVariants_forUDSG;
 
 	/* set the b-tag eff histograms */
 
@@ -202,17 +192,17 @@ void bTagSFhelper::InitForJet(double pt_, double eta_, double rawScore_,
     if(m_jetHadronFlavour == BTagEntry::FLAV_B)
     {
     	//std::cout<<" have *** a B with m_jetHadronFlavour = "<<m_jetHadronFlavour<<"\n";
-		m_SF_MediumWpCentral = m_MediumWpReaderCentral_forBorC.eval(BTagEntry::FLAV_B, m_jetEta, m_jetPt);
-		m_SF_MediumWpUp = m_MediumWpReaderUp_forBorC.eval(BTagEntry::FLAV_B, m_jetEta, m_jetPt);
-		m_SF_MediumWpDown = m_MediumWpReaderDown_forBorC.eval(BTagEntry::FLAV_B, m_jetEta, m_jetPt);
+		m_SF_MediumWpCentral = m_MediumWpReaderAllVariants_forB.eval_auto_bounds("central",BTagEntry::FLAV_B, m_jetEta, m_jetPt);
+		m_SF_MediumWpUp = m_MediumWpReaderAllVariants_forB.eval_auto_bounds("up",BTagEntry::FLAV_B, m_jetEta, m_jetPt);
+		m_SF_MediumWpDown = m_MediumWpReaderAllVariants_forB.eval_auto_bounds("down",BTagEntry::FLAV_B, m_jetEta, m_jetPt);
 	
-		m_SF_LooseWpCentral = m_LooseWpReaderCentral_forBorC.eval(BTagEntry::FLAV_B, m_jetEta, m_jetPt);
-		m_SF_LooseWpUp = m_LooseWpReaderUp_forBorC.eval(BTagEntry::FLAV_B, m_jetEta, m_jetPt);
-		m_SF_LooseWpDown = m_LooseWpReaderDown_forBorC.eval(BTagEntry::FLAV_B, m_jetEta, m_jetPt);
+		m_SF_LooseWpCentral = m_LooseWpReaderAllVariants_forB.eval_auto_bounds("central",BTagEntry::FLAV_B, m_jetEta, m_jetPt);
+		m_SF_LooseWpUp = m_LooseWpReaderAllVariants_forB.eval_auto_bounds("up",BTagEntry::FLAV_B, m_jetEta, m_jetPt);
+		m_SF_LooseWpDown = m_LooseWpReaderAllVariants_forB.eval_auto_bounds("down",BTagEntry::FLAV_B, m_jetEta, m_jetPt);
 
-		m_SF_TightWpCentral = m_TightWpReaderCentral_forBorC.eval(BTagEntry::FLAV_B, m_jetEta, m_jetPt);
-		m_SF_TightWpUp = m_TightWpReaderUp_forBorC.eval(BTagEntry::FLAV_B, m_jetEta, m_jetPt);
-		m_SF_TightWpDown = m_TightWpReaderDown_forBorC.eval(BTagEntry::FLAV_B, m_jetEta, m_jetPt);
+		m_SF_TightWpCentral = m_TightWpReaderAllVariants_forB.eval_auto_bounds("central",BTagEntry::FLAV_B, m_jetEta, m_jetPt);
+		m_SF_TightWpUp = m_TightWpReaderAllVariants_forB.eval_auto_bounds("up",BTagEntry::FLAV_B, m_jetEta, m_jetPt);
+		m_SF_TightWpDown = m_TightWpReaderAllVariants_forB.eval_auto_bounds("down",BTagEntry::FLAV_B, m_jetEta, m_jetPt);
     
 		/* extract the b-tag eff. from TFiles and TH2D histograms */
 
@@ -246,18 +236,18 @@ void bTagSFhelper::InitForJet(double pt_, double eta_, double rawScore_,
 
     	//std::cout<<" have *** a C with m_jetHadronFlavour = "<<m_jetHadronFlavour<<"\n";
 
-		m_SF_MediumWpCentral = m_MediumWpReaderCentral_forBorC.eval(BTagEntry::FLAV_C, m_jetEta, m_jetPt);
-		m_SF_MediumWpUp = m_MediumWpReaderUp_forBorC.eval(BTagEntry::FLAV_C, m_jetEta, m_jetPt);
-		m_SF_MediumWpDown = m_MediumWpReaderDown_forBorC.eval(BTagEntry::FLAV_C, m_jetEta, m_jetPt);
+		m_SF_MediumWpCentral = m_MediumWpReaderAllVariants_forC.eval_auto_bounds("central",BTagEntry::FLAV_C, m_jetEta, m_jetPt);
+		m_SF_MediumWpUp = m_MediumWpReaderAllVariants_forC.eval_auto_bounds("up",BTagEntry::FLAV_C, m_jetEta, m_jetPt);
+		m_SF_MediumWpDown = m_MediumWpReaderAllVariants_forC.eval_auto_bounds("down",BTagEntry::FLAV_C, m_jetEta, m_jetPt);
 	
-		m_SF_LooseWpCentral = m_LooseWpReaderCentral_forBorC.eval(BTagEntry::FLAV_C, m_jetEta, m_jetPt);
-		m_SF_LooseWpUp = m_LooseWpReaderUp_forBorC.eval(BTagEntry::FLAV_C, m_jetEta, m_jetPt);
-		m_SF_LooseWpDown = m_LooseWpReaderDown_forBorC.eval(BTagEntry::FLAV_C, m_jetEta, m_jetPt);
+		m_SF_LooseWpCentral = m_LooseWpReaderAllVariants_forC.eval_auto_bounds("central",BTagEntry::FLAV_C, m_jetEta, m_jetPt);
+		m_SF_LooseWpUp = m_LooseWpReaderAllVariants_forC.eval_auto_bounds("up",BTagEntry::FLAV_C, m_jetEta, m_jetPt);
+		m_SF_LooseWpDown = m_LooseWpReaderAllVariants_forC.eval_auto_bounds("down",BTagEntry::FLAV_C, m_jetEta, m_jetPt);
 
 
-		m_SF_TightWpCentral = m_TightWpReaderCentral_forBorC.eval(BTagEntry::FLAV_C, m_jetEta, m_jetPt);
-		m_SF_TightWpUp = m_TightWpReaderUp_forBorC.eval(BTagEntry::FLAV_C, m_jetEta, m_jetPt);
-		m_SF_TightWpDown = m_TightWpReaderDown_forBorC.eval(BTagEntry::FLAV_C, m_jetEta, m_jetPt);
+		m_SF_TightWpCentral = m_TightWpReaderAllVariants_forC.eval_auto_bounds("central",BTagEntry::FLAV_C, m_jetEta, m_jetPt);
+		m_SF_TightWpUp = m_TightWpReaderAllVariants_forC.eval_auto_bounds("up",BTagEntry::FLAV_C, m_jetEta, m_jetPt);
+		m_SF_TightWpDown = m_TightWpReaderAllVariants_forC.eval_auto_bounds("down",BTagEntry::FLAV_C, m_jetEta, m_jetPt);
 
 		/* extract the b-tag eff. from TFiles and TH2D histograms */
 
@@ -292,17 +282,17 @@ void bTagSFhelper::InitForJet(double pt_, double eta_, double rawScore_,
 
     	 // std::cout<<" have *** a UDSG with m_jetHadronFlavour = "<<m_jetHadronFlavour<<"\n";
 
-		m_SF_MediumWpCentral = m_MediumWpReaderCentral_forUDSG.eval(BTagEntry::FLAV_UDSG, m_jetEta, m_jetPt);
-		m_SF_MediumWpUp = m_MediumWpReaderUp_forUDSG.eval(BTagEntry::FLAV_UDSG, m_jetEta, m_jetPt);
-		m_SF_MediumWpDown = m_MediumWpReaderDown_forUDSG.eval(BTagEntry::FLAV_UDSG, m_jetEta, m_jetPt);
+		m_SF_MediumWpCentral = m_MediumWpReaderAllVariants_forUDSG.eval_auto_bounds("central",BTagEntry::FLAV_UDSG, m_jetEta, m_jetPt);
+		m_SF_MediumWpUp = m_MediumWpReaderAllVariants_forUDSG.eval_auto_bounds("up",BTagEntry::FLAV_UDSG, m_jetEta, m_jetPt);
+		m_SF_MediumWpDown = m_MediumWpReaderAllVariants_forUDSG.eval_auto_bounds("down",BTagEntry::FLAV_UDSG, m_jetEta, m_jetPt);
 	
-		m_SF_LooseWpCentral = m_LooseWpReaderCentral_forUDSG.eval(BTagEntry::FLAV_UDSG, m_jetEta, m_jetPt);
-		m_SF_LooseWpUp = m_LooseWpReaderUp_forUDSG.eval(BTagEntry::FLAV_UDSG, m_jetEta, m_jetPt);
-		m_SF_LooseWpDown = m_LooseWpReaderDown_forUDSG.eval(BTagEntry::FLAV_UDSG, m_jetEta, m_jetPt);
+		m_SF_LooseWpCentral = m_LooseWpReaderAllVariants_forUDSG.eval_auto_bounds("central",BTagEntry::FLAV_UDSG, m_jetEta, m_jetPt);
+		m_SF_LooseWpUp = m_LooseWpReaderAllVariants_forUDSG.eval_auto_bounds("up",BTagEntry::FLAV_UDSG, m_jetEta, m_jetPt);
+		m_SF_LooseWpDown = m_LooseWpReaderAllVariants_forUDSG.eval_auto_bounds("down",BTagEntry::FLAV_UDSG, m_jetEta, m_jetPt);
 
-		m_SF_TightWpCentral = m_TightWpReaderCentral_forUDSG.eval(BTagEntry::FLAV_UDSG, m_jetEta, m_jetPt);
-		m_SF_TightWpUp = m_TightWpReaderUp_forUDSG.eval(BTagEntry::FLAV_UDSG, m_jetEta, m_jetPt);
-		m_SF_TightWpDown = m_TightWpReaderDown_forUDSG.eval(BTagEntry::FLAV_UDSG, m_jetEta, m_jetPt);
+		m_SF_TightWpCentral = m_TightWpReaderAllVariants_forUDSG.eval_auto_bounds("central",BTagEntry::FLAV_UDSG, m_jetEta, m_jetPt);
+		m_SF_TightWpUp = m_TightWpReaderAllVariants_forUDSG.eval_auto_bounds("up",BTagEntry::FLAV_UDSG, m_jetEta, m_jetPt);
+		m_SF_TightWpDown = m_TightWpReaderAllVariants_forUDSG.eval_auto_bounds("down",BTagEntry::FLAV_UDSG, m_jetEta, m_jetPt);
 
 
 		/* extract the b-tag eff. from TFiles and TH2D histograms */

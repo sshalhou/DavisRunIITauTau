@@ -242,31 +242,36 @@ svMassAtFlatTupleConfig_(iConfig.getParameter<edm::ParameterSet>("SVMassConfig")
   /* setup the b-tag calibration tool & readers */
 
   BTagCalibration m_calib("csvv2", sf_file.fullPath());
-  BTagCalibrationReader m_LooseWpReaderCentral_forBorC(&m_calib, BTagEntry::OP_LOOSE,"mujets","central");
-  BTagCalibrationReader m_LooseWpReaderUp_forBorC(&m_calib, BTagEntry::OP_LOOSE,"mujets","up");
-  BTagCalibrationReader m_LooseWpReaderDown_forBorC(&m_calib, BTagEntry::OP_LOOSE,"mujets","down");
   
-  BTagCalibrationReader m_MediumWpReaderCentral_forBorC(&m_calib, BTagEntry::OP_MEDIUM,"mujets","central");
-  BTagCalibrationReader m_MediumWpReaderUp_forBorC(&m_calib, BTagEntry::OP_MEDIUM,"mujets","up");
-  BTagCalibrationReader m_MediumWpReaderDown_forBorC(&m_calib, BTagEntry::OP_MEDIUM,"mujets","down");
-  
-  BTagCalibrationReader m_TightWpReaderCentral_forBorC(&m_calib, BTagEntry::OP_TIGHT,"mujets","central");
-  BTagCalibrationReader m_TightWpReaderUp_forBorC(&m_calib, BTagEntry::OP_TIGHT,"mujets","up");
-  BTagCalibrationReader m_TightWpReaderDown_forBorC(&m_calib, BTagEntry::OP_TIGHT,"mujets","down");
-  
-  BTagCalibrationReader m_LooseWpReaderCentral_forUDSG(&m_calib, BTagEntry::OP_LOOSE,"incl","central");
-  BTagCalibrationReader m_LooseWpReaderUp_forUDSG(&m_calib, BTagEntry::OP_LOOSE,"incl","up");
-  BTagCalibrationReader m_LooseWpReaderDown_forUDSG(&m_calib, BTagEntry::OP_LOOSE,"incl","down");
-  
-  BTagCalibrationReader m_MediumWpReaderCentral_forUDSG(&m_calib, BTagEntry::OP_MEDIUM,"incl","central");
-  BTagCalibrationReader m_MediumWpReaderUp_forUDSG(&m_calib, BTagEntry::OP_MEDIUM,"incl","up");
-  BTagCalibrationReader m_MediumWpReaderDown_forUDSG(&m_calib, BTagEntry::OP_MEDIUM,"incl","down");
-  
-  BTagCalibrationReader m_TightWpReaderCentral_forUDSG(&m_calib, BTagEntry::OP_TIGHT,"incl","central");
-  BTagCalibrationReader m_TightWpReaderUp_forUDSG(&m_calib, BTagEntry::OP_TIGHT,"incl","up");
-  BTagCalibrationReader m_TightWpReaderDown_forUDSG(&m_calib, BTagEntry::OP_TIGHT,"incl","down");
+  /* mujets */
+  BTagCalibrationReader m_LooseWpReaderAllVariants_forB( BTagEntry::OP_LOOSE,"central", {"up", "down"});
+  BTagCalibrationReader m_MediumWpReaderAllVariants_forB( BTagEntry::OP_MEDIUM,"central", {"up", "down"});
+  BTagCalibrationReader m_TightWpReaderAllVariants_forB( BTagEntry::OP_TIGHT,"central", {"up", "down"});
 
 
+  /* mujets */
+  BTagCalibrationReader m_LooseWpReaderAllVariants_forC( BTagEntry::OP_LOOSE,"central", {"up", "down"});
+  BTagCalibrationReader m_MediumWpReaderAllVariants_forC( BTagEntry::OP_MEDIUM,"central", {"up", "down"});
+  BTagCalibrationReader m_TightWpReaderAllVariants_forC( BTagEntry::OP_TIGHT,"central", {"up", "down"});
+
+  /* incl */
+  BTagCalibrationReader m_LooseWpReaderAllVariants_forUDSG( BTagEntry::OP_LOOSE,"central", {"up", "down"});
+  BTagCalibrationReader m_MediumWpReaderAllVariants_forUDSG( BTagEntry::OP_MEDIUM,"central", {"up", "down"});
+  BTagCalibrationReader m_TightWpReaderAllVariants_forUDSG( BTagEntry::OP_TIGHT,"central", {"up", "down"});
+  
+
+
+  m_LooseWpReaderAllVariants_forB.load(m_calib, BTagEntry::FLAV_B, "mujets");             
+  m_MediumWpReaderAllVariants_forB.load(m_calib, BTagEntry::FLAV_B, "mujets");             
+  m_TightWpReaderAllVariants_forB.load(m_calib, BTagEntry::FLAV_B, "mujets");           
+
+  m_LooseWpReaderAllVariants_forC.load(m_calib, BTagEntry::FLAV_C, "mujets");             
+  m_MediumWpReaderAllVariants_forC.load(m_calib, BTagEntry::FLAV_C, "mujets");             
+  m_TightWpReaderAllVariants_forC.load(m_calib, BTagEntry::FLAV_C, "mujets");      
+
+  m_LooseWpReaderAllVariants_forUDSG.load(m_calib, BTagEntry::FLAV_UDSG, "incl");             
+  m_MediumWpReaderAllVariants_forUDSG.load(m_calib, BTagEntry::FLAV_UDSG, "incl");             
+  m_TightWpReaderAllVariants_forUDSG.load(m_calib, BTagEntry::FLAV_UDSG, "incl");      
 
   /* setup btag SF tool */
 
@@ -276,12 +281,15 @@ svMassAtFlatTupleConfig_(iConfig.getParameter<edm::ParameterSet>("SVMassConfig")
                       m_LooseEff_b, m_LooseEff_c, m_LooseEff_usdg, 
                       m_MediumEff_b, m_MediumEff_c, m_MediumEff_usdg, 
                       m_TightEff_b, m_TightEff_c, m_TightEff_usdg,
-                      m_LooseWpReaderCentral_forBorC, m_LooseWpReaderUp_forBorC, m_LooseWpReaderDown_forBorC, 
-                      m_MediumWpReaderCentral_forBorC, m_MediumWpReaderUp_forBorC, m_MediumWpReaderDown_forBorC, 
-                      m_TightWpReaderCentral_forBorC, m_TightWpReaderUp_forBorC, m_TightWpReaderDown_forBorC, 
-                      m_LooseWpReaderCentral_forUDSG, m_LooseWpReaderUp_forUDSG, m_LooseWpReaderDown_forUDSG, 
-                      m_MediumWpReaderCentral_forUDSG, m_MediumWpReaderUp_forUDSG, m_MediumWpReaderDown_forUDSG, 
-                      m_TightWpReaderCentral_forUDSG, m_TightWpReaderUp_forUDSG, m_TightWpReaderDown_forUDSG);
+                      m_LooseWpReaderAllVariants_forB,
+                      m_MediumWpReaderAllVariants_forB,
+                      m_TightWpReaderAllVariants_forB, 
+                      m_LooseWpReaderAllVariants_forC,
+                      m_MediumWpReaderAllVariants_forC,
+                      m_TightWpReaderAllVariants_forC, 
+                      m_LooseWpReaderAllVariants_forUDSG, 
+                      m_MediumWpReaderAllVariants_forUDSG,
+                      m_TightWpReaderAllVariants_forUDSG);
 
 
   /* setup the SVFit ResolutionPDF file */

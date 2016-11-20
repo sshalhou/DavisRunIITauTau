@@ -7,18 +7,18 @@ voms-proxy-init -voms cms --valid=72:00
 # some defaults
 
 source /cvmfs/cms.cern.ch/cmsset_default.csh
-setenv SCRAM_ARCH slc6_amd64_gcc493
+setenv SCRAM_ARCH slc6_amd64_gcc530
 
-if ( -d CMSSW_7_6_3_patch2) then
-        echo 'directory CMSSW_7_6_3_patch2 already exits, doing nothing further'
+if ( -d CMSSW_8_0_20) then
+        echo 'directory CMSSW_8_0_20 already exits, doing nothing further'
         exit 1
 endif
 
 
 # create the working area
 	
-cmsrel CMSSW_7_6_3_patch2
-cd CMSSW_7_6_3_patch2/src/
+cmsrel CMSSW_8_0_20
+cd CMSSW_8_0_20/src/
 cmsenv
 
 
@@ -26,111 +26,67 @@ cmsenv
 
 git cms-init
 
+# electron ID ----> cut based ID/mva ID are already integrated into this release but cuts must be modified
+# muon ID --> already integrated into this release but cuts must be modified
+# PF jet ID --> no new code cuts must be modifed
+# PU jet ID --> for this rel, no code is needed but must follow recalc instructions
+# JEC --> method unchanged from 76X no code is needed
+# b-jets -> no new code, should update sf code
 
+# MVA MET : 
 
-# electron ID ----> cut based ID/mva ID are already integrated into this release
+git cms-addpkg RecoMET/METPUSubtraction
+git cms-addpkg DataFormats/METReco
+git remote add -f mvamet https://github.com/rfriese/cmssw.git
+git checkout mvamet/mvamet8020 -b mvamet
+mkdir RecoMET/METPUSubtraction/data
+cd RecoMET/METPUSubtraction/data
+wget https://github.com/rfriese/cmssw/raw/MVAMET2_beta_0.6/RecoMET/METPUSubtraction/data/weightfile.root
+cd $CMSSW_BASE/src
 
-# muon ID --> already integrated into this release
+# PF MET :
 
-# for muon effective area
+# for PF MET, manual patch applied 
+# Additionally, apply these two patches: 
+# - https://github.com/vhbb/cmssw/pull/524/commits/1dd40d418ddc3f769daff7aff5a37a81edd1c9a9 
+# - https://github.com/vhbb/cmssw/pull/524/commits/3c18062dc38f56c01c6ee68da5cf79951208bd16
+# instead I have modified the files directly (these are fine in 820X)
 
-git clone -n https://github.com/latinos/UserCode-sixie-Muon-MuonAnalysisTools Muon/MuonAnalysisTools 
-cd Muon/MuonAnalysisTools 
-git checkout master -- interface/MuonEffectiveArea.h 
-cd -
+git cms-addpkg DataFormats/PatCandidates
+cp /afs/cern.ch/user/s/sshalhou/public/CMSSW_8X_MODS/METReco/MET.h_mod DataFormats/METReco/interface/MET.h
+cp /afs/cern.ch/user/s/sshalhou/public/CMSSW_8X_MODS/METReco/MET.cc_mod DataFormats/METReco/src/MET.cc
+cp /afs/cern.ch/user/s/sshalhou/public/CMSSW_8X_MODS/PatCandidates/MET.cc_mod DataFormats/PatCandidates/src/MET.cc
 
-# jets and jet energy corrections -- must be applied at ntuple level
+# SVFIt 
 
-
-# for sv mass
 git clone git@github.com:veelken/SVfit_standalone.git TauAnalysis/SVfitStandalone
-cd TauAnalysis/SVfitStandalone
-echo "***** Ignore Detatched Head Warnings ...."
+cd TauAnalysis/SVfitStandalone/
 git checkout HIG-16-006
-cd -
+cd $CMSSW_BASE/src
+
+# MET RECOIL CORRECTIONS (SAME CODE FOR PF AND MVA MET)
+git clone https://github.com/CMS-HTT/RecoilCorrections.git  HTT-utilities/RecoilCorrections 
+
 
 # pilup reweight code -- this is done to turn of cout statements
 git cms-addpkg PhysicsTools/Utilities
 sed -i 's/std::cout/\/\/std::cout/g' PhysicsTools/Utilities/src/LumiReWeighting.cc
 
 
+# for muon effective area 
 
-
-# # MVA MET : for 7_6_X 
-
-git cms-addpkg RecoMET/METPUSubtraction
-git cms-addpkg DataFormats/METReco
-git remote add -f mvamet https://github.com/rfriese/cmssw.git
-git checkout MVAMET2_beta_0.6 -b mvamet
-rm -rf RecoMET/METPUSubtraction/data/.git 
-
-
-# add CL software
-
-git clone https://github.com/cms-analysis/HiggsAnalysis-CombinedLimit.git HiggsAnalysis/CombinedLimit
-cd HiggsAnalysis/CombinedLimit
-git checkout 74x-root6 # is there a newer branch?
+git clone -n https://github.com/latinos/UserCode-sixie-Muon-MuonAnalysisTools Muon/MuonAnalysisTools 
+cd Muon/MuonAnalysisTools 
+git checkout master -- interface/MuonEffectiveArea.h 
 cd -
 
-# get the recoil CORRECTIONS for MVA MET
-git clone https://github.com/CMS-HTT/RecoilCorrections.git  HTT-utilities/RecoilCorrections 
-
-
-# relocate the davis code
-mv ../../DavisRunIITauTau .
-
-# copy the PU reweight files 
-
-cp /afs/cern.ch/work/a/adewit/public/pileup-hists/*root DavisRunIITauTau/RunTimeDataInput/data/PileUpReWeightFiles/.
-
-# get the right JER SF file for this release
-# if new file, need to code the change in runIIoneStep_v0.py and runIIntuple_v0.py
-
-mkdir DavisRunIITauTau/RunTimeDataInput/data/JER_FILES
-wget https://raw.githubusercontent.com/cms-jet/JRDatabase/master/textFiles/Fall15_25nsV2_MC/Fall15_25nsV2_MC_SF_AK4PFchs.txt .
-wget https://raw.githubusercontent.com/cms-jet/JRDatabase/master/textFiles/Fall15_25nsV2_MC/Fall15_25nsV2_MC_PtResolution_AK4PFchs.txt .
-mv Fall15_25nsV2_MC_SF_AK4PFchs.txt DavisRunIITauTau/RunTimeDataInput/data/JER_FILES/.
-mv Fall15_25nsV2_MC_PtResolution_AK4PFchs.txt DavisRunIITauTau/RunTimeDataInput/data/JER_FILES/.
-
-# get the BTAG SF CSV File  and EFF root files 
-# if the file is new, need to change the name used in FlatTupleConfig_cfi.py
-
-mkdir DavisRunIITauTau/RunTimeDataInput/data/BTAGSF
-cp /afs/cern.ch/user/s/sshalhou/public/INSTALL_PUBLIC_FILES/76X/BTAGSF/CSVv2.csv DavisRunIITauTau/RunTimeDataInput/data/BTAGSF/.
-mkdir DavisRunIITauTau/RunTimeDataInput/data/BTAGEFF
-cp /afs/cern.ch/user/s/sshalhou/public/INSTALL_PUBLIC_FILES/76X/BTAGEFF/tagging_efficiencies.root DavisRunIITauTau/RunTimeDataInput/data/BTAGEFF/.
-cp /afs/cern.ch/user/s/sshalhou/public/INSTALL_PUBLIC_FILES/76X/BTAGEFF/tagging_efficiencies_loosewp.root DavisRunIITauTau/RunTimeDataInput/data/BTAGEFF/.
-
-# bug fix in MVA met (replaced p4() comparisons with small DR comparisons instead)
-cp DavisRunIITauTau/External/MVAMET.cc_763patch2 RecoMET/METPUSubtraction/plugins/MVAMET.cc
-
-# Lepton Eff for Muon & Electron for Fall15 
-cd DavisRunIITauTau/AnalysisRunII/Analysis/
-git clone https://github.com/CMS-HTT/LeptonEff-interface.git HTT-utilities
-cd HTT-utilities/LepEffInterface
-git clone https://github.com/CMS-HTT/LeptonEfficiencies.git data
-cd ${CMSSW_BASE}/src
-
-# Z reweight file used in analysis 
-cd ${CMSSW_BASE}/src/DavisRunIITauTau/AnalysisRunII/Analysis/
-mkdir ZReweight
-cp /afs/cern.ch/user/s/sshalhou/public/INSTALL_PUBLIC_FILES/76X_Zreweight/zpt_weights.root ZReweight/.
-cd -
-
-# NLO Higgs Pt reweight Tool for SUSY signals
-cd ${CMSSW_BASE}/src/DavisRunIITauTau/AnalysisRunII/Analysis/
-mkdir SUSYHiggsPtReweight
-cp /afs/cern.ch/user/s/sshalhou/public/INSTALL_PUBLIC_FILES/76X_NLOsusy/Reweight.root SUSYHiggsPtReweight/.
-cd -
-
-
-# QCD weights for MSSM ele+muon channel (2015 version)
-
-cd ${CMSSW_BASE}/src/DavisRunIITauTau/AnalysisRunII/Analysis/
-git clone https://github.com/CMS-HTT/QCDModelingEMu HTT-utilities/QCDModelingEMu
-cp /afs/cern.ch/user/s/sshalhou/public/INSTALL_PUBLIC_FILES/76X_QCDeMu/QCDModelForEMu.cc HTT-utilities/QCDModelingEMu/src/QCDModelForEMu.cc 
-cd -
+# add CL software ---> this does not work in 8X, and seemingly there is no branch in which it will work
+# git clone https://github.com/cms-analysis/HiggsAnalysis-CombinedLimit.git HiggsAnalysis/CombinedLimit
+# cd HiggsAnalysis/CombinedLimit
+# git checkout 74x-root6 # is there a newer branch?
+# cd -
 
 # compile
 
 scram b -j 20
+
