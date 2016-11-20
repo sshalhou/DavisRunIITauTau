@@ -56,9 +56,9 @@ generateH2TauSyncTree::generateH2TauSyncTree(FlatTreeReader R_, bool run_, std::
 
 	/* init lepton sf tool */
 
-	sfTool_Muon_IdIso0p10_eff = new ScaleFactor();
-	sfTool_Muon_SingleMu_eff = new ScaleFactor();
 	sfTool_Muon_IdIso0p15_eff = new ScaleFactor();
+	sfTool_Muon_SingleMu_eff = new ScaleFactor();
+	sfTool_Muon_IdIso0p20_eff = new ScaleFactor();
 	sfTool_Electron_IdIso0p10_eff = new ScaleFactor();
 	sfTool_Electron_SingleEle_eff = new ScaleFactor();
 	sfTool_Electron_IdIso0p15_eff = new ScaleFactor();
@@ -67,12 +67,16 @@ generateH2TauSyncTree::generateH2TauSyncTree(FlatTreeReader R_, bool run_, std::
 	sfTool_Electron_Ele17_eff = new ScaleFactor();
 	sfTool_Electron_Ele12_eff = new ScaleFactor();
 
-	sfTool_Muon_IdIso0p10_eff->init_ScaleFactor("Muon_IdIso0p1_fall15.root");
+	sfTool_Muon_IdIso0p15_eff->init_ScaleFactor("Muon_IdIso0p15_eff.root");
+	sfTool_Muon_IdIso0p20_eff->init_ScaleFactor("Muon_IdIso0p20_eff.root");
+	
+	sfTool_Electron_IdIso0p10_eff->init_ScaleFactor("Electron_IdIso0p10_eff.root");
+	sfTool_Electron_IdIso0p15_eff->init_ScaleFactor("Electron_IdIso0p15_eff.root");
+
+
+
 	sfTool_Muon_SingleMu_eff->init_ScaleFactor("Muon_SingleMu_eff.root");
-	sfTool_Muon_IdIso0p15_eff->init_ScaleFactor("Muon_IdIso0p15_fall15.root");
-	sfTool_Electron_IdIso0p10_eff->init_ScaleFactor("Electron_IdIso0p1_fall15.root");
 	sfTool_Electron_SingleEle_eff->init_ScaleFactor("Electron_SingleEle_eff.root");
-	sfTool_Electron_IdIso0p15_eff->init_ScaleFactor("Electron_IdIso0p15_fall15.root");
 	sfTool_Muon_Mu8_eff->init_ScaleFactor("Muon_Mu8_fall15.root");
 	sfTool_Muon_Mu17_eff->init_ScaleFactor("Muon_Mu17_fall15.root");
 	sfTool_Electron_Ele17_eff->init_ScaleFactor("Electron_Ele17_fall15.root");
@@ -3333,7 +3337,7 @@ double generateH2TauSyncTree::getFinalScaleFactorsForPair(bool verbose, int sysS
 		}
 
 
-		muonID = sfTool_Muon_IdIso0p10_eff->get_ScaleFactor(pt1,eta1);
+		muonID = sfTool_Muon_IdIso0p15_eff->get_ScaleFactor(pt1,eta1);
 		muonTrigger = sfTool_Muon_SingleMu_eff->get_ScaleFactor(pt1,eta1);
 
 		returnSF = muonID * muonTrigger;
@@ -3433,7 +3437,7 @@ double generateH2TauSyncTree::getFinalScaleFactorsForPair(bool verbose, int sysS
 
 
 		electronID = sfTool_Electron_IdIso0p15_eff->get_ScaleFactor(pt1,eta1);
-		muonID = sfTool_Muon_IdIso0p15_eff->get_ScaleFactor(pt2,eta2);
+		muonID = sfTool_Muon_IdIso0p20_eff->get_ScaleFactor(pt2,eta2);
 
 
 

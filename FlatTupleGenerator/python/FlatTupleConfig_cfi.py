@@ -810,10 +810,11 @@ generalConfig = cms.PSet(
 			#####################
 			# b-tag configuration 
 
-			BtagSF_File = cms.string("DavisRunIITauTau/RunTimeDataInput/data/BTAGSF/CSVv2.csv"),
-			looseBtagEff_file = cms.string("DavisRunIITauTau/RunTimeDataInput/data/BTAGEFF/tagging_efficiencies_loosewp.root"),
-			mediumBtagEff_file = cms.string("DavisRunIITauTau/RunTimeDataInput/data/BTAGEFF/tagging_efficiencies.root"),
-			tightBtagEff_file = cms.string("DavisRunIITauTau/RunTimeDataInput/data/BTAGEFF/tagging_efficiencies.root"), # for 76X same as medium
+			BtagSF_File = cms.string("DavisRunIITauTau/RunTimeDataInput/data/BTAGSF/CSVv2_ichep.csv"),
+			# note for 80X it seems only a single file is available
+			looseBtagEff_file = cms.string("DavisRunIITauTau/RunTimeDataInput/data/BTAGEFF/tagging_efficiencies_ichep2016.root"),
+			mediumBtagEff_file = cms.string("DavisRunIITauTau/RunTimeDataInput/data/BTAGEFF/tagging_efficiencies_ichep2016.root"),
+			tightBtagEff_file = cms.string("DavisRunIITauTau/RunTimeDataInput/data/BTAGEFF/tagging_efficiencies_ichep2016.root"), 
 			LooseBtagWPcut = cms.double(0.460),
 			MediumBtagWPcut = cms.double(0.800),
 			TightBtagWPcut = cms.double(0.935),

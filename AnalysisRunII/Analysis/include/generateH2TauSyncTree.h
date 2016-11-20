@@ -247,12 +247,12 @@ private:
 
 	/* for muTau (muon leg) */
 
-	ScaleFactor * sfTool_Muon_IdIso0p10_eff;
+	ScaleFactor * sfTool_Muon_IdIso0p15_eff;
 	ScaleFactor * sfTool_Muon_SingleMu_eff;
 
 	/* for eleMu (muon leg) */
 
-	ScaleFactor * sfTool_Muon_IdIso0p15_eff;
+	ScaleFactor * sfTool_Muon_IdIso0p20_eff;
 
 
 	// for electron lepton ID and trigger scale factors and efficiencies 

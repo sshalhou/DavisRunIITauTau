@@ -957,8 +957,8 @@ from DavisRunIITauTau.TupleConfigurations.SampleMetaData_cfi import sampleInfo
 
 
 print '****************************************************************************************************'
-print '****  JERresolutionFile is ', "DavisRunIITauTau/RunTimeDataInput/data/JER_FILES/Fall15_25nsV2_MC_PtResolution_AK4PFchs.txt"
-print '****  JERscalefactorFile is ', "DavisRunIITauTau/RunTimeDataInput/data/JER_FILES/Fall15_25nsV2_MC_SF_AK4PFchs.txt"
+print '****  JERresolutionFile is ', "DavisRunIITauTau/RunTimeDataInput/data/JER_FILES/Spring16_25nsV6_MC_PtResolution_AK4PFchs.txt"
+print '****  JERscalefactorFile is ', "DavisRunIITauTau/RunTimeDataInput/data/JER_FILES/Spring16_25nsV6_MC_SF_AK4PFchs.txt"
 print '****   If not current, change in main python config : runII*.py'
 print '****************************************************************************************************'
 
@@ -966,8 +966,8 @@ process.pairIndep = cms.EDProducer('NtuplePairIndependentInfoProducer',
 							packedGenSrc = cms.InputTag('packedGenParticles'),
 							prundedGenSrc =  cms.InputTag('prunedGenParticles'),
 							NAME=cms.string("NtupleEventPairIndep"),
-							JERresolutionFile = cms.string("DavisRunIITauTau/RunTimeDataInput/data/JER_FILES/Fall15_25nsV2_MC_PtResolution_AK4PFchs.txt"),
-							JERscalefactorFile = cms.string("DavisRunIITauTau/RunTimeDataInput/data/JER_FILES/Fall15_25nsV2_MC_SF_AK4PFchs.txt"),
+							JERresolutionFile = cms.string("DavisRunIITauTau/RunTimeDataInput/data/JER_FILES/Spring16_25nsV6_MC_PtResolution_AK4PFchs.txt"),
+							JERscalefactorFile = cms.string("DavisRunIITauTau/RunTimeDataInput/data/JER_FILES/Spring16_25nsV6_MC_SF_AK4PFchs.txt"),
 							genParticlesToKeep = GEN_PARTICLES_TO_KEEP,
 							slimmedJetSrc = cms.InputTag('filteredSlimmedJets::DavisNtuple'),
 							slimmedGenJetsSrc = cms.InputTag('slimmedGenJets'),
