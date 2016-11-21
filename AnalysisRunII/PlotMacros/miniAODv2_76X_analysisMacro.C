@@ -74,6 +74,7 @@ bool shouldIplotSignals = 0;
 
 /* for safety blind met (in data) above this value, and m_vis between these */
 double met_blind = 100;
+std::string control_met_cutoff = "1000";
 
 /* plotting region key requirement -- usually a cut on the met!
    for control region data usually choose met < 100
@@ -535,9 +536,9 @@ void doTauTau()
     TCut signalCut_base("isOsPair==1 && dilepton_veto==0 && extramuon_veto==0 && againstElectronVLooseMVA6_1 > 0.5 && againstElectronVLooseMVA6_2 > 0.5 && againstMuonLoose3_1 > 0.5 && againstMuonLoose3_2 > 0.5 && byVTightIsolationMVArun2v1DBoldDMwLT_1 > 0.5 && byVTightIsolationMVArun2v1DBoldDMwLT_2 > 0.5");
 
     std::string metCutTmp;
-    if (cRegion) {metCutTmp = "mvamet > 0.";}
-    else {metCutTmp = " && " + met_options["NOM"];}
-    TCut cut_options_nom((drCutMap[drCut] + metCutTmp).c_str());
+    if (cRegion) {metCutTmp = "mvamet < " + control_met_cutoff;}
+    else {metCutTmp = met_options["NOM"];}
+    TCut cut_options_nom((drCutMap[drCut] + " && " + metCutTmp).c_str());
     cut_options_nom += jetCutMap["NOM"];
     
     //Systematic Cuts
@@ -678,7 +679,6 @@ void doTauTau()
             
             global_title = "QCD (Same Sign) Estimate Region";
             fillQCD_Shape(SScut_TauTau_base * cut_options_nom, wSF_SS_TauTau, qcd_TauTau_met, "mvamet", metBinning,  "QCD met shape ext. in SS side band (TauTau)", "tt", 1);
-            global_title = "MET < 100 GeV Control Region";
             drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_TauTau, qcd_TauTau_met, "mvamet", metBinning, "sig region (met<100) met", "tt", "", 1, 0, 1);
             
             if (doSyst)
@@ -742,7 +742,7 @@ void doTauTau()
 
             /* now draw the signal region in mt */
 
-            global_title = "MET < 100 GeV Control Region";
+            global_title = "MET < "+ control_met_cutoff + " GeV Control Region";
             drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_TauTau, qcd_TauTau_mt, "mt_1", mtBinning, "sig region (met<100) mt", "tt", "", 1, 0, 0);
             drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_TauTau, qcd_TauTau_m_vis, "m_vis", m_visBinning, "sig region (met<100) mvis", "tt", "", 1, 0, 0);
             drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_TauTau, qcd_TauTau_nbtag, "nbtag", nbtagBinning, "sig region (met<100) nbtag", "tt", "", 1, 0, 0);
@@ -834,7 +834,7 @@ void doEleMu()
     TCut signalCut_base("isOsPair==1 && dilepton_veto==0 && extramuon_veto==0  && iso_1 < 0.15 && iso_2 < 0.15");
 
     std::string metCutTmp;
-    if (cRegion) {metCutTmp = "mvamet > 0.";}
+    if (cRegion) {metCutTmp = "mvamet < " + control_met_cutoff;}
     else {metCutTmp = met_options["NOM"];}
     TCut cut_options_nom((drCutMap[drCut] + " && " + metCutTmp).c_str());
     cut_options_nom += jetCutMap["NOM"];
@@ -971,7 +971,6 @@ void doEleMu()
             
             global_title = "QCD (Same Sign) Estimate Region";
             fillQCD_Shape(SScut_eleMu_base * cut_options_nom, wSF_SS_eleMu, qcd_eleMu_met, "mvamet", metBinning,  "QCD met shape ext. in SS side band (eleMu)", "em", 1);
-            global_title = "MET < 100 GeV Control Region";
             drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_eleMu, qcd_eleMu_met, "mvamet", metBinning, "sig region (met<100) met", "em", "", 1, 0, 1);
             
             if (doSyst)
@@ -1031,7 +1030,7 @@ void doEleMu()
 
             /* now draw the signal region in mt */
 
-            global_title = "MET < 100 GeV Control Region";
+            global_title = "MET < " + control_met_cutoff + " GeV Control Region";
 
             drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_eleMu, qcd_eleMu_mt, "mt_1", mtBinning, "sig region (met<100) mt", "em", "", 1, 0, 0);
             drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_eleMu, qcd_eleMu_m_vis, "m_vis", m_visBinning, "sig region (met<100) mvis", "em", "", 1, 0, 0);
@@ -1129,7 +1128,7 @@ void doEleTau()
     if (cRegion)
     {
         if(doControlTMVA){metCutTmp = "mvamet > 0.";}
-        else{metCutTmp = "mvamet > 0.";}
+        else{metCutTmp = "mvamet < " + control_met_cutoff;}
     }
     else
     {
@@ -1318,7 +1317,7 @@ void doEleTau()
             
             global_title = "QCD (Same Sign) Estimate Region";
             fillQCD_Shape(SScut_eleTau_base * cut_options_nom, wSF_SS_eleTau, qcd_eleTau_met, "mvamet", metBinning,  "QCD met shape ext. in SS side band (eleTau)", "et", 1);
-            global_title = "MET < 100 GeV Control Region";
+            global_title = "MET < " + control_met_cutoff + " GeV Control Region";
             drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_eleTau, qcd_eleTau_met, "mvamet", metBinning, "sig region (met<100) met", "et", "", 1, 0, 1);
             
             if (doSyst)
@@ -1383,7 +1382,7 @@ void doEleTau()
             fillQCD_Shape(SScut_eleTau_base * cut_options_nom * TMVACutMap["ET_800"], wSF_SS_eleTau, qcd_eleTau_mvaVar_et_MZP800A0400,"mvaVar_et_MZP800A0400", tmvaBinning, "QCD Function TMVA variable shape ext. in SS side band (eleTau)", "et", 1);
             fillQCD_Shape(SScut_eleTau_base * cut_options_nom * TMVACutMap["ET_1000"], wSF_SS_eleTau, qcd_eleTau_mvaVar_et_MZP1000A0400,"mvaVar_et_MZP1000A0400", tmvaBinning, "QCD Function TMVA variable shape ext. in SS side band (eleTau)", "et", 1);
             fillQCD_Shape(SScut_eleTau_base * cut_options_nom * TMVACutMap["ET_1200"], wSF_SS_eleTau, qcd_eleTau_mvaVar_et_MZP1200A0400,"mvaVar_et_MZP1200A0400", tmvaBinning, "QCD Function TMVA variable shape ext. in SS side band (eleTau)", "et", 1);
-            global_title = "MET < 100 GeV Control Region";
+            
             drawSignalRegion(signalCut_base * cut_options_nom * TMVACutMap["ET_600"], wSF_OS_eleTau, qcd_eleTau_mvaVar_et_MZP600A0400, "mvaVar_et_MZP600A0400", tmvaBinning, "sig region Function TMVA variable", "et", "600", 1, 0, 1);
             drawSignalRegion(signalCut_base * cut_options_nom * TMVACutMap["ET_800"], wSF_OS_eleTau, qcd_eleTau_mvaVar_et_MZP1000A0400, "mvaVar_et_MZP800A0400", tmvaBinning, "sig region Function TMVA variable", "et", "800", 1, 0, 1);
             drawSignalRegion(signalCut_base * cut_options_nom * TMVACutMap["ET_1000"], wSF_OS_eleTau, qcd_eleTau_mvaVar_et_MZP1000A0400, "mvaVar_et_MZP1000A0400", tmvaBinning, "sig region Function TMVA variable", "et", "1000", 1, 0, 1);
@@ -1401,7 +1400,7 @@ void doEleTau()
                 fillQCD_Shape(SScut_eleTau_base * cut_options_nom, wSF_SS_eleTau, qcd_eleTau_mvaVar_et_MZP800A0400,"mvaVar_et_MZP800A0400", tmvaBinning, "QCD Function TMVA variable shape ext. in SS side band (eleTau)", "et", 1);
                 fillQCD_Shape(SScut_eleTau_base * cut_options_nom, wSF_SS_eleTau, qcd_eleTau_mvaVar_et_MZP1000A0400,"mvaVar_et_MZP1000A0400", tmvaBinning, "QCD Function TMVA variable shape ext. in SS side band (eleTau)", "et", 1);
                 fillQCD_Shape(SScut_eleTau_base * cut_options_nom, wSF_SS_eleTau, qcd_eleTau_mvaVar_et_MZP1200A0400,"mvaVar_et_MZP1200A0400", tmvaBinning, "QCD Function TMVA variable shape ext. in SS side band (eleTau)", "et", 1);
-                global_title = "MET < 100 GeV Control Region";
+                global_title = "MET < " + control_met_cutoff + " GeV Control Region";
                 drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_eleTau, qcd_eleTau_mvaVar_et_MZP600A0400, "mvaVar_et_MZP600A0400", tmvaBinning, "sig region Function TMVA variable", "et", "", 1, 0, 0);
                 drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_eleTau, qcd_eleTau_mvaVar_et_MZP800A0400, "mvaVar_et_MZP800A0400", tmvaBinning, "sig region Function TMVA variable", "et", "", 1, 0, 0);
                 drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_eleTau, qcd_eleTau_mvaVar_et_MZP1000A0400, "mvaVar_et_MZP1000A0400", tmvaBinning, "sig region Function TMVA variable", "et", "", 1, 0, 0);
@@ -1422,7 +1421,7 @@ void doEleTau()
                 fillQCD_Shape(SScut_eleTau_base * cut_options_nom, wSF_SS_eleTau, qcd_eleTau_DeltaPhi_leg1_leg2, "DeltaPhi_leg1_leg2", phiBinning, "QCD Function DeltaPhi_leg1_leg2 shape ext. in SS side band (eleTau)", "et", 1);
                 fillQCD_Shape(SScut_eleTau_base * cut_options_nom, wSF_SS_eleTau, qcd_eleTau_DeltaPhi_MVAMET_Higgs, "DeltaPhi_MVAMET_Higgs", phiBinning, "QCD Function DeltaPhi_MVAMET_Higgs shape ext. in SS side band (eleTau)", "et", 1);
                 fillQCD_Shape(SScut_eleTau_base * cut_options_nom, wSF_SS_eleTau, qcd_eleTau_DeltaPhi_PFMET_Higgs, "DeltaPhi_PFMET_Higgs", phiBinning, "QCD Function DeltaPhi_PFMET_Higgs shape ext. in SS side band (eleTau)", "et", 1);
-                global_title = "MET < 100 GeV Control Region";
+                global_title = "MET < " + control_met_cutoff + " GeV Control Region";
                 drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_eleTau, qcd_eleTau_mt, "mt_1", mtBinning, "sig region (met<100) mt", "et", "", 1, 0, 0);
                 drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_eleTau, qcd_eleTau_m_vis, "m_vis", m_visBinning, "sig region (met<100) mvis", "et", "", 1, 0, 0);
                 drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_eleTau, qcd_eleTau_nbtag, "nbtag", nbtagBinning, "sig region (met<100) nbtag", "et", "", 1, 0, 0);
@@ -1527,7 +1526,7 @@ void doMuTau()
     if (cRegion)
     {
         if(doControlTMVA){metCutTmp = "mvamet > 0.";}
-        else{metCutTmp = "mvamet > 0.";}
+        else{metCutTmp = "mvamet < " + control_met_cutoff;}
     }
     else
     {
@@ -1709,7 +1708,6 @@ void doMuTau()
             
             global_title = "QCD (Same Sign) Estimate Region";
             fillQCD_Shape(SScut_muTau_base * cut_options_nom, wSF_SS_muTau, qcd_muTau_met, "mvamet", metBinning,  "QCD met shape ext. in SS side band (muTau)", "mt", 1);
-            global_title = "MET < 100 GeV Control Region";
             drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_muTau, qcd_muTau_met, "mvamet", metBinning, "sig region (met<100) met", "mt", "", 1, 0, 1);
             
             if (doSyst)
@@ -1768,8 +1766,8 @@ void doMuTau()
         }
         else if (choice2==2)
         {
-            //setup_files_muTau();
-            setup_files_muTau_test();
+            setup_files_muTau();
+            //setup_files_muTau_test();
             if (doControlTMVA)
             {
                 global_title = "QCD (Same Sign) Estimate Region";
@@ -1777,7 +1775,7 @@ void doMuTau()
                 fillQCD_Shape(SScut_muTau_base * cut_options_nom, wSF_SS_muTau, qcd_muTau_mvaVar_mt_MZP800A0400,"mvaVar_mt_MZP800A0400", tmvaBinning, "QCD Function TMVA variable shape ext. in SS side band (muTau)", "mt", 1);
                 fillQCD_Shape(SScut_muTau_base * cut_options_nom, wSF_SS_muTau, qcd_muTau_mvaVar_mt_MZP1000A0400,"mvaVar_mt_MZP1000A0400", tmvaBinning, "QCD Function TMVA variable shape ext. in SS side band (muTau)", "mt", 1);
                 fillQCD_Shape(SScut_muTau_base * cut_options_nom, wSF_SS_muTau, qcd_muTau_mvaVar_mt_MZP1200A0400,"mvaVar_mt_MZP1200A0400", tmvaBinning, "QCD Function TMVA variable shape ext. in SS side band (muTau)", "mt", 1);
-                global_title = "MET < 100 GeV Control Region";
+                global_title = "MET < " + control_met_cutoff + " GeV Control Region";
                 drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_muTau, qcd_muTau_mvaVar_mt_MZP600A0400, "mvaVar_mt_MZP600A0400", tmvaBinning, "sig region Function TMVA variable", "mt", "", 1, 0, 0);
                 drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_muTau, qcd_muTau_mvaVar_mt_MZP800A0400, "mvaVar_mt_MZP800A0400", tmvaBinning, "sig region Function TMVA variable", "mt", "", 1, 0, 0);
                 drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_muTau, qcd_muTau_mvaVar_mt_MZP1000A0400, "mvaVar_mt_MZP1000A0400", tmvaBinning, "sig region Function TMVA variable", "mt", "", 1, 0, 0);
@@ -1799,7 +1797,7 @@ void doMuTau()
                 fillQCD_Shape(SScut_muTau_base * cut_options_nom, wSF_SS_muTau, qcd_muTau_DeltaPhi_MVAMET_Higgs, "DeltaPhi_MVAMET_Higgs", phiBinning, "QCD Function DeltaPhi_MVAMET_Higgs shape ext. in SS side band (muTau)", "mt", 1);
                 fillQCD_Shape(SScut_muTau_base * cut_options_nom, wSF_SS_muTau, qcd_muTau_DeltaPhi_PFMET_Higgs, "DeltaPhi_PFMET_Higgs", phiBinning, "QCD Function DeltaPhi_PFMET_Higgs shape ext. in SS side band (muTau)", "mt", 1);
                 
-                global_title = "MET < 100 GeV Control Region";
+                global_title = "MET < " + control_met_cutoff + " GeV Control Region";
                 drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_muTau, qcd_muTau_mt, "mt_1", mtBinning, "sig region (met<100) mt", "mt", "", 1, 0, 0);
                 drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_muTau, qcd_muTau_m_vis, "m_vis", m_visBinning, "sig region (met<100) mvis", "mt", "", 1, 0, 0);
                 drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_muTau, qcd_muTau_nbtag, "nbtag", nbtagBinning, "sig region (met<100) nbtag", "mt", "", 1, 0, 0);
