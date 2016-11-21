@@ -360,6 +360,7 @@ int miniAODv2_76X_analysisMacro()
 	x_axisLabels["m_vis"] = "Visible di-#tau Mass [GeV]";
 	x_axisLabels["nbtag"] = "Number of Jets";
 	x_axisLabels["mvamet"] = "Missing Transverse Energy [GeV]";
+    x_axisLabels["met"] = "Missing Transverse Energy [GeV]";
     x_axisLabels["LPT"] = "Likelihood Transverse Momentum of Pair Mother [GeV]";
     x_axisLabels["DeltaPhi_leg1_leg2"] = "DeltaPhi between legs";
     x_axisLabels["DeltaPhi_PFMET_Higgs"] = "DeltaPhi between PFMET and pair";
@@ -429,7 +430,7 @@ int miniAODv2_76X_analysisMacro()
     TMVACutMap["MT_1000"] = TCut("mvaVar_mt_MZP1000A0400 > 0.8 && mvaVar_mt_MZP1000A0400 < 1.2");
     TMVACutMap["MT_1200"] = TCut("mvaVar_mt_MZP1200A0400 > 0.8 && mvaVar_mt_MZP1200A0400 < 1.2");
     
-    met_options["NOM"] = "mvamet > " + metCutVal;
+    met_options["NOM"] = "met > " + metCutVal;
     met_options["MET_RESP_UP"] = "responseUP_mvaMET > " + metCutVal;
     met_options["MET_RESP_DOWN"] = "responseDOWN_mvaMET > " + metCutVal;
     met_options["MET_RESO_UP"] = "resolutionUP_mvaMET > " + metCutVal;
@@ -536,7 +537,7 @@ void doTauTau()
     TCut signalCut_base("isOsPair==1 && dilepton_veto==0 && extramuon_veto==0 && againstElectronVLooseMVA6_1 > 0.5 && againstElectronVLooseMVA6_2 > 0.5 && againstMuonLoose3_1 > 0.5 && againstMuonLoose3_2 > 0.5 && byVTightIsolationMVArun2v1DBoldDMwLT_1 > 0.5 && byVTightIsolationMVArun2v1DBoldDMwLT_2 > 0.5");
 
     std::string metCutTmp;
-    if (cRegion) {metCutTmp = "mvamet < " + control_met_cutoff;}
+    if (cRegion) {metCutTmp = "met < " + control_met_cutoff;}
     else {metCutTmp = met_options["NOM"];}
     TCut cut_options_nom((drCutMap[drCut] + " && " + metCutTmp).c_str());
     cut_options_nom += jetCutMap["NOM"];
@@ -678,48 +679,48 @@ void doTauTau()
             //setup_files_TauTau_test();
             
             global_title = "QCD (Same Sign) Estimate Region";
-            fillQCD_Shape(SScut_TauTau_base * cut_options_nom, wSF_SS_TauTau, qcd_TauTau_met, "mvamet", metBinning,  "QCD met shape ext. in SS side band (TauTau)", "tt", 1);
-            drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_TauTau, qcd_TauTau_met, "mvamet", metBinning, "sig region (met<100) met", "tt", "", 1, 0, 1);
+            fillQCD_Shape(SScut_TauTau_base * cut_options_nom, wSF_SS_TauTau, qcd_TauTau_met, "met", metBinning,  "QCD met shape ext. in SS side band (TauTau)", "tt", 1);
+            drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_TauTau, qcd_TauTau_met, "met", metBinning, "sig region (met<100) met", "tt", "", 1, 0, 1);
             
             if (doSyst)
             {
             
                 std::cout << "syst for tt started" << std::endl;
                 //syst
-                fillQCD_Shape(SScut_TauTau_base * cut_options_met_resp_up, wSF_SS_TauTau, qcd_TauTau_met_metRespUp, "mvamet", metBinning,  "QCD met shape ext. in SS side band (TauTau)", "tt", 0);
-                fillQCD_Shape(SScut_TauTau_base * cut_options_met_resp_down, wSF_SS_TauTau, qcd_TauTau_met_metRespDown, "mvamet", metBinning,  "QCD met shape ext. in SS side band (TauTau)", "tt", 0);
-                fillQCD_Shape(SScut_TauTau_base * cut_options_met_reso_up, wSF_SS_TauTau, qcd_TauTau_met_metResoUp, "mvamet", metBinning,  "QCD met shape ext. in SS side band (TauTau)", "tt", 0);
-                fillQCD_Shape(SScut_TauTau_base * cut_options_met_reso_down, wSF_SS_TauTau, qcd_TauTau_met_metResoDown, "mvamet", metBinning,  "QCD met shape ext. in SS side band (TauTau)", "tt", 0);
-                fillQCD_Shape(SScut_TauTau_base * cut_options_met_b_up, wSF_SS_TauTau, qcd_TauTau_met_bTagUp, "mvamet", metBinning,  "QCD met shape ext. in SS side band (TauTau)", "tt", 0);
-                fillQCD_Shape(SScut_TauTau_base * cut_options_met_b_down, wSF_SS_TauTau, qcd_TauTau_met_bTagDown, "mvamet", metBinning,  "QCD met shape ext. in SS side band (TauTau)", "tt", 0);
-                fillQCD_Shape(SScut_TauTau_base * cut_options_met_njec_up, wSF_SS_TauTau, qcd_TauTau_met_nJetJECUp, "mvamet", metBinning,  "QCD met shape ext. in SS side band (TauTau)", "tt", 0);
-                fillQCD_Shape(SScut_TauTau_base * cut_options_met_njec_down, wSF_SS_TauTau, qcd_TauTau_met_nJetJECDown, "mvamet", metBinning,  "QCD met shape ext. in SS side band (TauTau)", "tt", 0);
-                fillQCD_Shape(SScut_TauTau_base * cut_options_met_njer_up, wSF_SS_TauTau, qcd_TauTau_met_nJetJERUp, "mvamet", metBinning,  "QCD met shape ext. in SS side band (TauTau)", "tt", 0);
-                fillQCD_Shape(SScut_TauTau_base * cut_options_met_njer_down, wSF_SS_TauTau, qcd_TauTau_met_nJetJERDown, "mvamet", metBinning,  "QCD met shape ext. in SS side band (TauTau)", "tt", 0);
+                fillQCD_Shape(SScut_TauTau_base * cut_options_met_resp_up, wSF_SS_TauTau, qcd_TauTau_met_metRespUp, "met", metBinning,  "QCD met shape ext. in SS side band (TauTau)", "tt", 0);
+                fillQCD_Shape(SScut_TauTau_base * cut_options_met_resp_down, wSF_SS_TauTau, qcd_TauTau_met_metRespDown, "met", metBinning,  "QCD met shape ext. in SS side band (TauTau)", "tt", 0);
+                fillQCD_Shape(SScut_TauTau_base * cut_options_met_reso_up, wSF_SS_TauTau, qcd_TauTau_met_metResoUp, "met", metBinning,  "QCD met shape ext. in SS side band (TauTau)", "tt", 0);
+                fillQCD_Shape(SScut_TauTau_base * cut_options_met_reso_down, wSF_SS_TauTau, qcd_TauTau_met_metResoDown, "met", metBinning,  "QCD met shape ext. in SS side band (TauTau)", "tt", 0);
+                fillQCD_Shape(SScut_TauTau_base * cut_options_met_b_up, wSF_SS_TauTau, qcd_TauTau_met_bTagUp, "met", metBinning,  "QCD met shape ext. in SS side band (TauTau)", "tt", 0);
+                fillQCD_Shape(SScut_TauTau_base * cut_options_met_b_down, wSF_SS_TauTau, qcd_TauTau_met_bTagDown, "met", metBinning,  "QCD met shape ext. in SS side band (TauTau)", "tt", 0);
+                fillQCD_Shape(SScut_TauTau_base * cut_options_met_njec_up, wSF_SS_TauTau, qcd_TauTau_met_nJetJECUp, "met", metBinning,  "QCD met shape ext. in SS side band (TauTau)", "tt", 0);
+                fillQCD_Shape(SScut_TauTau_base * cut_options_met_njec_down, wSF_SS_TauTau, qcd_TauTau_met_nJetJECDown, "met", metBinning,  "QCD met shape ext. in SS side band (TauTau)", "tt", 0);
+                fillQCD_Shape(SScut_TauTau_base * cut_options_met_njer_up, wSF_SS_TauTau, qcd_TauTau_met_nJetJERUp, "met", metBinning,  "QCD met shape ext. in SS side band (TauTau)", "tt", 0);
+                fillQCD_Shape(SScut_TauTau_base * cut_options_met_njer_down, wSF_SS_TauTau, qcd_TauTau_met_nJetJERDown, "met", metBinning,  "QCD met shape ext. in SS side band (TauTau)", "tt", 0);
                 
                 std::cout << "QCD Shapes for tt syst filled" << std::endl;
                 
-                drawSignalRegion(signalCut_base * cut_options_met_resp_up, wSF_OS_TauTau, qcd_TauTau_met_metRespUp, "mvamet", metBinning,  "QCD met shape ext. in SS side band (TauTau)", "tt", "_metRespUp", 0, 0, 1);
-                drawSignalRegion(signalCut_base * cut_options_met_resp_down, wSF_OS_TauTau, qcd_TauTau_met_metRespDown, "mvamet", metBinning,  "QCD met shape ext. in SS side band (TauTau)", "tt", "_metRespDown", 0, 0, 1);
-                drawSignalRegion(signalCut_base * cut_options_met_reso_up, wSF_OS_TauTau, qcd_TauTau_met_metResoUp, "mvamet", metBinning,  "QCD met shape ext. in SS side band (TauTau)", "tt", "_metResoUp", 0, 0, 1);
-                drawSignalRegion(signalCut_base * cut_options_met_reso_down, wSF_OS_TauTau, qcd_TauTau_met_metResoDown, "mvamet", metBinning,  "QCD met shape ext. in SS side band (TauTau)", "tt", "_metResoDown", 0, 0, 1);
-                drawSignalRegion(signalCut_base * cut_options_met_b_up, wSF_OS_TauTau, qcd_TauTau_met_bTagUp, "mvamet", metBinning,  "QCD met shape ext. in SS side band (TauTau)", "tt", "_bTagUp", 0, 0, 1);
-                drawSignalRegion(signalCut_base * cut_options_met_b_down, wSF_OS_TauTau, qcd_TauTau_met_bTagDown, "mvamet", metBinning,  "QCD met shape ext. in SS side band (TauTau)", "tt", "_bTagDown", 0, 0, 1);
-                drawSignalRegion(signalCut_base * cut_options_met_njec_up, wSF_OS_TauTau, qcd_TauTau_met_nJetJECUp, "mvamet", metBinning,  "QCD met shape ext. in SS side band (TauTau)", "tt", "_nJetJECUp", 0, 0, 1);
-                drawSignalRegion(signalCut_base * cut_options_met_njec_down, wSF_OS_TauTau, qcd_TauTau_met_nJetJECDown, "mvamet", metBinning,  "QCD met shape ext. in SS side band (TauTau)", "tt", "_nJetJECDown", 0, 0, 1);
-                drawSignalRegion(signalCut_base * cut_options_met_njer_up, wSF_OS_TauTau, qcd_TauTau_met_nJetJERUp, "mvamet", metBinning,  "QCD met shape ext. in SS side band (TauTau)", "tt", "_nJetJERUp", 0, 0, 1);
-                drawSignalRegion(signalCut_base * cut_options_met_njer_down, wSF_OS_TauTau, qcd_TauTau_met_nJetJERDown, "mvamet", metBinning,  "QCD met shape ext. in SS side band (TauTau)", "tt", "_nJetJERDown", 0, 0, 1);
+                drawSignalRegion(signalCut_base * cut_options_met_resp_up, wSF_OS_TauTau, qcd_TauTau_met_metRespUp, "met", metBinning,  "QCD met shape ext. in SS side band (TauTau)", "tt", "_metRespUp", 0, 0, 1);
+                drawSignalRegion(signalCut_base * cut_options_met_resp_down, wSF_OS_TauTau, qcd_TauTau_met_metRespDown, "met", metBinning,  "QCD met shape ext. in SS side band (TauTau)", "tt", "_metRespDown", 0, 0, 1);
+                drawSignalRegion(signalCut_base * cut_options_met_reso_up, wSF_OS_TauTau, qcd_TauTau_met_metResoUp, "met", metBinning,  "QCD met shape ext. in SS side band (TauTau)", "tt", "_metResoUp", 0, 0, 1);
+                drawSignalRegion(signalCut_base * cut_options_met_reso_down, wSF_OS_TauTau, qcd_TauTau_met_metResoDown, "met", metBinning,  "QCD met shape ext. in SS side band (TauTau)", "tt", "_metResoDown", 0, 0, 1);
+                drawSignalRegion(signalCut_base * cut_options_met_b_up, wSF_OS_TauTau, qcd_TauTau_met_bTagUp, "met", metBinning,  "QCD met shape ext. in SS side band (TauTau)", "tt", "_bTagUp", 0, 0, 1);
+                drawSignalRegion(signalCut_base * cut_options_met_b_down, wSF_OS_TauTau, qcd_TauTau_met_bTagDown, "met", metBinning,  "QCD met shape ext. in SS side band (TauTau)", "tt", "_bTagDown", 0, 0, 1);
+                drawSignalRegion(signalCut_base * cut_options_met_njec_up, wSF_OS_TauTau, qcd_TauTau_met_nJetJECUp, "met", metBinning,  "QCD met shape ext. in SS side band (TauTau)", "tt", "_nJetJECUp", 0, 0, 1);
+                drawSignalRegion(signalCut_base * cut_options_met_njec_down, wSF_OS_TauTau, qcd_TauTau_met_nJetJECDown, "met", metBinning,  "QCD met shape ext. in SS side band (TauTau)", "tt", "_nJetJECDown", 0, 0, 1);
+                drawSignalRegion(signalCut_base * cut_options_met_njer_up, wSF_OS_TauTau, qcd_TauTau_met_nJetJERUp, "met", metBinning,  "QCD met shape ext. in SS side band (TauTau)", "tt", "_nJetJERUp", 0, 0, 1);
+                drawSignalRegion(signalCut_base * cut_options_met_njer_down, wSF_OS_TauTau, qcd_TauTau_met_nJetJERDown, "met", metBinning,  "QCD met shape ext. in SS side band (TauTau)", "tt", "_nJetJERDown", 0, 0, 1);
                 
                 reset_files();
                 setup_upTau_files_TauTau();
                 //setup_files_TauTau_test();
-                fillQCD_Shape(SScut_TauTau_base * cut_options_nom, wSF_SS_TauTau, qcd_TauTau_met_tauESUp, "mvamet", metBinning,  "QCD met shape ext. in SS side band (TauTau)", "tt", 0);
-                drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_TauTau, qcd_TauTau_met_tauESUp, "mvamet", metBinning,  "QCD met shape ext. in SS side band (TauTau)", "tt", "_tauESUp", 0, 0, 1);
+                fillQCD_Shape(SScut_TauTau_base * cut_options_nom, wSF_SS_TauTau, qcd_TauTau_met_tauESUp, "met", metBinning,  "QCD met shape ext. in SS side band (TauTau)", "tt", 0);
+                drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_TauTau, qcd_TauTau_met_tauESUp, "met", metBinning,  "QCD met shape ext. in SS side band (TauTau)", "tt", "_tauESUp", 0, 0, 1);
                 reset_files();
                 setup_downTau_files_TauTau();
                 //setup_files_TauTau_test();
-                fillQCD_Shape(SScut_TauTau_base * cut_options_nom, wSF_SS_TauTau, qcd_TauTau_met_tauESDown, "mvamet", metBinning,  "QCD met shape ext. in SS side band (TauTau)", "tt", 0);
-                drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_TauTau, qcd_TauTau_met_tauESDown, "mvamet", metBinning,  "QCD met shape ext. in SS side band (TauTau)", "tt","_tauESDown", 0, 0, 1);
+                fillQCD_Shape(SScut_TauTau_base * cut_options_nom, wSF_SS_TauTau, qcd_TauTau_met_tauESDown, "met", metBinning,  "QCD met shape ext. in SS side band (TauTau)", "tt", 0);
+                drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_TauTau, qcd_TauTau_met_tauESDown, "met", metBinning,  "QCD met shape ext. in SS side band (TauTau)", "tt","_tauESDown", 0, 0, 1);
                 
             }
             reset_files();
@@ -732,7 +733,7 @@ void doTauTau()
             fillQCD_Shape(SScut_TauTau_base * cut_options_nom, wSF_SS_TauTau, qcd_TauTau_mt, "mt_1", mtBinning, "QCD mt shape ext. in SS side band (TauTau)", "tt", 1);
             fillQCD_Shape(SScut_TauTau_base * cut_options_nom, wSF_SS_TauTau, qcd_TauTau_m_vis, "m_vis", m_visBinning,  "QCD mvis shape ext. in SS side band (TauTau)", "tt", 1);
             fillQCD_Shape(SScut_TauTau_base * cut_options_nom, wSF_SS_TauTau, qcd_TauTau_nbtag, "nbtag", nbtagBinning,  "QCD nbtag shape ext. in SS side band (TauTau)", "tt", 1);
-            fillQCD_Shape(SScut_TauTau_base * cut_options_nom, wSF_SS_TauTau, qcd_TauTau_met, "mvamet", metBinning,  "QCD met shape ext. in SS side band (TauTau)", "tt", 1);
+            fillQCD_Shape(SScut_TauTau_base * cut_options_nom, wSF_SS_TauTau, qcd_TauTau_met, "met", metBinning,  "QCD met shape ext. in SS side band (TauTau)", "tt", 1);
             fillQCD_Shape(SScut_TauTau_base * cut_options_nom, wSF_SS_TauTau, qcd_TauTau_pt_1, "pt_1", ptBinning,  "QCD pt_1 shape ext. in SS side band (TauTau)", "tt", 1);
             fillQCD_Shape(SScut_TauTau_base * cut_options_nom, wSF_SS_TauTau, qcd_TauTau_pt_2, "pt_2", ptBinning,  "QCD pt_2 shape ext. in SS side band (TauTau)", "tt", 1);
             fillQCD_Shape(SScut_TauTau_base * cut_options_nom, wSF_SS_TauTau, qcd_TauTau_LPT, "LPT", lptBinning,  "QCD LPT shape ext. in SS side band (TauTau)", "tt", 1);
@@ -746,7 +747,7 @@ void doTauTau()
             drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_TauTau, qcd_TauTau_mt, "mt_1", mtBinning, "sig region (met<100) mt", "tt", "", 1, 0, 0);
             drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_TauTau, qcd_TauTau_m_vis, "m_vis", m_visBinning, "sig region (met<100) mvis", "tt", "", 1, 0, 0);
             drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_TauTau, qcd_TauTau_nbtag, "nbtag", nbtagBinning, "sig region (met<100) nbtag", "tt", "", 1, 0, 0);
-            drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_TauTau, qcd_TauTau_met, "mvamet", metBinning, "sig region (met<100) met", "tt", "", 1, 0, 0);
+            drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_TauTau, qcd_TauTau_met, "met", metBinning, "sig region (met<100) met", "tt", "", 1, 0, 0);
             drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_TauTau, qcd_TauTau_pt_1, "pt_1", ptBinning, "sig region (met<100) pt_1", "tt", "", 1, 0, 0);
             drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_TauTau, qcd_TauTau_pt_2, "pt_2", ptBinning, "sig region (met<100) pt_2", "tt", "", 1, 0, 0);
             drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_TauTau, qcd_TauTau_LPT, "LPT", lptBinning, "sig region (met<100) LPT", "tt", "", 1, 0, 0);
@@ -801,20 +802,20 @@ void doTauTau()
         qcd_TauTau_met->Sumw2();
 
         /* need to make this function more general for any dist. */
-        fillQCD_Shape_NoPlots(SScut_TauTau_base * cut_options_nom, wSF_SS_TauTau, qcd_TauTau_met, "mvamet", metBinning);
+        fillQCD_Shape_NoPlots(SScut_TauTau_base * cut_options_nom, wSF_SS_TauTau, qcd_TauTau_met, "met", metBinning);
 
         /* use nominal analysis cuts to find nominal yields*/
 
         std::vector<std::vector<double>> nomYieldsVect;
 
-        nomYieldsVect = countSignalRegion(signalCut_base * cut_options_nom, wSF_OS_TauTau, qcd_TauTau_met, "mvamet", metBinning);
+        nomYieldsVect = countSignalRegion(signalCut_base * cut_options_nom, wSF_OS_TauTau, qcd_TauTau_met, "met", metBinning);
         
         TCut cut_options_met_reso_up((drCutMap[drCut] + " && " + met_options["MET_RESO_UP"]).c_str());
         cut_options_met_reso_up += jetCutMap["NOM"];
         TCut cut_options_met_reso_down((drCutMap[drCut] + " && " + met_options["MET_RESO_DOWN"]).c_str());
         cut_options_met_reso_up += jetCutMap["NOM"];
         
-        //evalSysBaselineNoW(nomYieldsVect, signalCut_base * cut_options_met_reso_up, signalCut_base * cut_options_met_reso_down, SScut_TauTau_base * cut_options_met_reso_up, SScut_TauTau_base * cut_options_met_reso_down, "mvamet", metBinning, "MetResolution");
+        //evalSysBaselineNoW(nomYieldsVect, signalCut_base * cut_options_met_reso_up, signalCut_base * cut_options_met_reso_down, SScut_TauTau_base * cut_options_met_reso_up, SScut_TauTau_base * cut_options_met_reso_down, "met", metBinning, "MetResolution");
         
     }
     else if (evalEnergyShiftSys==1)
@@ -834,7 +835,7 @@ void doEleMu()
     TCut signalCut_base("isOsPair==1 && dilepton_veto==0 && extramuon_veto==0  && iso_1 < 0.15 && iso_2 < 0.15");
 
     std::string metCutTmp;
-    if (cRegion) {metCutTmp = "mvamet < " + control_met_cutoff;}
+    if (cRegion) {metCutTmp = "met < " + control_met_cutoff;}
     else {metCutTmp = met_options["NOM"];}
     TCut cut_options_nom((drCutMap[drCut] + " && " + metCutTmp).c_str());
     cut_options_nom += jetCutMap["NOM"];
@@ -970,44 +971,44 @@ void doEleMu()
             //setup_files_eleMu_test();
             
             global_title = "QCD (Same Sign) Estimate Region";
-            fillQCD_Shape(SScut_eleMu_base * cut_options_nom, wSF_SS_eleMu, qcd_eleMu_met, "mvamet", metBinning,  "QCD met shape ext. in SS side band (eleMu)", "em", 1);
-            drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_eleMu, qcd_eleMu_met, "mvamet", metBinning, "sig region (met<100) met", "em", "", 1, 0, 1);
+            fillQCD_Shape(SScut_eleMu_base * cut_options_nom, wSF_SS_eleMu, qcd_eleMu_met, "met", metBinning,  "QCD met shape ext. in SS side band (eleMu)", "em", 1);
+            drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_eleMu, qcd_eleMu_met, "met", metBinning, "sig region (met<100) met", "em", "", 1, 0, 1);
             
             if (doSyst)
             {
                 //syst
-                fillQCD_Shape(SScut_eleMu_base * cut_options_met_resp_up, wSF_SS_eleMu, qcd_eleMu_met_metRespUp, "mvamet", metBinning,  "QCD met shape ext. in SS side band (eleMu)", "em", 0);
-                fillQCD_Shape(SScut_eleMu_base * cut_options_met_resp_down, wSF_SS_eleMu, qcd_eleMu_met_metRespDown, "mvamet", metBinning,  "QCD met shape ext. in SS side band (eleMu)", "em", 0);
-                fillQCD_Shape(SScut_eleMu_base * cut_options_met_reso_up, wSF_SS_eleMu, qcd_eleMu_met_metResoUp, "mvamet", metBinning,  "QCD met shape ext. in SS side band (eleMu)", "em", 0);
-                fillQCD_Shape(SScut_eleMu_base * cut_options_met_reso_down, wSF_SS_eleMu, qcd_eleMu_met_metResoDown, "mvamet", metBinning,  "QCD met shape ext. in SS side band (eleMu)", "em", 0);
-                fillQCD_Shape(SScut_eleMu_base * cut_options_met_b_up, wSF_SS_eleMu, qcd_eleMu_met_bTagUp, "mvamet", metBinning,  "QCD met shape ext. in SS side band (eleMu)", "em", 0);
-                fillQCD_Shape(SScut_eleMu_base * cut_options_met_b_down, wSF_SS_eleMu, qcd_eleMu_met_bTagDown, "mvamet", metBinning,  "QCD met shape ext. in SS side band (eleMu)", "em", 0);
-                fillQCD_Shape(SScut_eleMu_base * cut_options_met_njec_up, wSF_SS_eleMu, qcd_eleMu_met_nJetJECUp, "mvamet", metBinning,  "QCD met shape ext. in SS side band (eleMu)", "em", 0);
-                fillQCD_Shape(SScut_eleMu_base * cut_options_met_njec_down, wSF_SS_eleMu, qcd_eleMu_met_nJetJECDown, "mvamet", metBinning,  "QCD met shape ext. in SS side band (eleMu)", "em", 0);
-                fillQCD_Shape(SScut_eleMu_base * cut_options_met_njer_up, wSF_SS_eleMu, qcd_eleMu_met_nJetJERUp, "mvamet", metBinning,  "QCD met shape ext. in SS side band (eleMu)", "em", 0);
-                fillQCD_Shape(SScut_eleMu_base * cut_options_met_njer_down, wSF_SS_eleMu, qcd_eleMu_met_nJetJERDown, "mvamet", metBinning,  "QCD met shape ext. in SS side band (eleMu)", "em", 0);
+                fillQCD_Shape(SScut_eleMu_base * cut_options_met_resp_up, wSF_SS_eleMu, qcd_eleMu_met_metRespUp, "met", metBinning,  "QCD met shape ext. in SS side band (eleMu)", "em", 0);
+                fillQCD_Shape(SScut_eleMu_base * cut_options_met_resp_down, wSF_SS_eleMu, qcd_eleMu_met_metRespDown, "met", metBinning,  "QCD met shape ext. in SS side band (eleMu)", "em", 0);
+                fillQCD_Shape(SScut_eleMu_base * cut_options_met_reso_up, wSF_SS_eleMu, qcd_eleMu_met_metResoUp, "met", metBinning,  "QCD met shape ext. in SS side band (eleMu)", "em", 0);
+                fillQCD_Shape(SScut_eleMu_base * cut_options_met_reso_down, wSF_SS_eleMu, qcd_eleMu_met_metResoDown, "met", metBinning,  "QCD met shape ext. in SS side band (eleMu)", "em", 0);
+                fillQCD_Shape(SScut_eleMu_base * cut_options_met_b_up, wSF_SS_eleMu, qcd_eleMu_met_bTagUp, "met", metBinning,  "QCD met shape ext. in SS side band (eleMu)", "em", 0);
+                fillQCD_Shape(SScut_eleMu_base * cut_options_met_b_down, wSF_SS_eleMu, qcd_eleMu_met_bTagDown, "met", metBinning,  "QCD met shape ext. in SS side band (eleMu)", "em", 0);
+                fillQCD_Shape(SScut_eleMu_base * cut_options_met_njec_up, wSF_SS_eleMu, qcd_eleMu_met_nJetJECUp, "met", metBinning,  "QCD met shape ext. in SS side band (eleMu)", "em", 0);
+                fillQCD_Shape(SScut_eleMu_base * cut_options_met_njec_down, wSF_SS_eleMu, qcd_eleMu_met_nJetJECDown, "met", metBinning,  "QCD met shape ext. in SS side band (eleMu)", "em", 0);
+                fillQCD_Shape(SScut_eleMu_base * cut_options_met_njer_up, wSF_SS_eleMu, qcd_eleMu_met_nJetJERUp, "met", metBinning,  "QCD met shape ext. in SS side band (eleMu)", "em", 0);
+                fillQCD_Shape(SScut_eleMu_base * cut_options_met_njer_down, wSF_SS_eleMu, qcd_eleMu_met_nJetJERDown, "met", metBinning,  "QCD met shape ext. in SS side band (eleMu)", "em", 0);
                 
-                drawSignalRegion(signalCut_base * cut_options_met_resp_up, wSF_OS_eleMu, qcd_eleMu_met_metRespUp, "mvamet", metBinning,  "QCD met shape ext. in SS side band (eleMu)", "em", "_metRespUp", 0, 0, 1);
-                drawSignalRegion(signalCut_base * cut_options_met_resp_down, wSF_OS_eleMu, qcd_eleMu_met_metRespDown, "mvamet", metBinning,  "QCD met shape ext. in SS side band (eleMu)", "em", "_metRespDown", 0, 0, 1);
-                drawSignalRegion(signalCut_base * cut_options_met_reso_up, wSF_OS_eleMu, qcd_eleMu_met_metResoUp, "mvamet", metBinning,  "QCD met shape ext. in SS side band (eleMu)", "em", "_metResoUp", 0, 0, 1);
-                drawSignalRegion(signalCut_base * cut_options_met_reso_down, wSF_OS_eleMu, qcd_eleMu_met_metResoDown, "mvamet", metBinning,  "QCD met shape ext. in SS side band (eleMu)", "em", "_metResoDown", 0, 0, 1);
-                drawSignalRegion(signalCut_base * cut_options_met_b_up, wSF_OS_eleMu, qcd_eleMu_met_bTagUp, "mvamet", metBinning,  "QCD met shape ext. in SS side band (eleMu)", "em", "_bTagUp", 0, 0, 1);
-                drawSignalRegion(signalCut_base * cut_options_met_b_down, wSF_OS_eleMu, qcd_eleMu_met_bTagDown, "mvamet", metBinning,  "QCD met shape ext. in SS side band (eleMu)", "em", "_bTagDown", 0, 0, 1);
-                drawSignalRegion(signalCut_base * cut_options_met_njec_up, wSF_OS_eleMu, qcd_eleMu_met_nJetJECUp, "mvamet", metBinning,  "QCD met shape ext. in SS side band (eleMu)", "em", "_nJetJECUp", 0, 0, 1);
-                drawSignalRegion(signalCut_base * cut_options_met_njec_down, wSF_OS_eleMu, qcd_eleMu_met_nJetJECDown, "mvamet", metBinning,  "QCD met shape ext. in SS side band (eleMu)", "em", "_nJetJECDown", 0, 0, 1);
-                drawSignalRegion(signalCut_base * cut_options_met_njer_up, wSF_OS_eleMu, qcd_eleMu_met_nJetJERUp, "mvamet", metBinning,  "QCD met shape ext. in SS side band (eleMu)", "em", "_nJetJERUp", 0, 0, 1);
-                drawSignalRegion(signalCut_base * cut_options_met_njer_down, wSF_OS_eleMu, qcd_eleMu_met_nJetJERDown, "mvamet", metBinning,  "QCD met shape ext. in SS side band (eleMu)", "em", "_nJetJERDown", 0, 0, 1);
+                drawSignalRegion(signalCut_base * cut_options_met_resp_up, wSF_OS_eleMu, qcd_eleMu_met_metRespUp, "met", metBinning,  "QCD met shape ext. in SS side band (eleMu)", "em", "_metRespUp", 0, 0, 1);
+                drawSignalRegion(signalCut_base * cut_options_met_resp_down, wSF_OS_eleMu, qcd_eleMu_met_metRespDown, "met", metBinning,  "QCD met shape ext. in SS side band (eleMu)", "em", "_metRespDown", 0, 0, 1);
+                drawSignalRegion(signalCut_base * cut_options_met_reso_up, wSF_OS_eleMu, qcd_eleMu_met_metResoUp, "met", metBinning,  "QCD met shape ext. in SS side band (eleMu)", "em", "_metResoUp", 0, 0, 1);
+                drawSignalRegion(signalCut_base * cut_options_met_reso_down, wSF_OS_eleMu, qcd_eleMu_met_metResoDown, "met", metBinning,  "QCD met shape ext. in SS side band (eleMu)", "em", "_metResoDown", 0, 0, 1);
+                drawSignalRegion(signalCut_base * cut_options_met_b_up, wSF_OS_eleMu, qcd_eleMu_met_bTagUp, "met", metBinning,  "QCD met shape ext. in SS side band (eleMu)", "em", "_bTagUp", 0, 0, 1);
+                drawSignalRegion(signalCut_base * cut_options_met_b_down, wSF_OS_eleMu, qcd_eleMu_met_bTagDown, "met", metBinning,  "QCD met shape ext. in SS side band (eleMu)", "em", "_bTagDown", 0, 0, 1);
+                drawSignalRegion(signalCut_base * cut_options_met_njec_up, wSF_OS_eleMu, qcd_eleMu_met_nJetJECUp, "met", metBinning,  "QCD met shape ext. in SS side band (eleMu)", "em", "_nJetJECUp", 0, 0, 1);
+                drawSignalRegion(signalCut_base * cut_options_met_njec_down, wSF_OS_eleMu, qcd_eleMu_met_nJetJECDown, "met", metBinning,  "QCD met shape ext. in SS side band (eleMu)", "em", "_nJetJECDown", 0, 0, 1);
+                drawSignalRegion(signalCut_base * cut_options_met_njer_up, wSF_OS_eleMu, qcd_eleMu_met_nJetJERUp, "met", metBinning,  "QCD met shape ext. in SS side band (eleMu)", "em", "_nJetJERUp", 0, 0, 1);
+                drawSignalRegion(signalCut_base * cut_options_met_njer_down, wSF_OS_eleMu, qcd_eleMu_met_nJetJERDown, "met", metBinning,  "QCD met shape ext. in SS side band (eleMu)", "em", "_nJetJERDown", 0, 0, 1);
                 
                 reset_files();
                 setup_upEle_files_eleMu();
                 //setup_files_eleMu_test();
-                fillQCD_Shape(SScut_eleMu_base * cut_options_nom, wSF_SS_eleMu, qcd_eleMu_met_eleESUp, "mvamet", metBinning,  "QCD met shape ext. in SS side band (eleMu)", "em", 0);
-                drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_eleMu, qcd_eleMu_met_eleESUp, "mvamet", metBinning,  "QCD met shape ext. in SS side band (eleMu)", "em", "_eleESUp", 0, 0, 1);
+                fillQCD_Shape(SScut_eleMu_base * cut_options_nom, wSF_SS_eleMu, qcd_eleMu_met_eleESUp, "met", metBinning,  "QCD met shape ext. in SS side band (eleMu)", "em", 0);
+                drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_eleMu, qcd_eleMu_met_eleESUp, "met", metBinning,  "QCD met shape ext. in SS side band (eleMu)", "em", "_eleESUp", 0, 0, 1);
                 reset_files();
                 setup_downEle_files_eleMu();
                 //setup_files_eleMu_test();
-                fillQCD_Shape(SScut_eleMu_base * cut_options_nom, wSF_SS_eleMu, qcd_eleMu_met_eleESDown, "mvamet", metBinning,  "QCD met shape ext. in SS side band (eleMu)", "em", 0);
-                drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_eleMu, qcd_eleMu_met_eleESDown, "mvamet", metBinning,  "QCD met shape ext. in SS side band (eleMu)", "em","_eleESDown", 0, 0, 1);
+                fillQCD_Shape(SScut_eleMu_base * cut_options_nom, wSF_SS_eleMu, qcd_eleMu_met_eleESDown, "met", metBinning,  "QCD met shape ext. in SS side band (eleMu)", "em", 0);
+                drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_eleMu, qcd_eleMu_met_eleESDown, "met", metBinning,  "QCD met shape ext. in SS side band (eleMu)", "em","_eleESDown", 0, 0, 1);
                 
             }
             reset_files();
@@ -1020,7 +1021,7 @@ void doEleMu()
             fillQCD_Shape(SScut_eleMu_base * cut_options_nom, wSF_SS_eleMu, qcd_eleMu_mt, "mt_1", mtBinning, "QCD mt shape ext. in SS side band (eleMu)", "em", 1);
             fillQCD_Shape(SScut_eleMu_base * cut_options_nom, wSF_SS_eleMu, qcd_eleMu_m_vis, "m_vis", m_visBinning,  "QCD mvis shape ext. in SS side band (eleMu)", "em", 1);
             fillQCD_Shape(SScut_eleMu_base * cut_options_nom, wSF_SS_eleMu, qcd_eleMu_nbtag, "nbtag", nbtagBinning,  "QCD nbtag shape ext. in SS side band (eleMu)", "em", 1);
-            fillQCD_Shape(SScut_eleMu_base * cut_options_nom, wSF_SS_eleMu, qcd_eleMu_met, "mvamet", metBinning,  "QCD met shape ext. in SS side band (eleMu)", "em", 1);
+            fillQCD_Shape(SScut_eleMu_base * cut_options_nom, wSF_SS_eleMu, qcd_eleMu_met, "met", metBinning,  "QCD met shape ext. in SS side band (eleMu)", "em", 1);
             fillQCD_Shape(SScut_eleMu_base * cut_options_nom, wSF_SS_eleMu, qcd_eleMu_pt_1, "pt_1", ptBinning,  "QCD pt_1 shape ext. in SS side band (eleMu)", "em", 1);
             fillQCD_Shape(SScut_eleMu_base * cut_options_nom, wSF_SS_eleMu, qcd_eleMu_pt_2, "pt_2", ptBinning,  "QCD pt_2 shape ext. in SS side band (eleMu)", "em", 1);
             fillQCD_Shape(SScut_eleMu_base * cut_options_nom, wSF_SS_eleMu, qcd_eleMu_LPT, "LPT", lptBinning,  "QCD LPT shape ext. in SS side band (eleMu)", "em", 1);
@@ -1035,7 +1036,7 @@ void doEleMu()
             drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_eleMu, qcd_eleMu_mt, "mt_1", mtBinning, "sig region (met<100) mt", "em", "", 1, 0, 0);
             drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_eleMu, qcd_eleMu_m_vis, "m_vis", m_visBinning, "sig region (met<100) mvis", "em", "", 1, 0, 0);
             drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_eleMu, qcd_eleMu_nbtag, "nbtag", nbtagBinning, "sig region (met<100) nbtag", "em", "", 1, 0, 0);
-            drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_eleMu, qcd_eleMu_met, "mvamet", metBinning, "sig region (met<100) met", "em", "", 1, 0, 0);
+            drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_eleMu, qcd_eleMu_met, "met", metBinning, "sig region (met<100) met", "em", "", 1, 0, 0);
             drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_eleMu, qcd_eleMu_pt_1, "pt_1", ptBinning, "sig region (met<100) pt_1", "em", "", 1, 0, 0);
             drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_eleMu, qcd_eleMu_pt_2, "pt_2", ptBinning, "sig region (met<100) pt_2", "em", "", 1, 0, 0);
             drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_eleMu, qcd_eleMu_LPT, "LPT", lptBinning, "sig region (met<100) LPT", "em", "", 1, 0, 0);
@@ -1092,20 +1093,20 @@ void doEleMu()
         qcd_eleMu_met->Sumw2();
 
         /* need to make this function more general for any dist. */
-        fillQCD_Shape_NoPlots(SScut_eleMu_base * cut_options_nom, wSF_SS_eleMu, qcd_eleMu_met, "mvamet", metBinning);
+        fillQCD_Shape_NoPlots(SScut_eleMu_base * cut_options_nom, wSF_SS_eleMu, qcd_eleMu_met, "met", metBinning);
 
         /* use nominal analysis cuts to find nominal yields*/
 
         std::vector<std::vector<double>> nomYieldsVect;
 
-        nomYieldsVect = countSignalRegion(signalCut_base * cut_options_nom, wSF_OS_eleMu, qcd_eleMu_met, "mvamet", metBinning);
+        nomYieldsVect = countSignalRegion(signalCut_base * cut_options_nom, wSF_OS_eleMu, qcd_eleMu_met, "met", metBinning);
         
         TCut cut_options_met_reso_up((drCutMap[drCut] + " && " + met_options["MET_RESO_UP"]).c_str());
         cut_options_met_reso_up += jetCutMap["NOM"];
         TCut cut_options_met_reso_down((drCutMap[drCut] + " && " + met_options["MET_RESO_DOWN"]).c_str());
         cut_options_met_reso_up += jetCutMap["NOM"];
         
-        //evalSysBaselineNoW(nomYieldsVect, signalCut_base * cut_options_met_reso_up, signalCut_base * cut_options_met_reso_down, SScut_eleMu_base * cut_options_met_reso_up, SScut_eleMu_base * cut_options_met_reso_down, "mvamet", metBinning, "MetResolution");
+        //evalSysBaselineNoW(nomYieldsVect, signalCut_base * cut_options_met_reso_up, signalCut_base * cut_options_met_reso_down, SScut_eleMu_base * cut_options_met_reso_up, SScut_eleMu_base * cut_options_met_reso_down, "met", metBinning, "MetResolution");
     }
     else if (evalEnergyShiftSys==1)
     {
@@ -1127,13 +1128,13 @@ void doEleTau()
     std::string metCutTmp;
     if (cRegion)
     {
-        if(doControlTMVA){metCutTmp = "mvamet > 0.";}
-        else{metCutTmp = "mvamet < " + control_met_cutoff;}
+        if(doControlTMVA){metCutTmp = "met > 0.";}
+        else{metCutTmp = "met < " + control_met_cutoff;}
     }
     else
     {
         if (sigChoice==1) {metCutTmp = met_options["NOM"];}
-        else if (sigChoice==2) {metCutTmp = "mvamet > 0.";}
+        else if (sigChoice==2) {metCutTmp = "met > 0.";}
     }
     TCut cut_options_nom((drCutMap[drCut] + " && " + metCutTmp).c_str());
     cut_options_nom += jetCutMap["NOM"];
@@ -1316,58 +1317,58 @@ void doEleTau()
             //setup_files_eleTau_test();
             
             global_title = "QCD (Same Sign) Estimate Region";
-            fillQCD_Shape(SScut_eleTau_base * cut_options_nom, wSF_SS_eleTau, qcd_eleTau_met, "mvamet", metBinning,  "QCD met shape ext. in SS side band (eleTau)", "et", 1);
+            fillQCD_Shape(SScut_eleTau_base * cut_options_nom, wSF_SS_eleTau, qcd_eleTau_met, "met", metBinning,  "QCD met shape ext. in SS side band (eleTau)", "et", 1);
             global_title = "MET < " + control_met_cutoff + " GeV Control Region";
-            drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_eleTau, qcd_eleTau_met, "mvamet", metBinning, "sig region (met<100) met", "et", "", 1, 0, 1);
+            drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_eleTau, qcd_eleTau_met, "met", metBinning, "sig region (met<100) met", "et", "", 1, 0, 1);
             
             if (doSyst)
             {
                 //syst
-                fillQCD_Shape(SScut_eleTau_base * cut_options_met_resp_up, wSF_SS_eleTau, qcd_eleTau_met_metRespUp, "mvamet", metBinning,  "QCD met shape ext. in SS side band (eleTau)", "et", 0);
-                fillQCD_Shape(SScut_eleTau_base * cut_options_met_resp_down, wSF_SS_eleTau, qcd_eleTau_met_metRespDown, "mvamet", metBinning,  "QCD met shape ext. in SS side band (eleTau)", "et", 0);
-                fillQCD_Shape(SScut_eleTau_base * cut_options_met_reso_up, wSF_SS_eleTau, qcd_eleTau_met_metResoUp, "mvamet", metBinning,  "QCD met shape ext. in SS side band (eleTau)", "et", 0);
-                fillQCD_Shape(SScut_eleTau_base * cut_options_met_reso_down, wSF_SS_eleTau, qcd_eleTau_met_metResoDown, "mvamet", metBinning,  "QCD met shape ext. in SS side band (eleTau)", "et", 0);
-                fillQCD_Shape(SScut_eleTau_base * cut_options_met_b_up, wSF_SS_eleTau, qcd_eleTau_met_bTagUp, "mvamet", metBinning,  "QCD met shape ext. in SS side band (eleTau)", "et", 0);
-                fillQCD_Shape(SScut_eleTau_base * cut_options_met_b_down, wSF_SS_eleTau, qcd_eleTau_met_bTagDown, "mvamet", metBinning,  "QCD met shape ext. in SS side band (eleTau)", "et", 0);
-                fillQCD_Shape(SScut_eleTau_base * cut_options_met_njec_up, wSF_SS_eleTau, qcd_eleTau_met_nJetJECUp, "mvamet", metBinning,  "QCD met shape ext. in SS side band (eleTau)", "et", 0);
-                fillQCD_Shape(SScut_eleTau_base * cut_options_met_njec_down, wSF_SS_eleTau, qcd_eleTau_met_nJetJECDown, "mvamet", metBinning,  "QCD met shape ext. in SS side band (eleTau)", "et", 0);
-                fillQCD_Shape(SScut_eleTau_base * cut_options_met_njer_up, wSF_SS_eleTau, qcd_eleTau_met_nJetJERUp, "mvamet", metBinning,  "QCD met shape ext. in SS side band (eleTau)", "et", 0);
-                fillQCD_Shape(SScut_eleTau_base * cut_options_met_njer_down, wSF_SS_eleTau, qcd_eleTau_met_nJetJERDown, "mvamet", metBinning,  "QCD met shape ext. in SS side band (eleTau)", "et", 0);
+                fillQCD_Shape(SScut_eleTau_base * cut_options_met_resp_up, wSF_SS_eleTau, qcd_eleTau_met_metRespUp, "met", metBinning,  "QCD met shape ext. in SS side band (eleTau)", "et", 0);
+                fillQCD_Shape(SScut_eleTau_base * cut_options_met_resp_down, wSF_SS_eleTau, qcd_eleTau_met_metRespDown, "met", metBinning,  "QCD met shape ext. in SS side band (eleTau)", "et", 0);
+                fillQCD_Shape(SScut_eleTau_base * cut_options_met_reso_up, wSF_SS_eleTau, qcd_eleTau_met_metResoUp, "met", metBinning,  "QCD met shape ext. in SS side band (eleTau)", "et", 0);
+                fillQCD_Shape(SScut_eleTau_base * cut_options_met_reso_down, wSF_SS_eleTau, qcd_eleTau_met_metResoDown, "met", metBinning,  "QCD met shape ext. in SS side band (eleTau)", "et", 0);
+                fillQCD_Shape(SScut_eleTau_base * cut_options_met_b_up, wSF_SS_eleTau, qcd_eleTau_met_bTagUp, "met", metBinning,  "QCD met shape ext. in SS side band (eleTau)", "et", 0);
+                fillQCD_Shape(SScut_eleTau_base * cut_options_met_b_down, wSF_SS_eleTau, qcd_eleTau_met_bTagDown, "met", metBinning,  "QCD met shape ext. in SS side band (eleTau)", "et", 0);
+                fillQCD_Shape(SScut_eleTau_base * cut_options_met_njec_up, wSF_SS_eleTau, qcd_eleTau_met_nJetJECUp, "met", metBinning,  "QCD met shape ext. in SS side band (eleTau)", "et", 0);
+                fillQCD_Shape(SScut_eleTau_base * cut_options_met_njec_down, wSF_SS_eleTau, qcd_eleTau_met_nJetJECDown, "met", metBinning,  "QCD met shape ext. in SS side band (eleTau)", "et", 0);
+                fillQCD_Shape(SScut_eleTau_base * cut_options_met_njer_up, wSF_SS_eleTau, qcd_eleTau_met_nJetJERUp, "met", metBinning,  "QCD met shape ext. in SS side band (eleTau)", "et", 0);
+                fillQCD_Shape(SScut_eleTau_base * cut_options_met_njer_down, wSF_SS_eleTau, qcd_eleTau_met_nJetJERDown, "met", metBinning,  "QCD met shape ext. in SS side band (eleTau)", "et", 0);
                 
-                drawSignalRegion(signalCut_base * cut_options_met_resp_up, wSF_OS_eleTau, qcd_eleTau_met_metRespUp, "mvamet", metBinning,  "QCD met shape ext. in SS side band (eleTau)", "et", "_metRespUp", 0, 0, 1);
-                drawSignalRegion(signalCut_base * cut_options_met_resp_down, wSF_OS_eleTau, qcd_eleTau_met_metRespDown, "mvamet", metBinning,  "QCD met shape ext. in SS side band (eleTau)", "et", "_metRespDown", 0, 0, 1);
-                drawSignalRegion(signalCut_base * cut_options_met_reso_up, wSF_OS_eleTau, qcd_eleTau_met_metResoUp, "mvamet", metBinning,  "QCD met shape ext. in SS side band (eleTau)", "et", "_metResoUp", 0, 0, 1);
-                drawSignalRegion(signalCut_base * cut_options_met_reso_down, wSF_OS_eleTau, qcd_eleTau_met_metResoDown, "mvamet", metBinning,  "QCD met shape ext. in SS side band (eleTau)", "et", "_metResoDown", 0, 0, 1);
-                drawSignalRegion(signalCut_base * cut_options_met_b_up, wSF_OS_eleTau, qcd_eleTau_met_bTagUp, "mvamet", metBinning,  "QCD met shape ext. in SS side band (eleTau)", "et", "_bTagUp", 0, 0, 1);
-                drawSignalRegion(signalCut_base * cut_options_met_b_down, wSF_OS_eleTau, qcd_eleTau_met_bTagDown, "mvamet", metBinning,  "QCD met shape ext. in SS side band (eleTau)", "et", "_bTagDown", 0, 0, 1);
-                drawSignalRegion(signalCut_base * cut_options_met_njec_up, wSF_OS_eleTau, qcd_eleTau_met_nJetJECUp, "mvamet", metBinning,  "QCD met shape ext. in SS side band (eleTau)", "et", "_nJetJECUp", 0, 0, 1);
-                drawSignalRegion(signalCut_base * cut_options_met_njec_down, wSF_OS_eleTau, qcd_eleTau_met_nJetJECDown, "mvamet", metBinning,  "QCD met shape ext. in SS side band (eleTau)", "et", "_nJetJECDown", 0, 0, 1);
-                drawSignalRegion(signalCut_base * cut_options_met_njer_up, wSF_OS_eleTau, qcd_eleTau_met_nJetJERUp, "mvamet", metBinning,  "QCD met shape ext. in SS side band (eleTau)", "et", "_nJetJERUp", 0, 0, 1);
-                drawSignalRegion(signalCut_base * cut_options_met_njer_down, wSF_OS_eleTau, qcd_eleTau_met_nJetJERDown, "mvamet", metBinning,  "QCD met shape ext. in SS side band (eleTau)", "et", "_nJetJERDown", 0, 0, 1);
+                drawSignalRegion(signalCut_base * cut_options_met_resp_up, wSF_OS_eleTau, qcd_eleTau_met_metRespUp, "met", metBinning,  "QCD met shape ext. in SS side band (eleTau)", "et", "_metRespUp", 0, 0, 1);
+                drawSignalRegion(signalCut_base * cut_options_met_resp_down, wSF_OS_eleTau, qcd_eleTau_met_metRespDown, "met", metBinning,  "QCD met shape ext. in SS side band (eleTau)", "et", "_metRespDown", 0, 0, 1);
+                drawSignalRegion(signalCut_base * cut_options_met_reso_up, wSF_OS_eleTau, qcd_eleTau_met_metResoUp, "met", metBinning,  "QCD met shape ext. in SS side band (eleTau)", "et", "_metResoUp", 0, 0, 1);
+                drawSignalRegion(signalCut_base * cut_options_met_reso_down, wSF_OS_eleTau, qcd_eleTau_met_metResoDown, "met", metBinning,  "QCD met shape ext. in SS side band (eleTau)", "et", "_metResoDown", 0, 0, 1);
+                drawSignalRegion(signalCut_base * cut_options_met_b_up, wSF_OS_eleTau, qcd_eleTau_met_bTagUp, "met", metBinning,  "QCD met shape ext. in SS side band (eleTau)", "et", "_bTagUp", 0, 0, 1);
+                drawSignalRegion(signalCut_base * cut_options_met_b_down, wSF_OS_eleTau, qcd_eleTau_met_bTagDown, "met", metBinning,  "QCD met shape ext. in SS side band (eleTau)", "et", "_bTagDown", 0, 0, 1);
+                drawSignalRegion(signalCut_base * cut_options_met_njec_up, wSF_OS_eleTau, qcd_eleTau_met_nJetJECUp, "met", metBinning,  "QCD met shape ext. in SS side band (eleTau)", "et", "_nJetJECUp", 0, 0, 1);
+                drawSignalRegion(signalCut_base * cut_options_met_njec_down, wSF_OS_eleTau, qcd_eleTau_met_nJetJECDown, "met", metBinning,  "QCD met shape ext. in SS side band (eleTau)", "et", "_nJetJECDown", 0, 0, 1);
+                drawSignalRegion(signalCut_base * cut_options_met_njer_up, wSF_OS_eleTau, qcd_eleTau_met_nJetJERUp, "met", metBinning,  "QCD met shape ext. in SS side band (eleTau)", "et", "_nJetJERUp", 0, 0, 1);
+                drawSignalRegion(signalCut_base * cut_options_met_njer_down, wSF_OS_eleTau, qcd_eleTau_met_nJetJERDown, "met", metBinning,  "QCD met shape ext. in SS side band (eleTau)", "et", "_nJetJERDown", 0, 0, 1);
                 
                 reset_files();
                 setup_upTau_files_eleTau();
                 //setup_files_eleTau_test();
-                fillQCD_Shape(SScut_eleTau_base * cut_options_nom, wSF_SS_eleTau, qcd_eleTau_met_tauESUp, "mvamet", metBinning,  "QCD met shape ext. in SS side band (eleTau)", "et", 0);
-                drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_eleTau, qcd_eleTau_met_tauESUp, "mvamet", metBinning,  "QCD met shape ext. in SS side band (eleTau)", "et", "_tauESUp", 0, 0, 1);
+                fillQCD_Shape(SScut_eleTau_base * cut_options_nom, wSF_SS_eleTau, qcd_eleTau_met_tauESUp, "met", metBinning,  "QCD met shape ext. in SS side band (eleTau)", "et", 0);
+                drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_eleTau, qcd_eleTau_met_tauESUp, "met", metBinning,  "QCD met shape ext. in SS side band (eleTau)", "et", "_tauESUp", 0, 0, 1);
                 
                 reset_files();
                 setup_downTau_files_eleTau();
                 //setup_files_eleTau_test();
-                fillQCD_Shape(SScut_eleTau_base * cut_options_nom, wSF_SS_eleTau, qcd_eleTau_met_tauESDown, "mvamet", metBinning,  "QCD met shape ext. in SS side band (eleTau)", "et", 0);
-                drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_eleTau, qcd_eleTau_met_tauESDown, "mvamet", metBinning,  "QCD met shape ext. in SS side band (eleTau)", "et","_tauESDown", 0, 0, 1);
+                fillQCD_Shape(SScut_eleTau_base * cut_options_nom, wSF_SS_eleTau, qcd_eleTau_met_tauESDown, "met", metBinning,  "QCD met shape ext. in SS side band (eleTau)", "et", 0);
+                drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_eleTau, qcd_eleTau_met_tauESDown, "met", metBinning,  "QCD met shape ext. in SS side band (eleTau)", "et","_tauESDown", 0, 0, 1);
                 /*
                 reset_files();
                 setup_upEle_files_eleTau();
                 //setup_files_eleTau_test();
-                fillQCD_Shape(SScut_eleTau_base * cut_options_nom, wSF_SS_eleTau, qcd_eleTau_met_eleESUp, "mvamet", metBinning,  "QCD met shape ext. in SS side band (eleTau)", "et", 0);
-                drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_eleTau, qcd_eleTau_met_eleESUp, "mvamet", metBinning,  "QCD met shape ext. in SS side band (eleTau)", "et", "_eleESUp", 0, 0, 1);
+                fillQCD_Shape(SScut_eleTau_base * cut_options_nom, wSF_SS_eleTau, qcd_eleTau_met_eleESUp, "met", metBinning,  "QCD met shape ext. in SS side band (eleTau)", "et", 0);
+                drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_eleTau, qcd_eleTau_met_eleESUp, "met", metBinning,  "QCD met shape ext. in SS side band (eleTau)", "et", "_eleESUp", 0, 0, 1);
                 
                 reset_files();
                 setup_downEle_files_eleTau();
                 //setup_files_eleTau_test();
-                fillQCD_Shape(SScut_eleTau_base * cut_options_nom, wSF_SS_eleTau, qcd_eleTau_met_eleESDown, "mvamet", metBinning,  "QCD met shape ext. in SS side band (eleTau)", "et", 0);
-                drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_eleTau, qcd_eleTau_met_eleESDown, "mvamet", metBinning,  "QCD met shape ext. in SS side band (eleTau)", "et","_eleESDown", 0, 0, 1);
+                fillQCD_Shape(SScut_eleTau_base * cut_options_nom, wSF_SS_eleTau, qcd_eleTau_met_eleESDown, "met", metBinning,  "QCD met shape ext. in SS side band (eleTau)", "et", 0);
+                drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_eleTau, qcd_eleTau_met_eleESDown, "met", metBinning,  "QCD met shape ext. in SS side band (eleTau)", "et","_eleESDown", 0, 0, 1);
                 */
             }
             reset_files();
@@ -1412,7 +1413,7 @@ void doEleTau()
                 fillQCD_Shape(SScut_eleTau_base * cut_options_nom, wSF_SS_eleTau, qcd_eleTau_mt, "mt_1", mtBinning, "QCD mt shape ext. in SS side band (eleTau)", "et", 1);
                 fillQCD_Shape(SScut_eleTau_base * cut_options_nom, wSF_SS_eleTau, qcd_eleTau_m_vis, "m_vis", m_visBinning,  "QCD mvis shape ext. in SS side band (eleTau)", "et", 1);
                 fillQCD_Shape(SScut_eleTau_base * cut_options_nom, wSF_SS_eleTau, qcd_eleTau_nbtag, "nbtag", nbtagBinning,  "QCD nbtag shape ext. in SS side band (eleTau)", "et", 1);
-                fillQCD_Shape(SScut_eleTau_base * cut_options_nom, wSF_SS_eleTau, qcd_eleTau_met, "mvamet", metBinning,  "QCD met shape ext. in SS side band (eleTau)", "et", 1);
+                fillQCD_Shape(SScut_eleTau_base * cut_options_nom, wSF_SS_eleTau, qcd_eleTau_met, "met", metBinning,  "QCD met shape ext. in SS side band (eleTau)", "et", 1);
                 fillQCD_Shape(SScut_eleTau_base * cut_options_nom, wSF_SS_eleTau, qcd_eleTau_pt_1, "pt_1", ptBinning,  "QCD pt_1 shape ext. in SS side band (eleTau)", "et", 1);
                 fillQCD_Shape(SScut_eleTau_base * cut_options_nom, wSF_SS_eleTau, qcd_eleTau_pt_2, "pt_2", ptBinning,  "QCD pt_2 shape ext. in SS side band (eleTau)", "et", 1);
                 fillQCD_Shape(SScut_eleTau_base * cut_options_nom, wSF_SS_eleTau, qcd_eleTau_LPT, "LPT", lptBinning,  "QCD LPT shape ext. in SS side band (eleTau)", "et", 1);
@@ -1425,7 +1426,7 @@ void doEleTau()
                 drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_eleTau, qcd_eleTau_mt, "mt_1", mtBinning, "sig region (met<100) mt", "et", "", 1, 0, 0);
                 drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_eleTau, qcd_eleTau_m_vis, "m_vis", m_visBinning, "sig region (met<100) mvis", "et", "", 1, 0, 0);
                 drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_eleTau, qcd_eleTau_nbtag, "nbtag", nbtagBinning, "sig region (met<100) nbtag", "et", "", 1, 0, 0);
-                drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_eleTau, qcd_eleTau_met, "mvamet", metBinning, "sig region (met<100) met", "et", "", 1, 0, 0);
+                drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_eleTau, qcd_eleTau_met, "met", metBinning, "sig region (met<100) met", "et", "", 1, 0, 0);
                 drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_eleTau, qcd_eleTau_pt_1, "pt_1", ptBinning, "sig region (met<100) pt_1", "et", "", 1, 0, 0);
                 drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_eleTau, qcd_eleTau_pt_2, "pt_2", ptBinning, "sig region (met<100) pt_2", "et", "", 1, 0, 0);
                 drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_eleTau, qcd_eleTau_LPT, "LPT", lptBinning, "sig region (met<100) LPT", "et", "", 1, 0, 0);
@@ -1492,20 +1493,20 @@ void doEleTau()
         qcd_eleTau_met->Sumw2();
 
         /* need to make this function more general for any dist. */
-        fillQCD_Shape_NoPlots(SScut_eleTau_base * cut_options_nom, wSF_SS_eleTau, qcd_eleTau_met, "mvamet", metBinning);
+        fillQCD_Shape_NoPlots(SScut_eleTau_base * cut_options_nom, wSF_SS_eleTau, qcd_eleTau_met, "met", metBinning);
 
         /* use nominal analysis cuts to find nominal yields*/
 
         std::vector<std::vector<double>> nomYieldsVect;
 
-        nomYieldsVect = countSignalRegion(signalCut_base * cut_options_nom, wSF_OS_eleTau, qcd_eleTau_met, "mvamet", metBinning);
+        nomYieldsVect = countSignalRegion(signalCut_base * cut_options_nom, wSF_OS_eleTau, qcd_eleTau_met, "met", metBinning);
         
         TCut cut_options_met_reso_up((drCutMap[drCut] + " && " + met_options["MET_RESO_UP"]).c_str());
         cut_options_met_reso_up += jetCutMap["NOM"];
         TCut cut_options_met_reso_down((drCutMap[drCut] + " && " + met_options["MET_RESO_DOWN"]).c_str());
         cut_options_met_reso_up += jetCutMap["NOM"];
         
-        //evalSysBaseline(nomYieldsVect, signalCut_base * cut_options_met_reso_up, signalCut_base * cut_options_met_reso_down, SS_wNorm_eleTau_base * wNorm_cut_options["MET_RESO_UP"], SS_wNorm_eleTau_base * wNorm_cut_options["MET_RESO_DOWN"], OS_wNorm_eleTau_base * wNorm_cut_options["MET_RESO_UP"], OS_wNorm_eleTau_base * wNorm_cut_options["MET_RESO_DOWN"], SScut_eleTau_base * cut_options_met_reso_up, SScut_eleTau_base * cut_options_met_reso_down, "mvamet", metBinning, "MetResolution");
+        //evalSysBaseline(nomYieldsVect, signalCut_base * cut_options_met_reso_up, signalCut_base * cut_options_met_reso_down, SS_wNorm_eleTau_base * wNorm_cut_options["MET_RESO_UP"], SS_wNorm_eleTau_base * wNorm_cut_options["MET_RESO_DOWN"], OS_wNorm_eleTau_base * wNorm_cut_options["MET_RESO_UP"], OS_wNorm_eleTau_base * wNorm_cut_options["MET_RESO_DOWN"], SScut_eleTau_base * cut_options_met_reso_up, SScut_eleTau_base * cut_options_met_reso_down, "met", metBinning, "MetResolution");
     }
     else if (evalEnergyShiftSys==1)
     {
@@ -1525,13 +1526,13 @@ void doMuTau()
     std::string metCutTmp;
     if (cRegion)
     {
-        if(doControlTMVA){metCutTmp = "mvamet > 0.";}
-        else{metCutTmp = "mvamet < " + control_met_cutoff;}
+        if(doControlTMVA){metCutTmp = "met > 0.";}
+        else{metCutTmp = "met < " + control_met_cutoff;}
     }
     else
     {
         if (sigChoice==1) {metCutTmp = met_options["NOM"];}
-        else if (sigChoice==2) {metCutTmp = "mvamet > 0.";}
+        else if (sigChoice==2) {metCutTmp = "met > 0.";}
     }
     TCut cut_options_nom((drCutMap[drCut] + " && " + metCutTmp).c_str());
     cut_options_nom += jetCutMap["NOM"];
@@ -1707,44 +1708,44 @@ void doMuTau()
             //setup_files_muTau_test();
             
             global_title = "QCD (Same Sign) Estimate Region";
-            fillQCD_Shape(SScut_muTau_base * cut_options_nom, wSF_SS_muTau, qcd_muTau_met, "mvamet", metBinning,  "QCD met shape ext. in SS side band (muTau)", "mt", 1);
-            drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_muTau, qcd_muTau_met, "mvamet", metBinning, "sig region (met<100) met", "mt", "", 1, 0, 1);
+            fillQCD_Shape(SScut_muTau_base * cut_options_nom, wSF_SS_muTau, qcd_muTau_met, "met", metBinning,  "QCD met shape ext. in SS side band (muTau)", "mt", 1);
+            drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_muTau, qcd_muTau_met, "met", metBinning, "sig region (met<100) met", "mt", "", 1, 0, 1);
             
             if (doSyst)
             {
                 //syst
-                fillQCD_Shape(SScut_muTau_base * cut_options_met_resp_up, wSF_SS_muTau, qcd_muTau_met_metRespUp, "mvamet", metBinning,  "QCD met shape ext. in SS side band (muTau)", "mt", 0);
-                fillQCD_Shape(SScut_muTau_base * cut_options_met_resp_down, wSF_SS_muTau, qcd_muTau_met_metRespDown, "mvamet", metBinning,  "QCD met shape ext. in SS side band (muTau)", "mt", 0);
-                fillQCD_Shape(SScut_muTau_base * cut_options_met_reso_up, wSF_SS_muTau, qcd_muTau_met_metResoUp, "mvamet", metBinning,  "QCD met shape ext. in SS side band (muTau)", "mt", 0);
-                fillQCD_Shape(SScut_muTau_base * cut_options_met_reso_down, wSF_SS_muTau, qcd_muTau_met_metResoDown, "mvamet", metBinning,  "QCD met shape ext. in SS side band (muTau)", "mt", 0);
-                fillQCD_Shape(SScut_muTau_base * cut_options_met_b_up, wSF_SS_muTau, qcd_muTau_met_bTagUp, "mvamet", metBinning,  "QCD met shape ext. in SS side band (muTau)", "mt", 0);
-                fillQCD_Shape(SScut_muTau_base * cut_options_met_b_down, wSF_SS_muTau, qcd_muTau_met_bTagDown, "mvamet", metBinning,  "QCD met shape ext. in SS side band (muTau)", "mt", 0);
-                fillQCD_Shape(SScut_muTau_base * cut_options_met_njec_up, wSF_SS_muTau, qcd_muTau_met_nJetJECUp, "mvamet", metBinning,  "QCD met shape ext. in SS side band (muTau)", "mt", 0);
-                fillQCD_Shape(SScut_muTau_base * cut_options_met_njec_down, wSF_SS_muTau, qcd_muTau_met_nJetJECDown, "mvamet", metBinning,  "QCD met shape ext. in SS side band (muTau)", "mt", 0);
-                fillQCD_Shape(SScut_muTau_base * cut_options_met_njer_up, wSF_SS_muTau, qcd_muTau_met_nJetJERUp, "mvamet", metBinning,  "QCD met shape ext. in SS side band (muTau)", "mt", 0);
-                fillQCD_Shape(SScut_muTau_base * cut_options_met_njer_down, wSF_SS_muTau, qcd_muTau_met_nJetJERDown, "mvamet", metBinning,  "QCD met shape ext. in SS side band (muTau)", "mt", 0);
+                fillQCD_Shape(SScut_muTau_base * cut_options_met_resp_up, wSF_SS_muTau, qcd_muTau_met_metRespUp, "met", metBinning,  "QCD met shape ext. in SS side band (muTau)", "mt", 0);
+                fillQCD_Shape(SScut_muTau_base * cut_options_met_resp_down, wSF_SS_muTau, qcd_muTau_met_metRespDown, "met", metBinning,  "QCD met shape ext. in SS side band (muTau)", "mt", 0);
+                fillQCD_Shape(SScut_muTau_base * cut_options_met_reso_up, wSF_SS_muTau, qcd_muTau_met_metResoUp, "met", metBinning,  "QCD met shape ext. in SS side band (muTau)", "mt", 0);
+                fillQCD_Shape(SScut_muTau_base * cut_options_met_reso_down, wSF_SS_muTau, qcd_muTau_met_metResoDown, "met", metBinning,  "QCD met shape ext. in SS side band (muTau)", "mt", 0);
+                fillQCD_Shape(SScut_muTau_base * cut_options_met_b_up, wSF_SS_muTau, qcd_muTau_met_bTagUp, "met", metBinning,  "QCD met shape ext. in SS side band (muTau)", "mt", 0);
+                fillQCD_Shape(SScut_muTau_base * cut_options_met_b_down, wSF_SS_muTau, qcd_muTau_met_bTagDown, "met", metBinning,  "QCD met shape ext. in SS side band (muTau)", "mt", 0);
+                fillQCD_Shape(SScut_muTau_base * cut_options_met_njec_up, wSF_SS_muTau, qcd_muTau_met_nJetJECUp, "met", metBinning,  "QCD met shape ext. in SS side band (muTau)", "mt", 0);
+                fillQCD_Shape(SScut_muTau_base * cut_options_met_njec_down, wSF_SS_muTau, qcd_muTau_met_nJetJECDown, "met", metBinning,  "QCD met shape ext. in SS side band (muTau)", "mt", 0);
+                fillQCD_Shape(SScut_muTau_base * cut_options_met_njer_up, wSF_SS_muTau, qcd_muTau_met_nJetJERUp, "met", metBinning,  "QCD met shape ext. in SS side band (muTau)", "mt", 0);
+                fillQCD_Shape(SScut_muTau_base * cut_options_met_njer_down, wSF_SS_muTau, qcd_muTau_met_nJetJERDown, "met", metBinning,  "QCD met shape ext. in SS side band (muTau)", "mt", 0);
                 
-                drawSignalRegion(signalCut_base * cut_options_met_resp_up, wSF_OS_muTau, qcd_muTau_met_metRespUp, "mvamet", metBinning,  "QCD met shape ext. in SS side band (muTau)", "mt", "_metRespUp", 0, 0, 1);
-                drawSignalRegion(signalCut_base * cut_options_met_resp_down, wSF_OS_muTau, qcd_muTau_met_metRespDown, "mvamet", metBinning,  "QCD met shape ext. in SS side band (muTau)", "mt", "_metRespDown", 0, 0, 1);
-                drawSignalRegion(signalCut_base * cut_options_met_reso_up, wSF_OS_muTau, qcd_muTau_met_metResoUp, "mvamet", metBinning,  "QCD met shape ext. in SS side band (muTau)", "mt", "_metResoUp", 0, 0, 1);
-                drawSignalRegion(signalCut_base * cut_options_met_reso_down, wSF_OS_muTau, qcd_muTau_met_metResoDown, "mvamet", metBinning,  "QCD met shape ext. in SS side band (muTau)", "mt", "_metResoDown", 0, 0, 1);
-                drawSignalRegion(signalCut_base * cut_options_met_b_up, wSF_OS_muTau, qcd_muTau_met_bTagUp, "mvamet", metBinning,  "QCD met shape ext. in SS side band (muTau)", "mt", "_bTagUp", 0, 0, 1);
-                drawSignalRegion(signalCut_base * cut_options_met_b_down, wSF_OS_muTau, qcd_muTau_met_bTagDown, "mvamet", metBinning,  "QCD met shape ext. in SS side band (muTau)", "mt", "_bTagDown", 0, 0, 1);
-                drawSignalRegion(signalCut_base * cut_options_met_njec_up, wSF_OS_muTau, qcd_muTau_met_nJetJECUp, "mvamet", metBinning,  "QCD met shape ext. in SS side band (muTau)", "mt", "_nJetJECUp", 0, 0, 1);
-                drawSignalRegion(signalCut_base * cut_options_met_njec_down, wSF_OS_muTau, qcd_muTau_met_nJetJECDown, "mvamet", metBinning,  "QCD met shape ext. in SS side band (muTau)", "mt", "_nJetJECDown", 0, 0, 1);
-                drawSignalRegion(signalCut_base * cut_options_met_njer_up, wSF_OS_muTau, qcd_muTau_met_nJetJERUp, "mvamet", metBinning,  "QCD met shape ext. in SS side band (muTau)", "mt", "_nJetJERUp", 0, 0, 1);
-                drawSignalRegion(signalCut_base * cut_options_met_njer_down, wSF_OS_muTau, qcd_muTau_met_nJetJERDown, "mvamet", metBinning,  "QCD met shape ext. in SS side band (muTau)", "mt", "_nJetJERDown", 0, 0, 1);
+                drawSignalRegion(signalCut_base * cut_options_met_resp_up, wSF_OS_muTau, qcd_muTau_met_metRespUp, "met", metBinning,  "QCD met shape ext. in SS side band (muTau)", "mt", "_metRespUp", 0, 0, 1);
+                drawSignalRegion(signalCut_base * cut_options_met_resp_down, wSF_OS_muTau, qcd_muTau_met_metRespDown, "met", metBinning,  "QCD met shape ext. in SS side band (muTau)", "mt", "_metRespDown", 0, 0, 1);
+                drawSignalRegion(signalCut_base * cut_options_met_reso_up, wSF_OS_muTau, qcd_muTau_met_metResoUp, "met", metBinning,  "QCD met shape ext. in SS side band (muTau)", "mt", "_metResoUp", 0, 0, 1);
+                drawSignalRegion(signalCut_base * cut_options_met_reso_down, wSF_OS_muTau, qcd_muTau_met_metResoDown, "met", metBinning,  "QCD met shape ext. in SS side band (muTau)", "mt", "_metResoDown", 0, 0, 1);
+                drawSignalRegion(signalCut_base * cut_options_met_b_up, wSF_OS_muTau, qcd_muTau_met_bTagUp, "met", metBinning,  "QCD met shape ext. in SS side band (muTau)", "mt", "_bTagUp", 0, 0, 1);
+                drawSignalRegion(signalCut_base * cut_options_met_b_down, wSF_OS_muTau, qcd_muTau_met_bTagDown, "met", metBinning,  "QCD met shape ext. in SS side band (muTau)", "mt", "_bTagDown", 0, 0, 1);
+                drawSignalRegion(signalCut_base * cut_options_met_njec_up, wSF_OS_muTau, qcd_muTau_met_nJetJECUp, "met", metBinning,  "QCD met shape ext. in SS side band (muTau)", "mt", "_nJetJECUp", 0, 0, 1);
+                drawSignalRegion(signalCut_base * cut_options_met_njec_down, wSF_OS_muTau, qcd_muTau_met_nJetJECDown, "met", metBinning,  "QCD met shape ext. in SS side band (muTau)", "mt", "_nJetJECDown", 0, 0, 1);
+                drawSignalRegion(signalCut_base * cut_options_met_njer_up, wSF_OS_muTau, qcd_muTau_met_nJetJERUp, "met", metBinning,  "QCD met shape ext. in SS side band (muTau)", "mt", "_nJetJERUp", 0, 0, 1);
+                drawSignalRegion(signalCut_base * cut_options_met_njer_down, wSF_OS_muTau, qcd_muTau_met_nJetJERDown, "met", metBinning,  "QCD met shape ext. in SS side band (muTau)", "mt", "_nJetJERDown", 0, 0, 1);
                 
                 reset_files();
                 setup_upTau_files_muTau();
                 //setup_files_muTau_test();
-                fillQCD_Shape(SScut_muTau_base * cut_options_nom, wSF_SS_muTau, qcd_muTau_met_tauESUp, "mvamet", metBinning,  "QCD met shape ext. in SS side band (muTau)", "mt", 0);
-                drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_muTau, qcd_muTau_met_tauESUp, "mvamet", metBinning,  "QCD met shape ext. in SS side band (muTau)", "mt", "_tauESUp", 0, 0, 1);
+                fillQCD_Shape(SScut_muTau_base * cut_options_nom, wSF_SS_muTau, qcd_muTau_met_tauESUp, "met", metBinning,  "QCD met shape ext. in SS side band (muTau)", "mt", 0);
+                drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_muTau, qcd_muTau_met_tauESUp, "met", metBinning,  "QCD met shape ext. in SS side band (muTau)", "mt", "_tauESUp", 0, 0, 1);
                 reset_files();
                 setup_downTau_files_muTau();
                 //setup_files_muTau_test();
-                fillQCD_Shape(SScut_muTau_base * cut_options_nom, wSF_SS_muTau, qcd_muTau_met_tauESDown, "mvamet", metBinning,  "QCD met shape ext. in SS side band (muTau)", "mt", 0);
-                drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_muTau, qcd_muTau_met_tauESDown, "mvamet", metBinning,  "QCD met shape ext. in SS side band (muTau)", "mt","_tauESDown", 0, 0, 1);
+                fillQCD_Shape(SScut_muTau_base * cut_options_nom, wSF_SS_muTau, qcd_muTau_met_tauESDown, "met", metBinning,  "QCD met shape ext. in SS side band (muTau)", "mt", 0);
+                drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_muTau, qcd_muTau_met_tauESDown, "met", metBinning,  "QCD met shape ext. in SS side band (muTau)", "mt","_tauESDown", 0, 0, 1);
             }
             reset_files();
             
@@ -1787,7 +1788,7 @@ void doMuTau()
                 fillQCD_Shape(SScut_muTau_base * cut_options_nom, wSF_SS_muTau, qcd_muTau_mt, "mt_1", mtBinning, "QCD mt shape ext. in SS side band (muTau)", "mt", 1);
                 fillQCD_Shape(SScut_muTau_base * cut_options_nom, wSF_SS_muTau, qcd_muTau_m_vis, "m_vis", m_visBinning,  "QCD mvis shape ext. in SS side band (muTau)", "mt", 1);
                 fillQCD_Shape(SScut_muTau_base * cut_options_nom, wSF_SS_muTau, qcd_muTau_nbtag, "nbtag", nbtagBinning,  "QCD nbtag shape ext. in SS side band (muTau)", "mt", 1);
-                fillQCD_Shape(SScut_muTau_base * cut_options_nom, wSF_SS_muTau, qcd_muTau_met, "mvamet", metBinning,  "QCD met shape ext. in SS side band (muTau)", "mt", 1);
+                fillQCD_Shape(SScut_muTau_base * cut_options_nom, wSF_SS_muTau, qcd_muTau_met, "met", metBinning,  "QCD met shape ext. in SS side band (muTau)", "mt", 1);
                 fillQCD_Shape(SScut_muTau_base * cut_options_nom, wSF_SS_muTau, qcd_muTau_pt_1, "pt_1", ptBinning,  "QCD pt_1 shape ext. in SS side band (muTau)", "mt", 1);
                 fillQCD_Shape(SScut_muTau_base * cut_options_nom, wSF_SS_muTau, qcd_muTau_pt_2, "pt_2", ptBinning,  "QCD pt_2 shape ext. in SS side band (muTau)", "mt", 1);
                 fillQCD_Shape(SScut_muTau_base * cut_options_nom, wSF_SS_muTau, qcd_muTau_LPT, "LPT", lptBinning,  "QCD LPT shape ext. in SS side band (muTau)", "mt", 1);
@@ -1801,7 +1802,7 @@ void doMuTau()
                 drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_muTau, qcd_muTau_mt, "mt_1", mtBinning, "sig region (met<100) mt", "mt", "", 1, 0, 0);
                 drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_muTau, qcd_muTau_m_vis, "m_vis", m_visBinning, "sig region (met<100) mvis", "mt", "", 1, 0, 0);
                 drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_muTau, qcd_muTau_nbtag, "nbtag", nbtagBinning, "sig region (met<100) nbtag", "mt", "", 1, 0, 0);
-                drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_muTau, qcd_muTau_met, "mvamet", metBinning, "sig region (met<100) met", "mt", "", 1, 0, 0);
+                drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_muTau, qcd_muTau_met, "met", metBinning, "sig region (met<100) met", "mt", "", 1, 0, 0);
                 drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_muTau, qcd_muTau_pt_1, "pt_1", ptBinning, "sig region (met<100) pt_1", "mt", "", 1, 0, 0);
                 drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_muTau, qcd_muTau_pt_2, "pt_2", ptBinning, "sig region (met<100) pt_2", "mt", "", 1, 0, 0);
                 drawSignalRegion(signalCut_base * cut_options_nom, wSF_OS_muTau, qcd_muTau_LPT, "LPT", lptBinning, "sig region (met<100) LPT", "mt", "", 1, 0, 0);
@@ -1862,36 +1863,36 @@ void doMuTau()
         TH1F * qcd_muTau_met = new TH1F("qcd_muTau_met","qcd_muTau_met",metBinning[0],metBinning[1],metBinning[2]);
         qcd_muTau_met->Sumw2();
         /* need to make this function more general for any dist. */
-        fillQCD_Shape_NoPlots(SScut_muTau_base * cut_options_nom, wSF_SS_muTau, qcd_muTau_met, "mvamet", metBinning);
+        fillQCD_Shape_NoPlots(SScut_muTau_base * cut_options_nom, wSF_SS_muTau, qcd_muTau_met, "met", metBinning);
 
         /* use nominal analysis cuts to find nominal yields*/
         std::vector<std::vector<double>> nomYieldsVect;
-        nomYieldsVect = countSignalRegion(signalCut_base * cut_options_nom, wSF_OS_muTau, qcd_muTau_met, "mvamet", metBinning);
+        nomYieldsVect = countSignalRegion(signalCut_base * cut_options_nom, wSF_OS_muTau, qcd_muTau_met, "met", metBinning);
         
         //metRESO
         TCut cut_options_met_reso_up((drCutMap[drCut] + " && " + met_options["MET_RESO_UP"]).c_str()); cut_options_met_reso_up += jetCutMap["NOM"];
         TCut cut_options_met_reso_down((drCutMap[drCut] + " && " + met_options["MET_RESO_DOWN"]).c_str()); cut_options_met_reso_down += jetCutMap["NOM"];
-        evalSysBaselineNoW(nomYieldsVect, signalCut_base * cut_options_met_reso_up, signalCut_base * cut_options_met_reso_down, SScut_muTau_base * cut_options_met_reso_up, SScut_muTau_base * cut_options_met_reso_down, "mvamet", metBinning, "MetResolution");
+        evalSysBaselineNoW(nomYieldsVect, signalCut_base * cut_options_met_reso_up, signalCut_base * cut_options_met_reso_down, SScut_muTau_base * cut_options_met_reso_up, SScut_muTau_base * cut_options_met_reso_down, "met", metBinning, "MetResolution");
         
         //metRESP
         TCut cut_options_met_resp_up((drCutMap[drCut] + " && " + met_options["MET_RESP_UP"]).c_str()); cut_options_met_resp_up += jetCutMap["NOM"];
         TCut cut_options_met_resp_down((drCutMap[drCut] + " && " + met_options["MET_RESP_DOWN"]).c_str());cut_options_met_resp_down += jetCutMap["NOM"];
-        evalSysBaselineNoW(nomYieldsVect, signalCut_base * cut_options_met_resp_up, signalCut_base * cut_options_met_resp_down, SScut_muTau_base * cut_options_met_resp_up, SScut_muTau_base * cut_options_met_resp_down, "mvamet", metBinning, "MetResponse");
+        evalSysBaselineNoW(nomYieldsVect, signalCut_base * cut_options_met_resp_up, signalCut_base * cut_options_met_resp_down, SScut_muTau_base * cut_options_met_resp_up, SScut_muTau_base * cut_options_met_resp_down, "met", metBinning, "MetResponse");
 
         //Btag
         TCut cut_options_met_b_up((drCutMap[drCut] + " && " + met_options["NOM"]).c_str());cut_options_met_b_up += jetCutMap["BUP"];
         TCut cut_options_met_b_down((drCutMap[drCut] + " && " + met_options["NOM"]).c_str());cut_options_met_b_down += jetCutMap["BDOWN"];
-        evalSysBaselineNoW(nomYieldsVect, signalCut_base * cut_options_met_b_up, signalCut_base * cut_options_met_b_down, SScut_muTau_base * cut_options_met_b_up, SScut_muTau_base * cut_options_met_b_down, "mvamet", metBinning, "Btag");
+        evalSysBaselineNoW(nomYieldsVect, signalCut_base * cut_options_met_b_up, signalCut_base * cut_options_met_b_down, SScut_muTau_base * cut_options_met_b_up, SScut_muTau_base * cut_options_met_b_down, "met", metBinning, "Btag");
         
         //JEC
         TCut cut_options_met_njec_up((drCutMap[drCut] + " && " + met_options["NOM"]).c_str()); cut_options_met_njec_up += jetCutMap["NJECUP"];
         TCut cut_options_met_njec_down((drCutMap[drCut] + " && " + met_options["NOM"]).c_str());cut_options_met_njec_down += jetCutMap["NJECDOWN"];
-        evalSysBaselineNoW(nomYieldsVect, signalCut_base * cut_options_met_njec_up, signalCut_base * cut_options_met_njec_down, SScut_muTau_base * cut_options_met_njec_up, SScut_muTau_base * cut_options_met_njec_down, "mvamet", metBinning, "NjetJEC");
+        evalSysBaselineNoW(nomYieldsVect, signalCut_base * cut_options_met_njec_up, signalCut_base * cut_options_met_njec_down, SScut_muTau_base * cut_options_met_njec_up, SScut_muTau_base * cut_options_met_njec_down, "met", metBinning, "NjetJEC");
         
         //JER
         TCut cut_options_met_njer_up((drCutMap[drCut] + " && " + met_options["NOM"]).c_str()); cut_options_met_njer_up += jetCutMap["NJERUP"];
         TCut cut_options_met_njer_down((drCutMap[drCut] + " && " + met_options["NOM"]).c_str());cut_options_met_njer_down += jetCutMap["NJERDOWN"];
-        evalSysBaselineNoW(nomYieldsVect, signalCut_base * cut_options_met_njer_up, signalCut_base * cut_options_met_njer_down, SScut_muTau_base * cut_options_met_njer_up, SScut_muTau_base * cut_options_met_njer_down, "mvamet", metBinning, "NjetJER");
+        evalSysBaselineNoW(nomYieldsVect, signalCut_base * cut_options_met_njer_up, signalCut_base * cut_options_met_njer_down, SScut_muTau_base * cut_options_met_njer_up, SScut_muTau_base * cut_options_met_njer_down, "met", metBinning, "NjetJER");
     
     }
     else if (evalEnergyShiftSys==1)
@@ -1904,10 +1905,10 @@ void doMuTau()
         TH1F * qcd_muTau_met = new TH1F("qcd_muTau_met","qcd_muTau_met",metBinning[0],metBinning[1],metBinning[2]);
         qcd_muTau_met->Sumw2();
         /* need to make this function more general for any dist. */
-        fillQCD_Shape_NoPlots(SScut_muTau_base * cut_options_nom, wSF_SS_muTau, qcd_muTau_met, "mvamet", metBinning);
+        fillQCD_Shape_NoPlots(SScut_muTau_base * cut_options_nom, wSF_SS_muTau, qcd_muTau_met, "met", metBinning);
         /* use nominal analysis cuts to find nominal yields*/
         std::vector<std::vector<double>> nomYieldsVect;
-        nomYieldsVect = countSignalRegion(signalCut_base * cut_options_nom, wSF_OS_muTau, qcd_muTau_met, "mvamet", metBinning);
+        nomYieldsVect = countSignalRegion(signalCut_base * cut_options_nom, wSF_OS_muTau, qcd_muTau_met, "met", metBinning);
         
         reset_files();
         std::cout << "number of entries VV: " << VV->GetEntries() << std::endl;
@@ -1917,10 +1918,10 @@ void doMuTau()
         /* met */
         qcd_muTau_met->Reset();
         /* need to make this function more general for any dist. */
-        fillQCD_Shape_NoPlots(SScut_muTau_base * cut_options_nom, wSF_SS_muTau, qcd_muTau_met, "mvamet", metBinning);
+        fillQCD_Shape_NoPlots(SScut_muTau_base * cut_options_nom, wSF_SS_muTau, qcd_muTau_met, "met", metBinning);
         /* use nominal analysis cuts to find nominal yields*/
         std::vector<std::vector<double>> upTauYieldsVect;
-        upTauYieldsVect = countSignalRegion(signalCut_base * cut_options_nom, wSF_OS_muTau, qcd_muTau_met, "mvamet", metBinning);
+        upTauYieldsVect = countSignalRegion(signalCut_base * cut_options_nom, wSF_OS_muTau, qcd_muTau_met, "met", metBinning);
         
         reset_files();
         setup_downTau_files_muTau();
@@ -1929,10 +1930,10 @@ void doMuTau()
         /* met */
         qcd_muTau_met->Reset();
         /* need to make this function more general for any dist. */
-        fillQCD_Shape_NoPlots(SScut_muTau_base * cut_options_nom, wSF_SS_muTau, qcd_muTau_met, "mvamet", metBinning);
+        fillQCD_Shape_NoPlots(SScut_muTau_base * cut_options_nom, wSF_SS_muTau, qcd_muTau_met, "met", metBinning);
         /* use nominal analysis cuts to find nominal yields*/
         std::vector<std::vector<double>> downTauYieldsVect;
-        downTauYieldsVect = countSignalRegion(signalCut_base * cut_options_nom, wSF_OS_muTau, qcd_muTau_met, "mvamet", metBinning);
+        downTauYieldsVect = countSignalRegion(signalCut_base * cut_options_nom, wSF_OS_muTau, qcd_muTau_met, "met", metBinning);
         
         out_data << "Tau ES Systematics";
         
@@ -2300,7 +2301,7 @@ void drawSignalRegion(TCut cut, double sf, TH1F * QCDshape, std::string paramete
 	/* check if want blinded signal region met tail */
     if (plot)
     {
-        if(choice2==1 && parameter=="mvamet")
+        if(choice2==1 && (parameter=="met" || parameter=="mvamet"))
         {
             global_title = "Signal Region with Blind MET Tail";
         }
@@ -2395,7 +2396,7 @@ void drawSignalRegion(TCut cut, double sf, TH1F * QCDshape, std::string paramete
 	/* apply blinding conditions */
     if (plot)
     {
-        if(parameter=="mvamet")
+        if(parameter=="met")
         {
             for(int i=0; i<data_->GetNbinsX()+1; ++i)
             {
@@ -2514,7 +2515,7 @@ void drawSignalRegion(TCut cut, double sf, TH1F * QCDshape, std::string paramete
             data_->Add(comb_);
             data_->DrawCopy("PE");
             sigMTstack->Draw("histsames");
-            if(parameter=="mvamet") {zp1000_->DrawCopy("hist sames");}
+            if(parameter=="met") {zp1000_->DrawCopy("hist sames");}
             else
             {
                 if (parameter.substr(13,4)=="600A"){zp600_->SetLineStyle(1); zp600_->SetLineWidth(5); zp600_->SetLineColor(6); std::cout << "DRAWING" << std::endl; zp600_->DrawCopy("hist sames");}
@@ -2778,7 +2779,7 @@ void drawSignalRegion(TCut cut, double sf, TH1F * QCDshape, std::string paramete
 		/* create a file to help with S/sqrt(S+B) cut opt */
         
         std::string paramName;
-        if (parameter=="mvamet") {paramName = "met";}
+        if (parameter=="met" || parameter=="mvamet") {paramName = "met";}
         else if (parameter.substr(0,6)=="mvaVar") {paramName = "mva";}
         
         std::string catName = chan + "_" + drCutNameMap[drCut];
@@ -2968,7 +2969,7 @@ std::vector<std::vector<double>> countSignalRegion(TCut cut, double sf, TH1F * Q
 
 	/* apply blinding conditions */
 
-	if(parameter=="mvamet")
+	if(parameter=="met")
 	{
 		for(int i=0; i<data_->GetNbinsX()+1; ++i)
 		{
@@ -3207,7 +3208,7 @@ std::vector<std::vector<double>> countSignalRegion(TCut cut, double sf, TH1F * Q
 
 	// test
     /*
-	if(signalRegionMETonly && parameter=="mvamet")
+	if(signalRegionMETonly && parameter=="met")
 	{
 		std::cout<<" enter name for S/B opt root file \n";
 		std::string optName;
@@ -3256,15 +3257,15 @@ void evalSysBaseline(std::vector<std::vector<double>> nomYields, TCut upSigCut, 
     double up_wSF_OS = wjetsNorm_NoPlots(upOSwNormCut);
     double up_wSF_SS = wjetsNorm_NoPlots(upSSwNormCut);
     TH1F * upQCD_met_ = new TH1F("upQCD_met_","upQCD_met_",bin[0],bin[1],bin[2]);
-    fillQCD_Shape_NoPlots(upSSCut, up_wSF_SS, upQCD_met_, "mvamet", bin);
-    upYieldsVect = countSignalRegion(upSigCut, up_wSF_OS, upQCD_met_, "mvamet", bin);
+    fillQCD_Shape_NoPlots(upSSCut, up_wSF_SS, upQCD_met_, "met", bin);
+    upYieldsVect = countSignalRegion(upSigCut, up_wSF_OS, upQCD_met_, "met", bin);
     
     std::vector<std::vector<double>> downYieldsVect;
     double down_wSF_OS = wjetsNorm_NoPlots(downOSwNormCut);
     double down_wSF_SS = wjetsNorm_NoPlots(downSSwNormCut);
     TH1F * downQCD_met_ = new TH1F("downQCD_met_","downQCD_met_",bin[0],bin[1],bin[2]);
-    fillQCD_Shape_NoPlots(downSSCut, down_wSF_SS, downQCD_met_, "mvamet", bin);
-    downYieldsVect = countSignalRegion(downSigCut, down_wSF_OS, downQCD_met_, "mvamet", bin);
+    fillQCD_Shape_NoPlots(downSSCut, down_wSF_SS, downQCD_met_, "met", bin);
+    downYieldsVect = countSignalRegion(downSigCut, down_wSF_OS, downQCD_met_, "met", bin);
     
     out_data << systematicName << std::endl;
     
@@ -3286,15 +3287,15 @@ void evalSysBaselineNoW(std::vector<std::vector<double>> nomYields, TCut upSigCu
     double up_wSF_OS = 1.0;
     double up_wSF_SS = 1.0;
     TH1F * upQCD_met_ = new TH1F("upQCD_met_","upQCD_met_",bin[0],bin[1],bin[2]);
-    fillQCD_Shape_NoPlots(upSSCut, up_wSF_SS, upQCD_met_, "mvamet", bin);
-    upYieldsVect = countSignalRegion(upSigCut, up_wSF_OS, upQCD_met_, "mvamet", bin);
+    fillQCD_Shape_NoPlots(upSSCut, up_wSF_SS, upQCD_met_, "met", bin);
+    upYieldsVect = countSignalRegion(upSigCut, up_wSF_OS, upQCD_met_, "met", bin);
     
     std::vector<std::vector<double>> downYieldsVect;
     double down_wSF_OS = 1.0;
     double down_wSF_SS = 1.0;
     TH1F * downQCD_met_ = new TH1F("downQCD_met_","downQCD_met_",bin[0],bin[1],bin[2]);
-    fillQCD_Shape_NoPlots(downSSCut, down_wSF_SS, downQCD_met_, "mvamet", bin);
-    downYieldsVect = countSignalRegion(downSigCut, down_wSF_OS, downQCD_met_, "mvamet", bin);
+    fillQCD_Shape_NoPlots(downSSCut, down_wSF_SS, downQCD_met_, "met", bin);
+    downYieldsVect = countSignalRegion(downSigCut, down_wSF_OS, downQCD_met_, "met", bin);
     
     out_data << systematicName << std::endl;
     
@@ -3496,7 +3497,7 @@ void fillQCD_Shape(TCut SScut, double WnormForQCD, TH1F * QCDshape, std::string 
 void fillQCD_Shape_NoPlots(TCut SScut, double WnormForQCD, TH1F * QCDshape, std::string parameter, float bin[3])
 {
 
-	if(signalRegionMETonly && parameter!="mvamet") return;
+	if(signalRegionMETonly && parameter!="met") return;
 
 	/* create some histograms and format them */
 
