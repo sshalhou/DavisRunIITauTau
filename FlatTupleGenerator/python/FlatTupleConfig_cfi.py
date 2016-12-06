@@ -58,7 +58,7 @@ SVMASS_VERBOSE_FlatTuple = True
 ############################################
 
 
-USE_MVAMET_FOR_SVFit_AT_FlatTuple = True  				# this is the default choice (recoil corrected MVA MET)
+USE_MVAMET_FOR_SVFit_AT_FlatTuple = False  				# this is the default choice (recoil corrected MVA MET)
 USE_MVAMET_uncorrected_FOR_SVFit_AT_FlatTuple = False
 USE_MVAMET_responseUP_FOR_SVFit_AT_FlatTuple = False
 USE_MVAMET_responseDOWN_FOR_SVFit_AT_FlatTuple = False
@@ -162,12 +162,11 @@ muon_EleMuon.append("passesMediumMuonId==1.0")
 
 # muon in MuonTau final state :
 muon_MuonTau = []
-muon_MuonTau.append("pt>19")
+muon_MuonTau.append("pt>24")
 muon_MuonTau.append("abs(eta)<2.1")
 muon_MuonTau.append("abs(dxy)<0.045")
 muon_MuonTau.append("abs(dz)<0.2")
 muon_MuonTau.append("passesMediumMuonId==1.0")
-
 
 # tau in MuonTau final state :
 tau_MuonTau = []
@@ -179,7 +178,7 @@ tau_MuonTau.append("abs(charge)==1.0")
 
 # electron in EleTau final state :
 ele_EleTau = []
-ele_EleTau.append("pt>24")
+ele_EleTau.append("pt>27")
 ele_EleTau.append("abs(eta)<2.1")
 ele_EleTau.append("abs(dxy)<0.045")
 ele_EleTau.append("abs(dz)<0.2")
@@ -310,11 +309,10 @@ post_sync_TauTau_tauMVACuts_ = cms.string('1==1')
 # turn them into real cuts if APPLY_POST_SYNC_TAU_CUTS
 
 if APPLY_POST_SYNC_TAU_CUTS is True :
-	post_sync_tauIso_ = cms.string('(tauID("byTightIsolationMVArun2v1DBoldDMwLT") > 0.5 || tauID("byVTightIsolationMVArun2v1DBoldDMwLT") > 0.5 || tauID("byLooseIsolationMVArun2v1DBoldDMwLT") > 0.5 || tauID("byMediumIsolationMVArun2v1DBoldDMwLT") > 0.5 || tauID("byVLooseIsolationMVArun2v1DBoldDMwLT") > 0.5 || tauID("byVVTightIsolationMVArun2v1DBoldDMwLT") > 0.5)')
+	post_sync_tauIso_ = cms.string('(tauID("byTightIsolationMVArun2v1DBdR03oldDMwLT") > 0.5 || tauID("byVTightIsolationMVArun2v1DBdR03oldDMwLT") > 0.5 || tauID("byLooseIsolationMVArun2v1DBdR03oldDMwLT") > 0.5 || tauID("byMediumIsolationMVArun2v1DBdR03oldDMwLT") > 0.5 || tauID("byVLooseIsolationMVArun2v1DBdR03oldDMwLT") > 0.5 || tauID("byVVTightIsolationMVArun2v1DBdR03oldDMwLT") > 0.5)')
 	post_sync_EleTau_tauMVACuts_ = cms.string("(tauID('againstElectronTightMVA6')> 0.5 && tauID('againstMuonLoose3')>0.5)")
 	post_sync_MuonTau_tauMVACuts_ = cms.string("(tauID('againstElectronVLooseMVA6')> 0.5 && tauID('againstMuonTight3')>0.5)")
 	post_sync_TauTau_tauMVACuts_ = cms.string("(tauID('againstElectronVLooseMVA6')> 0.5 && tauID('againstMuonLoose3')>0.5)")
-
 
 	print '++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++'
 	print '++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++'
@@ -466,14 +464,23 @@ ZMuMuTriggerCutFall15MCminiAOD = "((isLeg1GoodForHLTPath('HLT_IsoMu18_v*')) || (
 # are the same, but MC has extra pt or isoTau match cuts
 ################################
 
-emuTriggerCut = cms.string(" ( !isRealData && "+emuTriggerCutFall15MCminiAOD+" ) || ( "+emuTriggerCutRun2015D + " && isRealData )" )
-tautauTriggerCut = cms.string(" ( !isRealData && "+tautauTriggerCutFall15MCminiAOD+" ) || ( "+tautauTriggerCutRun2015D+ " && isRealData )")
-etauTriggerCut = cms.string(" ( !isRealData && "+etauTriggerCutFall15MCminiAOD+" ) || ( "+etauTriggerCutRun2015D+ " && isRealData )")
-mtauTriggerCut  = cms.string(" ( !isRealData && "+mtauTriggerCutFall15MCminiAOD+" ) || ( "+mtauTriggerCutRun2015D+ " && isRealData )")
+# 2016 reHLT and non-reHLT MC uses no trigger cust
+emuTriggerCut = cms.string("(1==1)" )
+tautauTriggerCut  = cms.string("(1==1)" )
+etauTriggerCut  = cms.string("(1==1)" )
+mtauTriggerCut   = cms.string("(1==1)" )
+eeTriggerCut  = cms.string("(1==1)" )
+mmTriggerCut   = cms.string("(1==1)" )
 
-# ok since 2015 we use single e and single mu triggers from muTau, eTau, ee and muMu
-eeTriggerCut = cms.string(" ( !isRealData && "+ZEETriggerCutFall15MCminiAOD+" ) || ( "+ZEETriggerCutRun2015D+ " && isRealData )")
-mmTriggerCut  = cms.string(" ( !isRealData && "+ZMuMuTriggerCutFall15MCminiAOD+" ) || ( "+ZMuMuTriggerCutRun2015D+ " && isRealData )")
+
+# emuTriggerCut = cms.string(" ( !isRealData && "+emuTriggerCutFall15MCminiAOD+" ) || ( "+emuTriggerCutRun2015D + " && isRealData )" )
+# tautauTriggerCut = cms.string(" ( !isRealData && "+tautauTriggerCutFall15MCminiAOD+" ) || ( "+tautauTriggerCutRun2015D+ " && isRealData )")
+# etauTriggerCut = cms.string(" ( !isRealData && "+etauTriggerCutFall15MCminiAOD+" ) || ( "+etauTriggerCutRun2015D+ " && isRealData )")
+# mtauTriggerCut  = cms.string(" ( !isRealData && "+mtauTriggerCutFall15MCminiAOD+" ) || ( "+mtauTriggerCutRun2015D+ " && isRealData )")
+
+# # ok since 2015 we use single e and single mu triggers from muTau, eTau, ee and muMu
+# eeTriggerCut = cms.string(" ( !isRealData && "+ZEETriggerCutFall15MCminiAOD+" ) || ( "+ZEETriggerCutRun2015D+ " && isRealData )")
+# mmTriggerCut  = cms.string(" ( !isRealData && "+ZMuMuTriggerCutFall15MCminiAOD+" ) || ( "+ZMuMuTriggerCutRun2015D+ " && isRealData )")
 
 
 
@@ -677,8 +684,8 @@ generalConfig = cms.PSet(
 			keepOS = cms.bool(True),
 			keepSS = cms.bool(True),			
 			# how to rank pairs within this selection
-			rankByPtSum = cms.bool(False),
-			rankByIsolation = cms.bool(True), # checks leg1 isolation, then pt in case of tie
+			rankByPtSum = cms.bool(True),
+			rankByIsolation = cms.bool(False), # checks leg1 isolation, then pt in case of tie
 			
 			####################################
 			# new options for a FlatTuple 
@@ -715,7 +722,8 @@ generalConfig = cms.PSet(
 			muonIsolationForRank = cms.string("DeltaBetaCorrectedRelIso"),
 			muon_isSmallerValueMoreIsolated = cms.bool(True),
 			
-			tauIDisolationForRank = cms.string("byIsolationMVArun2v1DBoldDMwLTraw"),
+
+			tauIDisolationForRank = cms.string("byIsolationMVArun2v1DBdR03oldDMwLTraw"),
 			tau_isSmallerValueMoreIsolated = cms.bool(False),
 
 			# isolations to keep as the leg1_relativeIsolation and 
@@ -725,10 +733,10 @@ generalConfig = cms.PSet(
 			muonIsolationForRelIsoBranch= cms.string("DeltaBetaCorrectedRelIso"),
 
 			# in 76X and up these differ by channel
-			tauIsolationForRelIsoBranch = cms.string("byTightIsolationMVArun2v1DBoldDMwLT"), # default for effLeptons
-			tauIsolationForRelIsoBranch_forEleTau = cms.string("byTightIsolationMVArun2v1DBoldDMwLT"),
-			tauIsolationForRelIsoBranch_forMuTau = cms.string("byTightIsolationMVArun2v1DBoldDMwLT"),
-			tauIsolationForRelIsoBranch_forTauTau = cms.string("byVTightIsolationMVArun2v1DBoldDMwLT"),
+			tauIsolationForRelIsoBranch = cms.string("byTightIsolationMVArun2v1DBdR03oldDMwLT"), # default for effLeptons
+			tauIsolationForRelIsoBranch_forEleTau = cms.string("byTightIsolationMVArun2v1DBdR03oldDMwLT"),
+			tauIsolationForRelIsoBranch_forMuTau = cms.string("byTightIsolationMVArun2v1DBdR03oldDMwLT"),
+			tauIsolationForRelIsoBranch_forTauTau = cms.string("byVTightIsolationMVArun2v1DBdR03oldDMwLT"),
 
 
 			# isolations to keep as the veto_relativeIsolation  
@@ -754,7 +762,19 @@ generalConfig = cms.PSet(
 			# note : the hardcoded THE_MAX variable in FlatTupleGenerator.cc limits the 
 			# number of these that we can keep 
 
-			tauIDsToKeep = cms.vstring(				
+
+
+
+			tauIDsToKeep = cms.vstring(		
+
+				"byIsolationMVArun2v1DBdR03oldDMwLTraw",
+				"byVVTightIsolationMVArun2v1DBdR03oldDMwLT",
+				"byVTightIsolationMVArun2v1DBdR03oldDMwLT",
+				"byTightIsolationMVArun2v1DBdR03oldDMwLT",
+				"byMediumIsolationMVArun2v1DBdR03oldDMwLT",
+				"byLooseIsolationMVArun2v1DBdR03oldDMwLT",
+				"byVLooseIsolationMVArun2v1DBdR03oldDMwLT",
+
 				"byIsolationMVArun2v1DBoldDMwLTraw",
 				"byTightIsolationMVArun2v1DBoldDMwLT",
 				"byVTightIsolationMVArun2v1DBoldDMwLT",
@@ -769,11 +789,10 @@ generalConfig = cms.PSet(
 				"againstMuonLoose3",
 				"decayModeFinding",
 
-
 				#"againstElectronLooseMVA6",	
 				#"againstElectronMediumMVA6",
 				#"againstElectronVTightMVA6",
-				"byIsolationMVA3oldDMwLTraw",
+				#"byIsolationMVA3oldDMwLTraw",
 				#"chargedIsoPtSum",
 				#"neutralIsoPtSum",
 				#"puCorrPtSum",
@@ -811,6 +830,7 @@ generalConfig = cms.PSet(
 			# b-tag configuration 
 
 			BtagSF_File = cms.string("DavisRunIITauTau/RunTimeDataInput/data/BTAGSF/CSVv2_ichep.csv"),
+#			BtagSF_File = cms.string("DavisRunIITauTau/RunTimeDataInput/data/BTAGSF/CSVv2.csv"),
 			# note for 80X it seems only a single file is available
 			looseBtagEff_file = cms.string("DavisRunIITauTau/RunTimeDataInput/data/BTAGEFF/tagging_efficiencies_ichep2016.root"),
 			mediumBtagEff_file = cms.string("DavisRunIITauTau/RunTimeDataInput/data/BTAGEFF/tagging_efficiencies_ichep2016.root"),

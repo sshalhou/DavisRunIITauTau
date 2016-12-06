@@ -132,6 +132,7 @@ public:
       virtual void handlePairIndepInfo(const edm::Event&, const edm::EventSetup&, NtuplePairIndependentInfo); 
       virtual void handleCurrentEventInfo(const edm::Event&, const edm::EventSetup&, NtupleEvent); 
       virtual void handleMvaMetAndRecoil(const edm::Event&, const edm::EventSetup&, NtupleEvent);
+      virtual void handlePFMetAndRecoil(const edm::Event&, const edm::EventSetup&, NtupleEvent);
       virtual void handleSVFitCall(const edm::Event&, const edm::EventSetup&, NtupleEvent, std::string); 
       virtual void handleLeg1AndLeg2Info(const edm::Event&, const edm::EventSetup&, NtupleEvent); 
       virtual void handleEffLeptonInfo(const edm::Event&, const edm::EventSetup&, NtupleEvent); 
@@ -386,13 +387,60 @@ public:
 
 
 	double VISMass; 	  			/* the visible mass  */
-	double MTpfMET_leg1;  			/* MT using pf MET & leg1 */ 	
-	double MTpfMET_leg2;  			/* MT using pf MET & leg2 */
 	double MTpuppiMET_leg1;  		/* MT using puppi MET & leg1 */ 	
 	double MTpuppiMET_leg2;  		/* MT using puppi MET & leg2 */
   
-	double pfMET;					/* the PF MET   - type 1 corr */
-	double pfMETphi;				/* the PF MET phi  - type 1 corr */
+
+
+	double pfMET;					/* the PF MET   - type 1 corr (miniAOD default) */
+	double pfMETphi;				/* the PF MET phi  - type 1 corr (miniAOD default) */
+	double MTpfMET_leg1;  			/* MT using pf MET type 1 corr (miniAOD default) & leg1 */ 	
+	double MTpfMET_leg2;  			/* MT using pf MET  type 1 corr (miniAOD default)& leg2 */
+
+	double responseUP_pfMET; 			/* type 1 (miniAOD default) pf met varied with response up */
+	double responseUP_pfMETphi; 		/* type 1 (miniAOD default) pf met phi varied with response up */
+	double responseUP_MTpfMET_leg1; 	/* mt_1 with type 1 (miniAOD default) pf met with response up */
+	double responseUP_MTpfMET_leg2;		/* mt_2 with type 1 (miniAOD default) pf met with response up */
+	double responseDOWN_pfMET;			/* type 1 pf met with response shifted down */	
+	double responseDOWN_pfMETphi; 		/* type 1 pf met phi with response shifted down */	
+	double responseDOWN_MTpfMET_leg1;   /* mt_1 using type 1 pf met with response shifted down */	
+	double responseDOWN_MTpfMET_leg2;   /* mt_2 using type 1 pf met with response shifted down */		
+
+	double resolutionUP_pfMET; 			/* type 1 (miniAOD default) pf met varied with resolution up */
+	double resolutionUP_pfMETphi; 		/* type 1 (miniAOD default) pf met phi varied with resolution up */
+	double resolutionUP_MTpfMET_leg1; 	/* mt_1 with type 1 (miniAOD default) pf met with resolution up*/
+	double resolutionUP_MTpfMET_leg2;		/* mt_2 with type 1 (miniAOD default) pf met with resolution up */
+	double resolutionDOWN_pfMET;			/* type 1 pf met with resolution shifted down */	
+	double resolutionDOWN_pfMETphi; 		/* type 1 pf met phi with resolution shifted down */	
+	double resolutionDOWN_MTpfMET_leg1;   /* mt_1 using type 1 pf met with resolution shifted down */	
+	double resolutionDOWN_MTpfMET_leg2;   /* mt_2 using type 1 pf met with resolution shifted down */		
+
+
+	double CORRpfMET;					/* the PF MET   - with RECOIL CORRECTION APPLIED */
+	double CORRpfMETphi;				/* the PF MET phi  - with RECOIL CORRECTION APPLIED */
+	double MTCORRpfMET_leg1;  			/* MT using pf MET with RECOIL CORRECTION APPLIED & leg1 */ 	
+	double MTCORRpfMET_leg2;  			/* MT using pf MET  with RECOIL CORRECTION APPLIED& leg2 */
+
+	double responseUP_CORRpfMET; 			/* RECOIL CORRECTION APPLIED pf met varied with response up */
+	double responseUP_CORRpfMETphi; 		/* RECOIL CORRECTION APPLIED pf met phi varied with response up */
+	double responseUP_MTCORRpfMET_leg1; 	/* mt_1 with RECOIL CORRECTION APPLIED pf met with response up */
+	double responseUP_MTCORRpfMET_leg2;		/* mt_2 with RECOIL CORRECTION APPLIED pf met with response up */
+	double responseDOWN_CORRpfMET;			/* RECOIL CORRECTION APPLIED  pf met with response shifted down */	
+	double responseDOWN_CORRpfMETphi; 		/* RECOIL CORRECTION APPLIED  pf met phi with response shifted down */	
+	double responseDOWN_MTCORRpfMET_leg1;   /* mt_1 using RECOIL CORRECTION APPLIED  pf met with response shifted down */	
+	double responseDOWN_MTCORRpfMET_leg2;   /* mt_2 using RECOIL CORRECTION APPLIED  pf met with response shifted down */		
+
+	double resolutionUP_CORRpfMET; 			/* RECOIL CORRECTION APPLIED  pf met varied with resolution up */
+	double resolutionUP_CORRpfMETphi; 		/* RECOIL CORRECTION APPLIED  pf met phi varied with resolution up */
+	double resolutionUP_MTCORRpfMET_leg1; 	/* mt_1 with RECOIL CORRECTION APPLIED  pf met with response up*/
+	double resolutionUP_MTCORRpfMET_leg2;		/* mt_2 with RECOIL CORRECTION APPLIED  pf met with response up */
+	double resolutionDOWN_CORRpfMET;			/* RECOIL CORRECTION APPLIED  pf met with resolution shifted down */	
+	double resolutionDOWN_CORRpfMETphi; 		/* RECOIL CORRECTION APPLIED  pf met phi with resolution shifted down */	
+	double resolutionDOWN_MTCORRpfMET_leg1;   /* mt_1 using RECOIL CORRECTION APPLIED  pf met with resolution shifted down */	
+	double resolutionDOWN_MTCORRpfMET_leg2;   /* mt_2 using RECOIL CORRECTION APPLIED  pf met with resolution shifted down */		
+
+
+
 	double puppiMET;				/* the puppi MET   - type 1 corr(?) */
 	double puppiMETphi;				/* the puppi MET phi  - type 1 corr(?) */
 

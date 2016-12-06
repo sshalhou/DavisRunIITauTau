@@ -9,6 +9,69 @@ import FWCore.ParameterSet.Config as cms
 
 sampleInfo = []
 
+###########################
+# 2016 reHLT MC
+###########################
+
+
+
+############
+aPSet = cms.PSet(   
+    DataSet = cms.string("/SUSYGluGluToHToTauTau_M-160_TuneCUETP8M1_13TeV-pythia8/RunIISpring16MiniAODv2-PUSpring16RAWAODSIM_reHLT_80X_mcRun2_asymptotic_v14-v1/MINIAODSIM"),
+    EventTotal = cms.int32(498892),
+    NumberOfLumis = cms.int32(2708), # obtain from DAS using summary dataset command
+    MaxLumiBlock = cms.int32(2708), # obtain using DAS website and run,lumi dataset="XXX" command
+    EventType = cms.string("MC"), # valid EventTypes are :  MC, DATA, EMBEDDED (expand as needed)
+    KeyName = cms.string("SUSY_SIGNAL_REHLT_160GG"), # a unique descriptor for this sample to be used throught all parts of the code
+    DataCard = cms.string("SUSY_SIGNAL"), # sample classification for H2TauTau datacards 
+    CrossSection = cms.double(1.0), # cross section in pb (include *BR if needed)
+    FilterEff = cms.double(1.0), # generator level filter effi. 
+    CodeVersion = cms.double(1.0), # allow us to track differences as ntuples and flattuples evolve
+    ProductionInfo = cms.string("miniAOD_reHLT_2016_MC"), # needed for correct trigger settings
+    RecoilCorrection = cms.string("HIGGS"), # options are aMCatNLO_DY, aMCatNLO_W, MG5_DY, MG5_W, HIGGS, NONE (for mono-H, data, ttbar, single-top and diboson)
+    # for MetSystematicType use:
+    #       "NONE" for data 
+    #       "MEtSys::ProcessType::BOSON" for Z/W/Higgs
+    #       "MEtSys::ProcessType::EWK" for single top and Diboson
+    #       "MEtSys::ProcessType::TOP" for t t-bar samples
+    MetSystematicType = cms.string("MEtSys::ProcessType::EWK"),
+    KeepTheoryScaleFactors = cms.bool(False), # usually only needed for mono-H signals since H2Tau group does the rest
+    HLTversion = cms.string("HLT2") # in the 2016 September MC reHLT HLT is called HLT2 instead of HLT
+                )
+sampleInfo.append(aPSet)
+############ 
+
+
+
+############
+aPSet = cms.PSet(   
+    DataSet = cms.string("/GluGluHToTauTau_M125_13TeV_powheg_pythia8/RunIISpring16MiniAODv2-PUSpring16RAWAODSIM_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v1/MINIAODSIM"),
+    EventTotal = cms.int32(1498800),
+    NumberOfLumis = cms.int32(7502), # obtain from DAS using summary dataset command
+    MaxLumiBlock = cms.int32(7508), # obtain using DAS website and run,lumi dataset="XXX" command
+    EventType = cms.string("MC"), # valid EventTypes are :  MC, DATA, EMBEDDED (expand as needed)
+    KeyName = cms.string("SM_SIGNAL_OLDHLT_125GG"), # a unique descriptor for this sample to be used throught all parts of the code
+    DataCard = cms.string("SM_SIGNAL"), # sample classification for H2TauTau datacards 
+    CrossSection = cms.double(1.0), # cross section in pb (include *BR if needed)
+    FilterEff = cms.double(1.0), # generator level filter effi. 
+    CodeVersion = cms.double(1.0), # allow us to track differences as ntuples and flattuples evolve
+    ProductionInfo = cms.string("miniAOD_oldHLT_2016_MC"), # needed for correct trigger settings
+    RecoilCorrection = cms.string("HIGGS"), # options are aMCatNLO_DY, aMCatNLO_W, MG5_DY, MG5_W, HIGGS, NONE (for mono-H, data, ttbar, single-top and diboson)
+    # for MetSystematicType use:
+    #       "NONE" for data 
+    #       "MEtSys::ProcessType::BOSON" for Z/W/Higgs
+    #       "MEtSys::ProcessType::EWK" for single top and Diboson
+    #       "MEtSys::ProcessType::TOP" for t t-bar samples
+    MetSystematicType = cms.string("MEtSys::ProcessType::EWK"),
+    KeepTheoryScaleFactors = cms.bool(False), # usually only needed for mono-H signals since H2Tau group does the rest
+    HLTversion = cms.string("HLT") # in the 2016 September MC reHLT HLT is called HLT2 instead of HLT
+                )
+sampleInfo.append(aPSet)
+############ 
+
+
+
+
 ####################################################
 # mini AOD Fall15 DATA Samples                       #
 ####################################################

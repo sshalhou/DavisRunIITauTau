@@ -508,19 +508,20 @@ NtuplePairIndependentInfoProducer::produce(edm::Event& iEvent, const edm::EventS
         // std::cout<<currentNtupleJet.JEC_uncertaintySF_up()<<" and a down JEC shift scale factor = "<<currentNtupleJet.JEC_uncertaintySF_down()<<"\n";
 
 
-
         /* JER */
 
 
         // the pT resolution
 
+
         JME::JetParameters parameters_res;
         parameters_res.set(JME::Binning::JetPt, slimmedJets->at(i).pt());
         parameters_res.set({JME::Binning::JetEta, slimmedJets->at(i).eta()});
         parameters_res.set({JME::Binning::Rho, rho_forJER});
-
         float sigma_MC_PT = resolution_r.getResolution(parameters_res);
     
+
+
 
         // the SFs
         // JME::JetParameters parameters_sf = {{JME::Binning::JetEta, slimmedJets->at(i).eta()}, 
@@ -528,14 +529,25 @@ NtuplePairIndependentInfoProducer::produce(edm::Event& iEvent, const edm::EventS
         // the example code https://github.com/blinkseb/cmssw/blob/jer_fix_76x/JetMETCorrections/Modules/plugins/JetResolutionDemo.cc#L74
         // does not use rho
 
-        float sf = resolution_sf.getScaleFactor({{JME::Binning::JetEta, slimmedJets->at(i).eta()}}); 
-        float sf_up = resolution_sf.getScaleFactor({{JME::Binning::JetEta, slimmedJets->at(i).eta()}}, Variation::UP);
-        float sf_down = resolution_sf.getScaleFactor({{JME::Binning::JetEta, slimmedJets->at(i).eta()}}, Variation::DOWN);
+        //float sf = resolution_sf.getScaleFactor({{JME::Binning::JetEta, slimmedJets->at(i).eta()}}); 
+       
+
+      //  float sf_up = resolution_sf.getScaleFactor({{JME::Binning::JetEta, slimmedJets->at(i).eta()}}, Variation::UP);
+       
+
+     //   float sf_down = resolution_sf.getScaleFactor({{JME::Binning::JetEta, slimmedJets->at(i).eta()}}, Variation::DOWN);
+     
+
+        /* these give a crash with 2016 files, but turning off since JER is not used anyways */
+        // float sf = 1.0;
+        // float sf_up = 1.0;
+        // float sf_down = 1.0;
+
         LorentzVector genJetMatchForJER;
         genJetMatchForJER.SetXYZT(0,0,0,0);
 
         /* look for a GenJet match - this is used for the JER smearing */
-        if(slimmedGenJets.isValid()) 
+        if(slimmedGenJets.isValid() && 3==8) /* don't use JER, causes crashes for now */ 
         {
         //  std::cout<<" VALID slimmedGenJets \n";
 
@@ -574,7 +586,8 @@ NtuplePairIndependentInfoProducer::produce(edm::Event& iEvent, const edm::EventS
 
 
 
-        currentNtupleJet.fill_JER_SFs(sf, sf_up, sf_down, genJetMatchForJER, sigma_MC_PT);
+        // TURNING THIS OFF CAUSE CRASH IN 2016 and NOT USED ANYWAYS (TRandom Integral is 0)
+        // currentNtupleJet.fill_JER_SFs(sf, sf_up, sf_down, genJetMatchForJER, sigma_MC_PT);
 
 
         // std::cout<<" JER sf, sf+, sf-, resolution "<<currentNtupleJet.JER_SF_nominal()<<" "<<currentNtupleJet.JER_SF_up();
@@ -594,6 +607,8 @@ NtuplePairIndependentInfoProducer::produce(edm::Event& iEvent, const edm::EventS
                             defaultBtagAlgorithmNameSrc_);
   
 
+
+
       /* fill the PU jet ID */
       std::pair <std::string, unsigned int> nameAndIndex =
                           puANDpf_IdHelper.getPtRangeStringAndEtaIndex(
@@ -602,7 +617,7 @@ NtuplePairIndependentInfoProducer::produce(edm::Event& iEvent, const edm::EventS
                           slimmedJets->at(i).pt(), 
                           fabs(slimmedJets->at(i).eta()));
 
-                    
+ 
 
       std::vector<double> pu_cutsByEta =  PUjetIDworkingPointSrc_.getParameter<std::vector<double> >(nameAndIndex.first);
       currentNtupleJet.fill_PUjetID(slimmedJets->at(i),pu_DiscName, pu_cutsByEta[nameAndIndex.second]);
@@ -654,6 +669,9 @@ NtuplePairIndependentInfoProducer::produce(edm::Event& iEvent, const edm::EventS
   std::string pileup_dataFilePath = PUweightSettingsSrc_.getParameter<std::string> ("pileup_dataFilePath");
   InfoToWrite.fill_pileUpInfo(PupInfo,pileup_mcFilePath,pileup_dataFilePath); /* path argument order is mc, data */
 
+
+
+
   ///////////////////////////////////////////////////////////////////////////
   /*   get the MC gen weight collection  */
   ///////////////////////////////////////////////////////////////////////////
@@ -665,6 +683,8 @@ NtuplePairIndependentInfoProducer::produce(edm::Event& iEvent, const edm::EventS
     {
       InfoToWrite.fill_generatorEventWeight(genEvtWeight->weight());
     }
+
+
 
   /////////////////////////////////////////////////////////////////////////////////////
   /*   get the MC generated LHE collection - for NUP used in n-jet sample stitching  */

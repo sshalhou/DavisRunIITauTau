@@ -86,7 +86,49 @@ cd -
 # git checkout 74x-root6 # is there a newer branch?
 # cd -
 
+
+# relocate the davis code
+mv ../../DavisRunIITauTau .
+
+# copy the PU reweight files 
+cp /afs/cern.ch/work/a/adewit/public/pileup-hists-2016/MC_Spring16_PU25ns_V1.root DavisRunIITauTau/RunTimeDataInput/data/PileUpReWeightFiles/.
+cp /afs/cern.ch/user/a/anehrkor/public/Data_Pileup_2016_July22.root DavisRunIITauTau/RunTimeDataInput/data/PileUpReWeightFiles/.
+
+
+
+# get the right JER SF file for this release
+# if new file, need to code the change in runIIoneStep_v0.py and runIIntuple_v0.py
+
+
+mkdir DavisRunIITauTau/RunTimeDataInput/data/JER_FILES
+wget https://raw.githubusercontent.com/cms-jet/JRDatabase/master/textFiles/Spring16_25nsV6_MC/Spring16_25nsV6_MC_SF_AK4PFchs.txt .
+wget https://raw.githubusercontent.com/cms-jet/JRDatabase/master/textFiles/Spring16_25nsV6_MC/Spring16_25nsV6_MC_PtResolution_AK4PFchs.txt .
+mv Spring16_25nsV6_MC_SF_AK4PFchs.txt DavisRunIITauTau/RunTimeDataInput/data/JER_FILES/.
+mv Spring16_25nsV6_MC_PtResolution_AK4PFchs.txt DavisRunIITauTau/RunTimeDataInput/data/JER_FILES/.
+
+
+# get the BTAG SF CSV File  and EFF root files 
+# if the file is new, need to change the name used in FlatTupleConfig_cfi.py
+
+mkdir DavisRunIITauTau/RunTimeDataInput/data/BTAGSF
+cp /afs/cern.ch/user/s/sshalhou/public/CMSSW_8X_MODS/CSVv2_ichep.csv .
+mv CSVv2_ichep.csv DavisRunIITauTau/RunTimeDataInput/data/BTAGSF/.
+
+# so far in 80X only a single WP eff. is available for sf > 1 case 
+# if the file is new, need to change the name used in FlatTupleConfig_cfi.py
+
+mkdir DavisRunIITauTau/RunTimeDataInput/data/BTAGEFF
+cp /afs/cern.ch/work/a/adewit/public/MSSM2016/tagging_efficiencies_ichep2016.root DavisRunIITauTau/RunTimeDataInput/data/BTAGEFF/.
+
+
+# Lepton Eff for Muon & Electron for Spring 16
+# check that the correct  files used (they are hard-coded in generateH2TauSyncTree.cc)
+cd DavisRunIITauTau/AnalysisRunII/Analysis/
+git clone https://github.com/CMS-HTT/LeptonEff-interface.git HTT-utilities
+cd HTT-utilities/LepEffInterface
+git clone https://github.com/CMS-HTT/LeptonEfficiencies.git data
+cd ${CMSSW_BASE}/src
+
 # compile
 
 scram b -j 20
-

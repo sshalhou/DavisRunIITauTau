@@ -142,13 +142,26 @@ void muonClones::fillUserFloats()
 	  	m.addUserFloat("isGoodGlobalMuon",isGoodGlobalMuon);
 		
 	  	/* new for 7-4-7 simple access via isMediumMuon */
+	  	//passesMediumMuonId = m.isMediumMuon();
 
-	  	passesMediumMuonId = m.isMediumMuon();
 
+	  	/* FOR 2016 8X analysis we want to use the medium muon ID (short term ICHEP) */
+
+		passesMediumMuonId = 0;	
+
+		bool ichep2016_goodGlob = (m.isGlobalMuon() && 
+                     		  	  m.globalTrack()->normalizedChi2() < 3 && 
+		                      	  m.combinedQuality().chi2LocalPosition < 12 && 
+        		              	  m.combinedQuality().trkKink < 20); 
+
+		bool ichep2016_isMedium = (m.isLooseMuon() &&   		              
+								  m.innerTrack()->validFraction() > 0.49 && 
+								  m.segmentCompatibility()   >=   (ichep2016_goodGlob   ? 0.303 : 0.451));
+
+		passesMediumMuonId = ichep2016_isMedium;
+		
 		m.addUserFloat("passesMediumMuonId",passesMediumMuonId);
 	  
-
-
 		/////////////
 	  	// trigger info
 

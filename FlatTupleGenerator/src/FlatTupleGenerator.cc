@@ -248,7 +248,6 @@ svMassAtFlatTupleConfig_(iConfig.getParameter<edm::ParameterSet>("SVMassConfig")
   BTagCalibrationReader m_MediumWpReaderAllVariants_forB( BTagEntry::OP_MEDIUM,"central", {"up", "down"});
   BTagCalibrationReader m_TightWpReaderAllVariants_forB( BTagEntry::OP_TIGHT,"central", {"up", "down"});
 
-
   /* mujets */
   BTagCalibrationReader m_LooseWpReaderAllVariants_forC( BTagEntry::OP_LOOSE,"central", {"up", "down"});
   BTagCalibrationReader m_MediumWpReaderAllVariants_forC( BTagEntry::OP_MEDIUM,"central", {"up", "down"});
@@ -259,8 +258,6 @@ svMassAtFlatTupleConfig_(iConfig.getParameter<edm::ParameterSet>("SVMassConfig")
   BTagCalibrationReader m_MediumWpReaderAllVariants_forUDSG( BTagEntry::OP_MEDIUM,"central", {"up", "down"});
   BTagCalibrationReader m_TightWpReaderAllVariants_forUDSG( BTagEntry::OP_TIGHT,"central", {"up", "down"});
   
-
-
   m_LooseWpReaderAllVariants_forB.load(m_calib, BTagEntry::FLAV_B, "mujets");             
   m_MediumWpReaderAllVariants_forB.load(m_calib, BTagEntry::FLAV_B, "mujets");             
   m_TightWpReaderAllVariants_forB.load(m_calib, BTagEntry::FLAV_B, "mujets");           
@@ -720,7 +717,9 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
       handlePairIndepInfo(iEvent,iSetup,currentINDEP);
       handleCurrentEventInfo(iEvent,iSetup, currentPair);
       handleMvaMetAndRecoil( iEvent, iSetup, currentPair);
+      handlePFMetAndRecoil( iEvent, iSetup, currentPair);
       
+
       /* don't call SVFit for EleEle or MuonMuon */
   
       if(currentPair.CandidateEventType()!=TupleCandidateEventTypes::EleEle &&\
@@ -762,6 +761,416 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
 ///////////////////////////////////////////////
 // ----- set TTree values for parameters that are pair indep.
 ////////////////////////////////////////////////
+
+ 
+
+
+
+void FlatTupleGenerator::handlePFMetAndRecoil(const edm::Event& iEvent, const edm::EventSetup& iSetup,
+ NtupleEvent currentPair)
+{
+
+  /* we do not keep PF variants for effCand as of yet */
+  if(CandidateEventType!=TupleCandidateEventTypes::EffCand) 
+  {
+
+
+    /* systematic options are NONE, MEtSys::ProcessType::BOSON, MEtSys::ProcessType::EWK, MEtSys::ProcessType::TOP */
+
+    
+    assert(MetSystematicType_=="NONE" || MetSystematicType_=="MEtSys::ProcessType::BOSON" ||\
+           MetSystematicType_=="MEtSys::ProcessType::EWK" || MetSystematicType_=="MEtSys::ProcessType::TOP");
+
+
+
+    /* non-recoil corrected mva met read directly from ntuple */
+    /* make sure pfMET related variables are filled */
+
+    pfMET = currentPair.pfMET()[0].pt();
+    pfMETphi = currentPair.pfMET()[0].phi();      
+    MTpfMET_leg1 = currentPair.MTpfMET_leg1()[0]; /* will be NAN for effCand case */
+    MTpfMET_leg2 = currentPair.MTpfMET_leg2()[0];
+
+
+
+    /* some vectors we need */
+
+    TLorentzVector uncorr(0,0,0,0); /* the non-recoil corrected pf met */
+    TLorentzVector corr(0,0,0,0); /* the recoil corrected 4-vector */
+
+    TLorentzVector responseUP_corr(0,0,0,0); /* the recoil corrected 4-vector with response shifted 1 sigma up*/
+    TLorentzVector responseDOWN_corr(0,0,0,0); /* the recoil corrected 4-vector with response shifted 1 sigma down*/
+    TLorentzVector resolutionUP_corr(0,0,0,0); /* the recoil corrected 4-vector with resolution shifted 1 sigma up*/
+    TLorentzVector resolutionDOWN_corr(0,0,0,0); /* the recoil corrected 4-vector with resolution shifted 1 sigma down*/
+
+    TLorentzVector responseUP_uncorr(0,0,0,0); /* the NON-recoil corrected 4-vector with response shifted 1 sigma up*/
+    TLorentzVector responseDOWN_uncorr(0,0,0,0); /* the NON-recoil corrected 4-vector with response shifted 1 sigma down*/
+    TLorentzVector resolutionUP_uncorr(0,0,0,0); /* the NON-recoil corrected 4-vector with resolution shifted 1 sigma up*/
+    TLorentzVector resolutionDOWN_uncorr(0,0,0,0); /* the NON-recoil corrected 4-vector with resolution shifted 1 sigma down*/
+
+
+
+    /* init the uncorrected pf met */
+    uncorr.SetPtEtaPhiM(pfMET, 0., pfMETphi, 0.);
+
+
+    /* some gen info we need */
+    TLorentzVector genTotal(0,0,0,0);
+    genTotal.SetPtEtaPhiM(genBosonTotal_pt,genBosonTotal_eta,genBosonTotal_phi,genBosonTotal_M);
+
+    TLorentzVector genVisible(0,0,0,0);
+    genVisible.SetPtEtaPhiM(genBosonVisible_pt,genBosonVisible_eta,genBosonVisible_phi,genBosonVisible_M);
+
+
+    /* the number of jets */
+    /* in W+jets njets should be increased by 1 (due to jet-faking-lepton) */
+    /* for  diboson, single top, and ttbar : 
+           in eTau/muTau if leg2_MCMatchType == GenMcMatchTypes::jetOrPuFake increase jet count by 1 
+           in tt channel, increase njets by one for each leg with GenMcMatchTypes::jetOrPuFake */
+
+    ////////////////////////////
+
+    int njets = numberOfJets30; /* always use default not any of the variants */
+
+ //   std::cout<<" In njet adjustment code, leg1 and leg2 mc match types are "<<genhelper.leg1_MCMatchType()<<" "<<genhelper.leg2_MCMatchType()<<"\n";
+
+    if(RECOILCORRECTION_=="MG5_W" || RECOILCORRECTION_=="aMCatNLO_W") /* w+jets */
+    {
+      njets = numberOfJets30+1;
+    }
+    
+    else if(MetSystematicType_=="MEtSys::ProcessType::EWK" || MetSystematicType_=="MEtSys::ProcessType::TOP") /* t, tt, or vv */
+    {
+      if(currentPair.CandidateEventType()==TupleCandidateEventTypes::EleTau || currentPair.CandidateEventType()==TupleCandidateEventTypes::MuonTau)
+      {
+        if(genhelper.leg2_MCMatchType() == GenMcMatchTypes::jetOrPuFake) njets = numberOfJets30+1;
+      }
+      else if(currentPair.CandidateEventType()==TupleCandidateEventTypes::TauTau)
+      {
+        njets = numberOfJets30;
+        if(genhelper.leg1_MCMatchType() == GenMcMatchTypes::jetOrPuFake) njets++;
+        if(genhelper.leg2_MCMatchType() == GenMcMatchTypes::jetOrPuFake) njets++;
+      }
+    }
+
+    ////////////////////////////
+    numberOfJetsForRecoilCorr = njets;
+    ////////////////////////////
+
+
+    if(RECOILCORRECTION_=="NONE")
+    {
+      corr = uncorr;
+    }
+
+    else 
+    {
+
+      float temp_px = 0;
+      float temp_py = 0;
+
+      m_recoilMvaMetCorrector->CorrectByMeanResolution(
+        float(uncorr.Px()), 
+        float(uncorr.Py()), 
+        float(genTotal.Px()), 
+        float(genTotal.Py()), 
+        float(genVisible.Px()), 
+        float(genVisible.Py()), 
+        njets,  
+        temp_px, // corrected met px (float)
+        temp_py  // corrected met py (float)
+      );
+
+      corr.SetPx(temp_px);
+      corr.SetPy(temp_py);
+
+    }
+
+
+
+    /* handle the PF met systematics */
+    /* need to do this twice once with recoil applied and once without */
+
+    if(MetSystematicType_=="NONE")
+    {
+      responseUP_corr = corr;
+      responseDOWN_corr = corr;
+      resolutionUP_corr = corr;
+      resolutionDOWN_corr = corr;
+
+      responseUP_uncorr = uncorr;
+      responseDOWN_uncorr = uncorr;
+      resolutionUP_uncorr = uncorr;
+      resolutionDOWN_uncorr = uncorr;
+
+    }
+
+    else
+    {
+
+      /* prelims */
+
+      int type_of_process = -999;
+
+      if(MetSystematicType_=="MEtSys::ProcessType::BOSON") type_of_process = MEtSys::ProcessType::BOSON;
+      else if(MetSystematicType_=="MEtSys::ProcessType::EWK") type_of_process = MEtSys::ProcessType::EWK;
+      else if(MetSystematicType_=="MEtSys::ProcessType::TOP") type_of_process = MEtSys::ProcessType::TOP;
+
+
+      /* do the responseUP starting with RECOIL corrected PF met */
+
+      float responseUP_px_corr = 0;
+      float responseUP_py_corr = 0;
+
+      m_metSys->ApplyMEtSys(
+        float(corr.Px()), float(corr.Py()), 
+        float(genTotal.Px()),float(genTotal.Py()), 
+        float(genVisible.Px()),float(genVisible.Py()),
+        njets,
+        type_of_process,
+        MEtSys::SysType::Response,
+        MEtSys::SysShift::Up,
+        responseUP_px_corr, responseUP_py_corr
+        );
+
+      responseUP_corr.SetPx(responseUP_px_corr);
+      responseUP_corr.SetPy(responseUP_py_corr);
+
+      /* do the responseUP starting with NON-RECOIL corrected PF met */
+
+      float responseUP_px_uncorr = 0;
+      float responseUP_py_uncorr = 0;
+
+      m_metSys->ApplyMEtSys(
+        float(uncorr.Px()), float(uncorr.Py()), 
+        float(genTotal.Px()),float(genTotal.Py()), 
+        float(genVisible.Px()),float(genVisible.Py()),
+        njets,
+        type_of_process,
+        MEtSys::SysType::Response,
+        MEtSys::SysShift::Up,
+        responseUP_px_uncorr, responseUP_py_uncorr
+        );
+
+      responseUP_uncorr.SetPx(responseUP_px_uncorr);
+      responseUP_uncorr.SetPy(responseUP_py_uncorr);
+
+
+
+
+
+      /* do the responseDOWN starting with RECOIL corrected PF met  */
+
+      float responseDOWN_px_corr = 0;
+      float responseDOWN_py_corr = 0;
+
+      m_metSys->ApplyMEtSys(
+        float(corr.Px()), float(corr.Py()), 
+        float(genTotal.Px()),float(genTotal.Py()), 
+        float(genVisible.Px()),float(genVisible.Py()),
+        njets,
+        type_of_process,
+        MEtSys::SysType::Response,
+        MEtSys::SysShift::Down,
+        responseDOWN_px_corr, responseDOWN_py_corr
+        );
+
+      responseDOWN_corr.SetPx(responseDOWN_px_corr);
+      responseDOWN_corr.SetPy(responseDOWN_py_corr);
+
+
+      /* do the responseDOWN starting with NON RECOIL corrected PF met  */
+
+
+      float responseDOWN_px_uncorr = 0;
+      float responseDOWN_py_uncorr = 0;
+
+      m_metSys->ApplyMEtSys(
+        float(uncorr.Px()), float(uncorr.Py()), 
+        float(genTotal.Px()),float(genTotal.Py()), 
+        float(genVisible.Px()),float(genVisible.Py()),
+        njets,
+        type_of_process,
+        MEtSys::SysType::Response,
+        MEtSys::SysShift::Down,
+        responseDOWN_px_uncorr, responseDOWN_py_uncorr
+        );
+
+      responseDOWN_uncorr.SetPx(responseDOWN_px_uncorr);
+      responseDOWN_uncorr.SetPy(responseDOWN_py_uncorr);
+
+
+
+      /* do the resolutionUP  starting with RECOIL corrected PF met */
+
+      float resolutionUP_px_corr = 0;
+      float resolutionUP_py_corr = 0;
+
+      m_metSys->ApplyMEtSys(
+        float(corr.Px()), float(corr.Py()), 
+        float(genTotal.Px()),float(genTotal.Py()), 
+        float(genVisible.Px()),float(genVisible.Py()),
+        njets,
+        type_of_process,
+        MEtSys::SysType::Resolution,
+        MEtSys::SysShift::Up,
+        resolutionUP_px_corr, resolutionUP_py_corr
+        );
+
+      resolutionUP_corr.SetPx(resolutionUP_px_corr);
+      resolutionUP_corr.SetPy(resolutionUP_py_corr);
+
+      /* do the resolutionUP  starting with NON RECOIL corrected PF met */
+
+      float resolutionUP_px_uncorr = 0;
+      float resolutionUP_py_uncorr = 0;
+
+      m_metSys->ApplyMEtSys(
+        float(uncorr.Px()), float(uncorr.Py()), 
+        float(genTotal.Px()),float(genTotal.Py()), 
+        float(genVisible.Px()),float(genVisible.Py()),
+        njets,
+        type_of_process,
+        MEtSys::SysType::Resolution,
+        MEtSys::SysShift::Up,
+        resolutionUP_px_uncorr, resolutionUP_py_uncorr
+        );
+
+      resolutionUP_uncorr.SetPx(resolutionUP_px_uncorr);
+      resolutionUP_uncorr.SetPy(resolutionUP_py_uncorr);
+
+
+      /* do the resolutionDOWN  starting with RECOIL corrected PF met */
+
+      float resolutionDOWN_px_corr = 0;
+      float resolutionDOWN_py_corr = 0;
+
+      m_metSys->ApplyMEtSys(
+        float(corr.Px()), float(corr.Py()), 
+        float(genTotal.Px()),float(genTotal.Py()), 
+        float(genVisible.Px()),float(genVisible.Py()),
+        njets,
+        type_of_process,
+        MEtSys::SysType::Resolution,
+        MEtSys::SysShift::Down,
+        resolutionDOWN_px_corr, resolutionDOWN_py_corr
+        );
+
+      resolutionDOWN_corr.SetPx(resolutionDOWN_px_corr);
+      resolutionDOWN_corr.SetPy(resolutionDOWN_py_corr);
+          
+
+      /* do the resolutionDOWN  starting with NON RECOIL corrected PF met */
+
+      float resolutionDOWN_px_uncorr = 0;
+      float resolutionDOWN_py_uncorr = 0;
+
+      m_metSys->ApplyMEtSys(
+        float(uncorr.Px()), float(uncorr.Py()), 
+        float(genTotal.Px()),float(genTotal.Py()), 
+        float(genVisible.Px()),float(genVisible.Py()),
+        njets,
+        type_of_process,
+        MEtSys::SysType::Resolution,
+        MEtSys::SysShift::Down,
+        resolutionDOWN_px_uncorr, resolutionDOWN_py_uncorr
+        );
+
+      resolutionDOWN_uncorr.SetPx(resolutionDOWN_px_uncorr);
+      resolutionDOWN_uncorr.SetPy(resolutionDOWN_py_uncorr);
+
+    }
+
+
+
+
+    /* set values in FlatTuple starting from non RECOIL corrected PF met */
+
+
+    responseUP_pfMET = responseUP_uncorr.Pt();
+    responseUP_pfMETphi = responseUP_uncorr.Phi(); 
+    responseUP_MTpfMET_leg1 = GetTransverseMass(currentPair.leg1().p4(), responseUP_uncorr);
+    responseUP_MTpfMET_leg2 = GetTransverseMass(currentPair.leg2().p4(), responseUP_uncorr);
+
+    responseDOWN_pfMET = responseDOWN_uncorr.Pt();
+    responseDOWN_pfMETphi = responseDOWN_uncorr.Phi(); 
+    responseDOWN_MTpfMET_leg1 = GetTransverseMass(currentPair.leg1().p4(), responseDOWN_uncorr);
+    responseDOWN_MTpfMET_leg2 = GetTransverseMass(currentPair.leg2().p4(), responseDOWN_uncorr);
+
+    resolutionUP_pfMET = resolutionUP_uncorr.Pt();
+    resolutionUP_pfMETphi = resolutionUP_uncorr.Phi(); 
+    resolutionUP_MTpfMET_leg1 = GetTransverseMass(currentPair.leg1().p4(), resolutionUP_uncorr);
+    resolutionUP_MTpfMET_leg2 = GetTransverseMass(currentPair.leg2().p4(), resolutionUP_uncorr);
+
+    resolutionDOWN_pfMET = resolutionDOWN_uncorr.Pt();
+    resolutionDOWN_pfMETphi = resolutionDOWN_uncorr.Phi(); 
+    resolutionDOWN_MTpfMET_leg1 = GetTransverseMass(currentPair.leg1().p4(), resolutionDOWN_uncorr);
+    resolutionDOWN_MTpfMET_leg2 = GetTransverseMass(currentPair.leg2().p4(), resolutionDOWN_uncorr);
+
+
+
+
+    /* set values in FlatTuple starting from  RECOIL corrected PF met */
+
+    CORRpfMET = corr.Pt();
+    CORRpfMETphi = corr.Phi();
+    MTCORRpfMET_leg1 = GetTransverseMass(currentPair.leg1().p4(), corr);
+    MTCORRpfMET_leg2 = GetTransverseMass(currentPair.leg2().p4(), corr);
+
+
+    responseUP_CORRpfMET = responseUP_corr.Pt();
+    responseUP_CORRpfMETphi = responseUP_corr.Phi(); 
+    responseUP_MTCORRpfMET_leg1 = GetTransverseMass(currentPair.leg1().p4(), responseUP_corr);
+    responseUP_MTCORRpfMET_leg2 = GetTransverseMass(currentPair.leg2().p4(), responseUP_corr);
+
+    responseDOWN_CORRpfMET = responseDOWN_corr.Pt();
+    responseDOWN_CORRpfMETphi = responseDOWN_corr.Phi(); 
+    responseDOWN_MTCORRpfMET_leg1 = GetTransverseMass(currentPair.leg1().p4(), responseDOWN_corr);
+    responseDOWN_MTCORRpfMET_leg2 = GetTransverseMass(currentPair.leg2().p4(), responseDOWN_corr);
+
+    resolutionUP_CORRpfMET = resolutionUP_corr.Pt();
+    resolutionUP_CORRpfMETphi = resolutionUP_corr.Phi(); 
+    resolutionUP_MTCORRpfMET_leg1 = GetTransverseMass(currentPair.leg1().p4(), resolutionUP_corr);
+    resolutionUP_MTCORRpfMET_leg2 = GetTransverseMass(currentPair.leg2().p4(), resolutionUP_corr);
+
+    resolutionDOWN_CORRpfMET = resolutionDOWN_corr.Pt();
+    resolutionDOWN_CORRpfMETphi = resolutionDOWN_corr.Phi(); 
+    resolutionDOWN_MTCORRpfMET_leg1 = GetTransverseMass(currentPair.leg1().p4(), resolutionDOWN_corr);
+    resolutionDOWN_MTCORRpfMET_leg2 = GetTransverseMass(currentPair.leg2().p4(), resolutionDOWN_corr);
+
+    // std::cout<<" --------------------------------- \n";
+
+    // std::cout<<" SZS: uncorr_PFMET = "<<uncorr.Pt();
+    // std::cout<<" responseUP= "<<responseUP_uncorr.Pt();
+    // std::cout<<" responseDOWN= "<<responseDOWN_uncorr.Pt();
+    // std::cout<<" resolutionUP= "<<resolutionUP_uncorr.Pt();
+    // std::cout<<" resolutionDOWN= "<<resolutionDOWN_uncorr.Pt();
+    // std::cout<<"\n";
+
+    // std::cout<<" SZS: corr_PFMET = "<<corr.Pt();
+    // std::cout<<" responseUP= "<<responseUP_corr.Pt();
+    // std::cout<<" responseDOWN= "<<responseDOWN_corr.Pt();
+    // std::cout<<" resolutionUP= "<<resolutionUP_corr.Pt();
+    // std::cout<<" resolutionDOWN= "<<resolutionDOWN_corr.Pt();
+    // std::cout<<"\n";
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  }
+
+}
+
 
 
 void FlatTupleGenerator::handleMvaMetAndRecoil(const edm::Event& iEvent, const edm::EventSetup& iSetup,
@@ -2954,6 +3363,44 @@ void FlatTupleGenerator::handlePairIndepInfo(const edm::Event& iEvent, const edm
   RAWpuppiMET = NAN; 
   RAWpuppiMETphi = NAN; 
 
+  CORRpfMET = NAN;
+  CORRpfMETphi = NAN;
+  MTCORRpfMET_leg1 = NAN;
+  MTCORRpfMET_leg2 = NAN;
+  responseUP_pfMET = NAN;
+  responseUP_pfMETphi = NAN;
+  responseUP_MTpfMET_leg1 = NAN;
+  responseUP_MTpfMET_leg2 = NAN;
+  responseDOWN_pfMET = NAN;
+  responseDOWN_pfMETphi = NAN;
+  responseDOWN_MTpfMET_leg1 = NAN;
+  responseDOWN_MTpfMET_leg2 = NAN;
+  resolutionUP_pfMET = NAN;
+  resolutionUP_pfMETphi = NAN;
+  resolutionUP_MTpfMET_leg1 = NAN;
+  resolutionUP_MTpfMET_leg2 = NAN;
+  resolutionDOWN_pfMET = NAN;
+  resolutionDOWN_pfMETphi = NAN;
+  resolutionDOWN_MTpfMET_leg1 = NAN;
+  resolutionDOWN_MTpfMET_leg2 = NAN;
+  responseUP_CORRpfMET = NAN;
+  responseUP_CORRpfMETphi = NAN;
+  responseUP_MTCORRpfMET_leg1 = NAN;
+  responseUP_MTCORRpfMET_leg2 = NAN;
+  responseDOWN_CORRpfMET = NAN;
+  responseDOWN_CORRpfMETphi = NAN;
+  responseDOWN_MTCORRpfMET_leg1 = NAN;
+  responseDOWN_MTCORRpfMET_leg2 = NAN;
+  resolutionUP_CORRpfMET = NAN;
+  resolutionUP_CORRpfMETphi = NAN;
+  resolutionUP_MTCORRpfMET_leg1 = NAN;
+  resolutionUP_MTCORRpfMET_leg2 = NAN;
+  resolutionDOWN_CORRpfMET = NAN;
+  resolutionDOWN_CORRpfMETphi = NAN;
+  resolutionDOWN_MTCORRpfMET_leg1 = NAN;
+  resolutionDOWN_MTCORRpfMET_leg2 = NAN;
+
+
   leg1_dz = NAN;
   leg1_dxy = NAN;
   leg1_EffectiveArea = NAN;
@@ -3713,15 +4160,71 @@ void FlatTupleGenerator::beginJob()
   /* pf-MET                   */
   //////////////////////////////
 
-  FlatTuple->Branch("pfMET", &pfMET);
-  FlatTuple->Branch("pfMETphi", &pfMETphi);
+  FlatTuple->Branch("pfMET", &pfMET);                         /* PF MET direct from miniAOD */
+  FlatTuple->Branch("pfMETphi", &pfMETphi);                   /* PF MET direct from miniAOD */
+
+  FlatTuple->Branch("MTpfMET_leg1", &MTpfMET_leg1);           /* mt_1 using PF MET direct from miniAOD */
+  FlatTuple->Branch("MTpfMET_leg2", &MTpfMET_leg2);           /* mt_2 using PF MET direct from miniAOD */
+    
+  FlatTuple->Branch("CORRpfMET", &CORRpfMET);         /* PF MET with RECOIL CORRECTIONS applied */
+  FlatTuple->Branch("CORRpfMETphi", &CORRpfMETphi);   /* PF MET with RECOIL CORRECTIONS applied */
+
+  FlatTuple->Branch("MTCORRpfMET_leg1", &MTCORRpfMET_leg1);    /* mt_1 using PF MET with recoil corr */
+  FlatTuple->Branch("MTCORRpfMET_leg2", &MTCORRpfMET_leg2);    /* mt_2 using PF MET with recoil corr */
+    
+
+  // only keep for non-tau ES and non-electron ES systematic varied pairs 
+
+  if(TauEsVariantToKeep_=="NOMINAL" && ElectronEsVariantToKeep_=="NOMINAL" )
+  {
+
+    // response +/- and resolusion +/- variants APPLIED ONTO NON-RECOIL CORRECTED PFMET
+
+    FlatTuple->Branch("responseUP_pfMET", &responseUP_pfMET);
+    FlatTuple->Branch("responseUP_pfMETphi", &responseUP_pfMETphi);
+    FlatTuple->Branch("responseUP_MTpfMET_leg1", &responseUP_MTpfMET_leg1);
+    FlatTuple->Branch("responseUP_MTpfMET_leg2", &responseUP_MTpfMET_leg2);
+    FlatTuple->Branch("responseDOWN_pfMET", &responseDOWN_pfMET);
+    FlatTuple->Branch("responseDOWN_pfMETphi", &responseDOWN_pfMETphi);
+    FlatTuple->Branch("responseDOWN_MTpfMET_leg1", &responseDOWN_MTpfMET_leg1);
+    FlatTuple->Branch("responseDOWN_MTpfMET_leg2", &responseDOWN_MTpfMET_leg2);
+    FlatTuple->Branch("resolutionUP_pfMET", &resolutionUP_pfMET);
+    FlatTuple->Branch("resolutionUP_pfMETphi", &resolutionUP_pfMETphi);
+    FlatTuple->Branch("resolutionUP_MTpfMET_leg1", &resolutionUP_MTpfMET_leg1);
+    FlatTuple->Branch("resolutionUP_MTpfMET_leg2", &resolutionUP_MTpfMET_leg2);
+    FlatTuple->Branch("resolutionDOWN_pfMET", &resolutionDOWN_pfMET);
+    FlatTuple->Branch("resolutionDOWN_pfMETphi", &resolutionDOWN_pfMETphi);
+    FlatTuple->Branch("resolutionDOWN_MTpfMET_leg1", &resolutionDOWN_MTpfMET_leg1);
+    FlatTuple->Branch("resolutionDOWN_MTpfMET_leg2", &resolutionDOWN_MTpfMET_leg2);
+
+    // response +/- and resolusion +/- variants APPLIED ONTO RECOIL CORRECTED PFMET
+
+    FlatTuple->Branch("responseUP_CORRpfMET", &responseUP_CORRpfMET);
+    FlatTuple->Branch("responseUP_CORRpfMETphi", &responseUP_CORRpfMETphi);
+    FlatTuple->Branch("responseUP_MTCORRpfMET_leg1", &responseUP_MTCORRpfMET_leg1);
+    FlatTuple->Branch("responseUP_MTCORRpfMET_leg2", &responseUP_MTCORRpfMET_leg2);
+    FlatTuple->Branch("responseDOWN_CORRpfMET", &responseDOWN_CORRpfMET);
+    FlatTuple->Branch("responseDOWN_CORRpfMETphi", &responseDOWN_CORRpfMETphi);
+    FlatTuple->Branch("responseDOWN_MTCORRpfMET_leg1", &responseDOWN_MTCORRpfMET_leg1);
+    FlatTuple->Branch("responseDOWN_MTCORRpfMET_leg2", &responseDOWN_MTCORRpfMET_leg2);
+    FlatTuple->Branch("resolutionUP_CORRpfMET", &resolutionUP_CORRpfMET);
+    FlatTuple->Branch("resolutionUP_CORRpfMETphi", &resolutionUP_CORRpfMETphi);
+    FlatTuple->Branch("resolutionUP_MTCORRpfMET_leg1", &resolutionUP_MTCORRpfMET_leg1);
+    FlatTuple->Branch("resolutionUP_MTCORRpfMET_leg2", &resolutionUP_MTCORRpfMET_leg2);
+    FlatTuple->Branch("resolutionDOWN_CORRpfMET", &resolutionDOWN_CORRpfMET);
+    FlatTuple->Branch("resolutionDOWN_CORRpfMETphi", &resolutionDOWN_CORRpfMETphi);
+    FlatTuple->Branch("resolutionDOWN_MTCORRpfMET_leg1", &resolutionDOWN_MTCORRpfMET_leg1);
+    FlatTuple->Branch("resolutionDOWN_MTCORRpfMET_leg2", &resolutionDOWN_MTCORRpfMET_leg2);
+
+
+  }
+
+
+
 
   
   if(!SmallTree_)
   {
-    FlatTuple->Branch("MTpfMET_leg1", &MTpfMET_leg1);
-    FlatTuple->Branch("MTpfMET_leg2", &MTpfMET_leg2);
-
     FlatTuple->Branch("RAWpfMET", &RAWpfMET);
     FlatTuple->Branch("RAWpfMETphi", &RAWpfMETphi);
 
@@ -3824,12 +4327,10 @@ void FlatTupleGenerator::beginJob()
   /* trigger related info     */
   //////////////////////////////
 
-  // these are always off in small tree format
-  // since H2Tau baseline has events passing the needed
-  // triggers
 
-  if(!SmallTree_)
-  {
+  /* in 2016 samples we always need this ! */
+  // if(!SmallTree_)
+  // {
     for(std::size_t x = 0; x<triggerSummaryChecks.size();++x ) 
     {
       std::string versionStrippedName = triggerSummaryChecks.at(x);
@@ -3853,7 +4354,7 @@ void FlatTupleGenerator::beginJob()
     FlatTuple->Branch("leg2_maxPtTrigObjMatch", &leg2_maxPtTrigObjMatch);
 
     FlatTuple->Branch("PairPassesDoubleTauIsoTau28MatchCut", &PairPassesDoubleTauIsoTau28MatchCut);
-  }
+  //}
 
   //////////////////////////////
   /* leg1 info                */

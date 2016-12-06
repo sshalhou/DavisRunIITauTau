@@ -120,6 +120,7 @@ private:
   string tauIsolForOrderingPair_;
   bool smallerTauIsoValueIsBetter_;
   bool BuildEfficiencyTree_;
+  bool rankParisByPt_;
 
 };
 
@@ -152,7 +153,8 @@ EffMuonSrc_(iConfig.getParameter<edm::InputTag>("EffMuonSrc" )),
 EffTauSrc_(iConfig.getParameter<edm::InputTag>("EffTauSrc" )),
 tauIsolForOrderingPair_(iConfig.getParameter<string>("tauIsolForOrderingPair" )),
 smallerTauIsoValueIsBetter_(iConfig.getParameter<bool>("smallerTauIsoValueIsBetter" )),
-BuildEfficiencyTree_(iConfig.getParameter<bool>("BuildEfficiencyTree" ))
+BuildEfficiencyTree_(iConfig.getParameter<bool>("BuildEfficiencyTree" )),
+rankParisByPt_(iConfig.getParameter<bool>("rankParisByPt" ))
 {
 
 
@@ -356,7 +358,9 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
 
         }
 
-        /* In the case of tau_h + tau_h leg1 has to be the lowest isolation tau */
+        /* In the case of tau_h + tau_h leg1 has to be the better isolation tau 
+          unless pt ordering is chosen   
+        */
         else if(abs(mvamets->at(m).userCand("lepton0").get()->pdgId())==15 &&\
                 abs(mvamets->at(m).userCand("lepton1").get()->pdgId())==15)
         {
@@ -377,7 +381,7 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
             default_ordering = 1;
           }
 
-          if(default_ordering)
+          if(default_ordering && !rankParisByPt_)
           {
 
             CurrentCandidateEvent.set_leg1(*legA);
@@ -393,7 +397,7 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
           }
 
 
-          else /* invert */
+          else if(!rankParisByPt_) /* invert */
           {
 
             CurrentCandidateEvent.set_leg1(*legB);
@@ -408,6 +412,32 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
 
           }
            
+          else if(rankParisByPt_)
+          {
+
+            /* order the tau legs by pT */
+
+
+            if(legA->pt() >= legB->pt() )
+            {
+              CurrentCandidateEvent.set_leg1(*legA);
+              l1.SetPtEtaPhiM(legA->pt(), legA->eta(), legA->phi(),legA->mass());
+          
+              CurrentCandidateEvent.set_leg2(*legB);
+              l2.SetPtEtaPhiM(legB->pt(), legB->eta(), legB->phi(),legB->mass());
+            }
+
+            else 
+            {
+              CurrentCandidateEvent.set_leg1(*legB);
+              l1.SetPtEtaPhiM(legB->pt(), legB->eta(), legB->phi(),legB->mass());
+        
+              CurrentCandidateEvent.set_leg2(*legA);
+              l2.SetPtEtaPhiM(legA->pt(), legA->eta(), legA->phi(),legA->mass());
+            }
+
+          }
+
 
 
        //   std::cout<<" JUST CREATED A TAU TAU DR = "<<l1.DeltaR(l2)<<"\n";

@@ -26,16 +26,16 @@ filter_ = []
 
 # ----------------------------------------------------
 # ------------[user edit here]------------------------
-filter_.append('pt>13.0')
+filter_.append('pt>10.0')
 filter_.append('abs(eta)<2.5')
 filter_.append('abs(userFloat("dxy"))<0.045')
 filter_.append('abs(userFloat("dz"))<0.2')
-filter_.append('abs(userFloat("PASS_nonTrigMVA80"))==1.0')
 filter_.append('userFloat("passConversionVeto")==1.0')
 filter_.append('userFloat("numberOfMissingInnerHits")<=1.0')
-# ----------------------------------------------------
-# ----------------------------------------------------
+filter_.append('( (abs(userFloat("PASS_nonTrigMVA80"))==1.0) || (abs(userFloat("PASS_nonTrigMVA90"))==1.0) )')
 
+# ----------------------------------------------------
+# ----------------------------------------------------
 
 electronFilter = cms.string(and_string_concatonator(filter_))
 
