@@ -35,6 +35,7 @@ git cms-init
 
 # PF MET UNC 
 
+git cms-addpkg CondTools/BTau
 git cms-merge-topic cms-met:METRecipe_8020
 
 
@@ -69,7 +70,7 @@ cp /afs/cern.ch/user/s/sshalhou/public/CMSSW_8X_MODS/PatCandidates/MET.cc_mod Da
 
 git clone git@github.com:veelken/SVfit_standalone.git TauAnalysis/SVfitStandalone
 cd TauAnalysis/SVfitStandalone/
-git checkout master
+git checkout HIG-16-006
 cd $CMSSW_BASE/src
 
 # MET RECOIL CORRECTIONS (SAME CODE FOR PF AND MVA MET)
