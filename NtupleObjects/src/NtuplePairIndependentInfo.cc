@@ -41,7 +41,9 @@ NtuplePairIndependentInfo::NtuplePairIndependentInfo()
   m_eeBadScFilter = 1;
   m_chargedHadronTrackResolutionFilter = 1;
   m_muonBadTrackFilter = 1;
-
+  m_globalTightHalo2016Filter = 1;
+  m_BadChargedCandidateFilter = 1;
+  m_BadPFMuonFilter = 1;
 
 
   m_GenBosonVisibleMomentum.SetXYZT(NAN,NAN,NAN,NAN);
@@ -108,6 +110,24 @@ void  NtuplePairIndependentInfo::fill_muonBadTrackFilter(bool arg)
     m_muonBadTrackFilter = arg; 
 }
  
+
+void  NtuplePairIndependentInfo::fill_globalTightHalo2016Filter(bool arg)
+{ 
+    m_globalTightHalo2016Filter = arg; 
+}
+ 
+void  NtuplePairIndependentInfo::fill_BadChargedCandidateFilter(bool arg)
+{ 
+    m_BadChargedCandidateFilter = arg; 
+}
+ 
+void  NtuplePairIndependentInfo::fill_BadPFMuonFilter(bool arg)
+{ 
+    m_BadPFMuonFilter = arg; 
+}
+
+
+
 
 
 
@@ -305,6 +325,9 @@ bool NtuplePairIndependentInfo::goodVertices() const { return m_goodVertices; };
 bool NtuplePairIndependentInfo::eeBadScFilter() const { return m_eeBadScFilter; };
 bool NtuplePairIndependentInfo::chargedHadronTrackResolutionFilter() const { return m_chargedHadronTrackResolutionFilter; };
 bool NtuplePairIndependentInfo::muonBadTrackFilter() const { return m_muonBadTrackFilter; };
+bool NtuplePairIndependentInfo::globalTightHalo2016Filter() const { return m_globalTightHalo2016Filter; };
+bool NtuplePairIndependentInfo::BadChargedCandidateFilter() const { return m_BadChargedCandidateFilter; };
+bool NtuplePairIndependentInfo::BadPFMuonFilter() const { return m_BadPFMuonFilter; };
 
 
 LorentzVector  NtuplePairIndependentInfo::GenBosonVisibleMomentum() const { return m_GenBosonVisibleMomentum; };

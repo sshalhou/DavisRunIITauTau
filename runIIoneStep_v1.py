@@ -14,7 +14,7 @@
 # will write both FlatTuple and Ntuple to disk
 ######################################
 
-DEBUG_NTUPLE = False
+DEBUG_NTUPLE = True
 
 ######################################
 # if DEBUG_NTUPLE_INPUT is set to True
@@ -28,7 +28,7 @@ DEBUG_NTUPLE_INPUT = False
 # how many events to run, -1 means run all 
 ######################################
 
-MAX_EVENTS = 5000
+MAX_EVENTS = 500
 
 ######################################
 # datasets for local running 
@@ -56,6 +56,7 @@ dataSetName_ = "/SUSYGluGluToHToTauTau_M-160_TuneCUETP8M1_13TeV-pythia8/RunIISpr
 myfilelist = cms.untracked.vstring()
 
 if dataSetName_ == "/SUSYGluGluToHToTauTau_M-160_TuneCUETP8M1_13TeV-pythia8/RunIISpring16MiniAODv2-PUSpring16RAWAODSIM_reHLT_80X_mcRun2_asymptotic_v14-v1/MINIAODSIM":
+	#myfilelist.extend(['file:/uscms_data/d3/shalhout/MonoH_2500_800_reHLT.root'])
 	myfilelist.extend(['file:/uscms_data/d3/shalhout/SUSY_GG160_reHLT.root'])
 
 if dataSetName_ == "/GluGluHToTauTau_M125_13TeV_powheg_pythia8/RunIISpring16MiniAODv2-PUSpring16RAWAODSIM_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v1/MINIAODSIM":
@@ -168,6 +169,10 @@ if BUILD_ELECTRON_TAU : print 'e-tau',
 if BUILD_MUON_MUON : print 'mu-mu',
 if BUILD_MUON_TAU : print 'mu-tau',
 if BUILD_TAU_TAU : print 'tau-tau',
+if BUILD_ELECTRON_TAUBOOSTED : print 'e-tauBoosted',
+if BUILD_MUON_TAUBOOSTED : print 'mu-tauBoosted',
+if BUILD_TAUBOOSTED_TAUBOOSTED : print 'tauBoosted-tauBoosted',
+
 if BUILD_TAU_ES_VARIANTS : print ' + tau Es Variants',
 if BUILD_ELECTRON_ES_VARIANTS : print ' + electron Es Variants for eleMu channel (only!) '
 if BUILD_EFFICIENCY_TREE : print ' will generate eff tree for e+X, mu+X, and tau+X',
@@ -218,6 +223,11 @@ process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(MAX_EVENTS) 
 # input - remove for crab running
 ###################################
 
+# process.source = cms.Source("PoolSource",fileNames=myfilelist,
+# 			eventsToProcess = cms.untracked.VEventRange('1:40203-1:40203','1:42012-1:42012','1:41436-1:41436'))	
+
+
+
 process.source = cms.Source("PoolSource",fileNames=myfilelist)
 
 # process.source = cms.Source("PoolSource",fileNames=myfilelist,
@@ -267,6 +277,9 @@ process.Cumulative = cms.EDAnalyzer('CumulativeInfoAdder',
 	)
 
 
+
+
+
 ###################################
 # vertex filtering 
 #     - filter+clone vertex collection
@@ -282,6 +295,19 @@ process.filteredVertices = cms.EDFilter(
     filter = cms.bool(True) # drop events without good quality veritces
 )
 
+############################################
+# TESTING A VERY SIMPLE VERY EARLY FILTER
+############################################
+
+process.SimpleFilter = cms.EDFilter("SimpleFilter",
+  	electronSources = cms.VInputTag("slimmedElectrons"), 
+	muonSources     = cms.VInputTag("slimmedMuons"),
+	tauSources      = cms.VInputTag("slimmedTaus"),
+	BOOSTEDtauSources      = cms.VInputTag("slimmedTausBoosted"),
+	vertexSrc =cms.InputTag('filteredVertices::DavisNtuple'),
+    filter = cms.bool(True)
+	)
+
 
 ###################################
 # re-apply Jet Energy Corrections
@@ -293,13 +319,13 @@ process.load('Configuration.StandardSequences.MagneticField_38T_cff')
 process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff")
 
 
-# from RecoMET.METPUSubtraction.localSqlite import recorrectJets
+from RecoMET.METPUSubtraction.jet_recorrections import recorrectJets
 
-# if sampleData.EventType == 'MC':
-# 	recorrectJets(process, False)
+if sampleData.EventType == 'MC':
+	recorrectJets(process, False)
 
-# if sampleData.EventType == 'DATA':
-# 	recorrectJets(process, True)
+if sampleData.EventType == 'DATA':
+	recorrectJets(process, True)
 
 ###################################
 # apply jet filter onto 
@@ -310,8 +336,8 @@ from DavisRunIITauTau.TupleConfigurations.ConfigJets_cfi import jetFilter
 
 
 process.filteredSlimmedJets = cms.EDFilter("PATJetRefSelector",
-	src = cms.InputTag('slimmedJets'),
-	#src = cms.InputTag('patJetsReapplyJEC'),
+	#src = cms.InputTag('slimmedJets'),
+	src = cms.InputTag('patJetsReapplyJEC'),
 	cut = jetFilter
 	)
 
@@ -482,6 +508,52 @@ process.customSlimmedTausTauEsDown = cms.EDProducer('CustomPatTauProducer' ,
 
 
 
+# produces all 3 tau variants  -- BOOSTED
+
+
+
+process.customSlimmedTausBoostedTauEsNominal = cms.EDProducer('CustomPatTauProducer' ,
+							tauSrc =cms.InputTag('slimmedTausBoosted'),
+							vertexSrc =cms.InputTag('filteredVertices::DavisNtuple'),
+							NAME=cms.string("BOOSTED"),
+							#TauEsCorrection=cms.double(0.99),
+							TauEsCorrection=cms.double(1.0),
+							TauEsSystematicShift=cms.double(1.0),
+							triggerBitSrc = cms.InputTag("TriggerResults","",HLTlabelType),
+							triggerPreScaleSrc = cms.InputTag("patTrigger"),
+							triggerObjectSrc = cms.InputTag("selectedPatTrigger"),
+							rhoSources = rhoSourceList
+							                 )
+
+
+process.customSlimmedTausBoostedTauEsUp = cms.EDProducer('CustomPatTauProducer' ,
+							tauSrc =cms.InputTag('slimmedTausBoosted'),
+							vertexSrc =cms.InputTag('filteredVertices::DavisNtuple'),
+							NAME=cms.string("BOOSTED"),
+							#TauEsCorrection=cms.double(0.99),
+							TauEsCorrection=cms.double(1.0),
+							TauEsSystematicShift=cms.double(1.03),
+							triggerBitSrc = cms.InputTag("TriggerResults","",HLTlabelType),
+							triggerPreScaleSrc = cms.InputTag("patTrigger"),
+							triggerObjectSrc = cms.InputTag("selectedPatTrigger"),
+							rhoSources = rhoSourceList
+							                 )
+
+
+
+process.customSlimmedTausBoostedTauEsDown = cms.EDProducer('CustomPatTauProducer' ,
+							tauSrc =cms.InputTag('slimmedTausBoosted'),
+							vertexSrc =cms.InputTag('filteredVertices::DavisNtuple'),
+							NAME=cms.string("BOOSTED"),
+							#TauEsCorrection=cms.double(0.99),
+							TauEsCorrection=cms.double(1.0),
+							TauEsSystematicShift=cms.double(0.97),
+							triggerBitSrc = cms.InputTag("TriggerResults","",HLTlabelType),
+							triggerPreScaleSrc = cms.InputTag("patTrigger"),
+							triggerObjectSrc = cms.InputTag("selectedPatTrigger"),
+							rhoSources = rhoSourceList
+							                 )
+
 
 
 ###################################
@@ -533,6 +605,27 @@ process.filteredCustomTausEsDown = cms.EDFilter("PATTauRefSelector",
 	)
 
 
+
+
+
+process.filteredCustomTausBoostedEsNominal = cms.EDFilter("PATTauRefSelector",
+	src = cms.InputTag('customSlimmedTausBoostedTauEsNominal:BOOSTED:DavisNtuple'),
+	cut = tauFilter
+	)
+
+
+process.filteredCustomTausBoostedEsUp = cms.EDFilter("PATTauRefSelector",
+	src = cms.InputTag('customSlimmedTausBoostedTauEsUp:BOOSTED:DavisNtuple'),
+	cut = tauFilter
+	)
+
+process.filteredCustomTausBoostedEsDown = cms.EDFilter("PATTauRefSelector",
+	src = cms.InputTag('customSlimmedTausBoostedTauEsDown:BOOSTED:DavisNtuple'),
+	cut = tauFilter
+	)
+
+
+
 ##################################################
 # apply the max lepton count cut for each type   #
 ##################################################
@@ -579,6 +672,29 @@ process.TrimmedFilteredCustomTausEsDown = cms.EDProducer('TrimmedPatTauProducer'
    					 tauSrc = cms.InputTag("filteredCustomTausEsDown::DavisNtuple"),
 				     MAX_TO_KEEP = cms.uint32(MAX_TAU_COUNT),
 				     NAME=cms.string("TrimmedFilteredCustomTausEsDown"))
+
+
+
+
+process.TrimmedFilteredCustomTausBoostedEsNominal = cms.EDProducer('TrimmedPatTauProducer' ,
+   					 tauSrc = cms.InputTag("filteredCustomTausBoostedEsNominal::DavisNtuple"),
+				     MAX_TO_KEEP = cms.uint32(MAX_TAU_COUNT),
+				     NAME=cms.string("TrimmedFilteredCustomTausBoostedEsNominal"))
+
+
+process.TrimmedFilteredCustomTausBoostedEsUp = cms.EDProducer('TrimmedPatTauProducer' ,
+   					 tauSrc = cms.InputTag("filteredCustomTausBoostedEsUp::DavisNtuple"),
+				     MAX_TO_KEEP = cms.uint32(MAX_TAU_COUNT),
+				     NAME=cms.string("TrimmedFilteredCustomTausBoostedEsUp"))
+
+
+process.TrimmedFilteredCustomTausBoostedEsDown = cms.EDProducer('TrimmedPatTauProducer' ,
+   					 tauSrc = cms.InputTag("filteredCustomTausBoostedEsDown::DavisNtuple"),
+				     MAX_TO_KEEP = cms.uint32(MAX_TAU_COUNT),
+				     NAME=cms.string("TrimmedFilteredCustomTausBoostedEsDown"))
+
+
+
 
 
 
@@ -636,7 +752,10 @@ process.requireCandidateHiggsPair = cms.EDFilter("HiggsCandidateCountFilter",
 
 	tauSources      = cms.VInputTag("TrimmedFilteredCustomTausEsNominal:TrimmedFilteredCustomTausEsNominal:DavisNtuple",
 									"TrimmedFilteredCustomTausEsUp:TrimmedFilteredCustomTausEsUp:DavisNtuple",
-									"TrimmedFilteredCustomTausEsDown:TrimmedFilteredCustomTausEsDown:DavisNtuple"), 
+									"TrimmedFilteredCustomTausEsDown:TrimmedFilteredCustomTausEsDown:DavisNtuple",
+									"TrimmedFilteredCustomTausBoostedEsNominal:TrimmedFilteredCustomTausBoostedEsNominal:DavisNtuple",
+									"TrimmedFilteredCustomTausBoostedEsUp:TrimmedFilteredCustomTausBoostedEsUp:DavisNtuple",
+									"TrimmedFilteredCustomTausBoostedEsDown:TrimmedFilteredCustomTausBoostedEsDown:DavisNtuple"), 
 	countElectronElectrons = cms.bool(BUILD_ELECTRON_ELECTRON),
 	countElectronMuons  = cms.bool(BUILD_ELECTRON_MUON),
 	countElectronTaus = cms.bool(BUILD_ELECTRON_TAU),
@@ -652,6 +771,30 @@ process.requireCandidateHiggsPair = cms.EDFilter("HiggsCandidateCountFilter",
 	)
 
 #########################################
+# RUN PF MET CORR AND ERRORS
+##########################################
+
+# some of the jet selector tools assume running on PAT jets instead of mini-AODs slimmed jets
+# so we change it here 
+
+from PhysicsTools.PatUtils.patPFMETCorrections_cff import selectedPatJetsForMetT1T2Corr
+selectedPatJetsForMetT1T2Corr.src = cms.InputTag("slimmedJets")
+
+from PhysicsTools.PatUtils.patPFMETCorrections_cff import selectedPatJetsForMetT2Corr
+selectedPatJetsForMetT2Corr.src = cms.InputTag("slimmedJets")
+
+
+from PhysicsTools.PatUtils.tools.runMETCorrectionsAndUncertainties import runMetCorAndUncFromMiniAOD
+
+if sampleData.EventType == 'MC':
+	runMetCorAndUncFromMiniAOD(process, isData=False  )
+
+if sampleData.EventType == 'DATA':
+	runMetCorAndUncFromMiniAOD(process, isData=True )
+
+
+
+#########################################
 # new MVA MET (pairwise) interface
 # along with setup for tau ES var
 ##########################################
@@ -661,8 +804,8 @@ process.requireCandidateHiggsPair = cms.EDFilter("HiggsCandidateCountFilter",
 ##################################
 
 from RecoMET.METPUSubtraction.MVAMETConfiguration_cff import runMVAMET
-#runMVAMET( process, jetCollectionPF = "patJetsReapplyJEC")
-runMVAMET( process, jetCollectionPF = "slimmedJets")
+runMVAMET( process, jetCollectionPF = "patJetsReapplyJEC")
+#runMVAMET( process, jetCollectionPF = "slimmedJets")
 
 
 # there is a bug in MVA MET for 8X that requires user to manually set the srcMETs
@@ -728,6 +871,64 @@ process.MVAMETtauEsDown = process.MVAMET.clone(srcLeptons  = cms.VInputTag("Trim
 	                                            cms.InputTag("patpfPUCorrectedMET"),
 	                                            cms.InputTag("patpfPUMET"),
 	                                            cms.InputTag("slimmedMETsPuppi", "", BUGFIX_MET_TYPE) ) ) 
+
+
+##################################################################
+# clone the default (with mods) and adjust for tau BOOSTED ES nominal
+##################################################################
+
+process.MVAMETtauBoostedEsNominal = process.MVAMET.clone(srcLeptons  = cms.VInputTag("TrimmedFilteredCustomMuons:TrimmedFilteredCustomMuons:DavisNtuple", 
+											   "TrimmedFilteredCustomElectrons:TrimmedFilteredCustomElectrons:DavisNtuple", 
+											   "TrimmedFilteredCustomTausBoostedEsNominal:TrimmedFilteredCustomTausBoostedEsNominal:DavisNtuple"),
+												requireOS = cms.bool(False),
+												srcMETs = cms.VInputTag( cms.InputTag("slimmedMETs", "", BUGFIX_MET_TYPE),
+	                                            cms.InputTag("patpfMET"),
+	                                            cms.InputTag("patpfMETT1"),
+	                                            cms.InputTag("patpfTrackMET"),
+	                                            cms.InputTag("patpfNoPUMET"),
+	                                            cms.InputTag("patpfPUCorrectedMET"),
+	                                            cms.InputTag("patpfPUMET"),
+	                                            cms.InputTag("slimmedMETsPuppi", "", BUGFIX_MET_TYPE) ) )
+
+
+
+##################################################################
+# clone the default (with mods) and adjust for BOOSTED tau ES up
+##################################################################
+
+process.MVAMETtauBoostedEsUp = process.MVAMET.clone(srcLeptons  = cms.VInputTag("TrimmedFilteredCustomMuons:TrimmedFilteredCustomMuons:DavisNtuple", 
+											   "TrimmedFilteredCustomElectrons:TrimmedFilteredCustomElectrons:DavisNtuple", 
+											   "TrimmedFilteredCustomTausBoostedEsUp:TrimmedFilteredCustomTausBoostedEsUp:DavisNtuple"),
+												requireOS = cms.bool(False),
+												srcMETs = cms.VInputTag( cms.InputTag("slimmedMETs", "", BUGFIX_MET_TYPE),
+	                                            cms.InputTag("patpfMET"),
+	                                            cms.InputTag("patpfMETT1"),
+	                                            cms.InputTag("patpfTrackMET"),
+	                                            cms.InputTag("patpfNoPUMET"),
+	                                            cms.InputTag("patpfPUCorrectedMET"),
+	                                            cms.InputTag("patpfPUMET"),
+	                                            cms.InputTag("slimmedMETsPuppi", "", BUGFIX_MET_TYPE) ) )
+
+
+
+
+##################################################################
+# clone the default (with mods) and adjust for BOOSTED tau ES down
+##################################################################
+
+process.MVAMETtauBoostedEsDown = process.MVAMET.clone(srcLeptons  = cms.VInputTag("TrimmedFilteredCustomMuons:TrimmedFilteredCustomMuons:DavisNtuple", 
+											   "TrimmedFilteredCustomElectrons:TrimmedFilteredCustomElectrons:DavisNtuple", 
+											   "TrimmedFilteredCustomTausBoostedEsDown:TrimmedFilteredCustomTausBoostedEsDown:DavisNtuple"),
+												requireOS = cms.bool(False),
+												srcMETs = cms.VInputTag( cms.InputTag("slimmedMETs", "", BUGFIX_MET_TYPE),
+	                                            cms.InputTag("patpfMET"),
+	                                            cms.InputTag("patpfMETT1"),
+	                                            cms.InputTag("patpfTrackMET"),
+	                                            cms.InputTag("patpfNoPUMET"),
+	                                            cms.InputTag("patpfPUCorrectedMET"),
+	                                            cms.InputTag("patpfPUMET"),
+	                                            cms.InputTag("slimmedMETsPuppi", "", BUGFIX_MET_TYPE) ) ) 
+
 
 
 
@@ -882,6 +1083,72 @@ process.TupleCandidateEventsTauEsDown = cms.EDProducer('TupleCandidateEventProdu
     rankParisByPt = rankParisByPt_
 						)	
 
+process.TupleCandidateEventsBoosted = cms.EDProducer('TupleCandidateEventProducer' ,
+	puppiMETSrc = cms.InputTag("slimmedMETsPuppi"),
+	pfMETSrc = cms.InputTag("patpfMETT1"), # this has the updated JECs
+	mvaMETSrc = cms.InputTag("MVAMETtauBoostedEsNominal:MVAMET:DavisNtuple"),
+	electronVetoSrc =cms.InputTag("filteredVetoElectrons","","DavisNtuple"),
+	muonVetoSrc = cms.InputTag("filteredVetoMuons","","DavisNtuple"),				
+	pairDeltaRmin = cms.double(0.1),
+	NAME=cms.string("TupleCandidateEventsBoosted"),
+    doSVMass = cms.bool(COMPUTE_SVMASS_AT_NTUPLE),
+    useMVAMET = cms.bool(USE_MVAMET),
+    logMterm = cms.double(SVMASS_LOG_M),
+    svMassVerbose = cms.int32(SVMASS_VERBOSE),
+    # need to order the taus by isolation in tau_h + tau_h pairs
+    tauIsolForOrderingPair = tauIsolForOrderingPair_,
+    smallerTauIsoValueIsBetter = smallerTauIsoValueIsBetter_,
+    EffElectronSrc = cms.InputTag("TrimmedFilteredCustomElectrons:TrimmedFilteredCustomElectrons:DavisNtuple"),
+    EffMuonSrc = cms.InputTag("TrimmedFilteredCustomMuons:TrimmedFilteredCustomMuons:DavisNtuple"),
+    EffTauSrc = cms.InputTag("TrimmedFilteredCustomTausBoostedEsNominal:TrimmedFilteredCustomTausBoostedEsNominal:DavisNtuple"),
+    BuildEfficiencyTree = cms.bool(BUILD_EFFICIENCY_TREE),
+    rankParisByPt = rankParisByPt_
+						)	
+
+
+process.TupleCandidateEventsTauEsUpBoosted = cms.EDProducer('TupleCandidateEventProducer' ,
+	puppiMETSrc = cms.InputTag("slimmedMETsPuppi"),
+	pfMETSrc = cms.InputTag("patpfMETT1"), # this has the updated JECs
+	mvaMETSrc = cms.InputTag("MVAMETtauBoostedEsUp:MVAMET:DavisNtuple"),
+	electronVetoSrc =cms.InputTag("filteredVetoElectrons","","DavisNtuple"),
+	muonVetoSrc = cms.InputTag("filteredVetoMuons","","DavisNtuple"),				
+	pairDeltaRmin = cms.double(0.1), 
+	NAME=cms.string("TupleCandidateEventsTauEsUpBoosted"),
+    doSVMass = cms.bool(COMPUTE_SVMASS_AT_NTUPLE),
+    useMVAMET = cms.bool(USE_MVAMET),
+    logMterm = cms.double(SVMASS_LOG_M),
+    svMassVerbose = cms.int32(SVMASS_VERBOSE),
+    # need to order the taus by isolation in tau_h + tau_h pairs
+    tauIsolForOrderingPair = tauIsolForOrderingPair_,
+    smallerTauIsoValueIsBetter = smallerTauIsoValueIsBetter_,
+    EffElectronSrc = cms.InputTag("TrimmedFilteredCustomElectrons:TrimmedFilteredCustomElectrons:DavisNtuple"),
+    EffMuonSrc = cms.InputTag("TrimmedFilteredCustomMuons:TrimmedFilteredCustomMuons:DavisNtuple"),
+    EffTauSrc = cms.InputTag("TrimmedFilteredCustomTausBoostedEsUp:TrimmedFilteredCustomTausBoostedEsUp:DavisNtuple"),
+    BuildEfficiencyTree = cms.bool(False),
+    rankParisByPt = rankParisByPt_
+						)	
+
+process.TupleCandidateEventsTauEsDownBoosted = cms.EDProducer('TupleCandidateEventProducer' ,
+	puppiMETSrc = cms.InputTag("slimmedMETsPuppi"),
+	pfMETSrc = cms.InputTag("patpfMETT1"), # this has the updated JECs
+	mvaMETSrc = cms.InputTag("MVAMETtauBoostedEsDown:MVAMET:DavisNtuple"),
+	electronVetoSrc =cms.InputTag("filteredVetoElectrons","","DavisNtuple"),
+	muonVetoSrc = cms.InputTag("filteredVetoMuons","","DavisNtuple"),				
+	pairDeltaRmin = cms.double(0.1), 
+	NAME=cms.string("TupleCandidateEventsTauEsDownBoosted"),
+    doSVMass = cms.bool(COMPUTE_SVMASS_AT_NTUPLE),
+    useMVAMET = cms.bool(USE_MVAMET),
+    logMterm = cms.double(SVMASS_LOG_M),
+    svMassVerbose = cms.int32(SVMASS_VERBOSE),
+    # need to order the taus by isolation in tau_h + tau_h pairs
+    tauIsolForOrderingPair = tauIsolForOrderingPair_,
+    smallerTauIsoValueIsBetter = smallerTauIsoValueIsBetter_,
+    EffElectronSrc = cms.InputTag("TrimmedFilteredCustomElectrons:TrimmedFilteredCustomElectrons:DavisNtuple"),
+    EffMuonSrc = cms.InputTag("TrimmedFilteredCustomMuons:TrimmedFilteredCustomMuons:DavisNtuple"),
+    EffTauSrc = cms.InputTag("TrimmedFilteredCustomTausBoostedEsDown:TrimmedFilteredCustomTausBoostedEsDown:DavisNtuple"),
+    BuildEfficiencyTree = cms.bool(False),
+    rankParisByPt = rankParisByPt_
+						)	
 
 process.TupleCandidateEventsElectronEsUp = cms.EDProducer('TupleCandidateEventProducer' ,
 	puppiMETSrc = cms.InputTag("slimmedMETsPuppi"),
@@ -1046,6 +1313,26 @@ process.NtupleEventsElectronEsDown = cms.EDProducer('NtupleEventProducer' ,
 
 
 
+################################
+# 2016 BAD MUON FILTERS 
+# we don't want cuts on these applied here 
+# but in the final analysis, so we invoke them in 
+# tagging as opposed to filter mode and we record the
+# pass/fail result instead of rejecting the failed events
+################################
+
+process.load('RecoMET.METFilters.BadPFMuonFilter_cfi')
+process.BadPFMuonFilter.muons = cms.InputTag("slimmedMuons")
+process.BadPFMuonFilter.PFCandidates = cms.InputTag("packedPFCandidates")
+process.BadPFMuonFilter.taggingMode   = cms.bool(True)
+
+process.load('RecoMET.METFilters.BadChargedCandidateFilter_cfi')
+process.BadChargedCandidateFilter.muons = cms.InputTag("slimmedMuons")
+process.BadChargedCandidateFilter.PFCandidates = cms.InputTag("packedPFCandidates")
+process.BadChargedCandidateFilter.taggingMode   = cms.bool(True)
+
+
+
 
 #################################
 # pair independent content
@@ -1083,6 +1370,8 @@ process.pairIndep = cms.EDProducer('NtuplePairIndependentInfoProducer',
 							mcGenWeightSrc = mcGenWeightSrcInputTag,
 				  			LHEEventProductSrc = LHEEventProductSrcInputTag,
 				  			sampleInfoSrc = sampleData,						
+							BadChargedCandidateFilterSrc = cms.InputTag("BadChargedCandidateFilter","","DavisNtuple"),
+							BadPFMuonFilterSrc = cms.InputTag("BadPFMuonFilter","","DavisNtuple"),
 							triggerResultsPatSrc = cms.InputTag("TriggerResults","","PAT"),
 							triggerResultsRecoSrc = cms.InputTag("TriggerResults","","RECO"),
 							rhoSource = cms.InputTag('fixedGridRhoFastjetAll')
@@ -1293,9 +1582,12 @@ else :
 	if DEBUG_NTUPLE_INPUT is False :
 		process.p *= process.Cumulative
 		process.p *= process.filteredVertices
+		
+		if BUILD_EFFICIENCY_TREE is False:
+			process.p *= process.SimpleFilter
 
-		# process.p *= process.patJetCorrFactorsReapplyJEC 
-		# process.p *= process.patJetsReapplyJEC
+		process.p *= process.patJetCorrFactorsReapplyJEC 
+		process.p *= process.patJetsReapplyJEC
 
 
 		process.p *= process.filteredSlimmedJets
@@ -1309,6 +1601,11 @@ else :
 		process.p *= process.customSlimmedTausTauEsNominal
 		process.p *= process.customSlimmedTausTauEsUp
 		process.p *= process.customSlimmedTausTauEsDown
+
+		process.p *= process.customSlimmedTausBoostedTauEsNominal
+		process.p *= process.customSlimmedTausBoostedTauEsUp
+		process.p *= process.customSlimmedTausBoostedTauEsDown
+
 		process.p *= process.filteredCustomElectrons
 		process.p *= process.filteredCustomElectronsEsUp
 		process.p *= process.filteredCustomElectronsEsDown
@@ -1316,6 +1613,12 @@ else :
 		process.p *= process.filteredCustomTausEsNominal
 		process.p *= process.filteredCustomTausEsUp
 		process.p *= process.filteredCustomTausEsDown
+
+
+		process.p *= process.filteredCustomTausBoostedEsNominal
+		process.p *= process.filteredCustomTausBoostedEsUp
+		process.p *= process.filteredCustomTausBoostedEsDown
+
 
 		process.p *= process.TrimmedFilteredCustomElectrons
 		process.p *= process.TrimmedFilteredCustomElectronsEsUp
@@ -1326,7 +1629,9 @@ else :
 		process.p *= process.TrimmedFilteredCustomTausEsUp 
 		process.p *= process.TrimmedFilteredCustomTausEsDown 
 
-
+		process.p *= process.TrimmedFilteredCustomTausBoostedEsNominal 
+		process.p *= process.TrimmedFilteredCustomTausBoostedEsUp 
+		process.p *= process.TrimmedFilteredCustomTausBoostedEsDown 
 
 		process.p *= process.filteredVetoElectrons
 		process.p *= process.filteredVetoElectronsEsUp
@@ -1338,6 +1643,8 @@ else :
 		if BUILD_EFFICIENCY_TREE is False:
 			process.p *= process.requireCandidateHiggsPair
 
+
+
 		if BUILD_TAU_ES_VARIANTS is True :
 			process.MVAMETtauEsUp
 			process.MVAMETtauEsDown
@@ -1346,6 +1653,19 @@ else :
 			process.MVAMETelectronEsUp
 			process.MVAMETelectronEsDown
 
+
+
+		if (BUILD_ELECTRON_TAUBOOSTED or BUILD_MUON_TAUBOOSTED or BUILD_TAUBOOSTED_TAUBOOSTED) : 
+			process.MVAMETtauBoostedEsNominal
+			process.p *= process.TupleCandidateEventsBoosted
+
+
+			if BUILD_TAU_ES_VARIANTS is True :
+				process.MVAMETtauBoostedEsUp
+				process.MVAMETtauBoostedEsDown
+				process.p *= process.TupleCandidateEventsTauEsUpBoosted
+				process.p *= process.TupleCandidateEventsTauEsDownBoosted
+	
 
 		process.p *= process.TupleCandidateEvents
 		process.p *= process.NtupleEvents
@@ -1363,6 +1683,11 @@ else :
 			process.p *= process.TupleCandidateEventsElectronEsUp
 			process.p *= process.NtupleEventsElectronEsUp
 			process.p *= process.NtupleEventsElectronEsDown
+
+
+		# new MET Filters for 2016	
+		process.p *= process.BadPFMuonFilter 
+		process.p *= process.BadChargedCandidateFilter 
 
 		process.p *= process.pairIndep
 	process.p *= process.BASELINE

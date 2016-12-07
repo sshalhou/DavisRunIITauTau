@@ -78,6 +78,10 @@ public:
   void fill_eeBadScFilter(bool);
   void fill_chargedHadronTrackResolutionFilter(bool);
   void fill_muonBadTrackFilter(bool);
+  void fill_globalTightHalo2016Filter(bool);
+  void fill_BadChargedCandidateFilter(bool);
+  void fill_BadPFMuonFilter(bool);
+
 
 
   /* fill the boson 4-vectors at gen level */
@@ -133,6 +137,9 @@ public:
   bool eeBadScFilter() const;
   bool chargedHadronTrackResolutionFilter() const;
   bool muonBadTrackFilter() const;
+  bool globalTightHalo2016Filter() const;
+  bool BadChargedCandidateFilter() const;
+  bool BadPFMuonFilter() const;
 
 
   /* gen boson 4-vectors */
@@ -200,6 +207,10 @@ private:
   bool m_eeBadScFilter;
   bool m_chargedHadronTrackResolutionFilter;
   bool m_muonBadTrackFilter;
+  bool m_globalTightHalo2016Filter;
+  bool m_BadChargedCandidateFilter;
+  bool m_BadPFMuonFilter;
+
 
   /* gen boson 4-vectors */
 

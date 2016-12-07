@@ -14,6 +14,11 @@ BUILD_ELECTRON_TAU = True
 BUILD_MUON_MUON = False
 BUILD_MUON_TAU = True
 BUILD_TAU_TAU = True
+BUILD_ELECTRON_TAUBOOSTED = True
+BUILD_MUON_TAUBOOSTED = True
+BUILD_TAUBOOSTED_TAUBOOSTED = True
+
+
 # new options (any one of these will run eff. flatTuple options)
 BUILD_EFFICIENCY_TREE  = False
 

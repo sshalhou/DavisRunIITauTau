@@ -44,7 +44,12 @@ cd RecoMET/METPUSubtraction/data
 wget https://github.com/rfriese/cmssw/raw/MVAMET2_beta_0.6/RecoMET/METPUSubtraction/data/weightfile.root
 cd $CMSSW_BASE/src
 
-# PF MET :
+# PF MET AND UNC :
+
+
+git cms-addpkg DataFormats/PatCandidates
+git cms-merge-topic cms-met:METRecipe_8020
+
 
 # for PF MET, manual patch applied 
 # Additionally, apply these two patches: 
@@ -52,10 +57,10 @@ cd $CMSSW_BASE/src
 # - https://github.com/vhbb/cmssw/pull/524/commits/3c18062dc38f56c01c6ee68da5cf79951208bd16
 # instead I have modified the files directly (these are fine in 820X)
 
-git cms-addpkg DataFormats/PatCandidates
 cp /afs/cern.ch/user/s/sshalhou/public/CMSSW_8X_MODS/METReco/MET.h_mod DataFormats/METReco/interface/MET.h
-cp /afs/cern.ch/user/s/sshalhou/public/CMSSW_8X_MODS/METReco/MET.cc_mod DataFormats/METReco/src/MET.cc
-cp /afs/cern.ch/user/s/sshalhou/public/CMSSW_8X_MODS/PatCandidates/MET.cc_mod DataFormats/PatCandidates/src/MET.cc
+#diff /afs/cern.ch/user/s/sshalhou/public/CMSSW_8X_MODS/METReco/MET.cc_mod DataFormats/METReco/src/MET.cc
+#diff /afs/cern.ch/user/s/sshalhou/public/CMSSW_8X_MODS/PatCandidates/MET.cc_mod DataFormats/PatCandidates/src/MET.cc
+
 
 # SVFIt 
 
@@ -105,6 +110,11 @@ wget https://raw.githubusercontent.com/cms-jet/JRDatabase/master/textFiles/Sprin
 wget https://raw.githubusercontent.com/cms-jet/JRDatabase/master/textFiles/Spring16_25nsV6_MC/Spring16_25nsV6_MC_PtResolution_AK4PFchs.txt .
 mv Spring16_25nsV6_MC_SF_AK4PFchs.txt DavisRunIITauTau/RunTimeDataInput/data/JER_FILES/.
 mv Spring16_25nsV6_MC_PtResolution_AK4PFchs.txt DavisRunIITauTau/RunTimeDataInput/data/JER_FILES/.
+
+
+# Add in the new MET filter code needed for 8020X and beyond in 2016 
+# see: https://twiki.cern.ch/twiki/bin/viewauth/CMS/MissingETOptionalFiltersRun2#Notes_regarding_the_ICHEP_datase
+git cms-merge-topic -u cms-met:fromCMSSW_8_0_20_postICHEPfilter
 
 
 # get the BTAG SF CSV File  and EFF root files 

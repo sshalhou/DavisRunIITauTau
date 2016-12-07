@@ -852,7 +852,9 @@ void generateH2TauSyncTree::handleEvent()
 	eeBadScFilter 						= R.getB("eeBadScFilter");
 	chargedHadronTrackResolutionFilter 	= R.getB("chargedHadronTrackResolutionFilter");
 	muonBadTrackFilter 					= R.getB("muonBadTrackFilter");
-
+	globalTightHalo2016Filter    		= R.getB("globalTightHalo2016Filter");
+	BadChargedCandidateFilter	    	= R.getB("BadChargedCandidateFilter");
+	BadPFMuonFilter	    				= R.getB("BadPFMuonFilter");
 
 
 	/* lhe and gen info */
@@ -1694,6 +1696,12 @@ void generateH2TauSyncTree::setupBranches(TTree * T)
 	T->Branch("eeBadScFilter", &eeBadScFilter);
 	T->Branch("chargedHadronTrackResolutionFilter", &chargedHadronTrackResolutionFilter);
 	T->Branch("muonBadTrackFilter", &muonBadTrackFilter);
+	T->Branch("globalTightHalo2016Filter", &globalTightHalo2016Filter);
+	T->Branch("BadChargedCandidateFilter", &BadChargedCandidateFilter);
+	T->Branch("BadPFMuonFilter", &BadPFMuonFilter);
+
+
+
 	T->Branch("NUP", &NUP);
 	T->Branch("weight", &weight);
 	T->Branch("generatorEventWeight", &generatorEventWeight);
@@ -2297,6 +2305,10 @@ void generateH2TauSyncTree::reset()
 	eeBadScFilter = 0;
 	chargedHadronTrackResolutionFilter = 0;
 	muonBadTrackFilter = 0;
+	globalTightHalo2016Filter = 0;
+    BadChargedCandidateFilter = 0;
+    BadPFMuonFilter = 0;
+
 
 	NUP = -999;
 	weight = 1.0;

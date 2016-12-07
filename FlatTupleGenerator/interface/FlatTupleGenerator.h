@@ -707,7 +707,9 @@ public:
 	bool eeBadScFilter;
 	bool chargedHadronTrackResolutionFilter;
 	bool muonBadTrackFilter;
-
+	bool globalTightHalo2016Filter;
+	bool BadChargedCandidateFilter;
+	bool BadPFMuonFilter;
 
 
 	/* pileUp & other weight info */

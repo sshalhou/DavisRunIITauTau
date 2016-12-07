@@ -111,8 +111,6 @@ double LeptonRelativeIsolationTool::electronRelIso(const pat::Electron & e, doub
 }	
 
 
-
-
 // muon relIso
 
 double LeptonRelativeIsolationTool::muonRelIso(const pat::Muon & m, double deltaBeta)
@@ -123,10 +121,10 @@ double LeptonRelativeIsolationTool::muonRelIso(const pat::Muon & m, double delta
 
 
 	// these are taken as is from mini-AOD slimmedMuons
-	double chargedHadron = m.pfIsolationR03().sumChargedHadronPt;
-	double neutralHadron = m.pfIsolationR03().sumNeutralHadronEt;
-	double photonIso = m.pfIsolationR03().sumPhotonEt;
-	double PUchargedHadron = m.pfIsolationR03().sumPUPt;
+	double chargedHadron = m.pfIsolationR04().sumChargedHadronPt;
+	double neutralHadron = m.pfIsolationR04().sumNeutralHadronEt;
+	double photonIso = m.pfIsolationR04().sumPhotonEt;
+	double PUchargedHadron = m.pfIsolationR04().sumPUPt;
 
 	// should be careful to add FSR correction if recommended in the future
 

@@ -163,6 +163,15 @@ in 76X we can access directly from miniAOD */
   // edm::EDGetTokenT<bool> HBHEIsoNoiseFilterResultToken_;
 
 
+  /* in 80X need to rerun 2 filters on top of miniAOD for 2016 */
+ 
+  edm::InputTag BadChargedCandidateFilterSrc_;
+  edm::EDGetTokenT<bool> BadChargedCandidateFilterToken_;
+
+  edm::InputTag BadPFMuonFilterSrc_;
+  edm::EDGetTokenT<bool> BadPFMuonFilterToken_;
+
+
 
   /* parameters for MET Filters; we code 2 versions of TriggerResults 
      to support both PAT and RECO processes (only used if isValid checks out) */  
@@ -214,6 +223,8 @@ sampleInfoSrc_(iConfig.getParameter<edm::ParameterSet>("sampleInfoSrc")),
 // not needed for >= 76X
 // HBHENoiseFilterResultSrc_(iConfig.getParameter<edm::InputTag>("HBHENoiseFilterResultSrc")),
 // HBHEIsoNoiseFilterResultSrc_(iConfig.getParameter<edm::InputTag>("HBHEIsoNoiseFilterResultSrc")),
+BadChargedCandidateFilterSrc_(iConfig.getParameter<edm::InputTag>("BadChargedCandidateFilterSrc")),
+BadPFMuonFilterSrc_(iConfig.getParameter<edm::InputTag>("BadPFMuonFilterSrc")),
 triggerResultsPatSrc_(consumes<edm::TriggerResults>(iConfig.getParameter<edm::InputTag>("triggerResultsPatSrc"))),
 triggerResultsRecoSrc_(consumes<edm::TriggerResults>(iConfig.getParameter<edm::InputTag>("triggerResultsRecoSrc"))),
 rhoSource_(iConfig.getParameter<edm::InputTag>("rhoSource" ))
@@ -223,6 +234,9 @@ rhoSource_(iConfig.getParameter<edm::InputTag>("rhoSource" ))
 
   //HBHENoiseFilterResultToken_ = consumes< bool > (HBHENoiseFilterResultSrc_);
   //HBHEIsoNoiseFilterResultToken_ = consumes< bool > (HBHEIsoNoiseFilterResultSrc_);
+  
+  BadChargedCandidateFilterToken_ = consumes< bool > (BadChargedCandidateFilterSrc_);
+  BadPFMuonFilterToken_ = consumes< bool > (BadPFMuonFilterSrc_);
   LHEEventProductToken_ = consumes<LHEEventProduct> (LHEEventProductSrc_);
   mcGenWeightToken_ = consumes< GenEventInfoProduct > (mcGenWeightSrc_);
   pileupToken_ = consumes< std::vector<PileupSummaryInfo> >  (pileupSrc_);
@@ -788,6 +802,22 @@ NtuplePairIndependentInfoProducer::produce(edm::Event& iEvent, const edm::EventS
   // iEvent.getByToken(HBHEIsoNoiseFilterResultToken_,HBHEIsoNoiseFilterResult);
   // Flag_HBHEIsoNoiseFilter = *HBHEIsoNoiseFilterResult;
 
+
+  // rerun filters in 2016
+
+
+  bool Flag_BadChargedCandidateFilter = 0;
+  bool Flag_BadPFMuonFilter = 0;
+
+  edm::Handle<bool> BadChargedCandidateFilterResult;
+  iEvent.getByToken(BadChargedCandidateFilterToken_,BadChargedCandidateFilterResult);
+  Flag_BadChargedCandidateFilter = *BadChargedCandidateFilterResult;
+
+  edm::Handle<bool> BadPFMuonFilterResult;
+  iEvent.getByToken(BadPFMuonFilterToken_,BadPFMuonFilterResult);
+  Flag_BadPFMuonFilter = *BadPFMuonFilterResult;
+
+
   ///////////////////////////////////
   // filters read from MINI-AOD    //
   ///////////////////////////////////
@@ -798,6 +828,7 @@ NtuplePairIndependentInfoProducer::produce(edm::Event& iEvent, const edm::EventS
   bool Flag_EcalDeadCellTriggerPrimitiveFilter = 0; //  TO BE USED
   bool Flag_goodVertices = 0;                       //  TO BE USED
   bool Flag_eeBadScFilter = 0;                      //  TO BE USED
+  bool Flag_globalTightHalo2016Filter = 0;          //  TO BE USED
   bool Flag_chargedHadronTrackResolutionFilter = 0; //  do not use - those are under study 76X
   bool Flag_muonBadTrackFilter = 0;                 //  do not use - those are under study for 76X
 
@@ -826,6 +857,8 @@ NtuplePairIndependentInfoProducer::produce(edm::Event& iEvent, const edm::EventS
       else if( namesPat.triggerName(i) == "Flag_eeBadScFilter") Flag_eeBadScFilter = triggerBitsPat->accept(i);
       else if( namesPat.triggerName(i) == "Flag_chargedHadronTrackResolutionFilter") Flag_chargedHadronTrackResolutionFilter = triggerBitsPat->accept(i);
       else if( namesPat.triggerName(i) == "Flag_muonBadTrackFilter") Flag_muonBadTrackFilter = triggerBitsPat->accept(i);
+      else if( namesPat.triggerName(i) == "Flag_globalTightHalo2016Filter") Flag_globalTightHalo2016Filter = triggerBitsPat->accept(i);
+
     } 
     /////////////
   } 
@@ -845,6 +878,8 @@ NtuplePairIndependentInfoProducer::produce(edm::Event& iEvent, const edm::EventS
       else if( namesReco.triggerName(i) == "Flag_eeBadScFilter") Flag_eeBadScFilter = triggerBitsReco->accept(i);
       else if( namesReco.triggerName(i) == "Flag_chargedHadronTrackResolutionFilter") Flag_chargedHadronTrackResolutionFilter = triggerBitsReco->accept(i);
       else if( namesReco.triggerName(i) == "Flag_muonBadTrackFilter") Flag_muonBadTrackFilter = triggerBitsReco->accept(i);
+      else if( namesReco.triggerName(i) == "Flag_globalTightHalo2016Filter") Flag_globalTightHalo2016Filter = triggerBitsPat->accept(i);
+
 
     } 
     /////////////
@@ -864,9 +899,9 @@ NtuplePairIndependentInfoProducer::produce(edm::Event& iEvent, const edm::EventS
   InfoToWrite.fill_eeBadScFilter(Flag_eeBadScFilter);
   InfoToWrite.fill_chargedHadronTrackResolutionFilter(Flag_chargedHadronTrackResolutionFilter);
   InfoToWrite.fill_muonBadTrackFilter(Flag_muonBadTrackFilter);
-
-
-
+  InfoToWrite.fill_globalTightHalo2016Filter(Flag_globalTightHalo2016Filter);
+  InfoToWrite.fill_BadChargedCandidateFilter(Flag_BadChargedCandidateFilter);
+  InfoToWrite.fill_BadPFMuonFilter(Flag_BadPFMuonFilter);
 
 
   /////////////////////////////////////////////////////////////////

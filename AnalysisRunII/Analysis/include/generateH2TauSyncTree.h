@@ -1034,7 +1034,10 @@ private:
 	bool eeBadScFilter;
 	bool chargedHadronTrackResolutionFilter;
 	bool muonBadTrackFilter;
+	bool globalTightHalo2016Filter;
 
+	bool BadChargedCandidateFilter;
+	bool BadPFMuonFilter;
 
 	/* gen info */
 

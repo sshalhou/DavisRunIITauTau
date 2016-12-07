@@ -2855,6 +2855,9 @@ void FlatTupleGenerator::handlePairIndepInfo(const edm::Event& iEvent, const edm
   eeBadScFilter = currentINDEP.eeBadScFilter();
   chargedHadronTrackResolutionFilter = currentINDEP.chargedHadronTrackResolutionFilter();
   muonBadTrackFilter = currentINDEP.muonBadTrackFilter();
+  globalTightHalo2016Filter = currentINDEP.globalTightHalo2016Filter();
+  BadChargedCandidateFilter = currentINDEP.BadChargedCandidateFilter();
+  BadPFMuonFilter = currentINDEP.BadPFMuonFilter();
 
   /* pileup & other weights */
 
@@ -3716,7 +3719,9 @@ void FlatTupleGenerator::handlePairIndepInfo(const edm::Event& iEvent, const edm
   eeBadScFilter = 1;
   chargedHadronTrackResolutionFilter = 1;
   muonBadTrackFilter = 1;
-
+  globalTightHalo2016Filter = 1;
+  BadChargedCandidateFilter  = 1;
+  BadPFMuonFilter = 1;
 
   numberOfJetsForRecoilCorr = -999;
   numberOfJets30 = -999;
@@ -4591,6 +4596,9 @@ void FlatTupleGenerator::beginJob()
   FlatTuple->Branch("eeBadScFilter", &eeBadScFilter);
   FlatTuple->Branch("chargedHadronTrackResolutionFilter", &chargedHadronTrackResolutionFilter);
   FlatTuple->Branch("muonBadTrackFilter", &muonBadTrackFilter);
+  FlatTuple->Branch("globalTightHalo2016Filter", &globalTightHalo2016Filter);
+  FlatTuple->Branch("BadChargedCandidateFilter", &BadChargedCandidateFilter);
+  FlatTuple->Branch("BadPFMuonFilter", &BadPFMuonFilter);
 
   FlatTuple->Branch("DiMuon_Flag", &DiMuon_Flag);
   FlatTuple->Branch("DiElectron_Flag", &DiElectron_Flag);
