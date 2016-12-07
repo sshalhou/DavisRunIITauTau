@@ -33,6 +33,12 @@ git cms-init
 # JEC --> method unchanged from 76X no code is needed
 # b-jets -> no new code, should update sf code
 
+# PF MET UNC 
+
+git cms-merge-topic cms-met:METRecipe_8020
+
+
+
 # MVA MET : 
 
 git cms-addpkg RecoMET/METPUSubtraction
@@ -44,12 +50,9 @@ cd RecoMET/METPUSubtraction/data
 wget https://github.com/rfriese/cmssw/raw/MVAMET2_beta_0.6/RecoMET/METPUSubtraction/data/weightfile.root
 cd $CMSSW_BASE/src
 
-# PF MET AND UNC :
-
+# PF MET  :
 
 git cms-addpkg DataFormats/PatCandidates
-git cms-merge-topic cms-met:METRecipe_8020
-
 
 # for PF MET, manual patch applied 
 # Additionally, apply these two patches: 
@@ -58,15 +61,15 @@ git cms-merge-topic cms-met:METRecipe_8020
 # instead I have modified the files directly (these are fine in 820X)
 
 cp /afs/cern.ch/user/s/sshalhou/public/CMSSW_8X_MODS/METReco/MET.h_mod DataFormats/METReco/interface/MET.h
-#diff /afs/cern.ch/user/s/sshalhou/public/CMSSW_8X_MODS/METReco/MET.cc_mod DataFormats/METReco/src/MET.cc
-#diff /afs/cern.ch/user/s/sshalhou/public/CMSSW_8X_MODS/PatCandidates/MET.cc_mod DataFormats/PatCandidates/src/MET.cc
+cp /afs/cern.ch/user/s/sshalhou/public/CMSSW_8X_MODS/METReco/MET.cc_mod DataFormats/METReco/src/MET.cc
+cp /afs/cern.ch/user/s/sshalhou/public/CMSSW_8X_MODS/PatCandidates/MET.cc_mod DataFormats/PatCandidates/src/MET.cc
 
 
 # SVFIt 
 
 git clone git@github.com:veelken/SVfit_standalone.git TauAnalysis/SVfitStandalone
 cd TauAnalysis/SVfitStandalone/
-git checkout HIG-16-006
+git checkout master
 cd $CMSSW_BASE/src
 
 # MET RECOIL CORRECTIONS (SAME CODE FOR PF AND MVA MET)
