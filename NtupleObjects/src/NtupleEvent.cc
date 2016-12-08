@@ -16,7 +16,6 @@ NtupleEvent::NtupleEvent()
 	m_isOsPair = -999;
 	m_isRealData = 0;
 
-
 }
 
 ///// get max pt of all trigger objects match to a given reco leg

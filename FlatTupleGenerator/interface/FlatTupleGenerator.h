@@ -138,6 +138,10 @@ public:
       virtual void handleEffLeptonInfo(const edm::Event&, const edm::EventSetup&, NtupleEvent); 
       virtual double GetTransverseMass(LorentzVector, TLorentzVector);
 
+      /* for exotica group type PF met systematics */
+      /* the doubles are set to met pt, phi, mt1 and mt2 using the uncertainty and corr. specified */
+      virtual void GetPFMetVariant(NtupleEvent, pat::MET::METUncertainty, pat::MET::METCorrectionLevel, double&, double&, double&, double&); 
+
 // private:
 // 	virtual void beginJob() ;
 // 	virtual void analyze(const edm::Event&, const edm::EventSetup&);
@@ -440,12 +444,98 @@ public:
 	double resolutionDOWN_MTCORRpfMET_leg2;   /* mt_2 using RECOIL CORRECTION APPLIED  pf met with resolution shifted down */		
 
 
+	/* exotica MET+X style pfMET variants */
+
+	double pfmet_raw_Pt; 
+	double pfmet_raw_Phi;
+	double pfmet_raw_MT1;
+	double pfmet_raw_MT2;
+
+	double pfmet_type1_Pt; 
+	double pfmet_type1_Phi;
+	double pfmet_type1_MT1;
+	double pfmet_type1_MT2;
+
+	double pfmet_type1_JetResUp_Pt; 
+	double pfmet_type1_JetResUp_Phi;
+	double pfmet_type1_JetResUp_MT1;
+	double pfmet_type1_JetResUp_MT2;
+
+	double pfmet_type1_JetResDown_Pt; 
+	double pfmet_type1_JetResDown_Phi;
+	double pfmet_type1_JetResDown_MT1;
+	double pfmet_type1_JetResDown_MT2;
+
+	double pfmet_type1_JetEnUp_Pt; 
+	double pfmet_type1_JetEnUp_Phi;
+	double pfmet_type1_JetEnUp_MT1;
+	double pfmet_type1_JetEnUp_MT2;
+
+	double pfmet_type1_JetEnDown_Pt; 
+	double pfmet_type1_JetEnDown_Phi;
+	double pfmet_type1_JetEnDown_MT1;
+	double pfmet_type1_JetEnDown_MT2;
+
+	double pfmet_type1_MuonEnUp_Pt; 
+	double pfmet_type1_MuonEnUp_Phi;
+	double pfmet_type1_MuonEnUp_MT1;
+	double pfmet_type1_MuonEnUp_MT2;
+
+	double pfmet_type1_MuonEnDown_Pt; 
+	double pfmet_type1_MuonEnDown_Phi;
+	double pfmet_type1_MuonEnDown_MT1;
+	double pfmet_type1_MuonEnDown_MT2;
+
+	double pfmet_type1_ElectronEnUp_Pt; 
+	double pfmet_type1_ElectronEnUp_Phi;
+	double pfmet_type1_ElectronEnUp_MT1;
+	double pfmet_type1_ElectronEnUp_MT2;
+
+	double pfmet_type1_ElectronEnDown_Pt; 
+	double pfmet_type1_ElectronEnDown_Phi;
+	double pfmet_type1_ElectronEnDown_MT1;
+	double pfmet_type1_ElectronEnDown_MT2;
+
+	double pfmet_type1_TauEnUp_Pt; 
+	double pfmet_type1_TauEnUp_Phi;
+	double pfmet_type1_TauEnUp_MT1;
+	double pfmet_type1_TauEnUp_MT2;
+
+	double pfmet_type1_TauEnDown_Pt; 
+	double pfmet_type1_TauEnDown_Phi;
+	double pfmet_type1_TauEnDown_MT1;
+	double pfmet_type1_TauEnDown_MT2;
+
+	double pfmet_type1_UnclusteredEnUp_Pt; 
+	double pfmet_type1_UnclusteredEnUp_Phi;
+	double pfmet_type1_UnclusteredEnUp_MT1;
+	double pfmet_type1_UnclusteredEnUp_MT2;
+
+	double pfmet_type1_UnclusteredEnDown_Pt; 
+	double pfmet_type1_UnclusteredEnDown_Phi;
+	double pfmet_type1_UnclusteredEnDown_MT1;
+	double pfmet_type1_UnclusteredEnDown_MT2;
+
+	double pfmet_type1_PhotonEnUp_Pt; 
+	double pfmet_type1_PhotonEnUp_Phi;
+	double pfmet_type1_PhotonEnUp_MT1;
+	double pfmet_type1_PhotonEnUp_MT2;
+
+	double pfmet_type1_PhotonEnDown_Pt; 
+	double pfmet_type1_PhotonEnDown_Phi;
+	double pfmet_type1_PhotonEnDown_MT1;
+	double pfmet_type1_PhotonEnDown_MT2;
+
 
 	double puppiMET;				/* the puppi MET   - type 1 corr(?) */
 	double puppiMETphi;				/* the puppi MET phi  - type 1 corr(?) */
 
 	double genMET;					/* the gen-level MET   */
 	double genMETphi;				/* the gen-level MET phi  */
+	double genMETeta;					/* the gen-level MET eta  */
+	double genMETmass;				/* the gen-level MET mass  */
+
+
 
 	double RAWpfMET;				/* the PF MET   - RAW */
 	double RAWpfMETphi;				/* the PF MET phi  - RAW */

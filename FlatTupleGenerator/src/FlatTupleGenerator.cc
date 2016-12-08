@@ -2567,13 +2567,109 @@ NtupleEvent currentPair)
   {
     genMET = 0;
     genMETphi = 0;
+    genMETeta = 0;
+    genMETmass = 0;
+
   } 
   else 
   {
    
     genMET = currentPair.pfMET()[0].genMET()->pt();
     genMETphi = currentPair.pfMET()[0].genMET()->phi();
+    genMETeta = currentPair.pfMET()[0].genMET()->eta();
+    genMETmass = currentPair.pfMET()[0].genMET()->mass();
+
+
   }
+
+  std::cout<<" SZSMET genMET "<<genMET<<" , "<<genMETphi<<" "<<genMETeta<<" "<<genMETmass<<"\n";
+
+
+  /* for pfMET access each of the correction levels as well as the variants */
+
+
+  GetPFMetVariant(currentPair, pat::MET::NoShift , pat::MET::Raw,
+                   pfmet_raw_Pt , pfmet_raw_Phi ,
+                   pfmet_raw_MT1 , pfmet_raw_MT2 );
+
+  GetPFMetVariant(currentPair, pat::MET::NoShift , pat::MET::Type1,
+                   pfmet_type1_Pt , pfmet_type1_Phi ,
+                   pfmet_type1_MT1 , pfmet_type1_MT2 );
+
+  GetPFMetVariant(currentPair, pat::MET::JetResUp , pat::MET::Type1,
+                   pfmet_type1_JetResUp_Pt , pfmet_type1_JetResUp_Phi ,
+                   pfmet_type1_JetResUp_MT1 , pfmet_type1_JetResUp_MT2 );
+
+  GetPFMetVariant(currentPair, pat::MET::JetResDown , pat::MET::Type1,
+                   pfmet_type1_JetResDown_Pt , pfmet_type1_JetResDown_Phi ,
+                   pfmet_type1_JetResDown_MT1 , pfmet_type1_JetResDown_MT2 );
+
+  GetPFMetVariant(currentPair, pat::MET::JetEnUp , pat::MET::Type1,
+                   pfmet_type1_JetEnUp_Pt , pfmet_type1_JetEnUp_Phi ,
+                   pfmet_type1_JetEnUp_MT1 , pfmet_type1_JetEnUp_MT2 );
+
+  GetPFMetVariant(currentPair, pat::MET::JetEnDown , pat::MET::Type1,
+                   pfmet_type1_JetEnDown_Pt , pfmet_type1_JetEnDown_Phi ,
+                   pfmet_type1_JetEnDown_MT1 , pfmet_type1_JetEnDown_MT2 );
+
+  GetPFMetVariant(currentPair, pat::MET::MuonEnUp , pat::MET::Type1,
+                   pfmet_type1_MuonEnUp_Pt , pfmet_type1_MuonEnUp_Phi ,
+                   pfmet_type1_MuonEnUp_MT1 , pfmet_type1_MuonEnUp_MT2 );
+
+  GetPFMetVariant(currentPair, pat::MET::MuonEnDown , pat::MET::Type1,
+                   pfmet_type1_MuonEnDown_Pt , pfmet_type1_MuonEnDown_Phi ,
+                   pfmet_type1_MuonEnDown_MT1 , pfmet_type1_MuonEnDown_MT2 );
+
+  GetPFMetVariant(currentPair, pat::MET::ElectronEnUp , pat::MET::Type1,
+                   pfmet_type1_ElectronEnUp_Pt , pfmet_type1_ElectronEnUp_Phi ,
+                   pfmet_type1_ElectronEnUp_MT1 , pfmet_type1_ElectronEnUp_MT2 );
+
+  GetPFMetVariant(currentPair, pat::MET::ElectronEnDown , pat::MET::Type1,
+                   pfmet_type1_ElectronEnDown_Pt , pfmet_type1_ElectronEnDown_Phi ,
+                   pfmet_type1_ElectronEnDown_MT1 , pfmet_type1_ElectronEnDown_MT2 );
+
+  GetPFMetVariant(currentPair, pat::MET::TauEnUp , pat::MET::Type1,
+                   pfmet_type1_TauEnUp_Pt , pfmet_type1_TauEnUp_Phi ,
+                   pfmet_type1_TauEnUp_MT1 , pfmet_type1_TauEnUp_MT2 );
+
+  GetPFMetVariant(currentPair, pat::MET::TauEnDown , pat::MET::Type1,
+                   pfmet_type1_TauEnDown_Pt , pfmet_type1_TauEnDown_Phi ,
+                   pfmet_type1_TauEnDown_MT1 , pfmet_type1_TauEnDown_MT2 );
+
+  GetPFMetVariant(currentPair, pat::MET::UnclusteredEnUp , pat::MET::Type1,
+                   pfmet_type1_UnclusteredEnUp_Pt , pfmet_type1_UnclusteredEnUp_Phi ,
+                   pfmet_type1_UnclusteredEnUp_MT1 , pfmet_type1_UnclusteredEnUp_MT2 );
+
+  GetPFMetVariant(currentPair, pat::MET::UnclusteredEnDown , pat::MET::Type1,
+                   pfmet_type1_UnclusteredEnDown_Pt , pfmet_type1_UnclusteredEnDown_Phi ,
+                   pfmet_type1_UnclusteredEnDown_MT1 , pfmet_type1_UnclusteredEnDown_MT2 );
+
+  GetPFMetVariant(currentPair, pat::MET::PhotonEnUp , pat::MET::Type1,
+                   pfmet_type1_PhotonEnUp_Pt , pfmet_type1_PhotonEnUp_Phi ,
+                   pfmet_type1_PhotonEnUp_MT1 , pfmet_type1_PhotonEnUp_MT2 );
+
+  GetPFMetVariant(currentPair, pat::MET::PhotonEnDown , pat::MET::Type1,
+                   pfmet_type1_PhotonEnDown_Pt , pfmet_type1_PhotonEnDown_Phi ,
+                   pfmet_type1_PhotonEnDown_MT1 , pfmet_type1_PhotonEnDown_MT2 );
+
+
+
+  std::cout<<"pfmet_raw: "<<pfmet_raw_Pt<<" , "<<pfmet_raw_Phi<<" , "<<pfmet_raw_MT1<<" , "<<pfmet_raw_MT2<<"\n";
+  std::cout<<"pfmet_type1_JetResUp: "<<pfmet_type1_JetResUp_Pt<<" , "<<pfmet_type1_JetResUp_Phi<<" , "<<pfmet_type1_JetResUp_MT1<<" , "<<pfmet_type1_JetResUp_MT2<<"\n";
+  std::cout<<"pfmet_type1_JetResDown: "<<pfmet_type1_JetResDown_Pt<<" , "<<pfmet_type1_JetResDown_Phi<<" , "<<pfmet_type1_JetResDown_MT1<<" , "<<pfmet_type1_JetResDown_MT2<<"\n";
+  std::cout<<"pfmet_type1_JetEnUp: "<<pfmet_type1_JetEnUp_Pt<<" , "<<pfmet_type1_JetEnUp_Phi<<" , "<<pfmet_type1_JetEnUp_MT1<<" , "<<pfmet_type1_JetEnUp_MT2<<"\n";
+  std::cout<<"pfmet_type1_JetEnDown: "<<pfmet_type1_JetEnDown_Pt<<" , "<<pfmet_type1_JetEnDown_Phi<<" , "<<pfmet_type1_JetEnDown_MT1<<" , "<<pfmet_type1_JetEnDown_MT2<<"\n";
+  std::cout<<"pfmet_type1_MuonEnUp: "<<pfmet_type1_MuonEnUp_Pt<<" , "<<pfmet_type1_MuonEnUp_Phi<<" , "<<pfmet_type1_MuonEnUp_MT1<<" , "<<pfmet_type1_MuonEnUp_MT2<<"\n";
+  std::cout<<"pfmet_type1_MuonEnDown: "<<pfmet_type1_MuonEnDown_Pt<<" , "<<pfmet_type1_MuonEnDown_Phi<<" , "<<pfmet_type1_MuonEnDown_MT1<<" , "<<pfmet_type1_MuonEnDown_MT2<<"\n";
+  std::cout<<"pfmet_type1_ElectronEnUp: "<<pfmet_type1_ElectronEnUp_Pt<<" , "<<pfmet_type1_ElectronEnUp_Phi<<" , "<<pfmet_type1_ElectronEnUp_MT1<<" , "<<pfmet_type1_ElectronEnUp_MT2<<"\n";
+  std::cout<<"pfmet_type1_ElectronEnDown: "<<pfmet_type1_ElectronEnDown_Pt<<" , "<<pfmet_type1_ElectronEnDown_Phi<<" , "<<pfmet_type1_ElectronEnDown_MT1<<" , "<<pfmet_type1_ElectronEnDown_MT2<<"\n";
+  std::cout<<"pfmet_type1_TauEnUp: "<<pfmet_type1_TauEnUp_Pt<<" , "<<pfmet_type1_TauEnUp_Phi<<" , "<<pfmet_type1_TauEnUp_MT1<<" , "<<pfmet_type1_TauEnUp_MT2<<"\n";
+  std::cout<<"pfmet_type1_TauEnDown: "<<pfmet_type1_TauEnDown_Pt<<" , "<<pfmet_type1_TauEnDown_Phi<<" , "<<pfmet_type1_TauEnDown_MT1<<" , "<<pfmet_type1_TauEnDown_MT2<<"\n";
+  std::cout<<"pfmet_type1_UnclusteredEnUp: "<<pfmet_type1_UnclusteredEnUp_Pt<<" , "<<pfmet_type1_UnclusteredEnUp_Phi<<" , "<<pfmet_type1_UnclusteredEnUp_MT1<<" , "<<pfmet_type1_UnclusteredEnUp_MT2<<"\n";
+  std::cout<<"pfmet_type1_UnclusteredEnDown: "<<pfmet_type1_UnclusteredEnDown_Pt<<" , "<<pfmet_type1_UnclusteredEnDown_Phi<<" , "<<pfmet_type1_UnclusteredEnDown_MT1<<" , "<<pfmet_type1_UnclusteredEnDown_MT2<<"\n";
+  std::cout<<"pfmet_type1_PhotonEnUp: "<<pfmet_type1_PhotonEnUp_Pt<<" , "<<pfmet_type1_PhotonEnUp_Phi<<" , "<<pfmet_type1_PhotonEnUp_MT1<<" , "<<pfmet_type1_PhotonEnUp_MT2<<"\n";
+  std::cout<<"pfmet_type1_PhotonEnDown: "<<pfmet_type1_PhotonEnDown_Pt<<" , "<<pfmet_type1_PhotonEnDown_Phi<<" , "<<pfmet_type1_PhotonEnDown_MT1<<" , "<<pfmet_type1_PhotonEnDown_MT2<<"\n";
+
 
   /* fill veto lepton parameters, MUST FILL IN SAME ORDER FOR ELECTRONS & MUONS */
 
@@ -3357,6 +3453,9 @@ void FlatTupleGenerator::handlePairIndepInfo(const edm::Event& iEvent, const edm
 
   genMET = NAN; 
   genMETphi = NAN; 
+  genMETeta = NAN;
+  genMETmass = NAN;
+
   MTpuppiMET_leg1 = NAN; 
   MTpuppiMET_leg2 = NAN; 
   puppiMET = NAN; 
@@ -3402,6 +3501,75 @@ void FlatTupleGenerator::handlePairIndepInfo(const edm::Event& iEvent, const edm
   resolutionDOWN_CORRpfMETphi = NAN;
   resolutionDOWN_MTCORRpfMET_leg1 = NAN;
   resolutionDOWN_MTCORRpfMET_leg2 = NAN;
+
+  pfmet_raw_Pt = NAN;
+  pfmet_raw_Phi = NAN;
+  pfmet_raw_MT1 = NAN;
+  pfmet_raw_MT2 = NAN;
+
+  pfmet_type1_Pt = NAN;
+  pfmet_type1_Phi = NAN;
+  pfmet_type1_MT1 = NAN;
+  pfmet_type1_MT2 = NAN;
+
+
+  pfmet_type1_JetResUp_Pt = NAN;
+  pfmet_type1_JetResUp_Phi = NAN;
+  pfmet_type1_JetResUp_MT1 = NAN;
+  pfmet_type1_JetResUp_MT2 = NAN;
+  pfmet_type1_JetResDown_Pt = NAN;
+  pfmet_type1_JetResDown_Phi = NAN;
+  pfmet_type1_JetResDown_MT1 = NAN;
+  pfmet_type1_JetResDown_MT2 = NAN;
+  pfmet_type1_JetEnUp_Pt = NAN;
+  pfmet_type1_JetEnUp_Phi = NAN;
+  pfmet_type1_JetEnUp_MT1 = NAN;
+  pfmet_type1_JetEnUp_MT2 = NAN;
+  pfmet_type1_JetEnDown_Pt = NAN;
+  pfmet_type1_JetEnDown_Phi = NAN;
+  pfmet_type1_JetEnDown_MT1 = NAN;
+  pfmet_type1_JetEnDown_MT2 = NAN;
+  pfmet_type1_MuonEnUp_Pt = NAN;
+  pfmet_type1_MuonEnUp_Phi = NAN;
+  pfmet_type1_MuonEnUp_MT1 = NAN;
+  pfmet_type1_MuonEnUp_MT2 = NAN;
+  pfmet_type1_MuonEnDown_Pt = NAN;
+  pfmet_type1_MuonEnDown_Phi = NAN;
+  pfmet_type1_MuonEnDown_MT1 = NAN;
+  pfmet_type1_MuonEnDown_MT2 = NAN;
+  pfmet_type1_ElectronEnUp_Pt = NAN;
+  pfmet_type1_ElectronEnUp_Phi = NAN;
+  pfmet_type1_ElectronEnUp_MT1 = NAN;
+  pfmet_type1_ElectronEnUp_MT2 = NAN;
+  pfmet_type1_ElectronEnDown_Pt = NAN;
+  pfmet_type1_ElectronEnDown_Phi = NAN;
+  pfmet_type1_ElectronEnDown_MT1 = NAN;
+  pfmet_type1_ElectronEnDown_MT2 = NAN;
+  pfmet_type1_TauEnUp_Pt = NAN;
+  pfmet_type1_TauEnUp_Phi = NAN;
+  pfmet_type1_TauEnUp_MT1 = NAN;
+  pfmet_type1_TauEnUp_MT2 = NAN;
+  pfmet_type1_TauEnDown_Pt = NAN;
+  pfmet_type1_TauEnDown_Phi = NAN;
+  pfmet_type1_TauEnDown_MT1 = NAN;
+  pfmet_type1_TauEnDown_MT2 = NAN;
+  pfmet_type1_UnclusteredEnUp_Pt = NAN;
+  pfmet_type1_UnclusteredEnUp_Phi = NAN;
+  pfmet_type1_UnclusteredEnUp_MT1 = NAN;
+  pfmet_type1_UnclusteredEnUp_MT2 = NAN;
+  pfmet_type1_UnclusteredEnDown_Pt = NAN;
+  pfmet_type1_UnclusteredEnDown_Phi = NAN;
+  pfmet_type1_UnclusteredEnDown_MT1 = NAN;
+  pfmet_type1_UnclusteredEnDown_MT2 = NAN;
+  pfmet_type1_PhotonEnUp_Pt = NAN;
+  pfmet_type1_PhotonEnUp_Phi = NAN;
+  pfmet_type1_PhotonEnUp_MT1 = NAN;
+  pfmet_type1_PhotonEnUp_MT2 = NAN;
+  pfmet_type1_PhotonEnDown_Pt = NAN;
+  pfmet_type1_PhotonEnDown_Phi = NAN;
+  pfmet_type1_PhotonEnDown_MT1 = NAN;
+  pfmet_type1_PhotonEnDown_MT2 = NAN;
+
 
 
   leg1_dz = NAN;
@@ -4225,19 +4393,79 @@ void FlatTupleGenerator::beginJob()
   }
 
 
+  FlatTuple->Branch("pfmet_raw_Pt" , &pfmet_raw_Pt);
+  FlatTuple->Branch("pfmet_raw_Phi" , &pfmet_raw_Phi);
+  FlatTuple->Branch("pfmet_raw_MT1" , &pfmet_raw_MT1);
+  FlatTuple->Branch("pfmet_raw_MT2" , &pfmet_raw_MT2);
+  FlatTuple->Branch("pfmet_type1_Pt" , &pfmet_type1_Pt);
+  FlatTuple->Branch("pfmet_type1_Phi" , &pfmet_type1_Phi);
+  FlatTuple->Branch("pfmet_type1_MT1" , &pfmet_type1_MT1);
+  FlatTuple->Branch("pfmet_type1_MT2" , &pfmet_type1_MT2);
+  FlatTuple->Branch("pfmet_type1_JetResUp_Pt" , &pfmet_type1_JetResUp_Pt);
+  FlatTuple->Branch("pfmet_type1_JetResUp_Phi" , &pfmet_type1_JetResUp_Phi);
+  FlatTuple->Branch("pfmet_type1_JetResUp_MT1" , &pfmet_type1_JetResUp_MT1);
+  FlatTuple->Branch("pfmet_type1_JetResUp_MT2" , &pfmet_type1_JetResUp_MT2);
+  FlatTuple->Branch("pfmet_type1_JetResDown_Pt" , &pfmet_type1_JetResDown_Pt);
+  FlatTuple->Branch("pfmet_type1_JetResDown_Phi" , &pfmet_type1_JetResDown_Phi);
+  FlatTuple->Branch("pfmet_type1_JetResDown_MT1" , &pfmet_type1_JetResDown_MT1);
+  FlatTuple->Branch("pfmet_type1_JetResDown_MT2" , &pfmet_type1_JetResDown_MT2);
+  FlatTuple->Branch("pfmet_type1_JetEnUp_Pt" , &pfmet_type1_JetEnUp_Pt);
+  FlatTuple->Branch("pfmet_type1_JetEnUp_Phi" , &pfmet_type1_JetEnUp_Phi);
+  FlatTuple->Branch("pfmet_type1_JetEnUp_MT1" , &pfmet_type1_JetEnUp_MT1);
+  FlatTuple->Branch("pfmet_type1_JetEnUp_MT2" , &pfmet_type1_JetEnUp_MT2);
+  FlatTuple->Branch("pfmet_type1_JetEnDown_Pt" , &pfmet_type1_JetEnDown_Pt);
+  FlatTuple->Branch("pfmet_type1_JetEnDown_Phi" , &pfmet_type1_JetEnDown_Phi);
+  FlatTuple->Branch("pfmet_type1_JetEnDown_MT1" , &pfmet_type1_JetEnDown_MT1);
+  FlatTuple->Branch("pfmet_type1_JetEnDown_MT2" , &pfmet_type1_JetEnDown_MT2);
+  FlatTuple->Branch("pfmet_type1_MuonEnUp_Pt" , &pfmet_type1_MuonEnUp_Pt);
+  FlatTuple->Branch("pfmet_type1_MuonEnUp_Phi" , &pfmet_type1_MuonEnUp_Phi);
+  FlatTuple->Branch("pfmet_type1_MuonEnUp_MT1" , &pfmet_type1_MuonEnUp_MT1);
+  FlatTuple->Branch("pfmet_type1_MuonEnUp_MT2" , &pfmet_type1_MuonEnUp_MT2);
+  FlatTuple->Branch("pfmet_type1_MuonEnDown_Pt" , &pfmet_type1_MuonEnDown_Pt);
+  FlatTuple->Branch("pfmet_type1_MuonEnDown_Phi" , &pfmet_type1_MuonEnDown_Phi);
+  FlatTuple->Branch("pfmet_type1_MuonEnDown_MT1" , &pfmet_type1_MuonEnDown_MT1);
+  FlatTuple->Branch("pfmet_type1_MuonEnDown_MT2" , &pfmet_type1_MuonEnDown_MT2);
+  FlatTuple->Branch("pfmet_type1_ElectronEnUp_Pt" , &pfmet_type1_ElectronEnUp_Pt);
+  FlatTuple->Branch("pfmet_type1_ElectronEnUp_Phi" , &pfmet_type1_ElectronEnUp_Phi);
+  FlatTuple->Branch("pfmet_type1_ElectronEnUp_MT1" , &pfmet_type1_ElectronEnUp_MT1);
+  FlatTuple->Branch("pfmet_type1_ElectronEnUp_MT2" , &pfmet_type1_ElectronEnUp_MT2);
+  FlatTuple->Branch("pfmet_type1_ElectronEnDown_Pt" , &pfmet_type1_ElectronEnDown_Pt);
+  FlatTuple->Branch("pfmet_type1_ElectronEnDown_Phi" , &pfmet_type1_ElectronEnDown_Phi);
+  FlatTuple->Branch("pfmet_type1_ElectronEnDown_MT1" , &pfmet_type1_ElectronEnDown_MT1);
+  FlatTuple->Branch("pfmet_type1_ElectronEnDown_MT2" , &pfmet_type1_ElectronEnDown_MT2);
+  FlatTuple->Branch("pfmet_type1_TauEnUp_Pt" , &pfmet_type1_TauEnUp_Pt);
+  FlatTuple->Branch("pfmet_type1_TauEnUp_Phi" , &pfmet_type1_TauEnUp_Phi);
+  FlatTuple->Branch("pfmet_type1_TauEnUp_MT1" , &pfmet_type1_TauEnUp_MT1);
+  FlatTuple->Branch("pfmet_type1_TauEnUp_MT2" , &pfmet_type1_TauEnUp_MT2);
+  FlatTuple->Branch("pfmet_type1_TauEnDown_Pt" , &pfmet_type1_TauEnDown_Pt);
+  FlatTuple->Branch("pfmet_type1_TauEnDown_Phi" , &pfmet_type1_TauEnDown_Phi);
+  FlatTuple->Branch("pfmet_type1_TauEnDown_MT1" , &pfmet_type1_TauEnDown_MT1);
+  FlatTuple->Branch("pfmet_type1_TauEnDown_MT2" , &pfmet_type1_TauEnDown_MT2);
+  FlatTuple->Branch("pfmet_type1_UnclusteredEnUp_Pt" , &pfmet_type1_UnclusteredEnUp_Pt);
+  FlatTuple->Branch("pfmet_type1_UnclusteredEnUp_Phi" , &pfmet_type1_UnclusteredEnUp_Phi);
+  FlatTuple->Branch("pfmet_type1_UnclusteredEnUp_MT1" , &pfmet_type1_UnclusteredEnUp_MT1);
+  FlatTuple->Branch("pfmet_type1_UnclusteredEnUp_MT2" , &pfmet_type1_UnclusteredEnUp_MT2);
+  FlatTuple->Branch("pfmet_type1_UnclusteredEnDown_Pt" , &pfmet_type1_UnclusteredEnDown_Pt);
+  FlatTuple->Branch("pfmet_type1_UnclusteredEnDown_Phi" , &pfmet_type1_UnclusteredEnDown_Phi);
+  FlatTuple->Branch("pfmet_type1_UnclusteredEnDown_MT1" , &pfmet_type1_UnclusteredEnDown_MT1);
+  FlatTuple->Branch("pfmet_type1_UnclusteredEnDown_MT2" , &pfmet_type1_UnclusteredEnDown_MT2);
+  FlatTuple->Branch("pfmet_type1_PhotonEnUp_Pt" , &pfmet_type1_PhotonEnUp_Pt);
+  FlatTuple->Branch("pfmet_type1_PhotonEnUp_Phi" , &pfmet_type1_PhotonEnUp_Phi);
+  FlatTuple->Branch("pfmet_type1_PhotonEnUp_MT1" , &pfmet_type1_PhotonEnUp_MT1);
+  FlatTuple->Branch("pfmet_type1_PhotonEnUp_MT2" , &pfmet_type1_PhotonEnUp_MT2);
+  FlatTuple->Branch("pfmet_type1_PhotonEnDown_Pt" , &pfmet_type1_PhotonEnDown_Pt);
+  FlatTuple->Branch("pfmet_type1_PhotonEnDown_Phi" , &pfmet_type1_PhotonEnDown_Phi);
+  FlatTuple->Branch("pfmet_type1_PhotonEnDown_MT1" , &pfmet_type1_PhotonEnDown_MT1);
+  FlatTuple->Branch("pfmet_type1_PhotonEnDown_MT2" , &pfmet_type1_PhotonEnDown_MT2);
 
+  FlatTuple->Branch("RAWpfMET", &RAWpfMET);
+  FlatTuple->Branch("RAWpfMETphi", &RAWpfMETphi);
 
-  
-  if(!SmallTree_)
-  {
-    FlatTuple->Branch("RAWpfMET", &RAWpfMET);
-    FlatTuple->Branch("RAWpfMETphi", &RAWpfMETphi);
+  FlatTuple->Branch("pfMET_cov00", &pfMET_cov00);
+  FlatTuple->Branch("pfMET_cov01", &pfMET_cov01);
+  FlatTuple->Branch("pfMET_cov10", &pfMET_cov10);
+  FlatTuple->Branch("pfMET_cov11", &pfMET_cov11);
 
-    FlatTuple->Branch("pfMET_cov00", &pfMET_cov00);
-    FlatTuple->Branch("pfMET_cov01", &pfMET_cov01);
-    FlatTuple->Branch("pfMET_cov10", &pfMET_cov10);
-    FlatTuple->Branch("pfMET_cov11", &pfMET_cov11);
-  }
 
   //////////////////////////////
   /* puppi-MET                */
@@ -4257,11 +4485,14 @@ void FlatTupleGenerator::beginJob()
   }  
 
   //////////////////////////////
-  /* gen-MET  (invalid >76X)  */
+  /* gen-MET    */
   //////////////////////////////
 
-  // FlatTuple->Branch("genMET", &genMET);
-  // FlatTuple->Branch("genMETphi", &genMETphi);
+  FlatTuple->Branch("genMET", &genMET);
+  FlatTuple->Branch("genMETphi", &genMETphi);
+
+  FlatTuple->Branch("genMETeta", &genMETeta);
+  FlatTuple->Branch("genMETmass", &genMETmass);
 
 
   //////////////////////////////
@@ -5077,6 +5308,38 @@ void FlatTupleGenerator::beginJob()
 
 
 }
+
+
+/* for exotica group type PF met systematics */
+/* the doubles are set to met pt, phi, mt1 and mt2 using the uncertainty and corr. specified */
+void FlatTupleGenerator::GetPFMetVariant(NtupleEvent EVE, pat::MET::METUncertainty UNC, pat::MET::METCorrectionLevel LEV, 
+                                        double & PT, double & PHI, double & MT1, double & MT2) 
+{
+
+  /* sometimes PF MET is NAN, want to set everything to 0 in this case */
+
+  if(std::isnan(EVE.pfMET()[0].pt()))
+  {
+    PT = 0.0; 
+    PHI = 0.0;
+    MT1 = 0.0;
+    MT2 = 0.0;
+    return;
+
+  } 
+
+  PT = EVE.pfMET()[0].shiftedPt(UNC,LEV); 
+  PHI = EVE.pfMET()[0].shiftedPhi(UNC,LEV); 
+
+  TLorentzVector pfmet_local(0.,0.,0.,0.);
+  pfmet_local.SetPtEtaPhiM(PT, 0.0, PHI, 0.0);
+
+  MT1 = GetTransverseMass(EVE.leg1().p4() , pfmet_local); 
+  MT2 = GetTransverseMass(EVE.leg2().p4() , pfmet_local); 
+  return;
+} 
+
+
 
 
 double FlatTupleGenerator::GetTransverseMass(LorentzVector L, TLorentzVector T)

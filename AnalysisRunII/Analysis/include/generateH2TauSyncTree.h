@@ -513,6 +513,13 @@ private:
 	double metcov10;
 	double metcov11;
 
+	/* other mets*/
+
+	double genMET;
+	double genMETphi;
+	double genMETeta;
+	double genMETmass;
+
 	/* pzeta variables */
 
 	double pzetavis;	     /*  using mva met */	
@@ -528,6 +535,89 @@ private:
     double pzetamiss_resolutionUP;
     double pzetamiss_resolutionDOWN;
     double pzetamiss_uncorr;
+
+
+    /* PF MET as used by mono-H analysis */
+
+	double pfmet_raw_Pt; 
+	double pfmet_raw_Phi;
+	double pfmet_raw_MT1;
+	double pfmet_raw_MT2;
+
+	double pfmet_type1_Pt;  /* this is the default PF MET type 1 corrected */
+	double pfmet_type1_Phi;
+	double pfmet_type1_MT1;
+	double pfmet_type1_MT2;
+
+	double pfmet_type1_JetResUp_Pt; 
+	double pfmet_type1_JetResUp_Phi;
+	double pfmet_type1_JetResUp_MT1;
+	double pfmet_type1_JetResUp_MT2;
+
+	double pfmet_type1_JetResDown_Pt; 
+	double pfmet_type1_JetResDown_Phi;
+	double pfmet_type1_JetResDown_MT1;
+	double pfmet_type1_JetResDown_MT2;
+
+	double pfmet_type1_JetEnUp_Pt; 
+	double pfmet_type1_JetEnUp_Phi;
+	double pfmet_type1_JetEnUp_MT1;
+	double pfmet_type1_JetEnUp_MT2;
+
+	double pfmet_type1_JetEnDown_Pt; 
+	double pfmet_type1_JetEnDown_Phi;
+	double pfmet_type1_JetEnDown_MT1;
+	double pfmet_type1_JetEnDown_MT2;
+
+	double pfmet_type1_MuonEnUp_Pt; 
+	double pfmet_type1_MuonEnUp_Phi;
+	double pfmet_type1_MuonEnUp_MT1;
+	double pfmet_type1_MuonEnUp_MT2;
+
+	double pfmet_type1_MuonEnDown_Pt; 
+	double pfmet_type1_MuonEnDown_Phi;
+	double pfmet_type1_MuonEnDown_MT1;
+	double pfmet_type1_MuonEnDown_MT2;
+
+	double pfmet_type1_ElectronEnUp_Pt; 
+	double pfmet_type1_ElectronEnUp_Phi;
+	double pfmet_type1_ElectronEnUp_MT1;
+	double pfmet_type1_ElectronEnUp_MT2;
+
+	double pfmet_type1_ElectronEnDown_Pt; 
+	double pfmet_type1_ElectronEnDown_Phi;
+	double pfmet_type1_ElectronEnDown_MT1;
+	double pfmet_type1_ElectronEnDown_MT2;
+
+	double pfmet_type1_TauEnUp_Pt; 
+	double pfmet_type1_TauEnUp_Phi;
+	double pfmet_type1_TauEnUp_MT1;
+	double pfmet_type1_TauEnUp_MT2;
+
+	double pfmet_type1_TauEnDown_Pt; 
+	double pfmet_type1_TauEnDown_Phi;
+	double pfmet_type1_TauEnDown_MT1;
+	double pfmet_type1_TauEnDown_MT2;
+
+	double pfmet_type1_UnclusteredEnUp_Pt; 
+	double pfmet_type1_UnclusteredEnUp_Phi;
+	double pfmet_type1_UnclusteredEnUp_MT1;
+	double pfmet_type1_UnclusteredEnUp_MT2;
+
+	double pfmet_type1_UnclusteredEnDown_Pt; 
+	double pfmet_type1_UnclusteredEnDown_Phi;
+	double pfmet_type1_UnclusteredEnDown_MT1;
+	double pfmet_type1_UnclusteredEnDown_MT2;
+
+	double pfmet_type1_PhotonEnUp_Pt; 
+	double pfmet_type1_PhotonEnUp_Phi;
+	double pfmet_type1_PhotonEnUp_MT1;
+	double pfmet_type1_PhotonEnUp_MT2;
+
+	double pfmet_type1_PhotonEnDown_Pt; 
+	double pfmet_type1_PhotonEnDown_Phi;
+	double pfmet_type1_PhotonEnDown_MT1;
+	double pfmet_type1_PhotonEnDown_MT2;
 
 
 	/* JET system */

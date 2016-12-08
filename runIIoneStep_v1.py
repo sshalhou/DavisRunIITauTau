@@ -14,7 +14,7 @@
 # will write both FlatTuple and Ntuple to disk
 ######################################
 
-DEBUG_NTUPLE = True
+DEBUG_NTUPLE = False
 
 ######################################
 # if DEBUG_NTUPLE_INPUT is set to True
@@ -28,7 +28,7 @@ DEBUG_NTUPLE_INPUT = False
 # how many events to run, -1 means run all 
 ######################################
 
-MAX_EVENTS = 500
+MAX_EVENTS = 5000
 
 ######################################
 # datasets for local running 
@@ -774,15 +774,6 @@ process.requireCandidateHiggsPair = cms.EDFilter("HiggsCandidateCountFilter",
 # RUN PF MET CORR AND ERRORS
 ##########################################
 
-# some of the jet selector tools assume running on PAT jets instead of mini-AODs slimmed jets
-# so we change it here 
-
-from PhysicsTools.PatUtils.patPFMETCorrections_cff import selectedPatJetsForMetT1T2Corr
-selectedPatJetsForMetT1T2Corr.src = cms.InputTag("slimmedJets")
-
-from PhysicsTools.PatUtils.patPFMETCorrections_cff import selectedPatJetsForMetT2Corr
-selectedPatJetsForMetT2Corr.src = cms.InputTag("slimmedJets")
-
 
 from PhysicsTools.PatUtils.tools.runMETCorrectionsAndUncertainties import runMetCorAndUncFromMiniAOD
 
@@ -791,6 +782,12 @@ if sampleData.EventType == 'MC':
 
 if sampleData.EventType == 'DATA':
 	runMetCorAndUncFromMiniAOD(process, isData=True )
+
+# need to make sure our Ntuple producer uses this new MET while the MVA MET uses
+# the original slimmedMETs collection
+
+METforNtuple = DAVISprocessName
+
 
 
 
@@ -1018,11 +1015,11 @@ else :
 
 process.TupleCandidateEvents = cms.EDProducer('TupleCandidateEventProducer' ,
 	puppiMETSrc = cms.InputTag("slimmedMETsPuppi"),
-	pfMETSrc = cms.InputTag("patpfMETT1"), # this has the updated JECs
+	pfMETSrc = cms.InputTag("slimmedMETs","",DAVISprocessName), # this has the updated JECs
 	mvaMETSrc = cms.InputTag("MVAMET:MVAMET:DavisNtuple"),
 	electronVetoSrc =cms.InputTag("filteredVetoElectrons","","DavisNtuple"),
 	muonVetoSrc = cms.InputTag("filteredVetoMuons","","DavisNtuple"),				
-	pairDeltaRmin = cms.double(0.1),
+	pairDeltaRmin = cms.double(0.001),
 	NAME=cms.string("TupleCandidateEvents"),
     doSVMass = cms.bool(COMPUTE_SVMASS_AT_NTUPLE),
     useMVAMET = cms.bool(USE_MVAMET),
@@ -1041,11 +1038,11 @@ process.TupleCandidateEvents = cms.EDProducer('TupleCandidateEventProducer' ,
 
 process.TupleCandidateEventsTauEsUp = cms.EDProducer('TupleCandidateEventProducer' ,
 	puppiMETSrc = cms.InputTag("slimmedMETsPuppi"),
-	pfMETSrc = cms.InputTag("patpfMETT1"), # this has the updated JECs
+	pfMETSrc = cms.InputTag("slimmedMETs","",DAVISprocessName), # this has the updated JECs
 	mvaMETSrc = cms.InputTag("MVAMETtauEsUp:MVAMET:DavisNtuple"),
 	electronVetoSrc =cms.InputTag("filteredVetoElectrons","","DavisNtuple"),
 	muonVetoSrc = cms.InputTag("filteredVetoMuons","","DavisNtuple"),				
-	pairDeltaRmin = cms.double(0.1), 
+	pairDeltaRmin = cms.double(0.001), 
 	NAME=cms.string("TupleCandidateEventsTauEsUp"),
     doSVMass = cms.bool(COMPUTE_SVMASS_AT_NTUPLE),
     useMVAMET = cms.bool(USE_MVAMET),
@@ -1063,11 +1060,11 @@ process.TupleCandidateEventsTauEsUp = cms.EDProducer('TupleCandidateEventProduce
 
 process.TupleCandidateEventsTauEsDown = cms.EDProducer('TupleCandidateEventProducer' ,
 	puppiMETSrc = cms.InputTag("slimmedMETsPuppi"),
-	pfMETSrc = cms.InputTag("patpfMETT1"), # this has the updated JECs
+	pfMETSrc = cms.InputTag("slimmedMETs","",DAVISprocessName), # this has the updated JECs
 	mvaMETSrc = cms.InputTag("MVAMETtauEsDown:MVAMET:DavisNtuple"),
 	electronVetoSrc =cms.InputTag("filteredVetoElectrons","","DavisNtuple"),
 	muonVetoSrc = cms.InputTag("filteredVetoMuons","","DavisNtuple"),				
-	pairDeltaRmin = cms.double(0.1), 
+	pairDeltaRmin = cms.double(0.001), 
 	NAME=cms.string("TupleCandidateEventsTauEsDown"),
     doSVMass = cms.bool(COMPUTE_SVMASS_AT_NTUPLE),
     useMVAMET = cms.bool(USE_MVAMET),
@@ -1085,11 +1082,11 @@ process.TupleCandidateEventsTauEsDown = cms.EDProducer('TupleCandidateEventProdu
 
 process.TupleCandidateEventsBoosted = cms.EDProducer('TupleCandidateEventProducer' ,
 	puppiMETSrc = cms.InputTag("slimmedMETsPuppi"),
-	pfMETSrc = cms.InputTag("patpfMETT1"), # this has the updated JECs
+	pfMETSrc = cms.InputTag("slimmedMETs","",DAVISprocessName), # this has the updated JECs
 	mvaMETSrc = cms.InputTag("MVAMETtauBoostedEsNominal:MVAMET:DavisNtuple"),
 	electronVetoSrc =cms.InputTag("filteredVetoElectrons","","DavisNtuple"),
 	muonVetoSrc = cms.InputTag("filteredVetoMuons","","DavisNtuple"),				
-	pairDeltaRmin = cms.double(0.1),
+	pairDeltaRmin = cms.double(0.001),
 	NAME=cms.string("TupleCandidateEventsBoosted"),
     doSVMass = cms.bool(COMPUTE_SVMASS_AT_NTUPLE),
     useMVAMET = cms.bool(USE_MVAMET),
@@ -1108,11 +1105,11 @@ process.TupleCandidateEventsBoosted = cms.EDProducer('TupleCandidateEventProduce
 
 process.TupleCandidateEventsTauEsUpBoosted = cms.EDProducer('TupleCandidateEventProducer' ,
 	puppiMETSrc = cms.InputTag("slimmedMETsPuppi"),
-	pfMETSrc = cms.InputTag("patpfMETT1"), # this has the updated JECs
+	pfMETSrc = cms.InputTag("slimmedMETs","",DAVISprocessName), # this has the updated JECs
 	mvaMETSrc = cms.InputTag("MVAMETtauBoostedEsUp:MVAMET:DavisNtuple"),
 	electronVetoSrc =cms.InputTag("filteredVetoElectrons","","DavisNtuple"),
 	muonVetoSrc = cms.InputTag("filteredVetoMuons","","DavisNtuple"),				
-	pairDeltaRmin = cms.double(0.1), 
+	pairDeltaRmin = cms.double(0.001), 
 	NAME=cms.string("TupleCandidateEventsTauEsUpBoosted"),
     doSVMass = cms.bool(COMPUTE_SVMASS_AT_NTUPLE),
     useMVAMET = cms.bool(USE_MVAMET),
@@ -1130,11 +1127,11 @@ process.TupleCandidateEventsTauEsUpBoosted = cms.EDProducer('TupleCandidateEvent
 
 process.TupleCandidateEventsTauEsDownBoosted = cms.EDProducer('TupleCandidateEventProducer' ,
 	puppiMETSrc = cms.InputTag("slimmedMETsPuppi"),
-	pfMETSrc = cms.InputTag("patpfMETT1"), # this has the updated JECs
+	pfMETSrc = cms.InputTag("slimmedMETs","",DAVISprocessName), # this has the updated JECs
 	mvaMETSrc = cms.InputTag("MVAMETtauBoostedEsDown:MVAMET:DavisNtuple"),
 	electronVetoSrc =cms.InputTag("filteredVetoElectrons","","DavisNtuple"),
 	muonVetoSrc = cms.InputTag("filteredVetoMuons","","DavisNtuple"),				
-	pairDeltaRmin = cms.double(0.1), 
+	pairDeltaRmin = cms.double(0.001), 
 	NAME=cms.string("TupleCandidateEventsTauEsDownBoosted"),
     doSVMass = cms.bool(COMPUTE_SVMASS_AT_NTUPLE),
     useMVAMET = cms.bool(USE_MVAMET),
@@ -1152,11 +1149,11 @@ process.TupleCandidateEventsTauEsDownBoosted = cms.EDProducer('TupleCandidateEve
 
 process.TupleCandidateEventsElectronEsUp = cms.EDProducer('TupleCandidateEventProducer' ,
 	puppiMETSrc = cms.InputTag("slimmedMETsPuppi"),
-	pfMETSrc = cms.InputTag("patpfMETT1"), # this has the updated JECs
+	pfMETSrc = cms.InputTag("slimmedMETs","",DAVISprocessName), # this has the updated JECs
 	mvaMETSrc = cms.InputTag("MVAMETelectronEsUp:MVAMET:DavisNtuple"),
 	electronVetoSrc =cms.InputTag("filteredVetoElectronsEsUp","","DavisNtuple"),
 	muonVetoSrc = cms.InputTag("filteredVetoMuons","","DavisNtuple"),				
-	pairDeltaRmin = cms.double(0.1), 
+	pairDeltaRmin = cms.double(0.001), 
 	NAME=cms.string("TupleCandidateEventsElectronEsUp"),
     doSVMass = cms.bool(COMPUTE_SVMASS_AT_NTUPLE),
     useMVAMET = cms.bool(USE_MVAMET),
@@ -1176,11 +1173,11 @@ process.TupleCandidateEventsElectronEsUp = cms.EDProducer('TupleCandidateEventPr
 
 process.TupleCandidateEventsElectronEsDown = cms.EDProducer('TupleCandidateEventProducer' ,
 	puppiMETSrc = cms.InputTag("slimmedMETsPuppi"),
-	pfMETSrc = cms.InputTag("patpfMETT1"), # this has the updated JECs
+	pfMETSrc = cms.InputTag("slimmedMETs","",DAVISprocessName), # this has the updated JECs
 	mvaMETSrc = cms.InputTag("MVAMETelectronEsDown:MVAMET:DavisNtuple"),
 	electronVetoSrc =cms.InputTag("filteredVetoElectronsEsDown","","DavisNtuple"),
 	muonVetoSrc = cms.InputTag("filteredVetoMuons","","DavisNtuple"),				
-	pairDeltaRmin = cms.double(0.1), 
+	pairDeltaRmin = cms.double(0.001), 
 	NAME=cms.string("TupleCandidateEventsElectronEsDown"),
     doSVMass = cms.bool(COMPUTE_SVMASS_AT_NTUPLE),
     useMVAMET = cms.bool(USE_MVAMET),
@@ -1400,11 +1397,17 @@ print  sampleData.RecoilCorrection, ' recoil corrections'
 print '*** AT FLatTuple level, the MVA MET systematics will be added using ',
 print  sampleData.MetSystematicType, ' settings '
 
+# need to change this if running from Ntuple input 
+FlatTupleProductionName = DAVISprocessName
+
+if DEBUG_NTUPLE_INPUT is True:
+	FlatTupleProductionName = "DavisNtuple"
+
 
 
 process.BASELINE = cms.EDAnalyzer('FlatTupleGenerator',
-	pairSrc = cms.InputTag('NtupleEvents','NtupleEvents',DAVISprocessName),
-	indepSrc = cms.InputTag('pairIndep','NtupleEventPairIndep',DAVISprocessName),
+	pairSrc = cms.InputTag('NtupleEvents','NtupleEvents',FlatTupleProductionName),
+	indepSrc = cms.InputTag('pairIndep','NtupleEventPairIndep',FlatTupleProductionName),
 	NAME = cms.string("BASELINE"),
 	FillEffLeptonBranches = cms.bool(BUILD_EFFICIENCY_TREE), # everywhere else it should be always False
 	RecoilCorrection = sampleData.RecoilCorrection,
@@ -1419,8 +1422,8 @@ process.BASELINE = cms.EDAnalyzer('FlatTupleGenerator',
 
 
 process.BASELINEupTau = cms.EDAnalyzer('FlatTupleGenerator',
-	pairSrc = cms.InputTag('NtupleEventsTauEsUp','NtupleEventsTauEsUp',DAVISprocessName),
-	indepSrc = cms.InputTag('pairIndep','NtupleEventPairIndep',DAVISprocessName),
+	pairSrc = cms.InputTag('NtupleEventsTauEsUp','NtupleEventsTauEsUp',FlatTupleProductionName),
+	indepSrc = cms.InputTag('pairIndep','NtupleEventPairIndep',FlatTupleProductionName),
 	NAME = cms.string("BASELINEupTau"),
 	FillEffLeptonBranches = cms.bool(False), 
 	RecoilCorrection = sampleData.RecoilCorrection,
@@ -1434,8 +1437,8 @@ process.BASELINEupTau = cms.EDAnalyzer('FlatTupleGenerator',
 	)
 
 process.BASELINEdownTau = cms.EDAnalyzer('FlatTupleGenerator',
-	pairSrc = cms.InputTag('NtupleEventsTauEsDown','NtupleEventsTauEsDown',DAVISprocessName),
-	indepSrc = cms.InputTag('pairIndep','NtupleEventPairIndep',DAVISprocessName),
+	pairSrc = cms.InputTag('NtupleEventsTauEsDown','NtupleEventsTauEsDown',FlatTupleProductionName),
+	indepSrc = cms.InputTag('pairIndep','NtupleEventPairIndep',FlatTupleProductionName),
 	NAME = cms.string("BASELINEdownTau"),
 	FillEffLeptonBranches = cms.bool(False),	
 	RecoilCorrection = sampleData.RecoilCorrection,
@@ -1449,8 +1452,8 @@ process.BASELINEdownTau = cms.EDAnalyzer('FlatTupleGenerator',
 	)
 
 process.BASELINEupElectron = cms.EDAnalyzer('FlatTupleGenerator',
-	pairSrc = cms.InputTag('NtupleEventsElectronEsUp','NtupleEventsElectronEsUp',DAVISprocessName),
-	indepSrc = cms.InputTag('pairIndep','NtupleEventPairIndep',DAVISprocessName),
+	pairSrc = cms.InputTag('NtupleEventsElectronEsUp','NtupleEventsElectronEsUp',FlatTupleProductionName),
+	indepSrc = cms.InputTag('pairIndep','NtupleEventPairIndep',FlatTupleProductionName),
 	NAME = cms.string("BASELINEupElectron"),
 	FillEffLeptonBranches = cms.bool(False), 
 	RecoilCorrection = sampleData.RecoilCorrection,
@@ -1464,8 +1467,8 @@ process.BASELINEupElectron = cms.EDAnalyzer('FlatTupleGenerator',
 	)
 
 process.BASELINEdownElectron = cms.EDAnalyzer('FlatTupleGenerator',
-	pairSrc = cms.InputTag('NtupleEventsElectronEsDown','NtupleEventsElectronEsDown',DAVISprocessName),
-	indepSrc = cms.InputTag('pairIndep','NtupleEventPairIndep',DAVISprocessName),
+	pairSrc = cms.InputTag('NtupleEventsElectronEsDown','NtupleEventsElectronEsDown',FlatTupleProductionName),
+	indepSrc = cms.InputTag('pairIndep','NtupleEventPairIndep',FlatTupleProductionName),
 	NAME = cms.string("BASELINEdownElectron"),
 	FillEffLeptonBranches = cms.bool(False),	
 	RecoilCorrection = sampleData.RecoilCorrection,
@@ -1482,8 +1485,8 @@ process.BASELINEdownElectron = cms.EDAnalyzer('FlatTupleGenerator',
 
 
 process.LOWDELTAR = cms.EDAnalyzer('FlatTupleGenerator',
-	pairSrc = cms.InputTag('NtupleEvents','NtupleEvents',DAVISprocessName),
-	indepSrc = cms.InputTag('pairIndep','NtupleEventPairIndep',DAVISprocessName),
+	pairSrc = cms.InputTag('NtupleEvents','NtupleEvents',FlatTupleProductionName),
+	indepSrc = cms.InputTag('pairIndep','NtupleEventPairIndep',FlatTupleProductionName),
 	NAME = cms.string("LOWDELTAR"),
 	FillEffLeptonBranches = cms.bool(False),	
 	RecoilCorrection = sampleData.RecoilCorrection,
@@ -1498,8 +1501,8 @@ process.LOWDELTAR = cms.EDAnalyzer('FlatTupleGenerator',
 
 
 process.LOWDELTARupTau = cms.EDAnalyzer('FlatTupleGenerator',
-	pairSrc = cms.InputTag('NtupleEventsTauEsUp','NtupleEventsTauEsUp',DAVISprocessName),
-	indepSrc = cms.InputTag('pairIndep','NtupleEventPairIndep',DAVISprocessName),
+	pairSrc = cms.InputTag('NtupleEventsTauEsUp','NtupleEventsTauEsUp',FlatTupleProductionName),
+	indepSrc = cms.InputTag('pairIndep','NtupleEventPairIndep',FlatTupleProductionName),
 	NAME = cms.string("LOWDELTARupTau"),
 	FillEffLeptonBranches = cms.bool(False),	
 	RecoilCorrection = sampleData.RecoilCorrection,
@@ -1513,8 +1516,8 @@ process.LOWDELTARupTau = cms.EDAnalyzer('FlatTupleGenerator',
 	)
 
 process.LOWDELTARdownTau = cms.EDAnalyzer('FlatTupleGenerator',
-	pairSrc = cms.InputTag('NtupleEventsTauEsDown','NtupleEventsTauEsDown',DAVISprocessName),
-	indepSrc = cms.InputTag('pairIndep','NtupleEventPairIndep',DAVISprocessName),
+	pairSrc = cms.InputTag('NtupleEventsTauEsDown','NtupleEventsTauEsDown',FlatTupleProductionName),
+	indepSrc = cms.InputTag('pairIndep','NtupleEventPairIndep',FlatTupleProductionName),
 	NAME = cms.string("LOWDELTARdownTau"),
 	FillEffLeptonBranches = cms.bool(False),	
 	RecoilCorrection = sampleData.RecoilCorrection,
@@ -1530,8 +1533,8 @@ process.LOWDELTARdownTau = cms.EDAnalyzer('FlatTupleGenerator',
 
 
 process.LOWDELTARupElectron = cms.EDAnalyzer('FlatTupleGenerator',
-	pairSrc = cms.InputTag('NtupleEventsElectronEsUp','NtupleEventsElectronEsUp',DAVISprocessName),
-	indepSrc = cms.InputTag('pairIndep','NtupleEventPairIndep',DAVISprocessName),
+	pairSrc = cms.InputTag('NtupleEventsElectronEsUp','NtupleEventsElectronEsUp',FlatTupleProductionName),
+	indepSrc = cms.InputTag('pairIndep','NtupleEventPairIndep',FlatTupleProductionName),
 	NAME = cms.string("LOWDELTARupElectron"),
 	FillEffLeptonBranches = cms.bool(False),	
 	RecoilCorrection = sampleData.RecoilCorrection,
@@ -1545,8 +1548,8 @@ process.LOWDELTARupElectron = cms.EDAnalyzer('FlatTupleGenerator',
 	)
 
 process.LOWDELTARdownElectron = cms.EDAnalyzer('FlatTupleGenerator',
-	pairSrc = cms.InputTag('NtupleEventsElectronEsDown','NtupleEventsElectronEsDown',DAVISprocessName),
-	indepSrc = cms.InputTag('pairIndep','NtupleEventPairIndep',DAVISprocessName),
+	pairSrc = cms.InputTag('NtupleEventsElectronEsDown','NtupleEventsElectronEsDown',FlatTupleProductionName),
+	indepSrc = cms.InputTag('pairIndep','NtupleEventPairIndep',FlatTupleProductionName),
 	NAME = cms.string("LOWDELTARdownElectron"),
 	FillEffLeptonBranches = cms.bool(False),	
 	RecoilCorrection = sampleData.RecoilCorrection,
@@ -1561,6 +1564,8 @@ process.LOWDELTARdownElectron = cms.EDAnalyzer('FlatTupleGenerator',
 
 
 process.p = cms.Path()
+
+
 
 if DEBUG_NTUPLE == DEBUG_NTUPLE_INPUT and DEBUG_NTUPLE_INPUT is True:
 	print '++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++'
@@ -1690,6 +1695,7 @@ else :
 		process.p *= process.BadChargedCandidateFilter 
 
 		process.p *= process.pairIndep
+	
 	process.p *= process.BASELINE
 
 	if BUILD_TAU_ES_VARIANTS is True :
@@ -1726,11 +1732,19 @@ else :
 					fileName = cms.untracked.string('NtupleFile.root'),
 					SelectEvents = cms.untracked.PSet(
 					                SelectEvents = cms.vstring('p')
-					                ),
-					#outputCommands = cms.untracked.vstring('drop *')
-					outputCommands = cms.untracked.vstring('keep *')
-
+					                )					
 		)
+
+		from Configuration.EventContent.EventContent_cff import MINIAODSIMEventContent
+		process.out.outputCommands = MINIAODSIMEventContent.outputCommands
+		# will cause crash --> process.out.outputCommands.append("keep *")
+		# if only want things needed for FlatTuple uncomment the next line
+		#process.out.outputCommands.append("keep *")
+		#process.out.outputCommands.append("keep TupleCandidateEvents*_*_*_DavisNtuple")
+		process.out.outputCommands.append("keep NtupleEvents*_*_*_DavisNtuple")
+		process.out.outputCommands.append("keep pairIndep*_*_*_DavisNtuple")
+		process.out.outputCommands.append("keep NtuplePairIndependentInfos*_*_*_DavisNtuple")
+
 
 
 	process.TFileService = cms.Service("TFileService", fileName = cms.string("FlatTuple.root"))
