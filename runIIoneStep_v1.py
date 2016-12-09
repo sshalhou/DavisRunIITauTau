@@ -28,7 +28,7 @@ DEBUG_NTUPLE_INPUT = False
 # how many events to run, -1 means run all 
 ######################################
 
-MAX_EVENTS = 5000
+MAX_EVENTS = 15000
 
 ######################################
 # datasets for local running 
@@ -56,8 +56,8 @@ dataSetName_ = "/SUSYGluGluToHToTauTau_M-160_TuneCUETP8M1_13TeV-pythia8/RunIISpr
 myfilelist = cms.untracked.vstring()
 
 if dataSetName_ == "/SUSYGluGluToHToTauTau_M-160_TuneCUETP8M1_13TeV-pythia8/RunIISpring16MiniAODv2-PUSpring16RAWAODSIM_reHLT_80X_mcRun2_asymptotic_v14-v1/MINIAODSIM":
-	#myfilelist.extend(['file:/uscms_data/d3/shalhout/MonoH_2500_800_reHLT.root'])
-	myfilelist.extend(['file:/uscms_data/d3/shalhout/SUSY_GG160_reHLT.root'])
+	myfilelist.extend(['file:/uscms_data/d3/shalhout/MonoH_2500_800_reHLT.root'])
+	#myfilelist.extend(['file:/uscms_data/d3/shalhout/SUSY_GG160_reHLT.root'])
 
 if dataSetName_ == "/GluGluHToTauTau_M125_13TeV_powheg_pythia8/RunIISpring16MiniAODv2-PUSpring16RAWAODSIM_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v1/MINIAODSIM":
 	myfilelist.extend(['file:/uscms_data/d3/shalhout/nonREHLT_file.root']) # smH 125 file for testing non-REHLT running
@@ -1233,6 +1233,7 @@ process.NtupleEvents = cms.EDProducer('NtupleEventProducer' ,
 				 tau_triggerMatchDRSrc = tauTriggerMatch_DR,
 				 tau_triggerMatchTypesSrc = tauTriggerMatch_Types,
 				 tau_triggerMatchPathsAndFiltersSrc = tauTriggerPathsAndFilters,
+			     isBoostedChannelSrc = cms.bool(False),
 			     NAME=cms.string("NtupleEvents"))
 
 
@@ -1252,6 +1253,7 @@ process.NtupleEventsTauEsUp = cms.EDProducer('NtupleEventProducer' ,
 				 tau_triggerMatchDRSrc = tauTriggerMatch_DR,
 				 tau_triggerMatchTypesSrc = tauTriggerMatch_Types,
 				 tau_triggerMatchPathsAndFiltersSrc = tauTriggerPathsAndFilters,			 
+			     isBoostedChannelSrc = cms.bool(False),
 			     NAME=cms.string("NtupleEventsTauEsUp"))
 
 
@@ -1270,6 +1272,7 @@ process.NtupleEventsTauEsDown = cms.EDProducer('NtupleEventProducer' ,
 				 tau_triggerMatchDRSrc = tauTriggerMatch_DR,
 				 tau_triggerMatchTypesSrc = tauTriggerMatch_Types,
 				 tau_triggerMatchPathsAndFiltersSrc = tauTriggerPathsAndFilters,				 
+			     isBoostedChannelSrc = cms.bool(False),
 			     NAME=cms.string("NtupleEventsTauEsDown"))
 
 
@@ -1287,8 +1290,9 @@ process.NtupleEventsElectronEsUp = cms.EDProducer('NtupleEventProducer' ,
 				 muon_triggerMatchPathsAndFiltersSrc = muonTriggerPathsAndFilters,
 				 tau_triggerMatchDRSrc = tauTriggerMatch_DR,
 				 tau_triggerMatchTypesSrc = tauTriggerMatch_Types,
-				 tau_triggerMatchPathsAndFiltersSrc = tauTriggerPathsAndFilters,				 
-			     NAME=cms.string("NtupleEventsElectronEsUp"))
+				 tau_triggerMatchPathsAndFiltersSrc = tauTriggerPathsAndFilters,
+			     isBoostedChannelSrc = cms.bool(False),
+ 			     NAME=cms.string("NtupleEventsElectronEsUp"))
 
 process.NtupleEventsElectronEsDown = cms.EDProducer('NtupleEventProducer' ,
 				 tupleCandidateEventSrc = cms.InputTag("TupleCandidateEventsElectronEsDown","TupleCandidateEventsElectronEsDown","DavisNtuple"),
@@ -1305,7 +1309,70 @@ process.NtupleEventsElectronEsDown = cms.EDProducer('NtupleEventProducer' ,
 				 tau_triggerMatchDRSrc = tauTriggerMatch_DR,
 				 tau_triggerMatchTypesSrc = tauTriggerMatch_Types,
 				 tau_triggerMatchPathsAndFiltersSrc = tauTriggerPathsAndFilters,			 
+			     isBoostedChannelSrc = cms.bool(False),
 			     NAME=cms.string("NtupleEventsElectronEsDown"))
+
+
+# BOOSTED CHANNELS 
+
+
+
+process.NtupleEventsBoosted = cms.EDProducer('NtupleEventProducer' ,
+				 tupleCandidateEventSrc = cms.InputTag("TupleCandidateEventsBoosted","TupleCandidateEventsBoosted","DavisNtuple"),
+				 l1extraParticlesSrc = cms.InputTag("l1extraParticles","IsoTau","RECO"),
+				 triggerBitSrc = cms.InputTag("TriggerResults","",HLTlabelType),
+				 triggerPreScaleSrc = cms.InputTag("patTrigger"),
+				 triggerObjectSrc = cms.InputTag("selectedPatTrigger"),				 
+				 electron_triggerMatchDRSrc = electronTriggerMatch_DR,
+				 electron_triggerMatchTypesSrc = electronTriggerMatch_Types,
+				 electron_triggerMatchPathsAndFiltersSrc = electronTriggerPathsAndFilters,
+				 muon_triggerMatchDRSrc = muonTriggerMatch_DR,
+				 muon_triggerMatchTypesSrc = muonTriggerMatch_Types,
+				 muon_triggerMatchPathsAndFiltersSrc = muonTriggerPathsAndFilters,
+				 tau_triggerMatchDRSrc = tauTriggerMatch_DR,
+				 tau_triggerMatchTypesSrc = tauTriggerMatch_Types,
+				 tau_triggerMatchPathsAndFiltersSrc = tauTriggerPathsAndFilters,
+			     isBoostedChannelSrc = cms.bool(True),
+			     NAME=cms.string("NtupleEventsBoosted"))
+
+
+
+process.NtupleEventsTauEsUpBoosted = cms.EDProducer('NtupleEventProducer' ,
+				 tupleCandidateEventSrc = cms.InputTag("TupleCandidateEventsTauEsUpBoosted","TupleCandidateEventsTauEsUpBoosted","DavisNtuple"),
+				 l1extraParticlesSrc = cms.InputTag("l1extraParticles","IsoTau","RECO"),
+				 triggerBitSrc = cms.InputTag("TriggerResults","",HLTlabelType),
+				 triggerPreScaleSrc = cms.InputTag("patTrigger"),
+				 triggerObjectSrc = cms.InputTag("selectedPatTrigger"),				 
+				 electron_triggerMatchDRSrc = electronTriggerMatch_DR,
+				 electron_triggerMatchTypesSrc = electronTriggerMatch_Types,
+				 electron_triggerMatchPathsAndFiltersSrc = electronTriggerPathsAndFilters,
+				 muon_triggerMatchDRSrc = muonTriggerMatch_DR,
+				 muon_triggerMatchTypesSrc = muonTriggerMatch_Types,
+				 muon_triggerMatchPathsAndFiltersSrc = muonTriggerPathsAndFilters,
+				 tau_triggerMatchDRSrc = tauTriggerMatch_DR,
+				 tau_triggerMatchTypesSrc = tauTriggerMatch_Types,
+				 tau_triggerMatchPathsAndFiltersSrc = tauTriggerPathsAndFilters,			 
+			     isBoostedChannelSrc = cms.bool(True),
+			     NAME=cms.string("NtupleEventsTauEsUpBoosted"))
+
+
+process.NtupleEventsTauEsDownBoosted = cms.EDProducer('NtupleEventProducer' ,
+				 tupleCandidateEventSrc = cms.InputTag("TupleCandidateEventsTauEsDownBoosted","TupleCandidateEventsTauEsDownBoosted","DavisNtuple"),
+				 l1extraParticlesSrc = cms.InputTag("l1extraParticles","IsoTau","RECO"),
+				 triggerBitSrc = cms.InputTag("TriggerResults","",HLTlabelType),
+				 triggerPreScaleSrc = cms.InputTag("patTrigger"),
+				 triggerObjectSrc = cms.InputTag("selectedPatTrigger"),				 
+				 electron_triggerMatchDRSrc = electronTriggerMatch_DR,
+				 electron_triggerMatchTypesSrc = electronTriggerMatch_Types,
+				 electron_triggerMatchPathsAndFiltersSrc = electronTriggerPathsAndFilters,
+				 muon_triggerMatchDRSrc = muonTriggerMatch_DR,
+				 muon_triggerMatchTypesSrc = muonTriggerMatch_Types,
+				 muon_triggerMatchPathsAndFiltersSrc = muonTriggerPathsAndFilters,
+				 tau_triggerMatchDRSrc = tauTriggerMatch_DR,
+				 tau_triggerMatchTypesSrc = tauTriggerMatch_Types,
+				 tau_triggerMatchPathsAndFiltersSrc = tauTriggerPathsAndFilters,				 
+			     isBoostedChannelSrc = cms.bool(True),
+			     NAME=cms.string("NtupleEventsTauEsDownBoosted"))
 
 
 
@@ -1381,8 +1448,8 @@ process.pairIndep = cms.EDProducer('NtuplePairIndependentInfoProducer',
 # -- start FlatTuple production 
 
 from DavisRunIITauTau.FlatTupleGenerator.FlatTupleConfig_cfi import generalConfig
-from DavisRunIITauTau.FlatTupleGenerator.FlatTupleConfig_cfi import defaultCuts
-from DavisRunIITauTau.FlatTupleGenerator.FlatTupleConfig_cfi import lowDeltaRCuts
+from DavisRunIITauTau.FlatTupleGenerator.FlatTupleConfig_cfi import resolvedChannelCuts
+from DavisRunIITauTau.FlatTupleGenerator.FlatTupleConfig_cfi import boostedChannelCuts
 from DavisRunIITauTau.FlatTupleGenerator.FlatTupleConfig_cfi import svMassAtFlatTupleConfig
 from DavisRunIITauTau.FlatTupleGenerator.FlatTupleConfig_cfi import BUILD_LOWDR
 
@@ -1406,7 +1473,8 @@ if DEBUG_NTUPLE_INPUT is True:
 
 
 process.BASELINE = cms.EDAnalyzer('FlatTupleGenerator',
-	pairSrc = cms.InputTag('NtupleEvents','NtupleEvents',FlatTupleProductionName),
+	pairSrc = cms.VInputTag(cms.InputTag('NtupleEvents','NtupleEvents',FlatTupleProductionName),
+			  cms.InputTag('NtupleEventsBoosted','NtupleEventsBoosted',FlatTupleProductionName)),	
 	indepSrc = cms.InputTag('pairIndep','NtupleEventPairIndep',FlatTupleProductionName),
 	NAME = cms.string("BASELINE"),
 	FillEffLeptonBranches = cms.bool(BUILD_EFFICIENCY_TREE), # everywhere else it should be always False
@@ -1416,13 +1484,15 @@ process.BASELINE = cms.EDAnalyzer('FlatTupleGenerator',
 	EventCutSrc = generalConfig,
 	TauEsVariantToKeep = cms.string("NOMINAL"), # only NOMINAL, UP or DOWN are valid
 	ElectronEsVariantToKeep = cms.string("NOMINAL"), # only NOMINAL, UP or DOWN are valid
-	LeptonCutVecSrc = defaultCuts,
+	LeptonCutVecSrc = resolvedChannelCuts,
+	BoostedLeptonCutVecSrc = boostedChannelCuts,
 	SVMassConfig = svMassAtFlatTupleConfig
 	)
 
 
 process.BASELINEupTau = cms.EDAnalyzer('FlatTupleGenerator',
-	pairSrc = cms.InputTag('NtupleEventsTauEsUp','NtupleEventsTauEsUp',FlatTupleProductionName),
+	pairSrc = cms.VInputTag(cms.InputTag('NtupleEventsTauEsUp','NtupleEventsTauEsUp',FlatTupleProductionName),
+							cms.InputTag('NtupleEventsTauEsUpBoosted','NtupleEventsTauEsUpBoosted',FlatTupleProductionName)),
 	indepSrc = cms.InputTag('pairIndep','NtupleEventPairIndep',FlatTupleProductionName),
 	NAME = cms.string("BASELINEupTau"),
 	FillEffLeptonBranches = cms.bool(False), 
@@ -1432,12 +1502,14 @@ process.BASELINEupTau = cms.EDAnalyzer('FlatTupleGenerator',
 	EventCutSrc = generalConfig,
 	TauEsVariantToKeep = cms.string("UP"), # only NOMINAL, UP or DOWN are valid
 	ElectronEsVariantToKeep = cms.string("NOMINAL"), # only NOMINAL, UP or DOWN are valid
-	LeptonCutVecSrc = defaultCuts,
+	LeptonCutVecSrc = resolvedChannelCuts,
+	BoostedLeptonCutVecSrc = boostedChannelCuts,
 	SVMassConfig = svMassAtFlatTupleConfig
 	)
 
 process.BASELINEdownTau = cms.EDAnalyzer('FlatTupleGenerator',
-	pairSrc = cms.InputTag('NtupleEventsTauEsDown','NtupleEventsTauEsDown',FlatTupleProductionName),
+	pairSrc = cms.VInputTag(cms.InputTag('NtupleEventsTauEsDown','NtupleEventsTauEsDown',FlatTupleProductionName),
+							cms.InputTag('NtupleEventsTauEsDownBoosted','NtupleEventsTauEsDownBoosted',FlatTupleProductionName)),
 	indepSrc = cms.InputTag('pairIndep','NtupleEventPairIndep',FlatTupleProductionName),
 	NAME = cms.string("BASELINEdownTau"),
 	FillEffLeptonBranches = cms.bool(False),	
@@ -1447,12 +1519,13 @@ process.BASELINEdownTau = cms.EDAnalyzer('FlatTupleGenerator',
 	EventCutSrc = generalConfig,
 	TauEsVariantToKeep = cms.string("DOWN"), # only NOMINAL, UP or DOWN are valid
 	ElectronEsVariantToKeep = cms.string("NOMINAL"), # only NOMINAL, UP or DOWN are valid
-	LeptonCutVecSrc = defaultCuts,
+	LeptonCutVecSrc = resolvedChannelCuts,
+	BoostedLeptonCutVecSrc = boostedChannelCuts,
 	SVMassConfig = svMassAtFlatTupleConfig
 	)
 
 process.BASELINEupElectron = cms.EDAnalyzer('FlatTupleGenerator',
-	pairSrc = cms.InputTag('NtupleEventsElectronEsUp','NtupleEventsElectronEsUp',FlatTupleProductionName),
+	pairSrc = cms.VInputTag(cms.InputTag('NtupleEventsElectronEsUp','NtupleEventsElectronEsUp',FlatTupleProductionName)),
 	indepSrc = cms.InputTag('pairIndep','NtupleEventPairIndep',FlatTupleProductionName),
 	NAME = cms.string("BASELINEupElectron"),
 	FillEffLeptonBranches = cms.bool(False), 
@@ -1462,12 +1535,13 @@ process.BASELINEupElectron = cms.EDAnalyzer('FlatTupleGenerator',
 	EventCutSrc = generalConfig,
 	TauEsVariantToKeep = cms.string("NOMINAL"), # only NOMINAL, UP or DOWN are valid
 	ElectronEsVariantToKeep = cms.string("UP"), # only NOMINAL, UP or DOWN are valid
-	LeptonCutVecSrc = defaultCuts,
+	LeptonCutVecSrc = resolvedChannelCuts,
+	BoostedLeptonCutVecSrc = boostedChannelCuts,
 	SVMassConfig = svMassAtFlatTupleConfig
 	)
 
 process.BASELINEdownElectron = cms.EDAnalyzer('FlatTupleGenerator',
-	pairSrc = cms.InputTag('NtupleEventsElectronEsDown','NtupleEventsElectronEsDown',FlatTupleProductionName),
+	pairSrc = cms.VInputTag(cms.InputTag('NtupleEventsElectronEsDown','NtupleEventsElectronEsDown',FlatTupleProductionName)),
 	indepSrc = cms.InputTag('pairIndep','NtupleEventPairIndep',FlatTupleProductionName),
 	NAME = cms.string("BASELINEdownElectron"),
 	FillEffLeptonBranches = cms.bool(False),	
@@ -1477,90 +1551,91 @@ process.BASELINEdownElectron = cms.EDAnalyzer('FlatTupleGenerator',
 	EventCutSrc = generalConfig,
 	TauEsVariantToKeep = cms.string("NOMINAL"), # only NOMINAL, UP or DOWN are valid
 	ElectronEsVariantToKeep = cms.string("DOWN"), # only NOMINAL, UP or DOWN are valid
-	LeptonCutVecSrc = defaultCuts,
+	LeptonCutVecSrc = resolvedChannelCuts,
+	BoostedLeptonCutVecSrc = boostedChannelCuts,
 	SVMassConfig = svMassAtFlatTupleConfig
 	)
 
 
 
 
-process.LOWDELTAR = cms.EDAnalyzer('FlatTupleGenerator',
-	pairSrc = cms.InputTag('NtupleEvents','NtupleEvents',FlatTupleProductionName),
-	indepSrc = cms.InputTag('pairIndep','NtupleEventPairIndep',FlatTupleProductionName),
-	NAME = cms.string("LOWDELTAR"),
-	FillEffLeptonBranches = cms.bool(False),	
-	RecoilCorrection = sampleData.RecoilCorrection,
-	MetSystematicType = sampleData.MetSystematicType,
-	KeepTheoryScaleFactors = sampleData.KeepTheoryScaleFactors,
-	EventCutSrc = generalConfig,
-	TauEsVariantToKeep = cms.string("NOMINAL"), # only NOMINAL, UP or DOWN are valid
-	ElectronEsVariantToKeep = cms.string("NOMINAL"), # only NOMINAL, UP or DOWN are valid
-	LeptonCutVecSrc = lowDeltaRCuts,
-	SVMassConfig = svMassAtFlatTupleConfig
-	)
+# process.LOWDELTAR = cms.EDAnalyzer('FlatTupleGenerator',
+# 	pairSrc = cms.InputTag('NtupleEvents','NtupleEvents',FlatTupleProductionName),
+# 	indepSrc = cms.InputTag('pairIndep','NtupleEventPairIndep',FlatTupleProductionName),
+# 	NAME = cms.string("LOWDELTAR"),
+# 	FillEffLeptonBranches = cms.bool(False),	
+# 	RecoilCorrection = sampleData.RecoilCorrection,
+# 	MetSystematicType = sampleData.MetSystematicType,
+# 	KeepTheoryScaleFactors = sampleData.KeepTheoryScaleFactors,
+# 	EventCutSrc = generalConfig,
+# 	TauEsVariantToKeep = cms.string("NOMINAL"), # only NOMINAL, UP or DOWN are valid
+# 	ElectronEsVariantToKeep = cms.string("NOMINAL"), # only NOMINAL, UP or DOWN are valid
+# 	LeptonCutVecSrc = lowDeltaRCuts,
+# 	SVMassConfig = svMassAtFlatTupleConfig
+# 	)
 
 
-process.LOWDELTARupTau = cms.EDAnalyzer('FlatTupleGenerator',
-	pairSrc = cms.InputTag('NtupleEventsTauEsUp','NtupleEventsTauEsUp',FlatTupleProductionName),
-	indepSrc = cms.InputTag('pairIndep','NtupleEventPairIndep',FlatTupleProductionName),
-	NAME = cms.string("LOWDELTARupTau"),
-	FillEffLeptonBranches = cms.bool(False),	
-	RecoilCorrection = sampleData.RecoilCorrection,
-	MetSystematicType = sampleData.MetSystematicType,
-	KeepTheoryScaleFactors = sampleData.KeepTheoryScaleFactors,
-	EventCutSrc = generalConfig,
-	TauEsVariantToKeep = cms.string("UP"), # only NOMINAL, UP or DOWN are valid
-	ElectronEsVariantToKeep = cms.string("NOMINAL"), # only NOMINAL, UP or DOWN are valid
-	LeptonCutVecSrc = lowDeltaRCuts,
-	SVMassConfig = svMassAtFlatTupleConfig
-	)
+# process.LOWDELTARupTau = cms.EDAnalyzer('FlatTupleGenerator',
+# 	pairSrc = cms.InputTag('NtupleEventsTauEsUp','NtupleEventsTauEsUp',FlatTupleProductionName),
+# 	indepSrc = cms.InputTag('pairIndep','NtupleEventPairIndep',FlatTupleProductionName),
+# 	NAME = cms.string("LOWDELTARupTau"),
+# 	FillEffLeptonBranches = cms.bool(False),	
+# 	RecoilCorrection = sampleData.RecoilCorrection,
+# 	MetSystematicType = sampleData.MetSystematicType,
+# 	KeepTheoryScaleFactors = sampleData.KeepTheoryScaleFactors,
+# 	EventCutSrc = generalConfig,
+# 	TauEsVariantToKeep = cms.string("UP"), # only NOMINAL, UP or DOWN are valid
+# 	ElectronEsVariantToKeep = cms.string("NOMINAL"), # only NOMINAL, UP or DOWN are valid
+# 	LeptonCutVecSrc = lowDeltaRCuts,
+# 	SVMassConfig = svMassAtFlatTupleConfig
+# 	)
 
-process.LOWDELTARdownTau = cms.EDAnalyzer('FlatTupleGenerator',
-	pairSrc = cms.InputTag('NtupleEventsTauEsDown','NtupleEventsTauEsDown',FlatTupleProductionName),
-	indepSrc = cms.InputTag('pairIndep','NtupleEventPairIndep',FlatTupleProductionName),
-	NAME = cms.string("LOWDELTARdownTau"),
-	FillEffLeptonBranches = cms.bool(False),	
-	RecoilCorrection = sampleData.RecoilCorrection,
-	MetSystematicType = sampleData.MetSystematicType,
-	KeepTheoryScaleFactors = sampleData.KeepTheoryScaleFactors,
-	EventCutSrc = generalConfig,
-	TauEsVariantToKeep = cms.string("DOWN"), # only NOMINAL, UP or DOWN are valid
-	ElectronEsVariantToKeep = cms.string("NOMINAL"), # only NOMINAL, UP or DOWN are valid
-	LeptonCutVecSrc = lowDeltaRCuts,
-	SVMassConfig = svMassAtFlatTupleConfig
-	)
+# process.LOWDELTARdownTau = cms.EDAnalyzer('FlatTupleGenerator',
+# 	pairSrc = cms.InputTag('NtupleEventsTauEsDown','NtupleEventsTauEsDown',FlatTupleProductionName),
+# 	indepSrc = cms.InputTag('pairIndep','NtupleEventPairIndep',FlatTupleProductionName),
+# 	NAME = cms.string("LOWDELTARdownTau"),
+# 	FillEffLeptonBranches = cms.bool(False),	
+# 	RecoilCorrection = sampleData.RecoilCorrection,
+# 	MetSystematicType = sampleData.MetSystematicType,
+# 	KeepTheoryScaleFactors = sampleData.KeepTheoryScaleFactors,
+# 	EventCutSrc = generalConfig,
+# 	TauEsVariantToKeep = cms.string("DOWN"), # only NOMINAL, UP or DOWN are valid
+# 	ElectronEsVariantToKeep = cms.string("NOMINAL"), # only NOMINAL, UP or DOWN are valid
+# 	LeptonCutVecSrc = lowDeltaRCuts,
+# 	SVMassConfig = svMassAtFlatTupleConfig
+# 	)
 
 
 
-process.LOWDELTARupElectron = cms.EDAnalyzer('FlatTupleGenerator',
-	pairSrc = cms.InputTag('NtupleEventsElectronEsUp','NtupleEventsElectronEsUp',FlatTupleProductionName),
-	indepSrc = cms.InputTag('pairIndep','NtupleEventPairIndep',FlatTupleProductionName),
-	NAME = cms.string("LOWDELTARupElectron"),
-	FillEffLeptonBranches = cms.bool(False),	
-	RecoilCorrection = sampleData.RecoilCorrection,
-	MetSystematicType = sampleData.MetSystematicType,
-	KeepTheoryScaleFactors = sampleData.KeepTheoryScaleFactors,
-	EventCutSrc = generalConfig,
-	TauEsVariantToKeep = cms.string("NOMINAL"), # only NOMINAL, UP or DOWN are valid
-	ElectronEsVariantToKeep = cms.string("UP"), # only NOMINAL, UP or DOWN are valid
-	LeptonCutVecSrc = lowDeltaRCuts,
-	SVMassConfig = svMassAtFlatTupleConfig
-	)
+# process.LOWDELTARupElectron = cms.EDAnalyzer('FlatTupleGenerator',
+# 	pairSrc = cms.InputTag('NtupleEventsElectronEsUp','NtupleEventsElectronEsUp',FlatTupleProductionName),
+# 	indepSrc = cms.InputTag('pairIndep','NtupleEventPairIndep',FlatTupleProductionName),
+# 	NAME = cms.string("LOWDELTARupElectron"),
+# 	FillEffLeptonBranches = cms.bool(False),	
+# 	RecoilCorrection = sampleData.RecoilCorrection,
+# 	MetSystematicType = sampleData.MetSystematicType,
+# 	KeepTheoryScaleFactors = sampleData.KeepTheoryScaleFactors,
+# 	EventCutSrc = generalConfig,
+# 	TauEsVariantToKeep = cms.string("NOMINAL"), # only NOMINAL, UP or DOWN are valid
+# 	ElectronEsVariantToKeep = cms.string("UP"), # only NOMINAL, UP or DOWN are valid
+# 	LeptonCutVecSrc = lowDeltaRCuts,
+# 	SVMassConfig = svMassAtFlatTupleConfig
+# 	)
 
-process.LOWDELTARdownElectron = cms.EDAnalyzer('FlatTupleGenerator',
-	pairSrc = cms.InputTag('NtupleEventsElectronEsDown','NtupleEventsElectronEsDown',FlatTupleProductionName),
-	indepSrc = cms.InputTag('pairIndep','NtupleEventPairIndep',FlatTupleProductionName),
-	NAME = cms.string("LOWDELTARdownElectron"),
-	FillEffLeptonBranches = cms.bool(False),	
-	RecoilCorrection = sampleData.RecoilCorrection,
-	MetSystematicType = sampleData.MetSystematicType,
-	KeepTheoryScaleFactors = sampleData.KeepTheoryScaleFactors,
-	EventCutSrc = generalConfig,
-	TauEsVariantToKeep = cms.string("NOMINAL"), # only NOMINAL, UP or DOWN are valid
-	ElectronEsVariantToKeep = cms.string("DOWN"), # only NOMINAL, UP or DOWN are valid
-	LeptonCutVecSrc = lowDeltaRCuts,
-	SVMassConfig = svMassAtFlatTupleConfig
-	)
+# process.LOWDELTARdownElectron = cms.EDAnalyzer('FlatTupleGenerator',
+# 	pairSrc = cms.InputTag('NtupleEventsElectronEsDown','NtupleEventsElectronEsDown',FlatTupleProductionName),
+# 	indepSrc = cms.InputTag('pairIndep','NtupleEventPairIndep',FlatTupleProductionName),
+# 	NAME = cms.string("LOWDELTARdownElectron"),
+# 	FillEffLeptonBranches = cms.bool(False),	
+# 	RecoilCorrection = sampleData.RecoilCorrection,
+# 	MetSystematicType = sampleData.MetSystematicType,
+# 	KeepTheoryScaleFactors = sampleData.KeepTheoryScaleFactors,
+# 	EventCutSrc = generalConfig,
+# 	TauEsVariantToKeep = cms.string("NOMINAL"), # only NOMINAL, UP or DOWN are valid
+# 	ElectronEsVariantToKeep = cms.string("DOWN"), # only NOMINAL, UP or DOWN are valid
+# 	LeptonCutVecSrc = lowDeltaRCuts,
+# 	SVMassConfig = svMassAtFlatTupleConfig
+# 	)
 
 
 process.p = cms.Path()
@@ -1668,20 +1743,26 @@ else :
 			if BUILD_TAU_ES_VARIANTS is True :
 				process.MVAMETtauBoostedEsUp
 				process.MVAMETtauBoostedEsDown
-				process.p *= process.TupleCandidateEventsTauEsUpBoosted
-				process.p *= process.TupleCandidateEventsTauEsDownBoosted
-	
+
 
 		process.p *= process.TupleCandidateEvents
 		process.p *= process.NtupleEvents
+		process.p *= process.NtupleEventsBoosted
+
+
+
+
 
 
 		if BUILD_TAU_ES_VARIANTS is True :
 			process.p *= process.TupleCandidateEventsTauEsUp
 			process.p *= process.TupleCandidateEventsTauEsDown
+			process.p *= process.TupleCandidateEventsTauEsUpBoosted
+			process.p *= process.TupleCandidateEventsTauEsDownBoosted
 			process.p *= process.NtupleEventsTauEsUp
 			process.p *= process.NtupleEventsTauEsDown
-
+			process.p *= process.NtupleEventsTauEsUpBoosted
+			process.p *= process.NtupleEventsTauEsDownBoosted
 
 		if BUILD_ELECTRON_ES_VARIANTS is True :
 			process.p *= process.TupleCandidateEventsElectronEsDown
@@ -1707,14 +1788,14 @@ else :
 		process.p *= process.BASELINEdownElectron
 
 
-	if BUILD_LOWDR is True :
-		process.p *= process.LOWDELTAR	
-		if BUILD_TAU_ES_VARIANTS is True :
-			process.p *= process.LOWDELTARupTau 
-			process.p *= process.LOWDELTARdownTau
-		if BUILD_ELECTRON_ES_VARIANTS is True :
-			process.p *= process.LOWDELTARupElectron
-			process.p *= process.LOWDELTARdownElectron
+	# if BUILD_LOWDR is True :
+	# 	process.p *= process.LOWDELTAR	
+	# 	if BUILD_TAU_ES_VARIANTS is True :
+	# 		process.p *= process.LOWDELTARupTau 
+	# 		process.p *= process.LOWDELTARdownTau
+	# 	if BUILD_ELECTRON_ES_VARIANTS is True :
+	# 		process.p *= process.LOWDELTARupElectron
+	# 		process.p *= process.LOWDELTARdownElectron
 
 	###################################
 	# output config - should not be in crab

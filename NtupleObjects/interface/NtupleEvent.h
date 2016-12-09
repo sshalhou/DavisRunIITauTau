@@ -47,6 +47,8 @@ public:
   void fillL1IsoTauMatchInfoLeg1andLeg2(edm::Handle<l1extra::L1JetParticleCollection>);
   void fillL1IsoTauMatchInfoForEffLepton(edm::Handle<l1extra::L1JetParticleCollection>);
   void set_isRealData(bool);
+  void set_isBoostedChannel(bool);
+
 
   // helpers 
 
@@ -84,7 +86,7 @@ public:
   float EffLeptonMaxPtTriggerObjMatch(std::size_t) const;  /* arg is the index of the EffLepton */
    
   bool isRealData() const; /* needed to apply trigger cuts on data/mc*/ 
-
+  bool isBoostedChannel() const; /* 1 for channels using slimmedTausBoosted, 0 if just slimmedTaus */
 
 
 
@@ -211,6 +213,7 @@ private:
   std::vector < stringFloatPairVec > m_isEffLeptonGoodForHLTPath;
 
   bool m_isRealData; 
+  bool m_isBoostedChannel;
 
 };
 

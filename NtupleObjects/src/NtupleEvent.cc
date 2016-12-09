@@ -15,7 +15,7 @@ NtupleEvent::NtupleEvent()
 	m_ElectronEsNumberSigmasShifted = NAN;
 	m_isOsPair = -999;
 	m_isRealData = 0;
-
+	m_isBoostedChannel = 0;
 }
 
 ///// get max pt of all trigger objects match to a given reco leg
@@ -366,6 +366,11 @@ void NtupleEvent::set_isRealData(bool dummy_)
 }
 
 
+void NtupleEvent::set_isBoostedChannel(bool dummy_)
+{
+	m_isBoostedChannel = dummy_;
+}
+
 
 /* the next function helps to easily apply the cut 
 
@@ -427,6 +432,8 @@ NtupleLepton NtupleEvent::leg2() const { return m_leg2; }
 std::vector<NtupleLepton> NtupleEvent::EffLepton() const {return m_EffLepton;}
 
 bool NtupleEvent::isRealData() const {return m_isRealData; }
+bool NtupleEvent::isBoostedChannel() const {return m_isBoostedChannel; }
+
 
 std::vector<NtupleTrigObject> NtupleEvent::leg1_trigMatches() const { return m_leg1_trigMatches; }
 std::vector<NtupleTrigObject> NtupleEvent::leg2_trigMatches() const { return m_leg2_trigMatches; }

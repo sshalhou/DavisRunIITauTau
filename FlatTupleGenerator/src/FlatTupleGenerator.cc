@@ -11,7 +11,7 @@
 
 
 FlatTupleGenerator::FlatTupleGenerator(const edm::ParameterSet& iConfig):
-pairSrc_(iConfig.getParameter<edm::InputTag>("pairSrc" )),
+pairSrc_(iConfig.getParameter<vInputTag>("pairSrc")),
 indepSrc_(iConfig.getParameter<edm::InputTag>("indepSrc" )),
 NAME_(iConfig.getParameter<string>("NAME" )),
 FillEffLeptonBranches_(iConfig.getParameter<bool>("FillEffLeptonBranches")),
@@ -22,10 +22,15 @@ EventCutSrc_(iConfig.getParameter<edm::ParameterSet>("EventCutSrc")),
 TauEsVariantToKeep_(iConfig.getParameter<string>("TauEsVariantToKeep")),
 ElectronEsVariantToKeep_(iConfig.getParameter<string>("ElectronEsVariantToKeep")),
 LeptonCutVecSrc_(iConfig.getParameter<std::vector<edm::ParameterSet>>("LeptonCutVecSrc")),
+BoostedLeptonCutVecSrc_(iConfig.getParameter<std::vector<edm::ParameterSet>>("BoostedLeptonCutVecSrc")),
 svMassAtFlatTupleConfig_(iConfig.getParameter<edm::ParameterSet>("SVMassConfig"))
 {
 
-  pairToken_ = consumes < edm::View<NtupleEvent> >(pairSrc_);
+  for(vInputTag::const_iterator it=pairSrc_.begin();it!=pairSrc_.end();it++) 
+  {
+    pairToken_.push_back( consumes< edm::View< NtupleEvent > >( *it ) );
+  }
+
   indepToken_ = consumes < edm::View<NtuplePairIndependentInfo> >(indepSrc_);
 
 
@@ -374,22 +379,62 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
   ///////////////
   // get inputs 
 
-  edm::Handle< edm::View<NtupleEvent> > pairs;
-  iEvent.getByToken(pairToken_, pairs);
-
-
   edm::Handle< edm::View<NtuplePairIndependentInfo> > pairIndepInfos;
   iEvent.getByToken(indepToken_, pairIndepInfos);
-
-
 
 
 
   ///////////////////////////////////////////
   // for each event, store a vector of NtupleEvent (i.e. pair)
   // objects that pass the specified selection 
-  // this is done separately for each channel since they are ranked
+  // this is done separately for each channel (and boosted and resolved) since they are ranked
   // indep. from each other
+  // only after failing to find a resolved pair will a boosted pair be accepted (separately in each channel)
+
+
+  /* for resolved pairs */
+
+  std::vector<NtupleEvent> resolvedPairs_EleTau;
+  resolvedPairs_EleTau.clear();
+
+  std::vector<NtupleEvent> resolvedPairs_MuonTau;
+  resolvedPairs_MuonTau.clear();
+
+  std::vector<NtupleEvent> resolvedPairs_TauTau;
+  resolvedPairs_TauTau.clear();
+
+  std::vector<NtupleEvent> resolvedPairs_EleMuon;
+  resolvedPairs_EleMuon.clear();
+
+  std::vector<NtupleEvent> resolvedPairs_EleEle;
+  resolvedPairs_EleEle.clear();
+
+  std::vector<NtupleEvent> resolvedPairs_MuonMuon;
+  resolvedPairs_MuonMuon.clear();
+
+
+  /* for boosted pairs */
+
+  std::vector<NtupleEvent> boostedPairs_EleTau;
+  boostedPairs_EleTau.clear();
+
+  std::vector<NtupleEvent> boostedPairs_MuonTau;
+  boostedPairs_MuonTau.clear();
+
+  std::vector<NtupleEvent> boostedPairs_TauTau;
+  boostedPairs_TauTau.clear();
+
+  std::vector<NtupleEvent> boostedPairs_EleMuon;
+  boostedPairs_EleMuon.clear();
+
+  std::vector<NtupleEvent> boostedPairs_EleEle;
+  boostedPairs_EleEle.clear();
+
+  std::vector<NtupleEvent> boostedPairs_MuonMuon;
+  boostedPairs_MuonMuon.clear();
+
+
+  /* combined pairs : will hold resolved, and if none are found will add in boosted */
 
   std::vector<NtupleEvent> retainedPairs_EleTau;
   retainedPairs_EleTau.clear();
@@ -410,152 +455,212 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
   retainedPairs_MuonMuon.clear();
 
 
-  /////////////////////////////////////
-  // now loop through the pairs in the current event
-  // and figure out which ones to retain 
 
-  for(std::size_t p = 0; p<pairs->size(); ++p )
+
+
+
+
+/* loop through pairs and store those that pass cuts in the vectors split by channel */
+
+for ( std::vector<edm::EDGetTokenT<edm::View< NtupleEvent > > >::const_iterator pairToken_i = pairToken_.begin(); 
+        pairToken_i != pairToken_.end(); ++pairToken_i )
   {
-
-    NtupleEvent currentPairToCheck =   ((*pairs)[p]);
-
-    if(currentPairToCheck.CandidateEventType()==TupleCandidateEventTypes::EffCand && FillEffLeptonBranches_) 
-    {
-        //      std::cout<<" have an EffLepton candidate \n";      
-
-      //////////////////////////////////////////////////////////////////////
-      // fill the TTree for a EffLepton list                              //
-      //////////////////////////////////////////////////////////////////////
-
-
-      //////////////////////////////////
-      // access pair indep info       //
-
-      NtuplePairIndependentInfo currentINDEP =   ((*pairIndepInfos)[0]);
-
-
-      /////////////////////////////////////////////////////////////////////
-      // init the JetHelper and GenHelper tools and fill pairIndep info  //
-      // once per pair note: GenHelper and JetHelper                     // 
-      // tools **must** be inititalized                                  //
-      // before calling handleXXXX type functions                        //  
-      /////////////////////////////////////////////////////////////////////
-
-      if(currentPairToCheck.CandidateEventType()==TupleCandidateEventTypes::EffCand) 
-      {
-
-
-        // bTagSFhelper m_BtagSFTool(sf_file, looseEff_file, mediumEff_file, tightEff_file, 
-        //               LooseCut, MediumCut, TightCut );
-
-
-        jethelper.init(currentINDEP.jets(),jetIDcut, m_BtagSFTool, iEvent.isRealData());
-
-        genhelper.init(currentINDEP.genParticles(),currentPairToCheck.EffLepton(),
-                     currentPairToCheck.CandidateEventType());
-
-      }
-
-      /* the order of the handleXXX calls matters! 
-      switching them around will cause problems */
-
-      handlePairIndepInfo(iEvent,iSetup,currentINDEP);
-      handleCurrentEventInfo(iEvent,iSetup,currentPairToCheck);      
-      handleEffLeptonInfo(iEvent,iSetup,currentPairToCheck); 
-
-
-
-  //    std::cout<<" FILL EffCandidate! \n";
-      FlatTuple->Fill();
-
-
-
-
-  } // eff lepton
-
-
-    else if(currentPairToCheck.CandidateEventType()!=TupleCandidateEventTypes::EffCand) 
-    {
-
- //     std::cout<<" have a regular pair candidate \n";      
-
-      //////////////////////////////////////////////////////////////////////
-      // fill the TTree for a regular H->tau tau pair candidate           //
-      //////////////////////////////////////////////////////////////////////
-
-      bool keepSignPair = ((keepOS && currentPairToCheck.isOsPair()==1) || (keepSS && currentPairToCheck.isOsPair()!=1));
+    edm::Handle< edm::View< NtupleEvent > > pairs;
+    iEvent.getByToken(*pairToken_i, pairs);
     
-      bool keepTauEsVariant = (
-             (keepTauEsNominal && currentPairToCheck.TauEsNumberSigmasShifted()==0.0) ||
-             (keepTauEsNominal && isnan(currentPairToCheck.TauEsNumberSigmasShifted())) || /* for eMu, muMu, EleEle */
-             (keepTauEsUp && currentPairToCheck.TauEsNumberSigmasShifted()==1.0) ||
-             (keepTauEsDown && currentPairToCheck.TauEsNumberSigmasShifted()==-1.0) 
-      );
+
+    for(std::size_t p = 0; p<pairs->size(); ++p )
+    {
+
+      NtupleEvent currentPairToCheck =   ((*pairs)[p]);
 
 
-      bool keepElectronEsVariant = (
-             (keepElectronEsNominal && currentPairToCheck.ElectronEsNumberSigmasShifted()==0.0) ||
-             (keepElectronEsNominal && isnan(currentPairToCheck.ElectronEsNumberSigmasShifted())) || /* for muTau, eleTau, TauTau, MuMu */
-             (keepElectronEsUp && currentPairToCheck.ElectronEsNumberSigmasShifted()==1.0) ||
-             (keepElectronEsDown && currentPairToCheck.ElectronEsNumberSigmasShifted()==-1.0) 
-      );
-
-
-      bool buildPairTypeCheck = (
-            (BuildEleEle_   && currentPairToCheck.CandidateEventType()==TupleCandidateEventTypes::EleEle)  ||
-            (BuildEleMuon_  && currentPairToCheck.CandidateEventType()==TupleCandidateEventTypes::EleMuon) ||
-            (BuildEleTau_   && currentPairToCheck.CandidateEventType()==TupleCandidateEventTypes::EleTau)  ||
-            (BuildMuonMuon_ && currentPairToCheck.CandidateEventType()==TupleCandidateEventTypes::MuonMuon)|| 
-            (BuildMuonTau_  && currentPairToCheck.CandidateEventType()==TupleCandidateEventTypes::MuonTau) ||
-            (BuildTauTau_   && currentPairToCheck.CandidateEventType()==TupleCandidateEventTypes::TauTau) 
-      );
-
-
-
-
-      /* check if the cuts pass */
-
-      bool leptonCutsPass = LeptonCutHelper.cutEvaluator(currentPairToCheck, LeptonCutVecSrc_);
-      
-      ///////////////////
-      if(keepSignPair && keepTauEsVariant && leptonCutsPass && keepElectronEsVariant && buildPairTypeCheck) 
+      if(currentPairToCheck.CandidateEventType()==TupleCandidateEventTypes::EffCand && FillEffLeptonBranches_) 
       {
-        if(currentPairToCheck.CandidateEventType() == TupleCandidateEventTypes::EleTau) 
-        { 
-          retainedPairs_EleTau.push_back(currentPairToCheck);
+          //      std::cout<<" have an EffLepton candidate \n";      
+
+        //////////////////////////////////////////////////////////////////////
+        // fill the TTree for a EffLepton list                              //
+        //////////////////////////////////////////////////////////////////////
+
+
+        //////////////////////////////////
+        // access pair indep info       //
+
+        NtuplePairIndependentInfo currentINDEP =   ((*pairIndepInfos)[0]);
+
+
+        /////////////////////////////////////////////////////////////////////
+        // init the JetHelper and GenHelper tools and fill pairIndep info  //
+        // once per pair note: GenHelper and JetHelper                     // 
+        // tools **must** be inititalized                                  //
+        // before calling handleXXXX type functions                        //  
+        /////////////////////////////////////////////////////////////////////
+
+        if(currentPairToCheck.CandidateEventType()==TupleCandidateEventTypes::EffCand) 
+        {
+
+
+          // bTagSFhelper m_BtagSFTool(sf_file, looseEff_file, mediumEff_file, tightEff_file, 
+          //               LooseCut, MediumCut, TightCut );
+
+
+          jethelper.init(currentINDEP.jets(),jetIDcut, m_BtagSFTool, iEvent.isRealData());
+
+          genhelper.init(currentINDEP.genParticles(),currentPairToCheck.EffLepton(),
+                       currentPairToCheck.CandidateEventType());
+
         }
 
-        else if(currentPairToCheck.CandidateEventType() == TupleCandidateEventTypes::MuonTau) 
-        { 
-         retainedPairs_MuonTau.push_back(currentPairToCheck);
-        }
+        /* the order of the handleXXX calls matters! 
+        switching them around will cause problems */
+
+        handlePairIndepInfo(iEvent,iSetup,currentINDEP);
+        handleCurrentEventInfo(iEvent,iSetup,currentPairToCheck);      
+        handleEffLeptonInfo(iEvent,iSetup,currentPairToCheck); 
+
+        // std::cout<<" FILL EffCandidate! \n";
+        FlatTuple->Fill();
+
+      } // eff lepton
+
+
+      else if(currentPairToCheck.CandidateEventType()!=TupleCandidateEventTypes::EffCand) 
+      {
+
+        // std::cout<<" have a regular pair candidate \n";      
+
+        //////////////////////////////////////////////////////////////////////
+        // fill the TTree for a regular H->tau tau pair candidate           //
+        //////////////////////////////////////////////////////////////////////
+
+        bool keepSignPair = ((keepOS && currentPairToCheck.isOsPair()==1) || (keepSS && currentPairToCheck.isOsPair()!=1));
+      
+        bool keepTauEsVariant = (
+               (keepTauEsNominal && currentPairToCheck.TauEsNumberSigmasShifted()==0.0) ||
+               (keepTauEsNominal && isnan(currentPairToCheck.TauEsNumberSigmasShifted())) || /* for eMu, muMu, EleEle */
+               (keepTauEsUp && currentPairToCheck.TauEsNumberSigmasShifted()==1.0) ||
+               (keepTauEsDown && currentPairToCheck.TauEsNumberSigmasShifted()==-1.0) 
+        );
+
+
+        bool keepElectronEsVariant = (
+               (keepElectronEsNominal && currentPairToCheck.ElectronEsNumberSigmasShifted()==0.0) ||
+               (keepElectronEsNominal && isnan(currentPairToCheck.ElectronEsNumberSigmasShifted())) || /* for muTau, eleTau, TauTau, MuMu */
+               (keepElectronEsUp && currentPairToCheck.ElectronEsNumberSigmasShifted()==1.0) ||
+               (keepElectronEsDown && currentPairToCheck.ElectronEsNumberSigmasShifted()==-1.0) 
+        );
+
+
+        bool buildPairTypeCheck = (
+              (BuildEleEle_   && currentPairToCheck.CandidateEventType()==TupleCandidateEventTypes::EleEle)  ||
+              (BuildEleMuon_  && currentPairToCheck.CandidateEventType()==TupleCandidateEventTypes::EleMuon) ||
+              (BuildEleTau_   && currentPairToCheck.CandidateEventType()==TupleCandidateEventTypes::EleTau)  ||
+              (BuildMuonMuon_ && currentPairToCheck.CandidateEventType()==TupleCandidateEventTypes::MuonMuon)|| 
+              (BuildMuonTau_  && currentPairToCheck.CandidateEventType()==TupleCandidateEventTypes::MuonTau) ||
+              (BuildTauTau_   && currentPairToCheck.CandidateEventType()==TupleCandidateEventTypes::TauTau) 
+        );
+
+
+
+
+        /* check if the cuts pass */
+
+        bool isBoosted = currentPairToCheck.isBoostedChannel();
+
+
+        bool leptonCutsPass = 0;
+
+        if(!isBoosted) leptonCutsPass = LeptonCutHelper.cutEvaluator(currentPairToCheck, LeptonCutVecSrc_);
+        else leptonCutsPass = LeptonCutHelper.cutEvaluator(currentPairToCheck, BoostedLeptonCutVecSrc_);
+
+        ///////////////////
+        if(keepSignPair && keepTauEsVariant && leptonCutsPass && keepElectronEsVariant && buildPairTypeCheck) 
+        {
+          if(currentPairToCheck.CandidateEventType() == TupleCandidateEventTypes::EleTau) 
+          { 
+            if(!isBoosted) resolvedPairs_EleTau.push_back(currentPairToCheck);
+            else boostedPairs_EleTau.push_back(currentPairToCheck);
+          }
+
+          else if(currentPairToCheck.CandidateEventType() == TupleCandidateEventTypes::MuonTau) 
+          { 
+            if(!isBoosted) resolvedPairs_MuonTau.push_back(currentPairToCheck);
+            else boostedPairs_MuonTau.push_back(currentPairToCheck);
+          }
+         
+          else if(currentPairToCheck.CandidateEventType() == TupleCandidateEventTypes::TauTau) 
+          { 
+            if(!isBoosted) resolvedPairs_TauTau.push_back(currentPairToCheck);
+            else boostedPairs_TauTau.push_back(currentPairToCheck);
+          }
+
+          else if(currentPairToCheck.CandidateEventType() == TupleCandidateEventTypes::EleMuon) 
+          { 
+            if(!isBoosted) resolvedPairs_EleMuon.push_back(currentPairToCheck);      
+            else boostedPairs_EleMuon.push_back(currentPairToCheck);      
+          }
+
+          else if(currentPairToCheck.CandidateEventType() == TupleCandidateEventTypes::EleEle) 
+          { 
+            if(!isBoosted) resolvedPairs_EleEle.push_back(currentPairToCheck);      
+            else boostedPairs_EleEle.push_back(currentPairToCheck);      
+          }
+
+          else if(currentPairToCheck.CandidateEventType() == TupleCandidateEventTypes::MuonMuon) 
+          { 
+            if(!isBoosted) resolvedPairs_MuonMuon.push_back(currentPairToCheck);      
+            else boostedPairs_MuonMuon.push_back(currentPairToCheck);       
+          }
        
-        else if(currentPairToCheck.CandidateEventType() == TupleCandidateEventTypes::TauTau) 
-        { 
-          retainedPairs_TauTau.push_back(currentPairToCheck);
-        }
+        } // passes cuts
+       
 
-        else if(currentPairToCheck.CandidateEventType() == TupleCandidateEventTypes::EleMuon) 
-        { 
-          retainedPairs_EleMuon.push_back(currentPairToCheck);      
-        }
+      } // not eff cand 
 
-        else if(currentPairToCheck.CandidateEventType() == TupleCandidateEventTypes::EleEle) 
-        { 
-          retainedPairs_EleEle.push_back(currentPairToCheck);      
-        }
+    } // loop on pairs
 
-        else if(currentPairToCheck.CandidateEventType() == TupleCandidateEventTypes::MuonMuon) 
-        { 
-          retainedPairs_MuonMuon.push_back(currentPairToCheck);      
-        }
-      }
-      ///////////////////
-    }
-  }
-
+  } // loop on pairSrc vector 
   /////////////////////////
 
+  /* now that we have 2 vectors (resolved & boosted) for each channel we poplulate the 
+  combinde (retained) vector.
+
+    --> the preference will be for resolved
+    --> the boosted pairs will be pushed in only if the resolved vector is empty 
+  */
+
+
+
+  concatenateVectors(resolvedPairs_EleTau, boostedPairs_EleTau, retainedPairs_EleTau);
+  std::cout<<" resolved, boosted, retained in channel EleTau : "<<resolvedPairs_EleTau.size()<<" "<<boostedPairs_EleTau.size()<<" "<<retainedPairs_EleTau.size()<<"\n";
+  resolvedPairs_EleTau.clear();
+  boostedPairs_EleTau.clear();
+
+  concatenateVectors(resolvedPairs_MuonTau, boostedPairs_MuonTau, retainedPairs_MuonTau);
+  std::cout<<" resolved, boosted, retained in channel MuonTau : "<<resolvedPairs_MuonTau.size()<<" "<<boostedPairs_MuonTau.size()<<" "<<retainedPairs_MuonTau.size()<<"\n";
+  resolvedPairs_MuonTau.clear();
+  boostedPairs_MuonTau.clear();
+
+  concatenateVectors(resolvedPairs_TauTau, boostedPairs_TauTau, retainedPairs_TauTau);
+  std::cout<<" resolved, boosted, retained in channel TauTau : "<<resolvedPairs_TauTau.size()<<" "<<boostedPairs_TauTau.size()<<" "<<retainedPairs_TauTau.size()<<"\n";
+  resolvedPairs_TauTau.clear();
+  boostedPairs_TauTau.clear();
+
+  concatenateVectors(resolvedPairs_EleMuon, boostedPairs_EleMuon, retainedPairs_EleMuon);
+  std::cout<<" resolved, boosted, retained in channel EleMuon : "<<resolvedPairs_EleMuon.size()<<" "<<boostedPairs_EleMuon.size()<<" "<<retainedPairs_EleMuon.size()<<"\n";
+  resolvedPairs_EleMuon.clear();
+  boostedPairs_EleMuon.clear();
+
+  concatenateVectors(resolvedPairs_EleEle, boostedPairs_EleEle, retainedPairs_EleEle);
+  std::cout<<" resolved, boosted, retained in channel EleEle : "<<resolvedPairs_EleEle.size()<<" "<<boostedPairs_EleEle.size()<<" "<<retainedPairs_EleEle.size()<<"\n";
+  resolvedPairs_EleEle.clear();
+  boostedPairs_EleEle.clear();
+
+  concatenateVectors(resolvedPairs_MuonMuon, boostedPairs_MuonMuon, retainedPairs_MuonMuon);
+  std::cout<<" resolved, boosted, retained in channel MuonMuon : "<<resolvedPairs_MuonMuon.size()<<" "<<boostedPairs_MuonMuon.size()<<" "<<retainedPairs_MuonMuon.size()<<"\n";
+  resolvedPairs_MuonMuon.clear();
+  boostedPairs_MuonMuon.clear();
 
   /////////////////////////
   // next figure out how to rank the pairs 
@@ -675,8 +780,7 @@ void FlatTupleGenerator::analyze(const edm::Event& iEvent, const edm::EventSetup
       reInit();
 
       pairRank = retainedPairsWithRank[p].first;
-      if(pairRank!=0 && keepOnlyBestRankedPair) continue; /* no reason to keep more than the best pair/event */
-
+      if(pairRank!=0 && keepOnlyBestRankedPair) continue; /* no reason to keep more than the best pair/event */      
 
       ////////////////////////////////
       // access the current pair    //
@@ -2515,7 +2619,8 @@ NtupleEvent currentPair)
   // current pair (i.e. not legs or EffLeptons)
 
   CandidateEventType = currentPair.CandidateEventType();
-    
+  isBoostedChannelPair = currentPair.isBoostedChannel();
+
   pfMET = currentPair.pfMET()[0].pt();
   pfMETphi = currentPair.pfMET()[0].phi();      
   pfMET_cov00 = currentPair.pfMET_cov00()[0];
@@ -2912,6 +3017,7 @@ void FlatTupleGenerator::handlePairIndepInfo(const edm::Event& iEvent, const edm
   RecoilCorrectionType = RECOILCORRECTION_;
   MetSystematicType = MetSystematicType_;
 
+  /* should also add for boosted cuts -- low prioirity since this is just book keeping */
   AppliedLepCuts = LeptonCutHelper.getCutSummary(LeptonCutVecSrc_);
 
 
@@ -3316,6 +3422,7 @@ void FlatTupleGenerator::handlePairIndepInfo(const edm::Event& iEvent, const edm
    luminosityBlock = 0;
    event = 0;
    pairRank = 999;
+   isBoostedChannelPair = 0;
    isRealData  = 0;
    treeInfoString = "NULL";
    RecoilCorrectionType = "NULL";
@@ -4249,6 +4356,7 @@ void FlatTupleGenerator::beginJob()
   /////////////////////////
 
   FlatTuple->Branch("pairRank",&pairRank);
+  FlatTuple->Branch("isBoostedChannelPair",&isBoostedChannelPair);
   FlatTuple->Branch("isOsPair", &isOsPair);
   FlatTuple->Branch("CandidateEventType", &CandidateEventType);
 
@@ -5350,6 +5458,49 @@ double FlatTupleGenerator::GetTransverseMass(LorentzVector L, TLorentzVector T)
   return sqrt(MtSq);
 
 }
+
+
+
+/* conditionally concatenate arg1 (std::vector<NtupleEvent>) and arg2 (std::vector<NtupleEvent>) 
+   into arg3 (std::vector<NtupleEvent>)
+
+if arg1 is populated arg2 will not be added into arg3
+
+- in the usual usage arg1 = resoved, arg2 = boosted, arg3 = retained pairs
+
+- since we prefer resolved pairs, boosted pairs are only added into arg3 if no resolved pairs are found  
+*/    
+
+
+void FlatTupleGenerator::concatenateVectors(std::vector<NtupleEvent> RESOLVED, std::vector<NtupleEvent> BOOSTED, 
+                                            std::vector<NtupleEvent> & RETAINED)
+{
+
+  /* if no resolved pairs take boosted ones */
+ 
+  if(RESOLVED.size() == 0)
+  {  
+    for(std::size_t v = 0; v<BOOSTED.size(); ++v )
+    {
+      RETAINED.push_back(BOOSTED[v]);
+    }
+  }  
+
+  /* else if resolved pairs exist take onlythem */
+ 
+  else if(RESOLVED.size() > 0)
+  {  
+    for(std::size_t v = 0; v<RESOLVED.size(); ++v )
+    {
+      RETAINED.push_back(RESOLVED[v]);
+    }
+  }  
+
+
+  return;
+}
+
+
 
 
 //////////////////////////////////////////////////

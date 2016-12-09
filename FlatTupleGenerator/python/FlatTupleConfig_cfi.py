@@ -529,12 +529,14 @@ print "*********************************************************"
 
 
 # main cut vector PSet :
-defaultCuts = cms.VPSet(
+# take  DR between the legs > 0.3
+
+resolvedChannelCuts = cms.VPSet(
 
 		cms.PSet(   candidatePairType = cms.string("MuonMuon"),
 					muonID = cut_muon_MuonMuon,
-					minDR = cms.double(0.5),
-					maxDR = cms.double(999.0),
+					minDR = cms.double(0.3),
+					maxDR = cms.double(99999.0),
 					trigger = mmTriggerCut
 
 				),
@@ -542,8 +544,8 @@ defaultCuts = cms.VPSet(
 
 		cms.PSet(   candidatePairType = cms.string("EleEle"),
 					electronID = cut_ele_EleEle,
-					minDR = cms.double(0.5),
-					maxDR = cms.double(999.0),
+					minDR = cms.double(0.3),
+					maxDR = cms.double(99999.0),
 					trigger = eeTriggerCut
 
 				),
@@ -553,7 +555,7 @@ defaultCuts = cms.VPSet(
 					electronID = cut_ele_EleMuon,
 					muonID = cut_muon_EleMuon,
 					minDR = cms.double(0.3),
-					maxDR = cms.double(999.0),
+					maxDR = cms.double(99999.0),
 					trigger = emuTriggerCut
 
 				),
@@ -561,8 +563,8 @@ defaultCuts = cms.VPSet(
 		cms.PSet(   candidatePairType = cms.string("MuonTau"),
 					muonID = cut_muon_MuonTau,
 					tauID = cut_tau_MuonTau,
-					minDR = cms.double(0.5),
-					maxDR = cms.double(999.0),
+					minDR = cms.double(0.3),
+					maxDR = cms.double(99999.0),
 					trigger = mtauTriggerCut
 
 				),
@@ -571,29 +573,29 @@ defaultCuts = cms.VPSet(
 		cms.PSet(   candidatePairType = cms.string("EleTau"),
 					electronID = cut_ele_EleTau,
 					tauID = cut_tau_EleTau,
-					minDR = cms.double(0.5),
-					maxDR = cms.double(999.0),
+					minDR = cms.double(0.3),
+					maxDR = cms.double(99999.0),
 					trigger = etauTriggerCut
 				),
 
 
 		cms.PSet(   candidatePairType = cms.string("TauTau"),
 					tauID = cut_tau_TauTau,
-					minDR = cms.double(0.5),
-					maxDR = cms.double(999.0),
+					minDR = cms.double(0.3),
+					maxDR = cms.double(99999.0),
 					trigger = tautauTriggerCut
 				)
 	)
 
 
-
-lowDeltaRCuts = cms.VPSet(
+# take any DR between the legs
+boostedChannelCuts = cms.VPSet(
 
 
 		cms.PSet(   candidatePairType = cms.string("MuonMuon"),
 					muonID = cut_muon_MuonMuon,
 					minDR = cms.double(0.),
-					maxDR = cms.double(0.4999),
+					maxDR = cms.double(99999.0),
 					trigger = mmTriggerCut
 
 				),
@@ -602,7 +604,7 @@ lowDeltaRCuts = cms.VPSet(
 		cms.PSet(   candidatePairType = cms.string("EleEle"),
 					electronID = cut_ele_EleEle,
 					minDR = cms.double(0.),
-					maxDR = cms.double(0.4999),
+					maxDR = cms.double(99999.0),
 					trigger = eeTriggerCut
 
 				),
@@ -612,7 +614,7 @@ lowDeltaRCuts = cms.VPSet(
 					electronID = cut_ele_EleMuon,
 					muonID = cut_muon_EleMuon,
 					minDR = cms.double(0.),
-					maxDR = cms.double(0.2999),
+					maxDR = cms.double(99999.09),
 					trigger = emuTriggerCut
 
 				),
@@ -621,7 +623,7 @@ lowDeltaRCuts = cms.VPSet(
 					muonID = cut_muon_MuonTau,
 					tauID = cut_tau_MuonTau,
 					minDR = cms.double(0.),
-					maxDR = cms.double(0.4999),
+					maxDR = cms.double(99999.0),
 					trigger = mtauTriggerCut
 
 				),
@@ -631,7 +633,7 @@ lowDeltaRCuts = cms.VPSet(
 					electronID = cut_ele_EleTau,
 					tauID = cut_tau_EleTau,
 					minDR = cms.double(0.),
-					maxDR = cms.double(0.4999),
+					maxDR = cms.double(99999.0),
 					trigger = etauTriggerCut
 				),
 
@@ -639,7 +641,7 @@ lowDeltaRCuts = cms.VPSet(
 		cms.PSet(   candidatePairType = cms.string("TauTau"),
 					tauID = cut_tau_TauTau,
 					minDR = cms.double(0.),
-					maxDR = cms.double(0.4999),
+					maxDR = cms.double(99999.0),
 					trigger = tautauTriggerCut
 				)
 	)

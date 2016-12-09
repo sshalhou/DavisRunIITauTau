@@ -142,6 +142,22 @@ public:
       /* the doubles are set to met pt, phi, mt1 and mt2 using the uncertainty and corr. specified */
       virtual void GetPFMetVariant(NtupleEvent, pat::MET::METUncertainty, pat::MET::METCorrectionLevel, double&, double&, double&, double&); 
 
+      /* conditionally concatenate arg1 (std::vector<NtupleEvent>) and arg2 (std::vector<NtupleEvent>&) 
+         into arg3 (std::vector<NtupleEvent>)
+		 
+		 if arg1 is populated arg2 will not be added into arg3
+		
+		 - in the usual usage arg1 = resoved, arg2 = boosted, arg3 = retained pairs
+
+		 - since we prefer resolved pairs, boosted pairs are only added into arg3 if no resolved pairs are found 	
+	  */	 	
+
+      virtual void concatenateVectors(std::vector<NtupleEvent>, std::vector<NtupleEvent>, std::vector<NtupleEvent>&);
+
+
+
+
+
 // private:
 // 	virtual void beginJob() ;
 // 	virtual void analyze(const edm::Event&, const edm::EventSetup&);
@@ -187,9 +203,8 @@ public:
 
 	/* the input collection sources */
 
-	edm::InputTag pairSrc_;
-    edm::EDGetTokenT<edm::View< NtupleEvent > > pairToken_;
-
+	vInputTag pairSrc_;
+	std::vector<edm::EDGetTokenT< edm::View< NtupleEvent > > > pairToken_;
 
 	edm::InputTag indepSrc_;
 	edm::EDGetTokenT<edm::View< NtuplePairIndependentInfo > > indepToken_;
@@ -203,6 +218,7 @@ public:
 	std::string TauEsVariantToKeep_;  // should be NOMINAL, UP or DOWN
 	std::string ElectronEsVariantToKeep_;  // should be NOMINAL, UP or DOWN
 	std::vector<edm::ParameterSet> LeptonCutVecSrc_;
+	std::vector<edm::ParameterSet> BoostedLeptonCutVecSrc_;
 	edm::ParameterSet svMassAtFlatTupleConfig_;	
 
 	/* the parameters to be read from SVMassConfig in FlatTupleConfig_cfi.py */
@@ -306,6 +322,7 @@ public:
 	unsigned int  event ;     		/* from mini-AOD, the event number */
 	bool  isRealData ;       		/* from mini-AOD, 1 if data, 0 if MC (be careful of embedded samples!) */
 	unsigned int  pairRank ; 		/* since each event can have multiple TauTau pairs; zero is the best rank */	
+	bool isBoostedChannelPair;      /* set to 1 if the pair was formed using slimmedTausBoosted, 0 if slimmedTaus */
 	int isOsPair;		  			/* 1 if sign(leg1)!=sign(leg2), 0 otherwise */
 	int CandidateEventType;  		/* see TupleObjects/interface/TupleCandidateEventTypes.h */
 	float TauEsNumberSigmasShifted; /* number of sigmas the tau ES was shifted in this event */

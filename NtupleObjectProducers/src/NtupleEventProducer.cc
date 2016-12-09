@@ -106,6 +106,7 @@ private:
   double tau_triggerMatchDRSrc_;
   std::vector<int> tau_triggerMatchTypesSrc_;
   std::vector<std::string> tau_triggerMatchPathsAndFiltersSrc_;
+  bool isBoostedChannelSrc_;
   string NAME_;
 
 
@@ -138,6 +139,7 @@ muon_triggerMatchPathsAndFiltersSrc_(iConfig.getParameter<std::vector<std::strin
 tau_triggerMatchDRSrc_(iConfig.getParameter<double>("tau_triggerMatchDRSrc" )),
 tau_triggerMatchTypesSrc_(iConfig.getParameter<std::vector<int>>("tau_triggerMatchTypesSrc" )),
 tau_triggerMatchPathsAndFiltersSrc_(iConfig.getParameter<std::vector<std::string>>("tau_triggerMatchPathsAndFiltersSrc" )),
+isBoostedChannelSrc_(iConfig.getParameter<bool>("isBoostedChannelSrc" )),
 NAME_(iConfig.getParameter<string>("NAME" ))
 {
 
@@ -232,6 +234,7 @@ NtupleEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
 
           NtupleEvent anNtupleEffEvent;
           anNtupleEffEvent.fill(aPair);
+          anNtupleEffEvent.set_isBoostedChannel(isBoostedChannelSrc_);
 
 
           /* fill the trigger info for the EffCands */
@@ -269,7 +272,7 @@ NtupleEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
         {
           NtupleEvent anNtupleEvent;
           anNtupleEvent.fill(aPair);
-
+          anNtupleEvent.set_isBoostedChannel(isBoostedChannelSrc_);
 
 
 
