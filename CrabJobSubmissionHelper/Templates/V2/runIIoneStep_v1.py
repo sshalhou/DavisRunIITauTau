@@ -4,8 +4,8 @@
 #		 MAX_EVENTS    -- stop execution after MAX_EVENTS events, -1 to run all
 #		 dataSetName_  -- full DBS name of dataSet	
 #        myfilelist    -- the input list of miniAOD or Ntuple files
-#		 DEBUG_NTUPLE  -- produce both ntuple & flatTuple if True
-# 		 DEBUG_NTUPLE_INPUT -- input NtupleFile, output FlatTuple
+#		 DEBUG_NTUPLE  -- produce both ntuple & flatTuple if True (set to false on crab)
+# 		 DEBUG_NTUPLE_INPUT -- input NtupleFile, output FlatTuple (set to false on crab)
 #########################################################
 
 
@@ -30,41 +30,6 @@ DEBUG_NTUPLE_INPUT = False
 
 MAX_EVENTS = -1
 
-######################################
-# datasets for local running 
-######################################
-
-#dataSetName_ = "TEMP_DATA"
-#dataSetName_ = "/SUSYGluGluToHToTauTau_M-160_TuneCUETP8M1_13TeV-pythia8/RunIISpring16MiniAODv2-PUSpring16RAWAODSIM_reHLT_80X_mcRun2_asymptotic_v14-v1/MINIAODSIM"
-dataSetName_ = "/GluGluHToTauTau_M125_13TeV_powheg_pythia8/RunIISpring16MiniAODv2-PUSpring16RAWAODSIM_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v1/MINIAODSIM"
-
-
-
-######################################
-#  list of files to process 
-######################################
-
-myfilelist = cms.untracked.vstring()
-
-if dataSetName_ == "TEMP_DATA":
-	myfilelist.extend(['file:/uscms_data/d3/shalhout/Run2016H_SingleMuon.root'])
-
-
-if dataSetName_ == "/SUSYGluGluToHToTauTau_M-160_TuneCUETP8M1_13TeV-pythia8/RunIISpring16MiniAODv2-PUSpring16RAWAODSIM_reHLT_80X_mcRun2_asymptotic_v14-v1/MINIAODSIM":
-	#myfilelist.extend(['file:/uscms_data/d3/shalhout/MonoH_2500_800_reHLT.root'])
-	#myfilelist.extend(['file:/uscms_data/d3/shalhout/SUSY_GG160_reHLT.root'])
-	myfilelist.extend(['file:/uscms_data/d3/shalhout/reHLT_ttBar.root'])
-
-if dataSetName_ == "/GluGluHToTauTau_M125_13TeV_powheg_pythia8/RunIISpring16MiniAODv2-PUSpring16RAWAODSIM_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v1/MINIAODSIM":
-	myfilelist.extend(['file:/uscms_data/d3/shalhout/nonREHLT_file.root']) # smH 125 file for testing non-REHLT running
-	myfilelist.extend(['file:/uscms_data/d3/shalhout/nonReHLT_DY1JET.root'])
-	myfilelist.extend(['file:/uscms_data/d3/shalhout/nonReHLT_DY4JET.root'])
-	#myfilelist.extend(['file:/uscms_data/d3/shalhout/nonReHLT_WJetsHt100to200.root'])
-	#myfilelist.extend(['file:/uscms_data/d3/shalhout/nonReHLT_WJetsHt1200to2500.root'])
-
-
-if DEBUG_NTUPLE_INPUT is True:
-	myfilelist = cms.untracked.vstring(['file:./NtupleFile.root'])
 
 if MAX_EVENTS != -1:
 	print '*****************************************************************'
@@ -73,6 +38,12 @@ if MAX_EVENTS != -1:
 	print '****** If this is a crab job, things will NOT go well :(  '
 	print '*****************************************************************'
 	print '*****************************************************************'
+
+######################################
+# datasets for crab running
+######################################
+
+dataSetName_ = "DUMMY_DATASET_NAME"
 
 
 ########################################
@@ -84,10 +55,9 @@ DAVISprocessName = "DavisNtuple"
 if DEBUG_NTUPLE_INPUT is True:
 	DAVISprocessName = "DavisNtupleDebug"
 
-
-
 import FWCore.ParameterSet.Config as cms
 process = cms.Process(DAVISprocessName) 
+
 
 
 from DavisRunIITauTau.TupleConfigurations.ConfigNtupleContent_cfi import *
@@ -109,7 +79,6 @@ print '******************************************'
 print sampleData
 print '******************************************'
 print '******************************************'
-
 
 ####################
 # fix the HLT label 
@@ -171,6 +140,7 @@ print 'default btag algoritm = ', DEFAULT_BTAG_ALGORITHM
 
 
 
+
 # import of standard configurations
 process.load("FWCore.MessageService.MessageLogger_cfi")
 process.MessageLogger.cerr.FwkReport.reportEvery = 500
@@ -198,22 +168,12 @@ process.options.allowUnscheduled = cms.untracked.bool(True)
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(MAX_EVENTS) ) 
 
 
+
 ###################################
-# input - remove for crab running
+# input - configured for crab running
 ###################################
 
-# process.source = cms.Source("PoolSource",fileNames=myfilelist,
-# 			eventsToProcess = cms.untracked.VEventRange('1:40203-1:40203','1:42012-1:42012','1:41436-1:41436'))	
-
-
-
-process.source = cms.Source("PoolSource",fileNames=myfilelist)
-
-# process.source = cms.Source("PoolSource",fileNames=myfilelist,
-# 			eventsToProcess = cms.untracked.VEventRange('1:4465-1:4465','1:4442-1:4442','1:53532-1:53532',
-#                         '1:84528-1:84528','1:92356-1:92356','1:109720-1:109720'))	
-
-
+process.source = cms.Source("PoolSource")
 
 ###################################
 # Cumulative Info
@@ -228,7 +188,6 @@ process.Cumulative = cms.EDAnalyzer('CumulativeInfoAdder',
 	mcGenWeightSrc = mcGenWeightSrcInputTag,
 	LHEEventProductSrc = LHEEventProductSrcInputTag
 	)
-
 
 
 
@@ -293,8 +252,6 @@ process.filteredSlimmedJets = cms.EDFilter("PATJetRefSelector",
 	src = cms.InputTag('patJetsReapplyJEC'),
 	cut = jetFilter
 	)
-
-
 
 
 
@@ -506,6 +463,7 @@ process.customSlimmedTausBoostedTauEsDown = cms.EDProducer('CustomPatTauProducer
 							triggerObjectSrc = cms.InputTag("selectedPatTrigger"),
 							rhoSources = rhoSourceList
 							                 )
+
 
 
 
@@ -723,6 +681,7 @@ process.requireCandidateHiggsPair = cms.EDFilter("HiggsCandidateCountFilter",
     filter = cms.bool(True)
 	)
 
+
 #########################################
 # RUN PF MET CORR AND ERRORS
 ##########################################
@@ -740,6 +699,7 @@ if sampleData.EventType == 'DATA':
 # the original slimmedMETs collection
 
 METforNtuple = DAVISprocessName
+
 
 
 
@@ -932,6 +892,8 @@ if RUN_MEM_CHECK is True:
 
 
 # 
+
+
 
 ####################
 # produce the TupleCandidateEvent pair + MET container
@@ -1350,7 +1312,6 @@ process.BadChargedCandidateFilter.taggingMode   = cms.bool(True)
 
 
 
-
 #################################
 # pair independent content
 
@@ -1510,6 +1471,9 @@ process.BASELINEdownElectron = cms.EDAnalyzer('FlatTupleGenerator',
 	SVMassConfig = svMassAtFlatTupleConfig
 	)
 
+###################
+# start the path  #
+###################
 
 ###################
 # start the path  #
@@ -1665,45 +1629,8 @@ else :
 		process.p *= process.BASELINEdownElectron
 
 
-
-
-	###################################
-	# output config - should not be in crab
-	# script 
-	###################################
-
-
-	if DEBUG_NTUPLE is True :
-		print "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
-		print "+++++ DEBUG NTUPLE ***** will create Ntuple for Debugging "
-		print "+++++ DEBUG NTUPLE ***** with edmProvDump & edmDumpEventContent "
-		print "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
-
-		process.out = cms.OutputModule("PoolOutputModule",
-					fileName = cms.untracked.string('NtupleFile.root'),
-					SelectEvents = cms.untracked.PSet(
-					                SelectEvents = cms.vstring('p')
-					                )					
-		)
-
-		from Configuration.EventContent.EventContent_cff import MINIAODSIMEventContent
-		process.out.outputCommands = MINIAODSIMEventContent.outputCommands
-		# will cause crash --> process.out.outputCommands.append("keep *")
-		# if only want things needed for FlatTuple uncomment the next line
-		#process.out.outputCommands.append("keep *")
-		#process.out.outputCommands.append("keep TupleCandidateEvents*_*_*_DavisNtuple")
-		process.out.outputCommands.append("keep NtupleEvents*_*_*_DavisNtuple")
-		process.out.outputCommands.append("keep pairIndep*_*_*_DavisNtuple")
-		process.out.outputCommands.append("keep NtuplePairIndependentInfos*_*_*_DavisNtuple")
-
-
-
-	process.TFileService = cms.Service("TFileService", fileName = cms.string("FlatTuple.root"))
-
-	if DEBUG_NTUPLE is True :
-		process.e = cms.EndPath(process.out)
-	else :
-		process.e = cms.EndPath()
+process.TFileService = cms.Service("TFileService", fileName = cms.string("FlatTuple.root"))
+process.e = cms.EndPath()
 
 
 
