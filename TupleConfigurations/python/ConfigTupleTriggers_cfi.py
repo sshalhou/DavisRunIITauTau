@@ -90,7 +90,88 @@ class ConfigTriggerHelper:
 
 		# specific path strings to be concatenated and then grouped into one vstring object
 		# don't forget to append to masterList_ 
+		
 
+		################
+		# 2016 		   #	
+		################
+		# in 2016 we don't apply trig cuts on MC so we will store the same trigger booleans
+		# for data & MC based on the data (MC will likely have very few passes so we wont actually cut on it in MC)
+		# we won't apply data trigger cuts during FlatTuple production, but later on in the analysis macro
+
+		if(self.sampleData_.ProductionInfo == 'Run2016_B_C_D_E_F_G_H'):
+			#########################################################################		
+			# HLT paths and filters for Run2016_B_C_D_E_F_G_H  Data -- START		#
+			#########################################################################
+			print '******** SETTING TRIGGER INFO FOR ', self.sampleData_.ProductionInfo
+
+			####  Run2016_B_C_D_E_F_G_H path : IsoMu22 #####
+
+			mlist1_ = []
+			mlist1_.append('HLT_IsoMu22_v*') # path
+			mlist1_.append('AND') # AND or OR of the following filters
+			mlist1_.append('hltL3crIsoL1sMu20L1f0L2f10QL3f22QL3trkIsoFiltered0p09') # filter
+			self.muon_masterList_.append(mlist1_)
+
+			####  Run2016_B_C_D_E_F_G_H path : IsoTkMu22 #####
+
+			mlist2_ = []
+			mlist2_.append('HLT_IsoTkMu22_v*') # path
+			mlist2_.append('AND') # AND or OR of the following filters
+			mlist2_.append('hltL3fL1sMu20L1f0Tkf22QL3trkIsoFiltered0p09') # filter
+			self.muon_masterList_.append(mlist2_)
+
+
+			####  Run2016_B_C_D_E_F_G_H path : Ele25 #####
+
+			elist1_ = []
+			elist1_.append('HLT_Ele25_eta2p1_WPTight_Gsf_v*') # path
+			elist1_.append('AND') # AND or OR of the following filters
+			elist1_.append('hltEle25erWPTightGsfTrackIsoFilter') # filter
+			self.electron_masterList_.append(elist1_)
+
+			####  Run2016_B_C_D_E_F_G_H path : DoubleMediumIsoPFTau35 #####
+
+			tlist1_ = []
+			tlist1_.append('HLT_DoubleMediumIsoPFTau35_Trk1_eta2p1_Reg_v*') # path
+			tlist1_.append('AND') # AND or OR of the following filters
+			tlist1_.append('hltDoublePFTau35TrackPt1MediumIsolationDz02Reg') # filter
+			self.tau_masterList_.append(tlist1_)
+
+			####  Run2016_B_C_D_E_F_G_H path : Mu8+Ele23 #####
+
+			mlist3_ = []
+			mlist3_.append('HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v*') # path
+			mlist3_.append('AND') # AND or OR of the following filters
+			mlist3_.append('hltMu8TrkIsoVVLEle23CaloIdLTrackIdLIsoVLMuonlegL3IsoFiltered8') # filter
+			self.muon_masterList_.append(mlist3_)
+
+			elist2_ = []
+			elist2_.append('HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v*') # path
+			elist2_.append('AND') # AND or OR of the following filters
+			elist2_.append('hltMu8TrkIsoVVLEle23CaloIdLTrackIdLIsoVLElectronlegTrackIsoFilter') # filter
+			self.electron_masterList_.append(elist2_)
+
+			####  Run2016_B_C_D_E_F_G_H path : Mu23+Ele12 #####
+
+			mlist4_ = []
+			mlist4_.append('HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v*') # path
+			mlist4_.append('AND') # AND or OR of the following filters
+			mlist4_.append('hltMu23TrkIsoVVLEle12CaloIdLTrackIdLIsoVLMuonlegL3IsoFiltered23') # filter
+			self.muon_masterList_.append(mlist4_)
+
+			elist3_ = []
+			elist3_.append('HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v*') # path
+			elist3_.append('AND') # AND or OR of the following filters
+			elist3_.append('hltMu23TrkIsoVVLEle12CaloIdLTrackIdLIsoVLElectronlegTrackIsoFilter') # filter
+			self.electron_masterList_.append(elist3_)
+
+
+
+
+			#########################################################################					
+			# HLT paths and filters for Run2016_B_C_D_E_F_G_H  Data -- START		#
+			#########################################################################
 
 		if(self.sampleData_.ProductionInfo == 'Run2015B'):
 			#########################################################		

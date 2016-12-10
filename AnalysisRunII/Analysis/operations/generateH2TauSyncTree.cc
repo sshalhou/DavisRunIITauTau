@@ -954,6 +954,23 @@ void generateH2TauSyncTree::handleEvent()
 	ElectronEsNumberSigmasShifted = R.getF("ElectronEsNumberSigmasShifted");
 
 
+	// 2016 triggers -- will cause crash if applied different samples
+	
+	leg1_HLT_DoubleMediumIsoPFTau35_Trk1_eta2p1_Reg = R.getD("leg1_HLT_DoubleMediumIsoPFTau35_Trk1_eta2p1_Reg");
+	leg1_HLT_Ele25_eta2p1_WPTight_Gsf = R.getD("leg1_HLT_Ele25_eta2p1_WPTight_Gsf");
+	leg1_HLT_IsoMu22 = R.getD("leg1_HLT_IsoMu22");
+	leg1_HLT_IsoTkMu22 = R.getD("leg1_HLT_IsoTkMu22");
+	leg1_HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL = R.getD("leg1_HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL");
+	leg1_HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL = R.getD("leg1_HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL");
+	
+	leg2_HLT_DoubleMediumIsoPFTau35_Trk1_eta2p1_Reg = R.getD("leg2_HLT_DoubleMediumIsoPFTau35_Trk1_eta2p1_Reg");
+	leg2_HLT_Ele25_eta2p1_WPTight_Gsf = R.getD("leg2_HLT_Ele25_eta2p1_WPTight_Gsf");
+	leg2_HLT_IsoMu22 = R.getD("leg2_HLT_IsoMu22");
+	leg2_HLT_IsoTkMu22 = R.getD("leg2_HLT_IsoTkMu22");
+	leg2_HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL = R.getD("leg2_HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL");
+	leg2_HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL = R.getD("leg2_HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL");
+
+
 	//////////////////////////////////////////////////////////////////////////////
 
 	// tMVA variable calculations
@@ -1861,6 +1878,24 @@ void generateH2TauSyncTree::setupBranches(TTree * T)
 	T->Branch("isSmallTree", &isSmallTree);
 	T->Branch("TauEsNumberSigmasShifted", &TauEsNumberSigmasShifted);
 	T->Branch("ElectronEsNumberSigmasShifted", &ElectronEsNumberSigmasShifted);
+
+	T->Branch("leg1_HLT_DoubleMediumIsoPFTau35_Trk1_eta2p1_Reg", &leg1_HLT_DoubleMediumIsoPFTau35_Trk1_eta2p1_Reg);
+	T->Branch("leg1_HLT_Ele25_eta2p1_WPTight_Gsf", &leg1_HLT_Ele25_eta2p1_WPTight_Gsf);
+	T->Branch("leg1_HLT_IsoMu22", &leg1_HLT_IsoMu22);
+	T->Branch("leg1_HLT_IsoTkMu22", &leg1_HLT_IsoTkMu22);
+	T->Branch("leg1_HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL", &leg1_HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL);
+	T->Branch("leg1_HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL", &leg1_HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL);
+
+	T->Branch("leg2_HLT_DoubleMediumIsoPFTau35_Trk1_eta2p1_Reg", &leg2_HLT_DoubleMediumIsoPFTau35_Trk1_eta2p1_Reg);
+	T->Branch("leg2_HLT_Ele25_eta2p1_WPTight_Gsf", &leg2_HLT_Ele25_eta2p1_WPTight_Gsf);
+	T->Branch("leg2_HLT_IsoMu22", &leg2_HLT_IsoMu22);
+	T->Branch("leg2_HLT_IsoTkMu22", &leg2_HLT_IsoTkMu22);
+	T->Branch("leg2_HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL", &leg2_HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL);
+	T->Branch("leg2_HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL", &leg2_HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL);
+
+
+
+
 	T->Branch("veto_leptonType", &veto_leptonType);
 	T->Branch("veto_pt", &veto_pt);
 	T->Branch("veto_eta", &veto_eta);
@@ -2547,6 +2582,20 @@ void generateH2TauSyncTree::reset()
 	isSmallTree = 0;
 	TauEsNumberSigmasShifted = -999.0;
 	ElectronEsNumberSigmasShifted = -999.0;
+
+	leg1_HLT_DoubleMediumIsoPFTau35_Trk1_eta2p1_Reg = 0.0;
+	leg1_HLT_Ele25_eta2p1_WPTight_Gsf = 0.0;
+	leg1_HLT_IsoMu22 = 0.0;
+	leg1_HLT_IsoTkMu22 = 0.0;
+	leg1_HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL = 0.0;
+	leg1_HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL = 0.0;
+
+	leg2_HLT_DoubleMediumIsoPFTau35_Trk1_eta2p1_Reg = 0.0;
+	leg2_HLT_Ele25_eta2p1_WPTight_Gsf = 0.0;
+	leg2_HLT_IsoMu22 = 0.0;
+	leg2_HLT_IsoTkMu22 = 0.0;
+	leg2_HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL = 0.0;
+	leg2_HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL = 0.0;
 
 	veto_leptonType.clear();
 	veto_pt.clear();

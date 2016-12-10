@@ -337,16 +337,16 @@ bool SimpleFilter::filter(edm::Event & iEvent, const edm::EventSetup & iSetup) {
 
 
 
-  std::cout<<" ****** \n";
-  std::cout<<" SZS:: e, mu, tau counts = "<<NUM_ELECTRONS<<" , "<<NUM_MUONS<<" , "<<NUM_TAUS<<"\n";
-  std::cout<<" ZSZ : "<<" electrons in eTau, eMu, eE = "<<number_good_eTau_Electrons<<" , "<<number_good_eMu_Electrons<<" , "<<number_good_eE_Electrons<<"\n";
-  std::cout<<" ZSZ : "<<" muons in muTau, eMu, muMu = "<<number_good_muTau_Muons<<" , "<<number_good_eMu_Muons<<" , "<<number_good_MuMu_Muons<<"\n";
+  // std::cout<<" ****** \n";
+  // std::cout<<" SZS:: e, mu, tau counts = "<<NUM_ELECTRONS<<" , "<<NUM_MUONS<<" , "<<NUM_TAUS<<"\n";
+  // std::cout<<" ZSZ : "<<" electrons in eTau, eMu, eE = "<<number_good_eTau_Electrons<<" , "<<number_good_eMu_Electrons<<" , "<<number_good_eE_Electrons<<"\n";
+  // std::cout<<" ZSZ : "<<" muons in muTau, eMu, muMu = "<<number_good_muTau_Muons<<" , "<<number_good_eMu_Muons<<" , "<<number_good_MuMu_Muons<<"\n";
 
-  std::cout<<" zszBoostedTau counts "<<NUM_TAUS<<" in tauTau, eTau, muTau "<<number_good_tauTau_TausBoosted;
-  std::cout<<" , "<<number_good_eleTau_TausBoosted<<" , "<<number_good_muTau_TausBoosted<<" \n";
+  // std::cout<<" zszBoostedTau counts "<<NUM_TAUS<<" in tauTau, eTau, muTau "<<number_good_tauTau_TausBoosted;
+  // std::cout<<" , "<<number_good_eleTau_TausBoosted<<" , "<<number_good_muTau_TausBoosted<<" \n";
 
-  std::cout<<" zszTau counts "<<NUM_TAUS<<" in tauTau, eTau, muTau "<<number_good_tauTau_Taus;
-  std::cout<<" , "<<number_good_eleTau_Taus<<" , "<<number_good_muTau_Taus<<" \n";
+  // std::cout<<" zszTau counts "<<NUM_TAUS<<" in tauTau, eTau, muTau "<<number_good_tauTau_Taus;
+  // std::cout<<" , "<<number_good_eleTau_Taus<<" , "<<number_good_muTau_Taus<<" \n";
 
 
 

@@ -176,8 +176,7 @@ in 76X we can access directly from miniAOD */
   /* parameters for MET Filters; we code 2 versions of TriggerResults 
      to support both PAT and RECO processes (only used if isValid checks out) */  
 
-  edm::EDGetTokenT<edm::TriggerResults> triggerResultsPatSrc_;
-  edm::EDGetTokenT<edm::TriggerResults> triggerResultsRecoSrc_;
+  edm::EDGetTokenT<edm::TriggerResults> triggerResultsSrc_;
 
   edm::InputTag rhoSource_;
   edm::EDGetTokenT<double> rhoToken_;
@@ -225,8 +224,7 @@ sampleInfoSrc_(iConfig.getParameter<edm::ParameterSet>("sampleInfoSrc")),
 // HBHEIsoNoiseFilterResultSrc_(iConfig.getParameter<edm::InputTag>("HBHEIsoNoiseFilterResultSrc")),
 BadChargedCandidateFilterSrc_(iConfig.getParameter<edm::InputTag>("BadChargedCandidateFilterSrc")),
 BadPFMuonFilterSrc_(iConfig.getParameter<edm::InputTag>("BadPFMuonFilterSrc")),
-triggerResultsPatSrc_(consumes<edm::TriggerResults>(iConfig.getParameter<edm::InputTag>("triggerResultsPatSrc"))),
-triggerResultsRecoSrc_(consumes<edm::TriggerResults>(iConfig.getParameter<edm::InputTag>("triggerResultsRecoSrc"))),
+triggerResultsSrc_(consumes<edm::TriggerResults>(iConfig.getParameter<edm::InputTag>("triggerResultsSrc"))),
 rhoSource_(iConfig.getParameter<edm::InputTag>("rhoSource" ))
 {
 
@@ -543,25 +541,22 @@ NtuplePairIndependentInfoProducer::produce(edm::Event& iEvent, const edm::EventS
         // the example code https://github.com/blinkseb/cmssw/blob/jer_fix_76x/JetMETCorrections/Modules/plugins/JetResolutionDemo.cc#L74
         // does not use rho
 
-        //float sf = resolution_sf.getScaleFactor({{JME::Binning::JetEta, slimmedJets->at(i).eta()}}); 
+        float sf = resolution_sf.getScaleFactor({{JME::Binning::JetEta, slimmedJets->at(i).eta()}}); 
        
 
-      //  float sf_up = resolution_sf.getScaleFactor({{JME::Binning::JetEta, slimmedJets->at(i).eta()}}, Variation::UP);
+        float sf_up = resolution_sf.getScaleFactor({{JME::Binning::JetEta, slimmedJets->at(i).eta()}}, Variation::UP);
        
 
-     //   float sf_down = resolution_sf.getScaleFactor({{JME::Binning::JetEta, slimmedJets->at(i).eta()}}, Variation::DOWN);
+        float sf_down = resolution_sf.getScaleFactor({{JME::Binning::JetEta, slimmedJets->at(i).eta()}}, Variation::DOWN);
      
+       // std::cout<<" JER JER JER "<<sf<<" "<<sf_up<<" "<<sf_down<<"\n";
 
-        /* these give a crash with 2016 files, but turning off since JER is not used anyways */
-        // float sf = 1.0;
-        // float sf_up = 1.0;
-        // float sf_down = 1.0;
 
         LorentzVector genJetMatchForJER;
         genJetMatchForJER.SetXYZT(0,0,0,0);
 
         /* look for a GenJet match - this is used for the JER smearing */
-        if(slimmedGenJets.isValid() && 3==8) /* don't use JER, causes crashes for now */ 
+        if(slimmedGenJets.isValid()) /* don't use JER, causes crashes for now */ 
         {
         //  std::cout<<" VALID slimmedGenJets \n";
 
@@ -600,8 +595,7 @@ NtuplePairIndependentInfoProducer::produce(edm::Event& iEvent, const edm::EventS
 
 
 
-        // TURNING THIS OFF CAUSE CRASH IN 2016 and NOT USED ANYWAYS (TRandom Integral is 0)
-        // currentNtupleJet.fill_JER_SFs(sf, sf_up, sf_down, genJetMatchForJER, sigma_MC_PT);
+        currentNtupleJet.fill_JER_SFs(sf, sf_up, sf_down, genJetMatchForJER, sigma_MC_PT);
 
 
         // std::cout<<" JER sf, sf+, sf-, resolution "<<currentNtupleJet.JER_SF_nominal()<<" "<<currentNtupleJet.JER_SF_up();
@@ -832,58 +826,30 @@ NtuplePairIndependentInfoProducer::produce(edm::Event& iEvent, const edm::EventS
   bool Flag_chargedHadronTrackResolutionFilter = 0; //  do not use - those are under study 76X
   bool Flag_muonBadTrackFilter = 0;                 //  do not use - those are under study for 76X
 
-
-
-  /* mini-AOD existing met filters; for some samples the process is PAT
-  for others it is RECO */
-
-  edm::Handle<edm::TriggerResults> triggerBitsPat;
-  iEvent.getByToken(triggerResultsPatSrc_, triggerBitsPat);
+  edm::Handle<edm::TriggerResults> triggerBitsForMETFilters;
+  iEvent.getByToken(triggerResultsSrc_, triggerBitsForMETFilters);
   
-  edm::Handle<edm::TriggerResults> triggerBitsReco;
-  iEvent.getByToken(triggerResultsRecoSrc_, triggerBitsReco);
-  
-  if( triggerBitsPat.isValid() )
+  if( triggerBitsForMETFilters.isValid() )
   {
-    const edm::TriggerNames &namesPat = iEvent.triggerNames(*triggerBitsPat);
+    const edm::TriggerNames &namesPat = iEvent.triggerNames(*triggerBitsForMETFilters);
     /////////////
-    for (unsigned int i = 0, n = triggerBitsPat->size(); i < n; ++i) 
+    for (unsigned int i = 0, n = triggerBitsForMETFilters->size(); i < n; ++i) 
     {
-      if( namesPat.triggerName(i) == "Flag_HBHENoiseFilter") Flag_HBHENoiseFilter = triggerBitsPat->accept(i);
-      else if( namesPat.triggerName(i) == "Flag_HBHENoiseIsoFilter") Flag_HBHENoiseIsoFilter = triggerBitsPat->accept(i);
-      else if( namesPat.triggerName(i) == "Flag_CSCTightHalo2015Filter") Flag_CSCTightHalo2015Filter = triggerBitsPat->accept(i);
-      else if( namesPat.triggerName(i) == "Flag_EcalDeadCellTriggerPrimitiveFilter") Flag_EcalDeadCellTriggerPrimitiveFilter = triggerBitsPat->accept(i);
-      else if( namesPat.triggerName(i) == "Flag_goodVertices") Flag_goodVertices = triggerBitsPat->accept(i);
-      else if( namesPat.triggerName(i) == "Flag_eeBadScFilter") Flag_eeBadScFilter = triggerBitsPat->accept(i);
-      else if( namesPat.triggerName(i) == "Flag_chargedHadronTrackResolutionFilter") Flag_chargedHadronTrackResolutionFilter = triggerBitsPat->accept(i);
-      else if( namesPat.triggerName(i) == "Flag_muonBadTrackFilter") Flag_muonBadTrackFilter = triggerBitsPat->accept(i);
-      else if( namesPat.triggerName(i) == "Flag_globalTightHalo2016Filter") Flag_globalTightHalo2016Filter = triggerBitsPat->accept(i);
+      if( namesPat.triggerName(i) == "Flag_HBHENoiseFilter") Flag_HBHENoiseFilter = triggerBitsForMETFilters->accept(i);
+      else if( namesPat.triggerName(i) == "Flag_HBHENoiseIsoFilter") Flag_HBHENoiseIsoFilter = triggerBitsForMETFilters->accept(i);
+      else if( namesPat.triggerName(i) == "Flag_CSCTightHalo2015Filter") Flag_CSCTightHalo2015Filter = triggerBitsForMETFilters->accept(i);
+      else if( namesPat.triggerName(i) == "Flag_EcalDeadCellTriggerPrimitiveFilter") Flag_EcalDeadCellTriggerPrimitiveFilter = triggerBitsForMETFilters->accept(i);
+      else if( namesPat.triggerName(i) == "Flag_goodVertices") Flag_goodVertices = triggerBitsForMETFilters->accept(i);
+      else if( namesPat.triggerName(i) == "Flag_eeBadScFilter") Flag_eeBadScFilter = triggerBitsForMETFilters->accept(i);
+      else if( namesPat.triggerName(i) == "Flag_chargedHadronTrackResolutionFilter") Flag_chargedHadronTrackResolutionFilter = triggerBitsForMETFilters->accept(i);
+      else if( namesPat.triggerName(i) == "Flag_muonBadTrackFilter") Flag_muonBadTrackFilter = triggerBitsForMETFilters->accept(i);
+      else if( namesPat.triggerName(i) == "Flag_globalTightHalo2016Filter") Flag_globalTightHalo2016Filter = triggerBitsForMETFilters->accept(i);
 
     } 
     /////////////
   } 
 
-  else if( triggerBitsReco.isValid() )
-  {
-    const edm::TriggerNames &namesReco = iEvent.triggerNames(*triggerBitsReco);
-    /////////////
-    for (unsigned int i = 0, n = triggerBitsReco->size(); i < n; ++i) 
-    {
-      
-      if( namesReco.triggerName(i) == "Flag_HBHENoiseFilter") Flag_HBHENoiseFilter = triggerBitsReco->accept(i);
-      else if( namesReco.triggerName(i) == "Flag_HBHENoiseIsoFilter") Flag_HBHENoiseIsoFilter = triggerBitsReco->accept(i);
-      else if( namesReco.triggerName(i) == "Flag_CSCTightHalo2015Filter") Flag_CSCTightHalo2015Filter = triggerBitsReco->accept(i);
-      else if( namesReco.triggerName(i) == "Flag_EcalDeadCellTriggerPrimitiveFilter") Flag_EcalDeadCellTriggerPrimitiveFilter = triggerBitsReco->accept(i);
-      else if( namesReco.triggerName(i) == "Flag_goodVertices") Flag_goodVertices = triggerBitsReco->accept(i);
-      else if( namesReco.triggerName(i) == "Flag_eeBadScFilter") Flag_eeBadScFilter = triggerBitsReco->accept(i);
-      else if( namesReco.triggerName(i) == "Flag_chargedHadronTrackResolutionFilter") Flag_chargedHadronTrackResolutionFilter = triggerBitsReco->accept(i);
-      else if( namesReco.triggerName(i) == "Flag_muonBadTrackFilter") Flag_muonBadTrackFilter = triggerBitsReco->accept(i);
-      else if( namesReco.triggerName(i) == "Flag_globalTightHalo2016Filter") Flag_globalTightHalo2016Filter = triggerBitsPat->accept(i);
 
-
-    } 
-    /////////////
-  } 
 
 
 

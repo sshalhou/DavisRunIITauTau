@@ -145,4 +145,7 @@ cd ${CMSSW_BASE}/src
 
 # compile
 
+# there is a bug in 
+sed -i 's/from PhysicsTools.PatAlgos.tools.jetTools import switchJetCollection/from PhysicsTools.PatAlgos.tools.jetTools import switchJetCollection \nfrom RecoMET.METProducers.METSignificanceParams_cfi import METSignificanceParams_Data/1' ./PhysicsTools/PatUtils/python/tools/runMETCorrectionsAndUncertainties.py
+
 scram b -j 20

@@ -9,11 +9,40 @@ import FWCore.ParameterSet.Config as cms
 
 sampleInfo = []
 
+#############
+# 2016 Data
+
+
+############
+aPSet = cms.PSet(   
+    DataSet = cms.string("TEMP_DATA"),
+    EventTotal = cms.int32(134140420),
+    NumberOfLumis = cms.int32(46528), # obtain from DAS using summary dataset command
+    MaxLumiBlock = cms.int32(1), # obtain using DAS website and run,lumi dataset="XXX" command
+    EventType = cms.string("DATA"), # valid EventTypes are :  MC, DATA, EMBEDDED (expand as needed)
+    KeyName = cms.string("TEMP"), # a unique descriptor for this sample to be used throught all parts of the code
+    DataCard = cms.string("DATA"), # sample classification for H2TauTau datacards 
+    CrossSection = cms.double(1.0), # cross section in pb (include *BR if needed)
+    FilterEff = cms.double(1.0), # generator level filter effi. 
+    CodeVersion = cms.double(2.0), # allow us to track differences as ntuples and flattuples evolve
+    ProductionInfo = cms.string("Run2016_B_C_D_E_F_G_H"), # needed for correct trigger settings
+    RecoilCorrection = cms.string("NONE"), # options are aMCatNLO_DY, aMCatNLO_W, MG5_DY, MG5_W, HIGGS, NONE (for mono-H, data, ttbar, single-top and diboson)
+    # for MetSystematicType use:
+    #       "NONE" for data 
+    #       "MEtSys::ProcessType::BOSON" for Z/W/Higgs
+    #       "MEtSys::ProcessType::EWK" for single top and Diboson
+    #       "MEtSys::ProcessType::TOP" for t t-bar samples
+    MetSystematicType = cms.string("NONE"),
+    KeepTheoryScaleFactors = cms.bool(False), # usually only needed for mono-H signals since H2Tau group does the rest
+    HLTversion = cms.string("HLT") # in the 2016 September MC reHLT HLT is called HLT2 instead of HLT
+                )
+sampleInfo.append(aPSet)
+############
+
+
 ###########################
 # 2016 reHLT MC
 ###########################
-
-
 
 ############
 aPSet = cms.PSet(   
@@ -26,8 +55,8 @@ aPSet = cms.PSet(
     DataCard = cms.string("SUSY_SIGNAL"), # sample classification for H2TauTau datacards 
     CrossSection = cms.double(1.0), # cross section in pb (include *BR if needed)
     FilterEff = cms.double(1.0), # generator level filter effi. 
-    CodeVersion = cms.double(1.0), # allow us to track differences as ntuples and flattuples evolve
-    ProductionInfo = cms.string("miniAOD_reHLT_2016_MC"), # needed for correct trigger settings
+    CodeVersion = cms.double(2.0), # allow us to track differences as ntuples and flattuples evolve
+    ProductionInfo = cms.string("Run2016_B_C_D_E_F_G_H"), # needed for correct trigger settings
     RecoilCorrection = cms.string("HIGGS"), # options are aMCatNLO_DY, aMCatNLO_W, MG5_DY, MG5_W, HIGGS, NONE (for mono-H, data, ttbar, single-top and diboson)
     # for MetSystematicType use:
     #       "NONE" for data 
@@ -52,10 +81,10 @@ aPSet = cms.PSet(
     EventType = cms.string("MC"), # valid EventTypes are :  MC, DATA, EMBEDDED (expand as needed)
     KeyName = cms.string("SM_SIGNAL_OLDHLT_125GG"), # a unique descriptor for this sample to be used throught all parts of the code
     DataCard = cms.string("SM_SIGNAL"), # sample classification for H2TauTau datacards 
-    CrossSection = cms.double(1.0), # cross section in pb (include *BR if needed)
+    CrossSection = cms.double(2.0), # cross section in pb (include *BR if needed)
     FilterEff = cms.double(1.0), # generator level filter effi. 
     CodeVersion = cms.double(1.0), # allow us to track differences as ntuples and flattuples evolve
-    ProductionInfo = cms.string("miniAOD_oldHLT_2016_MC"), # needed for correct trigger settings
+    ProductionInfo = cms.string("Run2016_B_C_D_E_F_G_H"), # needed for correct trigger settings
     RecoilCorrection = cms.string("HIGGS"), # options are aMCatNLO_DY, aMCatNLO_W, MG5_DY, MG5_W, HIGGS, NONE (for mono-H, data, ttbar, single-top and diboson)
     # for MetSystematicType use:
     #       "NONE" for data 

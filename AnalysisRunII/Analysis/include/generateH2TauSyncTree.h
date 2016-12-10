@@ -1250,6 +1250,25 @@ private:
     double highPtTauEff_WeightUp;
     double highPtTauEff_WeightDown;
 
+
+    ///////////////
+    // 2016 Triggers -- these need to be kept
+    // current with triggerSummaryChecks_ in FlatTupleConfig_cfi.py
+
+    double leg1_HLT_DoubleMediumIsoPFTau35_Trk1_eta2p1_Reg;
+	double leg1_HLT_Ele25_eta2p1_WPTight_Gsf;
+	double leg1_HLT_IsoMu22;
+	double leg1_HLT_IsoTkMu22;
+	double leg1_HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL;
+	double leg1_HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL;
+	double leg2_HLT_DoubleMediumIsoPFTau35_Trk1_eta2p1_Reg;
+	double leg2_HLT_Ele25_eta2p1_WPTight_Gsf;
+	double leg2_HLT_IsoMu22;
+	double leg2_HLT_IsoTkMu22;
+	double leg2_HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL;
+	double leg2_HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL;
+
+
   	////////////////////////////////////////////////////
   	// END LIST OF Ntuple BRANCH-ASSOCIATED VARIABLES //
     ////////////////////////////////////////////////////

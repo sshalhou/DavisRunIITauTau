@@ -464,7 +464,8 @@ ZMuMuTriggerCutFall15MCminiAOD = "((isLeg1GoodForHLTPath('HLT_IsoMu18_v*')) || (
 # are the same, but MC has extra pt or isoTau match cuts
 ################################
 
-# 2016 reHLT and non-reHLT MC uses no trigger cust
+# 2016 reHLT and non-reHLT MC uses no trigger cuts
+# so won't cut at FlatTuple level (neither for MC or data)
 emuTriggerCut = cms.string("(1==1)" )
 tautauTriggerCut  = cms.string("(1==1)" )
 etauTriggerCut  = cms.string("(1==1)" )
@@ -655,14 +656,24 @@ boostedChannelCuts = cms.VPSet(
 # be sure to include the _v1, _v2 etc. version suffix as v* 
 # also make sure none are repeats 
 
-
 triggerSummaryChecks_ = cms.vstring(
-	"HLT_Mu17_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v*",
-	"HLT_Mu8_TrkIsoVVL_Ele17_CaloIdL_TrackIdL_IsoVL_v*",
-	"HLT_IsoMu18_v*",
-	"HLT_Ele23_WPLoose_Gsf_v*",
-	"HLT_DoubleMediumIsoPFTau35_Trk1_eta2p1_Reg_v*"				
-	)
+	"HLT_IsoMu22_v*",
+	"HLT_IsoTkMu22_v*",
+	"HLT_Ele25_eta2p1_WPTight_Gsf_v*",
+	"HLT_DoubleMediumIsoPFTau35_Trk1_eta2p1_Reg_v*",
+	"HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v*",
+	"HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v*"
+)
+
+
+# 2015
+# triggerSummaryChecks_ = cms.vstring(
+# 	"HLT_Mu17_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v*",
+# 	"HLT_Mu8_TrkIsoVVL_Ele17_CaloIdL_TrackIdL_IsoVL_v*",
+# 	"HLT_IsoMu18_v*",
+# 	"HLT_Ele23_WPLoose_Gsf_v*",
+# 	"HLT_DoubleMediumIsoPFTau35_Trk1_eta2p1_Reg_v*"				
+# 	)
 ############################################################
 
 from DavisRunIITauTau.TupleConfigurations.ConfigNtupleContent_cfi import BUILD_EFFICIENCY_TREE as BuildEffTree_

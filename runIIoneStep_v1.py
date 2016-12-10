@@ -28,14 +28,15 @@ DEBUG_NTUPLE_INPUT = False
 # how many events to run, -1 means run all 
 ######################################
 
-MAX_EVENTS = 15000
+MAX_EVENTS = 100
 
 ######################################
 # datasets for local running 
 ######################################
 
-dataSetName_ = "/SUSYGluGluToHToTauTau_M-160_TuneCUETP8M1_13TeV-pythia8/RunIISpring16MiniAODv2-PUSpring16RAWAODSIM_reHLT_80X_mcRun2_asymptotic_v14-v1/MINIAODSIM"
-#dataSetName_ = "/GluGluHToTauTau_M125_13TeV_powheg_pythia8/RunIISpring16MiniAODv2-PUSpring16RAWAODSIM_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v1/MINIAODSIM"
+#dataSetName_ = "TEMP_DATA"
+#dataSetName_ = "/SUSYGluGluToHToTauTau_M-160_TuneCUETP8M1_13TeV-pythia8/RunIISpring16MiniAODv2-PUSpring16RAWAODSIM_reHLT_80X_mcRun2_asymptotic_v14-v1/MINIAODSIM"
+dataSetName_ = "/GluGluHToTauTau_M125_13TeV_powheg_pythia8/RunIISpring16MiniAODv2-PUSpring16RAWAODSIM_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v1/MINIAODSIM"
 
 #dataSetName_= "/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM"
 #dataSetName_ = "/DYJetsToLL_M-10to50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12_ext1-v1/MINIAODSIM"
@@ -55,12 +56,21 @@ dataSetName_ = "/SUSYGluGluToHToTauTau_M-160_TuneCUETP8M1_13TeV-pythia8/RunIISpr
 
 myfilelist = cms.untracked.vstring()
 
+if dataSetName_ == "TEMP_DATA":
+	myfilelist.extend(['file:/uscms_data/d3/shalhout/Run2016H_SingleMuon.root'])
+
+
 if dataSetName_ == "/SUSYGluGluToHToTauTau_M-160_TuneCUETP8M1_13TeV-pythia8/RunIISpring16MiniAODv2-PUSpring16RAWAODSIM_reHLT_80X_mcRun2_asymptotic_v14-v1/MINIAODSIM":
-	myfilelist.extend(['file:/uscms_data/d3/shalhout/MonoH_2500_800_reHLT.root'])
+	#myfilelist.extend(['file:/uscms_data/d3/shalhout/MonoH_2500_800_reHLT.root'])
 	#myfilelist.extend(['file:/uscms_data/d3/shalhout/SUSY_GG160_reHLT.root'])
+	myfilelist.extend(['file:/uscms_data/d3/shalhout/reHLT_ttBar.root'])
 
 if dataSetName_ == "/GluGluHToTauTau_M125_13TeV_powheg_pythia8/RunIISpring16MiniAODv2-PUSpring16RAWAODSIM_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v1/MINIAODSIM":
-	myfilelist.extend(['file:/uscms_data/d3/shalhout/nonREHLT_file.root']) # smH 125 file for testing non-REHLT running
+	#myfilelist.extend(['file:/uscms_data/d3/shalhout/nonREHLT_file.root']) # smH 125 file for testing non-REHLT running
+	#myfilelist.extend(['file:/uscms_data/d3/shalhout/nonReHLT_DY1JET.root'])
+	#myfilelist.extend(['file:/uscms_data/d3/shalhout/nonReHLT_DY4JET.root'])
+	#myfilelist.extend(['file:/uscms_data/d3/shalhout/nonReHLT_WJetsHt100to200.root'])
+	myfilelist.extend(['file:/uscms_data/d3/shalhout/nonReHLT_WJetsHt1200to2500.root'])
 
 if dataSetName_ == "/SUSYGluGluToHToTauTau_M-160_TuneCUETP8M1_13TeV-pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM":
 #	myfilelist.extend(['file:/uscms_data/d3/shalhout/pickeventsMissing26.root'])
@@ -218,6 +228,7 @@ print '********** Running in unscheduled mode **********'
 process.options = cms.untracked.PSet(wantSummary = cms.untracked.bool(True))
 process.options.allowUnscheduled = cms.untracked.bool(True)
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(MAX_EVENTS) ) 
+
 
 ###################################
 # input - remove for crab running
@@ -1436,8 +1447,9 @@ process.pairIndep = cms.EDProducer('NtuplePairIndependentInfoProducer',
 				  			sampleInfoSrc = sampleData,						
 							BadChargedCandidateFilterSrc = cms.InputTag("BadChargedCandidateFilter","","DavisNtuple"),
 							BadPFMuonFilterSrc = cms.InputTag("BadPFMuonFilter","","DavisNtuple"),
-							triggerResultsPatSrc = cms.InputTag("TriggerResults","","PAT"),
-							triggerResultsRecoSrc = cms.InputTag("TriggerResults","","RECO"),
+							#triggerResultsPatSrc = cms.InputTag("TriggerResults","","PAT"),
+							#triggerResultsRecoSrc = cms.InputTag("TriggerResults","","RECO"),
+							triggerResultsSrc = cms.InputTag("TriggerResults"),
 							rhoSource = cms.InputTag('fixedGridRhoFastjetAll')
 							                 )
 

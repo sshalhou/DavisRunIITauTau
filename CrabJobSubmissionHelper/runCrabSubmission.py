@@ -36,8 +36,7 @@ def DeleteCMSTypes(arg, type):
 MC_EVENTS_PER_JOB = 2000 # used for MC only
 MAX_JOBS_PER_TASK = 5000 # true crab limit is 10,000 we should be below this (~5000 is safe to avoid crab over-rounding issues on the last task)
 DATA_UNITS_PER_JOB = 75
-DATA_LUMI_MASK = 'https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions15/13TeV/Cert_246908-260627_13TeV_PromptReco_Collisions15_25ns_JSON_v2.txt'
-
+DATA_LUMI_MASK = 'https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions16/13TeV/Final/Cert_271036-284044_13TeV_PromptReco_Collisions16_JSON.txt'
 
 ############################
 # basic crab config setup 
@@ -174,7 +173,7 @@ for line in fileinput.input(str(args.dataSetList[0])):
     # some sed swaps in the job config file (really just putting the dataset name in)
     sedHappySampleName = str(line.strip()).replace("/","\/")
     sed_command = "cat "+os.environ['CMSSW_BASE']+"/src/DavisRunIITauTau/CrabJobSubmissionHelper"
-    sed_command = sed_command + "/Templates/V1/runIIoneStep_v1.py | "
+    sed_command = sed_command + "/Templates/V2/runIIoneStep_v1.py | "
     sed_command = sed_command + "sed \'s/DUMMY_DATASET_NAME/"+sedHappySampleName+"/g\'"+" >& "+tempConfigName
 
     os.system(sed_command)

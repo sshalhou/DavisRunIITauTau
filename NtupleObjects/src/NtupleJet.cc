@@ -285,11 +285,26 @@ NtupleJet::NtupleJet()
       gausUP.SetParameter(1,m_jet_p4.pt());
       gausDN.SetParameter(1,m_jet_p4.pt());
 
-      gausNOM.SetParameter(1,m_JER_resolution*sqrt(pow(m_JER_SF_nominal,2)-1));
+
+      /* safety check for sqrt(-numbers) */
+      if(m_JER_SF_nominal < 1.0) m_JER_SF_nominal = 1.01;
+      if(m_JER_SF_up < 1.0) m_JER_SF_up = 1.01;
+      if(m_JER_SF_down < 1.0) m_JER_SF_down = 1.01;
+
+
+      gausNOM.SetParameter(2,m_JER_resolution*sqrt(pow(m_JER_SF_nominal,2)-1));
       gausUP.SetParameter(2,m_JER_resolution*sqrt(pow(m_JER_SF_up,2)-1));
       gausDN.SetParameter(2,m_JER_resolution*sqrt(pow(m_JER_SF_down,2)-1));
 
-      //std::cout<<" for pt of "<<m_jet_p4.pt()<<" get a width of "<<m_JER_resolution*sqrt(pow(m_JER_SF_nominal,2)-1)<<"\n";
+      // std::cout<<" JER SFs "<<m_JER_SF_nominal<<" "<<m_JER_SF_up<<" "<<m_JER_SF_down<<"\n";
+      // std::cout<<" m_JER_resolution "<<m_JER_resolution<<"\n";
+
+      // std::cout<<" GAUS PARAMS "<<m_jet_p4.pt()<<" "<<m_JER_resolution*sqrt(pow(m_JER_SF_nominal,2)-1)<<" nom \n";
+      // std::cout<<" GAUS PARAMS "<<m_jet_p4.pt()<<" "<<m_JER_resolution*sqrt(pow(m_JER_SF_up,2)-1)<<" up \n";
+      // std::cout<<" GAUS PARAMS "<<m_jet_p4.pt()<<" "<<m_JER_resolution*sqrt(pow(m_JER_SF_down,2)-1)<<" dn \n";
+
+
+
 
       pt_new_nominal = std::max(0.,  gausNOM.GetRandom());
       pt_new_up = std::max(0., gausUP.GetRandom());

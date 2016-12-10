@@ -633,32 +633,32 @@ for ( std::vector<edm::EDGetTokenT<edm::View< NtupleEvent > > >::const_iterator 
 
 
   concatenateVectors(resolvedPairs_EleTau, boostedPairs_EleTau, retainedPairs_EleTau);
-  std::cout<<" resolved, boosted, retained in channel EleTau : "<<resolvedPairs_EleTau.size()<<" "<<boostedPairs_EleTau.size()<<" "<<retainedPairs_EleTau.size()<<"\n";
+  //std::cout<<" resolved, boosted, retained in channel EleTau : "<<resolvedPairs_EleTau.size()<<" "<<boostedPairs_EleTau.size()<<" "<<retainedPairs_EleTau.size()<<"\n";
   resolvedPairs_EleTau.clear();
   boostedPairs_EleTau.clear();
 
   concatenateVectors(resolvedPairs_MuonTau, boostedPairs_MuonTau, retainedPairs_MuonTau);
-  std::cout<<" resolved, boosted, retained in channel MuonTau : "<<resolvedPairs_MuonTau.size()<<" "<<boostedPairs_MuonTau.size()<<" "<<retainedPairs_MuonTau.size()<<"\n";
+  //std::cout<<" resolved, boosted, retained in channel MuonTau : "<<resolvedPairs_MuonTau.size()<<" "<<boostedPairs_MuonTau.size()<<" "<<retainedPairs_MuonTau.size()<<"\n";
   resolvedPairs_MuonTau.clear();
   boostedPairs_MuonTau.clear();
 
   concatenateVectors(resolvedPairs_TauTau, boostedPairs_TauTau, retainedPairs_TauTau);
-  std::cout<<" resolved, boosted, retained in channel TauTau : "<<resolvedPairs_TauTau.size()<<" "<<boostedPairs_TauTau.size()<<" "<<retainedPairs_TauTau.size()<<"\n";
+  //std::cout<<" resolved, boosted, retained in channel TauTau : "<<resolvedPairs_TauTau.size()<<" "<<boostedPairs_TauTau.size()<<" "<<retainedPairs_TauTau.size()<<"\n";
   resolvedPairs_TauTau.clear();
   boostedPairs_TauTau.clear();
 
   concatenateVectors(resolvedPairs_EleMuon, boostedPairs_EleMuon, retainedPairs_EleMuon);
-  std::cout<<" resolved, boosted, retained in channel EleMuon : "<<resolvedPairs_EleMuon.size()<<" "<<boostedPairs_EleMuon.size()<<" "<<retainedPairs_EleMuon.size()<<"\n";
+  //std::cout<<" resolved, boosted, retained in channel EleMuon : "<<resolvedPairs_EleMuon.size()<<" "<<boostedPairs_EleMuon.size()<<" "<<retainedPairs_EleMuon.size()<<"\n";
   resolvedPairs_EleMuon.clear();
   boostedPairs_EleMuon.clear();
 
   concatenateVectors(resolvedPairs_EleEle, boostedPairs_EleEle, retainedPairs_EleEle);
-  std::cout<<" resolved, boosted, retained in channel EleEle : "<<resolvedPairs_EleEle.size()<<" "<<boostedPairs_EleEle.size()<<" "<<retainedPairs_EleEle.size()<<"\n";
+  //std::cout<<" resolved, boosted, retained in channel EleEle : "<<resolvedPairs_EleEle.size()<<" "<<boostedPairs_EleEle.size()<<" "<<retainedPairs_EleEle.size()<<"\n";
   resolvedPairs_EleEle.clear();
   boostedPairs_EleEle.clear();
 
   concatenateVectors(resolvedPairs_MuonMuon, boostedPairs_MuonMuon, retainedPairs_MuonMuon);
-  std::cout<<" resolved, boosted, retained in channel MuonMuon : "<<resolvedPairs_MuonMuon.size()<<" "<<boostedPairs_MuonMuon.size()<<" "<<retainedPairs_MuonMuon.size()<<"\n";
+  //std::cout<<" resolved, boosted, retained in channel MuonMuon : "<<resolvedPairs_MuonMuon.size()<<" "<<boostedPairs_MuonMuon.size()<<" "<<retainedPairs_MuonMuon.size()<<"\n";
   resolvedPairs_MuonMuon.clear();
   boostedPairs_MuonMuon.clear();
 
@@ -2687,7 +2687,7 @@ NtupleEvent currentPair)
 
   }
 
-  std::cout<<" SZSMET genMET "<<genMET<<" , "<<genMETphi<<" "<<genMETeta<<" "<<genMETmass<<"\n";
+  //std::cout<<" SZSMET genMET "<<genMET<<" , "<<genMETphi<<" "<<genMETeta<<" "<<genMETmass<<"\n";
 
 
   /* for pfMET access each of the correction levels as well as the variants */
@@ -2759,21 +2759,21 @@ NtupleEvent currentPair)
 
 
 
-  std::cout<<"pfmet_raw: "<<pfmet_raw_Pt<<" , "<<pfmet_raw_Phi<<" , "<<pfmet_raw_MT1<<" , "<<pfmet_raw_MT2<<"\n";
-  std::cout<<"pfmet_type1_JetResUp: "<<pfmet_type1_JetResUp_Pt<<" , "<<pfmet_type1_JetResUp_Phi<<" , "<<pfmet_type1_JetResUp_MT1<<" , "<<pfmet_type1_JetResUp_MT2<<"\n";
-  std::cout<<"pfmet_type1_JetResDown: "<<pfmet_type1_JetResDown_Pt<<" , "<<pfmet_type1_JetResDown_Phi<<" , "<<pfmet_type1_JetResDown_MT1<<" , "<<pfmet_type1_JetResDown_MT2<<"\n";
-  std::cout<<"pfmet_type1_JetEnUp: "<<pfmet_type1_JetEnUp_Pt<<" , "<<pfmet_type1_JetEnUp_Phi<<" , "<<pfmet_type1_JetEnUp_MT1<<" , "<<pfmet_type1_JetEnUp_MT2<<"\n";
-  std::cout<<"pfmet_type1_JetEnDown: "<<pfmet_type1_JetEnDown_Pt<<" , "<<pfmet_type1_JetEnDown_Phi<<" , "<<pfmet_type1_JetEnDown_MT1<<" , "<<pfmet_type1_JetEnDown_MT2<<"\n";
-  std::cout<<"pfmet_type1_MuonEnUp: "<<pfmet_type1_MuonEnUp_Pt<<" , "<<pfmet_type1_MuonEnUp_Phi<<" , "<<pfmet_type1_MuonEnUp_MT1<<" , "<<pfmet_type1_MuonEnUp_MT2<<"\n";
-  std::cout<<"pfmet_type1_MuonEnDown: "<<pfmet_type1_MuonEnDown_Pt<<" , "<<pfmet_type1_MuonEnDown_Phi<<" , "<<pfmet_type1_MuonEnDown_MT1<<" , "<<pfmet_type1_MuonEnDown_MT2<<"\n";
-  std::cout<<"pfmet_type1_ElectronEnUp: "<<pfmet_type1_ElectronEnUp_Pt<<" , "<<pfmet_type1_ElectronEnUp_Phi<<" , "<<pfmet_type1_ElectronEnUp_MT1<<" , "<<pfmet_type1_ElectronEnUp_MT2<<"\n";
-  std::cout<<"pfmet_type1_ElectronEnDown: "<<pfmet_type1_ElectronEnDown_Pt<<" , "<<pfmet_type1_ElectronEnDown_Phi<<" , "<<pfmet_type1_ElectronEnDown_MT1<<" , "<<pfmet_type1_ElectronEnDown_MT2<<"\n";
-  std::cout<<"pfmet_type1_TauEnUp: "<<pfmet_type1_TauEnUp_Pt<<" , "<<pfmet_type1_TauEnUp_Phi<<" , "<<pfmet_type1_TauEnUp_MT1<<" , "<<pfmet_type1_TauEnUp_MT2<<"\n";
-  std::cout<<"pfmet_type1_TauEnDown: "<<pfmet_type1_TauEnDown_Pt<<" , "<<pfmet_type1_TauEnDown_Phi<<" , "<<pfmet_type1_TauEnDown_MT1<<" , "<<pfmet_type1_TauEnDown_MT2<<"\n";
-  std::cout<<"pfmet_type1_UnclusteredEnUp: "<<pfmet_type1_UnclusteredEnUp_Pt<<" , "<<pfmet_type1_UnclusteredEnUp_Phi<<" , "<<pfmet_type1_UnclusteredEnUp_MT1<<" , "<<pfmet_type1_UnclusteredEnUp_MT2<<"\n";
-  std::cout<<"pfmet_type1_UnclusteredEnDown: "<<pfmet_type1_UnclusteredEnDown_Pt<<" , "<<pfmet_type1_UnclusteredEnDown_Phi<<" , "<<pfmet_type1_UnclusteredEnDown_MT1<<" , "<<pfmet_type1_UnclusteredEnDown_MT2<<"\n";
-  std::cout<<"pfmet_type1_PhotonEnUp: "<<pfmet_type1_PhotonEnUp_Pt<<" , "<<pfmet_type1_PhotonEnUp_Phi<<" , "<<pfmet_type1_PhotonEnUp_MT1<<" , "<<pfmet_type1_PhotonEnUp_MT2<<"\n";
-  std::cout<<"pfmet_type1_PhotonEnDown: "<<pfmet_type1_PhotonEnDown_Pt<<" , "<<pfmet_type1_PhotonEnDown_Phi<<" , "<<pfmet_type1_PhotonEnDown_MT1<<" , "<<pfmet_type1_PhotonEnDown_MT2<<"\n";
+  // std::cout<<"pfmet_raw: "<<pfmet_raw_Pt<<" , "<<pfmet_raw_Phi<<" , "<<pfmet_raw_MT1<<" , "<<pfmet_raw_MT2<<"\n";
+  // std::cout<<"pfmet_type1_JetResUp: "<<pfmet_type1_JetResUp_Pt<<" , "<<pfmet_type1_JetResUp_Phi<<" , "<<pfmet_type1_JetResUp_MT1<<" , "<<pfmet_type1_JetResUp_MT2<<"\n";
+  // std::cout<<"pfmet_type1_JetResDown: "<<pfmet_type1_JetResDown_Pt<<" , "<<pfmet_type1_JetResDown_Phi<<" , "<<pfmet_type1_JetResDown_MT1<<" , "<<pfmet_type1_JetResDown_MT2<<"\n";
+  // std::cout<<"pfmet_type1_JetEnUp: "<<pfmet_type1_JetEnUp_Pt<<" , "<<pfmet_type1_JetEnUp_Phi<<" , "<<pfmet_type1_JetEnUp_MT1<<" , "<<pfmet_type1_JetEnUp_MT2<<"\n";
+  // std::cout<<"pfmet_type1_JetEnDown: "<<pfmet_type1_JetEnDown_Pt<<" , "<<pfmet_type1_JetEnDown_Phi<<" , "<<pfmet_type1_JetEnDown_MT1<<" , "<<pfmet_type1_JetEnDown_MT2<<"\n";
+  // std::cout<<"pfmet_type1_MuonEnUp: "<<pfmet_type1_MuonEnUp_Pt<<" , "<<pfmet_type1_MuonEnUp_Phi<<" , "<<pfmet_type1_MuonEnUp_MT1<<" , "<<pfmet_type1_MuonEnUp_MT2<<"\n";
+  // std::cout<<"pfmet_type1_MuonEnDown: "<<pfmet_type1_MuonEnDown_Pt<<" , "<<pfmet_type1_MuonEnDown_Phi<<" , "<<pfmet_type1_MuonEnDown_MT1<<" , "<<pfmet_type1_MuonEnDown_MT2<<"\n";
+  // std::cout<<"pfmet_type1_ElectronEnUp: "<<pfmet_type1_ElectronEnUp_Pt<<" , "<<pfmet_type1_ElectronEnUp_Phi<<" , "<<pfmet_type1_ElectronEnUp_MT1<<" , "<<pfmet_type1_ElectronEnUp_MT2<<"\n";
+  // std::cout<<"pfmet_type1_ElectronEnDown: "<<pfmet_type1_ElectronEnDown_Pt<<" , "<<pfmet_type1_ElectronEnDown_Phi<<" , "<<pfmet_type1_ElectronEnDown_MT1<<" , "<<pfmet_type1_ElectronEnDown_MT2<<"\n";
+  // std::cout<<"pfmet_type1_TauEnUp: "<<pfmet_type1_TauEnUp_Pt<<" , "<<pfmet_type1_TauEnUp_Phi<<" , "<<pfmet_type1_TauEnUp_MT1<<" , "<<pfmet_type1_TauEnUp_MT2<<"\n";
+  // std::cout<<"pfmet_type1_TauEnDown: "<<pfmet_type1_TauEnDown_Pt<<" , "<<pfmet_type1_TauEnDown_Phi<<" , "<<pfmet_type1_TauEnDown_MT1<<" , "<<pfmet_type1_TauEnDown_MT2<<"\n";
+  // std::cout<<"pfmet_type1_UnclusteredEnUp: "<<pfmet_type1_UnclusteredEnUp_Pt<<" , "<<pfmet_type1_UnclusteredEnUp_Phi<<" , "<<pfmet_type1_UnclusteredEnUp_MT1<<" , "<<pfmet_type1_UnclusteredEnUp_MT2<<"\n";
+  // std::cout<<"pfmet_type1_UnclusteredEnDown: "<<pfmet_type1_UnclusteredEnDown_Pt<<" , "<<pfmet_type1_UnclusteredEnDown_Phi<<" , "<<pfmet_type1_UnclusteredEnDown_MT1<<" , "<<pfmet_type1_UnclusteredEnDown_MT2<<"\n";
+  // std::cout<<"pfmet_type1_PhotonEnUp: "<<pfmet_type1_PhotonEnUp_Pt<<" , "<<pfmet_type1_PhotonEnUp_Phi<<" , "<<pfmet_type1_PhotonEnUp_MT1<<" , "<<pfmet_type1_PhotonEnUp_MT2<<"\n";
+  // std::cout<<"pfmet_type1_PhotonEnDown: "<<pfmet_type1_PhotonEnDown_Pt<<" , "<<pfmet_type1_PhotonEnDown_Phi<<" , "<<pfmet_type1_PhotonEnDown_MT1<<" , "<<pfmet_type1_PhotonEnDown_MT2<<"\n";
 
 
   /* fill veto lepton parameters, MUST FILL IN SAME ORDER FOR ELECTRONS & MUONS */
