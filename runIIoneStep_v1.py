@@ -56,11 +56,12 @@ if dataSetName_ == "/SUSYGluGluToHToTauTau_M-160_TuneCUETP8M1_13TeV-pythia8/RunI
 	myfilelist.extend(['file:/uscms_data/d3/shalhout/reHLT_ttBar.root'])
 
 if dataSetName_ == "/GluGluHToTauTau_M125_13TeV_powheg_pythia8/RunIISpring16MiniAODv2-PUSpring16RAWAODSIM_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v1/MINIAODSIM":
-	myfilelist.extend(['file:/uscms_data/d3/shalhout/nonREHLT_file.root']) # smH 125 file for testing non-REHLT running
-	myfilelist.extend(['file:/uscms_data/d3/shalhout/nonReHLT_DY1JET.root'])
-	myfilelist.extend(['file:/uscms_data/d3/shalhout/nonReHLT_DY4JET.root'])
+	#myfilelist.extend(['file:/uscms_data/d3/shalhout/nonREHLT_file.root']) # smH 125 file for testing non-REHLT running
+	#myfilelist.extend(['file:/uscms_data/d3/shalhout/nonReHLT_DY1JET.root'])
+	#myfilelist.extend(['file:/uscms_data/d3/shalhout/nonReHLT_DY4JET.root'])
 	#myfilelist.extend(['file:/uscms_data/d3/shalhout/nonReHLT_WJetsHt100to200.root'])
 	#myfilelist.extend(['file:/uscms_data/d3/shalhout/nonReHLT_WJetsHt1200to2500.root'])
+	myfilelist.extend(['file:/uscms_data/d3/shalhout/PreMixHLT_MonoHtautau_ZpBaryonic_MZp-50_MChi-10_13TeV.root'])
 
 
 if DEBUG_NTUPLE_INPUT is True:

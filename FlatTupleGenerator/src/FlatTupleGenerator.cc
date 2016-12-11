@@ -323,22 +323,27 @@ svMassAtFlatTupleConfig_(iConfig.getParameter<edm::ParameterSet>("SVMassConfig")
   assert(RECOILCORRECTION_=="aMCatNLO_DY" || RECOILCORRECTION_=="aMCatNLO_W" || RECOILCORRECTION_=="MG5_DY"||\
          RECOILCORRECTION_=="MG5_W" || RECOILCORRECTION_=="HIGGS"|| RECOILCORRECTION_=="NONE");
 
-  std::string fname = "HTT-utilities/RecoilCorrections/data/recoilMvaMEt_76X_newTraining_MG5.root";
+  std::string fnameMVA = "HTT-utilities/RecoilCorrections/data/MvaMET_2016BCD.root";
+  std::string fnamePF = "HTT-utilities/RecoilCorrections/data/TypeIPFMET_2016BCD.root";
 
-  if(RECOILCORRECTION_=="HIGGS" || RECOILCORRECTION_=="MG5_DY" || RECOILCORRECTION_=="MG5_W")
-  {
-    fname = "HTT-utilities/RecoilCorrections/data/recoilMvaMEt_76X_newTraining_MG5.root";
-  }
-  else if(RECOILCORRECTION_=="aMCatNLO_DY" || RECOILCORRECTION_=="aMCatNLO_W")
-  {
-    fname = "HTT-utilities/RecoilCorrections/data/recoilMvaMEt_76X_newTraining.root";
-  }
+
+
+  // if(RECOILCORRECTION_=="HIGGS" || RECOILCORRECTION_=="MG5_DY" || RECOILCORRECTION_=="MG5_W")
+  // {
+  //   fnameMVA = "HTT-utilities/RecoilCorrections/data/recoilMvaMEt_76X_newTraining_MG5.root";
+  // }
+  // else if(RECOILCORRECTION_=="aMCatNLO_DY" || RECOILCORRECTION_=="aMCatNLO_W")
+  // {
+  //   fnameMVA = "HTT-utilities/RecoilCorrections/data/recoilMvaMEt_76X_newTraining.root";
+  // }
 
   /* not used if RECOILCORRECTION_==NONE, but need a valid file to initialize */
-  m_recoilMvaMetCorrector = new RecoilCorrector(fname); 
+  m_recoilMvaMetCorrector = new RecoilCorrector(fnameMVA); 
+  m_recoilPfMetCorrector = new RecoilCorrector(fnamePF); 
 
   std::cout<<"********************************************************************************\n";
-  std::cout<<" ******* Met RECOIL Correction TOOL ROOT FILE IS : "<<fname<<"\n";
+  std::cout<<" ******* MVA Met RECOIL Correction TOOL ROOT FILE IS : "<<fnameMVA<<"\n";
+  std::cout<<" ******* PF Met RECOIL Correction TOOL ROOT FILE IS : "<<fnamePF<<"\n";
   std::cout<<" Change in FlatTupleGenerator.cc if not current \n";
   std::cout<<"********************************************************************************\n";
 
@@ -357,6 +362,7 @@ FlatTupleGenerator::~FlatTupleGenerator()
   delete inputFile_visPtResolution;
   delete m_metSys;
   delete m_recoilMvaMetCorrector;
+  delete m_recoilPfMetCorrector;
 }
 
 //////////////////////////////////////////////////
@@ -973,7 +979,7 @@ void FlatTupleGenerator::handlePFMetAndRecoil(const edm::Event& iEvent, const ed
       float temp_px = 0;
       float temp_py = 0;
 
-      m_recoilMvaMetCorrector->CorrectByMeanResolution(
+      m_recoilPfMetCorrector->CorrectByMeanResolution(
         float(uncorr.Px()), 
         float(uncorr.Py()), 
         float(genTotal.Px()), 

@@ -102,7 +102,7 @@ public:
 	/* met recoil corrector */
 
 	RecoilCorrector * m_recoilMvaMetCorrector;
-
+	RecoilCorrector * m_recoilPfMetCorrector;
 
 	/* the b-tag eff histograms */
 
