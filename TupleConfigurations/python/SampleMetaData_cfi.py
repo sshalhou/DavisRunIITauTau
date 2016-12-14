@@ -56,7 +56,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("NONE"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT"),
+    HLTversion = cms.string("HLT")
        )
 sampleInfo.append(aPSet)
 
@@ -77,7 +77,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("NONE"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT"),
+    HLTversion = cms.string("HLT")
        )
 sampleInfo.append(aPSet)
 
@@ -98,7 +98,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("NONE"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT"),
+    HLTversion = cms.string("HLT")
        )
 sampleInfo.append(aPSet)
 
@@ -119,7 +119,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("NONE"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT"),
+    HLTversion = cms.string("HLT")
        )
 sampleInfo.append(aPSet)
 
@@ -140,7 +140,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("NONE"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT"),
+    HLTversion = cms.string("HLT")
        )
 sampleInfo.append(aPSet)
 
@@ -161,7 +161,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("NONE"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT"),
+    HLTversion = cms.string("HLT")
        )
 sampleInfo.append(aPSet)
 
@@ -182,7 +182,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("NONE"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT"),
+    HLTversion = cms.string("HLT")
        )
 sampleInfo.append(aPSet)
 
@@ -203,7 +203,7 @@ sampleInfo.append(aPSet)
 #     RecoilCorrection = cms.string("NONE"),
 #     MetSystematicType = cms.string("NONE"),
 #     KeepTheoryScaleFactors = cms.bool(False),
-#     HLTversion = cms.string("HLT"),
+#     HLTversion = cms.string("HLT")
 #        )
 # sampleInfo.append(aPSet)
 
@@ -224,7 +224,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("NONE"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT"),
+    HLTversion = cms.string("HLT")
        )
 sampleInfo.append(aPSet)
 
@@ -245,7 +245,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("NONE"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT"),
+    HLTversion = cms.string("HLT")
        )
 sampleInfo.append(aPSet)
 
@@ -267,7 +267,7 @@ sampleInfo.append(aPSet)
 #     RecoilCorrection = cms.string("NONE"),
 #     MetSystematicType = cms.string("NONE"),
 #     KeepTheoryScaleFactors = cms.bool(False),
-#     HLTversion = cms.string("HLT"),
+#     HLTversion = cms.string("HLT")
 #        )
 # sampleInfo.append(aPSet)
 
@@ -288,7 +288,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("NONE"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT"),
+    HLTversion = cms.string("HLT")
        )
 sampleInfo.append(aPSet)
 
@@ -309,7 +309,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("NONE"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT"),
+    HLTversion = cms.string("HLT")
        )
 sampleInfo.append(aPSet)
 
@@ -330,7 +330,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("NONE"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT"),
+    HLTversion = cms.string("HLT")
        )
 sampleInfo.append(aPSet)
 
@@ -351,7 +351,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("NONE"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT"),
+    HLTversion = cms.string("HLT")
        )
 sampleInfo.append(aPSet)
 
@@ -372,7 +372,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("NONE"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT"),
+    HLTversion = cms.string("HLT")
        )
 sampleInfo.append(aPSet)
 
@@ -393,7 +393,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("NONE"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT"),
+    HLTversion = cms.string("HLT")
        )
 sampleInfo.append(aPSet)
 
@@ -414,7 +414,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("NONE"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT"),
+    HLTversion = cms.string("HLT")
        )
 sampleInfo.append(aPSet)
 
@@ -435,7 +435,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("NONE"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT"),
+    HLTversion = cms.string("HLT")
        )
 sampleInfo.append(aPSet)
 
@@ -456,7 +456,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("NONE"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT"),
+    HLTversion = cms.string("HLT")
        )
 sampleInfo.append(aPSet)
 
@@ -477,7 +477,7 @@ sampleInfo.append(aPSet)
 #     RecoilCorrection = cms.string("NONE"),
 #     MetSystematicType = cms.string("NONE"),
 #     KeepTheoryScaleFactors = cms.bool(False),
-#     HLTversion = cms.string("HLT"),
+#     HLTversion = cms.string("HLT")
 #        )
 # sampleInfo.append(aPSet)
 
@@ -498,7 +498,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("NONE"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT"),
+    HLTversion = cms.string("HLT")
        )
 sampleInfo.append(aPSet)
 
@@ -519,7 +519,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("NONE"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT"),
+    HLTversion = cms.string("HLT")
        )
 sampleInfo.append(aPSet)
 
@@ -540,7 +540,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("NONE"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT"),
+    HLTversion = cms.string("HLT")
        )
 sampleInfo.append(aPSet)
 
@@ -561,7 +561,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("NONE"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT"),
+    HLTversion = cms.string("HLT")
        )
 sampleInfo.append(aPSet)
 
@@ -582,7 +582,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("NONE"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT"),
+    HLTversion = cms.string("HLT")
        )
 sampleInfo.append(aPSet)
 
@@ -603,7 +603,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("NONE"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT"),
+    HLTversion = cms.string("HLT")
        )
 sampleInfo.append(aPSet)
 
@@ -624,7 +624,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("NONE"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT"),
+    HLTversion = cms.string("HLT")
        )
 sampleInfo.append(aPSet)
 
@@ -645,7 +645,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("NONE"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT"),
+    HLTversion = cms.string("HLT")
        )
 sampleInfo.append(aPSet)
 
@@ -666,7 +666,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("NONE"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT"),
+    HLTversion = cms.string("HLT")
        )
 sampleInfo.append(aPSet)
 
@@ -687,7 +687,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("NONE"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT"),
+    HLTversion = cms.string("HLT")
        )
 sampleInfo.append(aPSet)
 
@@ -708,7 +708,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("NONE"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT"),
+    HLTversion = cms.string("HLT")
        )
 sampleInfo.append(aPSet)
 
@@ -729,7 +729,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("NONE"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT"),
+    HLTversion = cms.string("HLT")
        )
 sampleInfo.append(aPSet)
 
@@ -750,7 +750,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("NONE"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT"),
+    HLTversion = cms.string("HLT")
        )
 sampleInfo.append(aPSet)
 
@@ -771,7 +771,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("NONE"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT"),
+    HLTversion = cms.string("HLT")
        )
 sampleInfo.append(aPSet)
 
@@ -792,7 +792,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("NONE"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT"),
+    HLTversion = cms.string("HLT")
        )
 sampleInfo.append(aPSet)
 
@@ -813,7 +813,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("NONE"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT"),
+    HLTversion = cms.string("HLT")
        )
 sampleInfo.append(aPSet)
 
@@ -834,7 +834,7 @@ sampleInfo.append(aPSet)
 #     RecoilCorrection = cms.string("NONE"),
 #     MetSystematicType = cms.string("NONE"),
 #     KeepTheoryScaleFactors = cms.bool(False),
-#     HLTversion = cms.string("HLT"),
+#     HLTversion = cms.string("HLT")
 #        )
 # sampleInfo.append(aPSet)
 
@@ -855,7 +855,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("NONE"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT"),
+    HLTversion = cms.string("HLT")
        )
 sampleInfo.append(aPSet)
 
@@ -876,7 +876,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("NONE"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT"),
+    HLTversion = cms.string("HLT")
        )
 sampleInfo.append(aPSet)
 
@@ -903,7 +903,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("NONE"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT"),
+    HLTversion = cms.string("HLT")
        )
 sampleInfo.append(aPSet)
 
@@ -924,7 +924,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("NONE"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT2"),
+    HLTversion = cms.string("HLT2")
        )
 sampleInfo.append(aPSet)
 
@@ -945,7 +945,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("NONE"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT2"),
+    HLTversion = cms.string("HLT2")
        )
 sampleInfo.append(aPSet)
 
@@ -966,7 +966,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("NONE"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT2"),
+    HLTversion = cms.string("HLT2")
        )
 sampleInfo.append(aPSet)
 
@@ -987,7 +987,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("NONE"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT2"),
+    HLTversion = cms.string("HLT2")
        )
 sampleInfo.append(aPSet)
 
@@ -1008,7 +1008,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("NONE"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT"),
+    HLTversion = cms.string("HLT")
        )
 sampleInfo.append(aPSet)
 
@@ -1029,7 +1029,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("NONE"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT2"),
+    HLTversion = cms.string("HLT2")
        )
 sampleInfo.append(aPSet)
 
@@ -1050,7 +1050,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("NONE"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT2"),
+    HLTversion = cms.string("HLT2")
        )
 sampleInfo.append(aPSet)
 
@@ -1071,7 +1071,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("NONE"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT2"),
+    HLTversion = cms.string("HLT2")
        )
 sampleInfo.append(aPSet)
 
@@ -1092,7 +1092,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("NONE"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT2"),
+    HLTversion = cms.string("HLT2")
        )
 sampleInfo.append(aPSet)
 
@@ -1113,7 +1113,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("NONE"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT"),
+    HLTversion = cms.string("HLT")
        )
 sampleInfo.append(aPSet)
 
@@ -1134,7 +1134,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("NONE"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT2"),
+    HLTversion = cms.string("HLT2")
        )
 sampleInfo.append(aPSet)
 
@@ -1155,7 +1155,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("NONE"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT2"),
+    HLTversion = cms.string("HLT2")
        )
 sampleInfo.append(aPSet)
 
@@ -1176,7 +1176,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("NONE"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT2"),
+    HLTversion = cms.string("HLT2")
        )
 sampleInfo.append(aPSet)
 
@@ -1197,7 +1197,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("NONE"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT2"),
+    HLTversion = cms.string("HLT2")
        )
 sampleInfo.append(aPSet)
 
@@ -1218,7 +1218,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("NONE"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT2"),
+    HLTversion = cms.string("HLT2")
        )
 sampleInfo.append(aPSet)
 
@@ -1239,7 +1239,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("NONE"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT"),
+    HLTversion = cms.string("HLT")
        )
 sampleInfo.append(aPSet)
 
@@ -1260,7 +1260,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("NONE"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT2"),
+    HLTversion = cms.string("HLT2")
        )
 sampleInfo.append(aPSet)
 
@@ -1281,7 +1281,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("NONE"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT2"),
+    HLTversion = cms.string("HLT2")
        )
 sampleInfo.append(aPSet)
 
@@ -1302,7 +1302,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("NONE"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT2"),
+    HLTversion = cms.string("HLT2")
        )
 sampleInfo.append(aPSet)
 
@@ -1323,7 +1323,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("NONE"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT2"),
+    HLTversion = cms.string("HLT2")
        )
 sampleInfo.append(aPSet)
 
@@ -1344,7 +1344,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("NONE"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT"),
+    HLTversion = cms.string("HLT")
        )
 sampleInfo.append(aPSet)
 
@@ -1365,7 +1365,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("NONE"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT2"),
+    HLTversion = cms.string("HLT2")
        )
 sampleInfo.append(aPSet)
 
@@ -1386,7 +1386,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("NONE"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT2"),
+    HLTversion = cms.string("HLT2")
        )
 sampleInfo.append(aPSet)
 
@@ -1407,7 +1407,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("NONE"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT2"),
+    HLTversion = cms.string("HLT2")
        )
 sampleInfo.append(aPSet)
 
@@ -1428,7 +1428,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("NONE"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT2"),
+    HLTversion = cms.string("HLT2")
        )
 sampleInfo.append(aPSet)
 
@@ -1449,7 +1449,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("NONE"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT2"),
+    HLTversion = cms.string("HLT2")
        )
 sampleInfo.append(aPSet)
 
@@ -1470,7 +1470,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("NONE"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT"),
+    HLTversion = cms.string("HLT")
        )
 sampleInfo.append(aPSet)
 
@@ -1491,7 +1491,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("NONE"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT2"),
+    HLTversion = cms.string("HLT2")
        )
 sampleInfo.append(aPSet)
 
@@ -1512,7 +1512,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("NONE"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT2"),
+    HLTversion = cms.string("HLT2")
        )
 sampleInfo.append(aPSet)
 
@@ -1533,7 +1533,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("NONE"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT2"),
+    HLTversion = cms.string("HLT2")
        )
 sampleInfo.append(aPSet)
 
@@ -1554,7 +1554,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("NONE"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT2"),
+    HLTversion = cms.string("HLT2")
        )
 sampleInfo.append(aPSet)
 
@@ -1575,7 +1575,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("NONE"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT2"),
+    HLTversion = cms.string("HLT2")
        )
 sampleInfo.append(aPSet)
 
@@ -1596,7 +1596,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("NONE"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT"),
+    HLTversion = cms.string("HLT")
        )
 sampleInfo.append(aPSet)
 
@@ -1617,7 +1617,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("NONE"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT2"),
+    HLTversion = cms.string("HLT2")
        )
 sampleInfo.append(aPSet)
 
@@ -1638,7 +1638,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("NONE"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT2"),
+    HLTversion = cms.string("HLT2")
        )
 sampleInfo.append(aPSet)
 
@@ -1659,7 +1659,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("NONE"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT2"),
+    HLTversion = cms.string("HLT2")
        )
 sampleInfo.append(aPSet)
 
@@ -1680,7 +1680,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("NONE"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT2"),
+    HLTversion = cms.string("HLT2")
        )
 sampleInfo.append(aPSet)
 
@@ -1701,7 +1701,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("NONE"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT2"),
+    HLTversion = cms.string("HLT2")
        )
 sampleInfo.append(aPSet)
 
@@ -1722,7 +1722,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("NONE"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT"),
+    HLTversion = cms.string("HLT")
        )
 sampleInfo.append(aPSet)
 
@@ -1743,7 +1743,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("NONE"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT"),
+    HLTversion = cms.string("HLT")
        )
 sampleInfo.append(aPSet)
 
@@ -1764,7 +1764,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("NONE"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT"),
+    HLTversion = cms.string("HLT")
        )
 sampleInfo.append(aPSet)
 
@@ -1785,7 +1785,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("NONE"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT"),
+    HLTversion = cms.string("HLT")
        )
 sampleInfo.append(aPSet)
 
@@ -1806,7 +1806,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("NONE"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT"),
+    HLTversion = cms.string("HLT")
        )
 sampleInfo.append(aPSet)
 
@@ -1827,7 +1827,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("NONE"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT"),
+    HLTversion = cms.string("HLT")
        )
 sampleInfo.append(aPSet)
 
@@ -1848,7 +1848,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("NONE"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT"),
+    HLTversion = cms.string("HLT")
        )
 sampleInfo.append(aPSet)
 
@@ -1869,7 +1869,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("NONE"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT"),
+    HLTversion = cms.string("HLT")
        )
 sampleInfo.append(aPSet)
 
@@ -1890,7 +1890,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("NONE"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT"),
+    HLTversion = cms.string("HLT")
        )
 sampleInfo.append(aPSet)
 
@@ -1911,7 +1911,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("NONE"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT"),
+    HLTversion = cms.string("HLT")
        )
 sampleInfo.append(aPSet)
 
@@ -1932,7 +1932,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("NONE"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT"),
+    HLTversion = cms.string("HLT")
        )
 sampleInfo.append(aPSet)
 
@@ -1953,7 +1953,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("NONE"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT"),
+    HLTversion = cms.string("HLT")
        )
 sampleInfo.append(aPSet)
 
@@ -1974,7 +1974,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("NONE"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT"),
+    HLTversion = cms.string("HLT")
        )
 sampleInfo.append(aPSet)
 
@@ -1995,7 +1995,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("NONE"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT"),
+    HLTversion = cms.string("HLT")
        )
 sampleInfo.append(aPSet)
 
@@ -2016,7 +2016,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("NONE"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT"),
+    HLTversion = cms.string("HLT")
        )
 sampleInfo.append(aPSet)
 
@@ -2037,7 +2037,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("NONE"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT"),
+    HLTversion = cms.string("HLT")
        )
 sampleInfo.append(aPSet)
 
@@ -2058,7 +2058,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("NONE"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT"),
+    HLTversion = cms.string("HLT")
        )
 sampleInfo.append(aPSet)
 
@@ -2079,7 +2079,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("NONE"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT"),
+    HLTversion = cms.string("HLT")
        )
 sampleInfo.append(aPSet)
 
@@ -2100,7 +2100,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("NONE"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT"),
+    HLTversion = cms.string("HLT")
        )
 sampleInfo.append(aPSet)
 
@@ -2121,7 +2121,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("NONE"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT"),
+    HLTversion = cms.string("HLT")
        )
 sampleInfo.append(aPSet)
 
@@ -2142,7 +2142,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("NONE"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT"),
+    HLTversion = cms.string("HLT")
        )
 sampleInfo.append(aPSet)
 
@@ -2163,7 +2163,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("NONE"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT"),
+    HLTversion = cms.string("HLT")
        )
 sampleInfo.append(aPSet)
 
@@ -2184,7 +2184,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("NONE"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT"),
+    HLTversion = cms.string("HLT")
        )
 sampleInfo.append(aPSet)
 
@@ -2205,7 +2205,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("NONE"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT"),
+    HLTversion = cms.string("HLT")
        )
 sampleInfo.append(aPSet)
 
@@ -2226,7 +2226,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("NONE"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT"),
+    HLTversion = cms.string("HLT")
        )
 sampleInfo.append(aPSet)
 
@@ -2247,7 +2247,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("NONE"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT"),
+    HLTversion = cms.string("HLT")
        )
 sampleInfo.append(aPSet)
 
@@ -2268,7 +2268,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("NONE"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT"),
+    HLTversion = cms.string("HLT")
        )
 sampleInfo.append(aPSet)
 
@@ -2289,7 +2289,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("NONE"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT"),
+    HLTversion = cms.string("HLT")
        )
 sampleInfo.append(aPSet)
 
@@ -2310,7 +2310,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("NONE"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT"),
+    HLTversion = cms.string("HLT")
        )
 sampleInfo.append(aPSet)
 
@@ -2331,7 +2331,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("NONE"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT"),
+    HLTversion = cms.string("HLT")
        )
 sampleInfo.append(aPSet)
 
@@ -2352,7 +2352,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("NONE"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT"),
+    HLTversion = cms.string("HLT")
        )
 sampleInfo.append(aPSet)
 
@@ -2373,7 +2373,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("NONE"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT"),
+    HLTversion = cms.string("HLT")
        )
 sampleInfo.append(aPSet)
 
@@ -2394,7 +2394,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("NONE"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT"),
+    HLTversion = cms.string("HLT")
        )
 sampleInfo.append(aPSet)
 
@@ -2415,7 +2415,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("NONE"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT"),
+    HLTversion = cms.string("HLT")
        )
 sampleInfo.append(aPSet)
 
@@ -2436,7 +2436,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("NONE"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT"),
+    HLTversion = cms.string("HLT")
        )
 sampleInfo.append(aPSet)
 
@@ -2457,7 +2457,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("NONE"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT"),
+    HLTversion = cms.string("HLT")
        )
 sampleInfo.append(aPSet)
 
@@ -2478,7 +2478,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("NONE"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT"),
+    HLTversion = cms.string("HLT")
        )
 sampleInfo.append(aPSet)
 
@@ -2499,7 +2499,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("NONE"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT2"),
+    HLTversion = cms.string("HLT2")
        )
 sampleInfo.append(aPSet)
 
@@ -2520,7 +2520,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("NONE"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT2"),
+    HLTversion = cms.string("HLT2")
        )
 sampleInfo.append(aPSet)
 
@@ -2546,9 +2546,9 @@ aPSet = cms.PSet(
     CodeVersion = cms.double(2.0),
     ProductionInfo = cms.string("Run2016_B_C_D_E_F_G_H"),
     RecoilCorrection = cms.string("NONE"),
-    MetSystematicType = cms.string("TOP"),
+    MetSystematicType = cms.string("MEtSys::ProcessType::TOP"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT2"),
+    HLTversion = cms.string("HLT2")
        )
 sampleInfo.append(aPSet)
 
@@ -2567,7 +2567,7 @@ sampleInfo.append(aPSet)
 #     RecoilCorrection = cms.string("NONE"),
 #     MetSystematicType = cms.string("MEtSys::ProcessType::TOP"),
 #     KeepTheoryScaleFactors = cms.bool(False),
-#     HLTversion = cms.string("HLT2"),
+#     HLTversion = cms.string("HLT2")
 #        )
 # sampleInfo.append(aPSet)
 
@@ -2588,7 +2588,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("MG5_W"),
     MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT"),
+    HLTversion = cms.string("HLT")
        )
 sampleInfo.append(aPSet)
 
@@ -2609,7 +2609,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("MG5_W"),
     MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT"),
+    HLTversion = cms.string("HLT")
        )
 sampleInfo.append(aPSet)
 
@@ -2630,7 +2630,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("MG5_W"),
     MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT"),
+    HLTversion = cms.string("HLT")
        )
 sampleInfo.append(aPSet)
 
@@ -2651,7 +2651,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("MG5_W"),
     MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT"),
+    HLTversion = cms.string("HLT")
        )
 sampleInfo.append(aPSet)
 
@@ -2672,7 +2672,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("MG5_W"),
     MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT"),
+    HLTversion = cms.string("HLT")
        )
 sampleInfo.append(aPSet)
 
@@ -2693,7 +2693,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("MEtSys::ProcessType::EWK"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT"),
+    HLTversion = cms.string("HLT")
        )
 sampleInfo.append(aPSet)
 
@@ -2714,7 +2714,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("MEtSys::ProcessType::EWK"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT"),
+    HLTversion = cms.string("HLT")
        )
 sampleInfo.append(aPSet)
 
@@ -2735,7 +2735,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("MEtSys::ProcessType::EWK"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT"),
+    HLTversion = cms.string("HLT")
        )
 sampleInfo.append(aPSet)
 
@@ -2756,7 +2756,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("MEtSys::ProcessType::EWK"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT"),
+    HLTversion = cms.string("HLT")
        )
 sampleInfo.append(aPSet)
 
@@ -2777,7 +2777,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("MEtSys::ProcessType::EWK"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT"),
+    HLTversion = cms.string("HLT")
        )
 sampleInfo.append(aPSet)
 
@@ -2798,7 +2798,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("MEtSys::ProcessType::EWK"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT"),
+    HLTversion = cms.string("HLT")
        )
 sampleInfo.append(aPSet)
 
@@ -2819,7 +2819,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("MEtSys::ProcessType::EWK"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT"),
+    HLTversion = cms.string("HLT")
        )
 sampleInfo.append(aPSet)
 
@@ -2840,7 +2840,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("MEtSys::ProcessType::EWK"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT"),
+    HLTversion = cms.string("HLT")
        )
 sampleInfo.append(aPSet)
 
@@ -2861,7 +2861,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("MEtSys::ProcessType::EWK"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT"),
+    HLTversion = cms.string("HLT")
        )
 sampleInfo.append(aPSet)
 
@@ -2882,7 +2882,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("MEtSys::ProcessType::EWK"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT"),
+    HLTversion = cms.string("HLT")
        )
 sampleInfo.append(aPSet)
 
@@ -2903,7 +2903,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("MG5_W"),
     MetSystematicType = cms.string("MEtSys::ProcessType::EWK"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT"),
+    HLTversion = cms.string("HLT")
        )
 sampleInfo.append(aPSet)
 
@@ -2924,7 +2924,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("MG5_W"),
     MetSystematicType = cms.string("MEtSys::ProcessType::EWK"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT"),
+    HLTversion = cms.string("HLT")
        )
 sampleInfo.append(aPSet)
 
@@ -2945,7 +2945,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("MG5_DY"),
     MetSystematicType = cms.string("MEtSys::ProcessType::EWK"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT"),
+    HLTversion = cms.string("HLT")
        )
 sampleInfo.append(aPSet)
 
@@ -2966,7 +2966,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("MG5_DY"),
     MetSystematicType = cms.string("MEtSys::ProcessType::EWK"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT"),
+    HLTversion = cms.string("HLT")
        )
 sampleInfo.append(aPSet)
 
@@ -2985,9 +2985,9 @@ aPSet = cms.PSet(
     CodeVersion = cms.double(2.0),
     ProductionInfo = cms.string("Run2016_B_C_D_E_F_G_H"),
     RecoilCorrection = cms.string("HIGGS"),
-    MetSystematicType = cms.string("MEtSys::ProcessType::Higgs"),
+    MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT2"),
+    HLTversion = cms.string("HLT2")
        )
 sampleInfo.append(aPSet)
 
@@ -3006,9 +3006,9 @@ aPSet = cms.PSet(
     CodeVersion = cms.double(2.0),
     ProductionInfo = cms.string("Run2016_B_C_D_E_F_G_H"),
     RecoilCorrection = cms.string("HIGGS"),
-    MetSystematicType = cms.string("MEtSys::ProcessType::Higgs"),
+    MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT2"),
+    HLTversion = cms.string("HLT2")
        )
 sampleInfo.append(aPSet)
 
@@ -3027,9 +3027,9 @@ aPSet = cms.PSet(
     CodeVersion = cms.double(2.0),
     ProductionInfo = cms.string("Run2016_B_C_D_E_F_G_H"),
     RecoilCorrection = cms.string("HIGGS"),
-    MetSystematicType = cms.string("MEtSys::ProcessType::Higgs"),
+    MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT2"),
+    HLTversion = cms.string("HLT2")
        )
 sampleInfo.append(aPSet)
 
@@ -3048,9 +3048,9 @@ aPSet = cms.PSet(
     CodeVersion = cms.double(2.0),
     ProductionInfo = cms.string("Run2016_B_C_D_E_F_G_H"),
     RecoilCorrection = cms.string("HIGGS"),
-    MetSystematicType = cms.string("MEtSys::ProcessType::Higgs"),
+    MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT2"),
+    HLTversion = cms.string("HLT2")
        )
 sampleInfo.append(aPSet)
 
@@ -3069,9 +3069,9 @@ aPSet = cms.PSet(
     CodeVersion = cms.double(2.0),
     ProductionInfo = cms.string("Run2016_B_C_D_E_F_G_H"),
     RecoilCorrection = cms.string("HIGGS"),
-    MetSystematicType = cms.string("MEtSys::ProcessType::Higgs"),
+    MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT2"),
+    HLTversion = cms.string("HLT2")
        )
 sampleInfo.append(aPSet)
 
@@ -3090,9 +3090,9 @@ aPSet = cms.PSet(
     CodeVersion = cms.double(2.0),
     ProductionInfo = cms.string("Run2016_B_C_D_E_F_G_H"),
     RecoilCorrection = cms.string("HIGGS"),
-    MetSystematicType = cms.string("MEtSys::ProcessType::Higgs"),
+    MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT2"),
+    HLTversion = cms.string("HLT2")
        )
 sampleInfo.append(aPSet)
 
@@ -3111,9 +3111,9 @@ aPSet = cms.PSet(
     CodeVersion = cms.double(2.0),
     ProductionInfo = cms.string("Run2016_B_C_D_E_F_G_H"),
     RecoilCorrection = cms.string("HIGGS"),
-    MetSystematicType = cms.string("MEtSys::ProcessType::Higgs"),
+    MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT2"),
+    HLTversion = cms.string("HLT2")
        )
 sampleInfo.append(aPSet)
 
@@ -3132,9 +3132,9 @@ aPSet = cms.PSet(
     CodeVersion = cms.double(2.0),
     ProductionInfo = cms.string("Run2016_B_C_D_E_F_G_H"),
     RecoilCorrection = cms.string("HIGGS"),
-    MetSystematicType = cms.string("MEtSys::ProcessType::Higgs"),
+    MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT2"),
+    HLTversion = cms.string("HLT2")
        )
 sampleInfo.append(aPSet)
 
@@ -3155,7 +3155,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("MEtSys::ProcessType::EWK"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT"),
+    HLTversion = cms.string("HLT")
        )
 sampleInfo.append(aPSet)
 
@@ -3176,7 +3176,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("MEtSys::ProcessType::EWK"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT"),
+    HLTversion = cms.string("HLT")
        )
 sampleInfo.append(aPSet)
 
@@ -3197,7 +3197,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("NONE"),
     MetSystematicType = cms.string("MEtSys::ProcessType::EWK"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT"),
+    HLTversion = cms.string("HLT")
        )
 sampleInfo.append(aPSet)
 
@@ -3218,7 +3218,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("aMCatNLO_DY"),
     MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT"),
+    HLTversion = cms.string("HLT")
        )
 sampleInfo.append(aPSet)
 
@@ -3239,7 +3239,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("aMCatNLO_DY"),
     MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT"),
+    HLTversion = cms.string("HLT")
        )
 sampleInfo.append(aPSet)
 
@@ -3260,7 +3260,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("aMCatNLO_DY"),
     MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT"),
+    HLTversion = cms.string("HLT")
        )
 sampleInfo.append(aPSet)
 
@@ -3281,7 +3281,7 @@ aPSet = cms.PSet(
     RecoilCorrection = cms.string("aMCatNLO_DY"),
     MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
     KeepTheoryScaleFactors = cms.bool(False),
-    HLTversion = cms.string("HLT"),
+    HLTversion = cms.string("HLT")
        )
 sampleInfo.append(aPSet)
 
