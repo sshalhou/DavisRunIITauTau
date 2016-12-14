@@ -1,4 +1,4 @@
-/* class generateH2TauSyncTree 
+/* class generateH2TauSyncTree
 generate the H2TauTau group's standard sync trees (one tree produced per channel)
 see : https://twiki.cern.ch/twiki/bin/viewauth/CMS/HiggsToTauTauWorking2015#Synchronisation_Ntuple
 -- Shalhout
@@ -40,6 +40,7 @@ see : https://twiki.cern.ch/twiki/bin/viewauth/CMS/HiggsToTauTauWorking2015#Sync
 #include "HTT-utilities/QCDModelingEMu/interface/QCDModelForEMu.h"
 #include <TGraphAsymmErrors.h>
 #include <TRandom3.h>
+#include "TMVA/Reader.h"
 
 /* new struct to contain jet info under a give correction or systematic shift */
 
@@ -221,6 +222,7 @@ public:
 
 	jetDescription jetINFOstruct;
 
+
 private:
 
 	FlatTreeReader R;
@@ -296,17 +298,113 @@ private:
   	// BEGIN LIST OF Ntuple BRANCH-ASSOCIATED VARIABLES //
     //////////////////////////////////////////////////////
 
-
-    /* tMVA flag */
+    /* tMVA flags */
     
     // bool flag_MVAEventType; -- this will need to be added back in by Garrett later
     // also needs to be added to the .cc file 
     //using int for analysis, train, or test -> -1.0,1
 
     int flag_MVAEventType;
-
-    /* theory event weights */
     
+    float userRand;
+    
+    /* Create TMVA Reader */
+        
+    TMVA::Reader mt_MZP600A0400_reader;
+    TMVA::Reader mt_MZP800A0400_reader;
+    TMVA::Reader mt_MZP1000A0400_reader;
+    TMVA::Reader mt_MZP1200A0400_reader;
+    
+    TMVA::Reader et_MZP600A0400_reader;
+    TMVA::Reader et_MZP800A0400_reader;
+    TMVA::Reader et_MZP1000A0400_reader;
+    TMVA::Reader et_MZP1200A0400_reader;
+
+    TMVA::Reader mt_W_MZP600A0400_reader;
+    TMVA::Reader mt_W_MZP800A0400_reader;
+    TMVA::Reader mt_W_MZP1000A0400_reader;
+    TMVA::Reader mt_W_MZP1200A0400_reader;
+    
+    TMVA::Reader et_W_MZP600A0400_reader;
+    TMVA::Reader et_W_MZP800A0400_reader;
+    TMVA::Reader et_W_MZP1000A0400_reader;
+    TMVA::Reader et_W_MZP1200A0400_reader;
+    
+    TMVA::Reader tt_W_MZP600A0400_reader;
+    TMVA::Reader tt_W_MZP800A0400_reader;
+    TMVA::Reader tt_W_MZP1000A0400_reader;
+    TMVA::Reader tt_W_MZP1200A0400_reader;
+    
+    TMVA::Reader et_EXP1_reader;
+    TMVA::Reader et_EXP2_reader;
+    TMVA::Reader et_EXP3_reader;
+    
+    TMVA::Reader mt_EXP1_reader;
+    TMVA::Reader mt_EXP2_reader;
+    TMVA::Reader mt_EXP3_reader;
+    
+    TMVA::Reader tt_EXP1_reader;
+    TMVA::Reader tt_EXP2_reader;
+    TMVA::Reader tt_EXP3_reader;
+    
+    //TMVA variables
+    
+    double mvaVar_mt_MZP600A0400;
+    double mvaVar_mt_MZP800A0400;
+    double mvaVar_mt_MZP1000A0400;
+    double mvaVar_mt_MZP1200A0400;
+    
+    double mvaVar_et_MZP600A0400;
+    double mvaVar_et_MZP800A0400;
+    double mvaVar_et_MZP1000A0400;
+    double mvaVar_et_MZP1200A0400;
+    
+    double mvaVar_mt_W_MZP600A0400;
+    double mvaVar_mt_W_MZP800A0400;
+    double mvaVar_mt_W_MZP1000A0400;
+    double mvaVar_mt_W_MZP1200A0400;
+    
+    double mvaVar_et_W_MZP600A0400;
+    double mvaVar_et_W_MZP800A0400;
+    double mvaVar_et_W_MZP1000A0400;
+    double mvaVar_et_W_MZP1200A0400;
+    
+    double mvaVar_tt_W_MZP600A0400;
+    double mvaVar_tt_W_MZP800A0400;
+    double mvaVar_tt_W_MZP1000A0400;
+    double mvaVar_tt_W_MZP1200A0400;
+    
+    double mvaVar_et_EXP1;
+    double mvaVar_et_EXP2;
+    double mvaVar_et_EXP3;
+    
+    double mvaVar_mt_EXP1;
+    double mvaVar_mt_EXP2;
+    double mvaVar_mt_EXP3;
+    
+    double mvaVar_tt_EXP1;
+    double mvaVar_tt_EXP2;
+    double mvaVar_tt_EXP3;
+    
+    //same variables, all converted to floats for TMVA
+    float_t read_pt_1;
+    float_t read_pfmt_1;
+    float_t read_pt_2;
+    float_t read_pt_tt;
+    float_t read_m_vis;
+    float_t read_met;
+    float_t read_P_chi_pf;
+    float_t read_LPT;
+    float_t read_DeltaR_leg1_leg2;
+    float_t read_DeltaPhi_leg1_leg2;
+    float_t read_DeltaPhi_PFMET_Higgs;
+    
+    float_t read_npu;
+    float_t read_event;
+    float_t read_final_weight;
+    float_t read_ratio_weight;
+    
+    /* theory event weights */
     float originalXWGTUP;
     std::vector < float > theory_scale_factors; /* scale factors for theory variants, mapping is available in FlatTuple production log file */
 
@@ -458,6 +556,10 @@ private:
 
 	double pt_tt;
 	double DeltaR_leg1_leg2;
+    double DeltaPhi_leg1_leg2;
+    double DeltaPhi_PFMET_Higgs;
+    double DeltaPhi_MVAMET_Higgs;
+    
 	double mt_tot; /* use mva met */	
 	double m_vis;
 
@@ -1035,7 +1137,6 @@ private:
 	bool chargedHadronTrackResolutionFilter;
 	bool muonBadTrackFilter;
 
-
 	/* gen info */
 
 	int NUP;
@@ -1063,7 +1164,6 @@ private:
     double CrossSection;    /* MC process cross section */
     double FilterEff;       /* gen level filter eff. (needed if any is applied) */
 	bool isSmallTree;       /* was the FlatTuple produced under small tree conditions */
-
 
 	// information related to systematic shifts on tau and ele energy scales
 
@@ -1097,8 +1197,7 @@ private:
 	std::vector<int> veto_LeptonPassesThirdElectronVetoCuts; 			
 	std::vector<int> veto_LeptonPassesThirdMuonVetoCuts; 			
 	std::vector<int> veto_LeptonPassesDiElectronVetoCuts; 	
-	std::vector<int> veto_LeptonPassesDiMuonVetoCuts; 			
-		
+	std::vector<int> veto_LeptonPassesDiMuonVetoCuts;
     
     //MVA variables /* need to expand to use all variants */
     
@@ -1112,22 +1211,17 @@ private:
     double P_chi_puppi; /* using puppiMET */
     double M_min_puppi;	/* using puppiMET */
     
-
     double P_chi_uncorr; 		/* using uncorrected mvaMET */
     double M_min_uncorr;		/* using uncorrected mvaMET */
-
 
     double P_chi_responseUP; 		/* using responseUP mvaMET */
     double M_min_responseUP;		/* using responseUP mvaMET */
 
-
     double P_chi_responseDOWN; 		/* using responseDOWN mvaMET */
     double M_min_responseDOWN;		/* using responseDOWN mvaMET */
 
-
     double P_chi_resolutionUP; 		/* using resolutionUP mvaMET */
     double M_min_resolutionUP;		/* using resolutionUP mvaMET */
-
 
     double P_chi_resolutionDOWN; 		/* using resolutionDOWN mvaMET */
     double M_min_resolutionDOWN;		/* using resolutionDOWN mvaMET */
@@ -1160,8 +1254,6 @@ private:
   	////////////////////////////////////////////////////
   	// END LIST OF Ntuple BRANCH-ASSOCIATED VARIABLES //
     ////////////////////////////////////////////////////
-  
-
 
 	// member pointers to TTrees & TFiles 
 	
