@@ -8,7 +8,7 @@ import math
 import time
 
 filesPerJob = 5
-topDirName = "/eos/uscms/store/user/gfunk/NovProductionV2_76X/"
+topDirName = "/eos/uscms/store/user/gfunk/DecProductionV2_76X/"
 
 subprocess.call('make clean', shell = True)
 subprocess.call('make', shell = True)
