@@ -18,8 +18,8 @@ pileupSrcInputTag = cms.InputTag('slimmedAddPileupInfo') # for miniAODv2
 
 
 PUntupleWeightSettings = cms.PSet(
-			pileup_mcFilePath = cms.string("DavisRunIITauTau/RunTimeDataInput/data/PileUpReWeightFiles/MC_Spring16_PU25ns_V1.root"),
-			pileup_dataFilePath = cms.string("DavisRunIITauTau/RunTimeDataInput/data/PileUpReWeightFiles/Data_Pileup_2016_July22.root")
+			pileup_mcFilePath = cms.string("DavisRunIITauTau/RunTimeDataInput/data/PileUpReWeightFiles/MC_Moriond17_PU25ns_V1.root"),
+			pileup_dataFilePath = cms.string("DavisRunIITauTau/RunTimeDataInput/data/PileUpReWeightFiles/Data_Pileup_2016_271036-284044_80bins.root")
 			)
 
 # mc weight 

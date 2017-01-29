@@ -102,7 +102,11 @@ void muonClones::fillUserFloats()
 	  	// muon ID summary variables
 
 	  	float isGoodGlobalMuon = 0.0;
+	  	
+	  	float passesLooseMuonId = 0.0;
+	  	float passesMediumMuonId_ICHEP16 = 0.0;
 	  	float passesMediumMuonId = 0.0;
+	  	float passesTightMuonId = 0.0;
 
 
 
@@ -142,12 +146,16 @@ void muonClones::fillUserFloats()
 	  	m.addUserFloat("isGoodGlobalMuon",isGoodGlobalMuon);
 		
 	  	/* new for 7-4-7 simple access via isMediumMuon */
-	  	//passesMediumMuonId = m.isMediumMuon();
+	  	
 
+
+	  	passesLooseMuonId = m.isLooseMuon();
+	  	passesMediumMuonId = m.isMediumMuon();
+		passesTightMuonId = m.isTightMuon(first_vertex);
 
 	  	/* FOR 2016 8X analysis we want to use the medium muon ID (short term ICHEP) */
 
-		passesMediumMuonId = 0;	
+		passesMediumMuonId_ICHEP16 = 0;	
 
 		bool ichep2016_goodGlob = (m.isGlobalMuon() && 
                      		  	  m.globalTrack()->normalizedChi2() < 3 && 
@@ -158,9 +166,15 @@ void muonClones::fillUserFloats()
 								  m.innerTrack()->validFraction() > 0.49 && 
 								  m.segmentCompatibility()   >=   (ichep2016_goodGlob   ? 0.303 : 0.451));
 
-		passesMediumMuonId = ichep2016_isMedium;
-		
+		passesMediumMuonId_ICHEP16 = ichep2016_isMedium;
+
+
+	  	m.addUserFloat("passesLooseMuonId",passesLooseMuonId);
+	  	m.addUserFloat("passesMediumMuonId_ICHEP16",passesMediumMuonId_ICHEP16);
 		m.addUserFloat("passesMediumMuonId",passesMediumMuonId);
+	  	m.addUserFloat("passesTightMuonId",passesTightMuonId);
+
+		
 	  
 		/////////////
 	  	// trigger info

@@ -67,7 +67,7 @@ void JetHelper::init(std::vector<NtupleJet> jetVec, std::string jetCut, bTagSFhe
 					
 
 				/* set the Btag SFs for the current jet */
-					
+
 				jetVec[j].set_defaultBtagAlgorithmSF_LooseWpCentral(m_BtagSFTool->SF_LooseWpCentral());
 				jetVec[j].set_defaultBtagAlgorithmSF_LooseWpUp(m_BtagSFTool->SF_LooseWpUp());
 				jetVec[j].set_defaultBtagAlgorithmSF_LooseWpDown(m_BtagSFTool->SF_LooseWpDown());

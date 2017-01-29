@@ -1679,7 +1679,10 @@ void FlatTupleGenerator::handleEffLeptonInfo(const edm::Event& iEvent, const edm
     effLep_DepositR03TrackerOfficial.push_back(currentPair.EffLepton().at(i).DepositR03TrackerOfficial());
     effLep_isGlobalMuon.push_back(currentPair.EffLepton().at(i).isGlobalMuon());
     effLep_isGoodGlobalMuon.push_back(currentPair.EffLepton().at(i).isGoodGlobalMuon());
+    effLep_passesLooseMuonId.push_back(currentPair.EffLepton().at(i).passesLooseMuonId());
+    effLep_passesMediumMuonId_ICHEP16.push_back(currentPair.EffLepton().at(i).passesMediumMuonId_ICHEP16());
     effLep_passesMediumMuonId.push_back(currentPair.EffLepton().at(i).passesMediumMuonId());
+    effLep_passesTightMuonId.push_back(currentPair.EffLepton().at(i).passesTightMuonId());
     effLep_isLooseMuon.push_back(currentPair.EffLepton().at(i).isLooseMuon());
     effLep_isPFMuon.push_back(currentPair.EffLepton().at(i).isPFMuon());
     effLep_isSoftMuon.push_back(currentPair.EffLepton().at(i).isSoftMuon());
@@ -1884,7 +1887,10 @@ void FlatTupleGenerator::handleLeg1AndLeg2Info(const edm::Event& iEvent, const e
   leg1_DepositR03TrackerOfficial = currentPair.leg1().DepositR03TrackerOfficial();
   leg1_isGlobalMuon = currentPair.leg1().isGlobalMuon();
   leg1_isGoodGlobalMuon = currentPair.leg1().isGoodGlobalMuon();
+  leg1_passesLooseMuonId = currentPair.leg1().passesLooseMuonId();
+  leg1_passesMediumMuonId_ICHEP16 = currentPair.leg1().passesMediumMuonId_ICHEP16();
   leg1_passesMediumMuonId = currentPair.leg1().passesMediumMuonId();
+  leg1_passesTightMuonId = currentPair.leg1().passesTightMuonId();
   leg1_isLooseMuon = currentPair.leg1().isLooseMuon();
   leg1_isPFMuon = currentPair.leg1().isPFMuon();
   leg1_isSoftMuon = currentPair.leg1().isSoftMuon();
@@ -1946,7 +1952,10 @@ void FlatTupleGenerator::handleLeg1AndLeg2Info(const edm::Event& iEvent, const e
   leg2_DepositR03TrackerOfficial = currentPair.leg2().DepositR03TrackerOfficial();
   leg2_isGlobalMuon = currentPair.leg2().isGlobalMuon();
   leg2_isGoodGlobalMuon = currentPair.leg2().isGoodGlobalMuon();
+  leg2_passesLooseMuonId = currentPair.leg2().passesLooseMuonId();
+  leg2_passesMediumMuonId_ICHEP16 = currentPair.leg2().passesMediumMuonId_ICHEP16();
   leg2_passesMediumMuonId = currentPair.leg2().passesMediumMuonId();
+  leg2_passesTightMuonId = currentPair.leg2().passesTightMuonId();
   leg2_isLooseMuon = currentPair.leg2().isLooseMuon();
   leg2_isPFMuon = currentPair.leg2().isPFMuon();
   leg2_isSoftMuon = currentPair.leg2().isSoftMuon();
@@ -2812,7 +2821,10 @@ NtupleEvent currentPair)
       veto_M.push_back(currentPair.vetoElectron()[v].p4().M());
       veto_dxy.push_back(currentPair.vetoElectron()[v].dxy());
       veto_dz.push_back(currentPair.vetoElectron()[v].dz());
+      veto_passesLooseMuonId.push_back(currentPair.vetoElectron()[v].passesLooseMuonId());
+      veto_passesMediumMuonId_ICHEP16.push_back(currentPair.vetoElectron()[v].passesMediumMuonId_ICHEP16());
       veto_passesMediumMuonId.push_back(currentPair.vetoElectron()[v].passesMediumMuonId());
+      veto_passesTightMuonId.push_back(currentPair.vetoElectron()[v].passesTightMuonId());
       veto_rawElectronMVA.push_back(currentPair.vetoElectron()[v].raw_electronMVA());
       veto_categoryElectronMVA.push_back(currentPair.vetoElectron()[v].category_electronMVA());
       veto_passElectronMVA80.push_back(currentPair.vetoElectron()[v].passFail_electronMVA80());
@@ -2873,7 +2885,10 @@ NtupleEvent currentPair)
       veto_M.push_back(currentPair.vetoMuon()[v].p4().M());
       veto_dxy.push_back(currentPair.vetoMuon()[v].dxy());
       veto_dz.push_back(currentPair.vetoMuon()[v].dz());
+      veto_passesLooseMuonId.push_back(currentPair.vetoMuon()[v].passesLooseMuonId());
+      veto_passesMediumMuonId_ICHEP16.push_back(currentPair.vetoMuon()[v].passesMediumMuonId_ICHEP16());
       veto_passesMediumMuonId.push_back(currentPair.vetoMuon()[v].passesMediumMuonId());
+      veto_passesTightMuonId.push_back(currentPair.vetoMuon()[v].passesTightMuonId());
       veto_rawElectronMVA.push_back(currentPair.vetoMuon()[v].raw_electronMVA());
       veto_categoryElectronMVA.push_back(currentPair.vetoMuon()[v].category_electronMVA());
       veto_passElectronMVA80.push_back(currentPair.vetoMuon()[v].passFail_electronMVA80());
@@ -3122,6 +3137,33 @@ void FlatTupleGenerator::handlePairIndepInfo(const edm::Event& iEvent, const edm
   numberOfJets30_JERdown = 0;
 
 
+  /* compute the btag product scale factors */
+  BtagEventSFproduct_looseWpDown = 1.0;
+  BtagEventSFproduct_looseWpCentral = 1.0;
+  BtagEventSFproduct_looseWpUp = 1.0;
+  BtagEventSFproduct_mediumWpDown = 1.0;
+  BtagEventSFproduct_mediumWpCentral = 1.0;
+  BtagEventSFproduct_mediumWpUp = 1.0;
+  BtagEventSFproduct_tightWpDown = 1.0;
+  BtagEventSFproduct_tightWpCentral = 1.0;
+  BtagEventSFproduct_tightWpUp = 1.0;
+  BtagEventSFproduct_looseWpCentral_JECshiftedUp = 1.0;
+  BtagEventSFproduct_mediumWpCentral_JECshiftedUp = 1.0;
+  BtagEventSFproduct_tightWpCentral_JECshiftedUp = 1.0;
+  BtagEventSFproduct_looseWpCentral_JECshiftedDown = 1.0;
+  BtagEventSFproduct_mediumWpCentral_JECshiftedDown = 1.0;
+  BtagEventSFproduct_tightWpCentral_JECshiftedDown = 1.0;
+  BtagEventSFproduct_looseWpCentral_JERup = 1.0;
+  BtagEventSFproduct_mediumWpCentral_JERup = 1.0;
+  BtagEventSFproduct_tightWpCentral_JERup = 1.0;
+  BtagEventSFproduct_looseWpCentral_JERdown = 1.0;
+  BtagEventSFproduct_mediumWpCentral_JERdown = 1.0;
+  BtagEventSFproduct_tightWpCentral_JERdown = 1.0;
+
+
+
+
+
   /* now fill the FlatTuple jet vector */
   for(std::size_t j=0; j<goodJets.size(); ++j)
   {      
@@ -3149,6 +3191,29 @@ void FlatTupleGenerator::handlePairIndepInfo(const edm::Event& iEvent, const edm
     jets_BtagSF_TightWpCentral.push_back(goodJets[j].defaultBtagAlgorithmSF_TightWpCentral());
     jets_BtagSF_TightWpUp.push_back(goodJets[j].defaultBtagAlgorithmSF_TightWpUp());
     jets_BtagSF_TightWpDown.push_back(goodJets[j].defaultBtagAlgorithmSF_TightWpDown());
+
+
+
+    if(goodJets[j].defaultBtagAlgorithm_RawScore() > LooseCut) 
+    {
+      if(!std::isnan(goodJets[j].defaultBtagAlgorithmSF_LooseWpDown())) BtagEventSFproduct_looseWpDown *= (1.0-std::min(1.0,goodJets[j].defaultBtagAlgorithmSF_LooseWpDown()));
+      if(!std::isnan(goodJets[j].defaultBtagAlgorithmSF_LooseWpCentral())) BtagEventSFproduct_looseWpCentral *= (1.0-std::min(1.0,goodJets[j].defaultBtagAlgorithmSF_LooseWpCentral()));
+      if(!std::isnan(goodJets[j].defaultBtagAlgorithmSF_LooseWpUp())) BtagEventSFproduct_looseWpUp      *= (1.0-std::min(1.0,goodJets[j].defaultBtagAlgorithmSF_LooseWpUp()));
+    }
+    
+    if(goodJets[j].defaultBtagAlgorithm_RawScore() > MediumCut) 
+    {
+      if(!std::isnan(goodJets[j].defaultBtagAlgorithmSF_MediumWpDown())) BtagEventSFproduct_mediumWpDown    *= (1.0-std::min(1.0,goodJets[j].defaultBtagAlgorithmSF_MediumWpDown()));
+      if(!std::isnan(goodJets[j].defaultBtagAlgorithmSF_MediumWpCentral())) BtagEventSFproduct_mediumWpCentral *= (1.0-std::min(1.0,goodJets[j].defaultBtagAlgorithmSF_MediumWpCentral()));
+      if(!std::isnan(goodJets[j].defaultBtagAlgorithmSF_MediumWpUp())) BtagEventSFproduct_mediumWpUp      *= (1.0-std::min(1.0,goodJets[j].defaultBtagAlgorithmSF_MediumWpUp()));
+    }
+
+    if(goodJets[j].defaultBtagAlgorithm_RawScore() > TightCut) 
+    {
+      if(!std::isnan(goodJets[j].defaultBtagAlgorithmSF_TightWpDown())) BtagEventSFproduct_tightWpDown     *= (1.0-std::min(1.0,goodJets[j].defaultBtagAlgorithmSF_TightWpDown()));
+      if(!std::isnan(goodJets[j].defaultBtagAlgorithmSF_TightWpCentral())) BtagEventSFproduct_tightWpCentral  *= (1.0-std::min(1.0,goodJets[j].defaultBtagAlgorithmSF_TightWpCentral()));
+      if(!std::isnan(goodJets[j].defaultBtagAlgorithmSF_TightWpUp())) BtagEventSFproduct_tightWpUp       *= (1.0-std::min(1.0,goodJets[j].defaultBtagAlgorithmSF_TightWpUp()));
+    }
 
     jets_BtagEff_LooseWp.push_back(goodJets[j].defaultBtagAlgorithmEff_LooseWp());
     jets_BtagEff_MediumWp.push_back(goodJets[j].defaultBtagAlgorithmEff_MediumWp());
@@ -3197,6 +3262,21 @@ void FlatTupleGenerator::handlePairIndepInfo(const edm::Event& iEvent, const edm
     jets_BtagSF_TightWpUp_JECshiftedUp.push_back(goodJets_JECshiftedUp[j].defaultBtagAlgorithmSF_TightWpUp());
     jets_BtagSF_TightWpDown_JECshiftedUp.push_back(goodJets_JECshiftedUp[j].defaultBtagAlgorithmSF_TightWpDown());
 
+    if(goodJets[j].defaultBtagAlgorithm_RawScore() > LooseCut) 
+    {
+      if(!std::isnan(goodJets_JECshiftedUp[j].defaultBtagAlgorithmSF_LooseWpCentral())) BtagEventSFproduct_looseWpCentral_JECshiftedUp *= (1.0 - std::min(1.0,goodJets_JECshiftedUp[j].defaultBtagAlgorithmSF_LooseWpCentral()));
+    }
+    
+    if(goodJets[j].defaultBtagAlgorithm_RawScore() > MediumCut) 
+    {
+     if(!std::isnan(goodJets_JECshiftedUp[j].defaultBtagAlgorithmSF_MediumWpCentral())) BtagEventSFproduct_mediumWpCentral_JECshiftedUp *= (1.0 - std::min(1.0,goodJets_JECshiftedUp[j].defaultBtagAlgorithmSF_MediumWpCentral()));
+    }  
+
+    if(goodJets[j].defaultBtagAlgorithm_RawScore() > TightCut) 
+    {
+      if(!std::isnan(goodJets_JECshiftedUp[j].defaultBtagAlgorithmSF_TightWpCentral())) BtagEventSFproduct_tightWpCentral_JECshiftedUp *= (1.0 - std::min(1.0,goodJets_JECshiftedUp[j].defaultBtagAlgorithmSF_TightWpCentral()));
+    }
+    
     jets_BtagEff_LooseWp_JECshiftedUp.push_back(goodJets_JECshiftedUp[j].defaultBtagAlgorithmEff_LooseWp());
     jets_BtagEff_MediumWp_JECshiftedUp.push_back(goodJets_JECshiftedUp[j].defaultBtagAlgorithmEff_MediumWp());
     jets_BtagEff_TightWp_JECshiftedUp.push_back(goodJets_JECshiftedUp[j].defaultBtagAlgorithmEff_TightWp());
@@ -3244,6 +3324,22 @@ void FlatTupleGenerator::handlePairIndepInfo(const edm::Event& iEvent, const edm
     jets_BtagSF_TightWpUp_JECshiftedDown.push_back(goodJets_JECshiftedDown[j].defaultBtagAlgorithmSF_TightWpUp());
     jets_BtagSF_TightWpDown_JECshiftedDown.push_back(goodJets_JECshiftedDown[j].defaultBtagAlgorithmSF_TightWpDown());
 
+
+    if(goodJets[j].defaultBtagAlgorithm_RawScore() > LooseCut) 
+    {
+      if(!std::isnan(goodJets_JECshiftedDown[j].defaultBtagAlgorithmSF_LooseWpCentral())) BtagEventSFproduct_looseWpCentral_JECshiftedDown *= (1.0 - std::min(1.0,goodJets_JECshiftedDown[j].defaultBtagAlgorithmSF_LooseWpCentral()));
+    }
+
+    if(goodJets[j].defaultBtagAlgorithm_RawScore() > MediumCut) 
+    {  
+      if(!std::isnan(goodJets_JECshiftedDown[j].defaultBtagAlgorithmSF_MediumWpCentral())) BtagEventSFproduct_mediumWpCentral_JECshiftedDown *= (1.0 - std::min(1.0,goodJets_JECshiftedDown[j].defaultBtagAlgorithmSF_MediumWpCentral()));
+    }
+    
+    if(goodJets[j].defaultBtagAlgorithm_RawScore() > TightCut) 
+    {
+      if(!std::isnan(goodJets_JECshiftedDown[j].defaultBtagAlgorithmSF_TightWpCentral())) BtagEventSFproduct_tightWpCentral_JECshiftedDown *= (1.0 - std::min(1.0,goodJets_JECshiftedDown[j].defaultBtagAlgorithmSF_TightWpCentral()));
+    }
+
     jets_BtagEff_LooseWp_JECshiftedDown.push_back(goodJets_JECshiftedDown[j].defaultBtagAlgorithmEff_LooseWp());
     jets_BtagEff_MediumWp_JECshiftedDown.push_back(goodJets_JECshiftedDown[j].defaultBtagAlgorithmEff_MediumWp());
     jets_BtagEff_TightWp_JECshiftedDown.push_back(goodJets_JECshiftedDown[j].defaultBtagAlgorithmEff_TightWp());
@@ -3289,6 +3385,20 @@ void FlatTupleGenerator::handlePairIndepInfo(const edm::Event& iEvent, const edm
     jets_BtagSF_TightWpCentral_JERup.push_back(goodJets_JERup[j].defaultBtagAlgorithmSF_TightWpCentral());
     jets_BtagSF_TightWpUp_JERup.push_back(goodJets_JERup[j].defaultBtagAlgorithmSF_TightWpUp());
     jets_BtagSF_TightWpDown_JERup.push_back(goodJets_JERup[j].defaultBtagAlgorithmSF_TightWpDown());
+
+    if(goodJets[j].defaultBtagAlgorithm_RawScore() > LooseCut) 
+    {
+      if(!std::isnan(goodJets_JERup[j].defaultBtagAlgorithmSF_LooseWpCentral())) BtagEventSFproduct_looseWpCentral_JERup *= (1.0 - std::min(1.0,goodJets_JERup[j].defaultBtagAlgorithmSF_LooseWpCentral()));
+    }
+    if(goodJets[j].defaultBtagAlgorithm_RawScore() > MediumCut) 
+    {
+      if(!std::isnan(goodJets_JERup[j].defaultBtagAlgorithmSF_MediumWpCentral())) BtagEventSFproduct_mediumWpCentral_JERup *= (1.0 - std::min(1.0,goodJets_JERup[j].defaultBtagAlgorithmSF_MediumWpCentral()));
+    }
+
+    if(goodJets[j].defaultBtagAlgorithm_RawScore() > TightCut) 
+    {
+      if(!std::isnan(goodJets_JERup[j].defaultBtagAlgorithmSF_TightWpCentral())) BtagEventSFproduct_tightWpCentral_JERup *= (1.0 - std::min(1.0,goodJets_JERup[j].defaultBtagAlgorithmSF_TightWpCentral()));
+    }
 
 
     jets_BtagEff_LooseWp_JERup.push_back(goodJets_JERup[j].defaultBtagAlgorithmEff_LooseWp());
@@ -3336,6 +3446,22 @@ void FlatTupleGenerator::handlePairIndepInfo(const edm::Event& iEvent, const edm
     jets_BtagSF_TightWpUp_JERdown.push_back(goodJets_JERdown[j].defaultBtagAlgorithmSF_TightWpUp());
     jets_BtagSF_TightWpDown_JERdown.push_back(goodJets_JERdown[j].defaultBtagAlgorithmSF_TightWpDown());
 
+
+    if(goodJets[j].defaultBtagAlgorithm_RawScore() > LooseCut) 
+    {
+      if(!std::isnan(goodJets_JERdown[j].defaultBtagAlgorithmSF_LooseWpCentral())) BtagEventSFproduct_looseWpCentral_JERdown *= (1.0 - std::min(1.0,goodJets_JERdown[j].defaultBtagAlgorithmSF_LooseWpCentral()));
+    } 
+    
+    if(goodJets[j].defaultBtagAlgorithm_RawScore() > MediumCut) 
+    {
+      if(!std::isnan(goodJets_JERdown[j].defaultBtagAlgorithmSF_MediumWpCentral())) BtagEventSFproduct_mediumWpCentral_JERdown *= (1.0 - std::min(1.0,goodJets_JERdown[j].defaultBtagAlgorithmSF_MediumWpCentral()));
+    } 
+
+    if(goodJets[j].defaultBtagAlgorithm_RawScore() > TightCut) 
+    {
+      if(!std::isnan(goodJets_JERdown[j].defaultBtagAlgorithmSF_TightWpCentral())) BtagEventSFproduct_tightWpCentral_JERdown *= (1.0 - std::min(1.0,goodJets_JERdown[j].defaultBtagAlgorithmSF_TightWpCentral()));
+    }
+    
     jets_BtagEff_LooseWp_JERdown.push_back(goodJets_JERdown[j].defaultBtagAlgorithmEff_LooseWp());
     jets_BtagEff_MediumWp_JERdown.push_back(goodJets_JERdown[j].defaultBtagAlgorithmEff_MediumWp());
     jets_BtagEff_TightWp_JERdown.push_back(goodJets_JERdown[j].defaultBtagAlgorithmEff_TightWp());
@@ -3700,6 +3826,9 @@ void FlatTupleGenerator::handlePairIndepInfo(const edm::Event& iEvent, const edm
   leg1_isGlobalMuon = NAN;
   leg1_isGoodGlobalMuon = NAN;
   leg1_passesMediumMuonId = NAN;
+  leg1_passesLooseMuonId = NAN;
+  leg1_passesMediumMuonId_ICHEP16 = NAN;
+  leg1_passesTightMuonId = NAN;
   leg1_isLooseMuon = NAN;
   leg1_isPFMuon = NAN;
   leg1_isSoftMuon = NAN;
@@ -3755,6 +3884,9 @@ void FlatTupleGenerator::handlePairIndepInfo(const edm::Event& iEvent, const edm
   leg2_isGlobalMuon = NAN;
   leg2_isGoodGlobalMuon = NAN;
   leg2_passesMediumMuonId = NAN;
+  leg2_passesLooseMuonId = NAN;
+  leg2_passesMediumMuonId_ICHEP16 = NAN;
+  leg2_passesTightMuonId = NAN;
   leg2_isLooseMuon = NAN;
   leg2_isPFMuon = NAN;
   leg2_isSoftMuon = NAN;
@@ -3886,7 +4018,10 @@ void FlatTupleGenerator::handlePairIndepInfo(const edm::Event& iEvent, const edm
   effLep_DepositR03TrackerOfficial.clear(); 
   effLep_isGlobalMuon.clear();
   effLep_isGoodGlobalMuon.clear();
+  effLep_passesLooseMuonId.clear();
+  effLep_passesMediumMuonId_ICHEP16.clear();
   effLep_passesMediumMuonId.clear();
+  effLep_passesTightMuonId.clear();
   effLep_isLooseMuon.clear();
   effLep_isPFMuon.clear();
   effLep_isSoftMuon.clear();
@@ -3954,7 +4089,10 @@ void FlatTupleGenerator::handlePairIndepInfo(const edm::Event& iEvent, const edm
   veto_dxy.clear(); 
   veto_dz.clear(); 
   veto_RelIso.clear(); 
+  veto_passesLooseMuonId.clear(); 
+  veto_passesMediumMuonId_ICHEP16.clear(); 
   veto_passesMediumMuonId.clear(); 
+  veto_passesTightMuonId.clear(); 
   veto_rawElectronMVA.clear(); 
   veto_categoryElectronMVA.clear(); 
   veto_passElectronMVA80.clear(); 
@@ -4007,6 +4145,32 @@ void FlatTupleGenerator::handlePairIndepInfo(const edm::Event& iEvent, const edm
   numberOfJetsForRecoilCorr = -999;
   numberOfJets30 = -999;
   numberOfJets = -999;
+
+  /* init the btag product SF to 1.0 */
+  BtagEventSFproduct_looseWpDown = 1.0;
+  BtagEventSFproduct_looseWpCentral = 1.0;
+  BtagEventSFproduct_looseWpUp = 1.0;
+  BtagEventSFproduct_mediumWpDown = 1.0;
+  BtagEventSFproduct_mediumWpCentral = 1.0;
+  BtagEventSFproduct_mediumWpUp = 1.0;
+  BtagEventSFproduct_tightWpDown = 1.0;
+  BtagEventSFproduct_tightWpCentral = 1.0;
+  BtagEventSFproduct_tightWpUp = 1.0;
+  BtagEventSFproduct_looseWpCentral_JECshiftedUp = 1.0;
+  BtagEventSFproduct_mediumWpCentral_JECshiftedUp = 1.0;
+  BtagEventSFproduct_tightWpCentral_JECshiftedUp = 1.0;
+  BtagEventSFproduct_looseWpCentral_JECshiftedDown = 1.0;
+  BtagEventSFproduct_mediumWpCentral_JECshiftedDown = 1.0;
+  BtagEventSFproduct_tightWpCentral_JECshiftedDown = 1.0;
+  BtagEventSFproduct_looseWpCentral_JERup = 1.0;
+  BtagEventSFproduct_mediumWpCentral_JERup = 1.0;
+  BtagEventSFproduct_tightWpCentral_JERup = 1.0;
+  BtagEventSFproduct_looseWpCentral_JERdown = 1.0;
+  BtagEventSFproduct_mediumWpCentral_JERdown = 1.0;
+  BtagEventSFproduct_tightWpCentral_JERdown = 1.0;
+
+
+
   jets_pt.clear();
   jets_eta.clear();
   jets_phi.clear();
@@ -4740,7 +4904,10 @@ void FlatTupleGenerator::beginJob()
 
   FlatTuple->Branch("leg1_isGlobalMuon", &leg1_isGlobalMuon);
   FlatTuple->Branch("leg1_isGoodGlobalMuon", &leg1_isGoodGlobalMuon);
+  FlatTuple->Branch("leg1_passesLooseMuonId", &leg1_passesLooseMuonId);
   FlatTuple->Branch("leg1_passesMediumMuonId", &leg1_passesMediumMuonId);
+  FlatTuple->Branch("leg1_passesMediumMuonId_ICHEP16", &leg1_passesMediumMuonId_ICHEP16);
+  FlatTuple->Branch("leg1_passesTightMuonId", &leg1_passesTightMuonId);
   FlatTuple->Branch("leg1_isPFMuon", &leg1_isPFMuon);
   FlatTuple->Branch("leg1_isLooseMuon", &leg1_isLooseMuon);
   FlatTuple->Branch("leg1_isTightMuon", &leg1_isTightMuon);
@@ -4851,7 +5018,10 @@ void FlatTupleGenerator::beginJob()
 
   FlatTuple->Branch("leg2_isGlobalMuon", &leg2_isGlobalMuon);
   FlatTuple->Branch("leg2_isGoodGlobalMuon", &leg2_isGoodGlobalMuon);
+  FlatTuple->Branch("leg2_passesLooseMuonId", &leg2_passesLooseMuonId);
   FlatTuple->Branch("leg2_passesMediumMuonId", &leg2_passesMediumMuonId);
+  FlatTuple->Branch("leg2_passesMediumMuonId_ICHEP16", &leg2_passesMediumMuonId_ICHEP16);
+  FlatTuple->Branch("leg2_passesTightMuonId", &leg2_passesTightMuonId);
   FlatTuple->Branch("leg2_isPFMuon", &leg2_isPFMuon);
   FlatTuple->Branch("leg2_isLooseMuon", &leg2_isLooseMuon);
   FlatTuple->Branch("leg2_isTightMuon", &leg2_isTightMuon);
@@ -4967,7 +5137,10 @@ void FlatTupleGenerator::beginJob()
     FlatTuple->Branch("veto_dxy", &veto_dxy);
     FlatTuple->Branch("veto_dz", &veto_dz);
     FlatTuple->Branch("veto_RelIso", &veto_RelIso);
+    FlatTuple->Branch("veto_passesLooseMuonId", &veto_passesLooseMuonId);
+    FlatTuple->Branch("veto_passesMediumMuonId_ICHEP16", &veto_passesMediumMuonId_ICHEP16);
     FlatTuple->Branch("veto_passesMediumMuonId", &veto_passesMediumMuonId);
+    FlatTuple->Branch("veto_passesTightMuonId", &veto_passesTightMuonId);
     FlatTuple->Branch("veto_rawElectronMVA", &veto_rawElectronMVA);
     FlatTuple->Branch("veto_categoryElectronMVA", &veto_categoryElectronMVA);
     FlatTuple->Branch("veto_passElectronMVA80", &veto_passElectronMVA80);
@@ -5120,7 +5293,10 @@ void FlatTupleGenerator::beginJob()
     FlatTuple->Branch("effLep_DepositR03TrackerOfficial", &effLep_DepositR03TrackerOfficial);
     FlatTuple->Branch("effLep_isGlobalMuon", &effLep_isGlobalMuon);
     FlatTuple->Branch("effLep_isGoodGlobalMuon", &effLep_isGoodGlobalMuon);
+    FlatTuple->Branch("effLep_passesLooseMuonId", &effLep_passesLooseMuonId);
     FlatTuple->Branch("effLep_passesMediumMuonId", &effLep_passesMediumMuonId);
+    FlatTuple->Branch("effLep_passesMediumMuonId_ICHEP16", &effLep_passesMediumMuonId_ICHEP16);
+    FlatTuple->Branch("effLep_passesTightMuonId", &effLep_passesTightMuonId);
     FlatTuple->Branch("effLep_isLooseMuon", &effLep_isLooseMuon);
     FlatTuple->Branch("effLep_isPFMuon", &effLep_isPFMuon);
     FlatTuple->Branch("effLep_isSoftMuon", &effLep_isSoftMuon);
@@ -5185,7 +5361,7 @@ void FlatTupleGenerator::beginJob()
   FlatTuple->Branch("jets_pt", &jets_pt);
   FlatTuple->Branch("jets_eta", &jets_eta);
   FlatTuple->Branch("jets_phi", &jets_phi);
-  FlatTuple->Branch("jets_M", &jets_M);
+  FlatTuple->Branch("jets_M", &jets_M);  
   FlatTuple->Branch("jets_PU_jetIdRaw", &jets_PU_jetIdRaw);
   FlatTuple->Branch("jets_PU_jetIdPassed", &jets_PU_jetIdPassed);
   FlatTuple->Branch("jets_PF_jetIdPassed", &jets_PF_jetIdPassed);
@@ -5197,6 +5373,34 @@ void FlatTupleGenerator::beginJob()
   FlatTuple->Branch("jets_IsBTagged_TightWpCentral", &jets_IsBTagged_TightWpCentral);
   FlatTuple->Branch("jets_PF_jetIdPassedTight", &jets_PF_jetIdPassedTight);
 
+  /* the new mono_H style btag SFs */
+  FlatTuple->Branch("BtagEventSFproduct_looseWpDown",  &BtagEventSFproduct_looseWpDown);
+  FlatTuple->Branch("BtagEventSFproduct_looseWpCentral",  &BtagEventSFproduct_looseWpCentral);
+  FlatTuple->Branch("BtagEventSFproduct_looseWpUp",  &BtagEventSFproduct_looseWpUp);
+  FlatTuple->Branch("BtagEventSFproduct_mediumWpDown",  &BtagEventSFproduct_mediumWpDown);
+  FlatTuple->Branch("BtagEventSFproduct_mediumWpCentral",  &BtagEventSFproduct_mediumWpCentral);
+  FlatTuple->Branch("BtagEventSFproduct_mediumWpUp",  &BtagEventSFproduct_mediumWpUp);
+  FlatTuple->Branch("BtagEventSFproduct_tightWpDown",  &BtagEventSFproduct_tightWpDown);
+  FlatTuple->Branch("BtagEventSFproduct_tightWpCentral",  &BtagEventSFproduct_tightWpCentral);
+  FlatTuple->Branch("BtagEventSFproduct_tightWpUp",  &BtagEventSFproduct_tightWpUp);
+
+  FlatTuple->Branch("BtagEventSFproduct_looseWpCentral_JECshiftedUp",  &BtagEventSFproduct_looseWpCentral_JECshiftedUp);
+  FlatTuple->Branch("BtagEventSFproduct_mediumWpCentral_JECshiftedUp",  &BtagEventSFproduct_mediumWpCentral_JECshiftedUp);
+  FlatTuple->Branch("BtagEventSFproduct_tightWpCentral_JECshiftedUp",  &BtagEventSFproduct_tightWpCentral_JECshiftedUp);
+  FlatTuple->Branch("BtagEventSFproduct_looseWpCentral_JECshiftedDown",  &BtagEventSFproduct_looseWpCentral_JECshiftedDown);
+  FlatTuple->Branch("BtagEventSFproduct_mediumWpCentral_JECshiftedDown",  &BtagEventSFproduct_mediumWpCentral_JECshiftedDown);
+  FlatTuple->Branch("BtagEventSFproduct_tightWpCentral_JECshiftedDown",  &BtagEventSFproduct_tightWpCentral_JECshiftedDown);
+  FlatTuple->Branch("BtagEventSFproduct_looseWpCentral_JERup",  &BtagEventSFproduct_looseWpCentral_JERup);
+  FlatTuple->Branch("BtagEventSFproduct_mediumWpCentral_JERup",  &BtagEventSFproduct_mediumWpCentral_JERup);
+  FlatTuple->Branch("BtagEventSFproduct_tightWpCentral_JERup",  &BtagEventSFproduct_tightWpCentral_JERup);
+  FlatTuple->Branch("BtagEventSFproduct_looseWpCentral_JERdown",  &BtagEventSFproduct_looseWpCentral_JERdown);
+  FlatTuple->Branch("BtagEventSFproduct_mediumWpCentral_JERdown",  &BtagEventSFproduct_mediumWpCentral_JERdown);
+  FlatTuple->Branch("BtagEventSFproduct_tightWpCentral_JERdown",  &BtagEventSFproduct_tightWpCentral_JERdown);
+
+
+
+
+
   /* only keep b-tag shifts in nominal case */
   if(TauEsVariantToKeep_=="NOMINAL" && ElectronEsVariantToKeep_=="NOMINAL" )
   {
@@ -5206,6 +5410,7 @@ void FlatTupleGenerator::beginJob()
     FlatTuple->Branch("jets_IsBTagged_MediumWpDown", &jets_IsBTagged_MediumWpDown);
     FlatTuple->Branch("jets_IsBTagged_TightWpUp", &jets_IsBTagged_TightWpUp);
     FlatTuple->Branch("jets_IsBTagged_TightWpDown", &jets_IsBTagged_TightWpDown);
+
   }
 
   /* only keep alternate jet lists in the nominal tau and electron ES case */

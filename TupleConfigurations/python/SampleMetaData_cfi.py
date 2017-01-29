@@ -35,6 +35,30 @@ sampleInfo = []
 # sampleInfo.append(aPSet)
 # ########### 
 
+#############
+# 2017 MC 
+#############
+
+aPSet = cms.PSet(
+    DataSet = cms.string("/VBFHToTauTau_M125_13TeV_powheg_pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM"),
+    EventTotal = cms.int32(1),
+    NumberOfLumis = cms.int32(1),
+    MaxLumiBlock = cms.int32(1),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("VBF_TAUTAU"),
+    DataCard = cms.string("SMHiggs"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(3.0),
+    ProductionInfo = cms.string("Run2016_B_C_D_E_F_G_H"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("NONE"),
+    KeepTheoryScaleFactors = cms.bool(False),
+    HLTversion = cms.string("HLT")
+       )
+sampleInfo.append(aPSet)
+
+
 
 #############
 # 2016 DATA 

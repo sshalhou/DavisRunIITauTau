@@ -547,6 +547,33 @@ void generateH2TauSyncTree::handleEvent()
 	fillJetBranches(eventHasNominalLeptonEnergyScales, eventIsNotSmallTree, argString, jetINFOstruct);
 
 
+	/* the event-based mono-H style btag scale factors */
+
+	BtagEventSFproduct_looseWpDown = R.getD("BtagEventSFproduct_looseWpDown");
+	BtagEventSFproduct_looseWpCentral = R.getD("BtagEventSFproduct_looseWpCentral");
+	BtagEventSFproduct_looseWpUp = R.getD("BtagEventSFproduct_looseWpUp");
+	BtagEventSFproduct_mediumWpDown = R.getD("BtagEventSFproduct_mediumWpDown");
+	BtagEventSFproduct_mediumWpCentral = R.getD("BtagEventSFproduct_mediumWpCentral");
+	BtagEventSFproduct_mediumWpUp = R.getD("BtagEventSFproduct_mediumWpUp");
+	BtagEventSFproduct_tightWpDown = R.getD("BtagEventSFproduct_tightWpDown");
+	BtagEventSFproduct_tightWpCentral = R.getD("BtagEventSFproduct_tightWpCentral");
+	BtagEventSFproduct_tightWpUp = R.getD("BtagEventSFproduct_tightWpUp");
+	BtagEventSFproduct_looseWpCentral_JECshiftedUp = R.getD("BtagEventSFproduct_looseWpCentral_JECshiftedUp");
+	BtagEventSFproduct_mediumWpCentral_JECshiftedUp = R.getD("BtagEventSFproduct_mediumWpCentral_JECshiftedUp");
+	BtagEventSFproduct_tightWpCentral_JECshiftedUp = R.getD("BtagEventSFproduct_tightWpCentral_JECshiftedUp");
+	BtagEventSFproduct_looseWpCentral_JECshiftedDown = R.getD("BtagEventSFproduct_looseWpCentral_JECshiftedDown");
+	BtagEventSFproduct_mediumWpCentral_JECshiftedDown = R.getD("BtagEventSFproduct_mediumWpCentral_JECshiftedDown");
+	BtagEventSFproduct_tightWpCentral_JECshiftedDown = R.getD("BtagEventSFproduct_tightWpCentral_JECshiftedDown");
+	BtagEventSFproduct_looseWpCentral_JERup = R.getD("BtagEventSFproduct_looseWpCentral_JERup");
+	BtagEventSFproduct_mediumWpCentral_JERup = R.getD("BtagEventSFproduct_mediumWpCentral_JERup");
+	BtagEventSFproduct_tightWpCentral_JERup = R.getD("BtagEventSFproduct_tightWpCentral_JERup");
+	BtagEventSFproduct_looseWpCentral_JERdown = R.getD("BtagEventSFproduct_looseWpCentral_JERdown");
+	BtagEventSFproduct_mediumWpCentral_JERdown = R.getD("BtagEventSFproduct_mediumWpCentral_JERdown");
+	BtagEventSFproduct_tightWpCentral_JERdown = R.getD("BtagEventSFproduct_tightWpCentral_JERdown");
+
+
+
+
 	njets = jetINFOstruct.m_njets;
 	njetspt20 = jetINFOstruct.m_njetspt20;
 	mjj = jetINFOstruct.m_mjj;
@@ -897,7 +924,11 @@ void generateH2TauSyncTree::handleEvent()
 	veto_dxy = R.getVF("veto_dxy");
 	veto_dz = R.getVF("veto_dz");
 	veto_RelIso = R.getVF("veto_RelIso");
+	veto_passesLooseMuonId = R.getVF("veto_passesLooseMuonId");
+	veto_passesMediumMuonId_ICHEP16 = R.getVF("veto_passesMediumMuonId_ICHEP16");
 	veto_passesMediumMuonId = R.getVF("veto_passesMediumMuonId");
+	veto_passesTightMuonId = R.getVF("veto_passesTightMuonId");
+
 	veto_passElectronMVA80 = R.getVF("veto_passElectronMVA80");
 	veto_passElectronMVA90 = R.getVF("veto_passElectronMVA90");
 	veto_passElectronCutBased = R.getVF("veto_passElectronCutBased");
@@ -1857,6 +1888,28 @@ void generateH2TauSyncTree::setupBranches(TTree * T)
 	T->Branch("BadPFMuonFilter", &BadPFMuonFilter);
 
 
+	T->Branch("BtagEventSFproduct_looseWpDown",  &BtagEventSFproduct_looseWpDown);
+	T->Branch("BtagEventSFproduct_looseWpCentral",  &BtagEventSFproduct_looseWpCentral);
+	T->Branch("BtagEventSFproduct_looseWpUp",  &BtagEventSFproduct_looseWpUp);
+	T->Branch("BtagEventSFproduct_mediumWpDown",  &BtagEventSFproduct_mediumWpDown);
+	T->Branch("BtagEventSFproduct_mediumWpCentral",  &BtagEventSFproduct_mediumWpCentral);
+	T->Branch("BtagEventSFproduct_mediumWpUp",  &BtagEventSFproduct_mediumWpUp);
+	T->Branch("BtagEventSFproduct_tightWpDown",  &BtagEventSFproduct_tightWpDown);
+	T->Branch("BtagEventSFproduct_tightWpCentral",  &BtagEventSFproduct_tightWpCentral);
+	T->Branch("BtagEventSFproduct_tightWpUp",  &BtagEventSFproduct_tightWpUp);
+	T->Branch("BtagEventSFproduct_looseWpCentral_JECshiftedUp",  &BtagEventSFproduct_looseWpCentral_JECshiftedUp);
+	T->Branch("BtagEventSFproduct_mediumWpCentral_JECshiftedUp",  &BtagEventSFproduct_mediumWpCentral_JECshiftedUp);
+	T->Branch("BtagEventSFproduct_tightWpCentral_JECshiftedUp",  &BtagEventSFproduct_tightWpCentral_JECshiftedUp);
+	T->Branch("BtagEventSFproduct_looseWpCentral_JECshiftedDown",  &BtagEventSFproduct_looseWpCentral_JECshiftedDown);
+	T->Branch("BtagEventSFproduct_mediumWpCentral_JECshiftedDown",  &BtagEventSFproduct_mediumWpCentral_JECshiftedDown);
+	T->Branch("BtagEventSFproduct_tightWpCentral_JECshiftedDown",  &BtagEventSFproduct_tightWpCentral_JECshiftedDown);
+	T->Branch("BtagEventSFproduct_looseWpCentral_JERup",  &BtagEventSFproduct_looseWpCentral_JERup);
+	T->Branch("BtagEventSFproduct_mediumWpCentral_JERup",  &BtagEventSFproduct_mediumWpCentral_JERup);
+	T->Branch("BtagEventSFproduct_tightWpCentral_JERup",  &BtagEventSFproduct_tightWpCentral_JERup);
+	T->Branch("BtagEventSFproduct_looseWpCentral_JERdown",  &BtagEventSFproduct_looseWpCentral_JERdown);
+	T->Branch("BtagEventSFproduct_mediumWpCentral_JERdown",  &BtagEventSFproduct_mediumWpCentral_JERdown);
+	T->Branch("BtagEventSFproduct_tightWpCentral_JERdown",  &BtagEventSFproduct_tightWpCentral_JERdown);
+
 
 	T->Branch("NUP", &NUP);
 	T->Branch("weight", &weight);
@@ -1905,7 +1958,10 @@ void generateH2TauSyncTree::setupBranches(TTree * T)
 	T->Branch("veto_dxy", &veto_dxy);
 	T->Branch("veto_dz", &veto_dz);
 	T->Branch("veto_RelIso", &veto_RelIso);
+	T->Branch("veto_passesLooseMuonId", &veto_passesLooseMuonId);
 	T->Branch("veto_passesMediumMuonId", &veto_passesMediumMuonId);
+	T->Branch("veto_passesMediumMuonId_ICHEP16", &veto_passesMediumMuonId_ICHEP16);
+	T->Branch("veto_passesTightMuonId", &veto_passesTightMuonId);
 	T->Branch("veto_passElectronMVA80", &veto_passElectronMVA80);
 	T->Branch("veto_passElectronMVA90", &veto_passElectronMVA90);
 	T->Branch("veto_passElectronCutBased", &veto_passElectronCutBased);
@@ -2543,6 +2599,32 @@ void generateH2TauSyncTree::reset()
 	bmva_2_TightWp_JERdown = -999.0;
 	bcsv_2_TightWp_JERdown = -999.0;
 
+
+	/* init the btag product SF to 1.0 */
+	BtagEventSFproduct_looseWpDown = 1.0;
+	BtagEventSFproduct_looseWpCentral = 1.0;
+	BtagEventSFproduct_looseWpUp = 1.0;
+	BtagEventSFproduct_mediumWpDown = 1.0;
+	BtagEventSFproduct_mediumWpCentral = 1.0;
+	BtagEventSFproduct_mediumWpUp = 1.0;
+	BtagEventSFproduct_tightWpDown = 1.0;
+	BtagEventSFproduct_tightWpCentral = 1.0;
+	BtagEventSFproduct_tightWpUp = 1.0;
+	BtagEventSFproduct_looseWpCentral_JECshiftedUp = 1.0;
+	BtagEventSFproduct_mediumWpCentral_JECshiftedUp = 1.0;
+	BtagEventSFproduct_tightWpCentral_JECshiftedUp = 1.0;
+	BtagEventSFproduct_looseWpCentral_JECshiftedDown = 1.0;
+	BtagEventSFproduct_mediumWpCentral_JECshiftedDown = 1.0;
+	BtagEventSFproduct_tightWpCentral_JECshiftedDown = 1.0;
+	BtagEventSFproduct_looseWpCentral_JERup = 1.0;
+	BtagEventSFproduct_mediumWpCentral_JERup = 1.0;
+	BtagEventSFproduct_tightWpCentral_JERup = 1.0;
+	BtagEventSFproduct_looseWpCentral_JERdown = 1.0;
+	BtagEventSFproduct_mediumWpCentral_JERdown = 1.0;
+	BtagEventSFproduct_tightWpCentral_JERdown = 1.0;
+
+
+
 	dilepton_veto = -999.0;
 	extraelec_veto = -999.0;
 	extramuon_veto = -999.0;
@@ -2606,7 +2688,10 @@ void generateH2TauSyncTree::reset()
 	veto_dxy.clear();
 	veto_dz.clear();
 	veto_RelIso.clear();
+	veto_passesLooseMuonId.clear();
+	veto_passesMediumMuonId_ICHEP16.clear();
 	veto_passesMediumMuonId.clear();
+	veto_passesTightMuonId.clear();
 	veto_passElectronMVA80.clear();
 	veto_passElectronMVA90.clear();
 	veto_passElectronCutBased.clear();

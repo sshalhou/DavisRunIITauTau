@@ -28,7 +28,7 @@ DEBUG_NTUPLE_INPUT = False
 # how many events to run, -1 means run all 
 ######################################
 
-MAX_EVENTS = -1
+MAX_EVENTS = 100
 
 ######################################
 # datasets for local running 
@@ -36,7 +36,7 @@ MAX_EVENTS = -1
 
 #dataSetName_ = "TEMP_DATA"
 #dataSetName_ = "/SUSYGluGluToHToTauTau_M-160_TuneCUETP8M1_13TeV-pythia8/RunIISpring16MiniAODv2-PUSpring16RAWAODSIM_reHLT_80X_mcRun2_asymptotic_v14-v1/MINIAODSIM"
-dataSetName_ = "/GluGluHToTauTau_M125_13TeV_powheg_pythia8/RunIISpring16MiniAODv2-PUSpring16RAWAODSIM_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v1/MINIAODSIM"
+dataSetName_ = "/VBFHToTauTau_M125_13TeV_powheg_pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM"
 
 
 
@@ -46,22 +46,11 @@ dataSetName_ = "/GluGluHToTauTau_M125_13TeV_powheg_pythia8/RunIISpring16MiniAODv
 
 myfilelist = cms.untracked.vstring()
 
-if dataSetName_ == "TEMP_DATA":
-	myfilelist.extend(['file:/uscms_data/d3/shalhout/Run2016H_SingleMuon.root'])
+if dataSetName_ == "/VBFHToTauTau_M125_13TeV_powheg_pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM":
+	myfilelist.extend(['file:/uscms_data/d3/shalhout/VBFTauTauMorinon17.root'])
 
 
-if dataSetName_ == "/SUSYGluGluToHToTauTau_M-160_TuneCUETP8M1_13TeV-pythia8/RunIISpring16MiniAODv2-PUSpring16RAWAODSIM_reHLT_80X_mcRun2_asymptotic_v14-v1/MINIAODSIM":
-	#myfilelist.extend(['file:/uscms_data/d3/shalhout/MonoH_2500_800_reHLT.root'])
-	#myfilelist.extend(['file:/uscms_data/d3/shalhout/SUSY_GG160_reHLT.root'])
-	myfilelist.extend(['file:/uscms_data/d3/shalhout/reHLT_ttBar.root'])
 
-if dataSetName_ == "/GluGluHToTauTau_M125_13TeV_powheg_pythia8/RunIISpring16MiniAODv2-PUSpring16RAWAODSIM_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v1/MINIAODSIM":
-	#myfilelist.extend(['file:/uscms_data/d3/shalhout/nonREHLT_file.root']) # smH 125 file for testing non-REHLT running
-	#myfilelist.extend(['file:/uscms_data/d3/shalhout/nonReHLT_DY1JET.root'])
-	#myfilelist.extend(['file:/uscms_data/d3/shalhout/nonReHLT_DY4JET.root'])
-	#myfilelist.extend(['file:/uscms_data/d3/shalhout/nonReHLT_WJetsHt100to200.root'])
-	#myfilelist.extend(['file:/uscms_data/d3/shalhout/nonReHLT_WJetsHt1200to2500.root'])
-	myfilelist.extend(['file:/uscms_data/d3/shalhout/PreMixHLT_MonoHtautau_ZpBaryonic_MZp-50_MChi-10_13TeV.root'])
 
 
 if DEBUG_NTUPLE_INPUT is True:
@@ -273,13 +262,30 @@ process.load('Configuration.StandardSequences.MagneticField_38T_cff')
 process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff")
 
 
-from RecoMET.METPUSubtraction.jet_recorrections import recorrectJets
+
+# until the Global Tag is updated for Moriond17 we'll have to manually 
+# rely on local sqlite files (they differ for data & mc)
+# note this will void any Global Tag jet correction settings so be 
+# sure to deactivate if global tag is OK
+from RecoMET.METPUSubtraction.jet_recorrections import loadLocalSqlite
+
+sqliteFilenameARG = "DavisRunIITauTau/RunTimeDataInput/data/JECSQLiteFiles/Summer16_23Sep2016AllV3_DATA.db"
+tagARG = "JetCorrectorParametersCollection_Summer16_23Sep2016AllV3_DATA_AK4PFchs"
 
 if sampleData.EventType == 'MC':
-	recorrectJets(process, False)
+	sqliteFilenameARG = "DavisRunIITauTau/RunTimeDataInput/data/JECSQLiteFiles/Summer16_23Sep2016V3_MC.db"
+	tagARG = "JetCorrectorParametersCollection_Summer16_23Sep2016V3_MC_AK4PFchs"
+
+loadLocalSqlite(process, sqliteFilename = sqliteFilenameARG, tag = tagARG)
+
+from RecoMET.METPUSubtraction.jet_recorrections import recorrectJets
+
+
+if sampleData.EventType == 'MC':
+	recorrectJets(process, False) # the false is an isData boolean
 
 if sampleData.EventType == 'DATA':
-	recorrectJets(process, True)
+	recorrectJets(process, True) # the True is an isData boolean
 
 ###################################
 # apply jet filter onto 
@@ -1364,8 +1370,8 @@ from DavisRunIITauTau.TupleConfigurations.SampleMetaData_cfi import sampleInfo
 
 
 print '****************************************************************************************************'
-print '****  JERresolutionFile is ', "DavisRunIITauTau/RunTimeDataInput/data/JER_FILES/Spring16_25nsV6_MC_PtResolution_AK4PFchs.txt"
-print '****  JERscalefactorFile is ', "DavisRunIITauTau/RunTimeDataInput/data/JER_FILES/Spring16_25nsV6_MC_SF_AK4PFchs.txt"
+print '****  JERresolutionFile is ', "DavisRunIITauTau/RunTimeDataInput/data/JER_FILES/Spring16_25nsV10_MC_PtResolution_AK4PFchs.txt"
+print '****  JERscalefactorFile is ', "DavisRunIITauTau/RunTimeDataInput/data/JER_FILES/Spring16_25nsV10_MC_SF_AK4PFchs.txt"
 print '****   If not current, change in main python config : runII*.py'
 print '****************************************************************************************************'
 
@@ -1373,8 +1379,8 @@ process.pairIndep = cms.EDProducer('NtuplePairIndependentInfoProducer',
 							packedGenSrc = cms.InputTag('packedGenParticles'),
 							prundedGenSrc =  cms.InputTag('prunedGenParticles'),
 							NAME=cms.string("NtupleEventPairIndep"),
-							JERresolutionFile = cms.string("DavisRunIITauTau/RunTimeDataInput/data/JER_FILES/Spring16_25nsV6_MC_PtResolution_AK4PFchs.txt"),
-							JERscalefactorFile = cms.string("DavisRunIITauTau/RunTimeDataInput/data/JER_FILES/Spring16_25nsV6_MC_SF_AK4PFchs.txt"),
+							JERresolutionFile = cms.string("DavisRunIITauTau/RunTimeDataInput/data/JER_FILES/Spring16_25nsV10_MC_PtResolution_AK4PFchs.txt"),
+							JERscalefactorFile = cms.string("DavisRunIITauTau/RunTimeDataInput/data/JER_FILES/Spring16_25nsV10_MC_SF_AK4PFchs.txt"),
 							genParticlesToKeep = GEN_PARTICLES_TO_KEEP,
 							slimmedJetSrc = cms.InputTag('filteredSlimmedJets::DavisNtuple'),
 							slimmedGenJetsSrc = cms.InputTag('slimmedGenJets'),

@@ -35,7 +35,10 @@ NtupleLepton::NtupleLepton()
   m_DepositR03TrackerOfficial = NAN;   
   m_isGlobalMuon = NAN;    
   m_isGoodGlobalMuon = NAN;    
+  m_passesLooseMuonId = NAN;    
+  m_passesMediumMuonId_ICHEP16 = NAN;    
   m_passesMediumMuonId = NAN;    
+  m_passesTightMuonId = NAN;    
   m_isLooseMuon = NAN;   
   m_isPFMuon = NAN;    
   m_isSoftMuon = NAN;    
@@ -380,7 +383,10 @@ std::cout<<"<LEPPRINT "<<type_print<<"> DepositR03Hcal : " << m_DepositR03Hcal <
 std::cout<<"<LEPPRINT "<<type_print<<"> DepositR03TrackerOfficial : " << m_DepositR03TrackerOfficial << std::endl;
 std::cout<<"<LEPPRINT "<<type_print<<"> isGlobalMuon : " << m_isGlobalMuon << std::endl;
 std::cout<<"<LEPPRINT "<<type_print<<"> isGoodGlobalMuon : " << m_isGoodGlobalMuon << std::endl;
+std::cout<<"<LEPPRINT "<<type_print<<"> passesLooseMuonId : " << m_passesLooseMuonId << std::endl;
+std::cout<<"<LEPPRINT "<<type_print<<"> passesMediumMuonId_ICHEP16 : " << m_passesMediumMuonId_ICHEP16 << std::endl;
 std::cout<<"<LEPPRINT "<<type_print<<"> passesMediumMuonId : " << m_passesMediumMuonId << std::endl;
+std::cout<<"<LEPPRINT "<<type_print<<"> passesTightMuonId : " << m_passesTightMuonId << std::endl;
 std::cout<<"<LEPPRINT "<<type_print<<"> isLooseMuon : " << m_isLooseMuon << std::endl;
 std::cout<<"<LEPPRINT "<<type_print<<"> isPFMuon : " << m_isPFMuon << std::endl;
 std::cout<<"<LEPPRINT "<<type_print<<"> isSoftMuon : " << m_isSoftMuon << std::endl;
@@ -500,7 +506,10 @@ void NtupleLepton::userFloatVectorParser(stringVec & labels_,floatVec & values_)
     else if(labels_[i]=="DepositR03TrackerOfficial") {m_DepositR03TrackerOfficial = values_[i];}
     else if(labels_[i]=="isGlobalMuon") {m_isGlobalMuon = values_[i];}
     else if(labels_[i]=="isGoodGlobalMuon") {m_isGoodGlobalMuon = values_[i];}
+    else if(labels_[i]=="passesLooseMuonId") {m_passesLooseMuonId = values_[i];}
+    else if(labels_[i]=="passesMediumMuonId_ICHEP16") {m_passesMediumMuonId_ICHEP16 = values_[i];}
     else if(labels_[i]=="passesMediumMuonId") {m_passesMediumMuonId = values_[i];}
+    else if(labels_[i]=="passesTightMuonId") {m_passesTightMuonId = values_[i];}
     else if(labels_[i]=="isLooseMuon") {m_isLooseMuon = values_[i];}
     else if(labels_[i]=="isPFMuon") {m_isPFMuon = values_[i];}
     else if(labels_[i]=="isSoftMuon") {m_isSoftMuon = values_[i];}
@@ -730,7 +739,10 @@ float  NtupleLepton::DepositR03Hcal() const {return m_DepositR03Hcal;}
 float  NtupleLepton::DepositR03TrackerOfficial() const {return m_DepositR03TrackerOfficial;}   
 float  NtupleLepton::isGlobalMuon() const {return m_isGlobalMuon;}    
 float  NtupleLepton::isGoodGlobalMuon() const {return m_isGoodGlobalMuon;}    
-float  NtupleLepton::passesMediumMuonId() const {return m_passesMediumMuonId;}    
+float  NtupleLepton::passesLooseMuonId() const {return m_passesLooseMuonId;}   
+float  NtupleLepton::passesMediumMuonId_ICHEP16() const {return m_passesMediumMuonId_ICHEP16;}   
+float  NtupleLepton::passesMediumMuonId() const {return m_passesMediumMuonId;}   
+float  NtupleLepton::passesTightMuonId() const {return m_passesTightMuonId;}   
 float  NtupleLepton::isLooseMuon() const {return m_isLooseMuon;}   
 float  NtupleLepton::isPFMuon() const {return m_isPFMuon;}    
 float  NtupleLepton::isSoftMuon() const {return m_isSoftMuon;}    

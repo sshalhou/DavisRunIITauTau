@@ -111,7 +111,10 @@ public:
 	float DepositR03TrackerOfficial() const; 	
 	float isGlobalMuon() const; 	
 	float isGoodGlobalMuon() const; 	
+	float passesLooseMuonId() const; 	
+	float passesMediumMuonId_ICHEP16() const; 	
 	float passesMediumMuonId() const; 	
+	float passesTightMuonId() const; 	
 	float isLooseMuon() const; 	
 	float isPFMuon() const; 	
 	float isSoftMuon() const; 	
@@ -180,7 +183,12 @@ private:
 	float m_DepositR03TrackerOfficial;				//
 	float m_isGlobalMuon;							// pat::Muon isGlobalMuon
 	float m_isGoodGlobalMuon;						// pat::Muon isGlobalMuon + additional cuts
+
+	float m_passesLooseMuonId;						// proposed loose ID for Run II muons
+	float m_passesMediumMuonId_ICHEP16;			    // proposed passesMediumMuonId_ICHEP16 ID for Run II muons
 	float m_passesMediumMuonId;						// proposed meduim ID for Run II muons
+	float m_passesTightMuonId;						// proposed tight ID for Run II muons
+
 	float m_isLooseMuon;							// pat::Muon isLooseMuon
 	float m_isPFMuon;								// pat::Muon isPFMuon
 	float m_isSoftMuon;								// pat::Muon isSoftMuon(first_vertex)

@@ -152,13 +152,14 @@ ele_EleMuon.append("passFail_electronMVA80==1.0")
 ele_EleMuon.append("numberOfMissingInnerHits<=1")
 ele_EleMuon.append("passConversionVeto==1.0")
 
+
 # muon in EleMuon final state :
 muon_EleMuon = []
 muon_EleMuon.append("pt>10")
 muon_EleMuon.append("abs(eta)<2.4")
 muon_EleMuon.append("abs(dxy)<0.045")
 muon_EleMuon.append("abs(dz)<0.2")
-muon_EleMuon.append("passesMediumMuonId==1.0")
+muon_EleMuon.append("passesTightMuonId==1.0")
 
 # muon in MuonTau final state :
 muon_MuonTau = []
@@ -166,7 +167,7 @@ muon_MuonTau.append("pt>24")
 muon_MuonTau.append("abs(eta)<2.1")
 muon_MuonTau.append("abs(dxy)<0.045")
 muon_MuonTau.append("abs(dz)<0.2")
-muon_MuonTau.append("passesMediumMuonId==1.0")
+muon_MuonTau.append("passesTightMuonId==1.0")
 
 # tau in MuonTau final state :
 tau_MuonTau = []
@@ -225,7 +226,7 @@ muon_MuonMuon.append("abs(eta)<2.1")
 muon_MuonMuon.append("abs(dxy)<0.045")
 muon_MuonMuon.append("abs(dz)<0.2")
 muon_MuonMuon.append("isGlobalMuon==1.0")
-muon_MuonMuon.append("passesMediumMuonId==1.0")
+muon_MuonMuon.append("passesTightMuonId==1.0")
 
 
 #############################################
@@ -262,7 +263,7 @@ muon_ThirdLeptonVeto.append("pt>10")
 muon_ThirdLeptonVeto.append("abs(eta)<2.4")
 muon_ThirdLeptonVeto.append("abs(dxy)<0.045")
 muon_ThirdLeptonVeto.append("abs(dz)<0.2")
-muon_ThirdLeptonVeto.append("passesMediumMuonId==1.0")
+muon_ThirdLeptonVeto.append("passesTightMuonId==1.0")
 muon_ThirdLeptonVeto.append("relativeIsol('DeltaBetaCorrectedRelIso')<0.3")
 
 # muon cuts for DiMuon veto :
@@ -842,15 +843,14 @@ generalConfig = cms.PSet(
 			#####################
 			# b-tag configuration 
 
-			BtagSF_File = cms.string("DavisRunIITauTau/RunTimeDataInput/data/BTAGSF/CSVv2_ichep.csv"),
-#			BtagSF_File = cms.string("DavisRunIITauTau/RunTimeDataInput/data/BTAGSF/CSVv2.csv"),
-			# note for 80X it seems only a single file is available
+			BtagSF_File = cms.string("DavisRunIITauTau/RunTimeDataInput/data/BTAGSF/CSVv2Moriond17_2017_1_26_BtoH.csv"),
+			# these have not yet been updated and are only used in promote-demote which mono-H does not use
 			looseBtagEff_file = cms.string("DavisRunIITauTau/RunTimeDataInput/data/BTAGEFF/tagging_efficiencies_ichep2016.root"),
 			mediumBtagEff_file = cms.string("DavisRunIITauTau/RunTimeDataInput/data/BTAGEFF/tagging_efficiencies_ichep2016.root"),
 			tightBtagEff_file = cms.string("DavisRunIITauTau/RunTimeDataInput/data/BTAGEFF/tagging_efficiencies_ichep2016.root"), 
-			LooseBtagWPcut = cms.double(0.460),
-			MediumBtagWPcut = cms.double(0.800),
-			TightBtagWPcut = cms.double(0.935),
+			LooseBtagWPcut = cms.double(0.5426),
+			MediumBtagWPcut = cms.double(0.8484),
+			TightBtagWPcut = cms.double(0.9535),
 
 
 			###################

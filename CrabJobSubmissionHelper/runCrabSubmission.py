@@ -173,7 +173,7 @@ for line in fileinput.input(str(args.dataSetList[0])):
     # some sed swaps in the job config file (really just putting the dataset name in)
     sedHappySampleName = str(line.strip()).replace("/","\/")
     sed_command = "cat "+os.environ['CMSSW_BASE']+"/src/DavisRunIITauTau/CrabJobSubmissionHelper"
-    sed_command = sed_command + "/Templates/V2/runIIoneStep_v1.py | "
+    sed_command = sed_command + "/Templates/V3/runIIoneStep_v1.py | "
     sed_command = sed_command + "sed \'s/DUMMY_DATASET_NAME/"+sedHappySampleName+"/g\'"+" >& "+tempConfigName
 
     os.system(sed_command)

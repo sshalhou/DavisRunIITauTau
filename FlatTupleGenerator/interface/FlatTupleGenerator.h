@@ -598,6 +598,9 @@ public:
 	float leg1_isGlobalMuon, leg2_isGlobalMuon;
 	float leg1_isGoodGlobalMuon, leg2_isGoodGlobalMuon;
 	float leg1_passesMediumMuonId, leg2_passesMediumMuonId;
+	float leg1_passesLooseMuonId, leg2_passesLooseMuonId;
+	float leg1_passesMediumMuonId_ICHEP16, leg2_passesMediumMuonId_ICHEP16;
+	float leg1_passesTightMuonId, leg2_passesTightMuonId;
 	float leg1_isLooseMuon, leg2_isLooseMuon;
 	float leg1_isPFMuon, leg2_isPFMuon;
 	float leg1_isSoftMuon, leg2_isSoftMuon;
@@ -703,7 +706,10 @@ public:
 	std::vector<float> effLep_DepositR03TrackerOfficial; /* muon isolationR03 quantity, see /CustomPatCollectionProducers/src/MuonClones.cc */
 	std::vector<float> effLep_isGlobalMuon;
 	std::vector<float> effLep_isGoodGlobalMuon;
+	std::vector<float> effLep_passesLooseMuonId;
+	std::vector<float> effLep_passesMediumMuonId_ICHEP16;
 	std::vector<float> effLep_passesMediumMuonId;
+	std::vector<float> effLep_passesTightMuonId;
 	std::vector<float> effLep_isLooseMuon;
 	std::vector<float> effLep_isPFMuon;
 	std::vector<float> effLep_isSoftMuon;
@@ -763,7 +769,10 @@ public:
 	std::vector<float> veto_dxy;  /* lepton dxy see CustomPatCollectionProducers/src/{Electron,Muon,Tau}Clones.cc */
 	std::vector<float> veto_dz;	  /* lepton dz see CustomPatCollectionProducers/src/{Electron,Muon,Tau}Clones.cc */
 	std::vector<float> veto_RelIso;
+	std::vector<float> veto_passesLooseMuonId;
+	std::vector<float> veto_passesMediumMuonId_ICHEP16;
 	std::vector<float> veto_passesMediumMuonId;
+	std::vector<float> veto_passesTightMuonId;
 	std::vector<float> veto_rawElectronMVA;
 	std::vector<float> veto_categoryElectronMVA;
 	std::vector<float> veto_passElectronMVA80;
@@ -829,6 +838,37 @@ public:
 	double lheHT;
 	int lheOutGoingPartons;
 	double lheZmass;
+
+	/* new (with 8_0_25 ) b-tag overall event weights for mono-H */
+
+	double BtagEventSFproduct_looseWpDown;
+	double BtagEventSFproduct_looseWpCentral;
+	double BtagEventSFproduct_looseWpUp;
+	double BtagEventSFproduct_mediumWpDown;
+	double BtagEventSFproduct_mediumWpCentral;
+	double BtagEventSFproduct_mediumWpUp;
+	double BtagEventSFproduct_tightWpDown;
+	double BtagEventSFproduct_tightWpCentral;
+	double BtagEventSFproduct_tightWpUp;
+
+	/* for non-nominal jets only keep the central values */
+	double BtagEventSFproduct_looseWpCentral_JECshiftedUp;
+	double BtagEventSFproduct_mediumWpCentral_JECshiftedUp;
+	double BtagEventSFproduct_tightWpCentral_JECshiftedUp;
+
+	double BtagEventSFproduct_looseWpCentral_JECshiftedDown;
+	double BtagEventSFproduct_mediumWpCentral_JECshiftedDown;
+	double BtagEventSFproduct_tightWpCentral_JECshiftedDown;
+
+	double BtagEventSFproduct_looseWpCentral_JERup;
+	double BtagEventSFproduct_mediumWpCentral_JERup;
+	double BtagEventSFproduct_tightWpCentral_JERup;
+
+	double BtagEventSFproduct_looseWpCentral_JERdown;
+	double BtagEventSFproduct_mediumWpCentral_JERdown;
+	double BtagEventSFproduct_tightWpCentral_JERdown;
+ 
+
 
 
 
