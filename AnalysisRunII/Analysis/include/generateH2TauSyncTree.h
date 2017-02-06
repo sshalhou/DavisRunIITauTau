@@ -1,4 +1,5 @@
-/* class generateH2TauSyncTree 
+
+/* class generateH2TauSyncTree
 generate the H2TauTau group's standard sync trees (one tree produced per channel)
 see : https://twiki.cern.ch/twiki/bin/viewauth/CMS/HiggsToTauTauWorking2015#Synchronisation_Ntuple
 -- Shalhout
@@ -190,7 +191,6 @@ struct jetDescription
 
   }
 
-
 };
 
 
@@ -242,8 +242,29 @@ private:
 	// w/o DZeta cut ->
 	QCDModelForEMu * qcdWeightsNoDZeta; //("HTT-utilities/QCDModelingEMu/data/QCD_weight_emu_nodzeta.root"); 
 
+    // Muon POG central muon sf tool
+    
+    /* for mediumID2016 runs bcdef */
+    
+    TFile * sfFile_Muon_MediumID2016_BCDEF = new TFile("EfficienciesAndSF_ID_BCDEF.root","READ");
+    TH2F * sfHisto_Muon_MediumID2016_BCDEF = (TH2F*)sfFile_Muon_MediumID2016_BCDEF->Get("/MC_NUM_MediumID2016_DEN_genTracks_PAR_pt_eta/abseta_pt_ratio");
+    
+    /* for Iso runs bcdef */
+    
+    TFile * sfFile_Muon_TightIso_BCDEF = new TFile("EfficienciesAndSF_ISO_BCDEF.root","READ");
+    TH2F * sfHisto_Muon_TightIso_BCDEF = (TH2F*)sfFile_Muon_TightIso_BCDEF->Get("/TightISO_MediumID_pt_eta/abseta_pt_ratio");
+    
+    /* for mediumID2016 runs gh */
+    
+    TFile * sfFile_Muon_MediumID2016_GH = new TFile("EfficienciesAndSF_ID_GH.root","READ");
+    TH2F * sfHisto_Muon_MediumID2016_GH = (TH2F*)sfFile_Muon_MediumID2016_GH->Get("/MC_NUM_MediumID2016_DEN_genTracks_PAR_pt_eta/abseta_pt_ratio");
+    
+    /* for Iso runs gh */
+    
+    TFile * sfFile_Muon_TightIso_GH = new TFile("EfficienciesAndSF_ISO_GH.root","READ");
+    TH2F * sfHisto_Muon_TightIso_GH = (TH2F*)sfFile_Muon_TightIso_GH->Get("/TightISO_MediumID_pt_eta/abseta_pt_ratio");
 
-	// for muon lepton ID and trigger scale factors and efficiencies 
+	// for HTT derived lepton ID and trigger scale factors and efficiencies
 
 	/* for muTau (muon leg) */
 
@@ -253,7 +274,6 @@ private:
 	/* for eleMu (muon leg) */
 
 	ScaleFactor * sfTool_Muon_IdIso0p20_eff;
-
 
 	// for electron lepton ID and trigger scale factors and efficiencies 
 
@@ -266,7 +286,6 @@ private:
 
 	ScaleFactor * sfTool_Electron_IdIso0p15_eff;
 
-
 	/* for eleMu combined trigger efficiency */
 
 	ScaleFactor * sfTool_Muon_Mu8_eff;
@@ -274,10 +293,20 @@ private:
 	ScaleFactor * sfTool_Electron_Ele17_eff;
 	ScaleFactor * sfTool_Electron_Ele12_eff;
 
-	// needed for Z reweight 
+	// needed for V reweight
 
+    //older
 	TFile* zReweightFile = new TFile("zpt_weights.root","READ");
 	TH2D *zweightHist = (TH2D*) zReweightFile->Get("zptmass_histo");
+    
+    // k factors given by monojet group
+    TFile* kFactorsFile = new TFile("kfactors.root", "READ");
+    TH1F* EWK_Zcorr = (TH1F*) kFactorsFile->Get("/EWKcorr/Z");
+    TH1F* EWK_Gcorr = (TH1F*) kFactorsFile->Get("/EWKcorr/photon");
+    TH1F* EWK_Wcorr = (TH1F*) kFactorsFile->Get("/EWKcorr/W");
+    TH1F* LO_Zcorr = (TH1F*) kFactorsFile->Get("/ZJets_LO/inv_pt");
+    TH1F* LO_Gcorr = (TH1F*) kFactorsFile->Get("/GJets_LO/inv_pt_G");
+    TH1F* LO_Wcorr = (TH1F*) kFactorsFile->Get("/WJets_LO/inv_pt");
 
     //referenced for LPT
     TFile* inFile = new TFile("pDistPlots.root","READ");
@@ -1235,7 +1264,10 @@ private:
     double nominalCrossSection_Weight; /* indluded in final_weight */
     double puWeight_Weight;			   /* indluded in final_weight */	
     double TopQuarkPtWeight_Weight;    /* indluded in final_weight */
-    double ZReWeight_Weight;           /* indluded in final_weight */
+    double ZReWeight_Weight;
+    double KReWeight_Weight;           /* indluded in final_weight */
+    double JTF_WeightUp;
+    double JTF_WeightDown;
     double NLOReWeight_Weight;         /* indluded in final_weight */
     double ScaleFactorsForPair_Weight; /* NOMINAL VERSION indluded in final_weight */
     
@@ -1348,18 +1380,37 @@ private:
 
 	double getNLOReWeight(bool, int);          
 
-
-
-
 	/* function: getHighPtTauUncertainty(bool)
 			-- returns  vector with element [0] = 1 + 0.2 * (gen_tauPt)/1000.0 and element [1] = 1 - 0.2 * (gen_tauPt)/1000.0
 			-- for events with 2 hadronically decaying taus, uses the formula eff(leg1) + eff(leg2) - eff(leg1)*eff(leg2)
 	*/
 
-	std::vector<double> getHighPtTauUncertainty(bool);         
+	std::vector<double> getHighPtTauUncertainty(bool);
+    
+	/* function getCentralMuonFactor :
+		return a SF for ID and ISO for muon
+		args are : 
+                pt = pt of muon
+				eta = abs(eta) of muon
 
+	*/
+	double getCentralMuonFactor(Double_t, Double_t);
+    
+	/* function getKFactor :
+		return a k factor for reweighting DY, W:
+                bool = verbose option
 
+	*/
+	double getKFactor(bool);
+    
+	/* function getJetTauFakeFactor:
+		return a factor for reweighting W,ZJ:
+                bool = verbose option
+                int = variant, 1 up, -1 down
 
+	*/
+	double getJetTauFakeFactor(bool, int);
+    
 	/* function getFinalScaleFactorsForPair : 
 		return a combinded final SF for trigger, ID, and ISO for both legs of a piar
 		args are : 
@@ -1368,8 +1419,7 @@ private:
 
 	*/
 
-
-	double getFinalScaleFactorsForPair(bool, int);         
+	double getFinalScaleFactorsForPair(bool, int, bool);
 
 
 
@@ -1403,6 +1453,9 @@ private:
 	// scale factor parameters
 
 	// Run II efficiencies for HLT_DoubleMediumIsoPFTau35_Trk1_eta2p1_Reg
+
+    std::array <double, 5> Run2_TauTau_legTriggerEff_DataReal;
+    std::array <double, 5> Run2_TauTau_legTriggerEff_DataFake;
 
 	std::array <double, 5> Run2_TauTau_legTriggerEff_Data;
 	std::array <double, 5> Run2_TauTau_legTriggerEff_DataUP;
