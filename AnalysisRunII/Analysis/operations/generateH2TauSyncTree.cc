@@ -449,10 +449,10 @@ void generateH2TauSyncTree::handleEvent()
 		metcov11			= R.getD("pfMET_cov11");
 	}
 
-	//genMET = R.getD("genMET");
-	//genMETphi = R.getD("genMETphi");
-	//genMETeta = R.getD("genMETeta");
-	//genMETmass = R.getD("genMETmass");
+	genMET = R.getD("genMET");
+	genMETphi = R.getD("genMETphi");
+    genMETeta = R.getD("genMETeta");
+	genMETmass = R.getD("genMETmass");
 
 	pfmet_raw_Pt = R.getD("pfmet_raw_Pt");
 	pfmet_raw_Phi = R.getD("pfmet_raw_Phi");
