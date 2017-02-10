@@ -244,6 +244,16 @@ private:
 
     // Muon POG central muon sf tool
     
+    /* for Trigger runs bcdef */
+    
+    TFile * sfFile_Muon_Trigger_BCDEF = new TFile("EfficienciesAndSF_TRIG_BCDEF.root","READ");
+    TH2F * sfHisto_Muon_Trigger_BCDEF = (TH2F*)sfFile_Muon_Trigger_BCDEF->Get("/IsoMu24_OR_IsoTkMu24_PtEtaBins/abseta_pt_ratio");
+    
+    /* for Trigger runs gh */
+    
+    TFile * sfFile_Muon_Trigger_GH = new TFile("EfficienciesAndSF_TRIG_GH.root","READ");
+    TH2F * sfHisto_Muon_Trigger_GH = (TH2F*)sfFile_Muon_Trigger_GH->Get("/IsoMu24_OR_IsoTkMu24_PtEtaBins/abseta_pt_ratio");
+    
     /* for mediumID2016 runs bcdef */
     
     TFile * sfFile_Muon_MediumID2016_BCDEF = new TFile("EfficienciesAndSF_ID_BCDEF.root","READ");
@@ -1174,6 +1184,10 @@ private:
     int IsZL;
     int IsZJ;
     int IsZLL;
+    
+    /* TT classification */
+    
+    bool IsTTT;
 
 	// information related to sample and weights
 
@@ -1388,13 +1402,14 @@ private:
 	std::vector<double> getHighPtTauUncertainty(bool);
     
 	/* function getCentralMuonFactor :
-		return a SF for ID and ISO for muon
+		return a POG central SF for ID, ISO, and triggers for muon
 		args are : 
                 pt = pt of muon
 				eta = abs(eta) of muon
+                bool = do tri
 
 	*/
-	double getCentralMuonFactor(Double_t, Double_t);
+	double getCentralMuonFactor(Double_t, Double_t, bool);
     
 	/* function getKFactor :
 		return a k factor for reweighting DY, W:
@@ -1420,8 +1435,6 @@ private:
 	*/
 
 	double getFinalScaleFactorsForPair(bool, int, bool);
-
-
 
 	/* function: getQCDWeightForEleMuChannel(bool)
 		-- returns a size 6 double vector with elements :

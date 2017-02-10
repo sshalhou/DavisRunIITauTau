@@ -158,7 +158,6 @@ void generateH2TauSyncTree::handleEvent()
 
 	num_total ++; 
 
-
 	/* reset values before handling each event */
 
 	reset();
@@ -925,14 +924,22 @@ void generateH2TauSyncTree::handleEvent()
 	lheHT = R.getD("lheHT");
 	lheOutGoingPartons = R.getI("lheOutGoingPartons");
 	lheZmass = R.getD("lheZmass");
-	
 
 	/* dy classification */
 	IsZTT = R.getI("IsZTT");
 	IsZL = R.getI("IsZL");
 	IsZJ = R.getI("IsZJ");
 	IsZLL = R.getI("IsZLL");
-	
+    
+    bool ltauTTTcheck = ((R.getI("leg2_MCMatchType") == 5) && (((R.getI("CandidateEventType") == 5)) || (R.getI("CandidateEventType") == 3)));
+    bool tautauTTTcheck = ((R.getI("leg1_MCMatchType") == 5) && (R.getI("leg2_MCMatchType") == 5) && (R.getI("CandidateEventType") == 6));
+    
+    /* tt classification */
+    if(ltauTTTcheck || tautauTTTcheck)
+    {
+        IsTTT = 1;
+	}
+    
 	/* summary info */
 	DataSet = R.getS("DataSet");
 	EventTotal = R.getI("EventTotal");
@@ -1857,6 +1864,7 @@ void generateH2TauSyncTree::setupBranches(TTree * T)
 	T->Branch("IsZL", &IsZL);
 	T->Branch("IsZJ", &IsZJ);
 	T->Branch("IsZLL", &IsZLL);
+    T->Branch("IsTTT",&IsTTT);
 	T->Branch("DataSet=", &DataSet);
 	T->Branch("EventTotal", &EventTotal);
 	T->Branch("EventType=", &EventType);
@@ -2563,6 +2571,8 @@ void generateH2TauSyncTree::reset()
 	IsZL = -999;
 	IsZJ = -999;
 	IsZLL = -999;
+    
+    IsTTT = 0;
 
 	DataSet= "NULL";
 	EventTotal = -999;
@@ -3255,8 +3265,6 @@ double generateH2TauSyncTree::getTopQuarkPtWeight(bool verbose_)
 
 }          
 
-
-
 double generateH2TauSyncTree::getZReWeight(bool verbose_)
 {
 	double returnWeight_ = 1.0;
@@ -3290,7 +3298,6 @@ double generateH2TauSyncTree::getZReWeight(bool verbose_)
 	return returnWeight_;
 
 }        
-
 
 /* function: getHighPtTauUncertainty(bool)
 		-- returns  vector with element [0] = 1 + 0.2 * (gen_tauPt)/1000.0 and element [1] = 1 - 0.2 * (gen_tauPt)/1000.0
@@ -3332,7 +3339,6 @@ std::vector<double> generateH2TauSyncTree::getHighPtTauUncertainty(bool verbose_
 
 		/* get the down shift */
 		eff2 = 1 - (unc1 + unc2 - unc1 * unc2);
-
 
 	}
 
@@ -3545,24 +3551,39 @@ std::vector<double> generateH2TauSyncTree::getQCDWeightForEleMuChannel(bool verb
 	return returnVec;
 }
 
-double generateH2TauSyncTree::getCentralMuonFactor(Double_t eta, Double_t pt)
+double generateH2TauSyncTree::getCentralMuonFactor(Double_t eta, Double_t pt, bool trig)
 {
     float returnWeight_ = 1.0;
     float periodBCDEFweight = 0.75;
     float periodGHweight = 0.25;
     
-    if(eta > 2.4 || pt < 20.0 || pt > 120.0) return 1.0;
+    if(trig)
+    {
+        if(eta > 2.4 || pt < 20.0 || pt > 500.0) return 1.0;
+        else
+        {
+            float TRIGsfBCDEF = sfHisto_Muon_Trigger_BCDEF->GetBinContent(sfHisto_Muon_Trigger_BCDEF->GetXaxis()->FindBin(eta),sfHisto_Muon_Trigger_BCDEF->GetYaxis()->FindBin(pt));
+            
+            float TRIGsfGH = sfHisto_Muon_Trigger_GH->GetBinContent(sfHisto_Muon_Trigger_GH->GetXaxis()->FindBin(eta),sfHisto_Muon_Trigger_GH->GetYaxis()->FindBin(pt));
+            
+            returnWeight_ *= ((periodBCDEFweight*TRIGsfBCDEF + periodGHweight*TRIGsfGH) * (periodBCDEFweight*TRIGsfBCDEF + periodGHweight*TRIGsfGH));
+        }
+    }
     else
     {
-    float IDsfBCDEF = sfHisto_Muon_MediumID2016_BCDEF->GetBinContent(sfHisto_Muon_MediumID2016_BCDEF->GetXaxis()->FindBin(eta),sfHisto_Muon_MediumID2016_BCDEF->GetYaxis()->FindBin(pt));
-    float ISOsfBCDEF = sfHisto_Muon_TightIso_BCDEF->GetBinContent(sfHisto_Muon_TightIso_BCDEF->GetXaxis()->FindBin(eta),sfHisto_Muon_TightIso_BCDEF->GetYaxis()->FindBin(pt));
-    
-    float IDsfGH = sfHisto_Muon_MediumID2016_GH->GetBinContent(sfHisto_Muon_MediumID2016_GH->GetXaxis()->FindBin(eta),sfHisto_Muon_MediumID2016_GH->GetYaxis()->FindBin(pt));
-    float ISOsfGH = sfHisto_Muon_TightIso_GH->GetBinContent(sfHisto_Muon_TightIso_GH->GetXaxis()->FindBin(eta),sfHisto_Muon_TightIso_GH->GetYaxis()->FindBin(pt));
-    
-    returnWeight_ *= ((periodBCDEFweight*IDsfBCDEF + periodGHweight*IDsfGH) * (periodBCDEFweight*ISOsfBCDEF + periodGHweight*ISOsfGH));
-    return returnWeight_;
+        if(eta > 2.4 || pt < 20.0 || pt > 120.0) return 1.0;
+        else
+        {
+            float IDsfBCDEF = sfHisto_Muon_MediumID2016_BCDEF->GetBinContent(sfHisto_Muon_MediumID2016_BCDEF->GetXaxis()->FindBin(eta),sfHisto_Muon_MediumID2016_BCDEF->GetYaxis()->FindBin(pt));
+            float ISOsfBCDEF = sfHisto_Muon_TightIso_BCDEF->GetBinContent(sfHisto_Muon_TightIso_BCDEF->GetXaxis()->FindBin(eta),sfHisto_Muon_TightIso_BCDEF->GetYaxis()->FindBin(pt));
+            
+            float IDsfGH = sfHisto_Muon_MediumID2016_GH->GetBinContent(sfHisto_Muon_MediumID2016_GH->GetXaxis()->FindBin(eta),sfHisto_Muon_MediumID2016_GH->GetYaxis()->FindBin(pt));
+            float ISOsfGH = sfHisto_Muon_TightIso_GH->GetBinContent(sfHisto_Muon_TightIso_GH->GetXaxis()->FindBin(eta),sfHisto_Muon_TightIso_GH->GetYaxis()->FindBin(pt));
+            
+            returnWeight_ *= ((periodBCDEFweight*IDsfBCDEF + periodGHweight*IDsfGH) * (periodBCDEFweight*ISOsfBCDEF + periodGHweight*ISOsfGH));
+        }
     }
+    return returnWeight_;
 }
 
 double generateH2TauSyncTree::getKFactor(bool verbose)
@@ -3570,7 +3591,7 @@ double generateH2TauSyncTree::getKFactor(bool verbose)
     double returnWeight_ = 1.0;
     double genBosonMass_ = R.getD("genBosonTotal_M");
     double genBosonTotal_pt = R.getD("genBosonTotal_pt");
-
+    // Add W jets key names only
     if(R.getS("KeyName") == "Fall15_DY1Jet_MG5_DY" ||\
 	   R.getS("KeyName") == "Fall15_DY2Jet_MG5_DY" ||\
 	   R.getS("KeyName") == "Fall15_DY3Jet_MG5_DY" ||\
@@ -3599,18 +3620,57 @@ double generateH2TauSyncTree::getKFactor(bool verbose)
 
 double generateH2TauSyncTree::getJetTauFakeFactor(bool verbose, int variant)
 {
+    // remember to normalize tau-tau histogram
     double returnWeight_ = 1.0;
+    double pt1 = R.getD("leg1_pt");
     double pt2 = R.getD("leg2_pt");
-    
-    if (variant == 1 && gen_match_2 == 6)
+    if (pt1 > 200.0){pt1 = 200.0}
+    if (pt2 > 200.0){pt2 = 200.0}
+
+    if (R.getI("CandidateEventType")==5 || R.getI("CandidateEventType")==3)
     {
-        returnWeight_ *= 1.0 - ((0.2 * pt2)/100.0);
+        if (variant == 1 && gen_match_2 == 6)
+        {
+            returnWeight_ *= 1.224-0.0044*pt2+0.00001*pt2*pt2;
+        }
+        else if (variant == -1 && gen_match_2 == 6)
+        {
+            returnWeight_ *= 1/(1.224-0.0044*pt2+0.00001*pt2*pt2);
+        }
     }
-    else if (variant == -1 && gen_match_2 == 6)
+    else if (R.getI("CandidateEventType")==6)
     {
-        returnWeight_ *= 1.0 + ((0.2 * pt2)/100.0) ;
+        if (variant == 1)
+        {
+            if(gen_match_1 == 6 && gen_match_2 == 6)
+            {
+                returnWeight_ *= (1.224-0.0044*pt1+0.00001*pt1*pt1)*(1.224-0.0044*pt2+0.00001*pt2*pt2);
+            }
+            else if(gen_match_1 == 6 && gen_match_2 != 6)
+            {
+                returnWeight_ *= 1.224-0.0044*pt1+0.00001*pt1*pt1;
+            }
+            else if(gen_match_1 != 6 && gen_match_2 == 6)
+            {
+                returnWeight_ *= 1.224-0.0044*pt2+0.00001*pt2*pt2;
+            }
+        }
+        else if (variant == -1)
+        {
+            if(gen_match_1 == 6 && gen_match_2 == 6)
+            {
+                returnWeight_ *= 1/((1.224-0.0044*pt1+0.00001*pt1*pt1)*(1.224-0.0044*pt2+0.00001*pt2*pt2));
+            }
+            else if(gen_match_1 == 6 && gen_match_2 != 6)
+            {
+                returnWeight_ *= 1/(1.224-0.0044*pt1+0.00001*pt1*pt1);
+            }
+            else if(gen_match_1 != 6 && gen_match_2 == 6)
+            {
+                returnWeight_ *= 1/(1.224-0.0044*pt2+0.00001*pt2*pt2);
+            }
+        }
     }
-    
     return returnWeight_;
 }
 
@@ -3645,14 +3705,14 @@ double generateH2TauSyncTree::getFinalScaleFactorsForPair(bool verbose, int sysS
     
         if(useMuonCentral)
         {
-            muonID = getCentralMuonFactor(abs(eta1), pt1);
+            muonID = getCentralMuonFactor(abs(eta1), pt1, 0);
+            muonTrigger = getCentralMuonFactor(abs(eta1), pt1, 1);
         }
         else
         {
             muonID = sfTool_Muon_IdIso0p15_eff->get_ScaleFactor(pt1,eta1);
+            muonTrigger = sfTool_Muon_SingleMu_eff->get_ScaleFactor(pt1,eta1);
         }
-        
-        muonTrigger = sfTool_Muon_SingleMu_eff->get_ScaleFactor(pt1,eta1);
         
 		returnSF = muonID * muonTrigger;
 
@@ -3682,14 +3742,12 @@ double generateH2TauSyncTree::getFinalScaleFactorsForPair(bool verbose, int sysS
 		{
 			pt1 = R.getD("leg1_pt");
 			eta1 = R.getD("leg1_eta");
-
 		}
 
 		if(R.getI("leg2_leptonType")==1 && R.getI("leg1_leptonType") == 3)   
 		{
 			pt1 = R.getD("leg2_pt");
 			eta1 = R.getD("leg2_eta");
-
 		}
 
 		electronID = sfTool_Electron_IdIso0p10_eff->get_ScaleFactor(pt1,eta1);
@@ -3697,7 +3755,7 @@ double generateH2TauSyncTree::getFinalScaleFactorsForPair(bool verbose, int sysS
 
 		returnSF = electronID * electronTrigger;
 
-	/////////////////////////////////////
+        /////////////////////////////////
 		return returnSF;
 	}
 
@@ -3794,7 +3852,6 @@ double generateH2TauSyncTree::getFinalScaleFactorsForPair(bool verbose, int sysS
 		double effData2 = 1.0;
 		double effMC2 = 1.0;
 		double SF2 = 1.0;
-
 
 		/* tau1 */
 		double pt1 = R.getD("leg1_pt");
