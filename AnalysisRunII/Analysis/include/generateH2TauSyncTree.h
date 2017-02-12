@@ -305,11 +305,11 @@ private:
 
 	// needed for V reweight
 
-    //older
-	TFile* zReweightFile = new TFile("zpt_weights.root","READ");
+    //new 2016
+	TFile* zReweightFile = new TFile("zpt_weights_2016.root","READ");
 	TH2D *zweightHist = (TH2D*) zReweightFile->Get("zptmass_histo");
     
-    // k factors given by monojet group
+    // k factors from monojet group
     TFile* kFactorsFile = new TFile("kfactors.root", "READ");
     TH1F* EWK_Zcorr = (TH1F*) kFactorsFile->Get("/EWKcorr/Z");
     TH1F* EWK_Gcorr = (TH1F*) kFactorsFile->Get("/EWKcorr/photon");
@@ -334,7 +334,6 @@ private:
     //////////////////////////////////////////////////////
   	// BEGIN LIST OF Ntuple BRANCH-ASSOCIATED VARIABLES //
     //////////////////////////////////////////////////////
-
 
     /* tMVA flag */
     
@@ -574,7 +573,6 @@ private:
     double pzetamiss_resolutionUP;
     double pzetamiss_resolutionDOWN;
     double pzetamiss_uncorr;
-
 
     /* PF MET as used by mono-H analysis */
 
@@ -1278,8 +1276,12 @@ private:
     double nominalCrossSection_Weight; /* indluded in final_weight */
     double puWeight_Weight;			   /* indluded in final_weight */	
     double TopQuarkPtWeight_Weight;    /* indluded in final_weight */
-    double ZReWeight_Weight;
+    double ZReWeight_Weight;           /* indluded in final_weight */
+    double ZReWeight_WeightUp;
+    double ZReWeight_WeightDown;
     double KReWeight_Weight;           /* indluded in final_weight */
+    double KReWeight_WeightUp;
+    double KReWeight_WeightDown;
     double JTF_WeightUp;
     double JTF_WeightDown;
     double NLOReWeight_Weight;         /* indluded in final_weight */
@@ -1447,14 +1449,9 @@ private:
 		double qcdweightdownNoDZeta @ element 5 
 
 		all set to 1.0 in case not e+mu channel
-
 	*/
 
-	std::vector<double> getQCDWeightForEleMuChannel(bool);         
-
-
-
-
+	std::vector<double> getQCDWeightForEleMuChannel(bool);
 
 
 	////////////////////////////////

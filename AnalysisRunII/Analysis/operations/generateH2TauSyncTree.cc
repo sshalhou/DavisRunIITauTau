@@ -233,7 +233,6 @@ void generateH2TauSyncTree::handleEvent()
 	pfMetVec.SetPtEtaPhiM(R.getD("pfMET"),0.0,R.getD("pfMETphi"),0.0);
 	puppiMetVec.SetPtEtaPhiM(R.getD("puppiMET"),0.0,R.getD("puppiMETphi"),0.0);
 
-
     /* The LHE weights & Scale Factor Vector, mapping is available in FlatTuple production log file */
     
     originalXWGTUP = R.getF("originalXWGTUP");
@@ -242,7 +241,6 @@ void generateH2TauSyncTree::handleEvent()
     {
         theory_scale_factors = R.getVF("theory_scale_factors");
     }
-
 
     /* basic info */
 
@@ -519,7 +517,6 @@ void generateH2TauSyncTree::handleEvent()
 	pfmet_type1_PhotonEnDown_MT2 = R.getD("pfmet_type1_PhotonEnDown_MT2");
 
 	/* p_zeta variables */
-
 
 	pzetavis 			= pzetaVisCalc(l1,l2);
 
@@ -1028,7 +1025,11 @@ void generateH2TauSyncTree::handleEvent()
     puWeight_Weight = R.getD("puWeight");
     TopQuarkPtWeight_Weight = getTopQuarkPtWeight(0);
     ZReWeight_Weight = getZReWeight(0);
+    ZReWeight_WeightUp = getZReWeight(0);
+    ZReWeight_WeightDown = (1/getZReWeight(0));
     KReWeight_Weight = getKFactor(0);
+    KReWeight_WeightUp = getKFactor(0);
+    KReWeight_WeightDown = 1/(getKFactor(0));
     JTF_WeightUp = getJetTauFakeFactor(0,1);
     JTF_WeightDown = getJetTauFakeFactor(0,-1);
     NLOReWeight_Weight = getNLOReWeight(0,10);
@@ -3102,9 +3103,11 @@ double generateH2TauSyncTree::getFinalWeight(bool verbose_)
 
 	returnWeight_ *=  getTopQuarkPtWeight(verbose_);
 
-	/* include V pt reweight for W,DY samples (this returns 1.0 for non DY (and also 1.0 for low mass DY)) Currenlty using monojet values for all V, old Zpt reweight commented out*/
+	/* include V pt reweights for W,DY samples. Monojet k factors for W, NLO weight for Z*/
 
     returnWeight_ *= getKFactor(verbose_);
+    
+    returnWeight_ *= getZReWeight(verbose_);
     
 	/* include susy ggH NLO weight (1.0 for non valid samples ) 
 		susy signal samples use 10 as tan beta --- need to double check on this
@@ -3118,9 +3121,6 @@ double generateH2TauSyncTree::getFinalWeight(bool verbose_)
 
 	return returnWeight_;
 }
-
-
-
 
 
 /* function: getNominalWeight 
@@ -3170,7 +3170,6 @@ double generateH2TauSyncTree::getNominalWeight(bool verbose_)
 			if(outgoingJets_==3 && genBosonMass_ >  150.0) return 0.001205744;
 			if(outgoingJets_>=4 && genBosonMass_ <= 150.0) return 0.009662968;
 			if(outgoingJets_>=4 && genBosonMass_ >  150.0) return 0.001181490;
-
 
     	}	
 
@@ -3464,7 +3463,6 @@ float generateH2TauSyncTree::NLO_returnNLOweight(Int_t mass, Int_t tanb, Double_
 
 }
 
-
 /* function: getQCDWeightForEleMuChannel(bool)
 	-- returns a size 6 double vector with elements :
 
@@ -3554,8 +3552,8 @@ std::vector<double> generateH2TauSyncTree::getQCDWeightForEleMuChannel(bool verb
 double generateH2TauSyncTree::getCentralMuonFactor(Double_t eta, Double_t pt, bool trig)
 {
     float returnWeight_ = 1.0;
-    float periodBCDEFweight = 0.75;
-    float periodGHweight = 0.25;
+    float periodBCDEFweight = 0.5543;
+    float periodGHweight = 0.4457;
     
     if(trig)
     {
