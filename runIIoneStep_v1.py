@@ -252,6 +252,34 @@ process.SimpleFilter = cms.EDFilter("SimpleFilter",
 	)
 
 
+############################################
+# The Bad And Duplicate Muon Taggers
+# be careful not to confuse this Bad Muon filter
+# with the one from the MET trigger record
+############################################
+
+
+
+process.badGlobalMuonTagger = cms.EDFilter("BadGlobalMuonTagger",
+    muons = cms.InputTag("slimmedMuons"),
+    vtx   = cms.InputTag("offlineSlimmedPrimaryVertices"),
+    muonPtCut = cms.double(20),
+    selectClones = cms.bool(False),
+	)
+
+process.cloneGlobalMuonTagger =  cms.EDFilter("BadGlobalMuonTagger",
+    muons = cms.InputTag("slimmedMuons"),
+    vtx   = cms.InputTag("offlineSlimmedPrimaryVertices"),
+    muonPtCut = cms.double(20),
+    selectClones = cms.bool(True),
+	)
+
+
+
+
+    
+
+
 ###################################
 # re-apply Jet Energy Corrections
 # will use tools already available in MVA MET
@@ -260,8 +288,6 @@ process.SimpleFilter = cms.EDFilter("SimpleFilter",
 process.load('Configuration.StandardSequences.GeometryRecoDB_cff')
 process.load('Configuration.StandardSequences.MagneticField_38T_cff')
 process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff")
-
-
 
 # until the Global Tag is updated for Moriond17 we'll have to manually 
 # rely on local sqlite files (they differ for data & mc)
@@ -1549,6 +1575,12 @@ else :
 		
 		if BUILD_EFFICIENCY_TREE is False:
 			process.p *= process.SimpleFilter
+
+		process.p *= cms.ignore(process.badGlobalMuonTagger)
+		process.p *= cms.ignore(process.cloneGlobalMuonTagger)
+
+
+
 
 		process.p *= process.patJetCorrFactorsReapplyJEC 
 		process.p *= process.patJetsReapplyJEC

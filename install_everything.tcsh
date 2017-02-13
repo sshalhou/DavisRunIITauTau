@@ -46,6 +46,9 @@ cd $CMSSW_BASE/src
 git clone https://github.com/CMS-HTT/RecoilCorrections.git  HTT-utilities/RecoilCorrections 
 
 
+# relocate the davis code
+cp -r ../../DavisRunIITauTau .
+
 
 # copy the PU reweight files 
 # when these change (for new data or mc) 
@@ -125,6 +128,23 @@ cp /afs/cern.ch/work/a/adewit/public/MSSM2016/tagging_efficiencies_ichep2016.roo
 git cms-merge-topic -u cms-met:fromCMSSW_8_0_20_postICHEPfilter
 
 
+# for PF MET, manual patch applied 
+# Additionally, apply these two patches: 
+# - https://github.com/vhbb/cmssw/pull/524/commits/1dd40d418ddc3f769daff7aff5a37a81edd1c9a9 
+# - https://github.com/vhbb/cmssw/pull/524/commits/3c18062dc38f56c01c6ee68da5cf79951208bd16
+# instead I have modified the files directly (these are fine in 820X)
+
+git cms-addpkg DataFormats/PatCandidates
+cp /afs/cern.ch/user/s/sshalhou/public/CMSSW_8X_MODS/METReco/MET.h_mod DataFormats/METReco/interface/MET.h
+cp /afs/cern.ch/user/s/sshalhou/public/CMSSW_8X_MODS/METReco/MET.cc_mod DataFormats/METReco/src/MET.cc
+cp /afs/cern.ch/user/s/sshalhou/public/CMSSW_8X_MODS/PatCandidates/MET.cc_mod DataFormats/PatCandidates/src/MET.cc
+
+
+# Add in Bad Muon Filter -- we just copied the filter .cc file into our code
+# as CustomFilters/plugins/BadGlobalMuonTagger.cc
+# since this pulls in nearly all of CMSSW
+# keep off git cms-merge-topic gpetruc:badMuonFilters_80X
+
 
 # electron ID ----> cut based ID/mva ID are already integrated into this release but cuts must be modified
 # muon ID --> already integrated into this release but cuts must be modified
@@ -132,44 +152,6 @@ git cms-merge-topic -u cms-met:fromCMSSW_8_0_20_postICHEPfilter
 # PU jet ID --> for this rel, no code is needed but must follow recalc instructions
 # JEC --> method unchanged from 76X no code is needed
 # b-jets -> no new code, should update sf code
-
-# PF MET UNC 
-
-#-- git cms-addpkg CondTools/BTau
-#-- git cms-merge-topic cms-met:METRecipe_8020
-
-
-
-
-# PF MET  :
-
-#-- git cms-addpkg DataFormats/PatCandidates
-
-# for PF MET, manual patch applied 
-# Additionally, apply these two patches: 
-# - https://github.com/vhbb/cmssw/pull/524/commits/1dd40d418ddc3f769daff7aff5a37a81edd1c9a9 
-# - https://github.com/vhbb/cmssw/pull/524/commits/3c18062dc38f56c01c6ee68da5cf79951208bd16
-# instead I have modified the files directly (these are fine in 820X)
-
-#-- cp /afs/cern.ch/user/s/sshalhou/public/CMSSW_8X_MODS/METReco/MET.h_mod DataFormats/METReco/interface/MET.h
-#-- cp /afs/cern.ch/user/s/sshalhou/public/CMSSW_8X_MODS/METReco/MET.cc_mod DataFormats/METReco/src/MET.cc
-#-- cp /afs/cern.ch/user/s/sshalhou/public/CMSSW_8X_MODS/PatCandidates/MET.cc_mod DataFormats/PatCandidates/src/MET.cc
-
-
-
-
-
-# add CL software ---> this does not work in 8X, and seemingly there is no branch in which it will work
-# git clone https://github.com/cms-analysis/HiggsAnalysis-CombinedLimit.git HiggsAnalysis/CombinedLimit
-# cd HiggsAnalysis/CombinedLimit
-# git checkout 74x-root6 # is there a newer branch?
-# cd -
-
-
-# relocate the davis code
-mv ../../DavisRunIITauTau .
-
-
 
 
 
