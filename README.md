@@ -24,7 +24,7 @@ For Quick Start (on SL6 only, CMSSW_7_6_3 and higher):
 
 		cd DavisRunIITauTau
 
-		git checkout fall16_8_0_20
+		git checkout Moriond17_8_0_25
 
 		cd -
 
