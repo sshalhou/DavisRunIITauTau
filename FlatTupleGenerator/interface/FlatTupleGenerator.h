@@ -827,6 +827,16 @@ public:
 	bool BadChargedCandidateFilter;
 	bool BadPFMuonFilter;
 
+	/* Moriond 17 Bad and Duplicate Muon Tags 
+		- a value of 1 means the event contains a Bad or 
+		Duplicate Muon 
+		- 0 is the default and means the event is OK
+	*/
+
+	bool BadMuonTaggedMoriond17;
+	bool DuplicateMuonTaggedMoriond17;
+
+
 
 	/* pileUp & other weight info */
 

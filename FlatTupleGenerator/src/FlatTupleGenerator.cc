@@ -3082,6 +3082,13 @@ void FlatTupleGenerator::handlePairIndepInfo(const edm::Event& iEvent, const edm
   BadChargedCandidateFilter = currentINDEP.BadChargedCandidateFilter();
   BadPFMuonFilter = currentINDEP.BadPFMuonFilter();
 
+  /* bad and duplicate muons */
+
+  BadMuonTaggedMoriond17 = currentINDEP.BadMuonTaggedMoriond17();
+  DuplicateMuonTaggedMoriond17 = currentINDEP.DuplicateMuonTaggedMoriond17();
+
+
+
   /* pileup & other weights */
 
   puWeight = currentINDEP.puWeight();
@@ -4142,6 +4149,12 @@ void FlatTupleGenerator::handlePairIndepInfo(const edm::Event& iEvent, const edm
   BadChargedCandidateFilter  = 1;
   BadPFMuonFilter = 1;
 
+  /* init the two taggers to 0 which means event is OK */
+  BadMuonTaggedMoriond17 = 0;
+  DuplicateMuonTaggedMoriond17 = 0;
+
+
+
   numberOfJetsForRecoilCorr = -999;
   numberOfJets30 = -999;
   numberOfJets = -999;
@@ -5114,6 +5127,11 @@ void FlatTupleGenerator::beginJob()
   FlatTuple->Branch("globalTightHalo2016Filter", &globalTightHalo2016Filter);
   FlatTuple->Branch("BadChargedCandidateFilter", &BadChargedCandidateFilter);
   FlatTuple->Branch("BadPFMuonFilter", &BadPFMuonFilter);
+
+  FlatTuple->Branch("BadMuonTaggedMoriond17", &BadMuonTaggedMoriond17);
+  FlatTuple->Branch("DuplicateMuonTaggedMoriond17", &DuplicateMuonTaggedMoriond17);
+
+
 
   FlatTuple->Branch("DiMuon_Flag", &DiMuon_Flag);
   FlatTuple->Branch("DiElectron_Flag", &DiElectron_Flag);

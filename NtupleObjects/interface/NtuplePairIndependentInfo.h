@@ -81,7 +81,8 @@ public:
   void fill_globalTightHalo2016Filter(bool);
   void fill_BadChargedCandidateFilter(bool);
   void fill_BadPFMuonFilter(bool);
-
+  void fill_BadMuonTaggedMoriond17(bool);
+  void fill_DuplicateMuonTaggedMoriond17(bool);
 
 
   /* fill the boson 4-vectors at gen level */
@@ -140,6 +141,8 @@ public:
   bool globalTightHalo2016Filter() const;
   bool BadChargedCandidateFilter() const;
   bool BadPFMuonFilter() const;
+  bool BadMuonTaggedMoriond17() const;
+  bool DuplicateMuonTaggedMoriond17() const;
 
 
   /* gen boson 4-vectors */
@@ -210,6 +213,12 @@ private:
   bool m_globalTightHalo2016Filter;
   bool m_BadChargedCandidateFilter;
   bool m_BadPFMuonFilter;
+
+  /* bad and duplicate muon filters, if true the event
+     was tagged as having bad or duplicate muons */
+  
+  bool m_BadMuonTaggedMoriond17; 
+  bool m_DuplicateMuonTaggedMoriond17;
 
 
   /* gen boson 4-vectors */

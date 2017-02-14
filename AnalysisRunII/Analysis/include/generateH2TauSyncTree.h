@@ -1161,6 +1161,12 @@ private:
 	bool BadChargedCandidateFilter;
 	bool BadPFMuonFilter;
 
+	// bad and duplicate muon filters -- event is OK if these are 0
+
+	bool BadMuonTaggedMoriond17;
+	bool DuplicateMuonTaggedMoriond17;
+
+
 	/* gen info */
 
 	int NUP;

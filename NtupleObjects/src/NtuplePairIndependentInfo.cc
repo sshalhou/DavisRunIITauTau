@@ -44,6 +44,9 @@ NtuplePairIndependentInfo::NtuplePairIndependentInfo()
   m_globalTightHalo2016Filter = 1;
   m_BadChargedCandidateFilter = 1;
   m_BadPFMuonFilter = 1;
+  m_BadMuonTaggedMoriond17 = 0; /* init to false */
+  m_DuplicateMuonTaggedMoriond17 = 0; /* init to false */
+
 
 
   m_GenBosonVisibleMomentum.SetXYZT(NAN,NAN,NAN,NAN);
@@ -126,7 +129,17 @@ void  NtuplePairIndependentInfo::fill_BadPFMuonFilter(bool arg)
     m_BadPFMuonFilter = arg; 
 }
 
+ 
+void  NtuplePairIndependentInfo::fill_BadMuonTaggedMoriond17(bool arg)
+{ 
+    m_BadMuonTaggedMoriond17 = arg; 
+}
 
+ 
+void  NtuplePairIndependentInfo::fill_DuplicateMuonTaggedMoriond17(bool arg)
+{ 
+    m_DuplicateMuonTaggedMoriond17 = arg; 
+}
 
 
 
@@ -328,6 +341,11 @@ bool NtuplePairIndependentInfo::muonBadTrackFilter() const { return m_muonBadTra
 bool NtuplePairIndependentInfo::globalTightHalo2016Filter() const { return m_globalTightHalo2016Filter; };
 bool NtuplePairIndependentInfo::BadChargedCandidateFilter() const { return m_BadChargedCandidateFilter; };
 bool NtuplePairIndependentInfo::BadPFMuonFilter() const { return m_BadPFMuonFilter; };
+
+
+bool NtuplePairIndependentInfo::BadMuonTaggedMoriond17() const { return m_BadMuonTaggedMoriond17; };
+bool NtuplePairIndependentInfo::DuplicateMuonTaggedMoriond17() const { return m_DuplicateMuonTaggedMoriond17; };
+
 
 
 LorentzVector  NtuplePairIndependentInfo::GenBosonVisibleMomentum() const { return m_GenBosonVisibleMomentum; };

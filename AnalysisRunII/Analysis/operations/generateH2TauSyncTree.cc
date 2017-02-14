@@ -956,6 +956,12 @@ void generateH2TauSyncTree::handleEvent()
 	BadPFMuonFilter	    				= R.getB("BadPFMuonFilter");
 
 
+	/* bad/duplicate muon taggers */
+
+	BadMuonTaggedMoriond17	    		= R.getB("BadMuonTaggedMoriond17");
+	DuplicateMuonTaggedMoriond17	    = R.getB("DuplicateMuonTaggedMoriond17");
+
+
 	/* lhe and gen info */
 
 	NUP = R.getI("hepNUP");
@@ -1887,6 +1893,9 @@ void generateH2TauSyncTree::setupBranches(TTree * T)
 	T->Branch("BadChargedCandidateFilter", &BadChargedCandidateFilter);
 	T->Branch("BadPFMuonFilter", &BadPFMuonFilter);
 
+	T->Branch("BadMuonTaggedMoriond17", &BadMuonTaggedMoriond17);
+	T->Branch("DuplicateMuonTaggedMoriond17", &DuplicateMuonTaggedMoriond17);
+
 
 	T->Branch("BtagEventSFproduct_looseWpDown",  &BtagEventSFproduct_looseWpDown);
 	T->Branch("BtagEventSFproduct_looseWpCentral",  &BtagEventSFproduct_looseWpCentral);
@@ -2641,6 +2650,8 @@ void generateH2TauSyncTree::reset()
     BadChargedCandidateFilter = 0;
     BadPFMuonFilter = 0;
 
+	BadMuonTaggedMoriond17 = 0;
+	DuplicateMuonTaggedMoriond17 = 0;
 
 	NUP = -999;
 	weight = 1.0;

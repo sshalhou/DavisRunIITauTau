@@ -14,7 +14,7 @@
 # will write both FlatTuple and Ntuple to disk
 ######################################
 
-DEBUG_NTUPLE = False
+DEBUG_NTUPLE = True
 
 ######################################
 # if DEBUG_NTUPLE_INPUT is set to True
@@ -34,9 +34,9 @@ MAX_EVENTS = 100
 # datasets for local running 
 ######################################
 
-#dataSetName_ = "TEMP_DATA"
 #dataSetName_ = "/SUSYGluGluToHToTauTau_M-160_TuneCUETP8M1_13TeV-pythia8/RunIISpring16MiniAODv2-PUSpring16RAWAODSIM_reHLT_80X_mcRun2_asymptotic_v14-v1/MINIAODSIM"
 dataSetName_ = "/VBFHToTauTau_M125_13TeV_powheg_pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM"
+#dataSetName_ = "/SingleMuon/Run2016H-PromptReco-v2/MINIAOD"
 
 
 
@@ -49,6 +49,10 @@ myfilelist = cms.untracked.vstring()
 if dataSetName_ == "/VBFHToTauTau_M125_13TeV_powheg_pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM":
 	myfilelist.extend(['file:/uscms_data/d3/shalhout/VBFTauTauMorinon17.root'])
 
+if dataSetName_ == "/SingleMuon/Run2016H-PromptReco-v2/MINIAOD":
+	#myfilelist.extend(['file:/uscms_data/d3/shalhout/RunIIWorking/2017/MonoH_Moriond17/CMSSW_8_0_25/src/pickevents_rereco_33.root'])
+	#myfilelist.extend(['file:/uscms_data/d3/shalhout/MET_DATA.root'])
+	myfilelist.extend(['file:/uscms_data/d3/shalhout/Run2016H-PromptReco-v2.root'])
 
 
 
@@ -1425,7 +1429,9 @@ process.pairIndep = cms.EDProducer('NtuplePairIndependentInfoProducer',
 							#triggerResultsPatSrc = cms.InputTag("TriggerResults","","PAT"),
 							#triggerResultsRecoSrc = cms.InputTag("TriggerResults","","RECO"),
 							triggerResultsSrc = cms.InputTag("TriggerResults"),
-							rhoSource = cms.InputTag('fixedGridRhoFastjetAll')
+							rhoSource = cms.InputTag('fixedGridRhoFastjetAll'),
+							BadMuonTaggedMoriond17Src = cms.InputTag("badGlobalMuonTagger","bad","DavisNtuple"),				
+							DuplicateMuonTaggedMoriond17Src = cms.InputTag("cloneGlobalMuonTagger","bad","DavisNtuple")			
 							                 )
 
 
@@ -1579,9 +1585,6 @@ else :
 		process.p *= cms.ignore(process.badGlobalMuonTagger)
 		process.p *= cms.ignore(process.cloneGlobalMuonTagger)
 
-
-
-
 		process.p *= process.patJetCorrFactorsReapplyJEC 
 		process.p *= process.patJetsReapplyJEC
 
@@ -1734,6 +1737,7 @@ else :
 		process.out.outputCommands.append("keep NtupleEvents*_*_*_DavisNtuple")
 		process.out.outputCommands.append("keep pairIndep*_*_*_DavisNtuple")
 		process.out.outputCommands.append("keep NtuplePairIndependentInfos*_*_*_DavisNtuple")
+		process.out.outputCommands.append("keep *_*_bad_*")
 
 
 

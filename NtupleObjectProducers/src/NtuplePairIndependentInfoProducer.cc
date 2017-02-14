@@ -28,6 +28,8 @@ Implementation:
 #include "FWCore/Framework/interface/MakerMacros.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 #include "FWCore/Framework/interface/ESHandle.h"
+#include "DataFormats/Common/interface/PtrVector.h"
+
 
 // needed by ntuple Tau producer
 #include <vector>
@@ -181,6 +183,18 @@ in 76X we can access directly from miniAOD */
   edm::InputTag rhoSource_;
   edm::EDGetTokenT<double> rhoToken_;
 
+
+  /* the bad and duplicate muon collections */
+
+  edm::InputTag BadMuonTaggedMoriond17Src_;
+  edm::EDGetTokenT<edm::View< reco::Muon > > BadMuonTaggedMoriond17Token_;
+
+  edm::InputTag DuplicateMuonTaggedMoriond17Src_;
+  edm::EDGetTokenT<edm::View< reco::Muon > > DuplicateMuonTaggedMoriond17Token_;
+
+
+
+
   /* resolution tools */
 
   JME::JetResolution resolution_r;
@@ -225,7 +239,9 @@ sampleInfoSrc_(iConfig.getParameter<edm::ParameterSet>("sampleInfoSrc")),
 BadChargedCandidateFilterSrc_(iConfig.getParameter<edm::InputTag>("BadChargedCandidateFilterSrc")),
 BadPFMuonFilterSrc_(iConfig.getParameter<edm::InputTag>("BadPFMuonFilterSrc")),
 triggerResultsSrc_(consumes<edm::TriggerResults>(iConfig.getParameter<edm::InputTag>("triggerResultsSrc"))),
-rhoSource_(iConfig.getParameter<edm::InputTag>("rhoSource" ))
+rhoSource_(iConfig.getParameter<edm::InputTag>("rhoSource" )),
+BadMuonTaggedMoriond17Src_(iConfig.getParameter<edm::InputTag>("BadMuonTaggedMoriond17Src" )),
+DuplicateMuonTaggedMoriond17Src_(iConfig.getParameter<edm::InputTag>("DuplicateMuonTaggedMoriond17Src" ))
 {
 
   produces<vector<NtuplePairIndependentInfo>>(NAME_).setBranchAlias(NAME_);
@@ -244,6 +260,8 @@ rhoSource_(iConfig.getParameter<edm::InputTag>("rhoSource" ))
   packedGenToken_ = consumes<edm::View< pat::PackedGenParticle > > (packedGenSrc_);
   prunedGenToken_ = consumes<edm::View< reco::GenParticle > > (prunedGenSrc_);
   rhoToken_ = consumes< double > (rhoSource_);
+  BadMuonTaggedMoriond17Token_ = consumes< edm::View<reco::Muon> >(BadMuonTaggedMoriond17Src_);
+  DuplicateMuonTaggedMoriond17Token_ = consumes< edm::View<reco::Muon> >(DuplicateMuonTaggedMoriond17Src_);
 
 
   /* access the MC pT resolution */
@@ -326,6 +344,28 @@ NtuplePairIndependentInfoProducer::produce(edm::Event& iEvent, const edm::EventS
   ////////////////////////////////////////
 
   InfoToWrite.fill_sampleInfo(sampleInfoSrc_);
+
+
+  /////////////////////////////////////////////////////////
+  /* fill the Moriond17 bad and duplicate muon taggers   */
+  /////////////////////////////////////////////////////////
+
+ // get BadMuonTaggedMoriond17 collection
+  edm::Handle<edm::View<reco::Muon> > badTagged_muons;
+  iEvent.getByToken(BadMuonTaggedMoriond17Token_,badTagged_muons);
+
+ // get DuplicateMuonTaggedMoriond17 collection
+  edm::Handle<edm::View<reco::Muon> > duplicateTagged_muons;
+  iEvent.getByToken(DuplicateMuonTaggedMoriond17Token_,duplicateTagged_muons);
+
+
+  if(badTagged_muons->size() != 0) InfoToWrite.fill_BadMuonTaggedMoriond17(1);
+  if(duplicateTagged_muons->size() != 0) InfoToWrite.fill_DuplicateMuonTaggedMoriond17(1);
+
+
+  if(badTagged_muons->size() != 0) std::cout<<" BAD MUON \n";
+  if(duplicateTagged_muons->size() != 0) std::cout<<" BAD CLONE MUON \n";
+
 
   /////////////////////////////////////////////////////////////////
   /* start by adding gen particles to InfoToWrite */

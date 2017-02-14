@@ -47,7 +47,7 @@ git clone https://github.com/CMS-HTT/RecoilCorrections.git  HTT-utilities/Recoil
 
 
 # relocate the davis code
-cp -r ../../DavisRunIITauTau .
+mv ../../DavisRunIITauTau .
 
 
 # copy the PU reweight files 
@@ -143,7 +143,7 @@ cp /afs/cern.ch/user/s/sshalhou/public/CMSSW_8X_MODS/PatCandidates/MET.cc_mod Da
 # Add in Bad Muon Filter -- we just copied the filter .cc file into our code
 # as CustomFilters/plugins/BadGlobalMuonTagger.cc
 # since this pulls in nearly all of CMSSW
-# keep off git cms-merge-topic gpetruc:badMuonFilters_80X
+# this is much less than running : git cms-merge-topic gpetruc:badMuonFilters_80X
 
 
 # electron ID ----> cut based ID/mva ID are already integrated into this release but cuts must be modified
@@ -169,6 +169,7 @@ cp /afs/cern.ch/user/s/sshalhou/public/CMSSW_8X_MODS/PatCandidates/MET.cc_mod Da
 # compile
 
 # there is a bug in 
-#-- sed -i 's/from PhysicsTools.PatAlgos.tools.jetTools import switchJetCollection/from PhysicsTools.PatAlgos.tools.jetTools import switchJetCollection \nfrom RecoMET.METProducers.METSignificanceParams_cfi import METSignificanceParams_Data/1' ./PhysicsTools/PatUtils/python/tools/runMETCorrectionsAndUncertainties.py
+git cms-addpkg PhysicsTools/PatUtils
+sed -i 's/from PhysicsTools.PatAlgos.tools.jetTools import switchJetCollection/from PhysicsTools.PatAlgos.tools.jetTools import switchJetCollection \nfrom RecoMET.METProducers.METSignificanceParams_cfi import METSignificanceParams_Data/1' ./PhysicsTools/PatUtils/python/tools/runMETCorrectionsAndUncertainties.py
 
 scram b -j 20
