@@ -9,7 +9,7 @@ import FWCore.ParameterSet.Config as cms
 ####################################################################################################
 
 BUILD_ELECTRON_ELECTRON = False
-BUILD_ELECTRON_MUON = True
+BUILD_ELECTRON_MUON = False
 BUILD_ELECTRON_TAU = True
 BUILD_MUON_MUON = False
 BUILD_MUON_TAU = True
@@ -37,7 +37,7 @@ MAX_TAU_COUNT = 10
 ####################################################################################################
 
 BUILD_TAU_ES_VARIANTS = True 
-BUILD_ELECTRON_ES_VARIANTS = True # only used for e+mu channel
+BUILD_ELECTRON_ES_VARIANTS = False # only used for e+mu channel
 
 
 ####################################################################################################

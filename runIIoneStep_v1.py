@@ -28,7 +28,7 @@ DEBUG_NTUPLE_INPUT = False
 # how many events to run, -1 means run all 
 ######################################
 
-MAX_EVENTS = 100
+MAX_EVENTS = 5000
 
 ######################################
 # datasets for local running 
@@ -175,11 +175,11 @@ process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condD
 from Configuration.AlCa.GlobalTag_condDBv2 import GlobalTag
 
 if sampleData.EventType == 'MC':
-	process.GlobalTag = GlobalTag(process.GlobalTag, '80X_mcRun2_asymptotic_2016_miniAODv2_v1', '')
+	process.GlobalTag = GlobalTag(process.GlobalTag, '80X_mcRun2_asymptotic_2016_TrancheIV_v8', '')
 	#process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:run2_mc', '')
 
 if sampleData.EventType == 'DATA':
-	process.GlobalTag = GlobalTag(process.GlobalTag, '80X_dataRun2_Prompt_ICHEP16JEC_v0', '')
+	process.GlobalTag = GlobalTag(process.GlobalTag, '80X_dataRun2_2016SeptRepro_v7', '')
 	#process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:run2_data', '')
 
 print '********** HAVE MANUALLY SET GLOBAL TAG SET TO  *********************'
@@ -297,16 +297,17 @@ process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_condD
 # rely on local sqlite files (they differ for data & mc)
 # note this will void any Global Tag jet correction settings so be 
 # sure to deactivate if global tag is OK
-from RecoMET.METPUSubtraction.jet_recorrections import loadLocalSqlite
 
-sqliteFilenameARG = "DavisRunIITauTau/RunTimeDataInput/data/JECSQLiteFiles/Summer16_23Sep2016AllV3_DATA.db"
-tagARG = "JetCorrectorParametersCollection_Summer16_23Sep2016AllV3_DATA_AK4PFchs"
+# from RecoMET.METPUSubtraction.jet_recorrections import loadLocalSqlite
+# sqliteFilenameARG = "DavisRunIITauTau/RunTimeDataInput/data/JECSQLiteFiles/Summer16_23Sep2016AllV3_DATA.db"
+# tagARG = "JetCorrectorParametersCollection_Summer16_23Sep2016AllV3_DATA_AK4PFchs"
+# if sampleData.EventType == 'MC':
+# 	sqliteFilenameARG = "DavisRunIITauTau/RunTimeDataInput/data/JECSQLiteFiles/Summer16_23Sep2016V3_MC.db"
+# 	tagARG = "JetCorrectorParametersCollection_Summer16_23Sep2016V3_MC_AK4PFchs"
+# loadLocalSqlite(process, sqliteFilename = sqliteFilenameARG, tag = tagARG)
 
-if sampleData.EventType == 'MC':
-	sqliteFilenameARG = "DavisRunIITauTau/RunTimeDataInput/data/JECSQLiteFiles/Summer16_23Sep2016V3_MC.db"
-	tagARG = "JetCorrectorParametersCollection_Summer16_23Sep2016V3_MC_AK4PFchs"
+# Looks like the Global Tags are now available for Moriond17 
 
-loadLocalSqlite(process, sqliteFilename = sqliteFilenameARG, tag = tagARG)
 
 from RecoMET.METPUSubtraction.jet_recorrections import recorrectJets
 
