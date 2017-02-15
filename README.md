@@ -20,6 +20,14 @@ For Quick Start (on SL6 only, CMSSW_7_6_3 and higher):
 
 		cd WORKING_DIR
 
+		setenv GIT_ASKPASS
+
+		voms-proxy-init -voms cms --valid=72:00
+
+		source /cvmfs/cms.cern.ch/cmsset_default.csh
+
+		setenv SCRAM_ARCH slc6_amd64_gcc530
+
 		git clone git@github.com:sshalhou/DavisRunIITauTau DavisRunIITauTau
 
 		cd DavisRunIITauTau

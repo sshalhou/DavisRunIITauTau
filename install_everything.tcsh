@@ -21,11 +21,21 @@ cmsrel CMSSW_8_0_25
 cd CMSSW_8_0_25/src/
 cmsenv
 
-
 # set up git
 
 git cms-init
 
+# build command
+scram build # needed to get correct dir structure for electron ID
+
+# new Moriond17 electron ID 
+git cms-merge-topic ikrav:egm_id_80X_v2
+cd $CMSSW_BASE/external
+cd slc6_amd64_gcc530/
+git clone https://github.com/ikrav/RecoEgamma-ElectronIdentification.git data/RecoEgamma/ElectronIdentification/data
+cd data/RecoEgamma/ElectronIdentification/data
+git checkout egm_id_80X_v1
+cd $CMSSW_BASE/src
 
 # for muon effective area 
 
