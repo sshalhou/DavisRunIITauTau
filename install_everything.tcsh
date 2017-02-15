@@ -26,23 +26,39 @@ cmsenv
 git cms-init
 
 # build command
-scram build # needed to get correct dir structure for electron ID
+scram b -j 20 # needed to get correct dir structure for electron ID
+
+
+# MVA MET : 
+#git cms-addpkg RecoMET/METPUSubtraction
+#git cms-addpkg DataFormats/METReco
+#git remote add -f mvamet https://github.com/rfriese/cmssw.git
+#git checkout mvamet/mvamet8020 -b mvamet # this line erases the new electron ID for Moriond 2017
+# so instead we pull the needed directories only 
+
+mkdir RecoMET
+cp -r ../../DavisRunIITauTau/ExternalFiles/MVA_MET_8020/ExternalCode/METPUSubtraction RecoMET/. 
+mkdir DataFormats
+cp -r ../../DavisRunIITauTau/ExternalFiles/MVA_MET_8020/ExternalCode/METReco DataFormats/. 
+mkdir RecoMET/METPUSubtraction/data
+cd RecoMET/METPUSubtraction/data
+wget https://github.com/rfriese/cmssw/raw/MVAMET2_beta_0.6/RecoMET/METPUSubtraction/data/weightfile.root
+cd $CMSSW_BASE/src
 
 # new Moriond17 electron ID 
 git cms-merge-topic ikrav:egm_id_80X_v2
-cd $CMSSW_BASE/external
-cd slc6_amd64_gcc530/
-git clone https://github.com/ikrav/RecoEgamma-ElectronIdentification.git data/RecoEgamma/ElectronIdentification/data
-cd data/RecoEgamma/ElectronIdentification/data
-git checkout egm_id_80X_v1
-cd $CMSSW_BASE/src
 
-# for muon effective area 
+# Add in the new MET filter code needed for 8020X and beyond in 2016 
+# see: https://twiki.cern.ch/twiki/bin/viewauth/CMS/MissingETOptionalFiltersRun2#Notes_regarding_the_ICHEP_datase
+git cms-merge-topic -u cms-met:fromCMSSW_8_0_20_postICHEPfilter
 
-git clone -n https://github.com/latinos/UserCode-sixie-Muon-MuonAnalysisTools Muon/MuonAnalysisTools 
-cd Muon/MuonAnalysisTools 
-git checkout master -- interface/MuonEffectiveArea.h 
-cd -
+
+# Add in Bad Muon Filter -- we just copied the filter .cc file into our code
+# as CustomFilters/plugins/BadGlobalMuonTagger.cc
+# since this pulls in nearly all of CMSSW
+# this is much less than running : git cms-merge-topic gpetruc:badMuonFilters_80X
+git cms-merge-topic gpetruc:badMuonFilters_80X_v2
+
 
 
 # SVFIt 
@@ -55,6 +71,26 @@ cd $CMSSW_BASE/src
 # MET RECOIL CORRECTIONS (SAME CODE FOR PF AND MVA MET)
 git clone https://github.com/CMS-HTT/RecoilCorrections.git  HTT-utilities/RecoilCorrections 
 
+# for muon effective area 
+
+git clone -n https://github.com/latinos/UserCode-sixie-Muon-MuonAnalysisTools Muon/MuonAnalysisTools 
+cd Muon/MuonAnalysisTools 
+git checkout master -- interface/MuonEffectiveArea.h 
+cd -
+
+# additional electron MVA ID files
+
+cd $CMSSW_BASE/external
+cd slc6_amd64_gcc530/
+git clone https://github.com/ikrav/RecoEgamma-ElectronIdentification.git data/RecoEgamma/ElectronIdentification/data
+cd data/RecoEgamma/ElectronIdentification/data
+git checkout egm_id_80X_v1
+cd $CMSSW_BASE/src
+
+
+# pilup reweight code -- this is done to turn of cout statements
+git cms-addpkg PhysicsTools/Utilities
+sed -i 's/std::cout/\/\/std::cout/g' PhysicsTools/Utilities/src/LumiReWeighting.cc
 
 # relocate the davis code
 mv ../../DavisRunIITauTau .
@@ -72,21 +108,6 @@ mv ../../DavisRunIITauTau .
 cp DavisRunIITauTau/ExternalFiles/PileUpReWeightFiles/MC_Moriond17_PU25ns_V1.root DavisRunIITauTau/RunTimeDataInput/data/PileUpReWeightFiles/. 
 cp DavisRunIITauTau/ExternalFiles/PileUpReWeightFiles/Data_Pileup_2016_271036-284044_80bins.root DavisRunIITauTau/RunTimeDataInput/data/PileUpReWeightFiles/. 
 
-
-# pilup reweight code -- this is done to turn of cout statements
-git cms-addpkg PhysicsTools/Utilities
-sed -i 's/std::cout/\/\/std::cout/g' PhysicsTools/Utilities/src/LumiReWeighting.cc
-
-# MVA MET : 
-
-git cms-addpkg RecoMET/METPUSubtraction
-git cms-addpkg DataFormats/METReco
-git remote add -f mvamet https://github.com/rfriese/cmssw.git
-git checkout mvamet/mvamet8020 -b mvamet
-mkdir RecoMET/METPUSubtraction/data
-cd RecoMET/METPUSubtraction/data
-wget https://github.com/rfriese/cmssw/raw/MVAMET2_beta_0.6/RecoMET/METPUSubtraction/data/weightfile.root
-cd $CMSSW_BASE/src
 
 
 
@@ -154,10 +175,6 @@ mkdir DavisRunIITauTau/RunTimeDataInput/data/BTAGEFF
 cp DavisRunIITauTau/ExternalFiles/BTAGEFF/tagging_efficiencies_ichep2016.root DavisRunIITauTau/RunTimeDataInput/data/BTAGEFF/.
 
 
-# Add in the new MET filter code needed for 8020X and beyond in 2016 
-# see: https://twiki.cern.ch/twiki/bin/viewauth/CMS/MissingETOptionalFiltersRun2#Notes_regarding_the_ICHEP_datase
-git cms-merge-topic -u cms-met:fromCMSSW_8_0_20_postICHEPfilter
-
 
 # for PF MET, manual patch applied 
 # Additionally, apply these two patches: 
@@ -176,10 +193,6 @@ cp DavisRunIITauTau/ExternalFiles/CMSSW_8X_MODS/METReco/MET.cc_mod DataFormats/M
 cp DavisRunIITauTau/ExternalFiles/CMSSW_8X_MODS/PatCandidates/MET.cc_mod  DataFormats/PatCandidates/src/MET.cc
 
 
-# Add in Bad Muon Filter -- we just copied the filter .cc file into our code
-# as CustomFilters/plugins/BadGlobalMuonTagger.cc
-# since this pulls in nearly all of CMSSW
-# this is much less than running : git cms-merge-topic gpetruc:badMuonFilters_80X
 
 
 # electron ID ----> cut based ID/mva ID are already integrated into this release but cuts must be modified
@@ -207,5 +220,6 @@ cp DavisRunIITauTau/ExternalFiles/CMSSW_8X_MODS/PatCandidates/MET.cc_mod  DataFo
 # there is a bug in 
 git cms-addpkg PhysicsTools/PatUtils
 sed -i 's/from PhysicsTools.PatAlgos.tools.jetTools import switchJetCollection/from PhysicsTools.PatAlgos.tools.jetTools import switchJetCollection \nfrom RecoMET.METProducers.METSignificanceParams_cfi import METSignificanceParams_Data/1' ./PhysicsTools/PatUtils/python/tools/runMETCorrectionsAndUncertainties.py
+#mv DavisRunIITauTau/CustomFilters/plugins/BadGlobalMuonTagger.cc DavisRunIITauTau/CustomFilters/plugins/BadGlobalMuonTagger.cc_doNotUse
 
 scram b -j 20

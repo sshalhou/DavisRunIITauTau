@@ -269,6 +269,7 @@ process.badGlobalMuonTagger = cms.EDFilter("BadGlobalMuonTagger",
     vtx   = cms.InputTag("offlineSlimmedPrimaryVertices"),
     muonPtCut = cms.double(20),
     selectClones = cms.bool(False),
+    taggingMode   = cms.bool(True)
 	)
 
 process.cloneGlobalMuonTagger =  cms.EDFilter("BadGlobalMuonTagger",
@@ -276,6 +277,7 @@ process.cloneGlobalMuonTagger =  cms.EDFilter("BadGlobalMuonTagger",
     vtx   = cms.InputTag("offlineSlimmedPrimaryVertices"),
     muonPtCut = cms.double(20),
     selectClones = cms.bool(True),
+    taggingMode   = cms.bool(True)
 	)
 
 
@@ -367,7 +369,7 @@ for idmod in my_id_modules:
 
 wp80 = cms.InputTag("egmGsfElectronIDs:mvaEleID-Spring16-GeneralPurpose-V1-wp80")
 wp90 = cms.InputTag("egmGsfElectronIDs:mvaEleID-Spring16-GeneralPurpose-V1-wp90")
-wpVals = cms.InputTag("electronMVAValueMapProducer:ElectronMVAEstimatorRun2Spring16GeneralPurposeV1Values"),
+wpVals = cms.InputTag("electronMVAValueMapProducer:ElectronMVAEstimatorRun2Spring16GeneralPurposeV1Values")
 wpCats = cms.InputTag("electronMVAValueMapProducer:ElectronMVAEstimatorRun2Spring16GeneralPurposeV1Categories")
 
 
