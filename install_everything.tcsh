@@ -54,8 +54,13 @@ mv ../../DavisRunIITauTau .
 # when these change (for new data or mc) 
 # update the files listed in TupleConfigurations/python/ConfigNtupleWeights_cfi.py
 
-cp /afs/cern.ch/user/a/anehrkor/public/MC_Moriond17_PU25ns_V1.root DavisRunIITauTau/RunTimeDataInput/data/PileUpReWeightFiles/.
-cp /afs/cern.ch/user/a/anehrkor/public/Data_Pileup_2016_271036-284044_80bins.root DavisRunIITauTau/RunTimeDataInput/data/PileUpReWeightFiles/.
+# Moriond17 : SINCE AFS IS GOING AWAY we'll have to carry these in github from now on
+# for future updates be sure to adjust this to pull the correct files from whatever source they are hosted on
+#cp /afs/cern.ch/user/a/anehrkor/public/MC_Moriond17_PU25ns_V1.root DavisRunIITauTau/RunTimeDataInput/data/PileUpReWeightFiles/.
+#cp /afs/cern.ch/user/a/anehrkor/public/Data_Pileup_2016_271036-284044_80bins.root DavisRunIITauTau/RunTimeDataInput/data/PileUpReWeightFiles/.
+
+cp DavisRunIITauTau/ExternalFiles/PileUpReWeightFiles/MC_Moriond17_PU25ns_V1.root DavisRunIITauTau/RunTimeDataInput/data/PileUpReWeightFiles/. 
+cp DavisRunIITauTau/ExternalFiles/PileUpReWeightFiles/Data_Pileup_2016_271036-284044_80bins.root DavisRunIITauTau/RunTimeDataInput/data/PileUpReWeightFiles/. 
 
 
 # pilup reweight code -- this is done to turn of cout statements
@@ -93,12 +98,16 @@ mv Spring16_25nsV10_MC_PtResolution_AK4PFchs.txt DavisRunIITauTau/RunTimeDataInp
 # see secion on LocalSQLfile here 
 # https://twiki.cern.ch/twiki/bin/view/CMSPublic/WorkBookJetEnergyCorrections
 
-mkdir DavisRunIITauTau/RunTimeDataInput/data/JECSQLiteFiles
-cd DavisRunIITauTau/RunTimeDataInput/data/JECSQLiteFiles
-cp /afs/cern.ch/user/s/sshalhou/public/CMSSW_8X_MODS/SQLiteFiles/Summer16_23Sep2016AllV3_DATA.db .
-cp /afs/cern.ch/user/s/sshalhou/public/CMSSW_8X_MODS/SQLiteFiles/Summer16_23Sep2016V3_MC.db .
-cd -
 
+# Moriond17 : SINCE AFS IS GOING AWAY we'll have to carry these in github from now on
+# for future updates be sure to adjust this to pull the correct files from whatever source they are hosted on
+# mkdir DavisRunIITauTau/RunTimeDataInput/data/JECSQLiteFiles
+#cp /afs/cern.ch/user/s/sshalhou/public/CMSSW_8X_MODS/SQLiteFiles/Summer16_23Sep2016AllV3_DATA.db .
+#cp /afs/cern.ch/user/s/sshalhou/public/CMSSW_8X_MODS/SQLiteFiles/Summer16_23Sep2016V3_MC.db .
+
+mkdir DavisRunIITauTau/RunTimeDataInput/data/JECSQLiteFiles
+cp DavisRunIITauTau/ExternalFiles/JECSQLiteFiles/Summer16_23Sep2016AllV3_DATA.db DavisRunIITauTau/RunTimeDataInput/data/JECSQLiteFiles/.
+cp DavisRunIITauTau/ExternalFiles/JECSQLiteFiles/Summer16_23Sep2016V3_MC.db DavisRunIITauTau/RunTimeDataInput/data/JECSQLiteFiles/.
 
 # get the BTAG SF CSV File  and EFF root files 
 # make sure discirminator and working points are set in
@@ -113,15 +122,27 @@ cd -
 # while mono-H uses an event-based SF for MC (method 1c)
 # note : only promote-demote uses the BTAGEFF file
 
+
+# Moriond17 : SINCE AFS IS GOING AWAY we'll have to carry these in github from now on
+# for future updates be sure to adjust this to pull the correct files from whatever source they are hosted on
+#mkdir DavisRunIITauTau/RunTimeDataInput/data/BTAGSF
+#cp /afs/cern.ch/user/s/sshalhou/public/CMSSW_8X_MODS/CSVv2Moriond17_2017_1_26_BtoH.csv .
+#mv CSVv2Moriond17_2017_1_26_BtoH.csv DavisRunIITauTau/RunTimeDataInput/data/BTAGSF/.
+
 mkdir DavisRunIITauTau/RunTimeDataInput/data/BTAGSF
-cp /afs/cern.ch/user/s/sshalhou/public/CMSSW_8X_MODS/CSVv2Moriond17_2017_1_26_BtoH.csv .
-mv CSVv2Moriond17_2017_1_26_BtoH.csv DavisRunIITauTau/RunTimeDataInput/data/BTAGSF/.
+cp DavisRunIITauTau/ExternalFiles/BTAGSF/CSVv2Moriond17_2017_1_26_BtoH.csv DavisRunIITauTau/RunTimeDataInput/data/BTAGSF/.
+
+
 
 # so far in 80X only a single WP eff. is available for sf > 1 case 
 # if the file is new, need to change the name used in FlatTupleConfig_cfi.py
+# Moriond17 : SINCE AFS IS GOING AWAY we'll have to carry these in github from now on
+# for future updates be sure to adjust this to pull the correct files from whatever source they are hosted on
 
 mkdir DavisRunIITauTau/RunTimeDataInput/data/BTAGEFF
-cp /afs/cern.ch/work/a/adewit/public/MSSM2016/tagging_efficiencies_ichep2016.root DavisRunIITauTau/RunTimeDataInput/data/BTAGEFF/.
+#cp /afs/cern.ch/work/a/adewit/public/MSSM2016/tagging_efficiencies_ichep2016.root DavisRunIITauTau/RunTimeDataInput/data/BTAGEFF/.
+cp DavisRunIITauTau/ExternalFiles/BTAGEFF/tagging_efficiencies_ichep2016.root DavisRunIITauTau/RunTimeDataInput/data/BTAGEFF/.
+
 
 # Add in the new MET filter code needed for 8020X and beyond in 2016 
 # see: https://twiki.cern.ch/twiki/bin/viewauth/CMS/MissingETOptionalFiltersRun2#Notes_regarding_the_ICHEP_datase
@@ -135,9 +156,14 @@ git cms-merge-topic -u cms-met:fromCMSSW_8_0_20_postICHEPfilter
 # instead I have modified the files directly (these are fine in 820X)
 
 git cms-addpkg DataFormats/PatCandidates
-cp /afs/cern.ch/user/s/sshalhou/public/CMSSW_8X_MODS/METReco/MET.h_mod DataFormats/METReco/interface/MET.h
-cp /afs/cern.ch/user/s/sshalhou/public/CMSSW_8X_MODS/METReco/MET.cc_mod DataFormats/METReco/src/MET.cc
-cp /afs/cern.ch/user/s/sshalhou/public/CMSSW_8X_MODS/PatCandidates/MET.cc_mod DataFormats/PatCandidates/src/MET.cc
+# cp /afs/cern.ch/user/s/sshalhou/public/CMSSW_8X_MODS/METReco/MET.h_mod DataFormats/METReco/interface/MET.h
+# cp /afs/cern.ch/user/s/sshalhou/public/CMSSW_8X_MODS/METReco/MET.cc_mod DataFormats/METReco/src/MET.cc
+# cp /afs/cern.ch/user/s/sshalhou/public/CMSSW_8X_MODS/PatCandidates/MET.cc_mod DataFormats/PatCandidates/src/MET.cc
+# Moriond17 : SINCE AFS IS GOING AWAY we'll have to carry these in github from now on
+# for future updates be sure to adjust this to pull the correct files from whatever source they are hosted on
+cp DavisRunIITauTau/ExternalFiles/CMSSW_8X_MODS/METReco/MET.h_mod DataFormats/METReco/interface/MET.h
+cp DavisRunIITauTau/ExternalFiles/CMSSW_8X_MODS/METReco/MET.cc_mod DataFormats/METReco/src/MET.cc 
+cp DavisRunIITauTau/ExternalFiles/CMSSW_8X_MODS/PatCandidates/MET.cc_mod  DataFormats/PatCandidates/src/MET.cc
 
 
 # Add in Bad Muon Filter -- we just copied the filter .cc file into our code
