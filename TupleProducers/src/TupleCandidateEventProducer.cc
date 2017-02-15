@@ -96,6 +96,10 @@ private:
   edm::InputTag muonVetoSrc_;
   edm::EDGetTokenT<edm::View< pat::Muon > > muonVetoToken_;
 
+  edm::InputTag tauVetoSrc_;
+  edm::EDGetTokenT<edm::View< pat::Tau > > tauVetoToken_;
+
+
   double pairDeltaRmin_;
 
   string NAME_;
@@ -142,6 +146,7 @@ pfMETSrc_(iConfig.getParameter<edm::InputTag>("pfMETSrc" )),
 mvaMETSrc_(iConfig.getParameter<edm::InputTag>("mvaMETSrc" )),
 electronVetoSrc_(iConfig.getParameter<edm::InputTag>("electronVetoSrc" )),
 muonVetoSrc_(iConfig.getParameter<edm::InputTag>("muonVetoSrc" )),
+tauVetoSrc_(iConfig.getParameter<edm::InputTag>("tauVetoSrc" )),
 pairDeltaRmin_(iConfig.getParameter<double>("pairDeltaRmin" )),
 NAME_(iConfig.getParameter<string>("NAME" )),
 doSVMass_(iConfig.getParameter<bool>("doSVMass" )),
@@ -167,6 +172,7 @@ rankParisByPt_(iConfig.getParameter<bool>("rankParisByPt" ))
 
   electronVetoToken_ = consumes< edm::View<pat::Electron> >(electronVetoSrc_);
   muonVetoToken_ = consumes< edm::View<pat::Muon> >(muonVetoSrc_);
+  tauVetoToken_ = consumes< edm::View<pat::Tau> >(tauVetoSrc_);
 
 
   EffElectronToken_ = consumes< edm::View<pat::Electron> >(EffElectronSrc_);
@@ -231,6 +237,14 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
   // get VETO Muon collection
   edm::Handle<edm::View<pat::Muon> > veto_muons;
   iEvent.getByToken(muonVetoToken_,veto_muons);
+
+  // get VETO Tau collection
+  edm::Handle<edm::View<pat::Tau> > veto_taus;
+  iEvent.getByToken(tauVetoToken_,veto_taus);
+
+
+
+
 
   // get EFF Electron collection
   edm::Handle<edm::View<pat::Electron> > eff_electrons;
@@ -527,6 +541,14 @@ TupleCandidateEventProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
           {          
               CurrentCandidateEvent.set_vetoMuon(veto_muons->at(vm));
           }
+
+          /////// VETO TAUS /////////////////////////////////////////////
+
+          for (std::size_t vt=0; vt<veto_taus->size(); ++vt)
+          {          
+              CurrentCandidateEvent.set_vetoTau(veto_taus->at(vt));
+          }
+
           ///////////////////
 
           // std::cout<<" ---------->\n";

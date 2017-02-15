@@ -354,6 +354,14 @@ void NtupleEvent::fill(TupleCandidateEvent TCE)
 
 		}
 
+		for (std::size_t i = 0; i < TCE.vetoTau().size(); ++i)
+		{
+			NtupleLepton tempLep; tempLep.fill(TCE.vetoTau()[i]);
+			m_vetoTau.push_back(tempLep);
+
+		}
+
+
 	}
 
 }
@@ -445,6 +453,8 @@ std::vector < std::vector <LorentzVector> >  NtupleEvent::EffLepton_L1IsoTauDR05
 
 std::vector<NtupleLepton> NtupleEvent::vetoElectron() const {return m_vetoElectron;}
 std::vector<NtupleLepton> NtupleEvent::vetoMuon() const {return  m_vetoMuon;}
+std::vector<NtupleLepton> NtupleEvent::vetoTau() const {return  m_vetoTau;}
+
 std::vector<double> NtupleEvent::SVMass() const {return  m_SVMass;}
 std::vector<double> NtupleEvent::SVTransverseMass() const {return m_SVTransverseMass;}
 std::vector<double> NtupleEvent::VISMass() const {return  m_VISMass;}

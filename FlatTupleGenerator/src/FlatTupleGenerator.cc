@@ -148,6 +148,13 @@ svMassAtFlatTupleConfig_(iConfig.getParameter<edm::ParameterSet>("SVMassConfig")
     effLep_GoodForHLTPath.push_back(std::make_pair(q, ATEMP) );    
   }
 
+  /* create pair needed for the veto lepton tauID info */
+
+  for(int q = 0; q < THE_MAX; ++q)
+  {
+    std::vector<float> ATEMP;
+    veto_tauIDs.push_back(std::make_pair(q, ATEMP) );    
+  }  
 
   /* setup the btag sf helper tool */
 
@@ -1605,9 +1612,7 @@ void FlatTupleGenerator::handleEffLeptonInfo(const edm::Event& iEvent, const edm
 
       if(currentPair.EffLepton().at(l).leptonType() == TupleLeptonTypes::aTau)
       {
-
         effLep_tauIDs.at(x).second.push_back( currentPair.EffLepton().at(l).tauID(tauIDsToKeep[x]) );  
-
       }
       else
       {
@@ -1627,26 +1632,26 @@ void FlatTupleGenerator::handleEffLeptonInfo(const edm::Event& iEvent, const edm
 
     /* find and store the L1isoTau match (of max pt) for the EffLepton */
 
-    double maxIsoTauPt = -999.;
+    //double maxIsoTauPt = -999.;
     double maxPt_pt = -999.;
     double maxPt_eta = -999.;
     double maxPt_phi = -999.;
 
 
+    // the following block causes a crash when effLepton is on
+    // for(std::size_t ii = 0; ii<currentPair.EffLepton_L1IsoTauDR05Matches().at(i).size(); ++ii)
+    // {
 
-    for(std::size_t ii = 0; ii<currentPair.EffLepton_L1IsoTauDR05Matches().at(i).size(); ++ii)
-    {
+    //   if( currentPair.EffLepton_L1IsoTauDR05Matches()[i][ii].pt() > maxIsoTauPt )
+    //   {
+    //       maxIsoTauPt = currentPair.EffLepton_L1IsoTauDR05Matches()[i][ii].pt();
+    //       maxPt_pt = currentPair.EffLepton_L1IsoTauDR05Matches()[i][ii].pt();
+    //       maxPt_eta = currentPair.EffLepton_L1IsoTauDR05Matches()[i][ii].eta();
+    //       maxPt_phi = currentPair.EffLepton_L1IsoTauDR05Matches()[i][ii].phi();
 
-      if( currentPair.EffLepton_L1IsoTauDR05Matches()[i][ii].pt() > maxIsoTauPt )
-      {
-          maxIsoTauPt = currentPair.EffLepton_L1IsoTauDR05Matches()[i][ii].pt();
-          maxPt_pt = currentPair.EffLepton_L1IsoTauDR05Matches()[i][ii].pt();
-          maxPt_eta = currentPair.EffLepton_L1IsoTauDR05Matches()[i][ii].eta();
-          maxPt_phi = currentPair.EffLepton_L1IsoTauDR05Matches()[i][ii].phi();
+    //   }
 
-      }
-
-    }
+    // }
 
     effLep_MaxL1IsoTauMatch_pt.push_back(maxPt_pt);
     effLep_MaxL1IsoTauMatch_eta.push_back(maxPt_eta);
@@ -2867,6 +2872,20 @@ NtupleEvent currentPair)
       veto_LeptonPassesDiMuonVetoCuts.push_back(0);
 
 
+      // fill the tauIDs for vetoLeptons (these need to be filled for electron and muon as -999)
+
+      veto_ZimpactTau.push_back(-999.);
+      veto_numStrips.push_back(-999.);
+      veto_dzTauVertex.push_back(-999.);
+      veto_numHadrons.push_back(-999.);
+      veto_decayMode.push_back(-999);
+
+
+      for(std::size_t x = 0; x<tauIDsToKeep.size();++x ) 
+      {
+        veto_tauIDs.at(x).second.push_back( -999. );                   
+      }
+
   }
 
 
@@ -2937,7 +2956,133 @@ NtupleEvent currentPair)
       veto_LeptonPassesDiMuonVetoCuts.push_back(apply_diMuonVeto(currentPair.vetoMuon()[v]));
 
 
+      ////////////////////////////////
+      // fill the tauIDs for vetoLeptons (these need to be filled for electron and muon as -999)
+
+      veto_ZimpactTau.push_back(-999.);
+      veto_numStrips.push_back(-999.);
+      veto_dzTauVertex.push_back(-999.);
+      veto_numHadrons.push_back(-999.);
+      veto_decayMode.push_back(-999);
+
+      for(std::size_t x = 0; x<tauIDsToKeep.size();++x ) 
+      {
+        veto_tauIDs.at(x).second.push_back( -999. );                   
+      }
+
+
   }
+
+
+
+  for(std::size_t v = 0; v<currentPair.vetoTau().size(); ++v)
+  {
+
+    /* for taus we will just store them and not apply a veto here 
+    cuts can be applied at sync level */
+
+    bool DoesNotOverlapALeg = 1;
+
+    /* check if overlaps any of the Higgs legs, if it does set the flag to 0 */
+
+    if(currentPair.leg1().leptonType()==TupleLeptonTypes::aTau &&\
+      deltaR(currentPair.leg1().p4(),currentPair.vetoTau()[v].p4())<=legThirdLeptonMinDR)
+      {
+        DoesNotOverlapALeg = 0;
+      }
+
+    if(currentPair.leg2().leptonType()==TupleLeptonTypes::aTau &&\
+       deltaR(currentPair.leg2().p4(),currentPair.vetoTau()[v].p4())<=legThirdLeptonMinDR)
+      {
+        DoesNotOverlapALeg = 0;
+      }
+
+    if(DoesNotOverlapALeg==1)
+    {
+
+      veto_leptonType.push_back(currentPair.vetoTau()[v].leptonType());
+      veto_pt.push_back(currentPair.vetoTau()[v].p4().pt());
+      veto_eta.push_back(currentPair.vetoTau()[v].p4().eta());
+      veto_phi.push_back(currentPair.vetoTau()[v].p4().phi());
+      veto_M.push_back(currentPair.vetoTau()[v].p4().M());
+      veto_dxy.push_back(currentPair.vetoTau()[v].dxy());
+      veto_dz.push_back(currentPair.vetoTau()[v].dz());
+      veto_passesLooseMuonId.push_back(currentPair.vetoTau()[v].passesLooseMuonId());
+      veto_passesMediumMuonId_ICHEP16.push_back(currentPair.vetoTau()[v].passesMediumMuonId_ICHEP16());
+      veto_passesMediumMuonId.push_back(currentPair.vetoTau()[v].passesMediumMuonId());
+      veto_passesTightMuonId.push_back(currentPair.vetoTau()[v].passesTightMuonId());
+      veto_rawElectronMVA.push_back(currentPair.vetoTau()[v].raw_electronMVA());
+      veto_categoryElectronMVA.push_back(currentPair.vetoTau()[v].category_electronMVA());
+      veto_passElectronMVA80.push_back(currentPair.vetoTau()[v].passFail_electronMVA80());
+      veto_passElectronMVA90.push_back(currentPair.vetoTau()[v].passFail_electronMVA90());
+      veto_passElectronCutBased.push_back(currentPair.vetoTau()[v].passFail_electronCutBasedID());
+     
+      float isTrackerGlobalPFMuon = (currentPair.vetoTau()[v].isTrackerMuon() && \
+                                     currentPair.vetoTau()[v].isGlobalMuon() && \
+                                     currentPair.vetoTau()[v].isPFMuon());
+      
+
+      veto_isTrackerGlobalPFMuon.push_back(isTrackerGlobalPFMuon);         
+      veto_charge.push_back(currentPair.vetoTau()[v].charge());
+      veto_numberOfMissingInnerHits.push_back(currentPair.vetoTau()[v].numberOfMissingInnerHits());
+      veto_numberOfMissingOuterHits.push_back(currentPair.vetoTau()[v].numberOfMissingOuterHits());      
+      veto_passConversionVeto.push_back(currentPair.vetoTau()[v].passConversionVeto());
+
+      /* zeros for the ele cuts */
+      veto_LeptonPassesThirdElectronVetoCuts.push_back(0);
+      veto_LeptonPassesDiElectronVetoCuts.push_back(0);
+
+      /* zeros for the muon cust */
+      veto_LeptonPassesThirdMuonVetoCuts.push_back(0);   
+      veto_LeptonPassesDiMuonVetoCuts.push_back(0);
+
+
+
+      ////////////////////////////////
+      // fill the tauIDs for veto Taus
+
+
+      veto_ZimpactTau.push_back(currentPair.vetoTau().at(v).ZimpactTau());
+      veto_numStrips.push_back(currentPair.vetoTau().at(v).numStrips());
+      veto_dzTauVertex.push_back(currentPair.vetoTau().at(v).dzTauVertex());
+      veto_numHadrons.push_back(currentPair.vetoTau().at(v).numHadrons());
+      veto_decayMode.push_back(currentPair.vetoTau().at(v).decayMode());
+
+      for(std::size_t x = 0; x<tauIDsToKeep.size();++x ) 
+      {      
+        veto_tauIDs.at(x).second.push_back( currentPair.vetoTau().at(v).tauID(tauIDsToKeep[x]) );            
+      }
+
+      //// isolation 
+      float tau_relIso_temp = -999.;
+
+      if(currentPair.CandidateEventType()==TupleCandidateEventTypes::EleTau)
+      {
+            tau_relIso_temp = currentPair.vetoTau()[v].tauID(tauIsolationForRelIsoBranch_forEleTau);
+      }
+      else if(currentPair.CandidateEventType()==TupleCandidateEventTypes::MuonTau)
+      {
+            tau_relIso_temp = currentPair.vetoTau()[v].tauID(tauIsolationForRelIsoBranch_forMuTau);
+      }
+      else if(currentPair.CandidateEventType()==TupleCandidateEventTypes::TauTau)
+      {
+            tau_relIso_temp = currentPair.vetoTau()[v].tauID(tauIsolationForRelIsoBranch_forTauTau);
+      }
+      else tau_relIso_temp = currentPair.vetoTau()[v].tauID(tauIsolationForRelIsoBranch);
+
+      veto_RelIso.push_back(tau_relIso_temp);
+
+
+
+
+      ///////////////
+
+
+
+
+    } // tau does not overlap leg 1 or 2        
+  } // loop on veto taus
+
 
 
   /* now apply the event level vetos for di-Muon and di-Electrons */
@@ -3583,6 +3728,7 @@ void FlatTupleGenerator::handlePairIndepInfo(const edm::Event& iEvent, const edm
 
   for(int q = 0; q < THE_MAX; ++q)
   {    
+
     effLep_tauIDs.at(q).second.clear(); 
     effLep_GoodForHLTPath.at(q).second.clear(); 
   }
@@ -4109,6 +4255,20 @@ void FlatTupleGenerator::handlePairIndepInfo(const edm::Event& iEvent, const edm
   veto_numberOfMissingInnerHits.clear();
   veto_numberOfMissingOuterHits.clear();
   veto_passConversionVeto.clear();
+  
+  veto_ZimpactTau.clear(); 
+  veto_numStrips.clear(); 
+  veto_dzTauVertex.clear(); 
+  veto_numHadrons.clear(); 
+  veto_decayMode.clear(); 
+
+  for(int q = 0; q < THE_MAX; ++q)
+  {    
+    veto_tauIDs.at(q).second.clear(); 
+  }
+
+
+
   veto_LeptonPassesThirdElectronVetoCuts.clear();
   veto_LeptonPassesThirdMuonVetoCuts.clear();
   veto_LeptonPassesDiElectronVetoCuts.clear();
@@ -5169,6 +5329,17 @@ void FlatTupleGenerator::beginJob()
     FlatTuple->Branch("veto_numberOfMissingOuterHits", &veto_numberOfMissingOuterHits);
     FlatTuple->Branch("veto_passConversionVeto", &veto_passConversionVeto);
 
+    FlatTuple->Branch("veto_ZimpactTau", &veto_ZimpactTau);
+    FlatTuple->Branch("veto_numStrips", &veto_numStrips);
+    FlatTuple->Branch("veto_dzTauVertex", &veto_dzTauVertex);
+    FlatTuple->Branch("veto_numHadrons", &veto_numHadrons);
+    FlatTuple->Branch("veto_decayMode", &veto_decayMode);
+
+    for(std::size_t x = 0; x<tauIDsToKeep.size();++x ) 
+    {
+      FlatTuple->Branch(("veto_"+tauIDsToKeep.at(x)).c_str(), &veto_tauIDs.at(x).second);
+    }
+
     FlatTuple->Branch("veto_LeptonPassesThirdElectronVetoCuts", &veto_LeptonPassesThirdElectronVetoCuts);
     FlatTuple->Branch("veto_LeptonPassesThirdMuonVetoCuts", &veto_LeptonPassesThirdMuonVetoCuts);
     FlatTuple->Branch("veto_LeptonPassesDiElectronVetoCuts", &veto_LeptonPassesDiElectronVetoCuts);
@@ -5270,6 +5441,7 @@ void FlatTupleGenerator::beginJob()
 
     for(std::size_t x = 0; x<tauIDsToKeep.size();++x ) 
     {
+
       FlatTuple->Branch(("effLep_"+tauIDsToKeep.at(x)).c_str(), &effLep_tauIDs.at(x).second);
     }
 

@@ -782,6 +782,13 @@ public:
 	std::vector<float> veto_numberOfMissingInnerHits;
 	std::vector<float> veto_numberOfMissingOuterHits;
 	std::vector<float> veto_passConversionVeto;
+					   	
+	std::vector<float> veto_ZimpactTau;
+	std::vector<float> veto_numStrips;
+	std::vector<float> veto_dzTauVertex;
+	std::vector<float> veto_numHadrons;
+	std::vector<int> veto_decayMode;
+	std::vector< std::pair<int, std::vector<float> > > veto_tauIDs;
 
 	/* NOTE: these flags are 1 if the *lepton* passes the cuts associated with a veto
 	they do not indicate whether or not the event passes the veto itself */

@@ -189,6 +189,13 @@ void TupleCandidateEvent::set_vetoMuon(pat::Muon dummy_)
 		m_vetoMuon.push_back(dummy_);
 	}
 
+
+void TupleCandidateEvent::set_vetoTau(pat::Tau dummy_) 
+  { 
+    m_vetoTau.push_back(dummy_);
+  }
+
+
 void TupleCandidateEvent::set_vetoElectron(pat::Electron dummy_) 
 	{ 
 		m_vetoElectron.push_back(dummy_);
@@ -224,6 +231,7 @@ std::vector<double> TupleCandidateEvent::pfMET_cov10() const { return m_pfMET_co
 std::vector<double> TupleCandidateEvent::pfMET_cov11() const { return m_pfMET_cov11; }
 std::vector<pat::Electron> TupleCandidateEvent::vetoElectron() const { return m_vetoElectron; }
 std::vector<pat::Muon> TupleCandidateEvent::vetoMuon() const { return m_vetoMuon; }
+std::vector<pat::Tau> TupleCandidateEvent::vetoTau() const { return m_vetoTau; }
 std::vector<double> TupleCandidateEvent::SVMass() const {return m_SVMass;} 
 std::vector<double> TupleCandidateEvent::SVTransverseMass() const {return m_SVTransverseMass;} 
 

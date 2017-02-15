@@ -14,7 +14,7 @@
 # will write both FlatTuple and Ntuple to disk
 ######################################
 
-DEBUG_NTUPLE = True
+DEBUG_NTUPLE = False
 
 ######################################
 # if DEBUG_NTUPLE_INPUT is set to True
@@ -689,12 +689,13 @@ process.TrimmedFilteredCustomTausBoostedEsDown = cms.EDProducer('TrimmedPatTauPr
 
 
 ###################################
-# apply e/mu veto filters onto 
+# apply e/mu/tau veto filters onto 
 # custom slimmed lepton collections
 ###################################
 
 from DavisRunIITauTau.TupleConfigurations.ConfigVetoElectrons_cfi import electronVetoFilter
 from DavisRunIITauTau.TupleConfigurations.ConfigVetoMuons_cfi import muonVetoFilter
+from DavisRunIITauTau.TupleConfigurations.ConfigVetoTaus_cfi import tauVetoFilter
 
 
 process.filteredVetoElectrons = cms.EDFilter("PATElectronRefSelector",
@@ -715,6 +716,44 @@ process.filteredVetoElectronsEsDown = cms.EDFilter("PATElectronRefSelector",
 process.filteredVetoMuons = cms.EDFilter("PATMuonRefSelector",
 	src = cms.InputTag('customSlimmedMuons:customSlimmedMuons:DavisNtuple'),
 	cut = muonVetoFilter
+	)
+
+
+
+process.filteredVetoTausEsNominal = cms.EDFilter("PATTauRefSelector",
+	src = cms.InputTag('customSlimmedTausTauEsNominal::DavisNtuple'),
+	cut = tauVetoFilter
+	)
+
+
+process.filteredVetoTausEsUp = cms.EDFilter("PATTauRefSelector",
+	src = cms.InputTag('customSlimmedTausTauEsUp::DavisNtuple'),
+	cut = tauVetoFilter
+	)
+
+process.filteredVetoTausEsDown = cms.EDFilter("PATTauRefSelector",
+	src = cms.InputTag('customSlimmedTausTauEsDown::DavisNtuple'),
+	cut = tauVetoFilter
+	)
+
+
+
+
+
+process.filteredVetoTausBoostedEsNominal = cms.EDFilter("PATTauRefSelector",
+	src = cms.InputTag('customSlimmedTausBoostedTauEsNominal:BOOSTED:DavisNtuple'),
+	cut = tauVetoFilter
+	)
+
+
+process.filteredVetoTausBoostedEsUp = cms.EDFilter("PATTauRefSelector",
+	src = cms.InputTag('customSlimmedTausBoostedTauEsUp:BOOSTED:DavisNtuple'),
+	cut = tauVetoFilter
+	)
+
+process.filteredVetoTausBoostedEsDown = cms.EDFilter("PATTauRefSelector",
+	src = cms.InputTag('customSlimmedTausBoostedTauEsDown:BOOSTED:DavisNtuple'),
+	cut = tauVetoFilter
 	)
 
 
@@ -1002,13 +1041,13 @@ else :
 	print "******************************************************"
 
 
-
 process.TupleCandidateEvents = cms.EDProducer('TupleCandidateEventProducer' ,
 	puppiMETSrc = cms.InputTag("slimmedMETsPuppi"),
 	pfMETSrc = cms.InputTag("slimmedMETs","",DAVISprocessName), # this has the updated JECs
 	mvaMETSrc = cms.InputTag("MVAMET:MVAMET:DavisNtuple"),
 	electronVetoSrc =cms.InputTag("filteredVetoElectrons","","DavisNtuple"),
 	muonVetoSrc = cms.InputTag("filteredVetoMuons","","DavisNtuple"),				
+	tauVetoSrc = cms.InputTag("filteredVetoTausEsNominal","","DavisNtuple"),				
 	pairDeltaRmin = cms.double(0.001),
 	NAME=cms.string("TupleCandidateEvents"),
     doSVMass = cms.bool(COMPUTE_SVMASS_AT_NTUPLE),
@@ -1032,6 +1071,7 @@ process.TupleCandidateEventsTauEsUp = cms.EDProducer('TupleCandidateEventProduce
 	mvaMETSrc = cms.InputTag("MVAMETtauEsUp:MVAMET:DavisNtuple"),
 	electronVetoSrc =cms.InputTag("filteredVetoElectrons","","DavisNtuple"),
 	muonVetoSrc = cms.InputTag("filteredVetoMuons","","DavisNtuple"),				
+	tauVetoSrc = cms.InputTag("filteredVetoTausEsUp","","DavisNtuple"),				
 	pairDeltaRmin = cms.double(0.001), 
 	NAME=cms.string("TupleCandidateEventsTauEsUp"),
     doSVMass = cms.bool(COMPUTE_SVMASS_AT_NTUPLE),
@@ -1054,6 +1094,7 @@ process.TupleCandidateEventsTauEsDown = cms.EDProducer('TupleCandidateEventProdu
 	mvaMETSrc = cms.InputTag("MVAMETtauEsDown:MVAMET:DavisNtuple"),
 	electronVetoSrc =cms.InputTag("filteredVetoElectrons","","DavisNtuple"),
 	muonVetoSrc = cms.InputTag("filteredVetoMuons","","DavisNtuple"),				
+	tauVetoSrc = cms.InputTag("filteredVetoTausEsDown","","DavisNtuple"),				
 	pairDeltaRmin = cms.double(0.001), 
 	NAME=cms.string("TupleCandidateEventsTauEsDown"),
     doSVMass = cms.bool(COMPUTE_SVMASS_AT_NTUPLE),
@@ -1076,6 +1117,7 @@ process.TupleCandidateEventsBoosted = cms.EDProducer('TupleCandidateEventProduce
 	mvaMETSrc = cms.InputTag("MVAMETtauBoostedEsNominal:MVAMET:DavisNtuple"),
 	electronVetoSrc =cms.InputTag("filteredVetoElectrons","","DavisNtuple"),
 	muonVetoSrc = cms.InputTag("filteredVetoMuons","","DavisNtuple"),				
+	tauVetoSrc = cms.InputTag("filteredVetoTausBoostedEsNominal","","DavisNtuple"),				
 	pairDeltaRmin = cms.double(0.001),
 	NAME=cms.string("TupleCandidateEventsBoosted"),
     doSVMass = cms.bool(COMPUTE_SVMASS_AT_NTUPLE),
@@ -1099,6 +1141,7 @@ process.TupleCandidateEventsTauEsUpBoosted = cms.EDProducer('TupleCandidateEvent
 	mvaMETSrc = cms.InputTag("MVAMETtauBoostedEsUp:MVAMET:DavisNtuple"),
 	electronVetoSrc =cms.InputTag("filteredVetoElectrons","","DavisNtuple"),
 	muonVetoSrc = cms.InputTag("filteredVetoMuons","","DavisNtuple"),				
+	tauVetoSrc = cms.InputTag("filteredVetoTausBoostedEsUp","","DavisNtuple"),				
 	pairDeltaRmin = cms.double(0.001), 
 	NAME=cms.string("TupleCandidateEventsTauEsUpBoosted"),
     doSVMass = cms.bool(COMPUTE_SVMASS_AT_NTUPLE),
@@ -1121,6 +1164,7 @@ process.TupleCandidateEventsTauEsDownBoosted = cms.EDProducer('TupleCandidateEve
 	mvaMETSrc = cms.InputTag("MVAMETtauBoostedEsDown:MVAMET:DavisNtuple"),
 	electronVetoSrc =cms.InputTag("filteredVetoElectrons","","DavisNtuple"),
 	muonVetoSrc = cms.InputTag("filteredVetoMuons","","DavisNtuple"),				
+	tauVetoSrc = cms.InputTag("filteredVetoTausBoostedEsDown","","DavisNtuple"),				
 	pairDeltaRmin = cms.double(0.001), 
 	NAME=cms.string("TupleCandidateEventsTauEsDownBoosted"),
     doSVMass = cms.bool(COMPUTE_SVMASS_AT_NTUPLE),
@@ -1143,6 +1187,7 @@ process.TupleCandidateEventsElectronEsUp = cms.EDProducer('TupleCandidateEventPr
 	mvaMETSrc = cms.InputTag("MVAMETelectronEsUp:MVAMET:DavisNtuple"),
 	electronVetoSrc =cms.InputTag("filteredVetoElectronsEsUp","","DavisNtuple"),
 	muonVetoSrc = cms.InputTag("filteredVetoMuons","","DavisNtuple"),				
+	tauVetoSrc = cms.InputTag("filteredVetoTausBoostedEsNominal","","DavisNtuple"),				
 	pairDeltaRmin = cms.double(0.001), 
 	NAME=cms.string("TupleCandidateEventsElectronEsUp"),
     doSVMass = cms.bool(COMPUTE_SVMASS_AT_NTUPLE),
@@ -1167,6 +1212,7 @@ process.TupleCandidateEventsElectronEsDown = cms.EDProducer('TupleCandidateEvent
 	mvaMETSrc = cms.InputTag("MVAMETelectronEsDown:MVAMET:DavisNtuple"),
 	electronVetoSrc =cms.InputTag("filteredVetoElectronsEsDown","","DavisNtuple"),
 	muonVetoSrc = cms.InputTag("filteredVetoMuons","","DavisNtuple"),				
+	tauVetoSrc = cms.InputTag("filteredVetoTausBoostedEsNominal","","DavisNtuple"),				
 	pairDeltaRmin = cms.double(0.001), 
 	NAME=cms.string("TupleCandidateEventsElectronEsDown"),
     doSVMass = cms.bool(COMPUTE_SVMASS_AT_NTUPLE),
@@ -1638,11 +1684,15 @@ else :
 
 		process.p *= process.filteredVetoMuons
 
+		process.p *= process.filteredVetoTausEsNominal 
+		process.p *= process.filteredVetoTausEsUp 
+		process.p *= process.filteredVetoTausEsDown 
+		process.p *= process.filteredVetoTausBoostedEsNominal 
+		process.p *= process.filteredVetoTausBoostedEsUp 
+		process.p *= process.filteredVetoTausBoostedEsDown 
 
 		if BUILD_EFFICIENCY_TREE is False:
 			process.p *= process.requireCandidateHiggsPair
-
-
 
 		if BUILD_TAU_ES_VARIANTS is True :
 			process.MVAMETtauEsUp
@@ -1651,7 +1701,6 @@ else :
 		if BUILD_ELECTRON_ES_VARIANTS is True :
 			process.MVAMETelectronEsUp
 			process.MVAMETelectronEsDown
-
 
 
 		if (BUILD_ELECTRON_TAUBOOSTED or BUILD_MUON_TAUBOOSTED or BUILD_TAUBOOSTED_TAUBOOSTED) : 

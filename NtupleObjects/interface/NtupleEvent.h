@@ -142,6 +142,7 @@ public:
 
 	std::vector<NtupleLepton> vetoElectron() const; 
  	std::vector<NtupleLepton> vetoMuon() const;
+  std::vector<NtupleLepton> vetoTau() const;
   std::vector<double> SVMass() const;
   std::vector<double> SVTransverseMass() const;
   std::vector<double> VISMass() const;
@@ -188,6 +189,7 @@ private:
 
 	std::vector<NtupleLepton> m_vetoElectron; 
  	std::vector<NtupleLepton> m_vetoMuon;
+  std::vector<NtupleLepton> m_vetoTau;
   std::vector<double> m_SVMass;
   std::vector<double> m_SVTransverseMass;
   std::vector<double> m_VISMass;

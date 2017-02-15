@@ -65,6 +65,7 @@ public:
   void set_pfMET_covMatrix(double,double,double,double);  // 00, 01, 10, 11 is the order  
   void set_vetoElectron(pat::Electron);
   void set_vetoMuon(pat::Muon);
+  void set_vetoTau(pat::Tau);
   void set_SVMass(double);
   void set_SVTransverseMass(double);
 
@@ -83,6 +84,7 @@ public:
   std::vector<double>  pfMET_cov11() const;  
   std::vector<pat::Electron> vetoElectron() const;
   std::vector<pat::Muon> vetoMuon() const;
+  std::vector<pat::Tau> vetoTau() const;
   std::vector<double> SVMass() const;
   std::vector<double> SVTransverseMass() const;
 
@@ -102,6 +104,7 @@ private:
   std::vector<double>  m_pfMET_cov11; // needed due to missing sig matrix in phys14/Spring15 samples
   std::vector<pat::Electron> m_vetoElectron;
   std::vector<pat::Muon> m_vetoMuon;
+  std::vector<pat::Tau> m_vetoTau;
   std::vector<double> m_SVMass;
   std::vector<double> m_SVTransverseMass;
 
