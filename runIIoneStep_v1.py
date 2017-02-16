@@ -14,7 +14,7 @@
 # will write both FlatTuple and Ntuple to disk
 ######################################
 
-DEBUG_NTUPLE = False
+DEBUG_NTUPLE = True
 
 ######################################
 # if DEBUG_NTUPLE_INPUT is set to True
@@ -359,10 +359,9 @@ from PhysicsTools.SelectorUtils.tools.vid_id_tools import *
 dataFormat = DataFormat.MiniAOD
 switchOnVIDElectronIdProducer(process, dataFormat)
 
-
 my_id_modules = ['RecoEgamma.ElectronIdentification.Identification.mvaElectronID_Spring16_GeneralPurpose_V1_cff',
-                 'RecoEgamma.ElectronIdentification.Identification.cutBasedElectronID_Spring15_25ns_V1_cff']
-
+                 'RecoEgamma.ElectronIdentification.Identification.cutBasedElectronID_Summer16_80X_V1_cff',
+                 'RecoEgamma.ElectronIdentification.Identification.cutBasedElectronID_Spring15_25ns_V1_cff'] # needed since MVA MET is using it
 
 for idmod in my_id_modules:
     setupAllVIDIdsInModule(process,idmod,setupVIDElectronSelection)
@@ -371,26 +370,8 @@ wp80 = cms.InputTag("egmGsfElectronIDs:mvaEleID-Spring16-GeneralPurpose-V1-wp80"
 wp90 = cms.InputTag("egmGsfElectronIDs:mvaEleID-Spring16-GeneralPurpose-V1-wp90")
 wpVals = cms.InputTag("electronMVAValueMapProducer:ElectronMVAEstimatorRun2Spring16GeneralPurposeV1Values")
 wpCats = cms.InputTag("electronMVAValueMapProducer:ElectronMVAEstimatorRun2Spring16GeneralPurposeV1Categories")
+cutVeto = cms.InputTag("egmGsfElectronIDs:cutBasedElectronID-Summer16-80X-V1-veto")
 
-
-cutVeto = cms.InputTag("egmGsfElectronIDs:cutBasedElectronID-Spring15-25ns-V1-standalone-veto")
-
-
-
-
-
-# my_id_modules = ['RecoEgamma.ElectronIdentification.Identification.mvaElectronID_Spring15_25ns_nonTrig_V1_cff',
-#                  'RecoEgamma.ElectronIdentification.Identification.cutBasedElectronID_Spring15_25ns_V1_cff']
-
-
-# for idmod in my_id_modules:
-#     setupAllVIDIdsInModule(process,idmod,setupVIDElectronSelection)
-
-# wp80 = cms.InputTag("egmGsfElectronIDs:mvaEleID-Spring15-25ns-nonTrig-V1-wp80")
-# wp90 = cms.InputTag("egmGsfElectronIDs:mvaEleID-Spring15-25ns-nonTrig-V1-wp90")
-# wpVals = cms.InputTag("electronMVAValueMapProducer:ElectronMVAEstimatorRun2Spring15NonTrig25nsV1Values")
-# wpCats = cms.InputTag("electronMVAValueMapProducer:ElectronMVAEstimatorRun2Spring15NonTrig25nsV1Categories")
-# cutVeto = cms.InputTag("egmGsfElectronIDs:cutBasedElectronID-Spring15-25ns-V1-standalone-veto")
 
 
 
@@ -1661,7 +1642,6 @@ else :
 
 		process.p *= process.filteredSlimmedJets
 
-
 		process.p *= process.egmGsfElectronIDSequence
 		process.p *= process.customSlimmedElectrons
 		process.p *= process.customSlimmedElectronsEsUp
@@ -1811,6 +1791,7 @@ else :
 		process.out.outputCommands.append("keep pairIndep*_*_*_DavisNtuple")
 		process.out.outputCommands.append("keep NtuplePairIndependentInfos*_*_*_DavisNtuple")
 		process.out.outputCommands.append("keep *_*_bad_*")
+		process.out.outputCommands.append("keep *_egmGsfElectronIDs_*_*")
 
 
 

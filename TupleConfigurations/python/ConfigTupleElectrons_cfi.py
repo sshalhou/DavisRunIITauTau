@@ -32,7 +32,7 @@ filter_.append('abs(userFloat("dxy"))<0.045')
 filter_.append('abs(userFloat("dz"))<0.2')
 filter_.append('userFloat("passConversionVeto")==1.0')
 filter_.append('userFloat("numberOfMissingInnerHits")<=1.0')
-filter_.append('( (abs(userFloat("PASS_nonTrigMVA80"))==1.0) || (abs(userFloat("PASS_nonTrigMVA90"))==1.0) )')
+filter_.append('( (abs(userFloat("PASS_generalPurposeMVA80"))==1.0) || (abs(userFloat("PASS_generalPurposeMVA90"))==1.0) )')
 
 # ----------------------------------------------------
 # ----------------------------------------------------

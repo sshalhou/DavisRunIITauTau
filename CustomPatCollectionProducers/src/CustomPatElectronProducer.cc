@@ -310,10 +310,10 @@ CustomPatElectronProducer::produce(edm::Event& iEvent, const edm::EventSetup& iS
     bool passCutBasedVetoID = (*veto_id_decisions)[el];
    
 
-    ele.clones[i].addUserFloat("MVA_nonTrig_raw",mvaRawValue);
-    ele.clones[i].addUserFloat("PASS_nonTrigMVA80",float(isPassMedium));
-    ele.clones[i].addUserFloat("PASS_nonTrigMVA90",float(isPassTight));
-    ele.clones[i].addUserFloat("CATEGORY_nonTrigMVA",float(mvaCategory));
+    ele.clones[i].addUserFloat("MVA_generalPurpose_raw",mvaRawValue);
+    ele.clones[i].addUserFloat("PASS_generalPurposeMVA80",float(isPassMedium));
+    ele.clones[i].addUserFloat("PASS_generalPurposeMVA90",float(isPassTight));
+    ele.clones[i].addUserFloat("CATEGORY_generalPurposeMVA",float(mvaCategory));
     ele.clones[i].addUserFloat("passCutBasedVetoID",passCutBasedVetoID);
 
 

@@ -483,12 +483,12 @@ void NtupleLepton::userFloatVectorParser(stringVec & labels_,floatVec & values_)
       std::pair<std::string, float> currentPair(current_string,current_float);
       m_tauIDs.push_back(currentPair);        
     }
-    else if(labels_[i]=="MVA_nonTrig_raw") {m_raw_electronMVA = values_[i];}  
-    else if(labels_[i]=="CATEGORY_nonTrigMVA") {m_category_electronMVA = values_[i];}  
+    else if(labels_[i]=="MVA_generalPurpose_raw") {m_raw_electronMVA = values_[i];}  
+    else if(labels_[i]=="CATEGORY_generalPurposeMVA") {m_category_electronMVA = values_[i];}  
 
 
-    else if(labels_[i]=="PASS_nonTrigMVA80") {m_passFail_electronMVA80 = values_[i];}  
-    else if(labels_[i]=="PASS_nonTrigMVA90") {m_passFail_electronMVA90 = values_[i];}  
+    else if(labels_[i]=="PASS_generalPurposeMVA80") {m_passFail_electronMVA80 = values_[i];}  
+    else if(labels_[i]=="PASS_generalPurposeMVA90") {m_passFail_electronMVA90 = values_[i];}  
     else if(labels_[i]=="passCutBasedVetoID") {m_passFail_electronCutBasedID = values_[i];}  
     else if(labels_[i]=="ooEmooP") {m_ooEmooP = values_[i];}  
     else if(labels_[i]=="full5x5_sigmaIetaIeta") {m_full5x5_sigmaIetaIeta = values_[i];}  
