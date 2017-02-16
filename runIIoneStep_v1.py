@@ -14,7 +14,7 @@
 # will write both FlatTuple and Ntuple to disk
 ######################################
 
-DEBUG_NTUPLE = True
+DEBUG_NTUPLE = False
 
 ######################################
 # if DEBUG_NTUPLE_INPUT is set to True
@@ -371,6 +371,7 @@ wp90 = cms.InputTag("egmGsfElectronIDs:mvaEleID-Spring16-GeneralPurpose-V1-wp90"
 wpVals = cms.InputTag("electronMVAValueMapProducer:ElectronMVAEstimatorRun2Spring16GeneralPurposeV1Values")
 wpCats = cms.InputTag("electronMVAValueMapProducer:ElectronMVAEstimatorRun2Spring16GeneralPurposeV1Categories")
 cutVeto = cms.InputTag("egmGsfElectronIDs:cutBasedElectronID-Summer16-80X-V1-veto")
+tightCutBasedEWP = cms.InputTag("egmGsfElectronIDs:cutBasedElectronID-Summer16-80X-V1-tight")
 
 
 
@@ -400,7 +401,8 @@ process.customSlimmedElectrons = cms.EDProducer('CustomPatElectronProducer' ,
 							eleTightIdMap = wp90,
 							mvaValuesMap     = wpVals,
 							mvaCategoriesMap = wpCats,
-							eleVetoIdMap = cutVeto
+							eleVetoIdMap = cutVeto,
+							eleTightCutBasedIdMap = tightCutBasedEWP
 							                 )
 
 
@@ -420,7 +422,8 @@ process.customSlimmedElectronsEsUp = cms.EDProducer('CustomPatElectronProducer' 
 							eleTightIdMap = wp90,
 							mvaValuesMap     = wpVals,
 							mvaCategoriesMap = wpCats,
-							eleVetoIdMap = cutVeto
+							eleVetoIdMap = cutVeto,
+							eleTightCutBasedIdMap = tightCutBasedEWP
 							                 )
 
 
@@ -438,7 +441,8 @@ process.customSlimmedElectronsEsDown = cms.EDProducer('CustomPatElectronProducer
 							eleTightIdMap = wp90,
 							mvaValuesMap     = wpVals,
 							mvaCategoriesMap = wpCats,
-							eleVetoIdMap = cutVeto
+							eleVetoIdMap = cutVeto,
+							eleTightCutBasedIdMap = tightCutBasedEWP
 							                 )
 
 
@@ -701,7 +705,6 @@ process.TrimmedFilteredCustomTausBoostedEsDown = cms.EDProducer('TrimmedPatTauPr
 from DavisRunIITauTau.TupleConfigurations.ConfigVetoElectrons_cfi import electronVetoFilter
 from DavisRunIITauTau.TupleConfigurations.ConfigVetoMuons_cfi import muonVetoFilter
 from DavisRunIITauTau.TupleConfigurations.ConfigVetoTaus_cfi import tauVetoFilter
-
 
 process.filteredVetoElectrons = cms.EDFilter("PATElectronRefSelector",
 	src = cms.InputTag('customSlimmedElectrons::DavisNtuple'),

@@ -926,12 +926,14 @@ void generateH2TauSyncTree::handleEvent()
 	veto_RelIso = R.getVF("veto_RelIso");
 	veto_passesLooseMuonId = R.getVF("veto_passesLooseMuonId");
 	veto_passesMediumMuonId_ICHEP16 = R.getVF("veto_passesMediumMuonId_ICHEP16");
+	veto_passesMediumMuonId_Moriond17 = R.getVF("veto_passesMediumMuonId_Moriond17");
 	veto_passesMediumMuonId = R.getVF("veto_passesMediumMuonId");
 	veto_passesTightMuonId = R.getVF("veto_passesTightMuonId");
 
 	veto_passElectronMVA80 = R.getVF("veto_passElectronMVA80");
 	veto_passElectronMVA90 = R.getVF("veto_passElectronMVA90");
-	veto_passElectronCutBased = R.getVF("veto_passElectronCutBased");
+	veto_passVetoElectronCutBased = R.getVF("veto_passVetoElectronCutBased");
+	veto_passTightElectronCutBased = R.getVF("veto_passTightElectronCutBased");
 	veto_isTrackerGlobalPFMuon = R.getVF("veto_isTrackerGlobalPFMuon");
 	veto_numberOfMissingInnerHits = R.getVF("veto_numberOfMissingInnerHits");
 	veto_numberOfMissingOuterHits = R.getVF("veto_numberOfMissingOuterHits");
@@ -1970,10 +1972,12 @@ void generateH2TauSyncTree::setupBranches(TTree * T)
 	T->Branch("veto_passesLooseMuonId", &veto_passesLooseMuonId);
 	T->Branch("veto_passesMediumMuonId", &veto_passesMediumMuonId);
 	T->Branch("veto_passesMediumMuonId_ICHEP16", &veto_passesMediumMuonId_ICHEP16);
+	T->Branch("veto_passesMediumMuonId_Moriond17", &veto_passesMediumMuonId_Moriond17);
 	T->Branch("veto_passesTightMuonId", &veto_passesTightMuonId);
 	T->Branch("veto_passElectronMVA80", &veto_passElectronMVA80);
 	T->Branch("veto_passElectronMVA90", &veto_passElectronMVA90);
-	T->Branch("veto_passElectronCutBased", &veto_passElectronCutBased);
+	T->Branch("veto_passVetoElectronCutBased", &veto_passVetoElectronCutBased);
+	T->Branch("veto_passTightElectronCutBased", &veto_passTightElectronCutBased);
 	T->Branch("veto_isTrackerGlobalPFMuon", &veto_isTrackerGlobalPFMuon);
 	T->Branch("veto_numberOfMissingInnerHits", &veto_numberOfMissingInnerHits);
 	T->Branch("veto_numberOfMissingOuterHits", &veto_numberOfMissingOuterHits);
@@ -2701,11 +2705,13 @@ void generateH2TauSyncTree::reset()
 	veto_RelIso.clear();
 	veto_passesLooseMuonId.clear();
 	veto_passesMediumMuonId_ICHEP16.clear();
+	veto_passesMediumMuonId_Moriond17.clear();
 	veto_passesMediumMuonId.clear();
 	veto_passesTightMuonId.clear();
 	veto_passElectronMVA80.clear();
 	veto_passElectronMVA90.clear();
-	veto_passElectronCutBased.clear();
+	veto_passVetoElectronCutBased.clear();
+	veto_passTightElectronCutBased.clear();
 	veto_isTrackerGlobalPFMuon.clear();
 	veto_numberOfMissingInnerHits.clear();
 	veto_numberOfMissingOuterHits.clear();

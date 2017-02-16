@@ -33,7 +33,10 @@ filter_.append('pt>10.0')
 filter_.append('abs(eta)<2.5')
 filter_.append('abs(userFloat("dxy")) < 0.045')
 filter_.append('abs(userFloat("dz")) < 0.2')
-
+filter_.append('userFloat("PASS_generalPurposeMVA90")==1.0  || userFloat("passCutBasedVetoID")==1.0')
+filter_.append('userFloat("passConversionVeto")==1.0')
+filter_.append('userFloat("numberOfMissingInnerHits")<=1')
+filter_.append('userFloat("relativeIsol_DeltaBetaCorrectedRelIso") < 0.3')
 
 
 

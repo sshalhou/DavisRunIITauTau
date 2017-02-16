@@ -1686,6 +1686,7 @@ void FlatTupleGenerator::handleEffLeptonInfo(const edm::Event& iEvent, const edm
     effLep_isGoodGlobalMuon.push_back(currentPair.EffLepton().at(i).isGoodGlobalMuon());
     effLep_passesLooseMuonId.push_back(currentPair.EffLepton().at(i).passesLooseMuonId());
     effLep_passesMediumMuonId_ICHEP16.push_back(currentPair.EffLepton().at(i).passesMediumMuonId_ICHEP16());
+    effLep_passesMediumMuonId_Moriond17.push_back(currentPair.EffLepton().at(i).passesMediumMuonId_Moriond17());
     effLep_passesMediumMuonId.push_back(currentPair.EffLepton().at(i).passesMediumMuonId());
     effLep_passesTightMuonId.push_back(currentPair.EffLepton().at(i).passesTightMuonId());
     effLep_isLooseMuon.push_back(currentPair.EffLepton().at(i).isLooseMuon());
@@ -1702,7 +1703,8 @@ void FlatTupleGenerator::handleEffLeptonInfo(const edm::Event& iEvent, const edm
     effLep_category_electronMVA.push_back(currentPair.EffLepton().at(i).category_electronMVA());
     effLep_passFail_electronMVA80.push_back(currentPair.EffLepton().at(i).passFail_electronMVA80());
     effLep_passFail_electronMVA90.push_back(currentPair.EffLepton().at(i).passFail_electronMVA90());
-    effLep_passFail_electronCutBasedID.push_back(currentPair.EffLepton().at(i).passFail_electronCutBasedID());
+    effLep_passFail_VetoElectronCutBasedID.push_back(currentPair.EffLepton().at(i).passFail_VetoElectronCutBasedID());
+    effLep_passFail_TightElectronCutBasedID.push_back(currentPair.EffLepton().at(i).passFail_TightElectronCutBasedID());
     effLep_ooEmooP.push_back(currentPair.EffLepton().at(i).ooEmooP());
     effLep_full5x5_sigmaIetaIeta.push_back(currentPair.EffLepton().at(i).full5x5_sigmaIetaIeta());
     effLep_SuperClusterEta.push_back(currentPair.EffLepton().at(i).SuperClusterEta());
@@ -1894,6 +1896,7 @@ void FlatTupleGenerator::handleLeg1AndLeg2Info(const edm::Event& iEvent, const e
   leg1_isGoodGlobalMuon = currentPair.leg1().isGoodGlobalMuon();
   leg1_passesLooseMuonId = currentPair.leg1().passesLooseMuonId();
   leg1_passesMediumMuonId_ICHEP16 = currentPair.leg1().passesMediumMuonId_ICHEP16();
+  leg1_passesMediumMuonId_Moriond17 = currentPair.leg1().passesMediumMuonId_Moriond17();
   leg1_passesMediumMuonId = currentPair.leg1().passesMediumMuonId();
   leg1_passesTightMuonId = currentPair.leg1().passesTightMuonId();
   leg1_isLooseMuon = currentPair.leg1().isLooseMuon();
@@ -1910,7 +1913,8 @@ void FlatTupleGenerator::handleLeg1AndLeg2Info(const edm::Event& iEvent, const e
   leg1_category_electronMVA = currentPair.leg1().category_electronMVA();
   leg1_passFail_electronMVA80 = currentPair.leg1().passFail_electronMVA80();
   leg1_passFail_electronMVA90 = currentPair.leg1().passFail_electronMVA90();
-  leg1_passFail_electronCutBasedID = currentPair.leg1().passFail_electronCutBasedID();
+  leg1_passFail_VetoElectronCutBasedID = currentPair.leg1().passFail_VetoElectronCutBasedID();
+  leg1_passFail_TightElectronCutBasedID = currentPair.leg1().passFail_TightElectronCutBasedID();
   leg1_ooEmooP = currentPair.leg1().ooEmooP();
   leg1_full5x5_sigmaIetaIeta = currentPair.leg1().full5x5_sigmaIetaIeta();
   leg1_SuperClusterEta = currentPair.leg1().SuperClusterEta();
@@ -1959,6 +1963,7 @@ void FlatTupleGenerator::handleLeg1AndLeg2Info(const edm::Event& iEvent, const e
   leg2_isGoodGlobalMuon = currentPair.leg2().isGoodGlobalMuon();
   leg2_passesLooseMuonId = currentPair.leg2().passesLooseMuonId();
   leg2_passesMediumMuonId_ICHEP16 = currentPair.leg2().passesMediumMuonId_ICHEP16();
+  leg2_passesMediumMuonId_Moriond17 = currentPair.leg2().passesMediumMuonId_Moriond17();
   leg2_passesMediumMuonId = currentPair.leg2().passesMediumMuonId();
   leg2_passesTightMuonId = currentPair.leg2().passesTightMuonId();
   leg2_isLooseMuon = currentPair.leg2().isLooseMuon();
@@ -1975,7 +1980,8 @@ void FlatTupleGenerator::handleLeg1AndLeg2Info(const edm::Event& iEvent, const e
   leg2_category_electronMVA = currentPair.leg2().category_electronMVA();
   leg2_passFail_electronMVA80 = currentPair.leg2().passFail_electronMVA80();
   leg2_passFail_electronMVA90 = currentPair.leg2().passFail_electronMVA90();
-  leg2_passFail_electronCutBasedID = currentPair.leg2().passFail_electronCutBasedID();
+  leg2_passFail_VetoElectronCutBasedID = currentPair.leg2().passFail_VetoElectronCutBasedID();
+  leg2_passFail_TightElectronCutBasedID = currentPair.leg2().passFail_TightElectronCutBasedID();
   leg2_ooEmooP = currentPair.leg2().ooEmooP();
   leg2_full5x5_sigmaIetaIeta = currentPair.leg2().full5x5_sigmaIetaIeta();
   leg2_SuperClusterEta = currentPair.leg2().SuperClusterEta();
@@ -2828,13 +2834,15 @@ NtupleEvent currentPair)
       veto_dz.push_back(currentPair.vetoElectron()[v].dz());
       veto_passesLooseMuonId.push_back(currentPair.vetoElectron()[v].passesLooseMuonId());
       veto_passesMediumMuonId_ICHEP16.push_back(currentPair.vetoElectron()[v].passesMediumMuonId_ICHEP16());
+      veto_passesMediumMuonId_Moriond17.push_back(currentPair.vetoElectron()[v].passesMediumMuonId_Moriond17());
       veto_passesMediumMuonId.push_back(currentPair.vetoElectron()[v].passesMediumMuonId());
       veto_passesTightMuonId.push_back(currentPair.vetoElectron()[v].passesTightMuonId());
       veto_rawElectronMVA.push_back(currentPair.vetoElectron()[v].raw_electronMVA());
       veto_categoryElectronMVA.push_back(currentPair.vetoElectron()[v].category_electronMVA());
       veto_passElectronMVA80.push_back(currentPair.vetoElectron()[v].passFail_electronMVA80());
       veto_passElectronMVA90.push_back(currentPair.vetoElectron()[v].passFail_electronMVA90());
-      veto_passElectronCutBased.push_back(currentPair.vetoElectron()[v].passFail_electronCutBasedID());
+      veto_passVetoElectronCutBased.push_back(currentPair.vetoElectron()[v].passFail_VetoElectronCutBasedID());
+      veto_passTightElectronCutBased.push_back(currentPair.vetoElectron()[v].passFail_TightElectronCutBasedID());
       veto_isTrackerGlobalPFMuon.push_back(0.0);         
       veto_RelIso.push_back(currentPair.vetoElectron()[v].relativeIsol(electronIsolationForRelIsoBranch));
       veto_charge.push_back(currentPair.vetoElectron()[v].charge());
@@ -2906,14 +2914,19 @@ NtupleEvent currentPair)
       veto_dz.push_back(currentPair.vetoMuon()[v].dz());
       veto_passesLooseMuonId.push_back(currentPair.vetoMuon()[v].passesLooseMuonId());
       veto_passesMediumMuonId_ICHEP16.push_back(currentPair.vetoMuon()[v].passesMediumMuonId_ICHEP16());
+      veto_passesMediumMuonId_Moriond17.push_back(currentPair.vetoMuon()[v].passesMediumMuonId_Moriond17());
       veto_passesMediumMuonId.push_back(currentPair.vetoMuon()[v].passesMediumMuonId());
       veto_passesTightMuonId.push_back(currentPair.vetoMuon()[v].passesTightMuonId());
       veto_rawElectronMVA.push_back(currentPair.vetoMuon()[v].raw_electronMVA());
       veto_categoryElectronMVA.push_back(currentPair.vetoMuon()[v].category_electronMVA());
       veto_passElectronMVA80.push_back(currentPair.vetoMuon()[v].passFail_electronMVA80());
       veto_passElectronMVA90.push_back(currentPair.vetoMuon()[v].passFail_electronMVA90());
-      veto_passElectronCutBased.push_back(currentPair.vetoMuon()[v].passFail_electronCutBasedID());
+      veto_passVetoElectronCutBased.push_back(currentPair.vetoMuon()[v].passFail_VetoElectronCutBasedID());
+      veto_passTightElectronCutBased.push_back(currentPair.vetoMuon()[v].passFail_TightElectronCutBasedID());
+
      
+
+
       float isTrackerGlobalPFMuon = (currentPair.vetoMuon()[v].isTrackerMuon() && \
                                      currentPair.vetoMuon()[v].isGlobalMuon() && \
                                      currentPair.vetoMuon()[v].isPFMuon());
@@ -3009,13 +3022,15 @@ NtupleEvent currentPair)
       veto_dz.push_back(currentPair.vetoTau()[v].dz());
       veto_passesLooseMuonId.push_back(currentPair.vetoTau()[v].passesLooseMuonId());
       veto_passesMediumMuonId_ICHEP16.push_back(currentPair.vetoTau()[v].passesMediumMuonId_ICHEP16());
+      veto_passesMediumMuonId_Moriond17.push_back(currentPair.vetoTau()[v].passesMediumMuonId_Moriond17());
       veto_passesMediumMuonId.push_back(currentPair.vetoTau()[v].passesMediumMuonId());
       veto_passesTightMuonId.push_back(currentPair.vetoTau()[v].passesTightMuonId());
       veto_rawElectronMVA.push_back(currentPair.vetoTau()[v].raw_electronMVA());
       veto_categoryElectronMVA.push_back(currentPair.vetoTau()[v].category_electronMVA());
       veto_passElectronMVA80.push_back(currentPair.vetoTau()[v].passFail_electronMVA80());
       veto_passElectronMVA90.push_back(currentPair.vetoTau()[v].passFail_electronMVA90());
-      veto_passElectronCutBased.push_back(currentPair.vetoTau()[v].passFail_electronCutBasedID());
+      veto_passVetoElectronCutBased.push_back(currentPair.vetoTau()[v].passFail_VetoElectronCutBasedID());
+      veto_passTightElectronCutBased.push_back(currentPair.vetoTau()[v].passFail_TightElectronCutBasedID());
      
       float isTrackerGlobalPFMuon = (currentPair.vetoTau()[v].isTrackerMuon() && \
                                      currentPair.vetoTau()[v].isGlobalMuon() && \
@@ -3981,6 +3996,7 @@ void FlatTupleGenerator::handlePairIndepInfo(const edm::Event& iEvent, const edm
   leg1_passesMediumMuonId = NAN;
   leg1_passesLooseMuonId = NAN;
   leg1_passesMediumMuonId_ICHEP16 = NAN;
+  leg1_passesMediumMuonId_Moriond17 = NAN;  
   leg1_passesTightMuonId = NAN;
   leg1_isLooseMuon = NAN;
   leg1_isPFMuon = NAN;
@@ -3996,7 +4012,8 @@ void FlatTupleGenerator::handlePairIndepInfo(const edm::Event& iEvent, const edm
   leg1_category_electronMVA = NAN;
   leg1_passFail_electronMVA80 = NAN;
   leg1_passFail_electronMVA90 = NAN;
-  leg1_passFail_electronCutBasedID = NAN;
+  leg1_passFail_VetoElectronCutBasedID = NAN;
+  leg1_passFail_TightElectronCutBasedID = NAN;
   leg1_ooEmooP = NAN;
   leg1_full5x5_sigmaIetaIeta = NAN;
   leg1_SuperClusterEta = NAN;
@@ -4039,6 +4056,7 @@ void FlatTupleGenerator::handlePairIndepInfo(const edm::Event& iEvent, const edm
   leg2_passesMediumMuonId = NAN;
   leg2_passesLooseMuonId = NAN;
   leg2_passesMediumMuonId_ICHEP16 = NAN;
+  leg2_passesMediumMuonId_Moriond17 = NAN;
   leg2_passesTightMuonId = NAN;
   leg2_isLooseMuon = NAN;
   leg2_isPFMuon = NAN;
@@ -4054,7 +4072,8 @@ void FlatTupleGenerator::handlePairIndepInfo(const edm::Event& iEvent, const edm
   leg2_category_electronMVA = NAN;
   leg2_passFail_electronMVA80 = NAN;
   leg2_passFail_electronMVA90 = NAN;
-  leg2_passFail_electronCutBasedID = NAN;
+  leg2_passFail_VetoElectronCutBasedID = NAN;
+  leg2_passFail_TightElectronCutBasedID = NAN;
   leg2_ooEmooP = NAN;
   leg2_full5x5_sigmaIetaIeta = NAN;  
   leg2_SuperClusterEta = NAN;
@@ -4173,6 +4192,7 @@ void FlatTupleGenerator::handlePairIndepInfo(const edm::Event& iEvent, const edm
   effLep_isGoodGlobalMuon.clear();
   effLep_passesLooseMuonId.clear();
   effLep_passesMediumMuonId_ICHEP16.clear();
+  effLep_passesMediumMuonId_Moriond17.clear();
   effLep_passesMediumMuonId.clear();
   effLep_passesTightMuonId.clear();
   effLep_isLooseMuon.clear();
@@ -4189,7 +4209,8 @@ void FlatTupleGenerator::handlePairIndepInfo(const edm::Event& iEvent, const edm
   effLep_category_electronMVA.clear();
   effLep_passFail_electronMVA80.clear();
   effLep_passFail_electronMVA90.clear();
-  effLep_passFail_electronCutBasedID.clear();
+  effLep_passFail_VetoElectronCutBasedID.clear();
+  effLep_passFail_TightElectronCutBasedID.clear();
   effLep_ooEmooP.clear();
   effLep_full5x5_sigmaIetaIeta.clear();
   effLep_SuperClusterEta.clear();
@@ -4244,13 +4265,15 @@ void FlatTupleGenerator::handlePairIndepInfo(const edm::Event& iEvent, const edm
   veto_RelIso.clear(); 
   veto_passesLooseMuonId.clear(); 
   veto_passesMediumMuonId_ICHEP16.clear(); 
+  veto_passesMediumMuonId_Moriond17.clear(); 
   veto_passesMediumMuonId.clear(); 
   veto_passesTightMuonId.clear(); 
   veto_rawElectronMVA.clear(); 
   veto_categoryElectronMVA.clear(); 
   veto_passElectronMVA80.clear(); 
   veto_passElectronMVA90.clear(); 
-  veto_passElectronCutBased.clear(); 
+  veto_passVetoElectronCutBased.clear(); 
+  veto_passTightElectronCutBased.clear(); 
   veto_isTrackerGlobalPFMuon.clear(); 
   veto_numberOfMissingInnerHits.clear();
   veto_numberOfMissingOuterHits.clear();
@@ -5064,7 +5087,8 @@ void FlatTupleGenerator::beginJob()
   FlatTuple->Branch("leg1_category_electronMVA", &leg1_category_electronMVA);
   FlatTuple->Branch("leg1_passFail_electronMVA80", &leg1_passFail_electronMVA80);
   FlatTuple->Branch("leg1_passFail_electronMVA90", &leg1_passFail_electronMVA90);
-  FlatTuple->Branch("leg1_passFail_electronCutBasedID", &leg1_passFail_electronCutBasedID);
+  FlatTuple->Branch("leg1_passFail_VetoElectronCutBasedID", &leg1_passFail_VetoElectronCutBasedID);
+  FlatTuple->Branch("leg1_passFail_TightElectronCutBasedID", &leg1_passFail_TightElectronCutBasedID);
   FlatTuple->Branch("leg1_SuperClusterEta", &leg1_SuperClusterEta);
   FlatTuple->Branch("leg1_numberOfMissingInnerHits", &leg1_numberOfMissingInnerHits);
   FlatTuple->Branch("leg1_passConversionVeto", &leg1_passConversionVeto);
@@ -5080,6 +5104,7 @@ void FlatTupleGenerator::beginJob()
   FlatTuple->Branch("leg1_passesLooseMuonId", &leg1_passesLooseMuonId);
   FlatTuple->Branch("leg1_passesMediumMuonId", &leg1_passesMediumMuonId);
   FlatTuple->Branch("leg1_passesMediumMuonId_ICHEP16", &leg1_passesMediumMuonId_ICHEP16);
+  FlatTuple->Branch("leg1_passesMediumMuonId_Moriond17", &leg1_passesMediumMuonId_Moriond17);
   FlatTuple->Branch("leg1_passesTightMuonId", &leg1_passesTightMuonId);
   FlatTuple->Branch("leg1_isPFMuon", &leg1_isPFMuon);
   FlatTuple->Branch("leg1_isLooseMuon", &leg1_isLooseMuon);
@@ -5178,7 +5203,8 @@ void FlatTupleGenerator::beginJob()
   FlatTuple->Branch("leg2_category_electronMVA", &leg2_category_electronMVA);
   FlatTuple->Branch("leg2_passFail_electronMVA80", &leg2_passFail_electronMVA80);
   FlatTuple->Branch("leg2_passFail_electronMVA90", &leg2_passFail_electronMVA90);
-  FlatTuple->Branch("leg2_passFail_electronCutBasedID", &leg2_passFail_electronCutBasedID);
+  FlatTuple->Branch("leg2_passFail_VetoElectronCutBasedID", &leg2_passFail_VetoElectronCutBasedID);
+  FlatTuple->Branch("leg2_passFail_TightElectronCutBasedID", &leg2_passFail_TightElectronCutBasedID);
   FlatTuple->Branch("leg2_SuperClusterEta", &leg2_SuperClusterEta);
   FlatTuple->Branch("leg2_numberOfMissingInnerHits", &leg2_numberOfMissingInnerHits);
   FlatTuple->Branch("leg2_passConversionVeto", &leg2_passConversionVeto);
@@ -5194,6 +5220,7 @@ void FlatTupleGenerator::beginJob()
   FlatTuple->Branch("leg2_passesLooseMuonId", &leg2_passesLooseMuonId);
   FlatTuple->Branch("leg2_passesMediumMuonId", &leg2_passesMediumMuonId);
   FlatTuple->Branch("leg2_passesMediumMuonId_ICHEP16", &leg2_passesMediumMuonId_ICHEP16);
+  FlatTuple->Branch("leg2_passesMediumMuonId_Moriond17", &leg2_passesMediumMuonId_Moriond17);
   FlatTuple->Branch("leg2_passesTightMuonId", &leg2_passesTightMuonId);
   FlatTuple->Branch("leg2_isPFMuon", &leg2_isPFMuon);
   FlatTuple->Branch("leg2_isLooseMuon", &leg2_isLooseMuon);
@@ -5317,13 +5344,15 @@ void FlatTupleGenerator::beginJob()
     FlatTuple->Branch("veto_RelIso", &veto_RelIso);
     FlatTuple->Branch("veto_passesLooseMuonId", &veto_passesLooseMuonId);
     FlatTuple->Branch("veto_passesMediumMuonId_ICHEP16", &veto_passesMediumMuonId_ICHEP16);
+    FlatTuple->Branch("veto_passesMediumMuonId_Moriond17", &veto_passesMediumMuonId_Moriond17);
     FlatTuple->Branch("veto_passesMediumMuonId", &veto_passesMediumMuonId);
     FlatTuple->Branch("veto_passesTightMuonId", &veto_passesTightMuonId);
     FlatTuple->Branch("veto_rawElectronMVA", &veto_rawElectronMVA);
     FlatTuple->Branch("veto_categoryElectronMVA", &veto_categoryElectronMVA);
     FlatTuple->Branch("veto_passElectronMVA80", &veto_passElectronMVA80);
     FlatTuple->Branch("veto_passElectronMVA90", &veto_passElectronMVA90);
-    FlatTuple->Branch("veto_passElectronCutBased", &veto_passElectronCutBased);
+    FlatTuple->Branch("veto_passVetoElectronCutBased", &veto_passVetoElectronCutBased);
+    FlatTuple->Branch("veto_passTightElectronCutBased", &veto_passTightElectronCutBased);
     FlatTuple->Branch("veto_isTrackerGlobalPFMuon", &veto_isTrackerGlobalPFMuon);
     FlatTuple->Branch("veto_numberOfMissingInnerHits", &veto_numberOfMissingInnerHits);
     FlatTuple->Branch("veto_numberOfMissingOuterHits", &veto_numberOfMissingOuterHits);
@@ -5486,6 +5515,7 @@ void FlatTupleGenerator::beginJob()
     FlatTuple->Branch("effLep_passesLooseMuonId", &effLep_passesLooseMuonId);
     FlatTuple->Branch("effLep_passesMediumMuonId", &effLep_passesMediumMuonId);
     FlatTuple->Branch("effLep_passesMediumMuonId_ICHEP16", &effLep_passesMediumMuonId_ICHEP16);
+    FlatTuple->Branch("effLep_passesMediumMuonId_Moriond17", &effLep_passesMediumMuonId_Moriond17);
     FlatTuple->Branch("effLep_passesTightMuonId", &effLep_passesTightMuonId);
     FlatTuple->Branch("effLep_isLooseMuon", &effLep_isLooseMuon);
     FlatTuple->Branch("effLep_isPFMuon", &effLep_isPFMuon);
@@ -5501,7 +5531,8 @@ void FlatTupleGenerator::beginJob()
     FlatTuple->Branch("effLep_category_electronMVA", &effLep_category_electronMVA);
     FlatTuple->Branch("effLep_passFail_electronMVA80", &effLep_passFail_electronMVA80);
     FlatTuple->Branch("effLep_passFail_electronMVA90", &effLep_passFail_electronMVA90);
-    FlatTuple->Branch("effLep_passFail_electronCutBasedID", &effLep_passFail_electronCutBasedID);
+    FlatTuple->Branch("effLep_passFail_VetoElectronCutBasedID", &effLep_passFail_VetoElectronCutBasedID);
+    FlatTuple->Branch("effLep_passFail_TightElectronCutBasedID", &effLep_passFail_TightElectronCutBasedID);
     FlatTuple->Branch("effLep_ooEmooP", &effLep_ooEmooP);
     FlatTuple->Branch("effLep_full5x5_sigmaIetaIeta", &effLep_full5x5_sigmaIetaIeta);
     FlatTuple->Branch("effLep_SuperClusterEta", &effLep_SuperClusterEta);

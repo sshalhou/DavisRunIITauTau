@@ -34,8 +34,8 @@ filter_.append('abs(eta)<2.3')
 filter_.append('tauID("decayModeFinding")>0.5')
 filter_.append('abs(userFloat("dz"))<0.2')
 filter_.append('abs(charge)==1')
-# filter_.append('( (tauID("againstMuonLoose3") && tauID("againstElectronVLooseMVA6")) || (tauID("againstMuonTight3") && tauID("againstElectronVLooseMVA6")) || (tauID("againstMuonLoose3") && tauID("againstElectronTightMVA6")) )')
-# filter_.append('(tauID("byTightIsolationMVArun2v1DBdR03oldDMwLT") > 0.5 || tauID("byVTightIsolationMVArun2v1DBdR03oldDMwLT") > 0.5 || tauID("byLooseIsolationMVArun2v1DBdR03oldDMwLT") > 0.5 || tauID("byMediumIsolationMVArun2v1DBdR03oldDMwLT") > 0.5 || tauID("byVLooseIsolationMVArun2v1DBdR03oldDMwLT") > 0.5 || tauID("byVVTightIsolationMVArun2v1DBdR03oldDMwLT") > 0.5)')
+filter_.append('( (tauID("againstMuonLoose3") && tauID("againstElectronVLooseMVA6")) || (tauID("againstMuonTight3") && tauID("againstElectronVLooseMVA6")) || (tauID("againstMuonLoose3") && tauID("againstElectronTightMVA6")) )')
+filter_.append('(tauID("byTightIsolationMVArun2v1DBdR03oldDMwLT") > 0.5 || tauID("byVTightIsolationMVArun2v1DBdR03oldDMwLT") > 0.5 || tauID("byLooseIsolationMVArun2v1DBdR03oldDMwLT") > 0.5 || tauID("byMediumIsolationMVArun2v1DBdR03oldDMwLT") > 0.5 || tauID("byVLooseIsolationMVArun2v1DBdR03oldDMwLT") > 0.5 || tauID("byVVTightIsolationMVArun2v1DBdR03oldDMwLT") > 0.5)')
 
 
 

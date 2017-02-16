@@ -138,7 +138,7 @@ bool SimpleFilter::filter(edm::Event & iEvent, const edm::EventSetup & iSetup) {
       double pt_up = 1.1 * elecToCheck.pt();
       double pt_down = 0.9 * elecToCheck.pt();
 
-      if( pt > 27.0 || pt_up > 27.0 || pt_down > 27.0) number_good_eTau_Electrons ++;
+      if( pt > 26.0 || pt_up > 26.0 || pt_down > 26.0) number_good_eTau_Electrons ++;
       if( pt > 13.0 || pt_up > 13.0 || pt_down > 13.0) number_good_eMu_Electrons ++;
       if( pt > 10.0 || pt_up > 10.0 || pt_down > 10.0) number_good_eE_Electrons ++;
     }
@@ -173,22 +173,23 @@ bool SimpleFilter::filter(edm::Event & iEvent, const edm::EventSetup & iSetup) {
           dz = muonToCheck.muonBestTrack()->dz(first_vertex.position());
       }
 
+      // for monoH use Tight ID
+      // bool ichep2016_goodGlob = (muonToCheck.isGlobalMuon() && 
+      //                           muonToCheck.globalTrack()->normalizedChi2() < 3 && 
+      //                           muonToCheck.combinedQuality().chi2LocalPosition < 12 && 
+      //                           muonToCheck.combinedQuality().trkKink < 20); 
 
-      bool ichep2016_goodGlob = (muonToCheck.isGlobalMuon() && 
-                                muonToCheck.globalTrack()->normalizedChi2() < 3 && 
-                                muonToCheck.combinedQuality().chi2LocalPosition < 12 && 
-                                muonToCheck.combinedQuality().trkKink < 20); 
-
-      bool ichep2016_isMedium = (muonToCheck.isLooseMuon() &&                     
-                    muonToCheck.innerTrack()->validFraction() > 0.49 && 
-                    muonToCheck.segmentCompatibility()   >=   (ichep2016_goodGlob   ? 0.303 : 0.451));
+      // bool ichep2016_isMedium = (muonToCheck.isLooseMuon() &&                     
+      //               muonToCheck.innerTrack()->validFraction() > 0.49 && 
+      //               muonToCheck.segmentCompatibility()   >=   (ichep2016_goodGlob   ? 0.303 : 0.451));
 
 
+      bool passesTightMuonId = muonToCheck.isTightMuon(first_vertex);
 
       if(  !(fabs(dxy) < 0.045) ) continue;
       if(  !(fabs(dz) < 0.2) ) continue;
       if(  !(fabs(muonToCheck.eta()) <= 2.4) )    continue;  
-      if(  !(ichep2016_isMedium) )  continue;
+      if(  !(passesTightMuonId) )  continue;
 
       NUM_MUONS += 1;
 
@@ -200,7 +201,7 @@ bool SimpleFilter::filter(edm::Event & iEvent, const edm::EventSetup & iSetup) {
       double pt_up = 1.1 * muonToCheck.pt();
       double pt_down = 0.9 * muonToCheck.pt();
 
-      if( pt > 24.0 || pt_up > 24.0 || pt_down > 24.0) number_good_muTau_Muons ++;
+      if( pt > 26.0 || pt_up > 26.0 || pt_down > 26.0) number_good_muTau_Muons ++;
       if( pt > 10.0 || pt_up > 10.0 || pt_down > 10.0) number_good_eMu_Muons ++;
       if( pt > 10.0 || pt_up > 10.0 || pt_down > 10.0) number_good_MuMu_Muons ++;
 

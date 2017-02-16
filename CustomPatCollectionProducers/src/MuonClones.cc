@@ -175,7 +175,6 @@ void muonClones::fillUserFloats()
 	  	m.addUserFloat("passesTightMuonId",passesTightMuonId);
 
 		
-	  
 		/////////////
 	  	// trigger info
 

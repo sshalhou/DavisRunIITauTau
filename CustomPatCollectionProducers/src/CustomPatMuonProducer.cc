@@ -238,6 +238,20 @@ CustomPatMuonProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup
 
 
     const pat::Muon & muonToStore = mu.clones[i];
+
+
+    /* Moriond17 Muon Medium ID for DATA in PERIODS 2016 BCDEF uses ICHEP16 ID */
+
+    float MediumMuonID_Moriond17 = 0.0;
+
+    if ( iEvent.isRealData() && iEvent.id().run() < 278820 ) 
+    {
+      MediumMuonID_Moriond17 = mu.clones[i].userFloat("passesMediumMuonId_ICHEP16");
+    }
+    else MediumMuonID_Moriond17 = mu.clones[i].userFloat("passesMediumMuonId");
+
+    mu.clones[i].addUserFloat("passesMediumMuonId_Moriond17",MediumMuonID_Moriond17);
+
     storedMuons->push_back(muonToStore);
 
     // std::cout<<" ------> muon with pt = "<<muonToStore.p4().Pt()<<std::endl;

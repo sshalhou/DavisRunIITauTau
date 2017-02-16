@@ -1216,11 +1216,13 @@ private:
 	std::vector<float> veto_passesLooseMuonId;
 	std::vector<float> veto_passesMediumMuonId;
 	std::vector<float> veto_passesMediumMuonId_ICHEP16;
+	std::vector<float> veto_passesMediumMuonId_Moriond17;
 	std::vector<float> veto_passesMediumMuonId;
 	std::vector<float> veto_passesTightMuonId;
 	std::vector<float> veto_passElectronMVA80;
 	std::vector<float> veto_passElectronMVA90;
-	std::vector<float> veto_passElectronCutBased;
+	std::vector<float> veto_passVetoElectronCutBased;
+	std::vector<float> veto_passTightElectronCutBased;
 	std::vector<float> veto_isTrackerGlobalPFMuon;
 	std::vector<float> veto_numberOfMissingInnerHits;
 	std::vector<float> veto_numberOfMissingOuterHits;

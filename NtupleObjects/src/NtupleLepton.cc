@@ -19,7 +19,8 @@ NtupleLepton::NtupleLepton()
   m_category_electronMVA = NAN;
   m_passFail_electronMVA80 = NAN; 
   m_passFail_electronMVA90 = NAN; 
-  m_passFail_electronCutBasedID = NAN;
+  m_passFail_VetoElectronCutBasedID = NAN;
+  m_passFail_TightElectronCutBasedID = NAN;
   m_ooEmooP = NAN;
   m_full5x5_sigmaIetaIeta = NAN;
   m_TauEsVariant = NAN; 
@@ -36,7 +37,8 @@ NtupleLepton::NtupleLepton()
   m_isGlobalMuon = NAN;    
   m_isGoodGlobalMuon = NAN;    
   m_passesLooseMuonId = NAN;    
-  m_passesMediumMuonId_ICHEP16 = NAN;    
+  m_passesMediumMuonId_ICHEP16 = NAN;
+  m_passesMediumMuonId_Moriond17  = NAN;
   m_passesMediumMuonId = NAN;    
   m_passesTightMuonId = NAN;    
   m_isLooseMuon = NAN;   
@@ -366,7 +368,8 @@ void NtupleLepton::printLEP()
   std::cout<<"<LEPPRINT "<<type_print<<"> ELECTRON MVA CATEG. "<<m_category_electronMVA<<"\n";
   std::cout<<"<LEPPRINT "<<type_print<<"> ELECTRON MVA 80 PASSFAIL "<<m_passFail_electronMVA80<<"\n";
   std::cout<<"<LEPPRINT "<<type_print<<"> ELECTRON MVA 90 PASSFAIL "<<m_passFail_electronMVA90<<"\n";
-  std::cout<<"<LEPPRINT "<<type_print<<"> ELECTRON CUT BASED VETO ID PASSFAIL "<<m_passFail_electronCutBasedID<<"\n";
+  std::cout<<"<LEPPRINT "<<type_print<<"> ELECTRON CUT BASED VETO ID PASSFAIL "<<m_passFail_VetoElectronCutBasedID<<"\n";
+  std::cout<<"<LEPPRINT "<<type_print<<"> ELECTRON CUT BASED VETO ID PASSFAIL "<<m_passFail_TightElectronCutBasedID<<"\n";
   std::cout<<"<LEPPRINT "<<type_print<<"> ELECTRON ooEmooP "<<m_ooEmooP<<"\n";
   std::cout<<"<LEPPRINT "<<type_print<<"> ELECTRON full5x5_sigmaIetaIeta "<<m_full5x5_sigmaIetaIeta<<"\n";
   std::cout<<"<LEPPRINT "<<type_print<<"> TauEsVariant "<<m_TauEsVariant<<"\n";
@@ -385,6 +388,7 @@ std::cout<<"<LEPPRINT "<<type_print<<"> isGlobalMuon : " << m_isGlobalMuon << st
 std::cout<<"<LEPPRINT "<<type_print<<"> isGoodGlobalMuon : " << m_isGoodGlobalMuon << std::endl;
 std::cout<<"<LEPPRINT "<<type_print<<"> passesLooseMuonId : " << m_passesLooseMuonId << std::endl;
 std::cout<<"<LEPPRINT "<<type_print<<"> passesMediumMuonId_ICHEP16 : " << m_passesMediumMuonId_ICHEP16 << std::endl;
+std::cout<<"<LEPPRINT "<<type_print<<"> passesMediumMuonId_Moriond17 : " << m_passesMediumMuonId_Moriond17 << std::endl;
 std::cout<<"<LEPPRINT "<<type_print<<"> passesMediumMuonId : " << m_passesMediumMuonId << std::endl;
 std::cout<<"<LEPPRINT "<<type_print<<"> passesTightMuonId : " << m_passesTightMuonId << std::endl;
 std::cout<<"<LEPPRINT "<<type_print<<"> isLooseMuon : " << m_isLooseMuon << std::endl;
@@ -489,7 +493,8 @@ void NtupleLepton::userFloatVectorParser(stringVec & labels_,floatVec & values_)
 
     else if(labels_[i]=="PASS_generalPurposeMVA80") {m_passFail_electronMVA80 = values_[i];}  
     else if(labels_[i]=="PASS_generalPurposeMVA90") {m_passFail_electronMVA90 = values_[i];}  
-    else if(labels_[i]=="passCutBasedVetoID") {m_passFail_electronCutBasedID = values_[i];}  
+    else if(labels_[i]=="passCutBasedVetoID") {m_passFail_VetoElectronCutBasedID = values_[i];}  
+    else if(labels_[i]=="passCutBasedTightID") {m_passFail_TightElectronCutBasedID = values_[i];}  
     else if(labels_[i]=="ooEmooP") {m_ooEmooP = values_[i];}  
     else if(labels_[i]=="full5x5_sigmaIetaIeta") {m_full5x5_sigmaIetaIeta = values_[i];}  
     else if(labels_[i]=="TauEsVariant") {m_TauEsVariant = values_[i];}      
@@ -508,6 +513,7 @@ void NtupleLepton::userFloatVectorParser(stringVec & labels_,floatVec & values_)
     else if(labels_[i]=="isGoodGlobalMuon") {m_isGoodGlobalMuon = values_[i];}
     else if(labels_[i]=="passesLooseMuonId") {m_passesLooseMuonId = values_[i];}
     else if(labels_[i]=="passesMediumMuonId_ICHEP16") {m_passesMediumMuonId_ICHEP16 = values_[i];}
+    else if(labels_[i]=="passesMediumMuonId_Moriond17") {m_passesMediumMuonId_Moriond17 = values_[i];}
     else if(labels_[i]=="passesMediumMuonId") {m_passesMediumMuonId = values_[i];}
     else if(labels_[i]=="passesTightMuonId") {m_passesTightMuonId = values_[i];}
     else if(labels_[i]=="isLooseMuon") {m_isLooseMuon = values_[i];}
@@ -720,9 +726,8 @@ float NtupleLepton::category_electronMVA() const {return m_category_electronMVA;
 float NtupleLepton::raw_electronMVA() const {return m_raw_electronMVA;}
 float NtupleLepton::passFail_electronMVA80() const {return m_passFail_electronMVA80;} 
 float NtupleLepton::passFail_electronMVA90() const {return m_passFail_electronMVA90;} 
-
-
-float NtupleLepton::passFail_electronCutBasedID() const {return m_passFail_electronCutBasedID;} 
+float NtupleLepton::passFail_VetoElectronCutBasedID() const {return m_passFail_VetoElectronCutBasedID;} 
+float NtupleLepton::passFail_TightElectronCutBasedID() const {return m_passFail_TightElectronCutBasedID;} 
 float NtupleLepton::ooEmooP() const {return m_ooEmooP;} 
 float NtupleLepton::full5x5_sigmaIetaIeta() const {return m_full5x5_sigmaIetaIeta;} 
 
@@ -741,7 +746,8 @@ float  NtupleLepton::isGlobalMuon() const {return m_isGlobalMuon;}
 float  NtupleLepton::isGoodGlobalMuon() const {return m_isGoodGlobalMuon;}    
 float  NtupleLepton::passesLooseMuonId() const {return m_passesLooseMuonId;}   
 float  NtupleLepton::passesMediumMuonId_ICHEP16() const {return m_passesMediumMuonId_ICHEP16;}   
-float  NtupleLepton::passesMediumMuonId() const {return m_passesMediumMuonId;}   
+float  NtupleLepton::passesMediumMuonId_Moriond17() const {return m_passesMediumMuonId_Moriond17;}   
+float  NtupleLepton::passesMediumMuonId() const {return m_passesMediumMuonId;}
 float  NtupleLepton::passesTightMuonId() const {return m_passesTightMuonId;}   
 float  NtupleLepton::isLooseMuon() const {return m_isLooseMuon;}   
 float  NtupleLepton::isPFMuon() const {return m_isPFMuon;}    

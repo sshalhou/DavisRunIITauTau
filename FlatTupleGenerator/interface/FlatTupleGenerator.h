@@ -600,6 +600,7 @@ public:
 	float leg1_passesMediumMuonId, leg2_passesMediumMuonId;
 	float leg1_passesLooseMuonId, leg2_passesLooseMuonId;
 	float leg1_passesMediumMuonId_ICHEP16, leg2_passesMediumMuonId_ICHEP16;
+	float leg1_passesMediumMuonId_Moriond17, leg2_passesMediumMuonId_Moriond17;
 	float leg1_passesTightMuonId, leg2_passesTightMuonId;
 	float leg1_isLooseMuon, leg2_isLooseMuon;
 	float leg1_isPFMuon, leg2_isPFMuon;
@@ -620,7 +621,8 @@ public:
 	float leg1_category_electronMVA, leg2_category_electronMVA;
 	float leg1_passFail_electronMVA80, leg2_passFail_electronMVA80;
 	float leg1_passFail_electronMVA90, leg2_passFail_electronMVA90;
-    float leg1_passFail_electronCutBasedID,leg2_passFail_electronCutBasedID;
+    float leg1_passFail_VetoElectronCutBasedID,leg2_passFail_VetoElectronCutBasedID;
+    float leg1_passFail_TightElectronCutBasedID,leg2_passFail_TightElectronCutBasedID;
     float leg1_ooEmooP, leg2_ooEmooP;				
     float leg1_full5x5_sigmaIetaIeta, leg2_full5x5_sigmaIetaIeta;
 	float leg1_SuperClusterEta, leg2_SuperClusterEta;
@@ -708,6 +710,7 @@ public:
 	std::vector<float> effLep_isGoodGlobalMuon;
 	std::vector<float> effLep_passesLooseMuonId;
 	std::vector<float> effLep_passesMediumMuonId_ICHEP16;
+	std::vector<float> effLep_passesMediumMuonId_Moriond17;
 	std::vector<float> effLep_passesMediumMuonId;
 	std::vector<float> effLep_passesTightMuonId;
 	std::vector<float> effLep_isLooseMuon;
@@ -724,7 +727,8 @@ public:
 	std::vector<float> effLep_category_electronMVA;
 	std::vector<float> effLep_passFail_electronMVA80;
 	std::vector<float> effLep_passFail_electronMVA90;
-	std::vector<float> effLep_passFail_electronCutBasedID;
+	std::vector<float> effLep_passFail_VetoElectronCutBasedID;
+	std::vector<float> effLep_passFail_TightElectronCutBasedID;
     std::vector<float> effLep_ooEmooP;
     std::vector<float> effLep_full5x5_sigmaIetaIeta;
 	std::vector<float> effLep_SuperClusterEta;
@@ -771,13 +775,15 @@ public:
 	std::vector<float> veto_RelIso;
 	std::vector<float> veto_passesLooseMuonId;
 	std::vector<float> veto_passesMediumMuonId_ICHEP16;
+	std::vector<float> veto_passesMediumMuonId_Moriond17;
 	std::vector<float> veto_passesMediumMuonId;
 	std::vector<float> veto_passesTightMuonId;
 	std::vector<float> veto_rawElectronMVA;
 	std::vector<float> veto_categoryElectronMVA;
 	std::vector<float> veto_passElectronMVA80;
 	std::vector<float> veto_passElectronMVA90;
-	std::vector<float> veto_passElectronCutBased;
+	std::vector<float> veto_passVetoElectronCutBased;
+	std::vector<float> veto_passTightElectronCutBased;
 	std::vector<float> veto_isTrackerGlobalPFMuon;
 	std::vector<float> veto_numberOfMissingInnerHits;
 	std::vector<float> veto_numberOfMissingOuterHits;

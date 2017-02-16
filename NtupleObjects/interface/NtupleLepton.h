@@ -95,7 +95,8 @@ public:
 	float category_electronMVA() const;
 	float passFail_electronMVA80() const; 
 	float passFail_electronMVA90() const; 
-    float passFail_electronCutBasedID() const;   
+    float passFail_VetoElectronCutBasedID() const;   
+    float passFail_TightElectronCutBasedID() const;
     float ooEmooP() const;         				
     float full5x5_sigmaIetaIeta() const;   
 	float TauEsVariant() const; 
@@ -113,6 +114,7 @@ public:
 	float isGoodGlobalMuon() const; 	
 	float passesLooseMuonId() const; 	
 	float passesMediumMuonId_ICHEP16() const; 	
+	float passesMediumMuonId_Moriond17() const; 	
 	float passesMediumMuonId() const; 	
 	float passesTightMuonId() const; 	
 	float isLooseMuon() const; 	
@@ -186,6 +188,9 @@ private:
 
 	float m_passesLooseMuonId;						// proposed loose ID for Run II muons
 	float m_passesMediumMuonId_ICHEP16;			    // proposed passesMediumMuonId_ICHEP16 ID for Run II muons
+	float m_passesMediumMuonId_Moriond17; 			// medium ID for moriond DATA 2016BCDEF use ICEHP16 medium ID
+													// while MC & DATA 2016GH use standard medium ID (this variable handles this for you!)
+
 	float m_passesMediumMuonId;						// proposed meduim ID for Run II muons
 	float m_passesTightMuonId;						// proposed tight ID for Run II muons
 
@@ -210,7 +215,8 @@ private:
     float m_category_electronMVA;						//  category of electron MVA score
     float m_passFail_electronMVA80;         			//  pass fail of electron MVA 
     float m_passFail_electronMVA90;         			//  pass fail of electron MVA 
-    float m_passFail_electronCutBasedID;         		//  pass fail of electron cut-based veto ID 
+    float m_passFail_VetoElectronCutBasedID;         		//  pass fail of electron cut-based veto ID 
+    float m_passFail_TightElectronCutBasedID;         		//  pass fail of electron cut-based tight ID 
     float m_ooEmooP;         							//  used for electron cut-based veto ID 
     float m_full5x5_sigmaIetaIeta;         				//  used for electron cut-based veto ID 
 	float m_SuperClusterEta;

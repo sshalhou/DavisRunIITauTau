@@ -163,8 +163,8 @@ muon_EleMuon.append("passesTightMuonId==1.0")
 
 # muon in MuonTau final state :
 muon_MuonTau = []
-muon_MuonTau.append("pt>24")
-muon_MuonTau.append("abs(eta)<2.1")
+muon_MuonTau.append("pt>26")
+muon_MuonTau.append("abs(eta)<2.4")
 muon_MuonTau.append("abs(dxy)<0.045")
 muon_MuonTau.append("abs(dz)<0.2")
 muon_MuonTau.append("passesTightMuonId==1.0")
@@ -179,7 +179,17 @@ tau_MuonTau.append("abs(charge)==1.0")
 
 # electron in EleTau final state :
 ele_EleTau = []
-ele_EleTau.append("pt>27")
+
+# here MAY NEED TO ADD A TIGHT ID REQUIREMENT
+print "************ \n \n \n"
+print " - WARNING ***** TIGHT CUT BASED ID && WP80 ID ARE APPLIED IN ELETAU CHANNEL"
+print " - WARNING ***** TIGHT CUT BASED ID && WP80 ID ARE APPLIED IN ELETAU CHANNEL"
+print " - WARNING ***** TIGHT CUT BASED ID && WP80 ID ARE APPLIED IN ELETAU CHANNEL"
+print " - EDIT IN FlatTupleConfig_cfi.py "
+print "\n \n \n************"
+
+ele_EleTau.append("passFail_TightElectronCutBasedID==1.0")
+ele_EleTau.append("pt>26")
 ele_EleTau.append("abs(eta)<2.1")
 ele_EleTau.append("abs(dxy)<0.045")
 ele_EleTau.append("abs(dz)<0.2")
@@ -252,7 +262,7 @@ ele_ThirdLeptonVeto.append("relativeIsol('DeltaBetaCorrectedRelIso')<0.3")
 ele_DiElectron = []
 ele_DiElectron.append("pt>15")
 ele_DiElectron.append("abs(eta)<2.5")
-ele_DiElectron.append("passFail_electronCutBasedID==1.0")
+ele_DiElectron.append("passFail_VetoElectronCutBasedID==1.0")
 ele_DiElectron.append("abs(dz)<0.2")
 ele_DiElectron.append("abs(dxy)<0.045")
 ele_DiElectron.append("relativeIsol('DeltaBetaCorrectedRelIso')<0.3")
