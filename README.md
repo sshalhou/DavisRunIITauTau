@@ -32,7 +32,7 @@ For Quick Start (on SL6 only, CMSSW_7_6_3 and higher):
 
 		cd DavisRunIITauTau
 
-		git checkout Moriond17_8_0_25
+		git checkout Moriond17_8_0_26patch1
 
 		cd -
 

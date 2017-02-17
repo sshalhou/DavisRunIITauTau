@@ -9,16 +9,16 @@ voms-proxy-init -voms cms --valid=72:00
 source /cvmfs/cms.cern.ch/cmsset_default.csh
 setenv SCRAM_ARCH slc6_amd64_gcc530
 
-if ( -d CMSSW_8_0_25) then
-        echo 'directory CMSSW_8_0_25 already exits, doing nothing further'
+if ( -d CMSSW_8_0_26patch1) then
+        echo 'directory CMSSW_8_0_26patch1 already exits, doing nothing further'
         exit 1
 endif
 
 
 # create the working area
 	
-cmsrel CMSSW_8_0_25
-cd CMSSW_8_0_25/src/
+cmsrel CMSSW_8_0_26patch1
+cd CMSSW_8_0_26patch1/src/
 cmsenv
 
 # set up git
