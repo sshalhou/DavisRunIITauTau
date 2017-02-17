@@ -261,6 +261,16 @@ if __name__ == '__main__':
 
         if int(args.isMC[0]) == 0:
             config.Data.inputDataset = samp[0]
+
+            # split different data periods into different output areas
+            if int(args.isMC[0]) == 0:
+                uniqueDataDir = samp[0].split('/')[2]
+                config.Data.outputDatasetTag = str(args.outputDatasetTag[0]) + str(uniqueDataDir)
+                
+
+            print " outputDataSetTag ==> ", config.Data.outputDatasetTag 
+
+
             config.General.requestName = samp[1]  
             config.JobType.psetName = samp[2]
             config.Data.splitting = 'LumiBased'

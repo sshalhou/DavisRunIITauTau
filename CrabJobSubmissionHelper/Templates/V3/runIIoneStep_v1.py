@@ -28,37 +28,8 @@ DEBUG_NTUPLE_INPUT = False
 # how many events to run, -1 means run all 
 ######################################
 
-MAX_EVENTS = 5000
+MAX_EVENTS = -1
 
-######################################
-# datasets for local running 
-######################################
-
-#dataSetName_ = "/SUSYGluGluToHToTauTau_M-160_TuneCUETP8M1_13TeV-pythia8/RunIISpring16MiniAODv2-PUSpring16RAWAODSIM_reHLT_80X_mcRun2_asymptotic_v14-v1/MINIAODSIM"
-dataSetName_ = "/VBFHToTauTau_M125_13TeV_powheg_pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM"
-#dataSetName_ = "/SingleMuon/Run2016H-PromptReco-v2/MINIAOD"
-
-
-
-######################################
-#  list of files to process 
-######################################
-
-myfilelist = cms.untracked.vstring()
-
-if dataSetName_ == "/VBFHToTauTau_M125_13TeV_powheg_pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM":
-	myfilelist.extend(['file:/uscms_data/d3/shalhout/VBFTauTauMorinon17.root'])
-
-if dataSetName_ == "/SingleMuon/Run2016H-PromptReco-v2/MINIAOD":
-	#myfilelist.extend(['file:/uscms_data/d3/shalhout/RunIIWorking/2017/MonoH_Moriond17/CMSSW_8_0_25/src/pickevents_rereco_33.root'])
-	#myfilelist.extend(['file:/uscms_data/d3/shalhout/MET_DATA.root'])
-	myfilelist.extend(['file:/uscms_data/d3/shalhout/Run2016H-PromptReco-v2.root'])
-
-
-
-
-if DEBUG_NTUPLE_INPUT is True:
-	myfilelist = cms.untracked.vstring(['file:./NtupleFile.root'])
 
 if MAX_EVENTS != -1:
 	print '*****************************************************************'
@@ -67,6 +38,12 @@ if MAX_EVENTS != -1:
 	print '****** If this is a crab job, things will NOT go well :(  '
 	print '*****************************************************************'
 	print '*****************************************************************'
+
+######################################
+# datasets for crab running
+######################################
+
+dataSetName_ = "DUMMY_DATASET_NAME"
 
 
 ########################################
@@ -78,10 +55,9 @@ DAVISprocessName = "DavisNtuple"
 if DEBUG_NTUPLE_INPUT is True:
 	DAVISprocessName = "DavisNtupleDebug"
 
-
-
 import FWCore.ParameterSet.Config as cms
 process = cms.Process(DAVISprocessName) 
+
 
 
 from DavisRunIITauTau.TupleConfigurations.ConfigNtupleContent_cfi import *
@@ -103,7 +79,6 @@ print '******************************************'
 print sampleData
 print '******************************************'
 print '******************************************'
-
 
 ####################
 # fix the HLT label 
@@ -165,6 +140,7 @@ print 'default btag algoritm = ', DEFAULT_BTAG_ALGORITHM
 
 
 
+
 # import of standard configurations
 process.load("FWCore.MessageService.MessageLogger_cfi")
 process.MessageLogger.cerr.FwkReport.reportEvery = 500
@@ -192,22 +168,12 @@ process.options.allowUnscheduled = cms.untracked.bool(True)
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(MAX_EVENTS) ) 
 
 
+
 ###################################
-# input - remove for crab running
+# input - configured for crab running
 ###################################
 
-# process.source = cms.Source("PoolSource",fileNames=myfilelist,
-# 			eventsToProcess = cms.untracked.VEventRange('1:40203-1:40203','1:42012-1:42012','1:41436-1:41436'))	
-
-
-
-process.source = cms.Source("PoolSource",fileNames=myfilelist)
-
-# process.source = cms.Source("PoolSource",fileNames=myfilelist,
-# 			eventsToProcess = cms.untracked.VEventRange('1:4465-1:4465','1:4442-1:4442','1:53532-1:53532',
-#                         '1:84528-1:84528','1:92356-1:92356','1:109720-1:109720'))	
-
-
+process.source = cms.Source("PoolSource")
 
 ###################################
 # Cumulative Info
@@ -222,7 +188,6 @@ process.Cumulative = cms.EDAnalyzer('CumulativeInfoAdder',
 	mcGenWeightSrc = mcGenWeightSrcInputTag,
 	LHEEventProductSrc = LHEEventProductSrcInputTag
 	)
-
 
 
 
@@ -336,8 +301,6 @@ process.filteredSlimmedJets = cms.EDFilter("PATJetRefSelector",
 
 
 
-
-
 ############################
 # define rho sources to be used in isol variants
 
@@ -372,6 +335,7 @@ wpVals = cms.InputTag("electronMVAValueMapProducer:ElectronMVAEstimatorRun2Sprin
 wpCats = cms.InputTag("electronMVAValueMapProducer:ElectronMVAEstimatorRun2Spring16GeneralPurposeV1Categories")
 cutVeto = cms.InputTag("egmGsfElectronIDs:cutBasedElectronID-Summer16-80X-V1-veto")
 tightCutBasedEWP = cms.InputTag("egmGsfElectronIDs:cutBasedElectronID-Summer16-80X-V1-tight")
+
 
 
 
@@ -552,6 +516,7 @@ process.customSlimmedTausBoostedTauEsDown = cms.EDProducer('CustomPatTauProducer
 							triggerObjectSrc = cms.InputTag("selectedPatTrigger"),
 							rhoSources = rhoSourceList
 							                 )
+
 
 
 
@@ -807,6 +772,7 @@ process.requireCandidateHiggsPair = cms.EDFilter("HiggsCandidateCountFilter",
     filter = cms.bool(True)
 	)
 
+
 #########################################
 # RUN PF MET CORR AND ERRORS
 ##########################################
@@ -824,6 +790,7 @@ if sampleData.EventType == 'DATA':
 # the original slimmedMETs collection
 
 METforNtuple = DAVISprocessName
+
 
 
 
@@ -1016,6 +983,8 @@ if RUN_MEM_CHECK is True:
 
 
 # 
+
+
 
 ####################
 # produce the TupleCandidateEvent pair + MET container
@@ -1441,7 +1410,6 @@ process.BadChargedCandidateFilter.taggingMode   = cms.bool(True)
 
 
 
-
 #################################
 # pair independent content
 
@@ -1603,7 +1571,6 @@ process.BASELINEdownElectron = cms.EDAnalyzer('FlatTupleGenerator',
 	SVMassConfig = svMassAtFlatTupleConfig
 	)
 
-
 ###################
 # start the path  #
 ###################
@@ -1644,6 +1611,7 @@ else :
 
 
 		process.p *= process.filteredSlimmedJets
+
 
 		process.p *= process.egmGsfElectronIDSequence
 		process.p *= process.customSlimmedElectrons
@@ -1701,6 +1669,8 @@ else :
 		if BUILD_EFFICIENCY_TREE is False:
 			process.p *= process.requireCandidateHiggsPair
 
+
+
 		if BUILD_TAU_ES_VARIANTS is True :
 			process.MVAMETtauEsUp
 			process.MVAMETtauEsDown
@@ -1708,6 +1678,7 @@ else :
 		if BUILD_ELECTRON_ES_VARIANTS is True :
 			process.MVAMETelectronEsUp
 			process.MVAMETelectronEsDown
+
 
 
 		if (BUILD_ELECTRON_TAUBOOSTED or BUILD_MUON_TAUBOOSTED or BUILD_TAUBOOSTED_TAUBOOSTED) : 
@@ -1763,47 +1734,8 @@ else :
 		process.p *= process.BASELINEdownElectron
 
 
-
-
-	###################################
-	# output config - should not be in crab
-	# script 
-	###################################
-
-
-	if DEBUG_NTUPLE is True :
-		print "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
-		print "+++++ DEBUG NTUPLE ***** will create Ntuple for Debugging "
-		print "+++++ DEBUG NTUPLE ***** with edmProvDump & edmDumpEventContent "
-		print "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
-
-		process.out = cms.OutputModule("PoolOutputModule",
-					fileName = cms.untracked.string('NtupleFile.root'),
-					SelectEvents = cms.untracked.PSet(
-					                SelectEvents = cms.vstring('p')
-					                )					
-		)
-
-		from Configuration.EventContent.EventContent_cff import MINIAODSIMEventContent
-		process.out.outputCommands = MINIAODSIMEventContent.outputCommands
-		# will cause crash --> process.out.outputCommands.append("keep *")
-		# if only want things needed for FlatTuple uncomment the next line
-		#process.out.outputCommands.append("keep *")
-		#process.out.outputCommands.append("keep TupleCandidateEvents*_*_*_DavisNtuple")
-		process.out.outputCommands.append("keep NtupleEvents*_*_*_DavisNtuple")
-		process.out.outputCommands.append("keep pairIndep*_*_*_DavisNtuple")
-		process.out.outputCommands.append("keep NtuplePairIndependentInfos*_*_*_DavisNtuple")
-		process.out.outputCommands.append("keep *_*_bad_*")
-		process.out.outputCommands.append("keep *_egmGsfElectronIDs_*_*")
-
-
-
-	process.TFileService = cms.Service("TFileService", fileName = cms.string("FlatTuple.root"))
-
-	if DEBUG_NTUPLE is True :
-		process.e = cms.EndPath(process.out)
-	else :
-		process.e = cms.EndPath()
+process.TFileService = cms.Service("TFileService", fileName = cms.string("FlatTuple.root"))
+process.e = cms.EndPath()
 
 
 

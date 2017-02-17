@@ -9,7 +9,7 @@ import FWCore.ParameterSet.Config as cms
 
 sampleInfo = []
 
-# ############ EXAMPLE FOR A 2016  Sample
+# ############ EXAMPLE FOR A 2016/Moriond2017  Sample
 # aPSet = cms.PSet(   
 #     DataSet = cms.string("/GluGluHToTauTau_M125_13TeV_powheg_pythia8/RunIISpring16MiniAODv2-PUSpring16RAWAODSIM_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v1/MINIAODSIM"),
 #     EventTotal = cms.int32(1498800),
@@ -35,28 +35,1648 @@ sampleInfo = []
 # sampleInfo.append(aPSet)
 # ########### 
 
-#############
-# 2017 MC 
-#############
+
+
+################################
+# 2017 Moriond MonoH Signals   #
+################################
 
 aPSet = cms.PSet(
-    DataSet = cms.string("/VBFHToTauTau_M125_13TeV_powheg_pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM"),
-    EventTotal = cms.int32(1),
-    NumberOfLumis = cms.int32(1),
-    MaxLumiBlock = cms.int32(1),
+    DataSet = cms.string("/ZprimeToA0hToA0chichihtautau_2HDM_MZp-1000_MA0-300_13TeV-madgraph-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM"),
+    EventTotal = cms.int32(98549),
+    NumberOfLumis = cms.int32(543),
+    MaxLumiBlock = cms.int32(551),
     EventType = cms.string("MC"),
-    KeyName = cms.string("VBF_TAUTAU"),
-    DataCard = cms.string("SMHiggs"),
+    KeyName = cms.string("SIG_Moriond17_2HDM_Zp1000_A0300"),
+    DataCard = cms.string("MonoHiggs_2HDM"),
     CrossSection = cms.double(1.0),
     FilterEff = cms.double(1.0),
     CodeVersion = cms.double(3.0),
     ProductionInfo = cms.string("Run2016_B_C_D_E_F_G_H"),
     RecoilCorrection = cms.string("NONE"),
-    MetSystematicType = cms.string("NONE"),
+    MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
     KeepTheoryScaleFactors = cms.bool(False),
     HLTversion = cms.string("HLT")
        )
 sampleInfo.append(aPSet)
+
+
+
+aPSet = cms.PSet(
+    DataSet = cms.string("/ZprimeToA0hToA0chichihtautau_2HDM_MZp-1000_MA0-400_13TeV-madgraph/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM"),
+    EventTotal = cms.int32(100000),
+    NumberOfLumis = cms.int32(500),
+    MaxLumiBlock = cms.int32(500),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("SIG_Moriond17_2HDM_Zp1000_A0400"),
+    DataCard = cms.string("MonoHiggs_2HDM"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(3.0),
+    ProductionInfo = cms.string("Run2016_B_C_D_E_F_G_H"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
+    KeepTheoryScaleFactors = cms.bool(False),
+    HLTversion = cms.string("HLT")
+       )
+sampleInfo.append(aPSet)
+
+
+
+aPSet = cms.PSet(
+    DataSet = cms.string("/ZprimeToA0hToA0chichihtautau_2HDM_MZp-1000_MA0-500_13TeV-madgraph/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM"),
+    EventTotal = cms.int32(100000),
+    NumberOfLumis = cms.int32(500),
+    MaxLumiBlock = cms.int32(500),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("SIG_Moriond17_2HDM_Zp1000_A0500"),
+    DataCard = cms.string("MonoHiggs_2HDM"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(3.0),
+    ProductionInfo = cms.string("Run2016_B_C_D_E_F_G_H"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
+    KeepTheoryScaleFactors = cms.bool(False),
+    HLTversion = cms.string("HLT")
+       )
+sampleInfo.append(aPSet)
+
+
+
+aPSet = cms.PSet(
+    DataSet = cms.string("/ZprimeToA0hToA0chichihtautau_2HDM_MZp-1000_MA0-600_13TeV-madgraph/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM"),
+    EventTotal = cms.int32(100000),
+    NumberOfLumis = cms.int32(500),
+    MaxLumiBlock = cms.int32(500),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("SIG_Moriond17_2HDM_Zp1000_A0600"),
+    DataCard = cms.string("MonoHiggs_2HDM"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(3.0),
+    ProductionInfo = cms.string("Run2016_B_C_D_E_F_G_H"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
+    KeepTheoryScaleFactors = cms.bool(False),
+    HLTversion = cms.string("HLT")
+       )
+sampleInfo.append(aPSet)
+
+
+
+aPSet = cms.PSet(
+    DataSet = cms.string("/ZprimeToA0hToA0chichihtautau_2HDM_MZp-1000_MA0-700_13TeV-madgraph/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM"),
+    EventTotal = cms.int32(98600),
+    NumberOfLumis = cms.int32(493),
+    MaxLumiBlock = cms.int32(500),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("SIG_Moriond17_2HDM_Zp1000_A0700"),
+    DataCard = cms.string("MonoHiggs_2HDM"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(3.0),
+    ProductionInfo = cms.string("Run2016_B_C_D_E_F_G_H"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
+    KeepTheoryScaleFactors = cms.bool(False),
+    HLTversion = cms.string("HLT")
+       )
+sampleInfo.append(aPSet)
+
+
+
+aPSet = cms.PSet(
+    DataSet = cms.string("/ZprimeToA0hToA0chichihtautau_2HDM_MZp-1000_MA0-800_13TeV-madgraph/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM"),
+    EventTotal = cms.int32(96000),
+    NumberOfLumis = cms.int32(480),
+    MaxLumiBlock = cms.int32(500),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("SIG_Moriond17_2HDM_Zp1000_A0800"),
+    DataCard = cms.string("MonoHiggs_2HDM"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(3.0),
+    ProductionInfo = cms.string("Run2016_B_C_D_E_F_G_H"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
+    KeepTheoryScaleFactors = cms.bool(False),
+    HLTversion = cms.string("HLT")
+       )
+sampleInfo.append(aPSet)
+
+
+
+aPSet = cms.PSet(
+    DataSet = cms.string("/ZprimeToA0hToA0chichihtautau_2HDM_MZp-1200_MA0-300_13TeV-madgraph-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM"),
+    EventTotal = cms.int32(94271),
+    NumberOfLumis = cms.int32(532),
+    MaxLumiBlock = cms.int32(563),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("SIG_Moriond17_2HDM_Zp1200_A0300"),
+    DataCard = cms.string("MonoHiggs_2HDM"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(3.0),
+    ProductionInfo = cms.string("Run2016_B_C_D_E_F_G_H"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
+    KeepTheoryScaleFactors = cms.bool(False),
+    HLTversion = cms.string("HLT")
+       )
+sampleInfo.append(aPSet)
+
+
+
+aPSet = cms.PSet(
+    DataSet = cms.string("/ZprimeToA0hToA0chichihtautau_2HDM_MZp-1200_MA0-400_13TeV-madgraph/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM"),
+    EventTotal = cms.int32(100000),
+    NumberOfLumis = cms.int32(500),
+    MaxLumiBlock = cms.int32(500),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("SIG_Moriond17_2HDM_Zp1200_A0400"),
+    DataCard = cms.string("MonoHiggs_2HDM"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(3.0),
+    ProductionInfo = cms.string("Run2016_B_C_D_E_F_G_H"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
+    KeepTheoryScaleFactors = cms.bool(False),
+    HLTversion = cms.string("HLT")
+       )
+sampleInfo.append(aPSet)
+
+
+
+aPSet = cms.PSet(
+    DataSet = cms.string("/ZprimeToA0hToA0chichihtautau_2HDM_MZp-1200_MA0-500_13TeV-madgraph/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM"),
+    EventTotal = cms.int32(100000),
+    NumberOfLumis = cms.int32(500),
+    MaxLumiBlock = cms.int32(500),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("SIG_Moriond17_2HDM_Zp1200_A0500"),
+    DataCard = cms.string("MonoHiggs_2HDM"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(3.0),
+    ProductionInfo = cms.string("Run2016_B_C_D_E_F_G_H"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
+    KeepTheoryScaleFactors = cms.bool(False),
+    HLTversion = cms.string("HLT")
+       )
+sampleInfo.append(aPSet)
+
+
+
+aPSet = cms.PSet(
+    DataSet = cms.string("/ZprimeToA0hToA0chichihtautau_2HDM_MZp-1200_MA0-600_13TeV-madgraph/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM"),
+    EventTotal = cms.int32(100000),
+    NumberOfLumis = cms.int32(500),
+    MaxLumiBlock = cms.int32(500),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("SIG_Moriond17_2HDM_Zp1200_A0600"),
+    DataCard = cms.string("MonoHiggs_2HDM"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(3.0),
+    ProductionInfo = cms.string("Run2016_B_C_D_E_F_G_H"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
+    KeepTheoryScaleFactors = cms.bool(False),
+    HLTversion = cms.string("HLT")
+       )
+sampleInfo.append(aPSet)
+
+
+
+aPSet = cms.PSet(
+    DataSet = cms.string("/ZprimeToA0hToA0chichihtautau_2HDM_MZp-1200_MA0-700_13TeV-madgraph/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM"),
+    EventTotal = cms.int32(100000),
+    NumberOfLumis = cms.int32(500),
+    MaxLumiBlock = cms.int32(500),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("SIG_Moriond17_2HDM_Zp1200_A0700"),
+    DataCard = cms.string("MonoHiggs_2HDM"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(3.0),
+    ProductionInfo = cms.string("Run2016_B_C_D_E_F_G_H"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
+    KeepTheoryScaleFactors = cms.bool(False),
+    HLTversion = cms.string("HLT")
+       )
+sampleInfo.append(aPSet)
+
+
+
+aPSet = cms.PSet(
+    DataSet = cms.string("/ZprimeToA0hToA0chichihtautau_2HDM_MZp-1200_MA0-800_13TeV-madgraph/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM"),
+    EventTotal = cms.int32(100000),
+    NumberOfLumis = cms.int32(500),
+    MaxLumiBlock = cms.int32(500),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("SIG_Moriond17_2HDM_Zp1200_A0800"),
+    DataCard = cms.string("MonoHiggs_2HDM"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(3.0),
+    ProductionInfo = cms.string("Run2016_B_C_D_E_F_G_H"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
+    KeepTheoryScaleFactors = cms.bool(False),
+    HLTversion = cms.string("HLT")
+       )
+sampleInfo.append(aPSet)
+
+
+
+aPSet = cms.PSet(
+    DataSet = cms.string("/ZprimeToA0hToA0chichihtautau_2HDM_MZp-1400_MA0-300_13TeV-madgraph-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM"),
+    EventTotal = cms.int32(100000),
+    NumberOfLumis = cms.int32(659),
+    MaxLumiBlock = cms.int32(659),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("SIG_Moriond17_2HDM_Zp1400_A0300"),
+    DataCard = cms.string("MonoHiggs_2HDM"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(3.0),
+    ProductionInfo = cms.string("Run2016_B_C_D_E_F_G_H"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
+    KeepTheoryScaleFactors = cms.bool(False),
+    HLTversion = cms.string("HLT")
+       )
+sampleInfo.append(aPSet)
+
+
+
+aPSet = cms.PSet(
+    DataSet = cms.string("/ZprimeToA0hToA0chichihtautau_2HDM_MZp-1400_MA0-400_13TeV-madgraph/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM"),
+    EventTotal = cms.int32(100000),
+    NumberOfLumis = cms.int32(500),
+    MaxLumiBlock = cms.int32(500),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("SIG_Moriond17_2HDM_Zp1400_A0400"),
+    DataCard = cms.string("MonoHiggs_2HDM"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(3.0),
+    ProductionInfo = cms.string("Run2016_B_C_D_E_F_G_H"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
+    KeepTheoryScaleFactors = cms.bool(False),
+    HLTversion = cms.string("HLT")
+       )
+sampleInfo.append(aPSet)
+
+
+
+aPSet = cms.PSet(
+    DataSet = cms.string("/ZprimeToA0hToA0chichihtautau_2HDM_MZp-1400_MA0-500_13TeV-madgraph/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v2/MINIAODSIM"),
+    EventTotal = cms.int32(95600),
+    NumberOfLumis = cms.int32(478),
+    MaxLumiBlock = cms.int32(500),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("SIG_Moriond17_2HDM_Zp1400_A0500"),
+    DataCard = cms.string("MonoHiggs_2HDM"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(3.0),
+    ProductionInfo = cms.string("Run2016_B_C_D_E_F_G_H"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
+    KeepTheoryScaleFactors = cms.bool(False),
+    HLTversion = cms.string("HLT")
+       )
+sampleInfo.append(aPSet)
+
+
+
+aPSet = cms.PSet(
+    DataSet = cms.string("/ZprimeToA0hToA0chichihtautau_2HDM_MZp-1400_MA0-600_13TeV-madgraph/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM"),
+    EventTotal = cms.int32(98400),
+    NumberOfLumis = cms.int32(492),
+    MaxLumiBlock = cms.int32(500),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("SIG_Moriond17_2HDM_Zp1400_A0600"),
+    DataCard = cms.string("MonoHiggs_2HDM"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(3.0),
+    ProductionInfo = cms.string("Run2016_B_C_D_E_F_G_H"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
+    KeepTheoryScaleFactors = cms.bool(False),
+    HLTversion = cms.string("HLT")
+       )
+sampleInfo.append(aPSet)
+
+
+
+aPSet = cms.PSet(
+    DataSet = cms.string("/ZprimeToA0hToA0chichihtautau_2HDM_MZp-1400_MA0-700_13TeV-madgraph/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM"),
+    EventTotal = cms.int32(100000),
+    NumberOfLumis = cms.int32(500),
+    MaxLumiBlock = cms.int32(500),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("SIG_Moriond17_2HDM_Zp1400_A0700"),
+    DataCard = cms.string("MonoHiggs_2HDM"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(3.0),
+    ProductionInfo = cms.string("Run2016_B_C_D_E_F_G_H"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
+    KeepTheoryScaleFactors = cms.bool(False),
+    HLTversion = cms.string("HLT")
+       )
+sampleInfo.append(aPSet)
+
+
+
+aPSet = cms.PSet(
+    DataSet = cms.string("/ZprimeToA0hToA0chichihtautau_2HDM_MZp-1400_MA0-800_13TeV-madgraph/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM"),
+    EventTotal = cms.int32(100000),
+    NumberOfLumis = cms.int32(500),
+    MaxLumiBlock = cms.int32(500),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("SIG_Moriond17_2HDM_Zp1400_A0800"),
+    DataCard = cms.string("MonoHiggs_2HDM"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(3.0),
+    ProductionInfo = cms.string("Run2016_B_C_D_E_F_G_H"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
+    KeepTheoryScaleFactors = cms.bool(False),
+    HLTversion = cms.string("HLT")
+       )
+sampleInfo.append(aPSet)
+
+
+
+aPSet = cms.PSet(
+    DataSet = cms.string("/ZprimeToA0hToA0chichihtautau_2HDM_MZp-1700_MA0-300_13TeV-madgraph-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM"),
+    EventTotal = cms.int32(100000),
+    NumberOfLumis = cms.int32(601),
+    MaxLumiBlock = cms.int32(601),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("SIG_Moriond17_2HDM_Zp1700_A0300"),
+    DataCard = cms.string("MonoHiggs_2HDM"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(3.0),
+    ProductionInfo = cms.string("Run2016_B_C_D_E_F_G_H"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
+    KeepTheoryScaleFactors = cms.bool(False),
+    HLTversion = cms.string("HLT")
+       )
+sampleInfo.append(aPSet)
+
+
+
+aPSet = cms.PSet(
+    DataSet = cms.string("/ZprimeToA0hToA0chichihtautau_2HDM_MZp-1700_MA0-400_13TeV-madgraph/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM"),
+    EventTotal = cms.int32(100000),
+    NumberOfLumis = cms.int32(500),
+    MaxLumiBlock = cms.int32(500),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("SIG_Moriond17_2HDM_Zp1700_A0400"),
+    DataCard = cms.string("MonoHiggs_2HDM"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(3.0),
+    ProductionInfo = cms.string("Run2016_B_C_D_E_F_G_H"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
+    KeepTheoryScaleFactors = cms.bool(False),
+    HLTversion = cms.string("HLT")
+       )
+sampleInfo.append(aPSet)
+
+
+
+aPSet = cms.PSet(
+    DataSet = cms.string("/ZprimeToA0hToA0chichihtautau_2HDM_MZp-1700_MA0-500_13TeV-madgraph/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM"),
+    EventTotal = cms.int32(100000),
+    NumberOfLumis = cms.int32(500),
+    MaxLumiBlock = cms.int32(500),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("SIG_Moriond17_2HDM_Zp1700_A0500"),
+    DataCard = cms.string("MonoHiggs_2HDM"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(3.0),
+    ProductionInfo = cms.string("Run2016_B_C_D_E_F_G_H"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
+    KeepTheoryScaleFactors = cms.bool(False),
+    HLTversion = cms.string("HLT")
+       )
+sampleInfo.append(aPSet)
+
+
+
+aPSet = cms.PSet(
+    DataSet = cms.string("/ZprimeToA0hToA0chichihtautau_2HDM_MZp-1700_MA0-600_13TeV-madgraph/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM"),
+    EventTotal = cms.int32(100000),
+    NumberOfLumis = cms.int32(500),
+    MaxLumiBlock = cms.int32(500),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("SIG_Moriond17_2HDM_Zp1700_A0600"),
+    DataCard = cms.string("MonoHiggs_2HDM"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(3.0),
+    ProductionInfo = cms.string("Run2016_B_C_D_E_F_G_H"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
+    KeepTheoryScaleFactors = cms.bool(False),
+    HLTversion = cms.string("HLT")
+       )
+sampleInfo.append(aPSet)
+
+
+
+aPSet = cms.PSet(
+    DataSet = cms.string("/ZprimeToA0hToA0chichihtautau_2HDM_MZp-1700_MA0-700_13TeV-madgraph/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM"),
+    EventTotal = cms.int32(100000),
+    NumberOfLumis = cms.int32(500),
+    MaxLumiBlock = cms.int32(500),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("SIG_Moriond17_2HDM_Zp1700_A0700"),
+    DataCard = cms.string("MonoHiggs_2HDM"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(3.0),
+    ProductionInfo = cms.string("Run2016_B_C_D_E_F_G_H"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
+    KeepTheoryScaleFactors = cms.bool(False),
+    HLTversion = cms.string("HLT")
+       )
+sampleInfo.append(aPSet)
+
+
+
+aPSet = cms.PSet(
+    DataSet = cms.string("/ZprimeToA0hToA0chichihtautau_2HDM_MZp-1700_MA0-800_13TeV-madgraph/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM"),
+    EventTotal = cms.int32(99600),
+    NumberOfLumis = cms.int32(498),
+    MaxLumiBlock = cms.int32(500),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("SIG_Moriond17_2HDM_Zp1700_A0800"),
+    DataCard = cms.string("MonoHiggs_2HDM"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(3.0),
+    ProductionInfo = cms.string("Run2016_B_C_D_E_F_G_H"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
+    KeepTheoryScaleFactors = cms.bool(False),
+    HLTversion = cms.string("HLT")
+       )
+sampleInfo.append(aPSet)
+
+
+
+aPSet = cms.PSet(
+    DataSet = cms.string("/ZprimeToA0hToA0chichihtautau_2HDM_MZp-2000_MA0-300_13TeV-madgraph-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM"),
+    EventTotal = cms.int32(100000),
+    NumberOfLumis = cms.int32(585),
+    MaxLumiBlock = cms.int32(585),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("SIG_Moriond17_2HDM_Zp2000_A0300"),
+    DataCard = cms.string("MonoHiggs_2HDM"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(3.0),
+    ProductionInfo = cms.string("Run2016_B_C_D_E_F_G_H"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
+    KeepTheoryScaleFactors = cms.bool(False),
+    HLTversion = cms.string("HLT")
+       )
+sampleInfo.append(aPSet)
+
+
+
+aPSet = cms.PSet(
+    DataSet = cms.string("/ZprimeToA0hToA0chichihtautau_2HDM_MZp-2000_MA0-400_13TeV-madgraph/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM"),
+    EventTotal = cms.int32(98800),
+    NumberOfLumis = cms.int32(494),
+    MaxLumiBlock = cms.int32(500),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("SIG_Moriond17_2HDM_Zp2000_A0400"),
+    DataCard = cms.string("MonoHiggs_2HDM"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(3.0),
+    ProductionInfo = cms.string("Run2016_B_C_D_E_F_G_H"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
+    KeepTheoryScaleFactors = cms.bool(False),
+    HLTversion = cms.string("HLT")
+       )
+sampleInfo.append(aPSet)
+
+
+
+aPSet = cms.PSet(
+    DataSet = cms.string("/ZprimeToA0hToA0chichihtautau_2HDM_MZp-2000_MA0-500_13TeV-madgraph/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM"),
+    EventTotal = cms.int32(100000),
+    NumberOfLumis = cms.int32(500),
+    MaxLumiBlock = cms.int32(500),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("SIG_Moriond17_2HDM_Zp2000_A0500"),
+    DataCard = cms.string("MonoHiggs_2HDM"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(3.0),
+    ProductionInfo = cms.string("Run2016_B_C_D_E_F_G_H"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
+    KeepTheoryScaleFactors = cms.bool(False),
+    HLTversion = cms.string("HLT")
+       )
+sampleInfo.append(aPSet)
+
+
+
+aPSet = cms.PSet(
+    DataSet = cms.string("/ZprimeToA0hToA0chichihtautau_2HDM_MZp-2000_MA0-600_13TeV-madgraph/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM"),
+    EventTotal = cms.int32(95800),
+    NumberOfLumis = cms.int32(479),
+    MaxLumiBlock = cms.int32(500),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("SIG_Moriond17_2HDM_Zp2000_A0600"),
+    DataCard = cms.string("MonoHiggs_2HDM"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(3.0),
+    ProductionInfo = cms.string("Run2016_B_C_D_E_F_G_H"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
+    KeepTheoryScaleFactors = cms.bool(False),
+    HLTversion = cms.string("HLT")
+       )
+sampleInfo.append(aPSet)
+
+
+
+aPSet = cms.PSet(
+    DataSet = cms.string("/ZprimeToA0hToA0chichihtautau_2HDM_MZp-2000_MA0-700_13TeV-madgraph/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM"),
+    EventTotal = cms.int32(100000),
+    NumberOfLumis = cms.int32(500),
+    MaxLumiBlock = cms.int32(500),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("SIG_Moriond17_2HDM_Zp2000_A0700"),
+    DataCard = cms.string("MonoHiggs_2HDM"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(3.0),
+    ProductionInfo = cms.string("Run2016_B_C_D_E_F_G_H"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
+    KeepTheoryScaleFactors = cms.bool(False),
+    HLTversion = cms.string("HLT")
+       )
+sampleInfo.append(aPSet)
+
+
+
+aPSet = cms.PSet(
+    DataSet = cms.string("/ZprimeToA0hToA0chichihtautau_2HDM_MZp-2000_MA0-800_13TeV-madgraph/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM"),
+    EventTotal = cms.int32(97200),
+    NumberOfLumis = cms.int32(486),
+    MaxLumiBlock = cms.int32(500),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("SIG_Moriond17_2HDM_Zp2000_A0800"),
+    DataCard = cms.string("MonoHiggs_2HDM"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(3.0),
+    ProductionInfo = cms.string("Run2016_B_C_D_E_F_G_H"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
+    KeepTheoryScaleFactors = cms.bool(False),
+    HLTversion = cms.string("HLT")
+       )
+sampleInfo.append(aPSet)
+
+
+
+aPSet = cms.PSet(
+    DataSet = cms.string("/ZprimeToA0hToA0chichihtautau_2HDM_MZp-2500_MA0-300_13TeV-madgraph-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM"),
+    EventTotal = cms.int32(95560),
+    NumberOfLumis = cms.int32(517),
+    MaxLumiBlock = cms.int32(541),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("SIG_Moriond17_2HDM_Zp2500_A0300"),
+    DataCard = cms.string("MonoHiggs_2HDM"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(3.0),
+    ProductionInfo = cms.string("Run2016_B_C_D_E_F_G_H"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
+    KeepTheoryScaleFactors = cms.bool(False),
+    HLTversion = cms.string("HLT")
+       )
+sampleInfo.append(aPSet)
+
+
+
+aPSet = cms.PSet(
+    DataSet = cms.string("/ZprimeToA0hToA0chichihtautau_2HDM_MZp-2500_MA0-400_13TeV-madgraph/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM"),
+    EventTotal = cms.int32(98400),
+    NumberOfLumis = cms.int32(492),
+    MaxLumiBlock = cms.int32(500),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("SIG_Moriond17_2HDM_Zp2500_A0400"),
+    DataCard = cms.string("MonoHiggs_2HDM"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(3.0),
+    ProductionInfo = cms.string("Run2016_B_C_D_E_F_G_H"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
+    KeepTheoryScaleFactors = cms.bool(False),
+    HLTversion = cms.string("HLT")
+       )
+sampleInfo.append(aPSet)
+
+
+
+aPSet = cms.PSet(
+    DataSet = cms.string("/ZprimeToA0hToA0chichihtautau_2HDM_MZp-2500_MA0-500_13TeV-madgraph/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM"),
+    EventTotal = cms.int32(98400),
+    NumberOfLumis = cms.int32(492),
+    MaxLumiBlock = cms.int32(500),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("SIG_Moriond17_2HDM_Zp2500_A0500"),
+    DataCard = cms.string("MonoHiggs_2HDM"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(3.0),
+    ProductionInfo = cms.string("Run2016_B_C_D_E_F_G_H"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
+    KeepTheoryScaleFactors = cms.bool(False),
+    HLTversion = cms.string("HLT")
+       )
+sampleInfo.append(aPSet)
+
+
+
+aPSet = cms.PSet(
+    DataSet = cms.string("/ZprimeToA0hToA0chichihtautau_2HDM_MZp-2500_MA0-600_13TeV-madgraph/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM"),
+    EventTotal = cms.int32(99600),
+    NumberOfLumis = cms.int32(498),
+    MaxLumiBlock = cms.int32(500),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("SIG_Moriond17_2HDM_Zp2500_A0600"),
+    DataCard = cms.string("MonoHiggs_2HDM"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(3.0),
+    ProductionInfo = cms.string("Run2016_B_C_D_E_F_G_H"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
+    KeepTheoryScaleFactors = cms.bool(False),
+    HLTversion = cms.string("HLT")
+       )
+sampleInfo.append(aPSet)
+
+
+
+aPSet = cms.PSet(
+    DataSet = cms.string("/ZprimeToA0hToA0chichihtautau_2HDM_MZp-2500_MA0-700_13TeV-madgraph/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM"),
+    EventTotal = cms.int32(100000),
+    NumberOfLumis = cms.int32(500),
+    MaxLumiBlock = cms.int32(500),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("SIG_Moriond17_2HDM_Zp2500_A0700"),
+    DataCard = cms.string("MonoHiggs_2HDM"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(3.0),
+    ProductionInfo = cms.string("Run2016_B_C_D_E_F_G_H"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
+    KeepTheoryScaleFactors = cms.bool(False),
+    HLTversion = cms.string("HLT")
+       )
+sampleInfo.append(aPSet)
+
+
+
+aPSet = cms.PSet(
+    DataSet = cms.string("/ZprimeToA0hToA0chichihtautau_2HDM_MZp-2500_MA0-800_13TeV-madgraph/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM"),
+    EventTotal = cms.int32(100000),
+    NumberOfLumis = cms.int32(500),
+    MaxLumiBlock = cms.int32(500),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("SIG_Moriond17_2HDM_Zp2500_A0800"),
+    DataCard = cms.string("MonoHiggs_2HDM"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(3.0),
+    ProductionInfo = cms.string("Run2016_B_C_D_E_F_G_H"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
+    KeepTheoryScaleFactors = cms.bool(False),
+    HLTversion = cms.string("HLT")
+       )
+sampleInfo.append(aPSet)
+
+
+
+aPSet = cms.PSet(
+    DataSet = cms.string("/ZprimeToA0hToA0chichihtautau_2HDM_MZp-600_MA0-300_13TeV-madgraph-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM"),
+    EventTotal = cms.int32(99337),
+    NumberOfLumis = cms.int32(599),
+    MaxLumiBlock = cms.int32(603),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("SIG_Moriond17_2HDM_Zp600_A0300"),
+    DataCard = cms.string("MonoHiggs_2HDM"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(3.0),
+    ProductionInfo = cms.string("Run2016_B_C_D_E_F_G_H"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
+    KeepTheoryScaleFactors = cms.bool(False),
+    HLTversion = cms.string("HLT")
+       )
+sampleInfo.append(aPSet)
+
+
+
+aPSet = cms.PSet(
+    DataSet = cms.string("/ZprimeToA0hToA0chichihtautau_2HDM_MZp-600_MA0-400_13TeV-madgraph/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM"),
+    EventTotal = cms.int32(98800),
+    NumberOfLumis = cms.int32(494),
+    MaxLumiBlock = cms.int32(500),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("SIG_Moriond17_2HDM_Zp600_A0400"),
+    DataCard = cms.string("MonoHiggs_2HDM"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(3.0),
+    ProductionInfo = cms.string("Run2016_B_C_D_E_F_G_H"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
+    KeepTheoryScaleFactors = cms.bool(False),
+    HLTversion = cms.string("HLT")
+       )
+sampleInfo.append(aPSet)
+
+
+
+aPSet = cms.PSet(
+    DataSet = cms.string("/ZprimeToA0hToA0chichihtautau_2HDM_MZp-800_MA0-300_13TeV-madgraph-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM"),
+    EventTotal = cms.int32(98260),
+    NumberOfLumis = cms.int32(677),
+    MaxLumiBlock = cms.int32(689),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("SIG_Moriond17_2HDM_Zp800_A0300"),
+    DataCard = cms.string("MonoHiggs_2HDM"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(3.0),
+    ProductionInfo = cms.string("Run2016_B_C_D_E_F_G_H"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
+    KeepTheoryScaleFactors = cms.bool(False),
+    HLTversion = cms.string("HLT")
+       )
+sampleInfo.append(aPSet)
+
+
+
+aPSet = cms.PSet(
+    DataSet = cms.string("/ZprimeToA0hToA0chichihtautau_2HDM_MZp-800_MA0-400_13TeV-madgraph/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM"),
+    EventTotal = cms.int32(99400),
+    NumberOfLumis = cms.int32(497),
+    MaxLumiBlock = cms.int32(500),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("SIG_Moriond17_2HDM_Zp800_A0400"),
+    DataCard = cms.string("MonoHiggs_2HDM"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(3.0),
+    ProductionInfo = cms.string("Run2016_B_C_D_E_F_G_H"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
+    KeepTheoryScaleFactors = cms.bool(False),
+    HLTversion = cms.string("HLT")
+       )
+sampleInfo.append(aPSet)
+
+
+
+aPSet = cms.PSet(
+    DataSet = cms.string("/ZprimeToA0hToA0chichihtautau_2HDM_MZp-800_MA0-500_13TeV-madgraph/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM"),
+    EventTotal = cms.int32(100000),
+    NumberOfLumis = cms.int32(500),
+    MaxLumiBlock = cms.int32(500),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("SIG_Moriond17_2HDM_Zp800_A0500"),
+    DataCard = cms.string("MonoHiggs_2HDM"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(3.0),
+    ProductionInfo = cms.string("Run2016_B_C_D_E_F_G_H"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
+    KeepTheoryScaleFactors = cms.bool(False),
+    HLTversion = cms.string("HLT")
+       )
+sampleInfo.append(aPSet)
+
+
+
+aPSet = cms.PSet(
+    DataSet = cms.string("/ZprimeToA0hToA0chichihtautau_2HDM_MZp-800_MA0-600_13TeV-madgraph/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM"),
+    EventTotal = cms.int32(100000),
+    NumberOfLumis = cms.int32(500),
+    MaxLumiBlock = cms.int32(500),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("SIG_Moriond17_2HDM_Zp800_A0600"),
+    DataCard = cms.string("MonoHiggs_2HDM"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(3.0),
+    ProductionInfo = cms.string("Run2016_B_C_D_E_F_G_H"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
+    KeepTheoryScaleFactors = cms.bool(False),
+    HLTversion = cms.string("HLT")
+       )
+sampleInfo.append(aPSet)
+
+
+
+aPSet = cms.PSet(
+    DataSet = cms.string("/MonoHtautau_ZpBaryonic_MZp-10000_MChi-1000_13TeV-madgraph/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM"),
+    EventTotal = cms.int32(96760),
+    NumberOfLumis = cms.int32(598),
+    MaxLumiBlock = cms.int32(618),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("SIG_Moriond17_ZpBaryonic_Zp10000_Chi1000"),
+    DataCard = cms.string("MonoHiggs_ZpBaryonic"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(3.0),
+    ProductionInfo = cms.string("Run2016_B_C_D_E_F_G_H"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
+    KeepTheoryScaleFactors = cms.bool(False),
+    HLTversion = cms.string("HLT")
+       )
+sampleInfo.append(aPSet)
+
+
+
+aPSet = cms.PSet(
+    DataSet = cms.string("/MonoHtautau_ZpBaryonic_MZp-10000_MChi-10_13TeV-madgraph/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM"),
+    EventTotal = cms.int32(98946),
+    NumberOfLumis = cms.int32(563),
+    MaxLumiBlock = cms.int32(569),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("SIG_Moriond17_ZpBaryonic_Zp10000_Chi10"),
+    DataCard = cms.string("MonoHiggs_ZpBaryonic"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(3.0),
+    ProductionInfo = cms.string("Run2016_B_C_D_E_F_G_H"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
+    KeepTheoryScaleFactors = cms.bool(False),
+    HLTversion = cms.string("HLT")
+       )
+sampleInfo.append(aPSet)
+
+
+
+aPSet = cms.PSet(
+    DataSet = cms.string("/MonoHtautau_ZpBaryonic_MZp-10000_MChi-150_13TeV-madgraph/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM"),
+    EventTotal = cms.int32(100000),
+    NumberOfLumis = cms.int32(524),
+    MaxLumiBlock = cms.int32(524),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("SIG_Moriond17_ZpBaryonic_Zp10000_Chi150"),
+    DataCard = cms.string("MonoHiggs_ZpBaryonic"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(3.0),
+    ProductionInfo = cms.string("Run2016_B_C_D_E_F_G_H"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
+    KeepTheoryScaleFactors = cms.bool(False),
+    HLTversion = cms.string("HLT")
+       )
+sampleInfo.append(aPSet)
+
+
+
+aPSet = cms.PSet(
+    DataSet = cms.string("/MonoHtautau_ZpBaryonic_MZp-10000_MChi-1_13TeV-madgraph/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM"),
+    EventTotal = cms.int32(100000),
+    NumberOfLumis = cms.int32(509),
+    MaxLumiBlock = cms.int32(509),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("SIG_Moriond17_ZpBaryonic_Zp10000_Chi1"),
+    DataCard = cms.string("MonoHiggs_ZpBaryonic"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(3.0),
+    ProductionInfo = cms.string("Run2016_B_C_D_E_F_G_H"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
+    KeepTheoryScaleFactors = cms.bool(False),
+    HLTversion = cms.string("HLT")
+       )
+sampleInfo.append(aPSet)
+
+
+
+aPSet = cms.PSet(
+    DataSet = cms.string("/MonoHtautau_ZpBaryonic_MZp-10000_MChi-500_13TeV-madgraph/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM"),
+    EventTotal = cms.int32(95976),
+    NumberOfLumis = cms.int32(573),
+    MaxLumiBlock = cms.int32(597),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("SIG_Moriond17_ZpBaryonic_Zp10000_Chi500"),
+    DataCard = cms.string("MonoHiggs_ZpBaryonic"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(3.0),
+    ProductionInfo = cms.string("Run2016_B_C_D_E_F_G_H"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
+    KeepTheoryScaleFactors = cms.bool(False),
+    HLTversion = cms.string("HLT")
+       )
+sampleInfo.append(aPSet)
+
+
+
+aPSet = cms.PSet(
+    DataSet = cms.string("/MonoHtautau_ZpBaryonic_MZp-10000_MChi-50_13TeV-madgraph/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM"),
+    EventTotal = cms.int32(96235),
+    NumberOfLumis = cms.int32(512),
+    MaxLumiBlock = cms.int32(532),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("SIG_Moriond17_ZpBaryonic_Zp10000_Chi50"),
+    DataCard = cms.string("MonoHiggs_ZpBaryonic"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(3.0),
+    ProductionInfo = cms.string("Run2016_B_C_D_E_F_G_H"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
+    KeepTheoryScaleFactors = cms.bool(False),
+    HLTversion = cms.string("HLT")
+       )
+sampleInfo.append(aPSet)
+
+
+
+aPSet = cms.PSet(
+    DataSet = cms.string("/MonoHtautau_ZpBaryonic_MZp-1000_MChi-1000_13TeV-madgraph/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM"),
+    EventTotal = cms.int32(96428),
+    NumberOfLumis = cms.int32(540),
+    MaxLumiBlock = cms.int32(560),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("SIG_Moriond17_ZpBaryonic_Zp1000_Chi1000"),
+    DataCard = cms.string("MonoHiggs_ZpBaryonic"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(3.0),
+    ProductionInfo = cms.string("Run2016_B_C_D_E_F_G_H"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
+    KeepTheoryScaleFactors = cms.bool(False),
+    HLTversion = cms.string("HLT")
+       )
+sampleInfo.append(aPSet)
+
+
+
+aPSet = cms.PSet(
+    DataSet = cms.string("/MonoHtautau_ZpBaryonic_MZp-1000_MChi-150_13TeV-madgraph/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM"),
+    EventTotal = cms.int32(100000),
+    NumberOfLumis = cms.int32(531),
+    MaxLumiBlock = cms.int32(531),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("SIG_Moriond17_ZpBaryonic_Zp1000_Chi150"),
+    DataCard = cms.string("MonoHiggs_ZpBaryonic"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(3.0),
+    ProductionInfo = cms.string("Run2016_B_C_D_E_F_G_H"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
+    KeepTheoryScaleFactors = cms.bool(False),
+    HLTversion = cms.string("HLT")
+       )
+sampleInfo.append(aPSet)
+
+
+
+aPSet = cms.PSet(
+    DataSet = cms.string("/MonoHtautau_ZpBaryonic_MZp-1000_MChi-1_13TeV-madgraph/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM"),
+    EventTotal = cms.int32(97240),
+    NumberOfLumis = cms.int32(564),
+    MaxLumiBlock = cms.int32(580),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("SIG_Moriond17_ZpBaryonic_Zp1000_Chi1"),
+    DataCard = cms.string("MonoHiggs_ZpBaryonic"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(3.0),
+    ProductionInfo = cms.string("Run2016_B_C_D_E_F_G_H"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
+    KeepTheoryScaleFactors = cms.bool(False),
+    HLTversion = cms.string("HLT")
+       )
+sampleInfo.append(aPSet)
+
+
+
+aPSet = cms.PSet(
+    DataSet = cms.string("/MonoHtautau_ZpBaryonic_MZp-100_MChi-10_13TeV-madgraph/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM"),
+    EventTotal = cms.int32(99365),
+    NumberOfLumis = cms.int32(626),
+    MaxLumiBlock = cms.int32(630),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("SIG_Moriond17_ZpBaryonic_Zp100_Chi10"),
+    DataCard = cms.string("MonoHiggs_ZpBaryonic"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(3.0),
+    ProductionInfo = cms.string("Run2016_B_C_D_E_F_G_H"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
+    KeepTheoryScaleFactors = cms.bool(False),
+    HLTversion = cms.string("HLT")
+       )
+sampleInfo.append(aPSet)
+
+
+
+aPSet = cms.PSet(
+    DataSet = cms.string("/MonoHtautau_ZpBaryonic_MZp-100_MChi-1_13TeV-madgraph/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v2/MINIAODSIM"),
+    EventTotal = cms.int32(100000),
+    NumberOfLumis = cms.int32(527),
+    MaxLumiBlock = cms.int32(527),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("SIG_Moriond17_ZpBaryonic_Zp100_Chi1"),
+    DataCard = cms.string("MonoHiggs_ZpBaryonic"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(3.0),
+    ProductionInfo = cms.string("Run2016_B_C_D_E_F_G_H"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
+    KeepTheoryScaleFactors = cms.bool(False),
+    HLTversion = cms.string("HLT")
+       )
+sampleInfo.append(aPSet)
+
+
+
+aPSet = cms.PSet(
+    DataSet = cms.string("/MonoHtautau_ZpBaryonic_MZp-10_MChi-1000_13TeV-madgraph/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM"),
+    EventTotal = cms.int32(100000),
+    NumberOfLumis = cms.int32(514),
+    MaxLumiBlock = cms.int32(514),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("SIG_Moriond17_ZpBaryonic_Zp10_Chi1000"),
+    DataCard = cms.string("MonoHiggs_ZpBaryonic"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(3.0),
+    ProductionInfo = cms.string("Run2016_B_C_D_E_F_G_H"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
+    KeepTheoryScaleFactors = cms.bool(False),
+    HLTversion = cms.string("HLT")
+       )
+sampleInfo.append(aPSet)
+
+
+
+aPSet = cms.PSet(
+    DataSet = cms.string("/MonoHtautau_ZpBaryonic_MZp-10_MChi-10_13TeV-madgraph/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM"),
+    EventTotal = cms.int32(99272),
+    NumberOfLumis = cms.int32(546),
+    MaxLumiBlock = cms.int32(550),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("SIG_Moriond17_ZpBaryonic_Zp10_Chi10"),
+    DataCard = cms.string("MonoHiggs_ZpBaryonic"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(3.0),
+    ProductionInfo = cms.string("Run2016_B_C_D_E_F_G_H"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
+    KeepTheoryScaleFactors = cms.bool(False),
+    HLTversion = cms.string("HLT")
+       )
+sampleInfo.append(aPSet)
+
+
+
+aPSet = cms.PSet(
+    DataSet = cms.string("/MonoHtautau_ZpBaryonic_MZp-10_MChi-150_13TeV-madgraph/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v2/MINIAODSIM"),
+    EventTotal = cms.int32(98898),
+    NumberOfLumis = cms.int32(539),
+    MaxLumiBlock = cms.int32(545),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("SIG_Moriond17_ZpBaryonic_Zp10_Chi150"),
+    DataCard = cms.string("MonoHiggs_ZpBaryonic"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(3.0),
+    ProductionInfo = cms.string("Run2016_B_C_D_E_F_G_H"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
+    KeepTheoryScaleFactors = cms.bool(False),
+    HLTversion = cms.string("HLT")
+       )
+sampleInfo.append(aPSet)
+
+
+
+aPSet = cms.PSet(
+    DataSet = cms.string("/MonoHtautau_ZpBaryonic_MZp-10_MChi-1_13TeV-madgraph/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM"),
+    EventTotal = cms.int32(97116),
+    NumberOfLumis = cms.int32(539),
+    MaxLumiBlock = cms.int32(555),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("SIG_Moriond17_ZpBaryonic_Zp10_Chi1"),
+    DataCard = cms.string("MonoHiggs_ZpBaryonic"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(3.0),
+    ProductionInfo = cms.string("Run2016_B_C_D_E_F_G_H"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
+    KeepTheoryScaleFactors = cms.bool(False),
+    HLTversion = cms.string("HLT")
+       )
+sampleInfo.append(aPSet)
+
+
+
+aPSet = cms.PSet(
+    DataSet = cms.string("/MonoHtautau_ZpBaryonic_MZp-10_MChi-500_13TeV-madgraph/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM"),
+    EventTotal = cms.int32(98131),
+    NumberOfLumis = cms.int32(630),
+    MaxLumiBlock = cms.int32(642),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("SIG_Moriond17_ZpBaryonic_Zp10_Chi500"),
+    DataCard = cms.string("MonoHiggs_ZpBaryonic"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(3.0),
+    ProductionInfo = cms.string("Run2016_B_C_D_E_F_G_H"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
+    KeepTheoryScaleFactors = cms.bool(False),
+    HLTversion = cms.string("HLT")
+       )
+sampleInfo.append(aPSet)
+
+
+
+aPSet = cms.PSet(
+    DataSet = cms.string("/MonoHtautau_ZpBaryonic_MZp-10_MChi-50_13TeV-madgraph/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM"),
+    EventTotal = cms.int32(100000),
+    NumberOfLumis = cms.int32(532),
+    MaxLumiBlock = cms.int32(532),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("SIG_Moriond17_ZpBaryonic_Zp10_Chi50"),
+    DataCard = cms.string("MonoHiggs_ZpBaryonic"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(3.0),
+    ProductionInfo = cms.string("Run2016_B_C_D_E_F_G_H"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
+    KeepTheoryScaleFactors = cms.bool(False),
+    HLTversion = cms.string("HLT")
+       )
+sampleInfo.append(aPSet)
+
+
+
+aPSet = cms.PSet(
+    DataSet = cms.string("/MonoHtautau_ZpBaryonic_MZp-15_MChi-10_13TeV-madgraph/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM"),
+    EventTotal = cms.int32(100000),
+    NumberOfLumis = cms.int32(525),
+    MaxLumiBlock = cms.int32(525),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("SIG_Moriond17_ZpBaryonic_Zp15_Chi10"),
+    DataCard = cms.string("MonoHiggs_ZpBaryonic"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(3.0),
+    ProductionInfo = cms.string("Run2016_B_C_D_E_F_G_H"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
+    KeepTheoryScaleFactors = cms.bool(False),
+    HLTversion = cms.string("HLT")
+       )
+sampleInfo.append(aPSet)
+
+
+
+aPSet = cms.PSet(
+    DataSet = cms.string("/MonoHtautau_ZpBaryonic_MZp-1995_MChi-1000_13TeV-madgraph/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM"),
+    EventTotal = cms.int32(100000),
+    NumberOfLumis = cms.int32(532),
+    MaxLumiBlock = cms.int32(532),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("SIG_Moriond17_ZpBaryonic_Zp1995_Chi1000"),
+    DataCard = cms.string("MonoHiggs_ZpBaryonic"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(3.0),
+    ProductionInfo = cms.string("Run2016_B_C_D_E_F_G_H"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
+    KeepTheoryScaleFactors = cms.bool(False),
+    HLTversion = cms.string("HLT")
+       )
+sampleInfo.append(aPSet)
+
+
+
+aPSet = cms.PSet(
+    DataSet = cms.string("/MonoHtautau_ZpBaryonic_MZp-2000_MChi-1_13TeV-madgraph/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM"),
+    EventTotal = cms.int32(100000),
+    NumberOfLumis = cms.int32(531),
+    MaxLumiBlock = cms.int32(531),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("SIG_Moriond17_ZpBaryonic_Zp2000_Chi1"),
+    DataCard = cms.string("MonoHiggs_ZpBaryonic"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(3.0),
+    ProductionInfo = cms.string("Run2016_B_C_D_E_F_G_H"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
+    KeepTheoryScaleFactors = cms.bool(False),
+    HLTversion = cms.string("HLT")
+       )
+sampleInfo.append(aPSet)
+
+
+
+aPSet = cms.PSet(
+    DataSet = cms.string("/MonoHtautau_ZpBaryonic_MZp-2000_MChi-500_13TeV-madgraph/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM"),
+    EventTotal = cms.int32(97220),
+    NumberOfLumis = cms.int32(525),
+    MaxLumiBlock = cms.int32(540),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("SIG_Moriond17_ZpBaryonic_Zp2000_Chi500"),
+    DataCard = cms.string("MonoHiggs_ZpBaryonic"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(3.0),
+    ProductionInfo = cms.string("Run2016_B_C_D_E_F_G_H"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
+    KeepTheoryScaleFactors = cms.bool(False),
+    HLTversion = cms.string("HLT")
+       )
+sampleInfo.append(aPSet)
+
+
+
+aPSet = cms.PSet(
+    DataSet = cms.string("/MonoHtautau_ZpBaryonic_MZp-200_MChi-150_13TeV-madgraph/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM"),
+    EventTotal = cms.int32(100000),
+    NumberOfLumis = cms.int32(575),
+    MaxLumiBlock = cms.int32(575),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("SIG_Moriond17_ZpBaryonic_Zp200_Chi150"),
+    DataCard = cms.string("MonoHiggs_ZpBaryonic"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(3.0),
+    ProductionInfo = cms.string("Run2016_B_C_D_E_F_G_H"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
+    KeepTheoryScaleFactors = cms.bool(False),
+    HLTversion = cms.string("HLT")
+       )
+sampleInfo.append(aPSet)
+
+
+
+aPSet = cms.PSet(
+    DataSet = cms.string("/MonoHtautau_ZpBaryonic_MZp-200_MChi-1_13TeV-madgraph/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM"),
+    EventTotal = cms.int32(100000),
+    NumberOfLumis = cms.int32(502),
+    MaxLumiBlock = cms.int32(502),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("SIG_Moriond17_ZpBaryonic_Zp200_Chi1"),
+    DataCard = cms.string("MonoHiggs_ZpBaryonic"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(3.0),
+    ProductionInfo = cms.string("Run2016_B_C_D_E_F_G_H"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
+    KeepTheoryScaleFactors = cms.bool(False),
+    HLTversion = cms.string("HLT")
+       )
+sampleInfo.append(aPSet)
+
+
+
+aPSet = cms.PSet(
+    DataSet = cms.string("/MonoHtautau_ZpBaryonic_MZp-200_MChi-50_13TeV-madgraph/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM"),
+    EventTotal = cms.int32(100000),
+    NumberOfLumis = cms.int32(528),
+    MaxLumiBlock = cms.int32(528),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("SIG_Moriond17_ZpBaryonic_Zp200_Chi50"),
+    DataCard = cms.string("MonoHiggs_ZpBaryonic"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(3.0),
+    ProductionInfo = cms.string("Run2016_B_C_D_E_F_G_H"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
+    KeepTheoryScaleFactors = cms.bool(False),
+    HLTversion = cms.string("HLT")
+       )
+sampleInfo.append(aPSet)
+
+
+
+aPSet = cms.PSet(
+    DataSet = cms.string("/MonoHtautau_ZpBaryonic_MZp-20_MChi-1_13TeV-madgraph/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM"),
+    EventTotal = cms.int32(100000),
+    NumberOfLumis = cms.int32(595),
+    MaxLumiBlock = cms.int32(595),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("SIG_Moriond17_ZpBaryonic_Zp20_Chi1"),
+    DataCard = cms.string("MonoHiggs_ZpBaryonic"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(3.0),
+    ProductionInfo = cms.string("Run2016_B_C_D_E_F_G_H"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
+    KeepTheoryScaleFactors = cms.bool(False),
+    HLTversion = cms.string("HLT")
+       )
+sampleInfo.append(aPSet)
+
+
+
+aPSet = cms.PSet(
+    DataSet = cms.string("/MonoHtautau_ZpBaryonic_MZp-295_MChi-150_13TeV-madgraph/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM"),
+    EventTotal = cms.int32(98205),
+    NumberOfLumis = cms.int32(493),
+    MaxLumiBlock = cms.int32(502),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("SIG_Moriond17_ZpBaryonic_Zp295_Chi150"),
+    DataCard = cms.string("MonoHiggs_ZpBaryonic"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(3.0),
+    ProductionInfo = cms.string("Run2016_B_C_D_E_F_G_H"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
+    KeepTheoryScaleFactors = cms.bool(False),
+    HLTversion = cms.string("HLT")
+       )
+sampleInfo.append(aPSet)
+
+
+
+aPSet = cms.PSet(
+    DataSet = cms.string("/MonoHtautau_ZpBaryonic_MZp-300_MChi-1_13TeV-madgraph/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM"),
+    EventTotal = cms.int32(96532),
+    NumberOfLumis = cms.int32(557),
+    MaxLumiBlock = cms.int32(577),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("SIG_Moriond17_ZpBaryonic_Zp300_Chi1"),
+    DataCard = cms.string("MonoHiggs_ZpBaryonic"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(3.0),
+    ProductionInfo = cms.string("Run2016_B_C_D_E_F_G_H"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
+    KeepTheoryScaleFactors = cms.bool(False),
+    HLTversion = cms.string("HLT")
+       )
+sampleInfo.append(aPSet)
+
+
+
+aPSet = cms.PSet(
+    DataSet = cms.string("/MonoHtautau_ZpBaryonic_MZp-300_MChi-50_13TeV-madgraph/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM"),
+    EventTotal = cms.int32(98590),
+    NumberOfLumis = cms.int32(559),
+    MaxLumiBlock = cms.int32(567),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("SIG_Moriond17_ZpBaryonic_Zp300_Chi50"),
+    DataCard = cms.string("MonoHiggs_ZpBaryonic"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(3.0),
+    ProductionInfo = cms.string("Run2016_B_C_D_E_F_G_H"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
+    KeepTheoryScaleFactors = cms.bool(False),
+    HLTversion = cms.string("HLT")
+       )
+sampleInfo.append(aPSet)
+
+
+
+aPSet = cms.PSet(
+    DataSet = cms.string("/MonoHtautau_ZpBaryonic_MZp-500_MChi-150_13TeV-madgraph/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM"),
+    EventTotal = cms.int32(100000),
+    NumberOfLumis = cms.int32(619),
+    MaxLumiBlock = cms.int32(619),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("SIG_Moriond17_ZpBaryonic_Zp500_Chi150"),
+    DataCard = cms.string("MonoHiggs_ZpBaryonic"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(3.0),
+    ProductionInfo = cms.string("Run2016_B_C_D_E_F_G_H"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
+    KeepTheoryScaleFactors = cms.bool(False),
+    HLTversion = cms.string("HLT")
+       )
+sampleInfo.append(aPSet)
+
+
+
+aPSet = cms.PSet(
+    DataSet = cms.string("/MonoHtautau_ZpBaryonic_MZp-500_MChi-1_13TeV-madgraph/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM"),
+    EventTotal = cms.int32(100000),
+    NumberOfLumis = cms.int32(507),
+    MaxLumiBlock = cms.int32(507),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("SIG_Moriond17_ZpBaryonic_Zp500_Chi1"),
+    DataCard = cms.string("MonoHiggs_ZpBaryonic"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(3.0),
+    ProductionInfo = cms.string("Run2016_B_C_D_E_F_G_H"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
+    KeepTheoryScaleFactors = cms.bool(False),
+    HLTversion = cms.string("HLT")
+       )
+sampleInfo.append(aPSet)
+
+
+
+aPSet = cms.PSet(
+    DataSet = cms.string("/MonoHtautau_ZpBaryonic_MZp-500_MChi-500_13TeV-madgraph/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM"),
+    EventTotal = cms.int32(97705),
+    NumberOfLumis = cms.int32(511),
+    MaxLumiBlock = cms.int32(523),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("SIG_Moriond17_ZpBaryonic_Zp500_Chi500"),
+    DataCard = cms.string("MonoHiggs_ZpBaryonic"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(3.0),
+    ProductionInfo = cms.string("Run2016_B_C_D_E_F_G_H"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
+    KeepTheoryScaleFactors = cms.bool(False),
+    HLTversion = cms.string("HLT")
+       )
+sampleInfo.append(aPSet)
+
+
+
+aPSet = cms.PSet(
+    DataSet = cms.string("/MonoHtautau_ZpBaryonic_MZp-50_MChi-10_13TeV-madgraph/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM"),
+    EventTotal = cms.int32(100000),
+    NumberOfLumis = cms.int32(558),
+    MaxLumiBlock = cms.int32(558),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("SIG_Moriond17_ZpBaryonic_Zp50_Chi10"),
+    DataCard = cms.string("MonoHiggs_ZpBaryonic"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(3.0),
+    ProductionInfo = cms.string("Run2016_B_C_D_E_F_G_H"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
+    KeepTheoryScaleFactors = cms.bool(False),
+    HLTversion = cms.string("HLT")
+       )
+sampleInfo.append(aPSet)
+
+
+
+aPSet = cms.PSet(
+    DataSet = cms.string("/MonoHtautau_ZpBaryonic_MZp-50_MChi-1_13TeV-madgraph/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM"),
+    EventTotal = cms.int32(100000),
+    NumberOfLumis = cms.int32(512),
+    MaxLumiBlock = cms.int32(512),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("SIG_Moriond17_ZpBaryonic_Zp50_Chi1"),
+    DataCard = cms.string("MonoHiggs_ZpBaryonic"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(3.0),
+    ProductionInfo = cms.string("Run2016_B_C_D_E_F_G_H"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
+    KeepTheoryScaleFactors = cms.bool(False),
+    HLTversion = cms.string("HLT")
+       )
+sampleInfo.append(aPSet)
+
+
+
+aPSet = cms.PSet(
+    DataSet = cms.string("/MonoHtautau_ZpBaryonic_MZp-50_MChi-50_13TeV-madgraph/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v2/MINIAODSIM"),
+    EventTotal = cms.int32(98483),
+    NumberOfLumis = cms.int32(529),
+    MaxLumiBlock = cms.int32(537),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("SIG_Moriond17_ZpBaryonic_Zp50_Chi50"),
+    DataCard = cms.string("MonoHiggs_ZpBaryonic"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(3.0),
+    ProductionInfo = cms.string("Run2016_B_C_D_E_F_G_H"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
+    KeepTheoryScaleFactors = cms.bool(False),
+    HLTversion = cms.string("HLT")
+       )
+sampleInfo.append(aPSet)
+
+
+
+aPSet = cms.PSet(
+    DataSet = cms.string("/MonoHtautau_ZpBaryonic_MZp-95_MChi-50_13TeV-madgraph/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM"),
+    EventTotal = cms.int32(98832),
+    NumberOfLumis = cms.int32(508),
+    MaxLumiBlock = cms.int32(514),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("SIG_Moriond17_ZpBaryonic_Zp95_Chi50"),
+    DataCard = cms.string("MonoHiggs_ZpBaryonic"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(3.0),
+    ProductionInfo = cms.string("Run2016_B_C_D_E_F_G_H"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
+    KeepTheoryScaleFactors = cms.bool(False),
+    HLTversion = cms.string("HLT")
+       )
+sampleInfo.append(aPSet)
+
+
+
+aPSet = cms.PSet(
+    DataSet = cms.string("/MonoHtautau_ZpBaryonic_MZp-995_MChi-500_13TeV-madgraph/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM"),
+    EventTotal = cms.int32(99192),
+    NumberOfLumis = cms.int32(614),
+    MaxLumiBlock = cms.int32(619),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("SIG_Moriond17_ZpBaryonic_Zp995_Chi500"),
+    DataCard = cms.string("MonoHiggs_ZpBaryonic"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(3.0),
+    ProductionInfo = cms.string("Run2016_B_C_D_E_F_G_H"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("MEtSys::ProcessType::BOSON"),
+    KeepTheoryScaleFactors = cms.bool(False),
+    HLTversion = cms.string("HLT")
+       )
+sampleInfo.append(aPSet)
+
 
 
 
@@ -903,6 +2523,38 @@ aPSet = cms.PSet(
     HLTversion = cms.string("HLT")
        )
 sampleInfo.append(aPSet)
+
+
+
+
+
+
+
+
+#############
+# 2017 MC 
+#############
+
+aPSet = cms.PSet(
+    DataSet = cms.string("/VBFHToTauTau_M125_13TeV_powheg_pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM"),
+    EventTotal = cms.int32(1),
+    NumberOfLumis = cms.int32(1),
+    MaxLumiBlock = cms.int32(1),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("VBF_TAUTAU"),
+    DataCard = cms.string("SMHiggs"),
+    CrossSection = cms.double(1.0),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(3.0),
+    ProductionInfo = cms.string("Run2016_B_C_D_E_F_G_H"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("NONE"),
+    KeepTheoryScaleFactors = cms.bool(False),
+    HLTversion = cms.string("HLT")
+       )
+sampleInfo.append(aPSet)
+
+
 
 
 

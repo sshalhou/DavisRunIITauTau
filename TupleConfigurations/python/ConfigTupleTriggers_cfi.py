@@ -121,8 +121,71 @@ class ConfigTriggerHelper:
 			mlist2_.append('hltL3fL1sMu20L1f0Tkf22QL3trkIsoFiltered0p09') # filter
 			self.muon_masterList_.append(mlist2_)
 
+			####  Run2016_B_C_D_E_F_G_H path : IsoMu24 #####
 
-			####  Run2016_B_C_D_E_F_G_H path : Ele25 #####
+			mlist3_ = []
+			mlist3_.append('HLT_IsoMu24_v*') # path
+			mlist3_.append('AND') # AND or OR of the following filters
+			mlist3_.append('hltL3crIsoL1sMu22L1f0L2f10QL3f24QL3trkIsoFiltered0p09') # filter
+			self.muon_masterList_.append(mlist3_)
+
+
+			####  Run2016_B_C_D_E_F_G_H path : HLT_IsoTkMu24 #####
+
+			mlist4_ = []
+			mlist4_.append('HLT_IsoTkMu24_v*') # path
+			mlist4_.append('AND') # AND or OR of the following filters
+			mlist4_.append('hltL3fL1sMu22L1f0Tkf24QL3trkIsoFiltered0p09') # filter
+			self.muon_masterList_.append(mlist4_)
+
+			####  Run2016_B_C_D_E_F_G_H path : HLT_IsoMu22_eta2p1 #####
+
+			mlist5_ = []
+			mlist5_.append('HLT_IsoMu22_eta2p1_v*') # path
+			mlist5_.append('AND') # AND or OR of the following filters
+			mlist5_.append('hltL3crIsoL1sSingleMu20erL1f0L2f10QL3f22QL3trkIsoFiltered0p09') # filter
+			self.muon_masterList_.append(mlist5_)
+
+			####  Run2016_B_C_D_E_F_G_H path : HLT_IsoTkMu22_eta2p1 #####
+
+			mlist6_ = []
+			mlist6_.append('HLT_IsoTkMu22_eta2p1_v*') # path
+			mlist6_.append('AND') # AND or OR of the following filters
+			mlist6_.append('hltL3fL1sMu20erL1f0Tkf22QL3trkIsoFiltered0p09') # filter
+			self.muon_masterList_.append(mlist6_)
+
+
+			#### Run2016_B_C_D_E_F_G_H path : HLT_IsoMu19_eta2p1_LooseIsoPFTau20_SingleL1 #####
+
+			mlist7_ = []
+			mlist7_.append('HLT_IsoMu19_eta2p1_LooseIsoPFTau20_SingleL1_v*') # path
+			mlist7_.append('AND') # AND or OR of the following filters
+			mlist7_.append('hltL3crIsoL1sSingleMu18erIorSingleMu20erL1f0L2f10QL3f19QL3trkIsoFiltered0p09') # filter
+			self.muon_masterList_.append(mlist7_)
+
+			tlist1_ = []
+			tlist1_.append('HLT_IsoMu19_eta2p1_LooseIsoPFTau20_SingleL1_v*') # path
+			tlist1_.append('AND') # AND or OR of the following filters
+			tlist1_.append('hltOverlapFilterSingleIsoMu19LooseIsoPFTau20') # filter
+			self.tau_masterList_.append(tlist1_)
+
+			#### Run2016_B_C_D_E_F_G_H path : HLT_IsoMu21_eta2p1_LooseIsoPFTau20_SingleL1 #####
+
+			mlist8_ = []
+			mlist8_.append('HLT_IsoMu21_eta2p1_LooseIsoPFTau20_SingleL1_v*') # path
+			mlist8_.append('AND') # AND or OR of the following filters
+			mlist8_.append('hltL3crIsoL1sSingleMu20erIorSingleMu22erL1f0L2f10QL3f21QL3trkIsoFiltered0p09') # filter
+			self.muon_masterList_.append(mlist8_)
+
+			tlist2_ = []
+			tlist2_.append('HLT_IsoMu21_eta2p1_LooseIsoPFTau20_SingleL1_v*') # path
+			tlist2_.append('AND') # AND or OR of the following filters
+			tlist2_.append('hltOverlapFilterSingleIsoMu21LooseIsoPFTau20') # filter
+			self.tau_masterList_.append(tlist2_)
+
+
+
+			####  Run2016_B_C_D_E_F_G_H path : HLT_Ele25_eta2p1_WPTight_Gsf #####
 
 			elist1_ = []
 			elist1_.append('HLT_Ele25_eta2p1_WPTight_Gsf_v*') # path
@@ -130,47 +193,103 @@ class ConfigTriggerHelper:
 			elist1_.append('hltEle25erWPTightGsfTrackIsoFilter') # filter
 			self.electron_masterList_.append(elist1_)
 
-			####  Run2016_B_C_D_E_F_G_H path : DoubleMediumIsoPFTau35 #####
-
-			tlist1_ = []
-			tlist1_.append('HLT_DoubleMediumIsoPFTau35_Trk1_eta2p1_Reg_v*') # path
-			tlist1_.append('AND') # AND or OR of the following filters
-			tlist1_.append('hltDoublePFTau35TrackPt1MediumIsolationDz02Reg') # filter
-			self.tau_masterList_.append(tlist1_)
-
-			####  Run2016_B_C_D_E_F_G_H path : Mu8+Ele23 #####
-
-			mlist3_ = []
-			mlist3_.append('HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v*') # path
-			mlist3_.append('AND') # AND or OR of the following filters
-			mlist3_.append('hltMu8TrkIsoVVLEle23CaloIdLTrackIdLIsoVLMuonlegL3IsoFiltered8') # filter
-			self.muon_masterList_.append(mlist3_)
+			####  Run2016_B_C_D_E_F_G_H path : HLT_Ele27_eta2p1_WPLoose_Gsf #####
 
 			elist2_ = []
-			elist2_.append('HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v*') # path
+			elist2_.append('HLT_Ele27_eta2p1_WPLoose_Gsf_v*') # path
 			elist2_.append('AND') # AND or OR of the following filters
-			elist2_.append('hltMu8TrkIsoVVLEle23CaloIdLTrackIdLIsoVLElectronlegTrackIsoFilter') # filter
+			elist2_.append('hltEle27erWPLooseGsfTrackIsoFilter') # filter
 			self.electron_masterList_.append(elist2_)
 
-			####  Run2016_B_C_D_E_F_G_H path : Mu23+Ele12 #####
 
-			mlist4_ = []
-			mlist4_.append('HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v*') # path
-			mlist4_.append('AND') # AND or OR of the following filters
-			mlist4_.append('hltMu23TrkIsoVVLEle12CaloIdLTrackIdLIsoVLMuonlegL3IsoFiltered23') # filter
-			self.muon_masterList_.append(mlist4_)
+
+			####  Run2016_B_C_D_E_F_G_H path : HLT_Ele45_WPLoose_Gsf_L1JetTauSeeded #####
 
 			elist3_ = []
-			elist3_.append('HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v*') # path
+			elist3_.append('HLT_Ele45_WPLoose_Gsf_L1JetTauSeeded_v*') # path
 			elist3_.append('AND') # AND or OR of the following filters
-			elist3_.append('hltMu23TrkIsoVVLEle12CaloIdLTrackIdLIsoVLElectronlegTrackIsoFilter') # filter
+			elist3_.append('hltEle45WPLooseGsfTrackIsoL1TauJetSeededFilter') # filter
 			self.electron_masterList_.append(elist3_)
 
 
 
+			####  Run2016_B_C_D_E_F_G_H path : HLT_Ele115_CaloIdVT_GsfTrkIdT #####
+
+			elist4_ = []
+			elist4_.append('HLT_Ele115_CaloIdVT_GsfTrkIdT_v*') # path
+			elist4_.append('AND') # AND or OR of the following filters
+			elist4_.append('hltEle115CaloIdVTGsfTrkIdTGsfDphiFilter') # filter
+			self.electron_masterList_.append(elist4_)
+
+
+
+			#### Run2016_B_C_D_E_F_G_H path : HLT_Ele24_eta2p1_WPLoose_Gsf_LooseIsoPFTau20_SingleL1 #####
+
+			elist5_ = []
+			elist5_.append('HLT_Ele24_eta2p1_WPLoose_Gsf_LooseIsoPFTau20_SingleL1_v*') # path
+			elist5_.append('AND') # AND or OR of the following filters
+			elist5_.append('hltEle24WPLooseL1SingleIsoEG22erGsfTrackIsoFilter') # filter
+			self.electron_masterList_.append(elist5_)
+
+			tlist3_ = []
+			tlist3_.append('HLT_Ele24_eta2p1_WPLoose_Gsf_LooseIsoPFTau20_SingleL1_v*') # path
+			tlist3_.append('AND') # AND or OR of the following filters
+			tlist3_.append('hltOverlapFilterSingleIsoEle24WPLooseGsfLooseIsoPFTau20') # filter
+			self.tau_masterList_.append(tlist3_)
+
+
+			#### Run2016_B_C_D_E_F_G_H path : HLT_Ele24_eta2p1_WPLoose_Gsf_LooseIsoPFTau20 #####
+
+			elist6_ = []
+			elist6_.append('HLT_Ele24_eta2p1_WPLoose_Gsf_LooseIsoPFTau20_v*') # path
+			elist6_.append('AND') # AND or OR of the following filters
+			elist6_.append('hltEle24WPLooseL1IsoEG22erTau20erGsfTrackIsoFilter') # filter
+			self.electron_masterList_.append(elist6_)
+
+			tlist4_ = []
+			tlist4_.append('HLT_Ele24_eta2p1_WPLoose_Gsf_LooseIsoPFTau20_v*') # path
+			tlist4_.append('AND') # AND or OR of the following filters
+			tlist4_.append('hltOverlapFilterIsoEle24WPLooseGsfLooseIsoPFTau20') # filter
+			self.tau_masterList_.append(tlist4_)
+
+
+			#### Run2016_B_C_D_E_F_G_H path : HLT_Ele24_eta2p1_WPLoose_Gsf_LooseIsoPFTau30 #####
+
+			elist7_ = []
+			elist7_.append('HLT_Ele24_eta2p1_WPLoose_Gsf_LooseIsoPFTau30_v*') # path
+			elist7_.append('AND') # AND or OR of the following filters
+			elist7_.append('hltEle24WPLooseL1IsoEG22erIsoTau26erGsfTrackIsoFilter') # filter
+			self.electron_masterList_.append(elist7_)
+
+			tlist5_ = []
+			tlist5_.append('HLT_Ele24_eta2p1_WPLoose_Gsf_LooseIsoPFTau30_v*') # path
+			tlist5_.append('AND') # AND or OR of the following filters
+			tlist5_.append('hltOverlapFilterIsoEle24WPLooseGsfLooseIsoPFTau30') # filter
+			self.tau_masterList_.append(tlist5_)
+
+
+
+			#### Run2016_B_C_D_E_F_G_H path : HLT_Ele24_eta2p1_WPLoose_Gsf_LooseIsoPFTau30 #####
+
+			tlist6_ = []
+			tlist6_.append('HLT_DoubleMediumIsoPFTau35_Trk1_eta2p1_Reg_v*') # path
+			tlist6_.append('AND') # AND or OR of the following filters
+			tlist6_.append('hltDoublePFTau35TrackPt1MediumIsolationDz02Reg') # filter
+			self.tau_masterList_.append(tlist6_)
+
+
+			#### Run2016_B_C_D_E_F_G_H path : HLT_Ele24_eta2p1_WPLoose_Gsf_LooseIsoPFTau30 #####
+
+			tlist7_ = []
+			tlist7_.append('HLT_DoubleMediumCombinedIsoPFTau35_Trk1_eta2p1_Reg_v*') # path
+			tlist7_.append('AND') # AND or OR of the following filters
+			tlist7_.append('hltDoublePFTau35TrackPt1MediumCombinedIsolationDz02Reg') # filter
+			self.tau_masterList_.append(tlist7_)
+
+
 
 			#########################################################################					
-			# HLT paths and filters for Run2016_B_C_D_E_F_G_H  Data -- START		#
+			# HLT paths and filters for Run2016_B_C_D_E_F_G_H  Data -- END  		#
 			#########################################################################
 
 		if(self.sampleData_.ProductionInfo == 'Run2015B'):

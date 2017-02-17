@@ -253,7 +253,7 @@ ele_ThirdLeptonVeto.append("pt>10")
 ele_ThirdLeptonVeto.append("abs(eta)<2.5")
 ele_ThirdLeptonVeto.append("abs(dxy)<0.045")
 ele_ThirdLeptonVeto.append("abs(dz)<0.2")
-ele_ThirdLeptonVeto.append("passFail_electronMVA90==1.0")
+ele_ThirdLeptonVeto.append("passFail_electronMVA90==1.0 || passFail_VetoElectronCutBasedID==1.0")
 ele_ThirdLeptonVeto.append("passConversionVeto==1.0")
 ele_ThirdLeptonVeto.append("numberOfMissingInnerHits<=1")
 ele_ThirdLeptonVeto.append("relativeIsol('DeltaBetaCorrectedRelIso')<0.3")
@@ -273,7 +273,7 @@ muon_ThirdLeptonVeto.append("pt>10")
 muon_ThirdLeptonVeto.append("abs(eta)<2.4")
 muon_ThirdLeptonVeto.append("abs(dxy)<0.045")
 muon_ThirdLeptonVeto.append("abs(dz)<0.2")
-muon_ThirdLeptonVeto.append("passesTightMuonId==1.0")
+muon_ThirdLeptonVeto.append("passesMediumMuonId_Moriond17==1.0")
 muon_ThirdLeptonVeto.append("relativeIsol('DeltaBetaCorrectedRelIso')<0.3")
 
 # muon cuts for DiMuon veto :
@@ -670,10 +670,21 @@ boostedChannelCuts = cms.VPSet(
 triggerSummaryChecks_ = cms.vstring(
 	"HLT_IsoMu22_v*",
 	"HLT_IsoTkMu22_v*",
+	"HLT_IsoMu24_v*",
+	"HLT_IsoTkMu24_v*",
+	"HLT_IsoMu22_eta2p1_v*",
+	"HLT_IsoTkMu22_eta2p1_v*",
+	"HLT_IsoMu19_eta2p1_LooseIsoPFTau20_SingleL1_v*",
+	"HLT_IsoMu21_eta2p1_LooseIsoPFTau20_SingleL1_v*",
 	"HLT_Ele25_eta2p1_WPTight_Gsf_v*",
+	"HLT_Ele27_eta2p1_WPLoose_Gsf_v*",
+	"HLT_Ele45_WPLoose_Gsf_L1JetTauSeeded_v*",
+	"HLT_Ele115_CaloIdVT_GsfTrkIdT_v*",
+	"HLT_Ele24_eta2p1_WPLoose_Gsf_LooseIsoPFTau20_SingleL1_v*",
+	"HLT_Ele24_eta2p1_WPLoose_Gsf_LooseIsoPFTau20_v*",
+	"HLT_Ele24_eta2p1_WPLoose_Gsf_LooseIsoPFTau30_v*",
 	"HLT_DoubleMediumIsoPFTau35_Trk1_eta2p1_Reg_v*",
-	"HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v*",
-	"HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v*"
+	"HLT_DoubleMediumCombinedIsoPFTau35_Trk1_eta2p1_Reg_v*"
 )
 
 
