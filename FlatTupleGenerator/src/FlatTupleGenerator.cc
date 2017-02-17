@@ -3429,17 +3429,17 @@ void FlatTupleGenerator::handlePairIndepInfo(const edm::Event& iEvent, const edm
     jets_BtagSF_TightWpUp_JECshiftedUp.push_back(goodJets_JECshiftedUp[j].defaultBtagAlgorithmSF_TightWpUp());
     jets_BtagSF_TightWpDown_JECshiftedUp.push_back(goodJets_JECshiftedUp[j].defaultBtagAlgorithmSF_TightWpDown());
 
-    if(goodJets[j].defaultBtagAlgorithm_RawScore() > LooseCut) 
+    if(goodJets_JECshiftedUp[j].defaultBtagAlgorithm_RawScore() > LooseCut) 
     {
       if(!std::isnan(goodJets_JECshiftedUp[j].defaultBtagAlgorithmSF_LooseWpCentral())) BtagEventSFproduct_looseWpCentral_JECshiftedUp *= (1.0 - std::min(1.0,goodJets_JECshiftedUp[j].defaultBtagAlgorithmSF_LooseWpCentral()));
     }
     
-    if(goodJets[j].defaultBtagAlgorithm_RawScore() > MediumCut) 
+    if(goodJets_JECshiftedUp[j].defaultBtagAlgorithm_RawScore() > MediumCut) 
     {
      if(!std::isnan(goodJets_JECshiftedUp[j].defaultBtagAlgorithmSF_MediumWpCentral())) BtagEventSFproduct_mediumWpCentral_JECshiftedUp *= (1.0 - std::min(1.0,goodJets_JECshiftedUp[j].defaultBtagAlgorithmSF_MediumWpCentral()));
     }  
 
-    if(goodJets[j].defaultBtagAlgorithm_RawScore() > TightCut) 
+    if(goodJets_JECshiftedUp[j].defaultBtagAlgorithm_RawScore() > TightCut) 
     {
       if(!std::isnan(goodJets_JECshiftedUp[j].defaultBtagAlgorithmSF_TightWpCentral())) BtagEventSFproduct_tightWpCentral_JECshiftedUp *= (1.0 - std::min(1.0,goodJets_JECshiftedUp[j].defaultBtagAlgorithmSF_TightWpCentral()));
     }
@@ -3492,17 +3492,17 @@ void FlatTupleGenerator::handlePairIndepInfo(const edm::Event& iEvent, const edm
     jets_BtagSF_TightWpDown_JECshiftedDown.push_back(goodJets_JECshiftedDown[j].defaultBtagAlgorithmSF_TightWpDown());
 
 
-    if(goodJets[j].defaultBtagAlgorithm_RawScore() > LooseCut) 
+    if(goodJets_JECshiftedDown[j].defaultBtagAlgorithm_RawScore() > LooseCut) 
     {
       if(!std::isnan(goodJets_JECshiftedDown[j].defaultBtagAlgorithmSF_LooseWpCentral())) BtagEventSFproduct_looseWpCentral_JECshiftedDown *= (1.0 - std::min(1.0,goodJets_JECshiftedDown[j].defaultBtagAlgorithmSF_LooseWpCentral()));
     }
 
-    if(goodJets[j].defaultBtagAlgorithm_RawScore() > MediumCut) 
+    if(goodJets_JECshiftedDown[j].defaultBtagAlgorithm_RawScore() > MediumCut) 
     {  
       if(!std::isnan(goodJets_JECshiftedDown[j].defaultBtagAlgorithmSF_MediumWpCentral())) BtagEventSFproduct_mediumWpCentral_JECshiftedDown *= (1.0 - std::min(1.0,goodJets_JECshiftedDown[j].defaultBtagAlgorithmSF_MediumWpCentral()));
     }
     
-    if(goodJets[j].defaultBtagAlgorithm_RawScore() > TightCut) 
+    if(goodJets_JECshiftedDown[j].defaultBtagAlgorithm_RawScore() > TightCut) 
     {
       if(!std::isnan(goodJets_JECshiftedDown[j].defaultBtagAlgorithmSF_TightWpCentral())) BtagEventSFproduct_tightWpCentral_JECshiftedDown *= (1.0 - std::min(1.0,goodJets_JECshiftedDown[j].defaultBtagAlgorithmSF_TightWpCentral()));
     }
@@ -3553,16 +3553,16 @@ void FlatTupleGenerator::handlePairIndepInfo(const edm::Event& iEvent, const edm
     jets_BtagSF_TightWpUp_JERup.push_back(goodJets_JERup[j].defaultBtagAlgorithmSF_TightWpUp());
     jets_BtagSF_TightWpDown_JERup.push_back(goodJets_JERup[j].defaultBtagAlgorithmSF_TightWpDown());
 
-    if(goodJets[j].defaultBtagAlgorithm_RawScore() > LooseCut) 
+    if(goodJets_JERup[j].defaultBtagAlgorithm_RawScore() > LooseCut) 
     {
       if(!std::isnan(goodJets_JERup[j].defaultBtagAlgorithmSF_LooseWpCentral())) BtagEventSFproduct_looseWpCentral_JERup *= (1.0 - std::min(1.0,goodJets_JERup[j].defaultBtagAlgorithmSF_LooseWpCentral()));
     }
-    if(goodJets[j].defaultBtagAlgorithm_RawScore() > MediumCut) 
+    if(goodJets_JERup[j].defaultBtagAlgorithm_RawScore() > MediumCut) 
     {
       if(!std::isnan(goodJets_JERup[j].defaultBtagAlgorithmSF_MediumWpCentral())) BtagEventSFproduct_mediumWpCentral_JERup *= (1.0 - std::min(1.0,goodJets_JERup[j].defaultBtagAlgorithmSF_MediumWpCentral()));
     }
 
-    if(goodJets[j].defaultBtagAlgorithm_RawScore() > TightCut) 
+    if(goodJets_JERup[j].defaultBtagAlgorithm_RawScore() > TightCut) 
     {
       if(!std::isnan(goodJets_JERup[j].defaultBtagAlgorithmSF_TightWpCentral())) BtagEventSFproduct_tightWpCentral_JERup *= (1.0 - std::min(1.0,goodJets_JERup[j].defaultBtagAlgorithmSF_TightWpCentral()));
     }
@@ -3614,17 +3614,17 @@ void FlatTupleGenerator::handlePairIndepInfo(const edm::Event& iEvent, const edm
     jets_BtagSF_TightWpDown_JERdown.push_back(goodJets_JERdown[j].defaultBtagAlgorithmSF_TightWpDown());
 
 
-    if(goodJets[j].defaultBtagAlgorithm_RawScore() > LooseCut) 
+    if(goodJets_JERdown[j].defaultBtagAlgorithm_RawScore() > LooseCut) 
     {
       if(!std::isnan(goodJets_JERdown[j].defaultBtagAlgorithmSF_LooseWpCentral())) BtagEventSFproduct_looseWpCentral_JERdown *= (1.0 - std::min(1.0,goodJets_JERdown[j].defaultBtagAlgorithmSF_LooseWpCentral()));
     } 
     
-    if(goodJets[j].defaultBtagAlgorithm_RawScore() > MediumCut) 
+    if(goodJets_JERdown[j].defaultBtagAlgorithm_RawScore() > MediumCut) 
     {
       if(!std::isnan(goodJets_JERdown[j].defaultBtagAlgorithmSF_MediumWpCentral())) BtagEventSFproduct_mediumWpCentral_JERdown *= (1.0 - std::min(1.0,goodJets_JERdown[j].defaultBtagAlgorithmSF_MediumWpCentral()));
     } 
 
-    if(goodJets[j].defaultBtagAlgorithm_RawScore() > TightCut) 
+    if(goodJets_JERdown[j].defaultBtagAlgorithm_RawScore() > TightCut) 
     {
       if(!std::isnan(goodJets_JERdown[j].defaultBtagAlgorithmSF_TightWpCentral())) BtagEventSFproduct_tightWpCentral_JERdown *= (1.0 - std::min(1.0,goodJets_JERdown[j].defaultBtagAlgorithmSF_TightWpCentral()));
     }
