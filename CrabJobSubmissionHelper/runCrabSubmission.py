@@ -33,10 +33,10 @@ def DeleteCMSTypes(arg, type):
 # define a few variables here
 ###############################
 
-MC_EVENTS_PER_JOB = 20000 # used for MC only (OK when SVFit is off )
+MC_EVENTS_PER_JOB = 9700 # used for MC only (OK when SVFit is off )
 MAX_JOBS_PER_TASK = 7000 # true crab limit is 10,000 we should be below this (~5000 is safe to avoid crab over-rounding issues on the last task)
 DATA_UNITS_PER_JOB = 250
-DATA_LUMI_MASK = 'https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions16/13TeV/ReReco/Final/Cert_271036-284044_13TeV_23Sep2016ReReco_Collisions16_JSON.txt'
+DATA_LUMI_MASK = 'https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions16/13TeV/Final/Cert_271036-284044_13TeV_PromptReco_Collisions16_JSON.txt'
 
 ############################
 # basic crab config setup 

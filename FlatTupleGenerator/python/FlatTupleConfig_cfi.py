@@ -181,14 +181,14 @@ tau_MuonTau.append("abs(charge)==1.0")
 ele_EleTau = []
 
 # here MAY NEED TO ADD A TIGHT ID REQUIREMENT
-print "************ \n \n \n"
-print " - WARNING ***** TIGHT CUT BASED ID && WP80 ID ARE APPLIED IN ELETAU CHANNEL"
-print " - WARNING ***** TIGHT CUT BASED ID && WP80 ID ARE APPLIED IN ELETAU CHANNEL"
-print " - WARNING ***** TIGHT CUT BASED ID && WP80 ID ARE APPLIED IN ELETAU CHANNEL"
-print " - EDIT IN FlatTupleConfig_cfi.py "
-print "\n \n \n************"
+# print "************ \n \n \n"
+# print " - WARNING ***** TIGHT CUT BASED ID && WP80 ID ARE APPLIED IN ELETAU CHANNEL"
+# print " - WARNING ***** TIGHT CUT BASED ID && WP80 ID ARE APPLIED IN ELETAU CHANNEL"
+# print " - WARNING ***** TIGHT CUT BASED ID && WP80 ID ARE APPLIED IN ELETAU CHANNEL"
+# print " - EDIT IN FlatTupleConfig_cfi.py "
+# print "\n \n \n************"
+#ele_EleTau.append("passFail_TightElectronCutBasedID==1.0")
 
-ele_EleTau.append("passFail_TightElectronCutBasedID==1.0")
 ele_EleTau.append("pt>26")
 ele_EleTau.append("abs(eta)<2.1")
 ele_EleTau.append("abs(dxy)<0.045")
@@ -253,10 +253,11 @@ ele_ThirdLeptonVeto.append("pt>10")
 ele_ThirdLeptonVeto.append("abs(eta)<2.5")
 ele_ThirdLeptonVeto.append("abs(dxy)<0.045")
 ele_ThirdLeptonVeto.append("abs(dz)<0.2")
-ele_ThirdLeptonVeto.append("passFail_electronMVA90==1.0 || passFail_VetoElectronCutBasedID==1.0")
+ele_ThirdLeptonVeto.append("passFail_electronMVA90==1.0")
 ele_ThirdLeptonVeto.append("passConversionVeto==1.0")
-ele_ThirdLeptonVeto.append("numberOfMissingInnerHits<=1")
+#ele_ThirdLeptonVeto.append("numberOfMissingInnerHits<=1")
 ele_ThirdLeptonVeto.append("relativeIsol('DeltaBetaCorrectedRelIso')<0.3")
+
 
 # electron cuts for DiElectron veto :
 ele_DiElectron = []
@@ -267,13 +268,14 @@ ele_DiElectron.append("abs(dz)<0.2")
 ele_DiElectron.append("abs(dxy)<0.045")
 ele_DiElectron.append("relativeIsol('DeltaBetaCorrectedRelIso')<0.3")
 
+
 # muon cuts for third lepton veto :
 muon_ThirdLeptonVeto = []
 muon_ThirdLeptonVeto.append("pt>10")
 muon_ThirdLeptonVeto.append("abs(eta)<2.4")
 muon_ThirdLeptonVeto.append("abs(dxy)<0.045")
 muon_ThirdLeptonVeto.append("abs(dz)<0.2")
-muon_ThirdLeptonVeto.append("passesMediumMuonId_Moriond17==1.0")
+muon_ThirdLeptonVeto.append("passesLooseMuonId==1.0")
 muon_ThirdLeptonVeto.append("relativeIsol('DeltaBetaCorrectedRelIso')<0.3")
 
 # muon cuts for DiMuon veto :

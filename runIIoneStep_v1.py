@@ -35,7 +35,9 @@ MAX_EVENTS = 5000
 ######################################
 
 #dataSetName_ = "/SUSYGluGluToHToTauTau_M-160_TuneCUETP8M1_13TeV-pythia8/RunIISpring16MiniAODv2-PUSpring16RAWAODSIM_reHLT_80X_mcRun2_asymptotic_v14-v1/MINIAODSIM"
-dataSetName_ = "/VBFHToTauTau_M125_13TeV_powheg_pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM"
+#dataSetName_ = "/VBFHToTauTau_M125_13TeV_powheg_pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM"
+
+dataSetName_ = "/ZprimeToA0hToA0chichihtautau_2HDM_MZp-2500_MA0-500_13TeV-madgraph/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM"
 #dataSetName_ = "/SingleMuon/Run2016H-PromptReco-v2/MINIAOD"
 
 
@@ -55,6 +57,8 @@ if dataSetName_ == "/SingleMuon/Run2016H-PromptReco-v2/MINIAOD":
 	myfilelist.extend(['file:/uscms_data/d3/shalhout/Run2016H-PromptReco-v2.root'])
 
 
+if dataSetName_ == "/ZprimeToA0hToA0chichihtautau_2HDM_MZp-2500_MA0-500_13TeV-madgraph/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM":
+	myfilelist.extend(['file:/uscms_data/d3/shalhout/Morinond17_monoH.root'])
 
 
 if DEBUG_NTUPLE_INPUT is True:
@@ -167,7 +171,7 @@ print 'default btag algoritm = ', DEFAULT_BTAG_ALGORITHM
 
 # import of standard configurations
 process.load("FWCore.MessageService.MessageLogger_cfi")
-process.MessageLogger.cerr.FwkReport.reportEvery = 500
+process.MessageLogger.cerr.FwkReport.reportEvery = 1
 
 process.load('Configuration.StandardSequences.Services_cff')
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
