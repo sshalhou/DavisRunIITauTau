@@ -108,7 +108,7 @@ git cms-addpkg PhysicsTools/Utilities
 sed -i 's/std::cout/\/\/std::cout/g' PhysicsTools/Utilities/src/LumiReWeighting.cc
 
 # relocate the davis code
-cp -r ../../DavisRunIITauTau .
+mv ../../DavisRunIITauTau .
 
 
 # copy the PU reweight files 
