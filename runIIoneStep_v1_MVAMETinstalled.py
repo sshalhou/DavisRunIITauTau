@@ -212,25 +212,6 @@ process.source = cms.Source("PoolSource",fileNames=myfilelist)
 #                         '1:84528-1:84528','1:92356-1:92356','1:109720-1:109720'))	
 
 
-def recorrectJets(process, isData = False):
-    ## https://twiki.cern.ch/twiki/bin/view/CMSPublic/WorkBookJetEnergyCorrections#CorrPatJets
-    from PhysicsTools.PatAlgos.producersLayer1.jetUpdater_cff import updatedPatJetCorrFactors
-    process.patJetCorrFactorsReapplyJEC = updatedPatJetCorrFactors.clone(
-    src = cms.InputTag("slimmedJets"),
-      levels = ['L1FastJet', 'L2Relative', 'L3Absolute'],
-      payload = 'AK4PFchs' ) # Make sure to choose the appropriate levels and payload here!
-    from PhysicsTools.PatAlgos.producersLayer1.jetUpdater_cff import updatedPatJets
-    process.patJetsReapplyJEC = updatedPatJets.clone(
-      jetSource = cms.InputTag("slimmedJets"),
-      jetCorrFactorsSource = cms.VInputTag(cms.InputTag("patJetCorrFactorsReapplyJEC"))
-      )
-    if(isData):
-        process.patJetCorrFactorsReapplyJEC.levels = ['L1FastJet', 'L2Relative', 'L3Absolute', 'L2L3Residual']
-#    if( not hasattr(process, "p")):
-#        process.p = cms.Path() 
-#    process.p += cms.Sequence( process.patJetCorrFactorsReapplyJEC + process. patJetsReapplyJEC )
-
-
 
 ###################################
 # Cumulative Info
@@ -334,7 +315,7 @@ process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_condD
 # Looks like the Global Tags are now available for Moriond17 
 
 
-#from RecoMET.METPUSubtraction.jet_recorrections import recorrectJets
+from RecoMET.METPUSubtraction.jet_recorrections import recorrectJets
 
 
 if sampleData.EventType == 'MC':
@@ -860,8 +841,8 @@ METforNtuple = DAVISprocessName
 # init mva met 
 ##################################
 
-# from RecoMET.METPUSubtraction.MVAMETConfiguration_cff import runMVAMET
-# runMVAMET( process, jetCollectionPF = "patJetsReapplyJEC")
+from RecoMET.METPUSubtraction.MVAMETConfiguration_cff import runMVAMET
+runMVAMET( process, jetCollectionPF = "patJetsReapplyJEC")
 #runMVAMET( process, jetCollectionPF = "slimmedJets")
 
 
@@ -872,251 +853,154 @@ BUGFIX_MET_TYPE = "PAT"
 if sampleData.EventType == 'DATA':
 	BUGFIX_MET_TYPE = "RECO"
 
-# process.MVAMET.srcMETs = cms.VInputTag( cms.InputTag("slimmedMETs", "", BUGFIX_MET_TYPE),
-#                                             cms.InputTag("patpfMET"),
-#                                             cms.InputTag("patpfMETT1"),
-#                                             cms.InputTag("patpfTrackMET"),
-#                                             cms.InputTag("patpfNoPUMET"),
-#                                             cms.InputTag("patpfPUCorrectedMET"),
-#                                             cms.InputTag("patpfPUMET"),
-#                                             cms.InputTag("slimmedMETsPuppi", "", BUGFIX_MET_TYPE) )
+process.MVAMET.srcMETs = cms.VInputTag( cms.InputTag("slimmedMETs", "", BUGFIX_MET_TYPE),
+                                            cms.InputTag("patpfMET"),
+                                            cms.InputTag("patpfMETT1"),
+                                            cms.InputTag("patpfTrackMET"),
+                                            cms.InputTag("patpfNoPUMET"),
+                                            cms.InputTag("patpfPUCorrectedMET"),
+                                            cms.InputTag("patpfPUMET"),
+                                            cms.InputTag("slimmedMETsPuppi", "", BUGFIX_MET_TYPE) )
 
 
 
-####################################
-# new PF MET only test -- start
 
-##################################################################
-# TAU ES NOMINAL 
-##################################################################
+#################################
+# modify the default mva met    #
+#################################
 
-
-process.PFMetWithEmbeddedLeptonPairs = cms.EDProducer('PFMetWithEmbeddedLeptonPairs' ,
-	pfMETSrc = cms.InputTag("slimmedMETs","",DAVISprocessName), # this has the updated JECs
-	srcLeptons = cms.VInputTag("TrimmedFilteredCustomMuons:TrimmedFilteredCustomMuons:DavisNtuple", 
-								"TrimmedFilteredCustomElectrons:TrimmedFilteredCustomElectrons:DavisNtuple", 
-								"TrimmedFilteredCustomTausEsNominal:TrimmedFilteredCustomTausEsNominal:DavisNtuple"),
-	NAME=cms.string("PFMetWithEmbeddedLeptonPairs")
-						)	
-
+process.MVAMET.srcLeptons  = cms.VInputTag("TrimmedFilteredCustomMuons:TrimmedFilteredCustomMuons:DavisNtuple", 
+										   "TrimmedFilteredCustomElectrons:TrimmedFilteredCustomElectrons:DavisNtuple", 
+										   "TrimmedFilteredCustomTausEsNominal:TrimmedFilteredCustomTausEsNominal:DavisNtuple")
+process.MVAMET.requireOS = cms.bool(False)
 
 
 ##################################################################
-# TAU ES UP 
+# clone the default (with mods) and adjust for tau ES up
 ##################################################################
 
-process.PFMetWithEmbeddedLeptonPairsTauEsUp = cms.EDProducer('PFMetWithEmbeddedLeptonPairs' ,
-	pfMETSrc = cms.InputTag("slimmedMETs","",DAVISprocessName), # this has the updated JECs
-	srcLeptons  = cms.VInputTag("TrimmedFilteredCustomMuons:TrimmedFilteredCustomMuons:DavisNtuple", 
+process.MVAMETtauEsUp = process.MVAMET.clone(srcLeptons  = cms.VInputTag("TrimmedFilteredCustomMuons:TrimmedFilteredCustomMuons:DavisNtuple", 
 											   "TrimmedFilteredCustomElectrons:TrimmedFilteredCustomElectrons:DavisNtuple", 
 											   "TrimmedFilteredCustomTausEsUp:TrimmedFilteredCustomTausEsUp:DavisNtuple"),
-	NAME=cms.string("PFMetWithEmbeddedLeptonPairsTauEsUp")
-						)	
+												requireOS = cms.bool(False),
+												srcMETs = cms.VInputTag( cms.InputTag("slimmedMETs", "", BUGFIX_MET_TYPE),
+	                                            cms.InputTag("patpfMET"),
+	                                            cms.InputTag("patpfMETT1"),
+	                                            cms.InputTag("patpfTrackMET"),
+	                                            cms.InputTag("patpfNoPUMET"),
+	                                            cms.InputTag("patpfPUCorrectedMET"),
+	                                            cms.InputTag("patpfPUMET"),
+	                                            cms.InputTag("slimmedMETsPuppi", "", BUGFIX_MET_TYPE) ) )
+
 
 ##################################################################
-# TAU ES DOWN 
+# clone the default (with mods) and adjust for tau ES down
 ##################################################################
 
-process.PFMetWithEmbeddedLeptonPairsTauEsDown = cms.EDProducer('PFMetWithEmbeddedLeptonPairs' ,
-	pfMETSrc = cms.InputTag("slimmedMETs","",DAVISprocessName), # this has the updated JECs
-	srcLeptons  = cms.VInputTag("TrimmedFilteredCustomMuons:TrimmedFilteredCustomMuons:DavisNtuple", 
+process.MVAMETtauEsDown = process.MVAMET.clone(srcLeptons  = cms.VInputTag("TrimmedFilteredCustomMuons:TrimmedFilteredCustomMuons:DavisNtuple", 
 											   "TrimmedFilteredCustomElectrons:TrimmedFilteredCustomElectrons:DavisNtuple", 
 											   "TrimmedFilteredCustomTausEsDown:TrimmedFilteredCustomTausEsDown:DavisNtuple"),
-	NAME=cms.string("PFMetWithEmbeddedLeptonPairsTauEsDown")
-						)	
-
+												requireOS = cms.bool(False),
+												srcMETs = cms.VInputTag( cms.InputTag("slimmedMETs", "", BUGFIX_MET_TYPE),
+	                                            cms.InputTag("patpfMET"),
+	                                            cms.InputTag("patpfMETT1"),
+	                                            cms.InputTag("patpfTrackMET"),
+	                                            cms.InputTag("patpfNoPUMET"),
+	                                            cms.InputTag("patpfPUCorrectedMET"),
+	                                            cms.InputTag("patpfPUMET"),
+	                                            cms.InputTag("slimmedMETsPuppi", "", BUGFIX_MET_TYPE) ) ) 
 
 
 ##################################################################
-# BOOSTED TAU ES NOMINAL 
+# clone the default (with mods) and adjust for tau BOOSTED ES nominal
 ##################################################################
 
-
-process.PFMetWithEmbeddedLeptonPairsTausBoostedEsNominal = cms.EDProducer('PFMetWithEmbeddedLeptonPairs' ,
-	pfMETSrc = cms.InputTag("slimmedMETs","",DAVISprocessName), # this has the updated JECs
-	srcLeptons  = cms.VInputTag("TrimmedFilteredCustomMuons:TrimmedFilteredCustomMuons:DavisNtuple", 
+process.MVAMETtauBoostedEsNominal = process.MVAMET.clone(srcLeptons  = cms.VInputTag("TrimmedFilteredCustomMuons:TrimmedFilteredCustomMuons:DavisNtuple", 
 											   "TrimmedFilteredCustomElectrons:TrimmedFilteredCustomElectrons:DavisNtuple", 
-											   "TrimmedFilteredCustomTausBoostedEsNominal:TrimmedFilteredCustomTausBoostedEsNominal:DavisNtuple"),											
-	NAME=cms.string("PFMetWithEmbeddedLeptonPairsTausBoostedEsNominal")
-						)	
+											   "TrimmedFilteredCustomTausBoostedEsNominal:TrimmedFilteredCustomTausBoostedEsNominal:DavisNtuple"),
+												requireOS = cms.bool(False),
+												srcMETs = cms.VInputTag( cms.InputTag("slimmedMETs", "", BUGFIX_MET_TYPE),
+	                                            cms.InputTag("patpfMET"),
+	                                            cms.InputTag("patpfMETT1"),
+	                                            cms.InputTag("patpfTrackMET"),
+	                                            cms.InputTag("patpfNoPUMET"),
+	                                            cms.InputTag("patpfPUCorrectedMET"),
+	                                            cms.InputTag("patpfPUMET"),
+	                                            cms.InputTag("slimmedMETsPuppi", "", BUGFIX_MET_TYPE) ) )
 
 
 
 ##################################################################
-# BOOSTED TAU ES Up 
+# clone the default (with mods) and adjust for BOOSTED tau ES up
 ##################################################################
 
-
-process.PFMetWithEmbeddedLeptonPairsTausBoostedEsUp = cms.EDProducer('PFMetWithEmbeddedLeptonPairs' ,
-	pfMETSrc = cms.InputTag("slimmedMETs","",DAVISprocessName), # this has the updated JECs
-	srcLeptons  = cms.VInputTag("TrimmedFilteredCustomMuons:TrimmedFilteredCustomMuons:DavisNtuple", 
+process.MVAMETtauBoostedEsUp = process.MVAMET.clone(srcLeptons  = cms.VInputTag("TrimmedFilteredCustomMuons:TrimmedFilteredCustomMuons:DavisNtuple", 
 											   "TrimmedFilteredCustomElectrons:TrimmedFilteredCustomElectrons:DavisNtuple", 
-											   "TrimmedFilteredCustomTausBoostedEsUp:TrimmedFilteredCustomTausBoostedEsUp:DavisNtuple"),											
-	NAME=cms.string("PFMetWithEmbeddedLeptonPairsTausBoostedEsUp")
-						)	
-
+											   "TrimmedFilteredCustomTausBoostedEsUp:TrimmedFilteredCustomTausBoostedEsUp:DavisNtuple"),
+												requireOS = cms.bool(False),
+												srcMETs = cms.VInputTag( cms.InputTag("slimmedMETs", "", BUGFIX_MET_TYPE),
+	                                            cms.InputTag("patpfMET"),
+	                                            cms.InputTag("patpfMETT1"),
+	                                            cms.InputTag("patpfTrackMET"),
+	                                            cms.InputTag("patpfNoPUMET"),
+	                                            cms.InputTag("patpfPUCorrectedMET"),
+	                                            cms.InputTag("patpfPUMET"),
+	                                            cms.InputTag("slimmedMETsPuppi", "", BUGFIX_MET_TYPE) ) )
 
 
 
 
 ##################################################################
-# BOOSTED TAU ES Down 
+# clone the default (with mods) and adjust for BOOSTED tau ES down
 ##################################################################
 
-
-process.PFMetWithEmbeddedLeptonPairsTausBoostedEsDown = cms.EDProducer('PFMetWithEmbeddedLeptonPairs' ,
-	pfMETSrc = cms.InputTag("slimmedMETs","",DAVISprocessName), # this has the updated JECs
-	srcLeptons  = cms.VInputTag("TrimmedFilteredCustomMuons:TrimmedFilteredCustomMuons:DavisNtuple", 
+process.MVAMETtauBoostedEsDown = process.MVAMET.clone(srcLeptons  = cms.VInputTag("TrimmedFilteredCustomMuons:TrimmedFilteredCustomMuons:DavisNtuple", 
 											   "TrimmedFilteredCustomElectrons:TrimmedFilteredCustomElectrons:DavisNtuple", 
-											   "TrimmedFilteredCustomTausBoostedEsDown:TrimmedFilteredCustomTausBoostedEsDown:DavisNtuple"),											
-	NAME=cms.string("PFMetWithEmbeddedLeptonPairsTausBoostedEsDown")
-						)	
-
-
-
-# new PF MET only test -- end
-####################################
-
-
-
-
-
-# #################################
-# # modify the default mva met    #
-# #################################
-
-# process.MVAMET.srcLeptons  = cms.VInputTag("TrimmedFilteredCustomMuons:TrimmedFilteredCustomMuons:DavisNtuple", 
-# 										   "TrimmedFilteredCustomElectrons:TrimmedFilteredCustomElectrons:DavisNtuple", 
-# 										   "TrimmedFilteredCustomTausEsNominal:TrimmedFilteredCustomTausEsNominal:DavisNtuple")
-# process.MVAMET.requireOS = cms.bool(False)
-
-
-# ##################################################################
-# # clone the default (with mods) and adjust for tau ES up
-# ##################################################################
-
-# process.MVAMETtauEsUp = process.MVAMET.clone(srcLeptons  = cms.VInputTag("TrimmedFilteredCustomMuons:TrimmedFilteredCustomMuons:DavisNtuple", 
-# 											   "TrimmedFilteredCustomElectrons:TrimmedFilteredCustomElectrons:DavisNtuple", 
-# 											   "TrimmedFilteredCustomTausEsUp:TrimmedFilteredCustomTausEsUp:DavisNtuple"),
-# 												requireOS = cms.bool(False),
-# 												srcMETs = cms.VInputTag( cms.InputTag("slimmedMETs", "", BUGFIX_MET_TYPE),
-# 	                                            cms.InputTag("patpfMET"),
-# 	                                            cms.InputTag("patpfMETT1"),
-# 	                                            cms.InputTag("patpfTrackMET"),
-# 	                                            cms.InputTag("patpfNoPUMET"),
-# 	                                            cms.InputTag("patpfPUCorrectedMET"),
-# 	                                            cms.InputTag("patpfPUMET"),
-# 	                                            cms.InputTag("slimmedMETsPuppi", "", BUGFIX_MET_TYPE) ) )
-
-
-# ##################################################################
-# # clone the default (with mods) and adjust for tau ES down
-# ##################################################################
-
-# process.MVAMETtauEsDown = process.MVAMET.clone(srcLeptons  = cms.VInputTag("TrimmedFilteredCustomMuons:TrimmedFilteredCustomMuons:DavisNtuple", 
-# 											   "TrimmedFilteredCustomElectrons:TrimmedFilteredCustomElectrons:DavisNtuple", 
-# 											   "TrimmedFilteredCustomTausEsDown:TrimmedFilteredCustomTausEsDown:DavisNtuple"),
-# 												requireOS = cms.bool(False),
-# 												srcMETs = cms.VInputTag( cms.InputTag("slimmedMETs", "", BUGFIX_MET_TYPE),
-# 	                                            cms.InputTag("patpfMET"),
-# 	                                            cms.InputTag("patpfMETT1"),
-# 	                                            cms.InputTag("patpfTrackMET"),
-# 	                                            cms.InputTag("patpfNoPUMET"),
-# 	                                            cms.InputTag("patpfPUCorrectedMET"),
-# 	                                            cms.InputTag("patpfPUMET"),
-# 	                                            cms.InputTag("slimmedMETsPuppi", "", BUGFIX_MET_TYPE) ) ) 
-
-
-# ##################################################################
-# # clone the default (with mods) and adjust for tau BOOSTED ES nominal
-# ##################################################################
-
-# process.MVAMETtauBoostedEsNominal = process.MVAMET.clone(srcLeptons  = cms.VInputTag("TrimmedFilteredCustomMuons:TrimmedFilteredCustomMuons:DavisNtuple", 
-# 											   "TrimmedFilteredCustomElectrons:TrimmedFilteredCustomElectrons:DavisNtuple", 
-# 											   "TrimmedFilteredCustomTausBoostedEsNominal:TrimmedFilteredCustomTausBoostedEsNominal:DavisNtuple"),
-# 												requireOS = cms.bool(False),
-# 												srcMETs = cms.VInputTag( cms.InputTag("slimmedMETs", "", BUGFIX_MET_TYPE),
-# 	                                            cms.InputTag("patpfMET"),
-# 	                                            cms.InputTag("patpfMETT1"),
-# 	                                            cms.InputTag("patpfTrackMET"),
-# 	                                            cms.InputTag("patpfNoPUMET"),
-# 	                                            cms.InputTag("patpfPUCorrectedMET"),
-# 	                                            cms.InputTag("patpfPUMET"),
-# 	                                            cms.InputTag("slimmedMETsPuppi", "", BUGFIX_MET_TYPE) ) )
-
-
-
-# ##################################################################
-# # clone the default (with mods) and adjust for BOOSTED tau ES up
-# ##################################################################
-
-# process.MVAMETtauBoostedEsUp = process.MVAMET.clone(srcLeptons  = cms.VInputTag("TrimmedFilteredCustomMuons:TrimmedFilteredCustomMuons:DavisNtuple", 
-# 											   "TrimmedFilteredCustomElectrons:TrimmedFilteredCustomElectrons:DavisNtuple", 
-# 											   "TrimmedFilteredCustomTausBoostedEsUp:TrimmedFilteredCustomTausBoostedEsUp:DavisNtuple"),
-# 												requireOS = cms.bool(False),
-# 												srcMETs = cms.VInputTag( cms.InputTag("slimmedMETs", "", BUGFIX_MET_TYPE),
-# 	                                            cms.InputTag("patpfMET"),
-# 	                                            cms.InputTag("patpfMETT1"),
-# 	                                            cms.InputTag("patpfTrackMET"),
-# 	                                            cms.InputTag("patpfNoPUMET"),
-# 	                                            cms.InputTag("patpfPUCorrectedMET"),
-# 	                                            cms.InputTag("patpfPUMET"),
-# 	                                            cms.InputTag("slimmedMETsPuppi", "", BUGFIX_MET_TYPE) ) )
+											   "TrimmedFilteredCustomTausBoostedEsDown:TrimmedFilteredCustomTausBoostedEsDown:DavisNtuple"),
+												requireOS = cms.bool(False),
+												srcMETs = cms.VInputTag( cms.InputTag("slimmedMETs", "", BUGFIX_MET_TYPE),
+	                                            cms.InputTag("patpfMET"),
+	                                            cms.InputTag("patpfMETT1"),
+	                                            cms.InputTag("patpfTrackMET"),
+	                                            cms.InputTag("patpfNoPUMET"),
+	                                            cms.InputTag("patpfPUCorrectedMET"),
+	                                            cms.InputTag("patpfPUMET"),
+	                                            cms.InputTag("slimmedMETsPuppi", "", BUGFIX_MET_TYPE) ) ) 
 
 
 
 
-# ##################################################################
-# # clone the default (with mods) and adjust for BOOSTED tau ES down
-# ##################################################################
+##################################################################
+# clone the default (with mods) and adjust for electron ES up
+# since the electron ES systematic applies only for e+mu
+# evaluate only e + mu pairs (that is why srcLeptons does not use taus)
+##################################################################
 
-# process.MVAMETtauBoostedEsDown = process.MVAMET.clone(srcLeptons  = cms.VInputTag("TrimmedFilteredCustomMuons:TrimmedFilteredCustomMuons:DavisNtuple", 
-# 											   "TrimmedFilteredCustomElectrons:TrimmedFilteredCustomElectrons:DavisNtuple", 
-# 											   "TrimmedFilteredCustomTausBoostedEsDown:TrimmedFilteredCustomTausBoostedEsDown:DavisNtuple"),
-# 												requireOS = cms.bool(False),
-# 												srcMETs = cms.VInputTag( cms.InputTag("slimmedMETs", "", BUGFIX_MET_TYPE),
-# 	                                            cms.InputTag("patpfMET"),
-# 	                                            cms.InputTag("patpfMETT1"),
-# 	                                            cms.InputTag("patpfTrackMET"),
-# 	                                            cms.InputTag("patpfNoPUMET"),
-# 	                                            cms.InputTag("patpfPUCorrectedMET"),
-# 	                                            cms.InputTag("patpfPUMET"),
-# 	                                            cms.InputTag("slimmedMETsPuppi", "", BUGFIX_MET_TYPE) ) ) 
-
-
-
-
-# ##################################################################
-# # clone the default (with mods) and adjust for electron ES up
-# # since the electron ES systematic applies only for e+mu
-# # evaluate only e + mu pairs (that is why srcLeptons does not use taus)
-# ##################################################################
-
-# process.MVAMETelectronEsUp = process.MVAMET.clone(srcLeptons  = cms.VInputTag("TrimmedFilteredCustomMuons:TrimmedFilteredCustomMuons:DavisNtuple", 
-# 											   "TrimmedFilteredCustomElectronsEsUp:TrimmedFilteredCustomElectronsEsUp:DavisNtuple"),
-# 												requireOS = cms.bool(False),
-# 												srcMETs = cms.VInputTag( cms.InputTag("slimmedMETs", "", BUGFIX_MET_TYPE),
-# 	                                            cms.InputTag("patpfMET"),
-# 	                                            cms.InputTag("patpfMETT1"),
-# 	                                            cms.InputTag("patpfTrackMET"),
-# 	                                            cms.InputTag("patpfNoPUMET"),
-# 	                                            cms.InputTag("patpfPUCorrectedMET"),
-# 	                                            cms.InputTag("patpfPUMET"),
-# 	                                            cms.InputTag("slimmedMETsPuppi", "", BUGFIX_MET_TYPE) ) )
+process.MVAMETelectronEsUp = process.MVAMET.clone(srcLeptons  = cms.VInputTag("TrimmedFilteredCustomMuons:TrimmedFilteredCustomMuons:DavisNtuple", 
+											   "TrimmedFilteredCustomElectronsEsUp:TrimmedFilteredCustomElectronsEsUp:DavisNtuple"),
+												requireOS = cms.bool(False),
+												srcMETs = cms.VInputTag( cms.InputTag("slimmedMETs", "", BUGFIX_MET_TYPE),
+	                                            cms.InputTag("patpfMET"),
+	                                            cms.InputTag("patpfMETT1"),
+	                                            cms.InputTag("patpfTrackMET"),
+	                                            cms.InputTag("patpfNoPUMET"),
+	                                            cms.InputTag("patpfPUCorrectedMET"),
+	                                            cms.InputTag("patpfPUMET"),
+	                                            cms.InputTag("slimmedMETsPuppi", "", BUGFIX_MET_TYPE) ) )
 
 
 
-# process.MVAMETelectronEsDown = process.MVAMET.clone(srcLeptons  = cms.VInputTag("TrimmedFilteredCustomMuons:TrimmedFilteredCustomMuons:DavisNtuple", 
-# 											   "TrimmedFilteredCustomElectronsEsDown:TrimmedFilteredCustomElectronsEsDown:DavisNtuple"),
-# 												requireOS = cms.bool(False),
-# 												srcMETs = cms.VInputTag( cms.InputTag("slimmedMETs", "", BUGFIX_MET_TYPE),
-# 	                                            cms.InputTag("patpfMET"),
-# 	                                            cms.InputTag("patpfMETT1"),
-# 	                                            cms.InputTag("patpfTrackMET"),
-# 	                                            cms.InputTag("patpfNoPUMET"),
-# 	                                            cms.InputTag("patpfPUCorrectedMET"),
-# 	                                            cms.InputTag("patpfPUMET"),
-# 	                                            cms.InputTag("slimmedMETsPuppi", "", BUGFIX_MET_TYPE) ) )
+process.MVAMETelectronEsDown = process.MVAMET.clone(srcLeptons  = cms.VInputTag("TrimmedFilteredCustomMuons:TrimmedFilteredCustomMuons:DavisNtuple", 
+											   "TrimmedFilteredCustomElectronsEsDown:TrimmedFilteredCustomElectronsEsDown:DavisNtuple"),
+												requireOS = cms.bool(False),
+												srcMETs = cms.VInputTag( cms.InputTag("slimmedMETs", "", BUGFIX_MET_TYPE),
+	                                            cms.InputTag("patpfMET"),
+	                                            cms.InputTag("patpfMETT1"),
+	                                            cms.InputTag("patpfTrackMET"),
+	                                            cms.InputTag("patpfNoPUMET"),
+	                                            cms.InputTag("patpfPUCorrectedMET"),
+	                                            cms.InputTag("patpfPUMET"),
+	                                            cms.InputTag("slimmedMETsPuppi", "", BUGFIX_MET_TYPE) ) )
 
 
 
@@ -1169,13 +1053,10 @@ else :
 	print "******************************************************"
 
 
-
-
 process.TupleCandidateEvents = cms.EDProducer('TupleCandidateEventProducer' ,
 	puppiMETSrc = cms.InputTag("slimmedMETsPuppi"),
 	pfMETSrc = cms.InputTag("slimmedMETs","",DAVISprocessName), # this has the updated JECs
-	# 	mvaMETSrc = cms.InputTag("MVAMET:MVAMET:DavisNtuple"),
-	mvaMETSrc = cms.InputTag("PFMetWithEmbeddedLeptonPairs:PFMetWithEmbeddedLeptonPairs:DavisNtuple"),
+	mvaMETSrc = cms.InputTag("MVAMET:MVAMET:DavisNtuple"),
 	electronVetoSrc =cms.InputTag("filteredVetoElectrons","","DavisNtuple"),
 	muonVetoSrc = cms.InputTag("filteredVetoMuons","","DavisNtuple"),				
 	tauVetoSrc = cms.InputTag("filteredVetoTausEsNominal","","DavisNtuple"),				
@@ -1196,12 +1077,10 @@ process.TupleCandidateEvents = cms.EDProducer('TupleCandidateEventProducer' ,
 						)	
 
 
-
 process.TupleCandidateEventsTauEsUp = cms.EDProducer('TupleCandidateEventProducer' ,
 	puppiMETSrc = cms.InputTag("slimmedMETsPuppi"),
 	pfMETSrc = cms.InputTag("slimmedMETs","",DAVISprocessName), # this has the updated JECs
-	#mvaMETSrc = cms.InputTag("MVAMETtauEsUp:MVAMET:DavisNtuple"),
-	mvaMETSrc = cms.InputTag("PFMetWithEmbeddedLeptonPairsTauEsUp:PFMetWithEmbeddedLeptonPairsTauEsUp:DavisNtuple"),
+	mvaMETSrc = cms.InputTag("MVAMETtauEsUp:MVAMET:DavisNtuple"),
 	electronVetoSrc =cms.InputTag("filteredVetoElectrons","","DavisNtuple"),
 	muonVetoSrc = cms.InputTag("filteredVetoMuons","","DavisNtuple"),				
 	tauVetoSrc = cms.InputTag("filteredVetoTausEsUp","","DavisNtuple"),				
@@ -1224,8 +1103,7 @@ process.TupleCandidateEventsTauEsUp = cms.EDProducer('TupleCandidateEventProduce
 process.TupleCandidateEventsTauEsDown = cms.EDProducer('TupleCandidateEventProducer' ,
 	puppiMETSrc = cms.InputTag("slimmedMETsPuppi"),
 	pfMETSrc = cms.InputTag("slimmedMETs","",DAVISprocessName), # this has the updated JECs
-	# mvaMETSrc = cms.InputTag("MVAMETtauEsDown:MVAMET:DavisNtuple"),
-	mvaMETSrc = cms.InputTag("PFMetWithEmbeddedLeptonPairsTauEsDown:PFMetWithEmbeddedLeptonPairsTauEsDown:DavisNtuple"),
+	mvaMETSrc = cms.InputTag("MVAMETtauEsDown:MVAMET:DavisNtuple"),
 	electronVetoSrc =cms.InputTag("filteredVetoElectrons","","DavisNtuple"),
 	muonVetoSrc = cms.InputTag("filteredVetoMuons","","DavisNtuple"),				
 	tauVetoSrc = cms.InputTag("filteredVetoTausEsDown","","DavisNtuple"),				
@@ -1248,8 +1126,7 @@ process.TupleCandidateEventsTauEsDown = cms.EDProducer('TupleCandidateEventProdu
 process.TupleCandidateEventsBoosted = cms.EDProducer('TupleCandidateEventProducer' ,
 	puppiMETSrc = cms.InputTag("slimmedMETsPuppi"),
 	pfMETSrc = cms.InputTag("slimmedMETs","",DAVISprocessName), # this has the updated JECs
-	#mvaMETSrc = cms.InputTag("MVAMETtauBoostedEsNominal:MVAMET:DavisNtuple"),
-	mvaMETSrc = cms.InputTag("PFMetWithEmbeddedLeptonPairsTausBoostedEsNominal:PFMetWithEmbeddedLeptonPairsTausBoostedEsNominal:DavisNtuple"),
+	mvaMETSrc = cms.InputTag("MVAMETtauBoostedEsNominal:MVAMET:DavisNtuple"),
 	electronVetoSrc =cms.InputTag("filteredVetoElectrons","","DavisNtuple"),
 	muonVetoSrc = cms.InputTag("filteredVetoMuons","","DavisNtuple"),				
 	tauVetoSrc = cms.InputTag("filteredVetoTausBoostedEsNominal","","DavisNtuple"),				
@@ -1273,8 +1150,7 @@ process.TupleCandidateEventsBoosted = cms.EDProducer('TupleCandidateEventProduce
 process.TupleCandidateEventsTauEsUpBoosted = cms.EDProducer('TupleCandidateEventProducer' ,
 	puppiMETSrc = cms.InputTag("slimmedMETsPuppi"),
 	pfMETSrc = cms.InputTag("slimmedMETs","",DAVISprocessName), # this has the updated JECs
-	#mvaMETSrc = cms.InputTag("MVAMETtauBoostedEsUp:MVAMET:DavisNtuple"),
-	mvaMETSrc = cms.InputTag("PFMetWithEmbeddedLeptonPairsTausBoostedEsUp:PFMetWithEmbeddedLeptonPairsTausBoostedEsUp:DavisNtuple"),
+	mvaMETSrc = cms.InputTag("MVAMETtauBoostedEsUp:MVAMET:DavisNtuple"),
 	electronVetoSrc =cms.InputTag("filteredVetoElectrons","","DavisNtuple"),
 	muonVetoSrc = cms.InputTag("filteredVetoMuons","","DavisNtuple"),				
 	tauVetoSrc = cms.InputTag("filteredVetoTausBoostedEsUp","","DavisNtuple"),				
@@ -1297,8 +1173,7 @@ process.TupleCandidateEventsTauEsUpBoosted = cms.EDProducer('TupleCandidateEvent
 process.TupleCandidateEventsTauEsDownBoosted = cms.EDProducer('TupleCandidateEventProducer' ,
 	puppiMETSrc = cms.InputTag("slimmedMETsPuppi"),
 	pfMETSrc = cms.InputTag("slimmedMETs","",DAVISprocessName), # this has the updated JECs
-	#mvaMETSrc = cms.InputTag("MVAMETtauBoostedEsDown:MVAMET:DavisNtuple"),
-	mvaMETSrc = cms.InputTag("PFMetWithEmbeddedLeptonPairsTausBoostedEsDown:PFMetWithEmbeddedLeptonPairsTausBoostedEsDown:DavisNtuple"),
+	mvaMETSrc = cms.InputTag("MVAMETtauBoostedEsDown:MVAMET:DavisNtuple"),
 	electronVetoSrc =cms.InputTag("filteredVetoElectrons","","DavisNtuple"),
 	muonVetoSrc = cms.InputTag("filteredVetoMuons","","DavisNtuple"),				
 	tauVetoSrc = cms.InputTag("filteredVetoTausBoostedEsDown","","DavisNtuple"),				
@@ -1318,55 +1193,53 @@ process.TupleCandidateEventsTauEsDownBoosted = cms.EDProducer('TupleCandidateEve
     rankParisByPt = rankParisByPt_
 						)	
 
-# process.TupleCandidateEventsElectronEsUp = cms.EDProducer('TupleCandidateEventProducer' ,
-# 	puppiMETSrc = cms.InputTag("slimmedMETsPuppi"),
-# 	pfMETSrc = cms.InputTag("slimmedMETs","",DAVISprocessName), # this has the updated JECs
-# 	#mvaMETSrc = cms.InputTag("MVAMETelectronEsUp:MVAMET:DavisNtuple"),
-# 	mvaMETSrc = cms.InputTag("PFMetWithEmbeddedLeptonPairs:PFMetWithEmbeddedLeptonPairs:DavisNtuple"),
-# 	electronVetoSrc =cms.InputTag("filteredVetoElectronsEsUp","","DavisNtuple"),
-# 	muonVetoSrc = cms.InputTag("filteredVetoMuons","","DavisNtuple"),				
-# 	tauVetoSrc = cms.InputTag("filteredVetoTausBoostedEsNominal","","DavisNtuple"),				
-# 	pairDeltaRmin = cms.double(0.001), 
-# 	NAME=cms.string("TupleCandidateEventsElectronEsUp"),
-#     doSVMass = cms.bool(COMPUTE_SVMASS_AT_NTUPLE),
-#     useMVAMET = cms.bool(USE_MVAMET),
-#     logMterm = cms.double(SVMASS_LOG_M),
-#     svMassVerbose = cms.int32(SVMASS_VERBOSE),
-#     # need to order the taus by isolation in tau_h + tau_h pairs
-#     tauIsolForOrderingPair = tauIsolForOrderingPair_,
-#     smallerTauIsoValueIsBetter = smallerTauIsoValueIsBetter_,
-#     EffElectronSrc = cms.InputTag("TrimmedFilteredCustomElectronsEsUp:TrimmedFilteredCustomElectronsEsUp:DavisNtuple"),
-#     EffMuonSrc = cms.InputTag("TrimmedFilteredCustomMuons:TrimmedFilteredCustomMuons:DavisNtuple"),
-#     EffTauSrc = cms.InputTag("TrimmedFilteredCustomTausEsNominal:TrimmedFilteredCustomTausEsNominal:DavisNtuple"),
-#     BuildEfficiencyTree = cms.bool(False),
-#     rankParisByPt = rankParisByPt_
-# 						)	
+process.TupleCandidateEventsElectronEsUp = cms.EDProducer('TupleCandidateEventProducer' ,
+	puppiMETSrc = cms.InputTag("slimmedMETsPuppi"),
+	pfMETSrc = cms.InputTag("slimmedMETs","",DAVISprocessName), # this has the updated JECs
+	mvaMETSrc = cms.InputTag("MVAMETelectronEsUp:MVAMET:DavisNtuple"),
+	electronVetoSrc =cms.InputTag("filteredVetoElectronsEsUp","","DavisNtuple"),
+	muonVetoSrc = cms.InputTag("filteredVetoMuons","","DavisNtuple"),				
+	tauVetoSrc = cms.InputTag("filteredVetoTausBoostedEsNominal","","DavisNtuple"),				
+	pairDeltaRmin = cms.double(0.001), 
+	NAME=cms.string("TupleCandidateEventsElectronEsUp"),
+    doSVMass = cms.bool(COMPUTE_SVMASS_AT_NTUPLE),
+    useMVAMET = cms.bool(USE_MVAMET),
+    logMterm = cms.double(SVMASS_LOG_M),
+    svMassVerbose = cms.int32(SVMASS_VERBOSE),
+    # need to order the taus by isolation in tau_h + tau_h pairs
+    tauIsolForOrderingPair = tauIsolForOrderingPair_,
+    smallerTauIsoValueIsBetter = smallerTauIsoValueIsBetter_,
+    EffElectronSrc = cms.InputTag("TrimmedFilteredCustomElectronsEsUp:TrimmedFilteredCustomElectronsEsUp:DavisNtuple"),
+    EffMuonSrc = cms.InputTag("TrimmedFilteredCustomMuons:TrimmedFilteredCustomMuons:DavisNtuple"),
+    EffTauSrc = cms.InputTag("TrimmedFilteredCustomTausEsNominal:TrimmedFilteredCustomTausEsNominal:DavisNtuple"),
+    BuildEfficiencyTree = cms.bool(False),
+    rankParisByPt = rankParisByPt_
+						)	
 
 
 
-# process.TupleCandidateEventsElectronEsDown = cms.EDProducer('TupleCandidateEventProducer' ,
-# 	puppiMETSrc = cms.InputTag("slimmedMETsPuppi"),
-# 	pfMETSrc = cms.InputTag("slimmedMETs","",DAVISprocessName), # this has the updated JECs
-# 	#mvaMETSrc = cms.InputTag("MVAMETelectronEsDown:MVAMET:DavisNtuple"),
-# 	mvaMETSrc = cms.InputTag("PFMetWithEmbeddedLeptonPairs:PFMetWithEmbeddedLeptonPairs:DavisNtuple"),
-# 	electronVetoSrc =cms.InputTag("filteredVetoElectronsEsDown","","DavisNtuple"),
-# 	muonVetoSrc = cms.InputTag("filteredVetoMuons","","DavisNtuple"),				
-# 	tauVetoSrc = cms.InputTag("filteredVetoTausBoostedEsNominal","","DavisNtuple"),				
-# 	pairDeltaRmin = cms.double(0.001), 
-# 	NAME=cms.string("TupleCandidateEventsElectronEsDown"),
-#     doSVMass = cms.bool(COMPUTE_SVMASS_AT_NTUPLE),
-#     useMVAMET = cms.bool(USE_MVAMET),
-#     logMterm = cms.double(SVMASS_LOG_M),
-#     svMassVerbose = cms.int32(SVMASS_VERBOSE),
-#     # need to order the taus by isolation in tau_h + tau_h pairs
-#     tauIsolForOrderingPair = tauIsolForOrderingPair_,
-#     smallerTauIsoValueIsBetter = smallerTauIsoValueIsBetter_,
-#     EffElectronSrc = cms.InputTag("TrimmedFilteredCustomElectronsEsDown:TrimmedFilteredCustomElectronsEsDown:DavisNtuple"),
-#     EffMuonSrc = cms.InputTag("TrimmedFilteredCustomMuons:TrimmedFilteredCustomMuons:DavisNtuple"),
-#     EffTauSrc = cms.InputTag("TrimmedFilteredCustomTausEsNominal:TrimmedFilteredCustomTausEsNominal:DavisNtuple"),
-#     BuildEfficiencyTree = cms.bool(False),
-#     rankParisByPt = rankParisByPt_
-# 						)	
+process.TupleCandidateEventsElectronEsDown = cms.EDProducer('TupleCandidateEventProducer' ,
+	puppiMETSrc = cms.InputTag("slimmedMETsPuppi"),
+	pfMETSrc = cms.InputTag("slimmedMETs","",DAVISprocessName), # this has the updated JECs
+	mvaMETSrc = cms.InputTag("MVAMETelectronEsDown:MVAMET:DavisNtuple"),
+	electronVetoSrc =cms.InputTag("filteredVetoElectronsEsDown","","DavisNtuple"),
+	muonVetoSrc = cms.InputTag("filteredVetoMuons","","DavisNtuple"),				
+	tauVetoSrc = cms.InputTag("filteredVetoTausBoostedEsNominal","","DavisNtuple"),				
+	pairDeltaRmin = cms.double(0.001), 
+	NAME=cms.string("TupleCandidateEventsElectronEsDown"),
+    doSVMass = cms.bool(COMPUTE_SVMASS_AT_NTUPLE),
+    useMVAMET = cms.bool(USE_MVAMET),
+    logMterm = cms.double(SVMASS_LOG_M),
+    svMassVerbose = cms.int32(SVMASS_VERBOSE),
+    # need to order the taus by isolation in tau_h + tau_h pairs
+    tauIsolForOrderingPair = tauIsolForOrderingPair_,
+    smallerTauIsoValueIsBetter = smallerTauIsoValueIsBetter_,
+    EffElectronSrc = cms.InputTag("TrimmedFilteredCustomElectronsEsDown:TrimmedFilteredCustomElectronsEsDown:DavisNtuple"),
+    EffMuonSrc = cms.InputTag("TrimmedFilteredCustomMuons:TrimmedFilteredCustomMuons:DavisNtuple"),
+    EffTauSrc = cms.InputTag("TrimmedFilteredCustomTausEsNominal:TrimmedFilteredCustomTausEsNominal:DavisNtuple"),
+    BuildEfficiencyTree = cms.bool(False),
+    rankParisByPt = rankParisByPt_
+						)	
 
 
 
@@ -1451,41 +1324,41 @@ process.NtupleEventsTauEsDown = cms.EDProducer('NtupleEventProducer' ,
 			     NAME=cms.string("NtupleEventsTauEsDown"))
 
 
-# process.NtupleEventsElectronEsUp = cms.EDProducer('NtupleEventProducer' ,
-# 				 tupleCandidateEventSrc = cms.InputTag("TupleCandidateEventsElectronEsUp","TupleCandidateEventsElectronEsUp","DavisNtuple"),
-# 				 l1extraParticlesSrc = cms.InputTag("l1extraParticles","IsoTau","RECO"),
-# 				 triggerBitSrc = cms.InputTag("TriggerResults","",HLTlabelType),
-# 				 triggerPreScaleSrc = cms.InputTag("patTrigger"),
-# 				 triggerObjectSrc = cms.InputTag("selectedPatTrigger"),				 
-# 				 electron_triggerMatchDRSrc = electronTriggerMatch_DR,
-# 				 electron_triggerMatchTypesSrc = electronTriggerMatch_Types,
-# 				 electron_triggerMatchPathsAndFiltersSrc = electronTriggerPathsAndFilters,
-# 				 muon_triggerMatchDRSrc = muonTriggerMatch_DR,
-# 				 muon_triggerMatchTypesSrc = muonTriggerMatch_Types,
-# 				 muon_triggerMatchPathsAndFiltersSrc = muonTriggerPathsAndFilters,
-# 				 tau_triggerMatchDRSrc = tauTriggerMatch_DR,
-# 				 tau_triggerMatchTypesSrc = tauTriggerMatch_Types,
-# 				 tau_triggerMatchPathsAndFiltersSrc = tauTriggerPathsAndFilters,
-# 			     isBoostedChannelSrc = cms.bool(False),
-#  			     NAME=cms.string("NtupleEventsElectronEsUp"))
+process.NtupleEventsElectronEsUp = cms.EDProducer('NtupleEventProducer' ,
+				 tupleCandidateEventSrc = cms.InputTag("TupleCandidateEventsElectronEsUp","TupleCandidateEventsElectronEsUp","DavisNtuple"),
+				 l1extraParticlesSrc = cms.InputTag("l1extraParticles","IsoTau","RECO"),
+				 triggerBitSrc = cms.InputTag("TriggerResults","",HLTlabelType),
+				 triggerPreScaleSrc = cms.InputTag("patTrigger"),
+				 triggerObjectSrc = cms.InputTag("selectedPatTrigger"),				 
+				 electron_triggerMatchDRSrc = electronTriggerMatch_DR,
+				 electron_triggerMatchTypesSrc = electronTriggerMatch_Types,
+				 electron_triggerMatchPathsAndFiltersSrc = electronTriggerPathsAndFilters,
+				 muon_triggerMatchDRSrc = muonTriggerMatch_DR,
+				 muon_triggerMatchTypesSrc = muonTriggerMatch_Types,
+				 muon_triggerMatchPathsAndFiltersSrc = muonTriggerPathsAndFilters,
+				 tau_triggerMatchDRSrc = tauTriggerMatch_DR,
+				 tau_triggerMatchTypesSrc = tauTriggerMatch_Types,
+				 tau_triggerMatchPathsAndFiltersSrc = tauTriggerPathsAndFilters,
+			     isBoostedChannelSrc = cms.bool(False),
+ 			     NAME=cms.string("NtupleEventsElectronEsUp"))
 
-# process.NtupleEventsElectronEsDown = cms.EDProducer('NtupleEventProducer' ,
-# 				 tupleCandidateEventSrc = cms.InputTag("TupleCandidateEventsElectronEsDown","TupleCandidateEventsElectronEsDown","DavisNtuple"),
-# 				 l1extraParticlesSrc = cms.InputTag("l1extraParticles","IsoTau","RECO"),
-# 				 triggerBitSrc = cms.InputTag("TriggerResults","",HLTlabelType),
-# 				 triggerPreScaleSrc = cms.InputTag("patTrigger"),
-# 				 triggerObjectSrc = cms.InputTag("selectedPatTrigger"),				 
-# 				 electron_triggerMatchDRSrc = electronTriggerMatch_DR,
-# 				 electron_triggerMatchTypesSrc = electronTriggerMatch_Types,
-# 				 electron_triggerMatchPathsAndFiltersSrc = electronTriggerPathsAndFilters,
-# 				 muon_triggerMatchDRSrc = muonTriggerMatch_DR,
-# 				 muon_triggerMatchTypesSrc = muonTriggerMatch_Types,
-# 				 muon_triggerMatchPathsAndFiltersSrc = muonTriggerPathsAndFilters,
-# 				 tau_triggerMatchDRSrc = tauTriggerMatch_DR,
-# 				 tau_triggerMatchTypesSrc = tauTriggerMatch_Types,
-# 				 tau_triggerMatchPathsAndFiltersSrc = tauTriggerPathsAndFilters,			 
-# 			     isBoostedChannelSrc = cms.bool(False),
-# 			     NAME=cms.string("NtupleEventsElectronEsDown"))
+process.NtupleEventsElectronEsDown = cms.EDProducer('NtupleEventProducer' ,
+				 tupleCandidateEventSrc = cms.InputTag("TupleCandidateEventsElectronEsDown","TupleCandidateEventsElectronEsDown","DavisNtuple"),
+				 l1extraParticlesSrc = cms.InputTag("l1extraParticles","IsoTau","RECO"),
+				 triggerBitSrc = cms.InputTag("TriggerResults","",HLTlabelType),
+				 triggerPreScaleSrc = cms.InputTag("patTrigger"),
+				 triggerObjectSrc = cms.InputTag("selectedPatTrigger"),				 
+				 electron_triggerMatchDRSrc = electronTriggerMatch_DR,
+				 electron_triggerMatchTypesSrc = electronTriggerMatch_Types,
+				 electron_triggerMatchPathsAndFiltersSrc = electronTriggerPathsAndFilters,
+				 muon_triggerMatchDRSrc = muonTriggerMatch_DR,
+				 muon_triggerMatchTypesSrc = muonTriggerMatch_Types,
+				 muon_triggerMatchPathsAndFiltersSrc = muonTriggerPathsAndFilters,
+				 tau_triggerMatchDRSrc = tauTriggerMatch_DR,
+				 tau_triggerMatchTypesSrc = tauTriggerMatch_Types,
+				 tau_triggerMatchPathsAndFiltersSrc = tauTriggerPathsAndFilters,			 
+			     isBoostedChannelSrc = cms.bool(False),
+			     NAME=cms.string("NtupleEventsElectronEsDown"))
 
 
 # BOOSTED CHANNELS 
@@ -1702,37 +1575,37 @@ process.BASELINEdownTau = cms.EDAnalyzer('FlatTupleGenerator',
 	SVMassConfig = svMassAtFlatTupleConfig
 	)
 
-# process.BASELINEupElectron = cms.EDAnalyzer('FlatTupleGenerator',
-# 	pairSrc = cms.VInputTag(cms.InputTag('NtupleEventsElectronEsUp','NtupleEventsElectronEsUp',FlatTupleProductionName)),
-# 	indepSrc = cms.InputTag('pairIndep','NtupleEventPairIndep',FlatTupleProductionName),
-# 	NAME = cms.string("BASELINEupElectron"),
-# 	FillEffLeptonBranches = cms.bool(False), 
-# 	RecoilCorrection = sampleData.RecoilCorrection,
-# 	MetSystematicType = sampleData.MetSystematicType,
-# 	KeepTheoryScaleFactors = sampleData.KeepTheoryScaleFactors,
-# 	EventCutSrc = generalConfig,
-# 	TauEsVariantToKeep = cms.string("NOMINAL"), # only NOMINAL, UP or DOWN are valid
-# 	ElectronEsVariantToKeep = cms.string("UP"), # only NOMINAL, UP or DOWN are valid
-# 	LeptonCutVecSrc = resolvedChannelCuts,
-# 	BoostedLeptonCutVecSrc = boostedChannelCuts,
-# 	SVMassConfig = svMassAtFlatTupleConfig
-# 	)
+process.BASELINEupElectron = cms.EDAnalyzer('FlatTupleGenerator',
+	pairSrc = cms.VInputTag(cms.InputTag('NtupleEventsElectronEsUp','NtupleEventsElectronEsUp',FlatTupleProductionName)),
+	indepSrc = cms.InputTag('pairIndep','NtupleEventPairIndep',FlatTupleProductionName),
+	NAME = cms.string("BASELINEupElectron"),
+	FillEffLeptonBranches = cms.bool(False), 
+	RecoilCorrection = sampleData.RecoilCorrection,
+	MetSystematicType = sampleData.MetSystematicType,
+	KeepTheoryScaleFactors = sampleData.KeepTheoryScaleFactors,
+	EventCutSrc = generalConfig,
+	TauEsVariantToKeep = cms.string("NOMINAL"), # only NOMINAL, UP or DOWN are valid
+	ElectronEsVariantToKeep = cms.string("UP"), # only NOMINAL, UP or DOWN are valid
+	LeptonCutVecSrc = resolvedChannelCuts,
+	BoostedLeptonCutVecSrc = boostedChannelCuts,
+	SVMassConfig = svMassAtFlatTupleConfig
+	)
 
-# process.BASELINEdownElectron = cms.EDAnalyzer('FlatTupleGenerator',
-# 	pairSrc = cms.VInputTag(cms.InputTag('NtupleEventsElectronEsDown','NtupleEventsElectronEsDown',FlatTupleProductionName)),
-# 	indepSrc = cms.InputTag('pairIndep','NtupleEventPairIndep',FlatTupleProductionName),
-# 	NAME = cms.string("BASELINEdownElectron"),
-# 	FillEffLeptonBranches = cms.bool(False),	
-# 	RecoilCorrection = sampleData.RecoilCorrection,
-# 	MetSystematicType = sampleData.MetSystematicType,
-# 	KeepTheoryScaleFactors = sampleData.KeepTheoryScaleFactors,
-# 	EventCutSrc = generalConfig,
-# 	TauEsVariantToKeep = cms.string("NOMINAL"), # only NOMINAL, UP or DOWN are valid
-# 	ElectronEsVariantToKeep = cms.string("DOWN"), # only NOMINAL, UP or DOWN are valid
-# 	LeptonCutVecSrc = resolvedChannelCuts,
-# 	BoostedLeptonCutVecSrc = boostedChannelCuts,
-# 	SVMassConfig = svMassAtFlatTupleConfig
-# 	)
+process.BASELINEdownElectron = cms.EDAnalyzer('FlatTupleGenerator',
+	pairSrc = cms.VInputTag(cms.InputTag('NtupleEventsElectronEsDown','NtupleEventsElectronEsDown',FlatTupleProductionName)),
+	indepSrc = cms.InputTag('pairIndep','NtupleEventPairIndep',FlatTupleProductionName),
+	NAME = cms.string("BASELINEdownElectron"),
+	FillEffLeptonBranches = cms.bool(False),	
+	RecoilCorrection = sampleData.RecoilCorrection,
+	MetSystematicType = sampleData.MetSystematicType,
+	KeepTheoryScaleFactors = sampleData.KeepTheoryScaleFactors,
+	EventCutSrc = generalConfig,
+	TauEsVariantToKeep = cms.string("NOMINAL"), # only NOMINAL, UP or DOWN are valid
+	ElectronEsVariantToKeep = cms.string("DOWN"), # only NOMINAL, UP or DOWN are valid
+	LeptonCutVecSrc = resolvedChannelCuts,
+	BoostedLeptonCutVecSrc = boostedChannelCuts,
+	SVMassConfig = svMassAtFlatTupleConfig
+	)
 
 
 ###################
@@ -1832,31 +1705,23 @@ else :
 		if BUILD_EFFICIENCY_TREE is False:
 			process.p *= process.requireCandidateHiggsPair
 
-		process.p *= process.PFMetWithEmbeddedLeptonPairs
-		process.p *= process.PFMetWithEmbeddedLeptonPairsTauEsUp 
-		process.p *= process.PFMetWithEmbeddedLeptonPairsTauEsDown 
-		process.p *= process.PFMetWithEmbeddedLeptonPairsTausBoostedEsNominal 
-		process.p *= process.PFMetWithEmbeddedLeptonPairsTausBoostedEsUp 
-		process.p *= process.PFMetWithEmbeddedLeptonPairsTausBoostedEsDown 
+		if BUILD_TAU_ES_VARIANTS is True :
+			process.MVAMETtauEsUp
+			process.MVAMETtauEsDown
 
-
-		# if BUILD_TAU_ES_VARIANTS is True :
-		# 	process.MVAMETtauEsUp
-		# 	process.MVAMETtauEsDown
-
-		# if BUILD_ELECTRON_ES_VARIANTS is True :
-		# 	process.MVAMETelectronEsUp
-		# 	process.MVAMETelectronEsDown
+		if BUILD_ELECTRON_ES_VARIANTS is True :
+			process.MVAMETelectronEsUp
+			process.MVAMETelectronEsDown
 
 
 		if (BUILD_ELECTRON_TAUBOOSTED or BUILD_MUON_TAUBOOSTED or BUILD_TAUBOOSTED_TAUBOOSTED) : 
-			#process.MVAMETtauBoostedEsNominal
+			process.MVAMETtauBoostedEsNominal
 			process.p *= process.TupleCandidateEventsBoosted
 
 
-			# if BUILD_TAU_ES_VARIANTS is True :
-			# 	process.MVAMETtauBoostedEsUp
-			# 	process.MVAMETtauBoostedEsDown
+			if BUILD_TAU_ES_VARIANTS is True :
+				process.MVAMETtauBoostedEsUp
+				process.MVAMETtauBoostedEsDown
 
 
 		process.p *= process.TupleCandidateEvents
@@ -1897,9 +1762,9 @@ else :
 		process.p *= process.BASELINEupTau 
 		process.p *= process.BASELINEdownTau
 
-	# if BUILD_ELECTRON_ES_VARIANTS is True :
-	# 	process.p *= process.BASELINEupElectron
-	# 	process.p *= process.BASELINEdownElectron
+	if BUILD_ELECTRON_ES_VARIANTS is True :
+		process.p *= process.BASELINEupElectron
+		process.p *= process.BASELINEdownElectron
 
 
 
@@ -1928,14 +1793,13 @@ else :
 		# will cause crash --> process.out.outputCommands.append("keep *")
 		# if only want things needed for FlatTuple uncomment the next line
 		#process.out.outputCommands.append("keep *")
-		process.out.outputCommands.append("keep NtupleEvents*_*_*_DavisNtuple")
+		#process.out.outputCommands.append("keep TupleCandidateEvents*_*_*_DavisNtuple")
 		process.out.outputCommands.append("keep NtupleEvents*_*_*_DavisNtuple")
 		process.out.outputCommands.append("keep pairIndep*_*_*_DavisNtuple")
 		process.out.outputCommands.append("keep NtuplePairIndependentInfos*_*_*_DavisNtuple")
 		process.out.outputCommands.append("keep *_*_bad_*")
 		process.out.outputCommands.append("keep *_egmGsfElectronIDs_*_*")
-		process.out.outputCommands.append("keep *_MVAMET*_MVAMET_DavisNtuple");
-		process.out.outputCommands.append("keep *_PFMetWithEmbeddedLeptonPairs_*_DavisNtuple");
+
 
 
 	process.TFileService = cms.Service("TFileService", fileName = cms.string("FlatTuple.root"))

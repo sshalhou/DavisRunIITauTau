@@ -9,16 +9,16 @@ voms-proxy-init -voms cms --valid=72:00
 source /cvmfs/cms.cern.ch/cmsset_default.csh
 setenv SCRAM_ARCH slc6_amd64_gcc530
 
-if ( -d CMSSW_8_0_26patch1) then
-        echo 'directory CMSSW_8_0_26patch1 already exits, doing nothing further'
+if ( -d CMSSW_8_0_26_patch1) then
+        echo 'directory CMSSW_8_0_26_patch1 already exits, doing nothing further'
         exit 1
 endif
 
 
 # create the working area
 	
-cmsrel CMSSW_8_0_26patch1
-cd CMSSW_8_0_26patch1/src/
+cmsrel CMSSW_8_0_26_patch1
+cd CMSSW_8_0_26_patch1/src/
 cmsenv
 
 # set up git
@@ -29,21 +29,33 @@ git cms-init
 scram b -j 20 # needed to get correct dir structure for electron ID
 
 
-# MVA MET : 
+echo " -----> INSTALLING WITHOUT MVA MET "
+echo " -----> INSTALLING WITHOUT MVA MET "
+echo " -----> INSTALLING WITHOUT MVA MET "
+
+
+# MVA MET 
 #git cms-addpkg RecoMET/METPUSubtraction
 #git cms-addpkg DataFormats/METReco
 #git remote add -f mvamet https://github.com/rfriese/cmssw.git
 #git checkout mvamet/mvamet8020 -b mvamet # this line erases the new electron ID for Moriond 2017
-# so instead we pull the needed directories only 
 
-mkdir RecoMET
-cp -r ../../DavisRunIITauTau/ExternalFiles/MVA_MET_8020/ExternalCode/METPUSubtraction RecoMET/. 
-mkdir DataFormats
-cp -r ../../DavisRunIITauTau/ExternalFiles/MVA_MET_8020/ExternalCode/METReco DataFormats/. 
-mkdir RecoMET/METPUSubtraction/data
-cd RecoMET/METPUSubtraction/data
-wget https://github.com/rfriese/cmssw/raw/MVAMET2_beta_0.6/RecoMET/METPUSubtraction/data/weightfile.root
-cd $CMSSW_BASE/src
+
+# so instead we pull the needed directories only 
+# mkdir RecoMET
+# cp -r ../../DavisRunIITauTau/ExternalFiles/MVA_MET_8020/ExternalCode/METPUSubtraction RecoMET/. 
+# mkdir DataFormats
+# cp -r ../../DavisRunIITauTau/ExternalFiles/MVA_MET_8020/ExternalCode/METReco DataFormats/. 
+# mkdir RecoMET/METPUSubtraction/data
+# cd RecoMET/METPUSubtraction/data
+# wget https://github.com/rfriese/cmssw/raw/MVAMET2_beta_0.6/RecoMET/METPUSubtraction/data/weightfile.root
+# cd $CMSSW_BASE/src
+
+
+# to allow rerun of tau ID on miniAOD
+# see https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuidePFTauID#Rerunning_of_the_tau_ID_on_MiniA
+git cms-merge-topic -u cms-tau-pog:CMSSW_8_0_X_tau-pog_miniAOD-backport-tauID
+
 
 # new Moriond17 electron ID 
 git cms-merge-topic ikrav:egm_id_80X_v2
@@ -59,6 +71,9 @@ git cms-merge-topic -u cms-met:fromCMSSW_8_0_20_postICHEPfilter
 # this is much less than running : git cms-merge-topic gpetruc:badMuonFilters_80X
 git cms-merge-topic gpetruc:badMuonFilters_80X_v2
 
+# update to latest and greatest MET 
+
+git cms-merge-topic cms-met:METRecipe_8020 -u
 
 
 # SVFIt 
@@ -93,7 +108,7 @@ git cms-addpkg PhysicsTools/Utilities
 sed -i 's/std::cout/\/\/std::cout/g' PhysicsTools/Utilities/src/LumiReWeighting.cc
 
 # relocate the davis code
-mv ../../DavisRunIITauTau .
+cp -r ../../DavisRunIITauTau .
 
 
 # copy the PU reweight files 
@@ -188,9 +203,9 @@ git cms-addpkg DataFormats/PatCandidates
 # cp /afs/cern.ch/user/s/sshalhou/public/CMSSW_8X_MODS/PatCandidates/MET.cc_mod DataFormats/PatCandidates/src/MET.cc
 # Moriond17 : SINCE AFS IS GOING AWAY we'll have to carry these in github from now on
 # for future updates be sure to adjust this to pull the correct files from whatever source they are hosted on
-cp DavisRunIITauTau/ExternalFiles/CMSSW_8X_MODS/METReco/MET.h_mod DataFormats/METReco/interface/MET.h
-cp DavisRunIITauTau/ExternalFiles/CMSSW_8X_MODS/METReco/MET.cc_mod DataFormats/METReco/src/MET.cc 
-cp DavisRunIITauTau/ExternalFiles/CMSSW_8X_MODS/PatCandidates/MET.cc_mod  DataFormats/PatCandidates/src/MET.cc
+# cp DavisRunIITauTau/ExternalFiles/CMSSW_8X_MODS/METReco/MET.h_mod DataFormats/METReco/interface/MET.h
+# cp DavisRunIITauTau/ExternalFiles/CMSSW_8X_MODS/METReco/MET.cc_mod DataFormats/METReco/src/MET.cc 
+# cp DavisRunIITauTau/ExternalFiles/CMSSW_8X_MODS/PatCandidates/MET.cc_mod  DataFormats/PatCandidates/src/MET.cc
 
 
 
