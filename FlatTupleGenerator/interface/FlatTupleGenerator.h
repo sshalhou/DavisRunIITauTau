@@ -649,6 +649,15 @@ public:
 	float leg1_numStrips, leg2_numStrips;
 	float leg1_dzTauVertex, leg2_dzTauVertex;
 	float leg1_numHadrons, leg2_numHadrons;
+
+	float leg1_rerunDiscriminationByIsolationMVArun2v1raw, leg2_rerunDiscriminationByIsolationMVArun2v1raw;
+	float leg1_rerunDiscriminationByIsolationMVArun2v1VLoose, leg2_rerunDiscriminationByIsolationMVArun2v1VLoose;
+	float leg1_rerunDiscriminationByIsolationMVArun2v1Loose, leg2_rerunDiscriminationByIsolationMVArun2v1Loose;
+	float leg1_rerunDiscriminationByIsolationMVArun2v1Medium, leg2_rerunDiscriminationByIsolationMVArun2v1Medium;
+	float leg1_rerunDiscriminationByIsolationMVArun2v1Tight, leg2_rerunDiscriminationByIsolationMVArun2v1Tight;
+	float leg1_rerunDiscriminationByIsolationMVArun2v1VTight, leg2_rerunDiscriminationByIsolationMVArun2v1VTight;
+	float leg1_rerunDiscriminationByIsolationMVArun2v1VVTight, leg2_rerunDiscriminationByIsolationMVArun2v1VVTight;
+
 	int leg1_decayMode, leg2_decayMode;
 	float leg1_tauIDs[THE_MAX]; 		/* leg 1 tau IDs */
 	float leg2_tauIDs[THE_MAX]; 		/* leg 2 tau IDs */
@@ -753,6 +762,14 @@ public:
 	std::vector<float> effLep_numStrips;
 	std::vector<float> effLep_dzTauVertex;
 	std::vector<float> effLep_numHadrons;
+	std::vector<float> effLep_rerunDiscriminationByIsolationMVArun2v1raw;
+	std::vector<float> effLep_rerunDiscriminationByIsolationMVArun2v1VLoose;
+	std::vector<float> effLep_rerunDiscriminationByIsolationMVArun2v1Loose;
+	std::vector<float> effLep_rerunDiscriminationByIsolationMVArun2v1Medium;
+	std::vector<float> effLep_rerunDiscriminationByIsolationMVArun2v1Tight;
+	std::vector<float> effLep_rerunDiscriminationByIsolationMVArun2v1VTight;
+	std::vector<float> effLep_rerunDiscriminationByIsolationMVArun2v1VVTight;
+
 	std::vector<int> effLep_decayMode;
 	std::vector<float> effLep_RelIso; /* relative isolation - value depends on the FlatTupleConfig_cfi */
 
@@ -793,6 +810,15 @@ public:
 	std::vector<float> veto_numStrips;
 	std::vector<float> veto_dzTauVertex;
 	std::vector<float> veto_numHadrons;
+
+	std::vector<float> veto_rerunDiscriminationByIsolationMVArun2v1raw;
+	std::vector<float> veto_rerunDiscriminationByIsolationMVArun2v1VLoose;
+	std::vector<float> veto_rerunDiscriminationByIsolationMVArun2v1Loose;
+	std::vector<float> veto_rerunDiscriminationByIsolationMVArun2v1Medium;
+	std::vector<float> veto_rerunDiscriminationByIsolationMVArun2v1Tight;
+	std::vector<float> veto_rerunDiscriminationByIsolationMVArun2v1VTight;
+	std::vector<float> veto_rerunDiscriminationByIsolationMVArun2v1VVTight;
+
 	std::vector<int> veto_decayMode;
 	std::vector< std::pair<int, std::vector<float> > > veto_tauIDs;
 

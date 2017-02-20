@@ -89,6 +89,13 @@ public:
 	float ZimpactTau() const;
 	float numStrips() const;
 	float numHadrons() const;
+	float rerunDiscriminationByIsolationMVArun2v1raw() const;
+	float rerunDiscriminationByIsolationMVArun2v1VLoose() const;
+	float rerunDiscriminationByIsolationMVArun2v1Loose() const;
+	float rerunDiscriminationByIsolationMVArun2v1Medium() const;
+	float rerunDiscriminationByIsolationMVArun2v1Tight() const;
+	float rerunDiscriminationByIsolationMVArun2v1VTight() const;
+	float rerunDiscriminationByIsolationMVArun2v1VVTight() const;
 	int   decayMode() const;
 	float dzTauVertex() const;
 	float raw_electronMVA() const; 
@@ -248,15 +255,18 @@ private:
 	float m_ZimpactTau; 							// tau-event vertex match quality parameter
 	float m_numStrips;								//  number strips
 	float m_numHadrons;								//	number hadrons
+	float m_rerunDiscriminationByIsolationMVArun2v1raw; 	// tau ID rerun on mini-AOD
+	float m_rerunDiscriminationByIsolationMVArun2v1VLoose; 	// tau ID rerun on mini-AOD
+	float m_rerunDiscriminationByIsolationMVArun2v1Loose; 	// tau ID rerun on mini-AOD
+	float m_rerunDiscriminationByIsolationMVArun2v1Medium; 	// tau ID rerun on mini-AOD
+	float m_rerunDiscriminationByIsolationMVArun2v1Tight; 	// tau ID rerun on mini-AOD
+	float m_rerunDiscriminationByIsolationMVArun2v1VTight; 	// tau ID rerun on mini-AOD
+	float m_rerunDiscriminationByIsolationMVArun2v1VVTight; // tau ID rerun on mini-AOD
 	int m_decayMode; 								//  tau decay mode code
 	stringFloatPairVec m_tauIDs;                    //  pair rho name : value 
 	float m_dzTauVertex; 							//  tau.z - vertex.z
 
 
-
-
-
- 
 
 
 

@@ -104,8 +104,6 @@ private:
   edm::InputTag mvaIsolationVVTightSrc_;
   edm::EDGetTokenT<pat::PATTauDiscriminator> mvaIsolationVVTightToken_;
 
-  edm::InputTag mvaEleRawSrc_;
-  edm::EDGetTokenT<pat::PATTauDiscriminator> mvaEleRawToken_;
 
   string NAME_;
 
@@ -133,7 +131,6 @@ mvaIsolationMediumSrc_(iConfig.getParameter<edm::InputTag>("mvaIsolationMediumSr
 mvaIsolationTightSrc_(iConfig.getParameter<edm::InputTag>("mvaIsolationTightSrc")),
 mvaIsolationVTightSrc_(iConfig.getParameter<edm::InputTag>("mvaIsolationVTightSrc")),
 mvaIsolationVVTightSrc_(iConfig.getParameter<edm::InputTag>("mvaIsolationVVTightSrc")),
-mvaEleRawSrc_(iConfig.getParameter<edm::InputTag>("mvaEleRawSrc")),
 NAME_(iConfig.getParameter<string>("NAME" ))
 {
 
@@ -148,7 +145,6 @@ NAME_(iConfig.getParameter<string>("NAME" ))
   mvaIsolationTightToken_ = consumes<pat::PATTauDiscriminator>(mvaIsolationTightSrc_);
   mvaIsolationVTightToken_ = consumes<pat::PATTauDiscriminator>(mvaIsolationVTightSrc_);
   mvaIsolationVVTightToken_ = consumes<pat::PATTauDiscriminator>(mvaIsolationVVTightSrc_);
-  mvaEleRawToken_ = consumes<pat::PATTauDiscriminator>(mvaEleRawSrc_);
 
   //register your products
   /* Examples
@@ -212,9 +208,6 @@ RerunTauIDEmbedder::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
   edm::Handle<pat::PATTauDiscriminator> mvaIsoVVTight;
   iEvent.getByToken(mvaIsolationVVTightToken_,mvaIsoVVTight);
 
-  edm::Handle<pat::PATTauDiscriminator> mvaEleRaw;
-  iEvent.getByToken(mvaEleRawToken_,mvaEleRaw);
-
 
   auto_ptr<PatTauCollection> storedTaus (new PatTauCollection);
 
@@ -233,17 +226,22 @@ RerunTauIDEmbedder::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
     pat::TauRef tauRef(taus,i);
 
 
-    std::cout<<"mvaIsoRaw = "<<     (*mvaIsoRaw)[tauRef] <<" \n";
-    std::cout<<"mvaIsoVLoose = "<<      (*mvaIsoVLoose)[tauRef]<<" \n";
-    std::cout<<"mvaIsoLoose = "<<     (*mvaIsoLoose)[tauRef]<<" \n";
-    std::cout<<"mvaIsoMedium = "<<      (*mvaIsoMedium)[tauRef]<<" \n";
-    std::cout<<"mvaIsoTight = "<<     (*mvaIsoTight)[tauRef]<<" \n";
-    std::cout<<"mvaIsoVTight = "<<      (*mvaIsoVTight)[tauRef]<<" \n";
-    std::cout<<"mvaIsoVVTight = "<<     (*mvaIsoVVTight)[tauRef]<<" \n";
-    std::cout<<"mvaEleRaw = "<<     (*mvaEleRaw)[tauRef]<<" \n";
+    // std::cout<<"mvaIsoRaw = "<<     (*mvaIsoRaw)[tauRef] <<" \n";
+    // std::cout<<"mvaIsoVLoose = "<<      (*mvaIsoVLoose)[tauRef]<<" \n";
+    // std::cout<<"mvaIsoLoose = "<<     (*mvaIsoLoose)[tauRef]<<" \n";
+    // std::cout<<"mvaIsoMedium = "<<      (*mvaIsoMedium)[tauRef]<<" \n";
+    // std::cout<<"mvaIsoTight = "<<     (*mvaIsoTight)[tauRef]<<" \n";
+    // std::cout<<"mvaIsoVTight = "<<      (*mvaIsoVTight)[tauRef]<<" \n";
+    // std::cout<<"mvaIsoVVTight = "<<     (*mvaIsoVVTight)[tauRef]<<" \n";
 
+    TauToStore->addUserFloat("rerunDiscriminationByIsolationMVArun2v1raw",(*mvaIsoRaw)[tauRef]);
+    TauToStore->addUserFloat("rerunDiscriminationByIsolationMVArun2v1VLoose",(*mvaIsoVLoose)[tauRef]);
+    TauToStore->addUserFloat("rerunDiscriminationByIsolationMVArun2v1Loose",(*mvaIsoLoose)[tauRef]);
+    TauToStore->addUserFloat("rerunDiscriminationByIsolationMVArun2v1Medium",(*mvaIsoMedium)[tauRef]);
+    TauToStore->addUserFloat("rerunDiscriminationByIsolationMVArun2v1Tight",(*mvaIsoTight)[tauRef]);
+    TauToStore->addUserFloat("rerunDiscriminationByIsolationMVArun2v1VTight",(*mvaIsoVTight)[tauRef]);
+    TauToStore->addUserFloat("rerunDiscriminationByIsolationMVArun2v1VVTight",(*mvaIsoVVTight)[tauRef]);
 
-    TauToStore->addUserFloat("XXXXXX",1.0);
 
     storedTaus->push_back(*TauToStore);
   }

@@ -74,6 +74,13 @@ NtupleLepton::NtupleLepton()
   m_genJet_pdgId = -999;
   m_numStrips = NAN;
   m_numHadrons  = NAN;
+  m_rerunDiscriminationByIsolationMVArun2v1raw = NAN;
+  m_rerunDiscriminationByIsolationMVArun2v1VLoose = NAN;
+  m_rerunDiscriminationByIsolationMVArun2v1Loose = NAN;
+  m_rerunDiscriminationByIsolationMVArun2v1Medium = NAN;
+  m_rerunDiscriminationByIsolationMVArun2v1Tight = NAN;
+  m_rerunDiscriminationByIsolationMVArun2v1VTight = NAN;
+  m_rerunDiscriminationByIsolationMVArun2v1VVTight = NAN;
   m_decayMode = -999;
   m_dzTauVertex = NAN;
   m_ZimpactTau = NAN;
@@ -545,6 +552,13 @@ void NtupleLepton::userFloatVectorParser(stringVec & labels_,floatVec & values_)
     else if(labels_[i]=="numberOfTrackHits") {m_numberOfTrackHits = values_[i];}
     else if(labels_[i]=="passConversionVeto") {m_passConversionVeto = values_[i];}
     else if(labels_[i]=="numHadrons") {m_numHadrons = values_[i];}
+    else if(labels_[i]=="rerunDiscriminationByIsolationMVArun2v1raw") {m_rerunDiscriminationByIsolationMVArun2v1raw = values_[i];}
+    else if(labels_[i]=="rerunDiscriminationByIsolationMVArun2v1VLoose") {m_rerunDiscriminationByIsolationMVArun2v1VLoose = values_[i];}
+    else if(labels_[i]=="rerunDiscriminationByIsolationMVArun2v1Loose") {m_rerunDiscriminationByIsolationMVArun2v1Loose = values_[i];}
+    else if(labels_[i]=="rerunDiscriminationByIsolationMVArun2v1Medium") {m_rerunDiscriminationByIsolationMVArun2v1Medium = values_[i];}
+    else if(labels_[i]=="rerunDiscriminationByIsolationMVArun2v1Tight") {m_rerunDiscriminationByIsolationMVArun2v1Tight = values_[i];}
+    else if(labels_[i]=="rerunDiscriminationByIsolationMVArun2v1VTight") {m_rerunDiscriminationByIsolationMVArun2v1VTight = values_[i];}
+    else if(labels_[i]=="rerunDiscriminationByIsolationMVArun2v1VVTight") {m_rerunDiscriminationByIsolationMVArun2v1VVTight = values_[i];}
     else if(labels_[i]=="decayMode") {m_decayMode = values_[i];}
     else if(labels_[i]=="numStrips") {m_numStrips = values_[i];}
     else if(labels_[i]=="dzTauVertex") {m_dzTauVertex = values_[i];}
@@ -784,6 +798,13 @@ int NtupleLepton::genJet_pdgId() const {return m_genJet_pdgId;}
 float NtupleLepton::dzTauVertex() const {return m_dzTauVertex;}
 float NtupleLepton::numStrips() const {return m_numStrips;}
 float NtupleLepton::numHadrons() const {return m_numHadrons;}
+float NtupleLepton::rerunDiscriminationByIsolationMVArun2v1raw() const {return m_rerunDiscriminationByIsolationMVArun2v1raw;}
+float NtupleLepton::rerunDiscriminationByIsolationMVArun2v1VLoose() const {return m_rerunDiscriminationByIsolationMVArun2v1VLoose;}
+float NtupleLepton::rerunDiscriminationByIsolationMVArun2v1Loose() const {return m_rerunDiscriminationByIsolationMVArun2v1Loose;}
+float NtupleLepton::rerunDiscriminationByIsolationMVArun2v1Medium() const {return m_rerunDiscriminationByIsolationMVArun2v1Medium;}
+float NtupleLepton::rerunDiscriminationByIsolationMVArun2v1Tight() const {return m_rerunDiscriminationByIsolationMVArun2v1Tight;}
+float NtupleLepton::rerunDiscriminationByIsolationMVArun2v1VTight() const {return m_rerunDiscriminationByIsolationMVArun2v1VTight;}
+float NtupleLepton::rerunDiscriminationByIsolationMVArun2v1VVTight() const {return m_rerunDiscriminationByIsolationMVArun2v1VVTight;}
 int NtupleLepton::decayMode() const {return m_decayMode;}
 float NtupleLepton::ZimpactTau() const {return m_ZimpactTau;}
 

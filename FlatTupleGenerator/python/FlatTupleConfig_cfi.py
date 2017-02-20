@@ -322,7 +322,21 @@ post_sync_TauTau_tauMVACuts_ = cms.string('1==1')
 # turn them into real cuts if APPLY_POST_SYNC_TAU_CUTS
 
 if APPLY_POST_SYNC_TAU_CUTS is True :
-	post_sync_tauIso_ = cms.string('(tauID("byTightIsolationMVArun2v1DBdR03oldDMwLT") > 0.5 || tauID("byVTightIsolationMVArun2v1DBdR03oldDMwLT") > 0.5 || tauID("byLooseIsolationMVArun2v1DBdR03oldDMwLT") > 0.5 || tauID("byMediumIsolationMVArun2v1DBdR03oldDMwLT") > 0.5 || tauID("byVLooseIsolationMVArun2v1DBdR03oldDMwLT") > 0.5 || tauID("byVVTightIsolationMVArun2v1DBdR03oldDMwLT") > 0.5)')
+	#post_sync_tauIso_ = cms.string('(tauID("byTightIsolationMVArun2v1DBdR03oldDMwLT") > 0.5 || tauID("byVTightIsolationMVArun2v1DBdR03oldDMwLT") > 0.5 || tauID("byLooseIsolationMVArun2v1DBdR03oldDMwLT") > 0.5 || tauID("byMediumIsolationMVArun2v1DBdR03oldDMwLT") > 0.5 || tauID("byVLooseIsolationMVArun2v1DBdR03oldDMwLT") > 0.5 || tauID("byVVTightIsolationMVArun2v1DBdR03oldDMwLT") > 0.5)')
+	
+	post_sync_tauIso_ = cms.string('(tauID("byTightIsolationMVArun2v1DBdR03oldDMwLT") > 0.5 ||\
+		tauID("byVTightIsolationMVArun2v1DBdR03oldDMwLT") > 0.5 ||\
+		tauID("byLooseIsolationMVArun2v1DBdR03oldDMwLT") > 0.5 ||\
+		tauID("byMediumIsolationMVArun2v1DBdR03oldDMwLT") > 0.5 ||\
+		tauID("byVLooseIsolationMVArun2v1DBdR03oldDMwLT") > 0.5 ||\
+		tauID("byVVTightIsolationMVArun2v1DBdR03oldDMwLT") > 0.5 ||\
+		userFloat("rerunDiscriminationByIsolationMVArun2v1VLoose") > 0.5 ||\
+		userFloat("rerunDiscriminationByIsolationMVArun2v1Loose") > 0.5  ||\
+		userFloat("rerunDiscriminationByIsolationMVArun2v1Medium") > 0.5 ||\
+		userFloat("rerunDiscriminationByIsolationMVArun2v1Tight") > 0.5  ||\
+		userFloat("rerunDiscriminationByIsolationMVArun2v1VTight") > 0.5 ||\
+		userFloat("rerunDiscriminationByIsolationMVArun2v1VVTight") > 0.5)')
+
 	post_sync_EleTau_tauMVACuts_ = cms.string("(tauID('againstElectronTightMVA6')> 0.5 && tauID('againstMuonLoose3')>0.5)")
 	post_sync_MuonTau_tauMVACuts_ = cms.string("(tauID('againstElectronVLooseMVA6')> 0.5 && tauID('againstMuonTight3')>0.5)")
 	post_sync_TauTau_tauMVACuts_ = cms.string("(tauID('againstElectronVLooseMVA6')> 0.5 && tauID('againstMuonLoose3')>0.5)")

@@ -1729,6 +1729,15 @@ void FlatTupleGenerator::handleEffLeptonInfo(const edm::Event& iEvent, const edm
     effLep_dzTauVertex.push_back(currentPair.EffLepton().at(i).dzTauVertex());
     effLep_numStrips.push_back(currentPair.EffLepton().at(i).numStrips());
     effLep_numHadrons.push_back(currentPair.EffLepton().at(i).numHadrons());
+
+    effLep_rerunDiscriminationByIsolationMVArun2v1raw.push_back(currentPair.EffLepton().at(i).rerunDiscriminationByIsolationMVArun2v1raw());
+    effLep_rerunDiscriminationByIsolationMVArun2v1VLoose.push_back(currentPair.EffLepton().at(i).rerunDiscriminationByIsolationMVArun2v1VLoose());
+    effLep_rerunDiscriminationByIsolationMVArun2v1Loose.push_back(currentPair.EffLepton().at(i).rerunDiscriminationByIsolationMVArun2v1Loose());
+    effLep_rerunDiscriminationByIsolationMVArun2v1Medium.push_back(currentPair.EffLepton().at(i).rerunDiscriminationByIsolationMVArun2v1Medium());
+    effLep_rerunDiscriminationByIsolationMVArun2v1Tight.push_back(currentPair.EffLepton().at(i).rerunDiscriminationByIsolationMVArun2v1Tight());
+    effLep_rerunDiscriminationByIsolationMVArun2v1VTight.push_back(currentPair.EffLepton().at(i).rerunDiscriminationByIsolationMVArun2v1VTight());
+    effLep_rerunDiscriminationByIsolationMVArun2v1VVTight.push_back(currentPair.EffLepton().at(i).rerunDiscriminationByIsolationMVArun2v1VVTight());
+
     effLep_decayMode.push_back(currentPair.EffLepton().at(i).decayMode());
     effLep_pt.push_back(currentPair.EffLepton().at(i).p4().pt());
     effLep_gen_pt.push_back(currentPair.EffLepton().at(i).gen_p4().pt());
@@ -1939,6 +1948,15 @@ void FlatTupleGenerator::handleLeg1AndLeg2Info(const edm::Event& iEvent, const e
   leg1_dzTauVertex = currentPair.leg1().dzTauVertex();
   leg1_numStrips = currentPair.leg1().numStrips();
   leg1_numHadrons = currentPair.leg1().numHadrons();
+
+  leg1_rerunDiscriminationByIsolationMVArun2v1raw = currentPair.leg1().rerunDiscriminationByIsolationMVArun2v1raw();
+  leg1_rerunDiscriminationByIsolationMVArun2v1VLoose = currentPair.leg1().rerunDiscriminationByIsolationMVArun2v1VLoose();
+  leg1_rerunDiscriminationByIsolationMVArun2v1Loose = currentPair.leg1().rerunDiscriminationByIsolationMVArun2v1Loose();
+  leg1_rerunDiscriminationByIsolationMVArun2v1Medium = currentPair.leg1().rerunDiscriminationByIsolationMVArun2v1Medium();
+  leg1_rerunDiscriminationByIsolationMVArun2v1Tight = currentPair.leg1().rerunDiscriminationByIsolationMVArun2v1Tight();
+  leg1_rerunDiscriminationByIsolationMVArun2v1VTight = currentPair.leg1().rerunDiscriminationByIsolationMVArun2v1VTight();
+  leg1_rerunDiscriminationByIsolationMVArun2v1VVTight = currentPair.leg1().rerunDiscriminationByIsolationMVArun2v1VVTight();
+
   leg1_decayMode = currentPair.leg1().decayMode();
   leg2_leptonType = currentPair.leg2().leptonType();
 
@@ -2005,6 +2023,16 @@ void FlatTupleGenerator::handleLeg1AndLeg2Info(const edm::Event& iEvent, const e
   leg2_ZimpactTau = currentPair.leg2().ZimpactTau();
   leg2_numStrips = currentPair.leg2().numStrips();
   leg2_numHadrons = currentPair.leg2().numHadrons();
+
+  leg2_rerunDiscriminationByIsolationMVArun2v1raw = currentPair.leg2().rerunDiscriminationByIsolationMVArun2v1raw();
+  leg2_rerunDiscriminationByIsolationMVArun2v1VLoose = currentPair.leg2().rerunDiscriminationByIsolationMVArun2v1VLoose();
+  leg2_rerunDiscriminationByIsolationMVArun2v1Loose = currentPair.leg2().rerunDiscriminationByIsolationMVArun2v1Loose();
+  leg2_rerunDiscriminationByIsolationMVArun2v1Medium = currentPair.leg2().rerunDiscriminationByIsolationMVArun2v1Medium();
+  leg2_rerunDiscriminationByIsolationMVArun2v1Tight = currentPair.leg2().rerunDiscriminationByIsolationMVArun2v1Tight();
+  leg2_rerunDiscriminationByIsolationMVArun2v1VTight = currentPair.leg2().rerunDiscriminationByIsolationMVArun2v1VTight();
+  leg2_rerunDiscriminationByIsolationMVArun2v1VVTight = currentPair.leg2().rerunDiscriminationByIsolationMVArun2v1VVTight();
+
+
   leg2_decayMode = currentPair.leg2().decayMode();
   leg2_dzTauVertex = currentPair.leg2().dzTauVertex();
 
@@ -2886,6 +2914,16 @@ NtupleEvent currentPair)
       veto_numStrips.push_back(-999.);
       veto_dzTauVertex.push_back(-999.);
       veto_numHadrons.push_back(-999.);
+
+      veto_rerunDiscriminationByIsolationMVArun2v1raw.push_back(-999.);
+      veto_rerunDiscriminationByIsolationMVArun2v1VLoose.push_back(-999.);
+      veto_rerunDiscriminationByIsolationMVArun2v1Loose.push_back(-999.);
+      veto_rerunDiscriminationByIsolationMVArun2v1Medium.push_back(-999.);
+      veto_rerunDiscriminationByIsolationMVArun2v1Tight.push_back(-999.);
+      veto_rerunDiscriminationByIsolationMVArun2v1VTight.push_back(-999.);
+      veto_rerunDiscriminationByIsolationMVArun2v1VVTight.push_back(-999.);
+
+
       veto_decayMode.push_back(-999);
 
 
@@ -2976,6 +3014,15 @@ NtupleEvent currentPair)
       veto_numStrips.push_back(-999.);
       veto_dzTauVertex.push_back(-999.);
       veto_numHadrons.push_back(-999.);
+
+      veto_rerunDiscriminationByIsolationMVArun2v1raw.push_back(-999.);
+      veto_rerunDiscriminationByIsolationMVArun2v1VLoose.push_back(-999.);
+      veto_rerunDiscriminationByIsolationMVArun2v1Loose.push_back(-999.);
+      veto_rerunDiscriminationByIsolationMVArun2v1Medium.push_back(-999.);
+      veto_rerunDiscriminationByIsolationMVArun2v1Tight.push_back(-999.);
+      veto_rerunDiscriminationByIsolationMVArun2v1VTight.push_back(-999.);
+      veto_rerunDiscriminationByIsolationMVArun2v1VVTight.push_back(-999.);
+
       veto_decayMode.push_back(-999);
 
       for(std::size_t x = 0; x<tauIDsToKeep.size();++x ) 
@@ -3061,6 +3108,18 @@ NtupleEvent currentPair)
       veto_numStrips.push_back(currentPair.vetoTau().at(v).numStrips());
       veto_dzTauVertex.push_back(currentPair.vetoTau().at(v).dzTauVertex());
       veto_numHadrons.push_back(currentPair.vetoTau().at(v).numHadrons());
+
+      veto_rerunDiscriminationByIsolationMVArun2v1raw.push_back(currentPair.vetoTau().at(v).rerunDiscriminationByIsolationMVArun2v1raw());
+      veto_rerunDiscriminationByIsolationMVArun2v1VLoose.push_back(currentPair.vetoTau().at(v).rerunDiscriminationByIsolationMVArun2v1VLoose());
+      veto_rerunDiscriminationByIsolationMVArun2v1Loose.push_back(currentPair.vetoTau().at(v).rerunDiscriminationByIsolationMVArun2v1Loose());
+      veto_rerunDiscriminationByIsolationMVArun2v1Medium.push_back(currentPair.vetoTau().at(v).rerunDiscriminationByIsolationMVArun2v1Medium());
+      veto_rerunDiscriminationByIsolationMVArun2v1Tight.push_back(currentPair.vetoTau().at(v).rerunDiscriminationByIsolationMVArun2v1Tight());
+      veto_rerunDiscriminationByIsolationMVArun2v1VTight.push_back(currentPair.vetoTau().at(v).rerunDiscriminationByIsolationMVArun2v1VTight());
+      veto_rerunDiscriminationByIsolationMVArun2v1VVTight.push_back(currentPair.vetoTau().at(v).rerunDiscriminationByIsolationMVArun2v1VVTight());
+
+
+
+
       veto_decayMode.push_back(currentPair.vetoTau().at(v).decayMode());
 
       for(std::size_t x = 0; x<tauIDsToKeep.size();++x ) 
@@ -4038,6 +4097,16 @@ void FlatTupleGenerator::handlePairIndepInfo(const edm::Event& iEvent, const edm
   leg1_dzTauVertex = NAN;
   leg1_numStrips = NAN;
   leg1_numHadrons = NAN;
+
+  leg1_rerunDiscriminationByIsolationMVArun2v1raw = NAN;
+  leg1_rerunDiscriminationByIsolationMVArun2v1VLoose = NAN;
+  leg1_rerunDiscriminationByIsolationMVArun2v1Loose = NAN;
+  leg1_rerunDiscriminationByIsolationMVArun2v1Medium = NAN;
+  leg1_rerunDiscriminationByIsolationMVArun2v1Tight = NAN;
+  leg1_rerunDiscriminationByIsolationMVArun2v1VTight = NAN;
+  leg1_rerunDiscriminationByIsolationMVArun2v1VVTight = NAN;
+
+
   leg1_decayMode = -999;
   leg2_dz = NAN;
   leg2_dxy = NAN;
@@ -4097,6 +4166,16 @@ void FlatTupleGenerator::handlePairIndepInfo(const edm::Event& iEvent, const edm
   leg2_ZimpactTau = NAN;
   leg2_numStrips = NAN;
   leg2_numHadrons = NAN;
+
+  leg2_rerunDiscriminationByIsolationMVArun2v1raw = NAN;
+  leg2_rerunDiscriminationByIsolationMVArun2v1VLoose = NAN;
+  leg2_rerunDiscriminationByIsolationMVArun2v1Loose = NAN;
+  leg2_rerunDiscriminationByIsolationMVArun2v1Medium = NAN;
+  leg2_rerunDiscriminationByIsolationMVArun2v1Tight = NAN;
+  leg2_rerunDiscriminationByIsolationMVArun2v1VTight = NAN;
+  leg2_rerunDiscriminationByIsolationMVArun2v1VVTight = NAN;
+
+
   leg2_decayMode = -999;
   leg2_dzTauVertex = NAN;
 
@@ -4235,6 +4314,16 @@ void FlatTupleGenerator::handlePairIndepInfo(const edm::Event& iEvent, const edm
   effLep_numStrips.clear();
   effLep_dzTauVertex.clear();
   effLep_numHadrons.clear();
+
+  effLep_rerunDiscriminationByIsolationMVArun2v1raw.clear();
+  effLep_rerunDiscriminationByIsolationMVArun2v1VLoose.clear();
+  effLep_rerunDiscriminationByIsolationMVArun2v1Loose.clear();
+  effLep_rerunDiscriminationByIsolationMVArun2v1Medium.clear();
+  effLep_rerunDiscriminationByIsolationMVArun2v1Tight.clear();
+  effLep_rerunDiscriminationByIsolationMVArun2v1VTight.clear();
+  effLep_rerunDiscriminationByIsolationMVArun2v1VVTight.clear();
+
+
   effLep_decayMode.clear();
   effLep_RelIso.clear();
 
@@ -4283,6 +4372,15 @@ void FlatTupleGenerator::handlePairIndepInfo(const edm::Event& iEvent, const edm
   veto_numStrips.clear(); 
   veto_dzTauVertex.clear(); 
   veto_numHadrons.clear(); 
+
+  veto_rerunDiscriminationByIsolationMVArun2v1raw.clear();
+  veto_rerunDiscriminationByIsolationMVArun2v1VLoose.clear();
+  veto_rerunDiscriminationByIsolationMVArun2v1Loose.clear();
+  veto_rerunDiscriminationByIsolationMVArun2v1Medium.clear();
+  veto_rerunDiscriminationByIsolationMVArun2v1Tight.clear();
+  veto_rerunDiscriminationByIsolationMVArun2v1VTight.clear();
+  veto_rerunDiscriminationByIsolationMVArun2v1VVTight.clear();
+
   veto_decayMode.clear(); 
 
   for(int q = 0; q < THE_MAX; ++q)
@@ -5097,6 +5195,16 @@ void FlatTupleGenerator::beginJob()
   FlatTuple->Branch("leg1_numStrips", &leg1_numStrips);
   FlatTuple->Branch("leg1_dzTauVertex", &leg1_dzTauVertex);
   FlatTuple->Branch("leg1_numHadrons", &leg1_numHadrons);
+
+  FlatTuple->Branch("leg1_rerunDiscriminationByIsolationMVArun2v1raw", &leg1_rerunDiscriminationByIsolationMVArun2v1raw);
+  FlatTuple->Branch("leg1_rerunDiscriminationByIsolationMVArun2v1VLoose", &leg1_rerunDiscriminationByIsolationMVArun2v1VLoose);
+  FlatTuple->Branch("leg1_rerunDiscriminationByIsolationMVArun2v1Loose", &leg1_rerunDiscriminationByIsolationMVArun2v1Loose);
+  FlatTuple->Branch("leg1_rerunDiscriminationByIsolationMVArun2v1Medium", &leg1_rerunDiscriminationByIsolationMVArun2v1Medium);
+  FlatTuple->Branch("leg1_rerunDiscriminationByIsolationMVArun2v1Tight", &leg1_rerunDiscriminationByIsolationMVArun2v1Tight);
+  FlatTuple->Branch("leg1_rerunDiscriminationByIsolationMVArun2v1VTight", &leg1_rerunDiscriminationByIsolationMVArun2v1VTight);
+  FlatTuple->Branch("leg1_rerunDiscriminationByIsolationMVArun2v1VVTight", &leg1_rerunDiscriminationByIsolationMVArun2v1VVTight);
+
+
   FlatTuple->Branch("leg1_decayMode", &leg1_decayMode);
 
   FlatTuple->Branch("leg1_isGlobalMuon", &leg1_isGlobalMuon);
@@ -5213,6 +5321,15 @@ void FlatTupleGenerator::beginJob()
   FlatTuple->Branch("leg2_numStrips", &leg2_numStrips);
   FlatTuple->Branch("leg2_dzTauVertex", &leg2_dzTauVertex);
   FlatTuple->Branch("leg2_numHadrons", &leg2_numHadrons);
+
+  FlatTuple->Branch("leg2_rerunDiscriminationByIsolationMVArun2v1raw", &leg2_rerunDiscriminationByIsolationMVArun2v1raw);
+  FlatTuple->Branch("leg2_rerunDiscriminationByIsolationMVArun2v1VLoose", &leg2_rerunDiscriminationByIsolationMVArun2v1VLoose);
+  FlatTuple->Branch("leg2_rerunDiscriminationByIsolationMVArun2v1Loose", &leg2_rerunDiscriminationByIsolationMVArun2v1Loose);
+  FlatTuple->Branch("leg2_rerunDiscriminationByIsolationMVArun2v1Medium", &leg2_rerunDiscriminationByIsolationMVArun2v1Medium);
+  FlatTuple->Branch("leg2_rerunDiscriminationByIsolationMVArun2v1Tight", &leg2_rerunDiscriminationByIsolationMVArun2v1Tight);
+  FlatTuple->Branch("leg2_rerunDiscriminationByIsolationMVArun2v1VTight", &leg2_rerunDiscriminationByIsolationMVArun2v1VTight);
+  FlatTuple->Branch("leg2_rerunDiscriminationByIsolationMVArun2v1VVTight", &leg2_rerunDiscriminationByIsolationMVArun2v1VVTight);
+
   FlatTuple->Branch("leg2_decayMode", &leg2_decayMode);
 
   FlatTuple->Branch("leg2_isGlobalMuon", &leg2_isGlobalMuon);
@@ -5362,6 +5479,16 @@ void FlatTupleGenerator::beginJob()
     FlatTuple->Branch("veto_numStrips", &veto_numStrips);
     FlatTuple->Branch("veto_dzTauVertex", &veto_dzTauVertex);
     FlatTuple->Branch("veto_numHadrons", &veto_numHadrons);
+
+
+    FlatTuple->Branch("veto_rerunDiscriminationByIsolationMVArun2v1raw", &veto_rerunDiscriminationByIsolationMVArun2v1raw);
+    FlatTuple->Branch("veto_rerunDiscriminationByIsolationMVArun2v1VLoose", &veto_rerunDiscriminationByIsolationMVArun2v1VLoose);
+    FlatTuple->Branch("veto_rerunDiscriminationByIsolationMVArun2v1Loose", &veto_rerunDiscriminationByIsolationMVArun2v1Loose);
+    FlatTuple->Branch("veto_rerunDiscriminationByIsolationMVArun2v1Medium", &veto_rerunDiscriminationByIsolationMVArun2v1Medium);
+    FlatTuple->Branch("veto_rerunDiscriminationByIsolationMVArun2v1Tight", &veto_rerunDiscriminationByIsolationMVArun2v1Tight);
+    FlatTuple->Branch("veto_rerunDiscriminationByIsolationMVArun2v1VTight", &veto_rerunDiscriminationByIsolationMVArun2v1VTight);
+    FlatTuple->Branch("veto_rerunDiscriminationByIsolationMVArun2v1VVTight", &veto_rerunDiscriminationByIsolationMVArun2v1VVTight);
+
     FlatTuple->Branch("veto_decayMode", &veto_decayMode);
 
     for(std::size_t x = 0; x<tauIDsToKeep.size();++x ) 
@@ -5557,6 +5684,15 @@ void FlatTupleGenerator::beginJob()
     FlatTuple->Branch("effLep_numStrips", &effLep_numStrips);
     FlatTuple->Branch("effLep_dzTauVertex", &effLep_dzTauVertex);
     FlatTuple->Branch("effLep_numHadrons", &effLep_numHadrons);
+    
+    FlatTuple->Branch("effLep_rerunDiscriminationByIsolationMVArun2v1raw", &effLep_rerunDiscriminationByIsolationMVArun2v1raw);
+    FlatTuple->Branch("effLep_rerunDiscriminationByIsolationMVArun2v1VLoose", &effLep_rerunDiscriminationByIsolationMVArun2v1VLoose);
+    FlatTuple->Branch("effLep_rerunDiscriminationByIsolationMVArun2v1Loose", &effLep_rerunDiscriminationByIsolationMVArun2v1Loose);
+    FlatTuple->Branch("effLep_rerunDiscriminationByIsolationMVArun2v1Medium", &effLep_rerunDiscriminationByIsolationMVArun2v1Medium);
+    FlatTuple->Branch("effLep_rerunDiscriminationByIsolationMVArun2v1Tight", &effLep_rerunDiscriminationByIsolationMVArun2v1Tight);
+    FlatTuple->Branch("effLep_rerunDiscriminationByIsolationMVArun2v1VTight", &effLep_rerunDiscriminationByIsolationMVArun2v1VTight);
+    FlatTuple->Branch("effLep_rerunDiscriminationByIsolationMVArun2v1VVTight", &effLep_rerunDiscriminationByIsolationMVArun2v1VVTight);
+
     FlatTuple->Branch("effLep_decayMode", &effLep_decayMode);
     FlatTuple->Branch("effLep_RelIso", &effLep_RelIso);
     FlatTuple->Branch("effLep_genJet_pdgId", &effLep_genJet_pdgId); 

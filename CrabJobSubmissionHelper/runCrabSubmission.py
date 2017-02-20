@@ -16,7 +16,7 @@ import fileinput
 import FWCore.ParameterSet.Config as cms
 from DavisRunIITauTau.TupleConfigurations.getSampleInfoForDataSet import getSampleInfoForDataSet
 import math
-
+import time
 
 def DeleteCMSTypes(arg, type):
     temp = str(arg)
@@ -402,7 +402,8 @@ if __name__ == '__main__':
     for com in submitCommandList:
         print 'issuing crab sumbit command: ', com
         os.system(com)
-
+        print "sleeping for 20 seconds between submits ... "
+        time.sleep(20)
 
 
 

@@ -28,7 +28,7 @@ DEBUG_NTUPLE_INPUT = False
 # how many events to run, -1 means run all 
 ######################################
 
-MAX_EVENTS = 50
+MAX_EVENTS = -1
 
 ######################################
 # datasets for local running 
@@ -390,70 +390,6 @@ process.rerunMvaIsolation2SeqRun2Boosted = cms.Sequence(
 
 
 
-from RecoTauTag.RecoTau.PATTauDiscriminationAgainstElectronMVA6_cfi import *
-
-process.rerunDiscriminationAgainstElectronMVA6 = patTauDiscriminationAgainstElectronMVA6.clone(
-   PATTauProducer = cms.InputTag('slimmedTaus'),
-   Prediscriminants = noPrediscriminants,
-   #Prediscriminants = requireLeadTrack,
-   loadMVAfromDB = cms.bool(True),
-   returnMVA = cms.bool(True),
-   method = cms.string("BDTG"),
-   mvaName_NoEleMatch_woGwoGSF_BL = cms.string("RecoTauTag_antiElectronMVA6v1_gbr_NoEleMatch_woGwoGSF_BL"),
-   mvaName_NoEleMatch_wGwoGSF_BL = cms.string("RecoTauTag_antiElectronMVA6v1_gbr_NoEleMatch_wGwoGSF_BL"),
-   mvaName_woGwGSF_BL = cms.string("RecoTauTag_antiElectronMVA6v1_gbr_woGwGSF_BL"),
-   mvaName_wGwGSF_BL = cms.string("RecoTauTag_antiElectronMVA6v1_gbr_wGwGSF_BL"),
-   mvaName_NoEleMatch_woGwoGSF_EC = cms.string("RecoTauTag_antiElectronMVA6v1_gbr_NoEleMatch_woGwoGSF_EC"),
-   mvaName_NoEleMatch_wGwoGSF_EC = cms.string("RecoTauTag_antiElectronMVA6v1_gbr_NoEleMatch_wGwoGSF_EC"),
-   mvaName_woGwGSF_EC = cms.string("RecoTauTag_antiElectronMVA6v1_gbr_woGwGSF_EC"),
-   mvaName_wGwGSF_EC = cms.string("RecoTauTag_antiElectronMVA6v1_gbr_wGwGSF_EC"),
-   minMVANoEleMatchWOgWOgsfBL = cms.double(0.0),
-   minMVANoEleMatchWgWOgsfBL  = cms.double(0.0),
-   minMVAWOgWgsfBL            = cms.double(0.0),
-   minMVAWgWgsfBL             = cms.double(0.0),
-   minMVANoEleMatchWOgWOgsfEC = cms.double(0.0),
-   minMVANoEleMatchWgWOgsfEC  = cms.double(0.0),
-   minMVAWOgWgsfEC            = cms.double(0.0),
-   minMVAWgWgsfEC             = cms.double(0.0),
-   srcElectrons = cms.InputTag('slimmedElectrons')
-)
-
-
-
-
-
-
-
-############################
-# again For Boosted Taus
-############################
-
-process.rerunDiscriminationAgainstElectronMVA6Boosted = patTauDiscriminationAgainstElectronMVA6.clone(
-   PATTauProducer = cms.InputTag('slimmedTausBoosted'),
-   Prediscriminants = noPrediscriminants,
-   #Prediscriminants = requireLeadTrack,
-   loadMVAfromDB = cms.bool(True),
-   returnMVA = cms.bool(True),
-   method = cms.string("BDTG"),
-   mvaName_NoEleMatch_woGwoGSF_BL = cms.string("RecoTauTag_antiElectronMVA6v1_gbr_NoEleMatch_woGwoGSF_BL"),
-   mvaName_NoEleMatch_wGwoGSF_BL = cms.string("RecoTauTag_antiElectronMVA6v1_gbr_NoEleMatch_wGwoGSF_BL"),
-   mvaName_woGwGSF_BL = cms.string("RecoTauTag_antiElectronMVA6v1_gbr_woGwGSF_BL"),
-   mvaName_wGwGSF_BL = cms.string("RecoTauTag_antiElectronMVA6v1_gbr_wGwGSF_BL"),
-   mvaName_NoEleMatch_woGwoGSF_EC = cms.string("RecoTauTag_antiElectronMVA6v1_gbr_NoEleMatch_woGwoGSF_EC"),
-   mvaName_NoEleMatch_wGwoGSF_EC = cms.string("RecoTauTag_antiElectronMVA6v1_gbr_NoEleMatch_wGwoGSF_EC"),
-   mvaName_woGwGSF_EC = cms.string("RecoTauTag_antiElectronMVA6v1_gbr_woGwGSF_EC"),
-   mvaName_wGwGSF_EC = cms.string("RecoTauTag_antiElectronMVA6v1_gbr_wGwGSF_EC"),
-   minMVANoEleMatchWOgWOgsfBL = cms.double(0.0),
-   minMVANoEleMatchWgWOgsfBL  = cms.double(0.0),
-   minMVAWOgWgsfBL            = cms.double(0.0),
-   minMVAWgWgsfBL             = cms.double(0.0),
-   minMVANoEleMatchWOgWOgsfEC = cms.double(0.0),
-   minMVANoEleMatchWgWOgsfEC  = cms.double(0.0),
-   minMVAWOgWgsfEC            = cms.double(0.0),
-   minMVAWgWgsfEC             = cms.double(0.0),
-   srcElectrons = cms.InputTag('slimmedElectrons')
-)
-
 
 
 
@@ -472,7 +408,6 @@ process.TausWithRerunID = cms.EDProducer('RerunTauIDEmbedder' ,
           mvaIsolationTightSrc = cms.InputTag("rerunDiscriminationByIsolationMVArun2v1Tight","","DavisNtuple"),
           mvaIsolationVTightSrc = cms.InputTag("rerunDiscriminationByIsolationMVArun2v1VTight","","DavisNtuple"),
           mvaIsolationVVTightSrc = cms.InputTag("rerunDiscriminationByIsolationMVArun2v1VVTight","","DavisNtuple"),
-          mvaEleRawSrc = cms.InputTag("rerunDiscriminationAgainstElectronMVA6","","DavisNtuple"),
           NAME=cms.string("slimmedTausWithRerunTauID"))
 
 
@@ -485,7 +420,6 @@ process.BoostedTausWithRerunID = cms.EDProducer('RerunTauIDEmbedder' ,
           mvaIsolationTightSrc = cms.InputTag("rerunDiscriminationByIsolationMVArun2v1TightBoosted","","DavisNtuple"),
           mvaIsolationVTightSrc = cms.InputTag("rerunDiscriminationByIsolationMVArun2v1VTightBoosted","","DavisNtuple"),
           mvaIsolationVVTightSrc = cms.InputTag("rerunDiscriminationByIsolationMVArun2v1VVTightBoosted","","DavisNtuple"),
-          mvaEleRawSrc = cms.InputTag("rerunDiscriminationAgainstElectronMVA6Boosted","","DavisNtuple"),
           NAME=cms.string("slimmedTausBoostedWithRerunTauID"))
 
 ############################################
@@ -1986,9 +1920,7 @@ else :
     # rerun the tau IDs on top of MiniAOD (needed for CMSSW 8_0_26_patch1)
     # for future releases need to check with Tau POG 
     process.p *= process.rerunMvaIsolation2SeqRun2
-    process.p *= process.rerunDiscriminationAgainstElectronMVA6
     process.p *= process.rerunMvaIsolation2SeqRun2Boosted
-    process.p *= process.rerunDiscriminationAgainstElectronMVA6Boosted
     process.p *= process.TausWithRerunID 
     process.p *= process.BoostedTausWithRerunID 
 

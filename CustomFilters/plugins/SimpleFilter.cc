@@ -243,6 +243,14 @@ bool SimpleFilter::filter(edm::Event & iEvent, const edm::EventSetup & iSetup) {
       if(tauToCheck.tauID("byVLooseIsolationMVArun2v1DBdR03oldDMwLT") > 0.5 ) isoCheck = 1;
       if(tauToCheck.tauID("byVVTightIsolationMVArun2v1DBdR03oldDMwLT") > 0.5) isoCheck = 1;
 
+      // include  also the rerun tau ID
+      if(tauToCheck.userFloat("rerunDiscriminationByIsolationMVArun2v1VLoose") > 0.5 ) isoCheck = 1;
+      if(tauToCheck.userFloat("rerunDiscriminationByIsolationMVArun2v1Loose") > 0.5) isoCheck = 1;
+      if(tauToCheck.userFloat("rerunDiscriminationByIsolationMVArun2v1Medium") > 0.5 ) isoCheck = 1;
+      if(tauToCheck.userFloat("rerunDiscriminationByIsolationMVArun2v1Tight") > 0.5 ) isoCheck = 1;
+      if(tauToCheck.userFloat("rerunDiscriminationByIsolationMVArun2v1VTight") > 0.5 ) isoCheck = 1;
+      if(tauToCheck.userFloat("rerunDiscriminationByIsolationMVArun2v1VVTight") > 0.5) isoCheck = 1;
+
       if ( !isoCheck ) continue;
       if(  !(fabs(dz) < 0.2) ) continue;
       if(  !(fabs(tauToCheck.eta()) <= 2.3) )    continue;  
@@ -301,6 +309,15 @@ bool SimpleFilter::filter(edm::Event & iEvent, const edm::EventSetup & iSetup) {
       if(tauToCheck.tauID("byMediumIsolationMVArun2v1DBdR03oldDMwLT") > 0.5 ) isoCheck = 1;
       if(tauToCheck.tauID("byVLooseIsolationMVArun2v1DBdR03oldDMwLT") > 0.5 ) isoCheck = 1;
       if(tauToCheck.tauID("byVVTightIsolationMVArun2v1DBdR03oldDMwLT") > 0.5) isoCheck = 1;
+
+      // include  also the rerun tau ID
+      if(tauToCheck.userFloat("rerunDiscriminationByIsolationMVArun2v1VLoose") > 0.5 ) isoCheck = 1;
+      if(tauToCheck.userFloat("rerunDiscriminationByIsolationMVArun2v1Loose") > 0.5) isoCheck = 1;
+      if(tauToCheck.userFloat("rerunDiscriminationByIsolationMVArun2v1Medium") > 0.5 ) isoCheck = 1;
+      if(tauToCheck.userFloat("rerunDiscriminationByIsolationMVArun2v1Tight") > 0.5 ) isoCheck = 1;
+      if(tauToCheck.userFloat("rerunDiscriminationByIsolationMVArun2v1VTight") > 0.5 ) isoCheck = 1;
+      if(tauToCheck.userFloat("rerunDiscriminationByIsolationMVArun2v1VVTight") > 0.5) isoCheck = 1;
+
 
       if ( !isoCheck ) continue;
       if(  !(fabs(dz) < 0.2) ) continue;
