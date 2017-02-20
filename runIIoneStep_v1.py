@@ -28,7 +28,7 @@ DEBUG_NTUPLE_INPUT = False
 # how many events to run, -1 means run all 
 ######################################
 
-MAX_EVENTS = 5000
+MAX_EVENTS = 50
 
 ######################################
 # datasets for local running 
@@ -265,6 +265,229 @@ process.filteredVertices = cms.EDFilter(
     filter = cms.bool(True) # drop events without good quality veritces
 )
 
+
+###################################
+#  RERUN THE TAU ID ON TOP
+#  OF MINI-AOD 
+#  see : https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuidePFTauID#Rerunning_of_the_tau_ID_on_MiniA
+###################################
+
+
+from RecoTauTag.RecoTau.TauDiscriminatorTools import noPrediscriminants
+process.load('RecoTauTag.Configuration.loadRecoTauTagMVAsFromPrepDB_cfi')
+from RecoTauTag.RecoTau.PATTauDiscriminationByMVAIsolationRun2_cff import *
+
+process.rerunDiscriminationByIsolationMVArun2v1raw = patDiscriminationByIsolationMVArun2v1raw.clone(
+   PATTauProducer = cms.InputTag('slimmedTaus'),
+   Prediscriminants = noPrediscriminants,
+   loadMVAfromDB = cms.bool(True),
+   mvaName = cms.string("RecoTauTag_tauIdMVAIsoDBoldDMwLT2016v1"), # name of the training you want to use
+   mvaOpt = cms.string("DBoldDMwLT"), # option you want to use for your training (i.e., which variables are used to compute the BDT score)
+   requireDecayMode = cms.bool(True),
+   verbosity = cms.int32(0)
+)
+
+process.rerunDiscriminationByIsolationMVArun2v1VLoose = patDiscriminationByIsolationMVArun2v1VLoose.clone(
+   PATTauProducer = cms.InputTag('slimmedTaus'),    
+   Prediscriminants = noPrediscriminants,
+   toMultiplex = cms.InputTag('rerunDiscriminationByIsolationMVArun2v1raw'),
+   key = cms.InputTag('rerunDiscriminationByIsolationMVArun2v1raw:category'),
+   loadMVAfromDB = cms.bool(True),
+   mvaOutput_normalization = cms.string("RecoTauTag_tauIdMVAIsoDBoldDMwLT2016v1_mvaOutput_normalization"), # normalization fo the training you want to use
+   mapping = cms.VPSet(
+      cms.PSet(
+         category = cms.uint32(0),
+         cut = cms.string("RecoTauTag_tauIdMVAIsoDBoldDMwLT2016v1_WPEff90"), # this is the name of the working point you want to use
+         variable = cms.string("pt"),
+      )
+   )
+)
+
+# here we produce all the other working points for the training
+process.rerunDiscriminationByIsolationMVArun2v1Loose = process.rerunDiscriminationByIsolationMVArun2v1VLoose.clone()
+process.rerunDiscriminationByIsolationMVArun2v1Loose.mapping[0].cut = cms.string("RecoTauTag_tauIdMVAIsoDBoldDMwLT2016v1_WPEff80")
+process.rerunDiscriminationByIsolationMVArun2v1Medium = process.rerunDiscriminationByIsolationMVArun2v1VLoose.clone()
+process.rerunDiscriminationByIsolationMVArun2v1Medium.mapping[0].cut = cms.string("RecoTauTag_tauIdMVAIsoDBoldDMwLT2016v1_WPEff70")
+process.rerunDiscriminationByIsolationMVArun2v1Tight = process.rerunDiscriminationByIsolationMVArun2v1VLoose.clone()
+process.rerunDiscriminationByIsolationMVArun2v1Tight.mapping[0].cut = cms.string("RecoTauTag_tauIdMVAIsoDBoldDMwLT2016v1_WPEff60")
+process.rerunDiscriminationByIsolationMVArun2v1VTight = process.rerunDiscriminationByIsolationMVArun2v1VLoose.clone()
+process.rerunDiscriminationByIsolationMVArun2v1VTight.mapping[0].cut = cms.string("RecoTauTag_tauIdMVAIsoDBoldDMwLT2016v1_WPEff50")
+process.rerunDiscriminationByIsolationMVArun2v1VVTight = process.rerunDiscriminationByIsolationMVArun2v1VLoose.clone()
+process.rerunDiscriminationByIsolationMVArun2v1VVTight.mapping[0].cut = cms.string("RecoTauTag_tauIdMVAIsoDBoldDMwLT2016v1_WPEff40")
+
+# this sequence has to be included in your cms.Path() before your analyzer which accesses the new variables is called.
+process.rerunMvaIsolation2SeqRun2 = cms.Sequence(
+   process.rerunDiscriminationByIsolationMVArun2v1raw
+   *process.rerunDiscriminationByIsolationMVArun2v1VLoose
+   *process.rerunDiscriminationByIsolationMVArun2v1Loose
+   *process.rerunDiscriminationByIsolationMVArun2v1Medium
+   *process.rerunDiscriminationByIsolationMVArun2v1Tight
+   *process.rerunDiscriminationByIsolationMVArun2v1VTight
+   *process.rerunDiscriminationByIsolationMVArun2v1VVTight
+)
+
+############################
+# again For Boosted Taus
+############################
+
+process.rerunDiscriminationByIsolationMVArun2v1rawBoosted = patDiscriminationByIsolationMVArun2v1raw.clone(
+   PATTauProducer = cms.InputTag('slimmedTausBoosted'),
+   Prediscriminants = noPrediscriminants,
+   loadMVAfromDB = cms.bool(True),
+   mvaName = cms.string("RecoTauTag_tauIdMVAIsoDBoldDMwLT2016v1"), # name of the training you want to use
+   mvaOpt = cms.string("DBoldDMwLT"), # option you want to use for your training (i.e., which variables are used to compute the BDT score)
+   requireDecayMode = cms.bool(True),
+   verbosity = cms.int32(0)
+)
+
+process.rerunDiscriminationByIsolationMVArun2v1VLooseBoosted = patDiscriminationByIsolationMVArun2v1VLoose.clone(
+   PATTauProducer = cms.InputTag('slimmedTausBoosted'),    
+   Prediscriminants = noPrediscriminants,
+   toMultiplex = cms.InputTag('rerunDiscriminationByIsolationMVArun2v1rawBoosted'),
+   key = cms.InputTag('rerunDiscriminationByIsolationMVArun2v1rawBoosted:category'),
+   loadMVAfromDB = cms.bool(True),
+   mvaOutput_normalization = cms.string("RecoTauTag_tauIdMVAIsoDBoldDMwLT2016v1_mvaOutput_normalization"), # normalization fo the training you want to use
+   mapping = cms.VPSet(
+      cms.PSet(
+         category = cms.uint32(0),
+         cut = cms.string("RecoTauTag_tauIdMVAIsoDBoldDMwLT2016v1_WPEff90"), # this is the name of the working point you want to use
+         variable = cms.string("pt"),
+      )
+   )
+)
+
+# here we produce all the other working points for the training
+process.rerunDiscriminationByIsolationMVArun2v1LooseBoosted = process.rerunDiscriminationByIsolationMVArun2v1VLooseBoosted.clone()
+process.rerunDiscriminationByIsolationMVArun2v1LooseBoosted.mapping[0].cut = cms.string("RecoTauTag_tauIdMVAIsoDBoldDMwLT2016v1_WPEff80")
+
+
+process.rerunDiscriminationByIsolationMVArun2v1MediumBoosted = process.rerunDiscriminationByIsolationMVArun2v1VLooseBoosted.clone()
+process.rerunDiscriminationByIsolationMVArun2v1MediumBoosted.mapping[0].cut = cms.string("RecoTauTag_tauIdMVAIsoDBoldDMwLT2016v1_WPEff70")
+
+
+process.rerunDiscriminationByIsolationMVArun2v1TightBoosted = process.rerunDiscriminationByIsolationMVArun2v1VLooseBoosted.clone()
+process.rerunDiscriminationByIsolationMVArun2v1TightBoosted.mapping[0].cut = cms.string("RecoTauTag_tauIdMVAIsoDBoldDMwLT2016v1_WPEff60")
+
+process.rerunDiscriminationByIsolationMVArun2v1VTightBoosted = process.rerunDiscriminationByIsolationMVArun2v1VLooseBoosted.clone()
+process.rerunDiscriminationByIsolationMVArun2v1VTightBoosted.mapping[0].cut = cms.string("RecoTauTag_tauIdMVAIsoDBoldDMwLT2016v1_WPEff50")
+
+process.rerunDiscriminationByIsolationMVArun2v1VVTightBoosted = process.rerunDiscriminationByIsolationMVArun2v1VLooseBoosted.clone()
+process.rerunDiscriminationByIsolationMVArun2v1VVTightBoosted.mapping[0].cut = cms.string("RecoTauTag_tauIdMVAIsoDBoldDMwLT2016v1_WPEff40")
+
+
+
+# this sequence has to be included in your cms.Path() before your analyzer which accesses the new variables is called.
+process.rerunMvaIsolation2SeqRun2Boosted = cms.Sequence(
+   process.rerunDiscriminationByIsolationMVArun2v1rawBoosted
+   *process.rerunDiscriminationByIsolationMVArun2v1VLooseBoosted
+   *process.rerunDiscriminationByIsolationMVArun2v1LooseBoosted
+   *process.rerunDiscriminationByIsolationMVArun2v1MediumBoosted
+   *process.rerunDiscriminationByIsolationMVArun2v1TightBoosted
+   *process.rerunDiscriminationByIsolationMVArun2v1VTightBoosted
+   *process.rerunDiscriminationByIsolationMVArun2v1VVTightBoosted
+)
+
+
+
+
+from RecoTauTag.RecoTau.PATTauDiscriminationAgainstElectronMVA6_cfi import *
+
+process.rerunDiscriminationAgainstElectronMVA6 = patTauDiscriminationAgainstElectronMVA6.clone(
+   PATTauProducer = cms.InputTag('slimmedTaus'),
+   Prediscriminants = noPrediscriminants,
+   #Prediscriminants = requireLeadTrack,
+   loadMVAfromDB = cms.bool(True),
+   returnMVA = cms.bool(True),
+   method = cms.string("BDTG"),
+   mvaName_NoEleMatch_woGwoGSF_BL = cms.string("RecoTauTag_antiElectronMVA6v1_gbr_NoEleMatch_woGwoGSF_BL"),
+   mvaName_NoEleMatch_wGwoGSF_BL = cms.string("RecoTauTag_antiElectronMVA6v1_gbr_NoEleMatch_wGwoGSF_BL"),
+   mvaName_woGwGSF_BL = cms.string("RecoTauTag_antiElectronMVA6v1_gbr_woGwGSF_BL"),
+   mvaName_wGwGSF_BL = cms.string("RecoTauTag_antiElectronMVA6v1_gbr_wGwGSF_BL"),
+   mvaName_NoEleMatch_woGwoGSF_EC = cms.string("RecoTauTag_antiElectronMVA6v1_gbr_NoEleMatch_woGwoGSF_EC"),
+   mvaName_NoEleMatch_wGwoGSF_EC = cms.string("RecoTauTag_antiElectronMVA6v1_gbr_NoEleMatch_wGwoGSF_EC"),
+   mvaName_woGwGSF_EC = cms.string("RecoTauTag_antiElectronMVA6v1_gbr_woGwGSF_EC"),
+   mvaName_wGwGSF_EC = cms.string("RecoTauTag_antiElectronMVA6v1_gbr_wGwGSF_EC"),
+   minMVANoEleMatchWOgWOgsfBL = cms.double(0.0),
+   minMVANoEleMatchWgWOgsfBL  = cms.double(0.0),
+   minMVAWOgWgsfBL            = cms.double(0.0),
+   minMVAWgWgsfBL             = cms.double(0.0),
+   minMVANoEleMatchWOgWOgsfEC = cms.double(0.0),
+   minMVANoEleMatchWgWOgsfEC  = cms.double(0.0),
+   minMVAWOgWgsfEC            = cms.double(0.0),
+   minMVAWgWgsfEC             = cms.double(0.0),
+   srcElectrons = cms.InputTag('slimmedElectrons')
+)
+
+
+
+
+
+
+
+############################
+# again For Boosted Taus
+############################
+
+process.rerunDiscriminationAgainstElectronMVA6Boosted = patTauDiscriminationAgainstElectronMVA6.clone(
+   PATTauProducer = cms.InputTag('slimmedTausBoosted'),
+   Prediscriminants = noPrediscriminants,
+   #Prediscriminants = requireLeadTrack,
+   loadMVAfromDB = cms.bool(True),
+   returnMVA = cms.bool(True),
+   method = cms.string("BDTG"),
+   mvaName_NoEleMatch_woGwoGSF_BL = cms.string("RecoTauTag_antiElectronMVA6v1_gbr_NoEleMatch_woGwoGSF_BL"),
+   mvaName_NoEleMatch_wGwoGSF_BL = cms.string("RecoTauTag_antiElectronMVA6v1_gbr_NoEleMatch_wGwoGSF_BL"),
+   mvaName_woGwGSF_BL = cms.string("RecoTauTag_antiElectronMVA6v1_gbr_woGwGSF_BL"),
+   mvaName_wGwGSF_BL = cms.string("RecoTauTag_antiElectronMVA6v1_gbr_wGwGSF_BL"),
+   mvaName_NoEleMatch_woGwoGSF_EC = cms.string("RecoTauTag_antiElectronMVA6v1_gbr_NoEleMatch_woGwoGSF_EC"),
+   mvaName_NoEleMatch_wGwoGSF_EC = cms.string("RecoTauTag_antiElectronMVA6v1_gbr_NoEleMatch_wGwoGSF_EC"),
+   mvaName_woGwGSF_EC = cms.string("RecoTauTag_antiElectronMVA6v1_gbr_woGwGSF_EC"),
+   mvaName_wGwGSF_EC = cms.string("RecoTauTag_antiElectronMVA6v1_gbr_wGwGSF_EC"),
+   minMVANoEleMatchWOgWOgsfBL = cms.double(0.0),
+   minMVANoEleMatchWgWOgsfBL  = cms.double(0.0),
+   minMVAWOgWgsfBL            = cms.double(0.0),
+   minMVAWgWgsfBL             = cms.double(0.0),
+   minMVANoEleMatchWOgWOgsfEC = cms.double(0.0),
+   minMVANoEleMatchWgWOgsfEC  = cms.double(0.0),
+   minMVAWOgWgsfEC            = cms.double(0.0),
+   minMVAWgWgsfEC             = cms.double(0.0),
+   srcElectrons = cms.InputTag('slimmedElectrons')
+)
+
+
+
+
+##############################################
+# create new tau collections with the rerunID 
+# embedded as UserFloats
+
+
+
+process.TausWithRerunID = cms.EDProducer('RerunTauIDEmbedder' ,
+          tauSrc =cms.InputTag('slimmedTaus'),
+          mvaIsolationSrc = cms.InputTag("rerunDiscriminationByIsolationMVArun2v1raw","","DavisNtuple"),
+          mvaIsolationVLooseSrc = cms.InputTag("rerunDiscriminationByIsolationMVArun2v1VLoose","","DavisNtuple"),
+          mvaIsolationLooseSrc = cms.InputTag("rerunDiscriminationByIsolationMVArun2v1Loose","","DavisNtuple"),
+          mvaIsolationMediumSrc = cms.InputTag("rerunDiscriminationByIsolationMVArun2v1Medium","","DavisNtuple"),
+          mvaIsolationTightSrc = cms.InputTag("rerunDiscriminationByIsolationMVArun2v1Tight","","DavisNtuple"),
+          mvaIsolationVTightSrc = cms.InputTag("rerunDiscriminationByIsolationMVArun2v1VTight","","DavisNtuple"),
+          mvaIsolationVVTightSrc = cms.InputTag("rerunDiscriminationByIsolationMVArun2v1VVTight","","DavisNtuple"),
+          mvaEleRawSrc = cms.InputTag("rerunDiscriminationAgainstElectronMVA6","","DavisNtuple"),
+          NAME=cms.string("slimmedTausWithRerunTauID"))
+
+
+process.BoostedTausWithRerunID = cms.EDProducer('RerunTauIDEmbedder' ,
+          tauSrc =cms.InputTag('slimmedTausBoosted'),
+          mvaIsolationSrc = cms.InputTag("rerunDiscriminationByIsolationMVArun2v1rawBoosted","","DavisNtuple"),
+          mvaIsolationVLooseSrc = cms.InputTag("rerunDiscriminationByIsolationMVArun2v1VLooseBoosted","","DavisNtuple"),
+          mvaIsolationLooseSrc = cms.InputTag("rerunDiscriminationByIsolationMVArun2v1LooseBoosted","","DavisNtuple"),
+          mvaIsolationMediumSrc = cms.InputTag("rerunDiscriminationByIsolationMVArun2v1MediumBoosted","","DavisNtuple"),
+          mvaIsolationTightSrc = cms.InputTag("rerunDiscriminationByIsolationMVArun2v1TightBoosted","","DavisNtuple"),
+          mvaIsolationVTightSrc = cms.InputTag("rerunDiscriminationByIsolationMVArun2v1VTightBoosted","","DavisNtuple"),
+          mvaIsolationVVTightSrc = cms.InputTag("rerunDiscriminationByIsolationMVArun2v1VVTightBoosted","","DavisNtuple"),
+          mvaEleRawSrc = cms.InputTag("rerunDiscriminationAgainstElectronMVA6Boosted","","DavisNtuple"),
+          NAME=cms.string("slimmedTausBoostedWithRerunTauID"))
+
 ############################################
 # TESTING A VERY SIMPLE VERY EARLY FILTER
 ############################################
@@ -272,8 +495,8 @@ process.filteredVertices = cms.EDFilter(
 process.SimpleFilter = cms.EDFilter("SimpleFilter",
   	electronSources = cms.VInputTag("slimmedElectrons"), 
 	muonSources     = cms.VInputTag("slimmedMuons"),
-	tauSources      = cms.VInputTag("slimmedTaus"),
-	BOOSTEDtauSources      = cms.VInputTag("slimmedTausBoosted"),
+	tauSources      = cms.VInputTag("TausWithRerunID:slimmedTausWithRerunTauID:DavisNtuple"),
+	BOOSTEDtauSources      = cms.VInputTag("BoostedTausWithRerunID:slimmedTausBoostedWithRerunTauID:DavisNtuple"),
 	vertexSrc =cms.InputTag('filteredVertices::DavisNtuple'),
     filter = cms.bool(True)
 	)
@@ -486,7 +709,7 @@ process.customSlimmedMuons = cms.EDProducer('CustomPatMuonProducer' ,
 # produces all 3 tau variants 
 
 process.customSlimmedTausTauEsNominal = cms.EDProducer('CustomPatTauProducer' ,
-							tauSrc =cms.InputTag('slimmedTaus'),
+							tauSrc =cms.InputTag('TausWithRerunID:slimmedTausWithRerunTauID:DavisNtuple'),
 							vertexSrc =cms.InputTag('filteredVertices::DavisNtuple'),
 							NAME=cms.string(""),
 							#TauEsCorrection=cms.double(0.99),
@@ -500,7 +723,7 @@ process.customSlimmedTausTauEsNominal = cms.EDProducer('CustomPatTauProducer' ,
 
 
 process.customSlimmedTausTauEsUp = cms.EDProducer('CustomPatTauProducer' ,
-							tauSrc =cms.InputTag('slimmedTaus'),
+							tauSrc =cms.InputTag('TausWithRerunID:slimmedTausWithRerunTauID:DavisNtuple'),
 							vertexSrc =cms.InputTag('filteredVertices::DavisNtuple'),
 							NAME=cms.string(""),
 							#TauEsCorrection=cms.double(0.99),
@@ -515,7 +738,7 @@ process.customSlimmedTausTauEsUp = cms.EDProducer('CustomPatTauProducer' ,
 
 
 process.customSlimmedTausTauEsDown = cms.EDProducer('CustomPatTauProducer' ,
-							tauSrc =cms.InputTag('slimmedTaus'),
+							tauSrc =cms.InputTag('TausWithRerunID:slimmedTausWithRerunTauID:DavisNtuple'),
 							vertexSrc =cms.InputTag('filteredVertices::DavisNtuple'),
 							NAME=cms.string(""),
 							#TauEsCorrection=cms.double(0.99),
@@ -535,7 +758,7 @@ process.customSlimmedTausTauEsDown = cms.EDProducer('CustomPatTauProducer' ,
 
 
 process.customSlimmedTausBoostedTauEsNominal = cms.EDProducer('CustomPatTauProducer' ,
-							tauSrc =cms.InputTag('slimmedTausBoosted'),
+							tauSrc =cms.InputTag('BoostedTausWithRerunID:slimmedTausBoostedWithRerunTauID:DavisNtuple'),
 							vertexSrc =cms.InputTag('filteredVertices::DavisNtuple'),
 							NAME=cms.string("BOOSTED"),
 							#TauEsCorrection=cms.double(0.99),
@@ -549,7 +772,7 @@ process.customSlimmedTausBoostedTauEsNominal = cms.EDProducer('CustomPatTauProdu
 
 
 process.customSlimmedTausBoostedTauEsUp = cms.EDProducer('CustomPatTauProducer' ,
-							tauSrc =cms.InputTag('slimmedTausBoosted'),
+							tauSrc =cms.InputTag('BoostedTausWithRerunID:slimmedTausBoostedWithRerunTauID:DavisNtuple'),
 							vertexSrc =cms.InputTag('filteredVertices::DavisNtuple'),
 							NAME=cms.string("BOOSTED"),
 							#TauEsCorrection=cms.double(0.99),
@@ -564,7 +787,7 @@ process.customSlimmedTausBoostedTauEsUp = cms.EDProducer('CustomPatTauProducer' 
 
 
 process.customSlimmedTausBoostedTauEsDown = cms.EDProducer('CustomPatTauProducer' ,
-							tauSrc =cms.InputTag('slimmedTausBoosted'),
+							tauSrc =cms.InputTag('BoostedTausWithRerunID:slimmedTausBoostedWithRerunTauID:DavisNtuple'),
 							vertexSrc =cms.InputTag('filteredVertices::DavisNtuple'),
 							NAME=cms.string("BOOSTED"),
 							#TauEsCorrection=cms.double(0.99),
@@ -1734,7 +1957,6 @@ process.BASELINEdownTau = cms.EDAnalyzer('FlatTupleGenerator',
 # 	SVMassConfig = svMassAtFlatTupleConfig
 # 	)
 
-
 ###################
 # start the path  #
 ###################
@@ -1744,206 +1966,210 @@ process.p = cms.Path()
 
 
 if DEBUG_NTUPLE == DEBUG_NTUPLE_INPUT and DEBUG_NTUPLE_INPUT is True:
-	print '++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++'
-	print '++++ FAIL both debug modes active, doing nothing .... '
-	print '++++ change DEBUG_NTUPLE and/or DEBUG_NTUPLE_INPUT  .... '
-	print '++++ in runIIoneStep_*.py .... '
-	quit()
+  print '++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++'
+  print '++++ FAIL both debug modes active, doing nothing .... '
+  print '++++ change DEBUG_NTUPLE and/or DEBUG_NTUPLE_INPUT  .... '
+  print '++++ in runIIoneStep_*.py .... '
+  quit()
 
 else :
+  if DEBUG_NTUPLE_INPUT is True :
+    print "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+    print "+++++ DEBUG NTUPLE_INPUT ***** will run using Ntuple as input (not mini-AOD) "
+    print "+++++ DEBUG NTUPLE_INPUT ***** and produce FlatTuple          "
+    print "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
 
-	if DEBUG_NTUPLE_INPUT is True :
-		print "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
-		print "+++++ DEBUG NTUPLE_INPUT ***** will run using Ntuple as input (not mini-AOD) "
-		print "+++++ DEBUG NTUPLE_INPUT ***** and produce FlatTuple          "
-		print "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+  if DEBUG_NTUPLE_INPUT is False :
+    process.p *= process.Cumulative
+    process.p *= process.filteredVertices
 
+    # rerun the tau IDs on top of MiniAOD (needed for CMSSW 8_0_26_patch1)
+    # for future releases need to check with Tau POG 
+    process.p *= process.rerunMvaIsolation2SeqRun2
+    process.p *= process.rerunDiscriminationAgainstElectronMVA6
+    process.p *= process.rerunMvaIsolation2SeqRun2Boosted
+    process.p *= process.rerunDiscriminationAgainstElectronMVA6Boosted
+    process.p *= process.TausWithRerunID 
+    process.p *= process.BoostedTausWithRerunID 
 
+    if BUILD_EFFICIENCY_TREE is False:
+      process.p *= process.SimpleFilter
 
-	if DEBUG_NTUPLE_INPUT is False :
-		process.p *= process.Cumulative
-		process.p *= process.filteredVertices
-		
-		if BUILD_EFFICIENCY_TREE is False:
-			process.p *= process.SimpleFilter
+    process.p *= cms.ignore(process.badGlobalMuonTagger)
+    process.p *= cms.ignore(process.cloneGlobalMuonTagger)
 
-		process.p *= cms.ignore(process.badGlobalMuonTagger)
-		process.p *= cms.ignore(process.cloneGlobalMuonTagger)
-
-		process.p *= process.patJetCorrFactorsReapplyJEC 
-		process.p *= process.patJetsReapplyJEC
-
-
-		process.p *= process.filteredSlimmedJets
-
-		process.p *= process.egmGsfElectronIDSequence
-		process.p *= process.customSlimmedElectrons
-		process.p *= process.customSlimmedElectronsEsUp
-		process.p *= process.customSlimmedElectronsEsDown
-		process.p *= process.customSlimmedMuons
-		process.p *= process.customSlimmedTausTauEsNominal
-		process.p *= process.customSlimmedTausTauEsUp
-		process.p *= process.customSlimmedTausTauEsDown
-
-		process.p *= process.customSlimmedTausBoostedTauEsNominal
-		process.p *= process.customSlimmedTausBoostedTauEsUp
-		process.p *= process.customSlimmedTausBoostedTauEsDown
-
-		process.p *= process.filteredCustomElectrons
-		process.p *= process.filteredCustomElectronsEsUp
-		process.p *= process.filteredCustomElectronsEsDown
-		process.p *= process.filteredCustomMuons
-		process.p *= process.filteredCustomTausEsNominal
-		process.p *= process.filteredCustomTausEsUp
-		process.p *= process.filteredCustomTausEsDown
+    process.p *= process.patJetCorrFactorsReapplyJEC 
+    process.p *= process.patJetsReapplyJEC
 
 
-		process.p *= process.filteredCustomTausBoostedEsNominal
-		process.p *= process.filteredCustomTausBoostedEsUp
-		process.p *= process.filteredCustomTausBoostedEsDown
+    process.p *= process.filteredSlimmedJets
+
+    process.p *= process.egmGsfElectronIDSequence
+    process.p *= process.customSlimmedElectrons
+    process.p *= process.customSlimmedElectronsEsUp
+    process.p *= process.customSlimmedElectronsEsDown
+    process.p *= process.customSlimmedMuons
+    process.p *= process.customSlimmedTausTauEsNominal
+    process.p *= process.customSlimmedTausTauEsUp
+    process.p *= process.customSlimmedTausTauEsDown
+
+    process.p *= process.customSlimmedTausBoostedTauEsNominal
+    process.p *= process.customSlimmedTausBoostedTauEsUp
+    process.p *= process.customSlimmedTausBoostedTauEsDown
+
+    process.p *= process.filteredCustomElectrons
+    process.p *= process.filteredCustomElectronsEsUp
+    process.p *= process.filteredCustomElectronsEsDown
+    process.p *= process.filteredCustomMuons
+    process.p *= process.filteredCustomTausEsNominal
+    process.p *= process.filteredCustomTausEsUp
+    process.p *= process.filteredCustomTausEsDown
 
 
-		process.p *= process.TrimmedFilteredCustomElectrons
-		process.p *= process.TrimmedFilteredCustomElectronsEsUp
-		process.p *= process.TrimmedFilteredCustomElectronsEsDown
-
-		process.p *= process.TrimmedFilteredCustomMuons 
-		process.p *= process.TrimmedFilteredCustomTausEsNominal 
-		process.p *= process.TrimmedFilteredCustomTausEsUp 
-		process.p *= process.TrimmedFilteredCustomTausEsDown 
-
-		process.p *= process.TrimmedFilteredCustomTausBoostedEsNominal 
-		process.p *= process.TrimmedFilteredCustomTausBoostedEsUp 
-		process.p *= process.TrimmedFilteredCustomTausBoostedEsDown 
-
-		process.p *= process.filteredVetoElectrons
-		process.p *= process.filteredVetoElectronsEsUp
-		process.p *= process.filteredVetoElectronsEsDown
-
-		process.p *= process.filteredVetoMuons
-
-		process.p *= process.filteredVetoTausEsNominal 
-		process.p *= process.filteredVetoTausEsUp 
-		process.p *= process.filteredVetoTausEsDown 
-		process.p *= process.filteredVetoTausBoostedEsNominal 
-		process.p *= process.filteredVetoTausBoostedEsUp 
-		process.p *= process.filteredVetoTausBoostedEsDown 
-
-		if BUILD_EFFICIENCY_TREE is False:
-			process.p *= process.requireCandidateHiggsPair
-
-		process.p *= process.PFMetWithEmbeddedLeptonPairs
-		process.p *= process.PFMetWithEmbeddedLeptonPairsTauEsUp 
-		process.p *= process.PFMetWithEmbeddedLeptonPairsTauEsDown 
-		process.p *= process.PFMetWithEmbeddedLeptonPairsTausBoostedEsNominal 
-		process.p *= process.PFMetWithEmbeddedLeptonPairsTausBoostedEsUp 
-		process.p *= process.PFMetWithEmbeddedLeptonPairsTausBoostedEsDown 
+    process.p *= process.filteredCustomTausBoostedEsNominal
+    process.p *= process.filteredCustomTausBoostedEsUp
+    process.p *= process.filteredCustomTausBoostedEsDown
 
 
-		# if BUILD_TAU_ES_VARIANTS is True :
-		# 	process.MVAMETtauEsUp
-		# 	process.MVAMETtauEsDown
+    process.p *= process.TrimmedFilteredCustomElectrons
+    process.p *= process.TrimmedFilteredCustomElectronsEsUp
+    process.p *= process.TrimmedFilteredCustomElectronsEsDown
 
-		# if BUILD_ELECTRON_ES_VARIANTS is True :
-		# 	process.MVAMETelectronEsUp
-		# 	process.MVAMETelectronEsDown
+    process.p *= process.TrimmedFilteredCustomMuons 
+    process.p *= process.TrimmedFilteredCustomTausEsNominal 
+    process.p *= process.TrimmedFilteredCustomTausEsUp 
+    process.p *= process.TrimmedFilteredCustomTausEsDown 
 
+    process.p *= process.TrimmedFilteredCustomTausBoostedEsNominal 
+    process.p *= process.TrimmedFilteredCustomTausBoostedEsUp 
+    process.p *= process.TrimmedFilteredCustomTausBoostedEsDown 
 
-		if (BUILD_ELECTRON_TAUBOOSTED or BUILD_MUON_TAUBOOSTED or BUILD_TAUBOOSTED_TAUBOOSTED) : 
-			#process.MVAMETtauBoostedEsNominal
-			process.p *= process.TupleCandidateEventsBoosted
+    process.p *= process.filteredVetoElectrons
+    process.p *= process.filteredVetoElectronsEsUp
+    process.p *= process.filteredVetoElectronsEsDown
 
+    process.p *= process.filteredVetoMuons
 
-			# if BUILD_TAU_ES_VARIANTS is True :
-			# 	process.MVAMETtauBoostedEsUp
-			# 	process.MVAMETtauBoostedEsDown
+    process.p *= process.filteredVetoTausEsNominal 
+    process.p *= process.filteredVetoTausEsUp 
+    process.p *= process.filteredVetoTausEsDown 
+    process.p *= process.filteredVetoTausBoostedEsNominal 
+    process.p *= process.filteredVetoTausBoostedEsUp 
+    process.p *= process.filteredVetoTausBoostedEsDown 
 
+    if BUILD_EFFICIENCY_TREE is False:
+      process.p *= process.requireCandidateHiggsPair
 
-		process.p *= process.TupleCandidateEvents
-		process.p *= process.NtupleEvents
-		process.p *= process.NtupleEventsBoosted
-
-
-
-
-
-
-		if BUILD_TAU_ES_VARIANTS is True :
-			process.p *= process.TupleCandidateEventsTauEsUp
-			process.p *= process.TupleCandidateEventsTauEsDown
-			process.p *= process.TupleCandidateEventsTauEsUpBoosted
-			process.p *= process.TupleCandidateEventsTauEsDownBoosted
-			process.p *= process.NtupleEventsTauEsUp
-			process.p *= process.NtupleEventsTauEsDown
-			process.p *= process.NtupleEventsTauEsUpBoosted
-			process.p *= process.NtupleEventsTauEsDownBoosted
-
-		if BUILD_ELECTRON_ES_VARIANTS is True :
-			process.p *= process.TupleCandidateEventsElectronEsDown
-			process.p *= process.TupleCandidateEventsElectronEsUp
-			process.p *= process.NtupleEventsElectronEsUp
-			process.p *= process.NtupleEventsElectronEsDown
+    process.p *= process.PFMetWithEmbeddedLeptonPairs
+    process.p *= process.PFMetWithEmbeddedLeptonPairsTauEsUp 
+    process.p *= process.PFMetWithEmbeddedLeptonPairsTauEsDown 
+    process.p *= process.PFMetWithEmbeddedLeptonPairsTausBoostedEsNominal 
+    process.p *= process.PFMetWithEmbeddedLeptonPairsTausBoostedEsUp 
+    process.p *= process.PFMetWithEmbeddedLeptonPairsTausBoostedEsDown 
 
 
-		# new MET Filters for 2016	
-		process.p *= process.BadPFMuonFilter 
-		process.p *= process.BadChargedCandidateFilter 
+    # if BUILD_TAU_ES_VARIANTS is True :
+    # 	process.MVAMETtauEsUp
+    # 	process.MVAMETtauEsDown
 
-		process.p *= process.pairIndep
-	
-	process.p *= process.BASELINE
-
-	if BUILD_TAU_ES_VARIANTS is True :
-		process.p *= process.BASELINEupTau 
-		process.p *= process.BASELINEdownTau
-
-	# if BUILD_ELECTRON_ES_VARIANTS is True :
-	# 	process.p *= process.BASELINEupElectron
-	# 	process.p *= process.BASELINEdownElectron
+    # if BUILD_ELECTRON_ES_VARIANTS is True :
+    # 	process.MVAMETelectronEsUp
+    # 	process.MVAMETelectronEsDown
 
 
+    if (BUILD_ELECTRON_TAUBOOSTED or BUILD_MUON_TAUBOOSTED or BUILD_TAUBOOSTED_TAUBOOSTED) : 
+      #process.MVAMETtauBoostedEsNominal
+      process.p *= process.TupleCandidateEventsBoosted
+      # if BUILD_TAU_ES_VARIANTS is True :
+      # 	process.MVAMETtauBoostedEsUp
+      # 	process.MVAMETtauBoostedEsDown
 
 
-	###################################
-	# output config - should not be in crab
-	# script 
-	###################################
+    process.p *= process.TupleCandidateEvents
+    process.p *= process.NtupleEvents
+    process.p *= process.NtupleEventsBoosted
 
 
-	if DEBUG_NTUPLE is True :
-		print "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
-		print "+++++ DEBUG NTUPLE ***** will create Ntuple for Debugging "
-		print "+++++ DEBUG NTUPLE ***** with edmProvDump & edmDumpEventContent "
-		print "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+    if BUILD_TAU_ES_VARIANTS is True :
+      process.p *= process.TupleCandidateEventsTauEsUp
+      process.p *= process.TupleCandidateEventsTauEsDown
+      process.p *= process.TupleCandidateEventsTauEsUpBoosted
+      process.p *= process.TupleCandidateEventsTauEsDownBoosted
+      process.p *= process.NtupleEventsTauEsUp
+      process.p *= process.NtupleEventsTauEsDown
+      process.p *= process.NtupleEventsTauEsUpBoosted
+      process.p *= process.NtupleEventsTauEsDownBoosted
 
-		process.out = cms.OutputModule("PoolOutputModule",
-					fileName = cms.untracked.string('NtupleFile.root'),
-					SelectEvents = cms.untracked.PSet(
-					                SelectEvents = cms.vstring('p')
-					                )					
-		)
-
-		from Configuration.EventContent.EventContent_cff import MINIAODSIMEventContent
-		process.out.outputCommands = MINIAODSIMEventContent.outputCommands
-		# will cause crash --> process.out.outputCommands.append("keep *")
-		# if only want things needed for FlatTuple uncomment the next line
-		#process.out.outputCommands.append("keep *")
-		process.out.outputCommands.append("keep NtupleEvents*_*_*_DavisNtuple")
-		process.out.outputCommands.append("keep NtupleEvents*_*_*_DavisNtuple")
-		process.out.outputCommands.append("keep pairIndep*_*_*_DavisNtuple")
-		process.out.outputCommands.append("keep NtuplePairIndependentInfos*_*_*_DavisNtuple")
-		process.out.outputCommands.append("keep *_*_bad_*")
-		process.out.outputCommands.append("keep *_egmGsfElectronIDs_*_*")
-		process.out.outputCommands.append("keep *_MVAMET*_MVAMET_DavisNtuple");
-		process.out.outputCommands.append("keep *_PFMetWithEmbeddedLeptonPairs_*_DavisNtuple");
+    if BUILD_ELECTRON_ES_VARIANTS is True :
+      process.p *= process.TupleCandidateEventsElectronEsDown
+      process.p *= process.TupleCandidateEventsElectronEsUp
+      process.p *= process.NtupleEventsElectronEsUp
+      process.p *= process.NtupleEventsElectronEsDown
 
 
-	process.TFileService = cms.Service("TFileService", fileName = cms.string("FlatTuple.root"))
+    # new MET Filters for 2016	
+    process.p *= process.BadPFMuonFilter 
+    process.p *= process.BadChargedCandidateFilter 
 
-	if DEBUG_NTUPLE is True :
-		process.e = cms.EndPath(process.out)
-	else :
-		process.e = cms.EndPath()
+    process.p *= process.pairIndep
+
+##############################################	
+# run on Ntuple or MiniAOD 
+##############################################  
+
+  process.p *= process.BASELINE
+
+  if BUILD_TAU_ES_VARIANTS is True :
+    process.p *= process.BASELINEupTau 
+    process.p *= process.BASELINEdownTau
+
+  # if BUILD_ELECTRON_ES_VARIANTS is True :
+  # 	process.p *= process.BASELINEupElectron
+  # 	process.p *= process.BASELINEdownElectron
+
+
+
+
+###################################
+# output config - should not be in crab
+# script 
+###################################
+
+
+
+  if DEBUG_NTUPLE is True :
+    print "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+    print "+++++ DEBUG NTUPLE ***** will create Ntuple for Debugging "
+    print "+++++ DEBUG NTUPLE ***** with edmProvDump & edmDumpEventContent "
+    print "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+
+    process.out = cms.OutputModule("PoolOutputModule",
+          fileName = cms.untracked.string('NtupleFile.root'),
+          SelectEvents = cms.untracked.PSet(
+                          SelectEvents = cms.vstring('p')
+                          )         
+    )
+
+    from Configuration.EventContent.EventContent_cff import MINIAODSIMEventContent
+    process.out.outputCommands = MINIAODSIMEventContent.outputCommands
+    # will cause crash --> process.out.outputCommands.append("keep *")
+    # if only want things needed for FlatTuple uncomment the next line
+    #process.out.outputCommands.append("keep *")
+    #process.out.outputCommands.append("keep TupleCandidateEvents*_*_*_DavisNtuple")
+    process.out.outputCommands.append("keep NtupleEvents*_*_*_DavisNtuple")
+    process.out.outputCommands.append("keep pairIndep*_*_*_DavisNtuple")
+    process.out.outputCommands.append("keep NtuplePairIndependentInfos*_*_*_DavisNtuple")
+    process.out.outputCommands.append("keep *_*_bad_*")
+    process.out.outputCommands.append("keep *_egmGsfElectronIDs_*_*")
+    #process.out.outputCommands.append("keep *_rerun*_*_*")
+
+
+process.TFileService = cms.Service("TFileService", fileName = cms.string("FlatTuple.root"))
+
+if DEBUG_NTUPLE is True :
+  process.e = cms.EndPath(process.out)
+else :
+  process.e = cms.EndPath()
 
 
 
