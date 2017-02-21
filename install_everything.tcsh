@@ -58,7 +58,7 @@ git cms-merge-topic -u cms-tau-pog:CMSSW_8_0_X_tau-pog_miniAOD-backport-tauID
 
 
 # new Moriond17 electron ID 
-git cms-merge-topic ikrav:egm_id_80X_v2
+git cms-merge-topic ikrav:egm_id_80X_v2 -u
 
 # Add in the new MET filter code needed for 8020X and beyond in 2016 
 # see: https://twiki.cern.ch/twiki/bin/viewauth/CMS/MissingETOptionalFiltersRun2#Notes_regarding_the_ICHEP_datase
@@ -69,7 +69,7 @@ git cms-merge-topic -u cms-met:fromCMSSW_8_0_20_postICHEPfilter
 # as CustomFilters/plugins/BadGlobalMuonTagger.cc
 # since this pulls in nearly all of CMSSW
 # this is much less than running : git cms-merge-topic gpetruc:badMuonFilters_80X
-git cms-merge-topic gpetruc:badMuonFilters_80X_v2
+git cms-merge-topic gpetruc:badMuonFilters_80X_v2 -u
 
 # update to latest and greatest MET 
 
