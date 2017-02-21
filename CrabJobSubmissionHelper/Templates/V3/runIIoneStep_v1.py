@@ -1962,107 +1962,104 @@ if DEBUG_NTUPLE == DEBUG_NTUPLE_INPUT and DEBUG_NTUPLE_INPUT is True:
 
 else :
 
-	if DEBUG_NTUPLE_INPUT is True :
-		print "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
-		print "+++++ DEBUG NTUPLE_INPUT ***** will run using Ntuple as input (not mini-AOD) "
-		print "+++++ DEBUG NTUPLE_INPUT ***** and produce FlatTuple          "
-		print "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+  if DEBUG_NTUPLE_INPUT is True :
+    print "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+    print "+++++ DEBUG NTUPLE_INPUT ***** will run using Ntuple as input (not mini-AOD) "
+    print "+++++ DEBUG NTUPLE_INPUT ***** and produce FlatTuple          "
+    print "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
 
-
-
-	if DEBUG_NTUPLE_INPUT is False :
-		process.p *= process.Cumulative
-		process.p *= process.filteredVertices
-
+  if DEBUG_NTUPLE_INPUT is False :
+    process.p *= process.Cumulative
+    process.p *= process.filteredVertices
     process.p *= process.patJetCorrFactorsReapplyJEC 
     process.p *= process.patJetsReapplyJEC
 
 
-		# rerun the tau IDs on top of MiniAOD (needed for CMSSW 8_0_26_patch1)
-		# for future releases need to check with Tau POG 
-		process.p *= process.rerunMvaIsolation2SeqRun2
-		process.p *= process.rerunMvaIsolation2SeqRun2Boosted
-		process.p *= process.TausWithRerunID 
-		process.p *= process.BoostedTausWithRerunID 
+    # rerun the tau IDs on top of MiniAOD (needed for CMSSW 8_0_26_patch1)
+    # for future releases need to check with Tau POG 
+    process.p *= process.rerunMvaIsolation2SeqRun2
+    process.p *= process.rerunMvaIsolation2SeqRun2Boosted
+    process.p *= process.TausWithRerunID 
+    process.p *= process.BoostedTausWithRerunID 
 		
 
     process.p *= process.fullPatMetSequence
     process.p *= process.egcorrMET
 
 
-		if BUILD_EFFICIENCY_TREE is False:
-			process.p *= process.SimpleFilter
+    if BUILD_EFFICIENCY_TREE is False:
+      process.p *= process.SimpleFilter
 
-		process.p *= cms.ignore(process.badGlobalMuonTagger)
-		process.p *= cms.ignore(process.cloneGlobalMuonTagger)
-
-
-
-		process.p *= process.filteredSlimmedJets
+    process.p *= cms.ignore(process.badGlobalMuonTagger)
+    process.p *= cms.ignore(process.cloneGlobalMuonTagger)
 
 
-		process.p *= process.egmGsfElectronIDSequence
-		process.p *= process.customSlimmedElectrons
-		process.p *= process.customSlimmedElectronsEsUp
-		process.p *= process.customSlimmedElectronsEsDown
-		process.p *= process.customSlimmedMuons
-		process.p *= process.customSlimmedTausTauEsNominal
-		process.p *= process.customSlimmedTausTauEsUp
-		process.p *= process.customSlimmedTausTauEsDown
 
-		process.p *= process.customSlimmedTausBoostedTauEsNominal
-		process.p *= process.customSlimmedTausBoostedTauEsUp
-		process.p *= process.customSlimmedTausBoostedTauEsDown
-
-		process.p *= process.filteredCustomElectrons
-		process.p *= process.filteredCustomElectronsEsUp
-		process.p *= process.filteredCustomElectronsEsDown
-		process.p *= process.filteredCustomMuons
-		process.p *= process.filteredCustomTausEsNominal
-		process.p *= process.filteredCustomTausEsUp
-		process.p *= process.filteredCustomTausEsDown
+    process.p *= process.filteredSlimmedJets
 
 
-		process.p *= process.filteredCustomTausBoostedEsNominal
-		process.p *= process.filteredCustomTausBoostedEsUp
-		process.p *= process.filteredCustomTausBoostedEsDown
+    process.p *= process.egmGsfElectronIDSequence
+    process.p *= process.customSlimmedElectrons
+    process.p *= process.customSlimmedElectronsEsUp
+    process.p *= process.customSlimmedElectronsEsDown
+    process.p *= process.customSlimmedMuons
+    process.p *= process.customSlimmedTausTauEsNominal
+    process.p *= process.customSlimmedTausTauEsUp
+    process.p *= process.customSlimmedTausTauEsDown
+
+    process.p *= process.customSlimmedTausBoostedTauEsNominal
+    process.p *= process.customSlimmedTausBoostedTauEsUp
+    process.p *= process.customSlimmedTausBoostedTauEsDown
+
+    process.p *= process.filteredCustomElectrons
+    process.p *= process.filteredCustomElectronsEsUp
+    process.p *= process.filteredCustomElectronsEsDown
+    process.p *= process.filteredCustomMuons
+    process.p *= process.filteredCustomTausEsNominal
+    process.p *= process.filteredCustomTausEsUp
+    process.p *= process.filteredCustomTausEsDown
 
 
-		process.p *= process.TrimmedFilteredCustomElectrons
-		process.p *= process.TrimmedFilteredCustomElectronsEsUp
-		process.p *= process.TrimmedFilteredCustomElectronsEsDown
+    process.p *= process.filteredCustomTausBoostedEsNominal
+    process.p *= process.filteredCustomTausBoostedEsUp
+    process.p *= process.filteredCustomTausBoostedEsDown
 
-		process.p *= process.TrimmedFilteredCustomMuons 
-		process.p *= process.TrimmedFilteredCustomTausEsNominal 
-		process.p *= process.TrimmedFilteredCustomTausEsUp 
-		process.p *= process.TrimmedFilteredCustomTausEsDown 
 
-		process.p *= process.TrimmedFilteredCustomTausBoostedEsNominal 
-		process.p *= process.TrimmedFilteredCustomTausBoostedEsUp 
-		process.p *= process.TrimmedFilteredCustomTausBoostedEsDown 
+    process.p *= process.TrimmedFilteredCustomElectrons
+    process.p *= process.TrimmedFilteredCustomElectronsEsUp
+    process.p *= process.TrimmedFilteredCustomElectronsEsDown
 
-		process.p *= process.filteredVetoElectrons
-		process.p *= process.filteredVetoElectronsEsUp
-		process.p *= process.filteredVetoElectronsEsDown
+    process.p *= process.TrimmedFilteredCustomMuons 
+    process.p *= process.TrimmedFilteredCustomTausEsNominal 
+    process.p *= process.TrimmedFilteredCustomTausEsUp 
+    process.p *= process.TrimmedFilteredCustomTausEsDown 
 
-		process.p *= process.filteredVetoMuons
+    process.p *= process.TrimmedFilteredCustomTausBoostedEsNominal 
+    process.p *= process.TrimmedFilteredCustomTausBoostedEsUp 
+    process.p *= process.TrimmedFilteredCustomTausBoostedEsDown 
 
-		process.p *= process.filteredVetoTausEsNominal 
-		process.p *= process.filteredVetoTausEsUp 
-		process.p *= process.filteredVetoTausEsDown 
-		process.p *= process.filteredVetoTausBoostedEsNominal 
-		process.p *= process.filteredVetoTausBoostedEsUp 
-		process.p *= process.filteredVetoTausBoostedEsDown 
+    process.p *= process.filteredVetoElectrons
+    process.p *= process.filteredVetoElectronsEsUp
+    process.p *= process.filteredVetoElectronsEsDown
 
-		if BUILD_EFFICIENCY_TREE is False:
-			process.p *= process.requireCandidateHiggsPair
+    process.p *= process.filteredVetoMuons
 
-		process.p *= process.PFMetWithEmbeddedLeptonPairs
-		process.p *= process.PFMetWithEmbeddedLeptonPairsTauEsUp 
-		process.p *= process.PFMetWithEmbeddedLeptonPairsTauEsDown 
-		process.p *= process.PFMetWithEmbeddedLeptonPairsTausBoostedEsNominal 
-		process.p *= process.PFMetWithEmbeddedLeptonPairsTausBoostedEsUp 
-		process.p *= process.PFMetWithEmbeddedLeptonPairsTausBoostedEsDown 
+    process.p *= process.filteredVetoTausEsNominal 
+    process.p *= process.filteredVetoTausEsUp 
+    process.p *= process.filteredVetoTausEsDown 
+    process.p *= process.filteredVetoTausBoostedEsNominal 
+    process.p *= process.filteredVetoTausBoostedEsUp 
+    process.p *= process.filteredVetoTausBoostedEsDown 
+
+    if BUILD_EFFICIENCY_TREE is False:
+      process.p *= process.requireCandidateHiggsPair
+
+    process.p *= process.PFMetWithEmbeddedLeptonPairs
+    process.p *= process.PFMetWithEmbeddedLeptonPairsTauEsUp 
+    process.p *= process.PFMetWithEmbeddedLeptonPairsTauEsDown 
+    process.p *= process.PFMetWithEmbeddedLeptonPairsTausBoostedEsNominal 
+    process.p *= process.PFMetWithEmbeddedLeptonPairsTausBoostedEsUp 
+    process.p *= process.PFMetWithEmbeddedLeptonPairsTausBoostedEsDown 
 
 
 		# if BUILD_TAU_ES_VARIANTS is True :
@@ -2075,9 +2072,9 @@ else :
 
 
 
-		if (BUILD_ELECTRON_TAUBOOSTED or BUILD_MUON_TAUBOOSTED or BUILD_TAUBOOSTED_TAUBOOSTED) : 
-			#process.MVAMETtauBoostedEsNominal
-			process.p *= process.TupleCandidateEventsBoosted
+    if (BUILD_ELECTRON_TAUBOOSTED or BUILD_MUON_TAUBOOSTED or BUILD_TAUBOOSTED_TAUBOOSTED) : 
+      #process.MVAMETtauBoostedEsNominal
+      process.p *= process.TupleCandidateEventsBoosted
 
 
 			# if BUILD_TAU_ES_VARIANTS is True :
@@ -2085,43 +2082,43 @@ else :
 			# 	process.MVAMETtauBoostedEsDown
 
 
-		process.p *= process.TupleCandidateEvents
-		process.p *= process.NtupleEvents
-		process.p *= process.NtupleEventsBoosted
+    process.p *= process.TupleCandidateEvents
+    process.p *= process.NtupleEvents
+    process.p *= process.NtupleEventsBoosted
 
 
 
 
 
 
-		if BUILD_TAU_ES_VARIANTS is True :
-			process.p *= process.TupleCandidateEventsTauEsUp
-			process.p *= process.TupleCandidateEventsTauEsDown
-			process.p *= process.TupleCandidateEventsTauEsUpBoosted
-			process.p *= process.TupleCandidateEventsTauEsDownBoosted
-			process.p *= process.NtupleEventsTauEsUp
-			process.p *= process.NtupleEventsTauEsDown
-			process.p *= process.NtupleEventsTauEsUpBoosted
-			process.p *= process.NtupleEventsTauEsDownBoosted
+    if BUILD_TAU_ES_VARIANTS is True :
+      process.p *= process.TupleCandidateEventsTauEsUp
+      process.p *= process.TupleCandidateEventsTauEsDown
+      process.p *= process.TupleCandidateEventsTauEsUpBoosted
+      process.p *= process.TupleCandidateEventsTauEsDownBoosted
+      process.p *= process.NtupleEventsTauEsUp
+      process.p *= process.NtupleEventsTauEsDown
+      process.p *= process.NtupleEventsTauEsUpBoosted
+      process.p *= process.NtupleEventsTauEsDownBoosted
 
-		if BUILD_ELECTRON_ES_VARIANTS is True :
-			process.p *= process.TupleCandidateEventsElectronEsDown
-			process.p *= process.TupleCandidateEventsElectronEsUp
-			process.p *= process.NtupleEventsElectronEsUp
-			process.p *= process.NtupleEventsElectronEsDown
+    if BUILD_ELECTRON_ES_VARIANTS is True :
+      process.p *= process.TupleCandidateEventsElectronEsDown
+      process.p *= process.TupleCandidateEventsElectronEsUp
+      process.p *= process.NtupleEventsElectronEsUp
+      process.p *= process.NtupleEventsElectronEsDown
 
 
-		# new MET Filters for 2016	
-		process.p *= process.BadPFMuonFilter 
-		process.p *= process.BadChargedCandidateFilter 
+    # new MET Filters for 2016	
+    process.p *= process.BadPFMuonFilter 
+    process.p *= process.BadChargedCandidateFilter 
 
-		process.p *= process.pairIndep
+    process.p *= process.pairIndep
 	
-	process.p *= process.BASELINE
+  process.p *= process.BASELINE
 
-	if BUILD_TAU_ES_VARIANTS is True :
-		process.p *= process.BASELINEupTau 
-		process.p *= process.BASELINEdownTau
+  if BUILD_TAU_ES_VARIANTS is True :
+    process.p *= process.BASELINEupTau 
+    process.p *= process.BASELINEdownTau
 
 	# if BUILD_ELECTRON_ES_VARIANTS is True :
 	# 	process.p *= process.BASELINEupElectron
