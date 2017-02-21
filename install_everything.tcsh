@@ -75,6 +75,9 @@ git cms-merge-topic gpetruc:badMuonFilters_80X_v2
 
 git cms-merge-topic cms-met:METRecipe_8020 -u
 
+# allow MET E/Gamma recorrection on-the-fly 
+# see https://twiki.cern.ch/twiki/bin/view/CMSPublic/ReMiniAOD03Feb2017Notes#MET_Recipes
+git cms-merge-topic cms-met:METRecipe_80X_part2 -u
 
 # SVFIt 
 

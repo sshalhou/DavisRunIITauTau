@@ -1883,12 +1883,12 @@ else :
 		process.p *= process.Cumulative
 		process.p *= process.filteredVertices
 
-	    # rerun the tau IDs on top of MiniAOD (needed for CMSSW 8_0_26_patch1)
-	    # for future releases need to check with Tau POG 
-	    process.p *= process.rerunMvaIsolation2SeqRun2
-	    process.p *= process.rerunMvaIsolation2SeqRun2Boosted
-	    process.p *= process.TausWithRerunID 
-	    process.p *= process.BoostedTausWithRerunID 
+		# rerun the tau IDs on top of MiniAOD (needed for CMSSW 8_0_26_patch1)
+		# for future releases need to check with Tau POG 
+		process.p *= process.rerunMvaIsolation2SeqRun2
+		process.p *= process.rerunMvaIsolation2SeqRun2Boosted
+		process.p *= process.TausWithRerunID 
+		process.p *= process.BoostedTausWithRerunID 
 		
 		if BUILD_EFFICIENCY_TREE is False:
 			process.p *= process.SimpleFilter
@@ -1959,12 +1959,12 @@ else :
 		if BUILD_EFFICIENCY_TREE is False:
 			process.p *= process.requireCandidateHiggsPair
 
-	    process.p *= process.PFMetWithEmbeddedLeptonPairs
-	    process.p *= process.PFMetWithEmbeddedLeptonPairsTauEsUp 
-	    process.p *= process.PFMetWithEmbeddedLeptonPairsTauEsDown 
-	    process.p *= process.PFMetWithEmbeddedLeptonPairsTausBoostedEsNominal 
-	    process.p *= process.PFMetWithEmbeddedLeptonPairsTausBoostedEsUp 
-	    process.p *= process.PFMetWithEmbeddedLeptonPairsTausBoostedEsDown 
+		process.p *= process.PFMetWithEmbeddedLeptonPairs
+		process.p *= process.PFMetWithEmbeddedLeptonPairsTauEsUp 
+		process.p *= process.PFMetWithEmbeddedLeptonPairsTauEsDown 
+		process.p *= process.PFMetWithEmbeddedLeptonPairsTausBoostedEsNominal 
+		process.p *= process.PFMetWithEmbeddedLeptonPairsTausBoostedEsUp 
+		process.p *= process.PFMetWithEmbeddedLeptonPairsTausBoostedEsDown 
 
 
 		# if BUILD_TAU_ES_VARIANTS is True :
