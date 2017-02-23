@@ -738,6 +738,37 @@ private:
 	double bmva_2_LooseWp; 	// for trailing b-jet in pt (pt > 20) (loose WP central)
 	float bcsv_2_LooseWp;	// for trailing b-jet in pt (pt > 20) (loose WP central)
 
+    ///////////////////////////////////////////////////////////////
+    /* new (with 8_0_25 ) b-tag overall event weights for mono-H */
+    ///////////////////////////////////////////////////////////////
+
+    double BtagEventSFproduct_looseWpDown;
+    double BtagEventSFproduct_looseWpCentral;
+    double BtagEventSFproduct_looseWpUp;
+    double BtagEventSFproduct_mediumWpDown;
+    double BtagEventSFproduct_mediumWpCentral;
+    double BtagEventSFproduct_mediumWpUp;
+    double BtagEventSFproduct_tightWpDown;
+    double BtagEventSFproduct_tightWpCentral;
+    double BtagEventSFproduct_tightWpUp;
+
+    /* for non-nominal jets only keep the central values */
+    double BtagEventSFproduct_looseWpCentral_JECshiftedUp;
+    double BtagEventSFproduct_mediumWpCentral_JECshiftedUp;
+    double BtagEventSFproduct_tightWpCentral_JECshiftedUp;
+
+    double BtagEventSFproduct_looseWpCentral_JECshiftedDown;
+    double BtagEventSFproduct_mediumWpCentral_JECshiftedDown;
+    double BtagEventSFproduct_tightWpCentral_JECshiftedDown;
+
+    double BtagEventSFproduct_looseWpCentral_JERup;
+    double BtagEventSFproduct_mediumWpCentral_JERup;
+    double BtagEventSFproduct_tightWpCentral_JERup;
+
+    double BtagEventSFproduct_looseWpCentral_JERdown;
+    double BtagEventSFproduct_mediumWpCentral_JERdown;
+    double BtagEventSFproduct_tightWpCentral_JERdown;
+
 
 	////////////////////////////////////////////////////////////	
 	// NOMINAL JETS + Alternate WP btags  (tight WP central) //
@@ -1165,6 +1196,11 @@ private:
 
 	bool BadChargedCandidateFilter;
 	bool BadPFMuonFilter;
+    
+    // bad and duplicate muon filters -- event is OK if these are 0
+
+    bool BadMuonTaggedMoriond17;
+    bool DuplicateMuonTaggedMoriond17;
 
 	/* gen info */
 
@@ -1216,11 +1252,16 @@ private:
 	std::vector<float> veto_dxy;  /* lepton dxy see CustomPatCollectionProducers/src/{Electron,Muon,Tau}Clones.cc */
 	std::vector<float> veto_dz;	  /* lepton dz see CustomPatCollectionProducers/src/{Electron,Muon,Tau}Clones.cc */
 	std::vector<float> veto_RelIso;
+    std::vector<float> veto_passesLooseMuonId;
+    std::vector<float> veto_passesMediumMuonId_ICHEP16;
+    std::vector<float> veto_passesMediumMuonId_Moriond17;
 	std::vector<float> veto_passesMediumMuonId;
+    std::vector<float> veto_passesTightMuonId;
 	std::vector<float> veto_passElectronMVA80;
 	std::vector<float> veto_passElectronMVA90;
-	std::vector<float> veto_passElectronCutBased;
-	std::vector<float> veto_isTrackerGlobalPFMuon;
+	std::vector<float> veto_passVetoElectronCutBased;
+    std::vector<float> veto_passTightElectronCutBased;
+    std::vector<float> veto_isTrackerGlobalPFMuon;
 	std::vector<float> veto_numberOfMissingInnerHits;
 	std::vector<float> veto_numberOfMissingOuterHits;
 	std::vector<float> veto_passConversionVeto;
