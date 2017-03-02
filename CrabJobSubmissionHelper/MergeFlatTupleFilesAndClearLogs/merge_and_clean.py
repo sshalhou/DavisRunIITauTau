@@ -266,10 +266,9 @@ for dir_ in dirFile_:
 				else:
 					print " TRANSFER SUCCESS"
 
-
+				rm_commands = []
 				if int(split_dir_[3]) == 1:
-					print " PERFORMING CLEANUP IN ", split_dir_[0]
-					rm_commands = []
+					print " PERFORMING CLEANUP IN ", split_dir_[0]					
 					rm_commands.append("eos root://cmseos.fnal.gov rm -r "+eos_base+"log")
 					rm_commands.append("eos root://cmseos.fnal.gov rm -r "+eos_base+"failed")
 					for rm_file in master_split_list[m]:
