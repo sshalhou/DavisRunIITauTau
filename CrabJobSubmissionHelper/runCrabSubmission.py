@@ -263,9 +263,9 @@ if __name__ == '__main__':
             config.Data.inputDataset = samp[0]
 
             # split different data periods into different output areas
-            if int(args.isMC[0]) == 0:
-                uniqueDataDir = samp[0].split('/')[2]
-                config.Data.outputDatasetTag = str(args.outputDatasetTag[0]) + str(uniqueDataDir)
+            #if int(args.isMC[0]) == 0:
+            uniqueDataDir = samp[0].split('/')[2]
+            config.Data.outputDatasetTag = str(args.outputDatasetTag[0]) + str(uniqueDataDir)
                 
 
             print " outputDataSetTag ==> ", config.Data.outputDatasetTag 
