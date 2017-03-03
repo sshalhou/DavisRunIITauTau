@@ -1241,6 +1241,46 @@ sampleInfo.append(aPSet)
 
 
 
+aPSet = cms.PSet(
+    DataSet = cms.string("/ST_t-channel_antitop_4f_leptonDecays_13TeV-powheg-pythia8_TuneCUETP8M1/RunIISpring16MiniAODv2-PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v1/MINIAODSIM"),
+    EventTotal = cms.int32(1682400),
+    NumberOfLumis = cms.int32(16824),
+    MaxLumiBlock = cms.int32(17000),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("ST_t-channel_antitop_4f_leptonDecays"),
+    DataCard = cms.string("VV"),
+    CrossSection = cms.double(25.49900),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(2.0),
+    ProductionInfo = cms.string("Run2016_B_C_D_E_F_G_H"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("NONE"),
+    KeepTheoryScaleFactors = cms.bool(False),
+    HLTversion = cms.string("HLT"),
+       )
+sampleInfo.append(aPSet)
+
+
+
+aPSet = cms.PSet(
+    DataSet = cms.string("/ST_t-channel_top_4f_leptonDecays_13TeV-powheg-pythia8_TuneCUETP8M1/RunIISpring16MiniAODv2-PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v1/MINIAODSIM"),
+    EventTotal = cms.int32(3279200),
+    NumberOfLumis = cms.int32(16396),
+    MaxLumiBlock = cms.int32(16500),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("ST_t-channel_top_4f_leptonDecays"),
+    DataCard = cms.string("VV"),
+    CrossSection = cms.double(42.84630),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(2.0),
+    ProductionInfo = cms.string("Run2016_B_C_D_E_F_G_H"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("NONE"),
+    KeepTheoryScaleFactors = cms.bool(False),
+    HLTversion = cms.string("HLT"),
+       )
+sampleInfo.append(aPSet)
+
 
 
 ################################
