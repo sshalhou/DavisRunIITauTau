@@ -27,6 +27,27 @@ void JetHelper::init(std::vector<NtupleJet> jetVec, std::string jetCut, bTagSFhe
 	m_PtJetPairs_JERup.clear();
 	m_PtJetPairs_JERdown.clear();
 
+	/* reset the b-tag SF vectors */
+	SF_fullyCorrected.clear();
+	SFup_fullyCorrected.clear();
+	SFdown_fullyCorrected.clear();
+	SF_JECshiftedUp.clear();
+	SFup_JECshiftedUp.clear();
+	SFdown_JECshiftedUp.clear();
+	SF_JECshiftedDown.clear();
+	SFup_JECshiftedDown.clear();
+	SFdown_JECshiftedDown.clear();
+	SF_JERnomianl.clear();
+	SFup_JERnomianl.clear();
+	SFdown_JERnomianl.clear();
+	SF_JERup.clear();
+	SFup_JERup.clear();
+	SFdown_JERup.clear();
+	SF_JERup.clear();
+	SFup_JERup.clear();
+	SFdown_JERup.clear();
+
+
 
 	/* create container to hold all jet systematic levels */
 	std::string jetSysArray[6] = {"fullyCorrected","JECshiftedUp","JECshiftedDown","JERnomianl","JERup","JERdown"};
@@ -63,8 +84,9 @@ void JetHelper::init(std::vector<NtupleJet> jetVec, std::string jetCut, bTagSFhe
 				m_BtagSFTool->InitForJet(jetVec[j].pt(), 
 				 					jetVec[j].eta(), 
 									jetVec[j].defaultBtagAlgorithm_RawScore(),
-									jetVec[j].HADRON_flavour(), isRealData);
-					
+									jetVec[j].PARTON_flavour(), isRealData);
+									/* wisconsin uses PARTON_flavour we used to use HADRON_flavour */
+
 
 				/* set the Btag SFs for the current jet */
 
@@ -80,6 +102,48 @@ void JetHelper::init(std::vector<NtupleJet> jetVec, std::string jetCut, bTagSFhe
 				jetVec[j].set_defaultBtagAlgorithmSF_TightWpUp(m_BtagSFTool->SF_TightWpUp());
 				jetVec[j].set_defaultBtagAlgorithmSF_TightWpDown(m_BtagSFTool->SF_TightWpDown());
 
+
+				/* for b-tag SF wisconsin seems to cut at 30 instead of 20 */
+				if(jetSelector(jetVec[j]) && jetVec[j].pt() >= 30.0 && fabs(jetVec[j].eta()) <= 2.4 && jetVec[j].defaultBtagAlgorithm_RawScore()>m_BtagSFTool->getCutPointMedium())
+				{
+					/* store the medium WP scale factors for the correct jet variant */
+					if(	jetSysArray[sys]=="fullyCorrected") 			
+					{		
+						SF_fullyCorrected.push_back(m_BtagSFTool->SF_MediumWpCentral());
+						SFup_fullyCorrected.push_back(m_BtagSFTool->SF_MediumWpUp());
+						SFdown_fullyCorrected.push_back(m_BtagSFTool->SF_MediumWpDown());
+					}	
+					if(	jetSysArray[sys]=="JECshiftedUp" ) 
+					{		
+						SF_JECshiftedUp.push_back(m_BtagSFTool->SF_MediumWpCentral());
+						SFup_JECshiftedUp.push_back(m_BtagSFTool->SF_MediumWpUp());
+						SFdown_JECshiftedUp.push_back(m_BtagSFTool->SF_MediumWpDown());
+					}				
+					if(	jetSysArray[sys]=="JECshiftedDown" ) 
+					{		
+						SF_JECshiftedDown.push_back(m_BtagSFTool->SF_MediumWpCentral());
+						SFup_JECshiftedDown.push_back(m_BtagSFTool->SF_MediumWpUp());
+						SFdown_JECshiftedDown.push_back(m_BtagSFTool->SF_MediumWpDown());
+					}				
+					if(	jetSysArray[sys]=="JERnomianl" ) 
+					{		
+						SF_JERnomianl.push_back(m_BtagSFTool->SF_MediumWpCentral());
+						SFup_JERnomianl.push_back(m_BtagSFTool->SF_MediumWpUp());
+						SFdown_JERnomianl.push_back(m_BtagSFTool->SF_MediumWpDown());
+					}			
+					if(	jetSysArray[sys]=="JERup" ) 
+					{		
+						SF_JERup.push_back(m_BtagSFTool->SF_MediumWpCentral());
+						SFup_JERup.push_back(m_BtagSFTool->SF_MediumWpUp());
+						SFdown_JERup.push_back(m_BtagSFTool->SF_MediumWpDown());
+					}				
+					if(	jetSysArray[sys]=="JERdown" ) 
+					{		
+						SF_JERdown.push_back(m_BtagSFTool->SF_MediumWpCentral());
+						SFup_JERdown.push_back(m_BtagSFTool->SF_MediumWpUp());
+						SFdown_JERdown.push_back(m_BtagSFTool->SF_MediumWpDown());
+					}	
+				}
 
 				/* set the b-tag eff. for the current jet */
 
@@ -204,6 +268,26 @@ void JetHelper::init(std::vector<NtupleJet> jetVec, std::string jetCut,
 	m_PtJetPairs_JERup.clear();
 	m_PtJetPairs_JERdown.clear();
 
+	/* reset the b-tag SF vectors */
+	SF_fullyCorrected.clear();
+	SFup_fullyCorrected.clear();
+	SFdown_fullyCorrected.clear();
+	SF_JECshiftedUp.clear();
+	SFup_JECshiftedUp.clear();
+	SFdown_JECshiftedUp.clear();
+	SF_JECshiftedDown.clear();
+	SFup_JECshiftedDown.clear();
+	SFdown_JECshiftedDown.clear();
+	SF_JERnomianl.clear();
+	SFup_JERnomianl.clear();
+	SFdown_JERnomianl.clear();
+	SF_JERup.clear();
+	SFup_JERup.clear();
+	SFdown_JERup.clear();
+	SF_JERup.clear();
+	SFup_JERup.clear();
+	SFdown_JERup.clear();
+
 
 	/* create container to hold all jet systematic levels */
 	std::string jetSysArray[6] = {"fullyCorrected","JECshiftedUp","JECshiftedDown","JERnomianl","JERup","JERdown"};
@@ -229,8 +313,16 @@ void JetHelper::init(std::vector<NtupleJet> jetVec, std::string jetCut,
 				m_BtagSFTool->InitForJet(jetVec[j].pt(), 
 				 					jetVec[j].eta(), 
 									jetVec[j].defaultBtagAlgorithm_RawScore(),
-									jetVec[j].HADRON_flavour(), isRealData);
-					
+									jetVec[j].PARTON_flavour(), isRealData);
+									/* wisconsin uses PARTON_flavour we used to use HADRON_flavour */
+
+				if(jetSysArray[sys]=="fullyCorrected")
+				{
+					std::cout<<" sf sf sf "<<m_BtagSFTool->SF_MediumWpCentral()<<" pt "<<jetVec[j].pt()<<" eta "<<jetVec[j].eta()<<" raw "<<jetVec[j].defaultBtagAlgorithm_RawScore()<<" ";
+					std::cout<<" parton flavour "<<jetVec[j].PARTON_flavour()<<" ";
+					std::cout<<" hadron flavour "<<jetVec[j].HADRON_flavour()<<" ";
+					std::cout<<" jetSelector "<<jetSelector(jetVec[j])<<"\n";
+				}
 
 				/* set the Btag SFs for the current jet */
 					
@@ -245,6 +337,53 @@ void JetHelper::init(std::vector<NtupleJet> jetVec, std::string jetCut,
 				jetVec[j].set_defaultBtagAlgorithmSF_TightWpCentral(m_BtagSFTool->SF_TightWpCentral());
 				jetVec[j].set_defaultBtagAlgorithmSF_TightWpUp(m_BtagSFTool->SF_TightWpUp());
 				jetVec[j].set_defaultBtagAlgorithmSF_TightWpDown(m_BtagSFTool->SF_TightWpDown());
+
+
+				/* for b-tag SF wisconsin seems to cut at 30 instead of 20 */
+				if(jetSelector(jetVec[j]) && jetVec[j].pt() >= 30.0 && fabs(jetVec[j].eta()) <= 2.4 && jetVec[j].defaultBtagAlgorithm_RawScore()>m_BtagSFTool->getCutPointMedium())
+				{
+					if(deltaR(leg1.p4(), jetVec[j].jet_p4()) >= minDR && deltaR(leg2.p4(), jetVec[j].jet_p4()) >= minDR)
+					{
+
+						/* store the medium WP scale factors for the correct jet variant */
+						if(	jetSysArray[sys]=="fullyCorrected") 			
+						{		
+							SF_fullyCorrected.push_back(m_BtagSFTool->SF_MediumWpCentral());
+							SFup_fullyCorrected.push_back(m_BtagSFTool->SF_MediumWpUp());
+							SFdown_fullyCorrected.push_back(m_BtagSFTool->SF_MediumWpDown());
+						}	
+						if(	jetSysArray[sys]=="JECshiftedUp" ) 
+						{		
+							SF_JECshiftedUp.push_back(m_BtagSFTool->SF_MediumWpCentral());
+							SFup_JECshiftedUp.push_back(m_BtagSFTool->SF_MediumWpUp());
+							SFdown_JECshiftedUp.push_back(m_BtagSFTool->SF_MediumWpDown());
+						}				
+						if(	jetSysArray[sys]=="JECshiftedDown" ) 
+						{		
+							SF_JECshiftedDown.push_back(m_BtagSFTool->SF_MediumWpCentral());
+							SFup_JECshiftedDown.push_back(m_BtagSFTool->SF_MediumWpUp());
+							SFdown_JECshiftedDown.push_back(m_BtagSFTool->SF_MediumWpDown());
+						}				
+						if(	jetSysArray[sys]=="JERnomianl" ) 
+						{		
+							SF_JERnomianl.push_back(m_BtagSFTool->SF_MediumWpCentral());
+							SFup_JERnomianl.push_back(m_BtagSFTool->SF_MediumWpUp());
+							SFdown_JERnomianl.push_back(m_BtagSFTool->SF_MediumWpDown());
+						}			
+						if(	jetSysArray[sys]=="JERup" ) 
+						{		
+							SF_JERup.push_back(m_BtagSFTool->SF_MediumWpCentral());
+							SFup_JERup.push_back(m_BtagSFTool->SF_MediumWpUp());
+							SFdown_JERup.push_back(m_BtagSFTool->SF_MediumWpDown());
+						}				
+						if(	jetSysArray[sys]=="JERdown" ) 
+						{		
+							SF_JERdown.push_back(m_BtagSFTool->SF_MediumWpCentral());
+							SFup_JERdown.push_back(m_BtagSFTool->SF_MediumWpUp());
+							SFdown_JERdown.push_back(m_BtagSFTool->SF_MediumWpDown());
+						}	
+					}	
+				}
 
 
 				/* set the b-tag eff. for the current jet */
@@ -356,5 +495,100 @@ void JetHelper::init(std::vector<NtupleJet> jetVec, std::string jetCut,
 		return returnVec;
 
   	}
+
+
+
+
+ double JetHelper::getZeroBtagEventSF(std::string variant_, std::string shift_, unsigned int event_)
+ {
+
+	std::string jetSysArray[6] = {"fullyCorrected","JECshiftedUp","JECshiftedDown","JERnomianl","JERup","JERdown"};
+
+
+	    assert(variant_ == "fullyCorrected" ||\
+	           variant_ == "JECshiftedUp" ||\
+	           variant_ == "JECshiftedDown" ||\
+	           variant_ == "JERnomianl" ||\
+	           variant_ == "JERup" ||\
+	           variant_ == "JERdown");
+
+
+	    assert(shift_ == "central" ||\
+	           shift_ == "up" ||\
+	           shift_ == "down");
+
+
+	    std::vector <double> temp_sf_vector;
+	    temp_sf_vector.clear();
+
+
+	    if(variant_=="fullyCorrected")
+    	{
+	    	if(	shift_=="central") temp_sf_vector = SF_fullyCorrected;
+    		if(	shift_=="up")      temp_sf_vector = SFup_fullyCorrected;
+    		if(	shift_=="down")    temp_sf_vector = SFdown_fullyCorrected;
+		}	
+
+	    if(variant_=="JECshiftedUp")
+    	{
+	    	if(	shift_=="central") temp_sf_vector = SF_JECshiftedUp;
+    		if(	shift_=="up")      temp_sf_vector = SFup_JECshiftedUp;
+    		if(	shift_=="down")    temp_sf_vector = SFdown_JECshiftedUp;
+		}	
+
+	    if(variant_=="JECshiftedUp")
+    	{
+	    	if(	shift_=="central") temp_sf_vector = SF_JECshiftedUp;
+    		if(	shift_=="up")      temp_sf_vector = SFup_JECshiftedUp;
+    		if(	shift_=="down")    temp_sf_vector = SFdown_JECshiftedUp;
+		}			
+
+	    if(variant_=="JERnomianl")
+    	{
+	    	if(	shift_=="central") temp_sf_vector = SF_JERnomianl;
+    		if(	shift_=="up")      temp_sf_vector = SFup_JERnomianl;
+    		if(	shift_=="down")    temp_sf_vector = SFdown_JERnomianl;
+		}	
+
+	    if(variant_=="JERup")
+    	{
+	    	if(	shift_=="central") temp_sf_vector = SF_JERup;
+    		if(	shift_=="up")      temp_sf_vector = SFup_JERup;
+    		if(	shift_=="down")    temp_sf_vector = SFdown_JERup;
+		}	
+	  
+	    if(variant_=="JERdown")
+    	{
+	    	if(	shift_=="central") temp_sf_vector = SF_JERdown;
+    		if(	shift_=="up")      temp_sf_vector = SFup_JERdown;
+    		if(	shift_=="down")    temp_sf_vector = SFdown_JERdown;
+		}	
+ 
+
+		/* compute the SF */
+		double return_weight = 1.0;
+
+
+		std::cout<<event_<<" EVENT_XXX temp_sf_vector size "<<temp_sf_vector.size()<<"\n";
+		for(std::size_t j = 0; j<temp_sf_vector.size(); ++j)
+		{
+			std::cout<<event_<<" EVENT_XXX temp_sf_vector @ "<<j<<" "<<temp_sf_vector[j]<<"\n";
+		}
+
+
+		if(temp_sf_vector.size() == 0) {temp_sf_vector.clear();  return 1.0; }
+
+
+		for(std::size_t j = 0; j<temp_sf_vector.size(); ++j)
+		{
+			return_weight *= (1 - temp_sf_vector[j]);
+		}
+
+		temp_sf_vector.clear(); 
+		return return_weight;
+
+ }
+
+
 
 

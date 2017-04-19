@@ -98,6 +98,9 @@ public:
 	double SF_TightWpDown() const;
 
 
+  /* return the medium WP cut point */
+
+   double getCutPointMedium() const;
 
 
 private:

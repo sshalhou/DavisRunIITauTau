@@ -89,19 +89,32 @@ public:
   std::vector<NtupleJet> PtOrderedPassingJets(std::string);  
   
 
+  /* return the medium wp event 0 b-tag SFs for a given jet collection for
+  the mono-H analysis
+    1st string can be fullyCorrected,  JECshiftedUp, JECshiftedDown, JERnomianl, JERup, JERdown
+    2nd string is up, central, down variant on the SF itself 
+  note: these may not correspond to  PtOrderedPassingJets since different selections may apply */                   
+  double getZeroBtagEventSF(std::string, std::string, unsigned int);
+
 private:
 
 	std::vector<std::pair<double, NtupleJet>> m_PtJetPairs_fullyCorrected;     /* holder for Pt-NtupleJet pairs */
+  std::vector<double> SF_fullyCorrected,SFup_fullyCorrected,SFdown_fullyCorrected; /* holder for b-tag sfs */
 
   std::vector<std::pair<double, NtupleJet>> m_PtJetPairs_JECshiftedUp;     /* holder for Pt-NtupleJet pairs */
+  std::vector<double> SF_JECshiftedUp,SFup_JECshiftedUp,SFdown_JECshiftedUp;/* holder for b-tag sfs */
 
   std::vector<std::pair<double, NtupleJet>> m_PtJetPairs_JECshiftedDown;     /* holder for Pt-NtupleJet pairs */
+  std::vector<double> SF_JECshiftedDown,SFup_JECshiftedDown,SFdown_JECshiftedDown;/* holder for b-tag sfs */
 
   std::vector<std::pair<double, NtupleJet>> m_PtJetPairs_JERnomianl;     /* holder for Pt-NtupleJet pairs */
+  std::vector<double> SF_JERnomianl,SFup_JERnomianl,SFdown_JERnomianl;/* holder for b-tag sfs */
 
   std::vector<std::pair<double, NtupleJet>> m_PtJetPairs_JERup;     /* holder for Pt-NtupleJet pairs */
+  std::vector<double> SF_JERup,SFup_JERup,SFdown_JERup;/* holder for b-tag sfs */
 
   std::vector<std::pair<double, NtupleJet>> m_PtJetPairs_JERdown;     /* holder for Pt-NtupleJet pairs */
+  std::vector<double> SF_JERdown,SFup_JERdown,SFdown_JERdown;/* holder for b-tag sfs */
 
 
 

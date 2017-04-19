@@ -153,7 +153,56 @@ PUPFjetIdHelper::~PUPFjetIdHelper() {}
 
 
 
-	if (score == 11) return 1;
+    /* NEMF_27_30 */
+    if(PFjetIDworkingPointSrc_.exists("NEMF_27_30"))
+    {        
+      std::vector<double> NEMF_27_30_vec =  PFjetIDworkingPointSrc_.getParameter<std::vector<double> >("NEMF_27_30");
+      score += processPfIdCut(ETA, NEMF, NEMF_27_30_vec);
+    } else score++;
+
+
+    /* NHF_27_30 */
+    if(PFjetIDworkingPointSrc_.exists("NHF_27_30"))
+    {        
+      std::vector<double> NHF_27_30_vec =  PFjetIDworkingPointSrc_.getParameter<std::vector<double> >("NHF_27_30");
+      score += processPfIdCut(ETA, NHF, NHF_27_30_vec);
+    } else score++;
+
+
+    /* NumNeutralParticle_27_30 */
+    if(PFjetIDworkingPointSrc_.exists("NumNeutralParticle_27_30"))
+    {        
+      std::vector<double> NumNeutralParticle_27_30_vec =  PFjetIDworkingPointSrc_.getParameter<std::vector<double> >("NumNeutralParticle_27_30");
+      score += processPfIdCut(ETA, NumNeutralParticle, NumNeutralParticle_27_30_vec);
+    } else score++;
+
+
+    /* NEMF_NEG_30_27 */
+    if(PFjetIDworkingPointSrc_.exists("NEMF_NEG_30_27"))
+    {        
+      std::vector<double> NEMF_NEG_30_27_vec =  PFjetIDworkingPointSrc_.getParameter<std::vector<double> >("NEMF_NEG_30_27");
+      score += processPfIdCut(ETA, NEMF, NEMF_NEG_30_27_vec);
+    } else score++;
+
+
+    /* NHF_NEG_30_27 */
+    if(PFjetIDworkingPointSrc_.exists("NHF_NEG_30_27"))
+    {        
+      std::vector<double> NHF_NEG_30_27_vec =  PFjetIDworkingPointSrc_.getParameter<std::vector<double> >("NHF_NEG_30_27");
+      score += processPfIdCut(ETA, NHF, NHF_NEG_30_27_vec);
+    } else score++;
+
+
+    /* NumNeutralParticle_NEG_30_27 */
+    if(PFjetIDworkingPointSrc_.exists("NumNeutralParticle_NEG_30_27"))
+    {        
+      std::vector<double> NumNeutralParticle_NEG_30_27_vec =  PFjetIDworkingPointSrc_.getParameter<std::vector<double> >("NumNeutralParticle_NEG_30_27");
+      score += processPfIdCut(ETA, NumNeutralParticle, NumNeutralParticle_NEG_30_27_vec);
+    } else score++;
+
+
+
+	if (score == 17) return 1;
 	return 0;
   }
 

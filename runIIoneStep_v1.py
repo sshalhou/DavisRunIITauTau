@@ -28,7 +28,7 @@ DEBUG_NTUPLE_INPUT = False
 # how many events to run, -1 means run all 
 ######################################
 
-MAX_EVENTS = -1
+MAX_EVENTS = 1000
 
 ######################################
 # datasets for local running 
@@ -60,7 +60,18 @@ if dataSetName_ == "/ZprimeToA0hToA0chichihtautau_2HDM_MZp-2500_MA0-500_13TeV-ma
 	myfilelist.extend(['file:/uscms_data/d3/shalhout/Morinond17_monoH.root'])
 
 if dataSetName_ == "/ZprimeToA0hToA0chichihtautau_2HDM_MZp-1200_MA0-300_13TeV-madgraph-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM":
-  myfilelist.extend(['file:/uscms_data/d3/shalhout/CrabCrash_Mor17_2500_MA0-500.root'])
+  myfilelist.extend(['file:./PICK_EVENTS/pickevents_BTAGEFF_MUTAU.root'])
+  myfilelist.extend(['file:./PICK_EVENTS/pickevents_BTAGEFF.root'])
+  #myfilelist.extend(['file:./PICK_EVENTS/pickevents_1.root'])
+  #myfilelist.extend(['file:./PICK_EVENTS/pickevents_2.root'])
+  #myfilelist.extend(['file:./PICK_EVENTS/pickevents_5.root'])
+  #myfilelist.extend(['file:./PICK_EVENTS/pickevents_6.root'])
+  #myfilelist.extend(['file:./PICK_EVENTS/pickevents_7.root'])
+  #myfilelist.extend(['file:./PICK_EVENTS/pickevents_8.root'])
+  #myfilelist.extend(['file:./PICK_EVENTS/pickevents_9.root'])
+
+
+  #myfilelist.extend(['file:/uscms_data/d3/shalhout/CrabCrash_Mor17_2500_MA0-500.root'])
 
 
 

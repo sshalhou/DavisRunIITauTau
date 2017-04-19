@@ -92,11 +92,11 @@ PUjetIDworkingPoint  = cms.PSet(
 
 PFjetIDworkingPoint = cms.PSet(
 
-		# for eta range: |eta| <= 3.0
+		# for eta range: |eta| <= 2.7
 
-		NHF  				= cms.vdouble(-3.0,3.0,0.99,1.0), 	# NHF < 0.99
-		NEMF  				= cms.vdouble(-3.0,3.0,0.99,1.0), 	# NEMF < 0.99	
-		NumConst  			= cms.vdouble(-3.0,3.0,1.0,0.0),	# NumConst > 1
+		NHF  				= cms.vdouble(-2.7,2.7,0.99,1.0), 	# NHF < 0.99
+		NEMF  				= cms.vdouble(-2.7,2.7,0.99,1.0), 	# NEMF < 0.99	
+		NumConst  			= cms.vdouble(-2.7,2.7,1.0,0.0),	# NumConst > 1
 
 		# for eta range: |eta| <= 2.4
 
@@ -105,9 +105,23 @@ PFjetIDworkingPoint = cms.PSet(
 		CEMF  				= cms.vdouble(-2.4,2.4,0.99,1.0),  	    # CEMF < 0.99
 
 
+		# for eta range: 2.7 < eta < 3.0
+		# note par names can't be repeated 
+		NEMF_27_30 			     =  cms.vdouble(2.7,3.0,0.01,0.0), 	    # NEMF > 0.01	
+		NHF_27_30 			     =  cms.vdouble(2.7,3.0,0.98,1.0), 	    # NHF < 0.98	
+		NumNeutralParticle_27_30 =  cms.vdouble(2.7,3.0,2.0,0), 	    # NumNeutralParticle > 2.0	
+
+		# for eta range: -2.7 > eta > -3.0
+		# note par names can't be repeated 
+		NEMF_NEG_30_27 			     =  cms.vdouble(-3.0,-2.7,0.01,0.0), 	    # NEMF > 0.01	
+		NHF_NEG_30_27 			     =  cms.vdouble(-3.0,-2.7,0.98,1.0), 	    # NHF < 0.98	
+		NumNeutralParticle_NEG_30_27 =  cms.vdouble(-3.0,-2.7,2.0,0), 	    # NumNeutralParticle > 2.0	
+
+
+
 		# for eta range: eta > 3.0
 		# note par names can't be repeated 
-		NEMF_HIGH 			     = cms.vdouble(3.0,1000.0,0.90,1.0), 	    # NEMF < 0.99	
+		NEMF_HIGH 			     = cms.vdouble(3.0,1000.0,0.90,1.0), 	    # NEMF < 0.90	
 		NumNeutralParticle_HIGH  = cms.vdouble(3.0,1000.0,10.0,0), 	    # NumNeutralParticle > 10.0	
 
 
@@ -117,6 +131,11 @@ PFjetIDworkingPoint = cms.PSet(
 
 
 									)
+
+
+
+
+
 
 TightPFjetIDworkingPoint = cms.PSet(
 

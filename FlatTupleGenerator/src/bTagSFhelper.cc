@@ -455,6 +455,9 @@ double bTagSFhelper::SF_TightWpUp() const { return m_SF_TightWpUp; }
 double bTagSFhelper::SF_TightWpDown() const { return m_SF_TightWpDown; }
 
 
+double bTagSFhelper::getCutPointMedium() const { return m_cutMedium; }
+
+
 double bTagSFhelper::EFF_LooseWp() const { return m_EFF_LooseWp; }
 double bTagSFhelper::EFF_MediumWp() const { return m_EFF_MediumWp; }
 double bTagSFhelper::EFF_TightWp() const { return m_EFF_TightWp; }

@@ -242,9 +242,12 @@ bool HiggsCandidateCountFilter::filter(edm::Event & iEvent, const edm::EventSetu
       if (NUM_TAUS > 1 && num_taus_passing_TauTau_MVAs > 1) KEEP = 1;    
     }
 
- // if(KEEP && !ACCEPTED_ON_HLT_PATH) std::cout<<" EVENT FAIL DUE TO TRIGGER \n";    
+   if(KEEP && !ACCEPTED_ON_HLT_PATH) std::cout<<" EVENT FAIL DUE TO TRIGGER, BUT KEEPING ANYWAYS SEE HiggsCandidateCountFilter.cc \n";    
 
-  return (KEEP && ACCEPTED_ON_HLT_PATH);
+  //return (KEEP && ACCEPTED_ON_HLT_PATH);
+
+  return KEEP;  
+
 }
 
 

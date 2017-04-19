@@ -270,13 +270,23 @@ svMassAtFlatTupleConfig_(iConfig.getParameter<edm::ParameterSet>("SVMassConfig")
   BTagCalibrationReader m_MediumWpReaderAllVariants_forUDSG( BTagEntry::OP_MEDIUM,"central", {"up", "down"});
   BTagCalibrationReader m_TightWpReaderAllVariants_forUDSG( BTagEntry::OP_TIGHT,"central", {"up", "down"});
   
-  m_LooseWpReaderAllVariants_forB.load(m_calib, BTagEntry::FLAV_B, "mujets");             
-  m_MediumWpReaderAllVariants_forB.load(m_calib, BTagEntry::FLAV_B, "mujets");             
-  m_TightWpReaderAllVariants_forB.load(m_calib, BTagEntry::FLAV_B, "mujets");           
+  // m_LooseWpReaderAllVariants_forB.load(m_calib, BTagEntry::FLAV_B, "mujets");             
+  // m_MediumWpReaderAllVariants_forB.load(m_calib, BTagEntry::FLAV_B, "mujets");             
+  // m_TightWpReaderAllVariants_forB.load(m_calib, BTagEntry::FLAV_B, "mujets");           
 
-  m_LooseWpReaderAllVariants_forC.load(m_calib, BTagEntry::FLAV_C, "mujets");             
-  m_MediumWpReaderAllVariants_forC.load(m_calib, BTagEntry::FLAV_C, "mujets");             
-  m_TightWpReaderAllVariants_forC.load(m_calib, BTagEntry::FLAV_C, "mujets");      
+  // m_LooseWpReaderAllVariants_forC.load(m_calib, BTagEntry::FLAV_C, "mujets");             
+  // m_MediumWpReaderAllVariants_forC.load(m_calib, BTagEntry::FLAV_C, "mujets");             
+  // m_TightWpReaderAllVariants_forC.load(m_calib, BTagEntry::FLAV_C, "mujets");      
+
+  /* wisconsin uses comb not mujets */
+  m_LooseWpReaderAllVariants_forB.load(m_calib, BTagEntry::FLAV_B, "comb");             
+  m_MediumWpReaderAllVariants_forB.load(m_calib, BTagEntry::FLAV_B, "comb");             
+  m_TightWpReaderAllVariants_forB.load(m_calib, BTagEntry::FLAV_B, "comb");           
+
+  m_LooseWpReaderAllVariants_forC.load(m_calib, BTagEntry::FLAV_C, "comb");             
+  m_MediumWpReaderAllVariants_forC.load(m_calib, BTagEntry::FLAV_C, "comb");             
+  m_TightWpReaderAllVariants_forC.load(m_calib, BTagEntry::FLAV_C, "comb");  
+
 
   m_LooseWpReaderAllVariants_forUDSG.load(m_calib, BTagEntry::FLAV_UDSG, "incl");             
   m_MediumWpReaderAllVariants_forUDSG.load(m_calib, BTagEntry::FLAV_UDSG, "incl");             
@@ -3387,6 +3397,7 @@ void FlatTupleGenerator::handlePairIndepInfo(const edm::Event& iEvent, const edm
   BtagEventSFproduct_tightWpCentral_JERdown = 1.0;
 
 
+  std::cout<<" TEST_BTAG_ZERO_SF "<<run<<":"<<luminosityBlock<<":"<<event<<" ..... "<<jethelper.getZeroBtagEventSF("fullyCorrected","central", event)<<"\n";
 
 
 

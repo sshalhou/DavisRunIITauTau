@@ -175,11 +175,11 @@ cp DavisRunIITauTau/ExternalFiles/JECSQLiteFiles/Summer16_23Sep2016V3_MC.db Davi
 # Moriond17 : SINCE AFS IS GOING AWAY we'll have to carry these in github from now on
 # for future updates be sure to adjust this to pull the correct files from whatever source they are hosted on
 #mkdir DavisRunIITauTau/RunTimeDataInput/data/BTAGSF
-#cp /afs/cern.ch/user/s/sshalhou/public/CMSSW_8X_MODS/CSVv2Moriond17_2017_1_26_BtoH.csv .
-#mv CSVv2Moriond17_2017_1_26_BtoH.csv DavisRunIITauTau/RunTimeDataInput/data/BTAGSF/.
+#cp /afs/cern.ch/user/s/sshalhou/public/CMSSW_8X_MODS/CSVv2_Moriond17_B_H.csv .
+#mv CSVv2_Moriond17_B_H.csv DavisRunIITauTau/RunTimeDataInput/data/BTAGSF/.
 
 mkdir DavisRunIITauTau/RunTimeDataInput/data/BTAGSF
-cp DavisRunIITauTau/ExternalFiles/BTAGSF/CSVv2Moriond17_2017_1_26_BtoH.csv DavisRunIITauTau/RunTimeDataInput/data/BTAGSF/.
+cp DavisRunIITauTau/ExternalFiles/BTAGSF/CSVv2_Moriond17_B_H.csv DavisRunIITauTau/RunTimeDataInput/data/BTAGSF/.
 
 
 
