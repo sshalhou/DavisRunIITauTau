@@ -655,7 +655,7 @@ NtuplePairIndependentInfoProducer::produce(edm::Event& iEvent, const edm::EventS
                             defaultBtagAlgorithmNameSrc_);
   
 
-      std::cout<<"XYZ "<<iEvent.id().event()<<" "<<slimmedJets->at(i).pt()<<" "<<slimmedJets->at(i).eta()<<" "<<slimmedJets->at(i).bDiscriminator(defaultBtagAlgorithmNameSrc_)<<"\n";
+      //std::cout<<"XYZ "<<iEvent.id().event()<<" "<<slimmedJets->at(i).pt()<<" "<<slimmedJets->at(i).eta()<<" "<<slimmedJets->at(i).bDiscriminator(defaultBtagAlgorithmNameSrc_)<<"\n";
 
 
 

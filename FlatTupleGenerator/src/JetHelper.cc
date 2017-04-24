@@ -31,22 +31,26 @@ void JetHelper::init(std::vector<NtupleJet> jetVec, std::string jetCut, bTagSFhe
 	SF_fullyCorrected.clear();
 	SFup_fullyCorrected.clear();
 	SFdown_fullyCorrected.clear();
+	
 	SF_JECshiftedUp.clear();
 	SFup_JECshiftedUp.clear();
 	SFdown_JECshiftedUp.clear();
+	
 	SF_JECshiftedDown.clear();
 	SFup_JECshiftedDown.clear();
 	SFdown_JECshiftedDown.clear();
+	
 	SF_JERnomianl.clear();
 	SFup_JERnomianl.clear();
 	SFdown_JERnomianl.clear();
+	
 	SF_JERup.clear();
 	SFup_JERup.clear();
 	SFdown_JERup.clear();
-	SF_JERup.clear();
-	SFup_JERup.clear();
-	SFdown_JERup.clear();
-
+	
+	SF_JERdown.clear();
+	SFup_JERdown.clear();
+	SFdown_JERdown.clear();
 
 
 	/* create container to hold all jet systematic levels */
@@ -269,24 +273,30 @@ void JetHelper::init(std::vector<NtupleJet> jetVec, std::string jetCut,
 	m_PtJetPairs_JERdown.clear();
 
 	/* reset the b-tag SF vectors */
+	
 	SF_fullyCorrected.clear();
 	SFup_fullyCorrected.clear();
 	SFdown_fullyCorrected.clear();
+	
 	SF_JECshiftedUp.clear();
 	SFup_JECshiftedUp.clear();
 	SFdown_JECshiftedUp.clear();
+	
 	SF_JECshiftedDown.clear();
 	SFup_JECshiftedDown.clear();
 	SFdown_JECshiftedDown.clear();
+	
 	SF_JERnomianl.clear();
 	SFup_JERnomianl.clear();
 	SFdown_JERnomianl.clear();
+	
 	SF_JERup.clear();
 	SFup_JERup.clear();
 	SFdown_JERup.clear();
-	SF_JERup.clear();
-	SFup_JERup.clear();
-	SFdown_JERup.clear();
+	
+	SF_JERdown.clear();
+	SFup_JERdown.clear();
+	SFdown_JERdown.clear();
 
 
 	/* create container to hold all jet systematic levels */
@@ -316,13 +326,13 @@ void JetHelper::init(std::vector<NtupleJet> jetVec, std::string jetCut,
 									jetVec[j].PARTON_flavour(), isRealData);
 									/* wisconsin uses PARTON_flavour we used to use HADRON_flavour */
 
-				if(jetSysArray[sys]=="fullyCorrected")
-				{
-					std::cout<<" sf sf sf "<<m_BtagSFTool->SF_MediumWpCentral()<<" pt "<<jetVec[j].pt()<<" eta "<<jetVec[j].eta()<<" raw "<<jetVec[j].defaultBtagAlgorithm_RawScore()<<" ";
-					std::cout<<" parton flavour "<<jetVec[j].PARTON_flavour()<<" ";
-					std::cout<<" hadron flavour "<<jetVec[j].HADRON_flavour()<<" ";
-					std::cout<<" jetSelector "<<jetSelector(jetVec[j])<<"\n";
-				}
+				// if(jetSysArray[sys]=="fullyCorrected")
+				// {
+				// 	std::cout<<" sf sf sf "<<m_BtagSFTool->SF_MediumWpCentral()<<" pt "<<jetVec[j].pt()<<" eta "<<jetVec[j].eta()<<" raw "<<jetVec[j].defaultBtagAlgorithm_RawScore()<<" ";
+				// 	std::cout<<" parton flavour "<<jetVec[j].PARTON_flavour()<<" ";
+				// 	std::cout<<" hadron flavour "<<jetVec[j].HADRON_flavour()<<" ";
+				// 	std::cout<<" jetSelector "<<jetSelector(jetVec[j])<<"\n";
+				// }
 
 				/* set the Btag SFs for the current jet */
 					
@@ -536,11 +546,11 @@ void JetHelper::init(std::vector<NtupleJet> jetVec, std::string jetCut,
     		if(	shift_=="down")    temp_sf_vector = SFdown_JECshiftedUp;
 		}	
 
-	    if(variant_=="JECshiftedUp")
+	    if(variant_=="JECshiftedDown")
     	{
-	    	if(	shift_=="central") temp_sf_vector = SF_JECshiftedUp;
-    		if(	shift_=="up")      temp_sf_vector = SFup_JECshiftedUp;
-    		if(	shift_=="down")    temp_sf_vector = SFdown_JECshiftedUp;
+	    	if(	shift_=="central") temp_sf_vector = SF_JECshiftedDown;
+    		if(	shift_=="up")      temp_sf_vector = SFup_JECshiftedDown;
+    		if(	shift_=="down")    temp_sf_vector = SFdown_JECshiftedDown;
 		}			
 
 	    if(variant_=="JERnomianl")
@@ -569,11 +579,11 @@ void JetHelper::init(std::vector<NtupleJet> jetVec, std::string jetCut,
 		double return_weight = 1.0;
 
 
-		std::cout<<event_<<" EVENT_XXX temp_sf_vector size "<<temp_sf_vector.size()<<"\n";
-		for(std::size_t j = 0; j<temp_sf_vector.size(); ++j)
-		{
-			std::cout<<event_<<" EVENT_XXX temp_sf_vector @ "<<j<<" "<<temp_sf_vector[j]<<"\n";
-		}
+		// std::cout<<event_<<" EVENT_XXX temp_sf_vector size "<<temp_sf_vector.size()<<"\n";
+		// for(std::size_t j = 0; j<temp_sf_vector.size(); ++j)
+		// {
+		// 	std::cout<<event_<<" EVENT_XXX temp_sf_vector @ "<<j<<" "<<temp_sf_vector[j]<<"\n";
+		// }
 
 
 		if(temp_sf_vector.size() == 0) {temp_sf_vector.clear();  return 1.0; }

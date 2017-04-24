@@ -3397,7 +3397,16 @@ void FlatTupleGenerator::handlePairIndepInfo(const edm::Event& iEvent, const edm
   BtagEventSFproduct_tightWpCentral_JERdown = 1.0;
 
 
-  std::cout<<" TEST_BTAG_ZERO_SF "<<run<<":"<<luminosityBlock<<":"<<event<<" ..... "<<jethelper.getZeroBtagEventSF("fullyCorrected","central", event)<<"\n";
+  /* set the Wisconsin style zero b-tag event weights */
+
+  jets_zero_btag_event_weight = jethelper.getZeroBtagEventSF("fullyCorrected","central", event);
+  jets_zero_btag_event_weight_up = jethelper.getZeroBtagEventSF("fullyCorrected","up", event);
+  jets_zero_btag_event_weight_down = jethelper.getZeroBtagEventSF("fullyCorrected","down", event);
+  jets_JECshiftedUp_zero_btag_event_weight = jethelper.getZeroBtagEventSF("JECshiftedUp","central", event);
+  jets_JECshiftedDown_zero_btag_event_weight = jethelper.getZeroBtagEventSF("JECshiftedDown","central", event);
+  jets_JERup_zero_btag_event_weight = jethelper.getZeroBtagEventSF("JERup","central", event);
+  jets_JERdown_zero_btag_event_weight = jethelper.getZeroBtagEventSF("JERdown","central", event);
+
 
 
 
@@ -4655,7 +4664,14 @@ void FlatTupleGenerator::handlePairIndepInfo(const edm::Event& iEvent, const edm
   jets_IsBTagged_TightWpDown_JERdown.clear();
   jets_PF_jetIdPassedTight_JERdown.clear();
 
-
+  /* new wisconsin style zero b-tag event weights */
+  jets_zero_btag_event_weight = 1.0;
+  jets_zero_btag_event_weight_up = 1.0;
+  jets_zero_btag_event_weight_down = 1.0;
+  jets_JECshiftedUp_zero_btag_event_weight = 1.0;
+  jets_JECshiftedDown_zero_btag_event_weight = 1.0;
+  jets_JERup_zero_btag_event_weight = 1.0;
+  jets_JERdown_zero_btag_event_weight = 1.0;
 
 
 
@@ -5740,6 +5756,17 @@ void FlatTupleGenerator::beginJob()
   FlatTuple->Branch("jets_IsBTagged_MediumWpCentral", &jets_IsBTagged_MediumWpCentral);
   FlatTuple->Branch("jets_IsBTagged_TightWpCentral", &jets_IsBTagged_TightWpCentral);
   FlatTuple->Branch("jets_PF_jetIdPassedTight", &jets_PF_jetIdPassedTight);
+
+  /* the wisconsin style zero btag event weights */
+
+  FlatTuple->Branch("jets_zero_btag_event_weight", &jets_zero_btag_event_weight);
+  FlatTuple->Branch("jets_zero_btag_event_weight_up", &jets_zero_btag_event_weight_up);
+  FlatTuple->Branch("jets_zero_btag_event_weight_down", &jets_zero_btag_event_weight_down);
+ 
+  FlatTuple->Branch("jets_JECshiftedUp_zero_btag_event_weight", &jets_JECshiftedUp_zero_btag_event_weight);
+  FlatTuple->Branch("jets_JECshiftedDown_zero_btag_event_weight", &jets_JECshiftedDown_zero_btag_event_weight);
+  FlatTuple->Branch("jets_JERup_zero_btag_event_weight", &jets_JERup_zero_btag_event_weight);
+  FlatTuple->Branch("jets_JERdown_zero_btag_event_weight", &jets_JERdown_zero_btag_event_weight);
 
   /* the new mono_H style btag SFs */
   FlatTuple->Branch("BtagEventSFproduct_looseWpDown",  &BtagEventSFproduct_looseWpDown);
