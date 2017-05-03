@@ -579,11 +579,11 @@ void JetHelper::init(std::vector<NtupleJet> jetVec, std::string jetCut,
 		double return_weight = 1.0;
 
 
-		// std::cout<<event_<<" EVENT_XXX temp_sf_vector size "<<temp_sf_vector.size()<<"\n";
-		// for(std::size_t j = 0; j<temp_sf_vector.size(); ++j)
-		// {
-		// 	std::cout<<event_<<" EVENT_XXX temp_sf_vector @ "<<j<<" "<<temp_sf_vector[j]<<"\n";
-		// }
+		std::cout<<event_<<" EVENT_XXX temp_sf_vector size "<<temp_sf_vector.size()<<"\n";
+		for(std::size_t j = 0; j<temp_sf_vector.size(); ++j)
+		{
+			std::cout<<event_<<" EVENT_XXX temp_sf_vector @ "<<j<<" "<<temp_sf_vector[j]<<"\n";
+		}
 
 
 		if(temp_sf_vector.size() == 0) {temp_sf_vector.clear();  return 1.0; }

@@ -158,25 +158,25 @@ if sampleData.EventType == 'DATA':
 	process.GlobalTag = GlobalTag(process.GlobalTag, '80X_dataRun2_2016SeptRepro_v7', '')
 	#process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:run2_data', '')
 
-  # not sure about this
-  # # period RunH data for 2016 uses a different global tag from the BCDEFG
-  # if sampleData.DataSet == '/SingleElectron/Run2016H-03Feb2017_ver2-v1/MINIAOD':
-  #   process.GlobalTag = GlobalTag(process.GlobalTag, '80X_dataRun2_Prompt_v16', '')
+# not sure about this
+# # period RunH data for 2016 uses a different global tag from the BCDEFG
+if sampleData.DataSet == '/SingleElectron/Run2016H-03Feb2017_ver2-v1/MINIAOD':
+  process.GlobalTag = GlobalTag(process.GlobalTag, '80X_dataRun2_Prompt_v16', '')
 
-  # if sampleData.DataSet == '/SingleElectron/Run2016H-03Feb2017_ver3-v1/MINIAOD':
-  #   process.GlobalTag = GlobalTag(process.GlobalTag, '80X_dataRun2_Prompt_v16', '')
+if sampleData.DataSet == '/SingleElectron/Run2016H-03Feb2017_ver3-v1/MINIAOD':
+  process.GlobalTag = GlobalTag(process.GlobalTag, '80X_dataRun2_Prompt_v16', '')
 
-  # if sampleData.DataSet == '/SingleMuon/Run2016H-03Feb2017_ver2-v1/MINIAOD':
-  #   process.GlobalTag = GlobalTag(process.GlobalTag, '80X_dataRun2_Prompt_v16', '')
+if sampleData.DataSet == '/SingleMuon/Run2016H-03Feb2017_ver2-v1/MINIAOD':
+  process.GlobalTag = GlobalTag(process.GlobalTag, '80X_dataRun2_Prompt_v16', '')
 
-  # if sampleData.DataSet == '/SingleMuon/Run2016H-03Feb2017_ver3-v1/MINIAOD':
-  #   process.GlobalTag = GlobalTag(process.GlobalTag, '80X_dataRun2_Prompt_v16', '')
+if sampleData.DataSet == '/SingleMuon/Run2016H-03Feb2017_ver3-v1/MINIAOD':
+  process.GlobalTag = GlobalTag(process.GlobalTag, '80X_dataRun2_Prompt_v16', '')
 
-  # if sampleData.DataSet == '/Tau/Run2016H-03Feb2017_ver2-v1/MINIAOD':
-  #   process.GlobalTag = GlobalTag(process.GlobalTag, '80X_dataRun2_Prompt_v16', '')
+if sampleData.DataSet == '/Tau/Run2016H-03Feb2017_ver2-v1/MINIAOD':
+  process.GlobalTag = GlobalTag(process.GlobalTag, '80X_dataRun2_Prompt_v16', '')
 
-  # if sampleData.DataSet == '/Tau/Run2016H-03Feb2017_ver3-v1/MINIAOD':
-  #   process.GlobalTag = GlobalTag(process.GlobalTag, '80X_dataRun2_Prompt_v16', '')
+if sampleData.DataSet == '/Tau/Run2016H-03Feb2017_ver3-v1/MINIAOD':
+  process.GlobalTag = GlobalTag(process.GlobalTag, '80X_dataRun2_Prompt_v16', '')
 
 
 print '********** HAVE MANUALLY SET GLOBAL TAG SET TO  *********************'
