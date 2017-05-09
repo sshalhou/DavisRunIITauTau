@@ -29,7 +29,7 @@ filter_ = []
 
 
 # these are aligned with Wisconsin mono-H analysis for resolved tau channels
-filter_.append('pt>20.0') 	   
+filter_.append('pt>17.0') 	   # was 20 ; changed for TauES @ sync tree
 filter_.append('abs(eta)<2.3') 
 filter_.append('tauID("decayModeFinding")>0.5')
 filter_.append('abs(userFloat("dz"))<0.2')

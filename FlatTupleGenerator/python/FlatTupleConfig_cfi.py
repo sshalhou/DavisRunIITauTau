@@ -171,7 +171,7 @@ muon_MuonTau.append("passesTightMuonId==1.0")
 
 # tau in MuonTau final state :
 tau_MuonTau = []
-tau_MuonTau.append("pt>20")
+tau_MuonTau.append("pt>17") # was 20 ; changed for TauES @ sync tree
 tau_MuonTau.append("abs(eta)<2.3")
 tau_MuonTau.append("tauID('decayModeFinding') > 0.5")                                        
 tau_MuonTau.append("abs(dz)<0.2")
@@ -199,7 +199,7 @@ ele_EleTau.append("numberOfMissingInnerHits<=1")
 
 # tau in EleTau final state :
 tau_EleTau = []
-tau_EleTau.append("pt>20")
+tau_EleTau.append("pt>17") # was 20 ; changed for TauES @ sync tree
 tau_EleTau.append("abs(eta)<2.3")
 tau_EleTau.append("tauID('decayModeFinding') > 0.5")                                        
 tau_EleTau.append("abs(dz)<0.2")
@@ -207,7 +207,7 @@ tau_EleTau.append("abs(charge)==1.0")
 
 # tau in TauTau final state :
 tau_TauTau = []
-tau_TauTau.append("pt>40")
+tau_TauTau.append("pt>35") # was 20 ; changed for TauES @ sync tree
 tau_TauTau.append("abs(eta)<2.1")
 tau_TauTau.append("tauID('decayModeFinding') > 0.5")                                        
 tau_TauTau.append("abs(dz)<0.2")

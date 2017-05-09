@@ -1283,6 +1283,28 @@ sampleInfo.append(aPSet)
 
 
 
+
+aPSet = cms.PSet(
+    DataSet = cms.string("/VBFHToWWTo2L2Nu_M125_13TeV_powheg_JHUgen_pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM"),
+    EventTotal = cms.int32(499200),
+    NumberOfLumis = cms.int32(2551),
+    MaxLumiBlock = cms.int32(2555),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("VBFHToWW2L2Nu_M125"),
+    DataCard = cms.string("SMHIGGS"),
+    CrossSection = cms.double(0.0858),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(2.0),
+    ProductionInfo = cms.string("Run2016_B_C_D_E_F_G_H"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("NONE"),
+    KeepTheoryScaleFactors = cms.bool(False),
+    HLTversion = cms.string("HLT"),
+       )
+sampleInfo.append(aPSet)
+
+
+
 ################################
 # 2017 Moriond MonoH Signals   #
 ################################

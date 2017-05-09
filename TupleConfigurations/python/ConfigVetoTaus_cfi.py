@@ -29,7 +29,7 @@ filter_ = []
 # FlatTupleConfig_cfi.py 
 # ----------------------------------------------------
 # ------------[user edit here]------------------------
-filter_.append('pt>15.0') 	   
+filter_.append('pt>12.0') 	   # was 15 ; changed for TauES @ sync tree
 filter_.append('abs(eta)<2.3') 
 filter_.append('tauID("decayModeFinding")>0.5')
 filter_.append('abs(userFloat("dz"))<0.2')
