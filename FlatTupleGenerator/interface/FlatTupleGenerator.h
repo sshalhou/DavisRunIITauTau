@@ -1199,6 +1199,7 @@ public:
     /* gen level boson 4-vectors Z/W/H */
     double genBosonTotal_pt, genBosonTotal_eta, genBosonTotal_phi, genBosonTotal_M; 	    /* the gen total 4-vector of W/Z/H */
 	double genBosonVisible_pt, genBosonVisible_eta, genBosonVisible_phi, genBosonVisible_M; /* the gen visible 4-vector of W/Z/H */
+	double MaxPtGenBoson_WisconinStyle_pt,  MaxPtGenBoson_WisconinStyle_eta,  MaxPtGenBoson_WisconinStyle_phi,  MaxPtGenBoson_WisconinStyle_M; /* gen W,Z,H with max pt */
 
     /* for DY at gen level how does the Z decay ? */
 

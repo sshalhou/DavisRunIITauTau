@@ -3342,6 +3342,13 @@ void FlatTupleGenerator::handlePairIndepInfo(const edm::Event& iEvent, const edm
   genBosonVisible_phi = currentINDEP.GenBosonVisibleMomentum().phi();
   genBosonVisible_M = currentINDEP.GenBosonVisibleMomentum().M();
 
+
+  MaxPtGenBoson_WisconinStyle_pt = currentINDEP.MaxPtGenBoson_WisconinStyle().pt();
+  MaxPtGenBoson_WisconinStyle_eta = currentINDEP.MaxPtGenBoson_WisconinStyle().eta();
+  MaxPtGenBoson_WisconinStyle_phi = currentINDEP.MaxPtGenBoson_WisconinStyle().phi();
+  MaxPtGenBoson_WisconinStyle_M = currentINDEP.MaxPtGenBoson_WisconinStyle().M();
+
+
   /* handle the jets - there is a slight dep. on leptons here due to DR cuts */
 
 
@@ -4755,6 +4762,12 @@ void FlatTupleGenerator::handlePairIndepInfo(const edm::Event& iEvent, const edm
   genBosonVisible_phi = NAN;
   genBosonVisible_M = NAN;
 
+
+MaxPtGenBoson_WisconinStyle_pt  = NAN;
+MaxPtGenBoson_WisconinStyle_eta  = NAN;
+MaxPtGenBoson_WisconinStyle_phi  = NAN;
+MaxPtGenBoson_WisconinStyle_M  = NAN;
+
   isZTTatGenLevel = 0;
   isZEEatGenLevel = 0;
   isZMMatGenLevel = 0;
@@ -5554,6 +5567,14 @@ void FlatTupleGenerator::beginJob()
   FlatTuple->Branch("genBosonVisible_eta", &genBosonVisible_eta); 
   FlatTuple->Branch("genBosonVisible_phi", &genBosonVisible_phi); 
   FlatTuple->Branch("genBosonVisible_M", &genBosonVisible_M); 
+
+
+  FlatTuple->Branch("MaxPtGenBoson_WisconinStyle_pt", &MaxPtGenBoson_WisconinStyle_pt); 
+  FlatTuple->Branch("MaxPtGenBoson_WisconinStyle_eta", &MaxPtGenBoson_WisconinStyle_eta); 
+  FlatTuple->Branch("MaxPtGenBoson_WisconinStyle_phi", &MaxPtGenBoson_WisconinStyle_phi); 
+  FlatTuple->Branch("MaxPtGenBoson_WisconinStyle_M", &MaxPtGenBoson_WisconinStyle_M); 
+
+
 
   FlatTuple->Branch("isZTTatGenLevel", &isZTTatGenLevel);
   FlatTuple->Branch("isZEEatGenLevel", &isZEEatGenLevel);

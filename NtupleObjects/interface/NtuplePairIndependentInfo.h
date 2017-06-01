@@ -87,6 +87,7 @@ public:
 
   /* fill the boson 4-vectors at gen level */
 
+  void fill_MaxPtGenBoson_WisconinStyle(LorentzVector);
   void fill_GenBosonVisibleMomentum(LorentzVector);
   void fill_GenBosonTotalMomentum(LorentzVector); 
 
@@ -147,6 +148,7 @@ public:
 
   /* gen boson 4-vectors */
 
+  LorentzVector MaxPtGenBoson_WisconinStyle() const;
   LorentzVector GenBosonVisibleMomentum() const;
   LorentzVector GenBosonTotalMomentum() const;
 
@@ -223,6 +225,7 @@ private:
 
   /* gen boson 4-vectors */
 
+  LorentzVector m_MaxPtGenBoson_WisconinStyle;
   LorentzVector m_GenBosonVisibleMomentum;
   LorentzVector m_GenBosonTotalMomentum;
 

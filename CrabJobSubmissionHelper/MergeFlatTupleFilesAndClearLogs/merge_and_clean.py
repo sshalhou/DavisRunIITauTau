@@ -21,6 +21,8 @@ import argparse
 import subprocess
 import FWCore.ParameterSet.Config as cms
 
+MAX_ATTEMPTS = 5
+
 def splitList(list, mergeCount):
     for l in range(0, len(list), mergeCount):
         yield list[l:l+mergeCount]
@@ -101,6 +103,12 @@ for dir_ in dirFile_:
 
 		#print SUB_DIRS
 
+	############
+	# track total merged and unmerged event counts
+
+	total_event_count_for_all = 0
+	total_event_count_for_all_merged = 0
+
 	#####################################
 	# loop over sub-dirs and find ROOT FILES
 	#####################################
@@ -112,7 +120,7 @@ for dir_ in dirFile_:
 		if formatt_fix.startswith("/eos/uscms"):
 			formatt_fix = SUB_DIRS[d][len("/eos/uscms"):]
 	
-		print " format fix = ", formatt_fix
+		#print " format fix = ", formatt_fix
 		# check which xrdfsls command as xrdfsls is an alias  
 		command = 'xrdfs root://cmseos.fnal.gov ls -u ' + formatt_fix + ' | grep FlatTuple | grep root | grep -v merged | grep -v failed | grep -v log '
 		fileListRaw = os.popen(command).read()
@@ -143,6 +151,7 @@ for dir_ in dirFile_:
 		
 		print len(fileList), "ROOT Files will be merged ~ ",  split_dir_[1], " at a time to produce ", 	total_splits, " new files"
 		sys.stdout.flush() 
+
 	#####################################
 	# loop over merge lists, counting events in TTree
 	# and perform merge
@@ -160,131 +169,201 @@ for dir_ in dirFile_:
 			print "**** manually delete ", tmpDirName, " and try again "
 			continue
 
-		total_event_count_for_all = 0
-		total_event_count_for_all_merged = 0
+
 
 		for m in range(0,len(master_split_list)):
-			print len(master_split_list[m])
+			#print len(master_split_list[m])
 			localName = tmpDirName + "/mergeJob"+str(m)
 			makeDir = "mkdir "+localName
 			os.system(makeDir)
 
 	#####################################
 	# 1st check event count before merge
+	# require triple-vote count match before
+	# deleting originals 
 	#####################################			
 
 			tempChain = TChain(split_dir_[2])
+			tempChainCHECK1 = TChain(split_dir_[2])
+			tempChainCHECK2 = TChain(split_dir_[2])
+			
+			#####################################
+			# create a list of files to merge   #
+			#####################################
+
+			initial_count = 0
+			initial_countCHECK1 = 1
+			initial_countCHECK2 = 2
 			hadd_oldFiles = ''
 
-			for file in master_split_list[m]:
-				hadd_oldFiles += (" "+file)
-			 	tempChain.Add(file)
-			initial_count = tempChain.GetEntries()
-			total_event_count_for_all += initial_count
-			print initial_count, " events found in EOS location in TTree ", split_dir_[2]
+			# keep count of attempts at forming TTrees
+			# program will abort if reach MAX_ATTEMPTS
+			attemptCount1 = 0
+			while initial_count!=initial_countCHECK1 or initial_count!=initial_countCHECK1 or initial_countCHECK1!=initial_countCHECK2:
 
-			hadd_newFile = localName+"/FlatTuple_merged"+str(m)+".root"
-			hadd_command = "hadd "+ hadd_newFile + " " + hadd_oldFiles
-			print "Running hadd ... "
-			os.system(hadd_command)
-			sys.stdout.flush() 
+				# reset chains
+				tempChain.Reset()
+				tempChainCHECK1.Reset()
+				tempChainCHECK2.Reset()
 
-	##############################
-	# if you make really large file count merges, hadd may produce more than 1 new file		
-	# when it hits the max TTree size 
-	# so check the files created
+				hadd_oldFiles = ''
+				for file in master_split_list[m]:
+					hadd_oldFiles += (" "+file)
+				
+				 	tempChain.Add(file)
+				 	tempChainCHECK1.Add(file)
+				 	tempChainCHECK2.Add(file)
 
-			produced_files = [] 
+				initial_count = tempChain.GetEntries()
+				initial_countCHECK1 = tempChainCHECK1.GetEntries()
+				initial_countCHECK2 = tempChainCHECK2.GetEntries()
 
-			for prod_file in os.listdir(localName):
-				if prod_file.endswith('.root'):
-					produced_files.append(localName+"/"+prod_file)
+				attemptCount1+=1
+				if( attemptCount1 > MAX_ATTEMPTS) :
+					print " ************** "
+					print " ************** REACHED MAX MERGE ATTEMPT COUNT EXITING PROGRAM ************** "
+					print " ************** FAIL OCCURRED ON DIR : ", formatt_fix
+					print " ************** WHILE TRYING TO FORM TChains for Merging "
+					print " ************** "
+					sys.exit()
 
-			print "----> Merge has created ", len(produced_files), ' new files : '
-			print produced_files
+				print "************************************************************************ "
+				print "************************************************************************ "
+				print "********", initial_count, " events found in EOS location in TTree ", split_dir_[2]
+				#print " extra count checks are ", initial_countCHECK1, " and ", initial_countCHECK2, " ************"
 
-			print "verifying event count in new file ..."
-			tempChainNEW = TChain(split_dir_[2])
-
-			for xfile in produced_files:
-				tempChainNEW.Add(xfile)
-
-			final_count = tempChainNEW.GetEntries()
-			total_event_count_for_all_merged += final_count
-			print "found ", final_count, " events in new file "
-
-			###############
-			# check merge result
-
-			if 	final_count != 	initial_count:	 
-				print "**** ERORR **** event mis-match "
-				print "**** FOR MERGE ATTEMPT IN ", SUB_DIRS[d], " split group # ", m , " in ", localName
-				print "**** ABORT no files from this merge will be modified on EOS ***" 
-
-
-			####################################################	
-			#  obtain checksum in prep for writing file to EOS   	 
-
-			else :
-				checksum_local = ""
-				checksum_eos = ""
-				for xfile in produced_files:
-					command = "adler32 "+xfile
-					print command
-					checksum_local = ((os.popen(command).read()).split(" ")[0]).replace(" ","").replace("\n","")
-					eos_file = (master_split_list[m][0]).split("FlatTuple")[0]+xfile.split("/")[2]
-					copyCommand = "xrdcp "+ xfile + " " +eos_file										
-					print " copying merged file to EOS : ", copyCommand
-					os.system(copyCommand)
-					eos_total = ("/store"+eos_file.split("store")[1])
-					eos_base =  eos_total.split("FlatTuple")[0]
-					eos_file = 	eos_total.split("FlatTuple")[1]
-					remoteCheck = "eos root://cmseos.fnal.gov fileinfo " + eos_total + " --checksum"
-					#print remoteCheck
-					checksum_eos = ((os.popen(remoteCheck).read()).split("xs:")[1]).replace(" ","").replace("\n","")
-					#print checksum_local
-					#print checksum_eos
-
-
-				print "----------------------------------------------------------"
-				print "-----transfer check--------"
-				print " CHECKSUM LOCAL = ", checksum_local
-				print " CHECKSUM EOS = ", checksum_eos
-				sys.stdout.flush() 
-
-				print "----------------------------------------------------------"
-				print "----------------------------------------------------------"
-				print "TOTAL EVENT COUNTS ", total_event_count_for_all, " vs. ", total_event_count_for_all_merged
-				print "----------------------------------------------------------"
-				print "----------------------------------------------------------"
-				sys.stdout.flush() 
-
-				if checksum_eos != checksum_local:
-					print " TRANSFER FAIL ... ABORT, PLEASE TRY AGAIN"
-					print "**** FOR MERGE ATTEMPT IN ", SUB_DIRS[d], " split group # ", m , " in ", localName
-					print "**** COPY TO EOS HAS FAILED no files from this merge will be modified on EOS ***" 
+				if initial_count!=initial_countCHECK1 or initial_count!=initial_countCHECK1 or initial_countCHECK1!=initial_countCHECK2:
+					print "******** SOMETHING WENT WRONG, ATTEMPTING TO REFORM TChain ******* "
 				else:
-					print " TRANSFER SUCCESS"
+					print "******** TChain Successfully formed for merging ************"
+					total_event_count_for_all += initial_count
 
-				rm_commands = []
-				if int(split_dir_[3]) == 1:
-					print " PERFORMING CLEANUP IN ", split_dir_[0]					
-					rm_commands.append("eos root://cmseos.fnal.gov rm -r "+eos_base+"log")
-					rm_commands.append("eos root://cmseos.fnal.gov rm -r "+eos_base+"failed")
-					for rm_file in master_split_list[m]:
-						file_suffix = rm_file.split("FlatTuple")[1]
-						rm_commands.append("eos root://cmseos.fnal.gov rm "+eos_base+"FlatTuple"+file_suffix)
-
-
-				#print rm_commands
+			name_suffix = 	(os.popen("date | awk \'{print $2$3\"_\"$4}\' | sed \'s/://g\'").read()).rstrip()
+			hadd_newFile = localName+"/FlatTuple_merged"+str(m)+"_"+str(name_suffix)+".root"
+			hadd_logName = localName+"/log_FlatTuple_merged"+str(m)+"_"+str(name_suffix)+".txt"
+			hadd_command = "hadd "+ hadd_newFile + " " + hadd_oldFiles + ">& "+str(hadd_logName)
+	
+			#print "     ************ NEW FILE NAME = ", hadd_newFile ," ************"
+			#print hadd_command
 
 
-				if total_event_count_for_all == total_event_count_for_all_merged :	
-					for do_rm in rm_commands:
-						os.system(do_rm)
-					for xfile in produced_files:
-						os.system("rm -rf "+xfile)
+			##############################
+			# if you make really large file count merges, hadd may produce more than 1 new file		
+			# when it hits the max TTree size 
+			# so check the files created
 
+			hadd_count1 = 0
+
+			# keep count of attempts at running HADD
+			# program will abort if reach MAX_ATTEMPTS
+			attemptCount2 = 0
+		
+			while hadd_count1!=initial_count:
+				print "Running hadd ... screen output in ", hadd_logName
+				os.system(hadd_command)
 				sys.stdout.flush() 
+
+				
+				produced_files = []
+				for prod_file in os.listdir(localName):
+					if prod_file.endswith('.root'):
+						produced_files.append(localName+"/"+prod_file)
+
+				#print "----> Merge has created ", len(produced_files), ' new files : '
+				#print produced_files
+
+				#print "verifying event count in new file ..."
+				haddChain = TChain(split_dir_[2])
+
+
+				for xfile in produced_files:
+					haddChain.Add(xfile)
+				hadd_count1 = haddChain.GetEntries()
+
+				#print "found ", hadd_count1, " events in new file "
+
+
+				attemptCount2 += 1
+				if( attemptCount2 > MAX_ATTEMPTS) :
+					print " ************** "
+					print " ************** REACHED MAX MERGE ATTEMPT COUNT EXITING PROGRAM ************** "
+					print " ************** FAIL OCCURRED ON DIR : ", formatt_fix
+					print " ************** WHILE TRYING TO RUN HADD COMMAND "
+					print " ************** "
+					sys.exit()
+
+				if(hadd_count1!=initial_count): 
+					print " ************ HADD FAILULRE -- WILL TRY AGAIN ************ "
+					fail_rm_command = "rm -rf "+str(hadd_newFile)
+					os.system(fail_rm_command)
+				else :
+					print " ************ HADD WORKED FINE ************ "
+					total_event_count_for_all_merged += hadd_count1
+
+					#print " ************ preparing transfer validation ************ "
+
+					for xfile in produced_files:
+						checksum_local = ""
+						checksum_eos = "XXXXX"
+						command = "adler32 "+xfile
+						#print command
+						checksum_local = ((os.popen(command).read()).split(" ")[0]).replace(" ","").replace("\n","")
+						eos_file = (master_split_list[m][0]).split("FlatTuple")[0]+xfile.split("/")[2]
+						copyCommand = "xrdcp "+ xfile + " " +eos_file										
+						
+						copyAttemptCount = 0
+						while checksum_local != checksum_eos:
+							#print " copying merged file to EOS : ", copyCommand
+							os.system(copyCommand)
+							eos_total = ("/store"+eos_file.split("store")[1])
+							eos_base =  eos_total.split("FlatTuple")[0]
+							eos_file = 	eos_total.split("FlatTuple")[1]
+							remoteCheck = "eos root://cmseos.fnal.gov fileinfo " + eos_total + " --checksum"
+							# #print remoteCheck
+							checksum_eos = ((os.popen(remoteCheck).read()).split("xs:")[1]).replace(" ","").replace("\n","")
+
+							if( checksum_local == checksum_eos):
+								print " **** TRANSFER MERGED FILE TO EOS SUCCESS ****** "
+								#print " CHECKSUM LOCAL = ", checksum_local
+								#print " CHECKSUM EOS = ", checksum_eos							
+							else :
+								print " **** TRANSFER MERGED FILE TO FAILED, Trying again  ****** "
+								print " CHECKSUM LOCAL = ", checksum_local
+								print " CHECKSUM EOS = ", checksum_eos
+								rmFailCommand = "eos root://cmseos.fnal.gov rm "+eos_total
+								os.system(rmFailCommand)
+
+								copyAttemptCount += 1
+								if(copyAttemptCount> MAX_ATTEMPTS) :
+									print " ************** "
+									print " ************** REACHED MAX COPY ATTEMPT COUNT EXITING PROGRAM ************** "
+									print " ************** FAIL OCCURRED ON DIR : ", formatt_fix
+									print " ************** WHILE TRYING TO COPY MERGED FILE TO EOS "
+									print " ************** "
+									sys.exit()
+
+					################################################
+					# if made it here it means we can try cleanup on EOS
+					####################################################
+
+					print total_event_count_for_all, " vs ", total_event_count_for_all_merged
+					if( total_event_count_for_all == total_event_count_for_all_merged):
+						rm_commands = []
+						if int(split_dir_[3]) == 1:
+							print " PERFORMING CLEANUP IN ", split_dir_[0]					
+							#rm_commands.append("eos root://cmseos.fnal.gov rm -r "+eos_base+"log")
+							#rm_commands.append("eos root://cmseos.fnal.gov rm -r "+eos_base+"failed")
+							for rm_file in master_split_list[m]:
+								file_suffix = rm_file.split("FlatTuple")[1]
+								rm_commands.append("eos root://cmseos.fnal.gov rm "+eos_base+"FlatTuple"+file_suffix)
+
+							for do_rm in rm_commands:
+								os.system(do_rm)
+							for xfile in produced_files:
+								os.system("rm -rf "+xfile)
+
+	print " *** FINAL MERGE REPORT FOR ", SUB_DIRS[d], " PRE-MERGE TOTAL COUNT = ", total_event_count_for_all,
+	print " post merge total = ", total_event_count_for_all_merged
+	sys.stdout.flush() 
 
 

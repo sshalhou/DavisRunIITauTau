@@ -49,6 +49,7 @@ NtuplePairIndependentInfo::NtuplePairIndependentInfo()
 
 
 
+  m_MaxPtGenBoson_WisconinStyle.SetXYZT(NAN,NAN,NAN,NAN);
   m_GenBosonVisibleMomentum.SetXYZT(NAN,NAN,NAN,NAN);
   m_GenBosonTotalMomentum.SetXYZT(NAN,NAN,NAN,NAN);
 
@@ -58,6 +59,12 @@ NtuplePairIndependentInfo::NtuplePairIndependentInfo()
 
 }
 
+
+
+void  NtuplePairIndependentInfo::fill_MaxPtGenBoson_WisconinStyle(LorentzVector X)
+{  
+  m_MaxPtGenBoson_WisconinStyle  = X;
+}
 
 void  NtuplePairIndependentInfo::fill_GenBosonVisibleMomentum(LorentzVector X)
 {  
@@ -348,6 +355,7 @@ bool NtuplePairIndependentInfo::DuplicateMuonTaggedMoriond17() const { return m_
 
 
 
+LorentzVector  NtuplePairIndependentInfo::MaxPtGenBoson_WisconinStyle() const { return m_MaxPtGenBoson_WisconinStyle; };
 LorentzVector  NtuplePairIndependentInfo::GenBosonVisibleMomentum() const { return m_GenBosonVisibleMomentum; };
 LorentzVector  NtuplePairIndependentInfo::GenBosonTotalMomentum() const { return m_GenBosonTotalMomentum; };
 

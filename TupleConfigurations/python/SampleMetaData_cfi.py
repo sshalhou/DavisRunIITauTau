@@ -1304,6 +1304,215 @@ aPSet = cms.PSet(
 sampleInfo.append(aPSet)
 
 
+aPSet = cms.PSet(
+    DataSet = cms.string("/EWKWMinus2Jets_WToLNu_M-50_13TeV-madgraph-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext2-v1/MINIAODSIM"),
+    EventTotal = cms.int32(3841472),
+    NumberOfLumis = cms.int32(23418),
+    MaxLumiBlock = cms.int32(24391),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("EWKWMinus2Jets_WToLNu_M-50--ext2-v1"),
+    DataCard = cms.string("EWK"),
+    CrossSection = cms.double(20.25000),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(2.0),
+    ProductionInfo = cms.string("Run2016_B_C_D_E_F_G_H"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("NONE"),
+    KeepTheoryScaleFactors = cms.bool(False),
+    HLTversion = cms.string("HLT"),
+       )
+sampleInfo.append(aPSet)
+
+
+
+aPSet = cms.PSet(
+    DataSet = cms.string("/EWKWPlus2Jets_WToLNu_M-50_13TeV-madgraph-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext1-v1/MINIAODSIM"),
+    EventTotal = cms.int32(500000),
+    NumberOfLumis = cms.int32(2571),
+    MaxLumiBlock = cms.int32(2571),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("EWKWPlus2Jets_WToLNu_M-50--ext1-v1"),
+    DataCard = cms.string("EWK"),
+    CrossSection = cms.double(25.62000),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(2.0),
+    ProductionInfo = cms.string("Run2016_B_C_D_E_F_G_H"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("NONE"),
+    KeepTheoryScaleFactors = cms.bool(False),
+    HLTversion = cms.string("HLT"),
+       )
+sampleInfo.append(aPSet)
+
+
+
+aPSet = cms.PSet(
+    DataSet = cms.string("/EWKWPlus2Jets_WToLNu_M-50_13TeV-madgraph-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext2-v1/MINIAODSIM"),
+    EventTotal = cms.int32(3939705),
+    NumberOfLumis = cms.int32(20256),
+    MaxLumiBlock = cms.int32(20566),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("EWKWPlus2Jets_WToLNu_M-50--ext2-v1"),
+    DataCard = cms.string("EWK"),
+    CrossSection = cms.double(25.62000),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(2.0),
+    ProductionInfo = cms.string("Run2016_B_C_D_E_F_G_H"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("NONE"),
+    KeepTheoryScaleFactors = cms.bool(False),
+    HLTversion = cms.string("HLT"),
+       )
+sampleInfo.append(aPSet)
+
+
+
+aPSet = cms.PSet(
+    DataSet = cms.string("/EWKZ2Jets_ZToLL_M-50_13TeV-madgraph-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext1-v1/MINIAODSIM"),
+    EventTotal = cms.int32(150000),
+    NumberOfLumis = cms.int32(973),
+    MaxLumiBlock = cms.int32(973),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("EWKZ2Jets_ZToLL_M-50--ext1-v1"),
+    DataCard = cms.string("EWK"),
+    CrossSection = cms.double(3.98700),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(2.0),
+    ProductionInfo = cms.string("Run2016_B_C_D_E_F_G_H"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("NONE"),
+    KeepTheoryScaleFactors = cms.bool(False),
+    HLTversion = cms.string("HLT"),
+       )
+sampleInfo.append(aPSet)
+
+
+
+aPSet = cms.PSet(
+    DataSet = cms.string("/EWKZ2Jets_ZToLL_M-50_13TeV-madgraph-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext2-v1/MINIAODSIM"),
+    EventTotal = cms.int32(699451),
+    NumberOfLumis = cms.int32(3823),
+    MaxLumiBlock = cms.int32(3826),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("EWKZ2Jets_ZToLL_M-50--ext2-v1"),
+    DataCard = cms.string("EWK"),
+    CrossSection = cms.double(3.98700),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(2.0),
+    ProductionInfo = cms.string("Run2016_B_C_D_E_F_G_H"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("NONE"),
+    KeepTheoryScaleFactors = cms.bool(False),
+    HLTversion = cms.string("HLT"),
+       )
+sampleInfo.append(aPSet)
+
+
+
+aPSet = cms.PSet(
+    DataSet = cms.string("/EWKZ2Jets_ZToNuNu_13TeV-madgraph-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext1-v1/MINIAODSIM"),
+    EventTotal = cms.int32(300000),
+    NumberOfLumis = cms.int32(1708),
+    MaxLumiBlock = cms.int32(1708),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("EWKZ2Jets_ZToNuNu--ext1-v1"),
+    DataCard = cms.string("EWK"),
+    CrossSection = cms.double(10.01000),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(2.0),
+    ProductionInfo = cms.string("Run2016_B_C_D_E_F_G_H"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("NONE"),
+    KeepTheoryScaleFactors = cms.bool(False),
+    HLTversion = cms.string("HLT"),
+       )
+sampleInfo.append(aPSet)
+
+
+
+aPSet = cms.PSet(
+    DataSet = cms.string("/GluGluHToWWTo2L2Nu_M125_13TeV_powheg_JHUgen_pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM"),
+    EventTotal = cms.int32(492200),
+    NumberOfLumis = cms.int32(2463),
+    MaxLumiBlock = cms.int32(2502),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("GluGluHToWWTo2L2Nu_M125---v1"),
+    DataCard = cms.string("SMHIGGS"),
+    CrossSection = cms.double(1.00100),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(2.0),
+    ProductionInfo = cms.string("Run2016_B_C_D_E_F_G_H"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("NONE"),
+    KeepTheoryScaleFactors = cms.bool(False),
+    HLTversion = cms.string("HLT"),
+       )
+sampleInfo.append(aPSet)
+
+
+
+aPSet = cms.PSet(
+    DataSet = cms.string("/ST_t-channel_antitop_4f_inclusiveDecays_13TeV-powhegV2-madspin-pythia8_TuneCUETP8M1/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM"),
+    EventTotal = cms.int32(38811017),
+    NumberOfLumis = cms.int32(203542),
+    MaxLumiBlock = cms.int32(209771),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("ST_t-channel_antitop_4f_inclusiveDecaysV2---v1"),
+    DataCard = cms.string("VV"),
+    CrossSection = cms.double(80.95000),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(2.0),
+    ProductionInfo = cms.string("Run2016_B_C_D_E_F_G_H"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("NONE"),
+    KeepTheoryScaleFactors = cms.bool(False),
+    HLTversion = cms.string("HLT"),
+       )
+sampleInfo.append(aPSet)
+
+
+
+aPSet = cms.PSet(
+    DataSet = cms.string("/ST_t-channel_top_4f_inclusiveDecays_13TeV-powhegV2-madspin-pythia8_TuneCUETP8M1/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM"),
+    EventTotal = cms.int32(67240808),
+    NumberOfLumis = cms.int32(349939),
+    MaxLumiBlock = cms.int32(364267),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("ST_t-channel_top_4f_inclusiveDecaysV2---v1"),
+    DataCard = cms.string("VV"),
+    CrossSection = cms.double(136.02000),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(2.0),
+    ProductionInfo = cms.string("Run2016_B_C_D_E_F_G_H"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("NONE"),
+    KeepTheoryScaleFactors = cms.bool(False),
+    HLTversion = cms.string("HLT"),
+       )
+sampleInfo.append(aPSet)
+
+
+
+aPSet = cms.PSet(
+    DataSet = cms.string("/ZZTo4L_13TeV-amcatnloFXFX-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext1-v1/MINIAODSIM"),
+    EventTotal = cms.int32(10709784),
+    NumberOfLumis = cms.int32(59558),
+    MaxLumiBlock = cms.int32(59639),
+    EventType = cms.string("MC"),
+    KeyName = cms.string("ZZTo4L--ext1-v1"),
+    DataCard = cms.string("VV"),
+    CrossSection = cms.double(1.21200),
+    FilterEff = cms.double(1.0),
+    CodeVersion = cms.double(2.0),
+    ProductionInfo = cms.string("Run2016_B_C_D_E_F_G_H"),
+    RecoilCorrection = cms.string("NONE"),
+    MetSystematicType = cms.string("NONE"),
+    KeepTheoryScaleFactors = cms.bool(False),
+    HLTversion = cms.string("HLT"),
+       )
+sampleInfo.append(aPSet)
+
+
 
 ################################
 # 2017 Moriond MonoH Signals   #

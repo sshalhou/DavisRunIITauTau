@@ -367,6 +367,42 @@ NtuplePairIndependentInfoProducer::produce(edm::Event& iEvent, const edm::EventS
   if(duplicateTagged_muons->size() != 0) std::cout<<" BAD CLONE MUON \n";
 
 
+  //////////////////////////////////////////////
+  // new Wisconsin-style Boson Pt @ GEN LEVEL //
+  //////////////////////////////////////////////
+
+  double maxGenBosonPt_w = -999.9;
+  LorentzVector GenMaxPtBosonVec(0,0,0,0);
+
+  if(prunedGens.isValid()) 
+  {
+    for(std::size_t w = 0; w<prunedGens->size(); ++w)
+    {
+      int ID_w = abs(prunedGens->at(w).pdgId());
+      double PT_w = prunedGens->at(w).pt();
+      if(ID_w == 23 || ID_w == 24 || ID_w == 25)
+      {
+        if(PT_w > maxGenBosonPt_w) { maxGenBosonPt_w = PT_w; GenMaxPtBosonVec = prunedGens->at(w).p4(); }
+      }
+    }
+  }
+  if(packedGens.isValid()) 
+  {
+    for(std::size_t w = 0; w<packedGens->size(); ++w)
+    {
+      int ID_w = abs(packedGens->at(w).pdgId());
+      double PT_w = packedGens->at(w).pt();
+      if(ID_w == 23 || ID_w == 24 || ID_w == 25)
+      {
+        if(PT_w > maxGenBosonPt_w) { maxGenBosonPt_w = PT_w; GenMaxPtBosonVec = packedGens->at(w).p4(); }
+      }
+    }
+  }
+
+//  std::cout<<" MAX GEN BOSON PT = "<<maxGenBosonPt_w<<"\n";
+
+InfoToWrite.fill_MaxPtGenBoson_WisconinStyle(GenMaxPtBosonVec);
+
   /////////////////////////////////////////////////////////////////
   /* start by adding gen particles to InfoToWrite */
   /////////////////////////////////////////////////////////////////
