@@ -351,8 +351,8 @@ for dir_ in dirFile_:
 						rm_commands = []
 						if int(split_dir_[3]) == 1:
 							print " PERFORMING CLEANUP IN ", split_dir_[0]					
-							#rm_commands.append("eos root://cmseos.fnal.gov rm -r "+eos_base+"log")
-							#rm_commands.append("eos root://cmseos.fnal.gov rm -r "+eos_base+"failed")
+							rm_commands.append("eos root://cmseos.fnal.gov rm -r "+eos_base+"log")
+							rm_commands.append("eos root://cmseos.fnal.gov rm -r "+eos_base+"failed")
 							for rm_file in master_split_list[m]:
 								file_suffix = rm_file.split("FlatTuple")[1]
 								rm_commands.append("eos root://cmseos.fnal.gov rm "+eos_base+"FlatTuple"+file_suffix)
@@ -362,7 +362,7 @@ for dir_ in dirFile_:
 							for xfile in produced_files:
 								os.system("rm -rf "+xfile)
 
-	print " *** FINAL MERGE REPORT FOR ", SUB_DIRS[d], " PRE-MERGE TOTAL COUNT = ", total_event_count_for_all,
+	print " *** FINAL MERGE REPORT FOR ", dir_.split(" ")[0], " PRE-MERGE TOTAL COUNT = ", total_event_count_for_all,
 	print " post merge total = ", total_event_count_for_all_merged
 	sys.stdout.flush() 
 
