@@ -53,6 +53,31 @@ void JetHelper::init(std::vector<NtupleJet> jetVec, std::string jetCut, bTagSFhe
 	SFdown_JERdown.clear();
 
 
+
+	LOOSE_SF_fullyCorrected.clear();
+	LOOSE_SFup_fullyCorrected.clear();
+	LOOSE_SFdown_fullyCorrected.clear();
+	
+	LOOSE_SF_JECshiftedUp.clear();
+	LOOSE_SFup_JECshiftedUp.clear();
+	LOOSE_SFdown_JECshiftedUp.clear();
+	
+	LOOSE_SF_JECshiftedDown.clear();
+	LOOSE_SFup_JECshiftedDown.clear();
+	LOOSE_SFdown_JECshiftedDown.clear();
+	
+	LOOSE_SF_JERnomianl.clear();
+	LOOSE_SFup_JERnomianl.clear();
+	LOOSE_SFdown_JERnomianl.clear();
+	
+	LOOSE_SF_JERup.clear();
+	LOOSE_SFup_JERup.clear();
+	LOOSE_SFdown_JERup.clear();
+	
+	LOOSE_SF_JERdown.clear();
+	LOOSE_SFup_JERdown.clear();
+	LOOSE_SFdown_JERdown.clear();
+
 	/* create container to hold all jet systematic levels */
 	std::string jetSysArray[6] = {"fullyCorrected","JECshiftedUp","JECshiftedDown","JERnomianl","JERup","JERdown"};
 
@@ -148,6 +173,51 @@ void JetHelper::init(std::vector<NtupleJet> jetVec, std::string jetCut, bTagSFhe
 						SFdown_JERdown.push_back(m_BtagSFTool->SF_MediumWpDown());
 					}	
 				}
+
+
+				/* for b-tag SF wisconsin seems to cut at 30 instead of 20 */
+				if(jetSelector(jetVec[j]) && jetVec[j].pt() >= 30.0 && fabs(jetVec[j].eta()) <= 2.4 && jetVec[j].defaultBtagAlgorithm_RawScore()>m_BtagSFTool->getCutPointLoose())
+				{
+					/* store the Loose WP scale factors for the correct jet variant */
+					if(	jetSysArray[sys]=="fullyCorrected") 			
+					{		
+						LOOSE_SF_fullyCorrected.push_back(m_BtagSFTool->SF_LooseWpCentral());
+						LOOSE_SFup_fullyCorrected.push_back(m_BtagSFTool->SF_LooseWpUp());
+						LOOSE_SFdown_fullyCorrected.push_back(m_BtagSFTool->SF_LooseWpDown());
+					}	
+					if(	jetSysArray[sys]=="JECshiftedUp" ) 
+					{		
+						LOOSE_SF_JECshiftedUp.push_back(m_BtagSFTool->SF_LooseWpCentral());
+						LOOSE_SFup_JECshiftedUp.push_back(m_BtagSFTool->SF_LooseWpUp());
+						LOOSE_SFdown_JECshiftedUp.push_back(m_BtagSFTool->SF_LooseWpDown());
+					}				
+					if(	jetSysArray[sys]=="JECshiftedDown" ) 
+					{		
+						LOOSE_SF_JECshiftedDown.push_back(m_BtagSFTool->SF_LooseWpCentral());
+						LOOSE_SFup_JECshiftedDown.push_back(m_BtagSFTool->SF_LooseWpUp());
+						LOOSE_SFdown_JECshiftedDown.push_back(m_BtagSFTool->SF_LooseWpDown());
+					}				
+					if(	jetSysArray[sys]=="JERnomianl" ) 
+					{		
+						LOOSE_SF_JERnomianl.push_back(m_BtagSFTool->SF_LooseWpCentral());
+						LOOSE_SFup_JERnomianl.push_back(m_BtagSFTool->SF_LooseWpUp());
+						LOOSE_SFdown_JERnomianl.push_back(m_BtagSFTool->SF_LooseWpDown());
+					}			
+					if(	jetSysArray[sys]=="JERup" ) 
+					{		
+						LOOSE_SF_JERup.push_back(m_BtagSFTool->SF_LooseWpCentral());
+						LOOSE_SFup_JERup.push_back(m_BtagSFTool->SF_LooseWpUp());
+						LOOSE_SFdown_JERup.push_back(m_BtagSFTool->SF_LooseWpDown());
+					}				
+					if(	jetSysArray[sys]=="JERdown" ) 
+					{		
+						LOOSE_SF_JERdown.push_back(m_BtagSFTool->SF_LooseWpCentral());
+						LOOSE_SFup_JERdown.push_back(m_BtagSFTool->SF_LooseWpUp());
+						LOOSE_SFdown_JERdown.push_back(m_BtagSFTool->SF_LooseWpDown());
+					}	
+				}
+
+
 
 				/* set the b-tag eff. for the current jet */
 
@@ -299,6 +369,31 @@ void JetHelper::init(std::vector<NtupleJet> jetVec, std::string jetCut,
 	SFdown_JERdown.clear();
 
 
+	LOOSE_SF_fullyCorrected.clear();
+	LOOSE_SFup_fullyCorrected.clear();
+	LOOSE_SFdown_fullyCorrected.clear();
+	
+	LOOSE_SF_JECshiftedUp.clear();
+	LOOSE_SFup_JECshiftedUp.clear();
+	LOOSE_SFdown_JECshiftedUp.clear();
+	
+	LOOSE_SF_JECshiftedDown.clear();
+	LOOSE_SFup_JECshiftedDown.clear();
+	LOOSE_SFdown_JECshiftedDown.clear();
+	
+	LOOSE_SF_JERnomianl.clear();
+	LOOSE_SFup_JERnomianl.clear();
+	LOOSE_SFdown_JERnomianl.clear();
+	
+	LOOSE_SF_JERup.clear();
+	LOOSE_SFup_JERup.clear();
+	LOOSE_SFdown_JERup.clear();
+	
+	LOOSE_SF_JERdown.clear();
+	LOOSE_SFup_JERdown.clear();
+	LOOSE_SFdown_JERdown.clear();
+
+
 	/* create container to hold all jet systematic levels */
 	std::string jetSysArray[6] = {"fullyCorrected","JECshiftedUp","JECshiftedDown","JERnomianl","JERup","JERdown"};
 
@@ -394,6 +489,53 @@ void JetHelper::init(std::vector<NtupleJet> jetVec, std::string jetCut,
 						}	
 					}	
 				}
+
+				/* for b-tag SF wisconsin seems to cut at 30 instead of 20 */
+				if(jetSelector(jetVec[j]) && jetVec[j].pt() >= 30.0 && fabs(jetVec[j].eta()) <= 2.4 && jetVec[j].defaultBtagAlgorithm_RawScore()>m_BtagSFTool->getCutPointLoose())
+				{
+					if(deltaR(leg1.p4(), jetVec[j].jet_p4()) >= minDR && deltaR(leg2.p4(), jetVec[j].jet_p4()) >= minDR)
+					{
+
+						/* store the medium WP scale factors for the correct jet variant */
+						if(	jetSysArray[sys]=="fullyCorrected") 			
+						{		
+							LOOSE_SF_fullyCorrected.push_back(m_BtagSFTool->SF_LooseWpCentral());
+							LOOSE_SFup_fullyCorrected.push_back(m_BtagSFTool->SF_LooseWpUp());
+							LOOSE_SFdown_fullyCorrected.push_back(m_BtagSFTool->SF_LooseWpDown());
+						}	
+						if(	jetSysArray[sys]=="JECshiftedUp" ) 
+						{		
+							LOOSE_SF_JECshiftedUp.push_back(m_BtagSFTool->SF_LooseWpCentral());
+							LOOSE_SFup_JECshiftedUp.push_back(m_BtagSFTool->SF_LooseWpUp());
+							LOOSE_SFdown_JECshiftedUp.push_back(m_BtagSFTool->SF_LooseWpDown());
+						}				
+						if(	jetSysArray[sys]=="JECshiftedDown" ) 
+						{		
+							LOOSE_SF_JECshiftedDown.push_back(m_BtagSFTool->SF_LooseWpCentral());
+							LOOSE_SFup_JECshiftedDown.push_back(m_BtagSFTool->SF_LooseWpUp());
+							LOOSE_SFdown_JECshiftedDown.push_back(m_BtagSFTool->SF_LooseWpDown());
+						}				
+						if(	jetSysArray[sys]=="JERnomianl" ) 
+						{		
+							LOOSE_SF_JERnomianl.push_back(m_BtagSFTool->SF_LooseWpCentral());
+							LOOSE_SFup_JERnomianl.push_back(m_BtagSFTool->SF_LooseWpUp());
+							LOOSE_SFdown_JERnomianl.push_back(m_BtagSFTool->SF_LooseWpDown());
+						}			
+						if(	jetSysArray[sys]=="JERup" ) 
+						{		
+							LOOSE_SF_JERup.push_back(m_BtagSFTool->SF_LooseWpCentral());
+							LOOSE_SFup_JERup.push_back(m_BtagSFTool->SF_LooseWpUp());
+							LOOSE_SFdown_JERup.push_back(m_BtagSFTool->SF_LooseWpDown());
+						}				
+						if(	jetSysArray[sys]=="JERdown" ) 
+						{		
+							LOOSE_SF_JERdown.push_back(m_BtagSFTool->SF_LooseWpCentral());
+							LOOSE_SFup_JERdown.push_back(m_BtagSFTool->SF_LooseWpUp());
+							LOOSE_SFdown_JERdown.push_back(m_BtagSFTool->SF_LooseWpDown());
+						}	
+					}	
+				}
+
 
 
 				/* set the b-tag eff. for the current jet */
@@ -599,6 +741,97 @@ void JetHelper::init(std::vector<NtupleJet> jetVec, std::string jetCut,
 
  }
 
+
+
+ double JetHelper::getZeroBtagEventSF_LOOSE(std::string variant_, std::string shift_, unsigned int event_)
+ {
+
+	std::string jetSysArray[6] = {"fullyCorrected","JECshiftedUp","JECshiftedDown","JERnomianl","JERup","JERdown"};
+
+
+	    assert(variant_ == "fullyCorrected" ||\
+	           variant_ == "JECshiftedUp" ||\
+	           variant_ == "JECshiftedDown" ||\
+	           variant_ == "JERnomianl" ||\
+	           variant_ == "JERup" ||\
+	           variant_ == "JERdown");
+
+
+	    assert(shift_ == "central" ||\
+	           shift_ == "up" ||\
+	           shift_ == "down");
+
+
+	    std::vector <double> temp_sf_vector;
+	    temp_sf_vector.clear();
+
+
+	    if(variant_=="fullyCorrected")
+    	{
+	    	if(	shift_=="central") temp_sf_vector = LOOSE_SF_fullyCorrected;
+    		if(	shift_=="up")      temp_sf_vector = LOOSE_SFup_fullyCorrected;
+    		if(	shift_=="down")    temp_sf_vector = LOOSE_SFdown_fullyCorrected;
+		}	
+
+	    if(variant_=="JECshiftedUp")
+    	{
+	    	if(	shift_=="central") temp_sf_vector = LOOSE_SF_JECshiftedUp;
+    		if(	shift_=="up")      temp_sf_vector = LOOSE_SFup_JECshiftedUp;
+    		if(	shift_=="down")    temp_sf_vector = LOOSE_SFdown_JECshiftedUp;
+		}	
+
+	    if(variant_=="JECshiftedDown")
+    	{
+	    	if(	shift_=="central") temp_sf_vector = LOOSE_SF_JECshiftedDown;
+    		if(	shift_=="up")      temp_sf_vector = LOOSE_SFup_JECshiftedDown;
+    		if(	shift_=="down")    temp_sf_vector = LOOSE_SFdown_JECshiftedDown;
+		}			
+
+	    if(variant_=="JERnomianl")
+    	{
+	    	if(	shift_=="central") temp_sf_vector = LOOSE_SF_JERnomianl;
+    		if(	shift_=="up")      temp_sf_vector = LOOSE_SFup_JERnomianl;
+    		if(	shift_=="down")    temp_sf_vector = LOOSE_SFdown_JERnomianl;
+		}	
+
+	    if(variant_=="JERup")
+    	{
+	    	if(	shift_=="central") temp_sf_vector = LOOSE_SF_JERup;
+    		if(	shift_=="up")      temp_sf_vector = LOOSE_SFup_JERup;
+    		if(	shift_=="down")    temp_sf_vector = LOOSE_SFdown_JERup;
+		}	
+	  
+	    if(variant_=="JERdown")
+    	{
+	    	if(	shift_=="central") temp_sf_vector = LOOSE_SF_JERdown;
+    		if(	shift_=="up")      temp_sf_vector = LOOSE_SFup_JERdown;
+    		if(	shift_=="down")    temp_sf_vector = LOOSE_SFdown_JERdown;
+		}	
+ 
+
+		/* compute the SF */
+		double return_weight = 1.0;
+
+
+		// std::cout<<event_<<" EVENT_XXX temp_sf_vector size "<<temp_sf_vector.size()<<"\n";
+		// for(std::size_t j = 0; j<temp_sf_vector.size(); ++j)
+		// {
+		// 	std::cout<<event_<<" EVENT_XXX temp_sf_vector @ "<<j<<" "<<temp_sf_vector[j]<<"\n";
+		// }
+
+
+		if(temp_sf_vector.size() == 0) {temp_sf_vector.clear();  return 1.0; }
+
+
+		for(std::size_t j = 0; j<temp_sf_vector.size(); ++j)
+		{
+			return_weight *= (1 - temp_sf_vector[j]);
+		}
+
+		temp_sf_vector.clear(); 
+		return return_weight;
+
+ }
 
 
 

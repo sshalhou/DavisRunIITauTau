@@ -1129,6 +1129,16 @@ public:
 
 
 
+	double jets_zero_btag_event_weight_LOOSE;
+	double jets_zero_btag_event_weight_LOOSE_up;
+	double jets_zero_btag_event_weight_LOOSE_down;
+
+	double jets_JECshiftedUp_zero_btag_event_weight_LOOSE;
+	double jets_JECshiftedDown_zero_btag_event_weight_LOOSE;
+	double jets_JERup_zero_btag_event_weight_LOOSE;
+	double jets_JERdown_zero_btag_event_weight_LOOSE;
+
+
 
   	/* gen particles - kind of complicated, but we don't want custom objects in this code */
 

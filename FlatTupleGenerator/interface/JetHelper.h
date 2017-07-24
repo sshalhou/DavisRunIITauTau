@@ -95,26 +95,34 @@ public:
     2nd string is up, central, down variant on the SF itself 
   note: these may not correspond to  PtOrderedPassingJets since different selections may apply */                   
   double getZeroBtagEventSF(std::string, std::string, unsigned int);
+  double getZeroBtagEventSF_LOOSE(std::string, std::string, unsigned int);
+
 
 private:
 
 	std::vector<std::pair<double, NtupleJet>> m_PtJetPairs_fullyCorrected;     /* holder for Pt-NtupleJet pairs */
   std::vector<double> SF_fullyCorrected,SFup_fullyCorrected,SFdown_fullyCorrected; /* holder for b-tag sfs */
+  std::vector<double> LOOSE_SF_fullyCorrected,LOOSE_SFup_fullyCorrected,LOOSE_SFdown_fullyCorrected; /* holder for b-tag sfs */
 
   std::vector<std::pair<double, NtupleJet>> m_PtJetPairs_JECshiftedUp;     /* holder for Pt-NtupleJet pairs */
   std::vector<double> SF_JECshiftedUp,SFup_JECshiftedUp,SFdown_JECshiftedUp;/* holder for b-tag sfs */
+  std::vector<double> LOOSE_SF_JECshiftedUp,LOOSE_SFup_JECshiftedUp,LOOSE_SFdown_JECshiftedUp;/* holder for b-tag sfs */
 
   std::vector<std::pair<double, NtupleJet>> m_PtJetPairs_JECshiftedDown;     /* holder for Pt-NtupleJet pairs */
   std::vector<double> SF_JECshiftedDown,SFup_JECshiftedDown,SFdown_JECshiftedDown;/* holder for b-tag sfs */
+  std::vector<double> LOOSE_SF_JECshiftedDown,LOOSE_SFup_JECshiftedDown,LOOSE_SFdown_JECshiftedDown;/* holder for b-tag sfs */
 
   std::vector<std::pair<double, NtupleJet>> m_PtJetPairs_JERnomianl;     /* holder for Pt-NtupleJet pairs */
   std::vector<double> SF_JERnomianl,SFup_JERnomianl,SFdown_JERnomianl;/* holder for b-tag sfs */
+  std::vector<double> LOOSE_SF_JERnomianl,LOOSE_SFup_JERnomianl,LOOSE_SFdown_JERnomianl;/* holder for b-tag sfs */
 
   std::vector<std::pair<double, NtupleJet>> m_PtJetPairs_JERup;     /* holder for Pt-NtupleJet pairs */
   std::vector<double> SF_JERup,SFup_JERup,SFdown_JERup;/* holder for b-tag sfs */
+  std::vector<double> LOOSE_SF_JERup,LOOSE_SFup_JERup,LOOSE_SFdown_JERup;/* holder for b-tag sfs */
 
   std::vector<std::pair<double, NtupleJet>> m_PtJetPairs_JERdown;     /* holder for Pt-NtupleJet pairs */
   std::vector<double> SF_JERdown,SFup_JERdown,SFdown_JERdown;/* holder for b-tag sfs */
+  std::vector<double> LOOSE_SF_JERdown,LOOSE_SFup_JERdown,LOOSE_SFdown_JERdown;/* holder for b-tag sfs */
 
 
 

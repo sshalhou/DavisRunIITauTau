@@ -102,6 +102,9 @@ public:
 
    double getCutPointMedium() const;
 
+   /* return the loose wp cut point */
+   double getCutPointLoose() const;
+
 
 private:
 
